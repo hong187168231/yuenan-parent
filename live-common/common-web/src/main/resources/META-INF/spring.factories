@@ -1,0 +1,7 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.live.common.web.config.WebMvcConfig,\
+  com.live.common.web.config.FeignConfig,\
+  com.live.common.web.exception.GlobalExceptionHandler,\
+  com.live.common.web.config.DozerConfig,\
+  com.live.common.web.util.DozerUtil,\
+  com.live.common.web.exception.FeignErrorDecoder

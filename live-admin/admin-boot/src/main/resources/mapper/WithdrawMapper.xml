@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.live.admin.modules.mem.mapper.WithdrawMapper">
+
+    <select id="queryList" resultType="com.live.user.pojo.vo.WithdrawVo">
+        select t1.id,t1.order_id,t1.mem_id,t1.amount,t1.service_fee,t1.bank_relation_id,
+        t1.withdrawal_account,t1.withdrawal_type,t1.apply_time,t1.status,t1.examine_time,
+        t1.reason,t1.disbursement,t1.operator,t1.remark,t1.create_time,t1.update_time,t1.is_del,
+        t2.account,t2.real_name,t2.hierarchy_id,t2.level_id,
+        (select name from mem_bank where t3.bank_id = id) as bankName,t3.bank_card,t3.account_opening_address,(select real_name from mem_baseinfo where t3.mem_id = id) as payee
+        from withdrawal t1
+        left join mem_baseinfo t2 on t1.mem_id = t2.id
+        left join mem_bank_relation t3 on t1.bank_relation_id = t3.id
+        where t1.is_del = 0
+        <if test="dto.orderId != null and dto.orderId != ''">and t1.order_id = #{dto.orderId}</if>
+        <if test="dto.status != null and dto.status != ''">and t1.status = #{dto.status}</if>
+        <if test="dto.bankCard != null and dto.bankCard != ''">and t3.bank_card = #{dto.bankCard}</if>
+        <if test="dto.levelId != null and dto.levelId != ''">and t2.level_id = #{dto.levelId}</if>
+        <if test="dto.account != null  and dto.account != ''">and t2.account like concat('%', #{dto.account}, '%')</if>
+        <if test="dto.ids != null and dto.ids.size()>0">
+            t1.id in
+            <foreach collection="dto.ids" item="valueList" open="(" close=")" separator=",">
+                #{valueList}
+            </foreach>
+        </if>
+        <if test="dto.highAmount != null and dto.highAmount != ''">
+            and t1.amount &lt;= #{dto.highAmount}
+        </if>
+        <if test="dto.lowAmount != null and dto.lowAmount != ''">
+            and t1.amount &gt;= #{dto.lowAmount}
+        </if>
+        <if test="dto.beginTime != null and dto.beginTime != ''">
+            and date_format(t1.examine_time,'%y%m%d') &gt;= date_format(#{dto.beginTime},'%y%m%d')
+        </if>
+        <if test="dto.endTime != null and dto.endTime != ''">
+            and date_format(t1.examine_time,'%y%m%d') &lt;= date_format(#{dto.endTime},'%y%m%d')
+        </if>
+        <if test="dto.applyBeginTime != null and dto.applyBeginTime != ''">
+            and date_format(t1.apply_time,'%y%m%d') &gt;= date_format(#{dto.applyBeginTime},'%y%m%d')
+        </if>
+        <if test="dto.applyEndTime != null and dto.applyEndTime != ''">
+            and date_format(t1.apply_time,'%y%m%d') &lt;= date_format(#{dto.applyEndTime},'%y%m%d')
+        </if>
+        ORDER BY t1.create_time desc
+    </select>
+
+    <select id="queryApplyList" resultType="com.live.user.pojo.vo.WithdrawVo">
+        SELECT
+            t1.id,
+            t1.order_id,
+            t1.mem_id,
+            t1.amount,
+            t1.service_fee,
+            t1.bank_relation_id,
+            t1.withdrawal_account,
+            t1.withdrawal_type,
+            t1.apply_time,
+            t1.STATUS,
+            t1.examine_time,
+            t1.reason,
+            t1.disbursement,
+            t1.operator,
+            t1.remark,
+            t1.create_time,
+            t1.update_time,
+            t1.is_del,
+            t2.account,
+            t2.real_name,
+            t2.hierarchy_id,
+            t2.level_id,
+            ( SELECT NAME FROM mem_bank WHERE t3.bank_id = id ) AS bankName,
+            t3.bank_card,
+            t3.account_opening_address
+        FROM
+        withdrawal t1
+        LEFT JOIN mem_baseinfo t2 ON t1.mem_id = t2.id
+        LEFT JOIN mem_bank_relation t3 ON t1.bank_relation_id = t3.id
+        WHERE
+        t1.is_del = 0
+        <if test="dto.orderId != null and dto.orderId != ''">and t1.order_id = #{dto.orderId}</if>
+        <if test="dto.levelId != null and dto.levelId != ''">and t2.level_id = #{dto.levelId}</if>
+        <if test="dto.account != null  and dto.account != ''">and t2.account like concat('%', #{dto.account}, '%')</if>
+        <if test="dto.highAmount != null and dto.highAmount != ''">
+            and t1.amount &lt;= #{dto.highAmount}
+        </if>
+        <if test="dto.lowAmount != null and dto.lowAmount != ''">
+            and t1.amount &gt;= #{dto.lowAmount}
+        </if>
+        <if test="dto.applyBeginTime != null and dto.applyBeginTime != ''">
+            and date_format(t1.apply_time,'%y%m%d') &gt;= date_format(#{dto.applyBeginTime},'%y%m%d')
+        </if>
+        <if test="dto.applyEndTime != null and dto.applyEndTime != ''">
+            and date_format(t1.apply_time,'%y%m%d') &lt;= date_format(#{dto.applyEndTime},'%y%m%d')
+        </if>
+        ORDER BY t1.create_time desc
+    </select>
+
+
+
+</mapper>

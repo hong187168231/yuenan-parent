@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.live.admin.modules.msg.mapper.MsgPlatformAnnouncementMapper">
+
+    <resultMap id="SysPlatformAnnouncement" type="com.live.user.pojo.entity.MsgPlatformAnnouncement">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="title" column="title" jdbcType="VARCHAR"/>
+        <result property="content" column="content" jdbcType="VARCHAR"/>
+        <result property="levelIds" column="level_ids" jdbcType="VARCHAR"/>
+        <result property="type" column="type" jdbcType="INTEGER"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="isDel" column="is_del" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result  property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <resultMap id="SysPlatformAnnouncementVo" extends="SysPlatformAnnouncement" type="com.live.user.pojo.vo.MsgPlatformAnnouncementVO">
+    </resultMap>
+
+    <select id="queryList" resultMap="SysPlatformAnnouncementVo">
+        SELECT *
+        FROM msg_platform_announcement
+        <where>
+            <if test="dto.title !=null and dto.title != ''">
+                and title like concat('%', #{dto.title,jdbcType=VARCHAR}, '%')
+            </if>
+        </where>
+        ORDER BY create_time desc
+    </select>
+
+    <delete id="deleteAnnouncement">
+        delete from msg_platform_announcement
+        where id IN
+        <foreach collection="list" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="updateAnnouncement">
+        update msg_platform_announcement
+        <set>
+            <if test="title != null and title != ''">
+                title = #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null and content != ''">
+                content = #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="levelIds != null and levelIds != ''">
+                level_ids = #{levelIds,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                type = #{type,jdbcType=INTEGER},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+</mapper>

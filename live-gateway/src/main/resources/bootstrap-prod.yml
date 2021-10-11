@@ -1,0 +1,17 @@
+server:
+  port: 9999
+
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: live-gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: http://c.live.tech:8848
+        namespace: prod_namespace_idy
+      config:
+        server-addr: ${spring.cloud.nacos.discovery.server-addr}
+        file-extension: yaml
+        namespace: prod_namespace_id

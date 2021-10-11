@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.live.admin.modules.pay.mapper.PayWayConfigMapper">
+
+    <select id="queryList" resultType="com.live.pay.pojo.vo.PayWayConfigVO">
+        SELECT
+            t.pay_way_id,
+            t.way_type,
+            t.way_type_code,
+            t.way_name,
+            t.way_account,
+            t.qr_code,
+            t.group_id,
+            t.audit_status,
+            t.tips,
+            t.min_amount,
+            t.max_amount,
+            t.is_del,
+            t.remark,
+            t.sort_by,
+            t.create_user,
+            t.update_user,
+            t.create_time,
+            t.update_time,
+            ct.group_name as groupName
+        FROM
+            pay_way_config t
+        left join pay_group_config ct on ct.pay_group_id = t.group_id
+        ORDER BY t.sort_by desc
+    </select>
+
+    <select id="querySingle" resultType="com.live.pay.pojo.vo.PayWayConfigVO">
+        SELECT
+           t.pay_way_id,
+           t.way_type,
+           t.way_type_code,
+           t.way_name,
+           t.way_account,
+           t.qr_code,
+           t.group_id,
+           t.audit_status,
+           t.tips,
+           t.min_amount,
+           t.max_amount,
+           t.is_del,
+           t.remark,
+           t.sort_by,
+           t.create_user,
+           t.update_user,
+           t.create_time,
+           t.update_time,
+           ct.group_name as groupName
+        FROM
+            pay_way_config t
+        left join pay_group_config ct on ct.pay_group_id = t.group_id
+        where pay_way_id = #{dto.payWayId}
+    </select>
+
+    <insert id="insertPayWay">
+        INSERT INTO pay_way_config (
+            way_type,
+            way_type_code,
+            way_name,
+            way_account,
+            qr_code,
+            group_id,
+            audit_status,
+            tips,
+            min_amount,
+            max_amount,
+            is_del,
+            remark,
+            sort_by,
+            create_user,
+            update_user,
+            create_time,
+            update_time)
+        VALUES
+            (
+             #{wayType},
+             #{wayTypeCode},
+             #{wayName},
+             #{wayAccount},
+             #{qrCode},
+             #{groupId},
+             #{auditStatus},
+             #{tips},
+             #{minAmount},
+             #{maxAmount},
+             #{isDel},
+             #{remark},
+             #{sortBy},
+             #{createUser},
+             #{updateUser},
+             now(),
+             now()
+            )
+    </insert>
+
+    <update id="updatePayWay">
+        update pay_way_config
+        set
+            way_type = #{wayType},
+            way_type_code = #{wayTypeCode},
+            way_name = #{wayName},
+            way_account = #{wayAccount},
+            qr_code = #{qrCode},
+            group_id = #{groupId},
+            audit_status = #{auditStatus},
+            tips = #{tips},
+            min_amount = #{minAmount},
+            max_amount = #{maxAmount},
+            is_del = #{isDel},
+            remark = #{remark},
+            sort_by = #{sortBy},
+            update_user = #{updateUser},
+            update_time = now()
+        where pay_way_id = #{payWayId}
+    </update>
+
+    <update id="deletePayWay">
+        delete from pay_way_config
+        where pay_way_id = #{payWayId}
+    </update>
+
+    <update id="stopStartPayWay">
+        update pay_way_config
+        set
+            is_del = #{isDel},
+            update_user = #{updateUser},
+            update_time = now()
+        where pay_way_id = #{payWayId}
+    </update>
+
+</mapper>

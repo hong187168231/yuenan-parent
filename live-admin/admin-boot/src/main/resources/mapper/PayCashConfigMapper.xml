@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.live.admin.modules.pay.mapper.PayCashConfigMapper">
+
+    <select id="queryList" resultType="com.live.pay.pojo.vo.PayCashConfigVO">
+        SELECT
+            t.pay_cash_id,
+            t.cash_name,
+            t.cash_type_code,
+            t.sort_by,
+            t.is_del,
+            t.desc,
+            t.currency,
+            t.cash_fee,
+            t.bind_account_num,
+            t.min_cash_amount,
+            t.max_cash_amount
+        FROM
+        pay_cash_config t
+        ORDER BY t.sort_by desc
+    </select>
+
+    <select id="querySingle" resultType="com.live.pay.pojo.vo.PayCashConfigVO">
+        SELECT
+            t.pay_cash_id,
+            t.cash_name,
+            t.cash_type_code,
+            t.sort_by,
+            t.is_del,
+            t.desc,
+            t.currency,
+            t.cash_fee,
+            t.bind_account_num,
+            t.min_cash_amount,
+            t.max_cash_amount
+        FROM
+            pay_cash_config t
+        where pay_cash_id = #{dto.payCashId}
+    </select>
+
+    <insert id="insertCash">
+        INSERT INTO pay_cash_config (
+                                     cash_name,
+                                     cash_type_code,
+                                     sort_by,
+                                     is_del,
+                                     `DESC`,
+                                     currency,
+                                     cash_fee,
+                                     bind_account_num,
+                                     min_cash_amount,
+                                     max_cash_amount)
+        VALUES
+            (
+             #{cashName},
+             #{cashTypeCode},
+             #{sortBy},
+             #{isDel},
+             #{desc},
+             #{currency},
+             #{cashFee},
+             #{bindAccountNum},
+             #{minCashAmount},
+             #{maxCashAmount}
+            )
+    </insert>
+
+    <update id="updateCash">
+        update pay_cash_config
+        set
+            sort_by = #{isDel},
+            is_del = #{isDel},
+            `DESC` = #{desc},
+            cash_fee = #{cashFee},
+            bind_account_num = #{bindAccountNum},
+            min_cash_amount = #{minCashAmount},
+            max_cash_amount = #{maxCashAmount}
+        where pay_cash_id = #{payCashId}
+    </update>
+
+    <update id="deleteCash">
+        delete from pay_cash_config
+        where pay_cash_id = #{payCashId}
+    </update>
+
+</mapper>

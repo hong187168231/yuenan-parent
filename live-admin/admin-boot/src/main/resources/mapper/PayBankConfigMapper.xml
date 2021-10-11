@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.live.admin.modules.pay.mapper.PayBankConfigMapper">
+
+    <select id="queryList" resultType="com.live.pay.pojo.vo.PayBankConfigVO">
+        SELECT
+            t.pay_bank_id,
+            t.bank_id,
+            t.open_account,
+            t.bank_card_no,
+            t.pay_url,
+            t.min_amount,
+            t.max_amount,
+            t.branch_address,
+            t.is_del,
+            t.remark,
+            t.group_id,
+            t.tips,
+            t.sort_by,
+            t.create_user,
+            t.update_user,
+            t.create_time,
+            t.update_time,
+            bt.name as bankName,
+            ct.group_name as groupName
+        FROM
+            pay_bank_config t
+        left join mem_bank bt on bt.id = t.bank_id
+        left join pay_group_config ct on ct.pay_group_id = t.group_id
+        ORDER BY t.sort_by desc
+    </select>
+
+    <select id="querySingle" resultType="com.live.pay.pojo.vo.PayBankConfigVO">
+        SELECT
+            t.pay_bank_id,
+            t.bank_id,
+            t.open_account,
+            t.bank_card_no,
+            t.pay_url,
+            t.min_amount,
+            t.max_amount,
+            t.branch_address,
+            t.is_del,
+            t.remark,
+            t.group_id,
+            t.tips,
+            t.sort_by,
+            t.create_user,
+            t.update_user,
+            t.create_time,
+            t.update_time,
+            bt.name as bankName,
+            ct.group_name as groupName
+        FROM
+            pay_bank_config t
+        left join mem_bank bt on bt.id = t.bank_id
+        left join pay_group_config ct on ct.pay_group_id = t.group_id
+        where pay_bank_id = #{dto.payBankId}
+    </select>
+
+    <insert id="insertPayBank">
+        INSERT INTO pay_bank_config (
+            bank_id,
+            open_account,
+            bank_card_no,
+            pay_url,
+            min_amount,
+            max_amount,
+            branch_address,
+            is_del,
+            remark,
+            group_id,
+            tips,
+            sort_by,
+            create_user,
+            update_user,
+            create_time,
+            update_time)
+        VALUES
+            (
+             #{bankId},
+             #{openAccount},
+             #{bankCardNo},
+             #{payUrl},
+             #{minAmount},
+             #{maxAmount},
+             #{branchAddress},
+             #{isDel},
+             #{remark},
+             #{groupId},
+             #{tips},
+             #{sortBy},
+             #{createUser},
+             #{updateUser},
+             now(),
+             now()
+            )
+    </insert>
+
+    <update id="updatePayBank">
+        update pay_bank_config
+        set
+            open_account = #{openAccount},
+            bank_card_no = #{bankCardNo},
+            pay_url = #{payUrl},
+            min_amount = #{minAmount},
+            max_amount = #{maxAmount},
+            branch_address = #{branchAddress},
+            is_del = #{isDel},
+            remark = #{remark},
+            group_id = #{groupId},
+            tips = #{tips},
+            sort_by = #{sortBy},
+            update_user = #{updateUser},
+            update_time = now()
+        where pay_bank_id = #{payBankId}
+    </update>
+
+    <update id="deletePayBank">
+        delete from pay_bank_config
+        where pay_bank_id = #{payBankId}
+    </update>
+
+    <update id="stopStartPayBank">
+        update pay_bank_config
+        set
+            is_del = #{isDel},
+            update_user = #{updateUser},
+            update_time = now()
+        where pay_bank_id = #{payBankId}
+    </update>
+
+</mapper>

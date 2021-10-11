@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.live.Pay.mapper.PaymentReqMapper">
+
+    <select id="queryGroup" resultType="com.live.pay.pojo.vo.PayGroupConfigVO">
+        SELECT
+            pay_group_id,
+            group_name,
+            group_val,
+            single_max_amount,
+            today_max_amount,
+            single_cash_max_amount,
+            today_cash_max_amount,
+            today_cash_max_num,
+            today_max_not_pay,
+            remark,
+            is_del,
+            create_user,
+            update_user,
+            create_time,
+            update_time
+        FROM
+            pay_group_config t
+        join mem_baseinfo bt on bt.hierarchy_id = t.group_id and bt.status = 0 and bt.prohibit_recharge = 0 and bt.is_del = 0
+        where t.is_del = 0 and bt.id = #{memId}
+    </select>
+
+    <select id="queryBankList" resultType="com.live.pay.pojo.vo.PayBankConfigVO">
+        SELECT
+        t.pay_bank_id,
+        t.bank_id,
+        t.open_account,
+        t.bank_card_no,
+        t.pay_url,
+        t.min_amount,
+        t.max_amount,
+        t.branch_address,
+        t.is_del,
+        t.remark,
+        t.group_id,
+        t.tips,
+        t.sort_by,
+        t.create_user,
+        t.update_user,
+        t.create_time,
+        t.update_time,
+        bt.name as bankName
+        FROM
+        pay_bank_config t
+        left join mem_bank bt on bt.id = t.bank_id
+        join mem_baseinfo bt on bt.hierarchy_id = t.group_id and bt.status = 0 and bt.prohibit_recharge = 0 and bt.is_del = 0
+        where t.is_del = 0 and bt.id = #{memId}
+        <if test="bankId != null and bankId != ''">
+            and t.bank_id = #{bankId}
+        </if>
+        ORDER BY t.sort_by desc
+    </select>
+
+    <select id="queryWayList" resultType="com.live.pay.pojo.vo.PayWayConfigVO">
+        SELECT
+        t.pay_way_id,
+        t.way_type,
+        t.way_type_code,
+        t.way_name,
+        t.way_account,
+        t.qr_code,
+        t.group_id,
+        t.audit_status,
+        t.tips,
+        t.min_amount,
+        t.max_amount,
+        t.is_del,
+        t.remark,
+        t.sort_by,
+        t.create_user,
+        t.update_user,
+        t.create_time,
+        t.update_time
+        FROM
+        pay_way_config t
+        join mem_baseinfo bt on bt.hierarchy_id = t.group_id and bt.status = 0 and bt.prohibit_recharge = 0 and bt.is_del = 0
+        where t.is_del = 0 and bt.id = #{memId}
+        <if test="wayType != null and wayType != ''">
+            and t.way_type = #{wayType}
+        </if>
+        ORDER BY t.sort_by desc
+    </select>
+
+</mapper>

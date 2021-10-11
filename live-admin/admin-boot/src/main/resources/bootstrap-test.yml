@@ -1,0 +1,48 @@
+server:
+  port: 8100
+
+spring:
+  application:
+    name: live-admin
+  cloud:
+    nacos:
+      # 注册中心
+      discovery:
+        server-addr: http://54.255.224.255:8848
+        namespace: live-viet
+      # 配置中心
+      config:
+        server-addr: ${spring.cloud.nacos.discovery.server-addr}
+        file-extension: yaml
+        namespace: live-viet
+  main:
+    allow-bean-definition -overriding: true
+
+feign:
+  httpclient:
+    enabled: true
+  okhttp:
+    enabled: false
+  circuitbreaker:
+    enabled: true
+  sentinel:  # 开启feign对sentinel的支持
+    enabled: false
+
+
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: /
+    # 息在未被队列接收时返回
+    publisher-returns: true
+    #消息在没有被队列接收时是否强行退回还是直接丢弃
+    template:
+      mandatory: true
+    publisher-confirm-type: simple
+    # 消息开启手动确认
+    listener:
+      direct:
+        acknowledge-mode: manual

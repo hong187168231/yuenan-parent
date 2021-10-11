@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.live.admin.modules.pay.mapper.PayOnlineConfigMapper">
+
+    <select id="queryList" resultType="com.live.pay.pojo.vo.PayOnlineConfigVO">
+        SELECT
+            t.pay_online_id,
+            t.pay_channel_id,
+            t.pay_name,
+            t.merchant_no,
+            t.merchant_secret,
+            t.third_public_secret,
+            t.third_url,
+            t.terminal_no,
+            t.pay_gateway,
+            t.callback_url,
+            t.min_amount,
+            t.max_amount,
+            t.is_del,
+            t.remark,
+            t.create_user,
+            t.update_user,
+            t.create_time,
+            t.update_time,
+            ct.channel_name as payName,
+            ct.channe_type as channeType
+        FROM
+            pay_online_config t
+        left join pay_channel_config ct on ct.pay_channel_id = t.pay_channel_id
+        ORDER BY t.create_time desc
+    </select>
+
+    <select id="querySingle" resultType="com.live.pay.pojo.vo.PayOnlineConfigVO">
+        SELECT
+            t.pay_online_id,
+            t.pay_channel_id,
+            t.pay_name,
+            t.merchant_no,
+            t.merchant_secret,
+            t.third_public_secret,
+            t.third_url,
+            t.terminal_no,
+            t.pay_gateway,
+            t.callback_url,
+            t.min_amount,
+            t.max_amount,
+            t.is_del,
+            t.remark,
+            t.create_user,
+            t.update_user,
+            t.create_time,
+            t.update_time,
+            ct.channel_name as payName,
+            ct.channe_type as channeType
+        FROM
+            pay_online_config t
+        left join pay_channel_config ct on ct.pay_channel_id = t.pay_channel_id
+        where pay_online_id = #{dto.payOnlineId}
+    </select>
+
+    <insert id="insertPayOnline">
+        INSERT INTO pay_online_config (
+            pay_channel_id,
+            pay_name,
+            merchant_no,
+            merchant_secret,
+            third_public_secret,
+            third_url,
+            terminal_no,
+            pay_gateway,
+            callback_url,
+            min_amount,
+            max_amount,
+            is_del,
+            remark,
+            create_user,
+            update_user,
+            create_time,
+            update_time)
+        VALUES
+            (
+             #{payChannelId},
+             #{payName},
+             #{merchantNo},
+             #{merchantSecret},
+             #{thirdPublicSecret},
+             #{thirdUrl},
+             #{terminalNo},
+             #{payGateway},
+             #{callbackUrl},
+             #{minAmount},
+             #{maxAmount},
+             #{isDel},
+             #{remark},
+             #{createUser},
+             #{updateUser},
+             now(),
+             now()
+            )
+    </insert>
+
+    <update id="updatePayOnline">
+        update pay_online_config
+        set
+            pay_channel_id = #{payChannelId},
+            pay_name = #{payName},
+            merchant_no = #{merchantNo},
+            merchant_secret = #{merchantSecret},
+            third_public_secret = #{thirdPublicSecret},
+            third_url = #{thirdUrl},
+            terminal_no = #{terminalNo},
+            pay_gateway =#{payGateway},
+            callback_url = #{callbackUrl},
+            min_amount = #{minAmount},
+            max_amount = #{maxAmount},
+            is_del = #{isDel},
+            remark = #{remark},
+            update_user = #{updateUser},
+            update_time = now()
+        where pay_online_id = #{payOnlineId}
+    </update>
+
+    <update id="copyPayOnline">
+        INSERT INTO pay_online_config (
+            pay_channel_id,
+            pay_name,
+            merchant_no,
+            merchant_secret,
+            third_public_secret,
+            third_url,
+            terminal_no,
+            pay_gateway,
+            callback_url,
+            min_amount,
+            max_amount,
+            is_del,
+            remark,
+            create_user,
+            update_user,
+            create_time,
+            update_time
+        ) select pay_channel_id,
+                 pay_name,
+                 merchant_no,
+                 merchant_secret,
+                 third_public_secret,
+                 third_url,
+                 terminal_no,
+                 pay_gateway,
+                 callback_url,
+                 min_amount,
+                 max_amount,
+                 is_del,
+                 remark,
+                 #{createUser},
+                 #{updateUser},
+                 now(),
+                 now() from pay_online_config where pay_online_id = #{payOnlineId}
+    </update>
+
+    <update id="deletePayOnline">
+        delete from pay_online_config
+        where pay_online_id = #{payOnlineId}
+    </update>
+
+    <update id="stopStartPayOnline">
+        update pay_online_config
+        set
+            is_del = #{isDel},
+            update_user = #{updateUser},
+            update_time = now()
+        where pay_online_id = #{payOnlineId}
+    </update>
+
+</mapper>
