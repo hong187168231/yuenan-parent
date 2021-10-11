@@ -1,4 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.live.common.mybatis.config.MybatisPlusConfig,\
-  com.live.common.mybatis.handler.FieldFillHandler
-
