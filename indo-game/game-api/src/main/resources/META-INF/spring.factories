@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.live.admin.api.fallback.UserFeignFallbackClient
