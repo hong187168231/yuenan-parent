@@ -1,0 +1,556 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.indo.admin.modules.mem.mapper.MemBaseInfoMapper">
+  <resultMap id="MemBaseinfo" type="com.indo.user.pojo.entity.MemBaseinfo">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="Identity_type" jdbcType="INTEGER" property="identityType" />
+    <result column="account" jdbcType="VARCHAR" property="account" />
+    <result column="real_name" jdbcType="VARCHAR" property="realName" />
+    <result column="nick_name" jdbcType="VARCHAR" property="nickName" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="security_code" jdbcType="VARCHAR" property="securityCode" />
+    <result column="mobile" jdbcType="VARCHAR" property="mobile" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="qq" jdbcType="VARCHAR" property="qq" />
+    <result column="wechat" jdbcType="VARCHAR" property="wechat" />
+    <result column="invite_code" jdbcType="VARCHAR" property="inviteCode" />
+    <result column="cash_rate" jdbcType="DECIMAL" property="cashRate" />
+    <result column="rebate_status" jdbcType="INTEGER" property="rebateStatus" />
+    <result column="below_odds_status" jdbcType="INTEGER" property="belowOddsStatus" />
+    <result column="growth_status" jdbcType="INTEGER" property="growthStatus" />
+    <result column="max_cash_num" jdbcType="INTEGER" property="maxCashNum" />
+    <result column="pass_error_num" jdbcType="INTEGER" property="passErrorNum" />
+    <result column="head_url" jdbcType="VARCHAR" property="headUrl" />
+    <result column="hierarchy_id" jdbcType="BIGINT" property="hierarchyId" />
+    <result column="level_id" jdbcType="BIGINT" property="levelId" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="point" jdbcType="INTEGER" property="point" />
+    <result column="source" jdbcType="INTEGER" property="source" />
+    <result column="balance" jdbcType="BIGINT" property="balance" />
+    <result column="device_code" jdbcType="VARCHAR" property="deviceCode" />
+    <result column="last_login_time" jdbcType="TIMESTAMP" property="lastLoginTime" />
+    <result column="is_del" jdbcType="TINYINT" property="isDel" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+  </resultMap>
+  <resultMap id="MemBaseinfoVo" type="com.indo.user.pojo.vo.MemBaseInfoVo">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="Identity_type" jdbcType="INTEGER" property="identityType" />
+    <result column="account" jdbcType="VARCHAR" property="account" />
+    <result column="real_name" jdbcType="VARCHAR" property="realName" />
+    <result column="nick_name" jdbcType="VARCHAR" property="nickName" />
+    <result column="mobile" jdbcType="VARCHAR" property="mobile" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="qq" jdbcType="VARCHAR" property="qq" />
+    <result column="wechat" jdbcType="VARCHAR" property="wechat" />
+    <result column="invite_code" jdbcType="VARCHAR" property="inviteCode" />
+    <result column="cash_rate" jdbcType="DECIMAL" property="cashRate" />
+    <result column="rebate_status" jdbcType="INTEGER" property="rebateStatus" />
+    <result column="below_odds_status" jdbcType="INTEGER" property="belowOddsStatus" />
+    <result column="growth_status" jdbcType="INTEGER" property="growthStatus" />
+    <result column="max_cash_num" jdbcType="INTEGER" property="maxCashNum" />
+    <result column="pass_error_num" jdbcType="INTEGER" property="passErrorNum" />
+    <result column="head_url" jdbcType="VARCHAR" property="headUrl" />
+    <result column="hierarchy_id" jdbcType="BIGINT" property="hierarchyId" />
+    <result column="level_id" jdbcType="BIGINT" property="levelId" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="point" jdbcType="INTEGER" property="point" />
+    <result column="source" jdbcType="INTEGER" property="source" />
+    <result column="balance" jdbcType="BIGINT" property="balance" />
+    <result column="device_code" jdbcType="VARCHAR" property="deviceCode" />
+    <result column="last_login_time" jdbcType="TIMESTAMP" property="lastLoginTime" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="superiorAgent" jdbcType="VARCHAR" property="superiorAgent" />
+    <result column="subordinateNum" jdbcType="VARCHAR" property="subordinateNum" />
+    <result column="teamNum" jdbcType="VARCHAR" property="teamNum" />
+    <result column="leaveDays" jdbcType="VARCHAR" property="leaveDays" />
+    <result column="hierarchy" jdbcType="VARCHAR" property="hierarchy" />
+  </resultMap>
+
+  <resultMap id="agentVo" type="com.indo.admin.pojo.vo.AgentVo">
+      <id column="id" jdbcType="BIGINT" property="id" />
+      <result column="account" jdbcType="VARCHAR" property="account" />
+      <result column="superiorAgent" jdbcType="VARCHAR" property="superiorAgent" />
+      <result column="accountType" jdbcType="INTEGER" property="accountType" />
+      <result column="subordinateNum" jdbcType="INTEGER" property="subordinateNum" />
+      <result column="teamNum" jdbcType="INTEGER" property="teamNum" />
+      <result column="subordinateNum" jdbcType="INTEGER" property="subordinateNum" />
+      <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    select
+      id, Identity_type, account, real_name, nick_name, password, security_code, mobile,
+      email, qq, wechat, invite_code, cash_rate, rebate_status, below_odds_status, growth_status,
+      max_cash_num, pass_error_num, head_url, hierarchy_id, level_id, status, point, source,
+      balance, device_code, last_login_time, is_del, create_time, update_time, remark
+    from mem_baseinfo
+  </sql>
+
+  <insert id="insert" parameterType="com.indo.user.pojo.entity.MemBaseinfo">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into mem_baseinfo (Identity_type, account, real_name,
+      nick_name, password, security_code,
+      mobile, email, qq,
+      wechat, invite_code, cash_rate,
+      rebate_status, below_odds_status, growth_status,
+      max_cash_num, pass_error_num, head_url,
+      hierarchy_id, level_id, status,
+      point, source, balance,
+      device_code, last_login_time, is_del,
+      create_time, update_time, remark
+      )
+    values (#{identityType,jdbcType=INTEGER}, #{account,jdbcType=VARCHAR}, #{realName,jdbcType=VARCHAR},
+      #{nickName,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{securityCode,jdbcType=VARCHAR},
+      #{mobile,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{qq,jdbcType=VARCHAR},
+      #{wechat,jdbcType=VARCHAR}, #{inviteCode,jdbcType=VARCHAR}, #{cashRate,jdbcType=DECIMAL},
+      #{rebateStatus,jdbcType=INTEGER}, #{belowOddsStatus,jdbcType=INTEGER}, #{growthStatus,jdbcType=INTEGER},
+      #{maxCashNum,jdbcType=INTEGER}, #{passErrorNum,jdbcType=INTEGER}, #{headUrl,jdbcType=VARCHAR},
+      #{hierarchyId,jdbcType=BIGINT}, #{levelId,jdbcType=BIGINT}, #{status,jdbcType=TINYINT},
+      #{point,jdbcType=INTEGER}, #{source,jdbcType=INTEGER}, #{balance,jdbcType=BIGINT},
+      #{deviceCode,jdbcType=VARCHAR}, #{lastLoginTime,jdbcType=TIMESTAMP}, #{isDel,jdbcType=TINYINT},
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR}
+      )
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.indo.user.pojo.entity.MemBaseinfo">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into mem_baseinfo
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="identityType != null">
+        Identity_type,
+      </if>
+      <if test="account != null">
+        account,
+      </if>
+      <if test="realName != null">
+        real_name,
+      </if>
+      <if test="nickName != null">
+        nick_name,
+      </if>
+      <if test="password != null">
+        password,
+      </if>
+      <if test="securityCode != null">
+        security_code,
+      </if>
+      <if test="mobile != null">
+        mobile,
+      </if>
+      <if test="email != null">
+        email,
+      </if>
+      <if test="qq != null">
+        qq,
+      </if>
+      <if test="wechat != null">
+        wechat,
+      </if>
+      <if test="inviteCode != null">
+        invite_code,
+      </if>
+      <if test="cashRate != null">
+        cash_rate,
+      </if>
+      <if test="rebateStatus != null">
+        rebate_status,
+      </if>
+      <if test="belowOddsStatus != null">
+        below_odds_status,
+      </if>
+      <if test="growthStatus != null">
+        growth_status,
+      </if>
+      <if test="maxCashNum != null">
+        max_cash_num,
+      </if>
+      <if test="passErrorNum != null">
+        pass_error_num,
+      </if>
+      <if test="headUrl != null">
+        head_url,
+      </if>
+      <if test="hierarchyId != null">
+        hierarchy_id,
+      </if>
+      <if test="levelId != null">
+        level_id,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="point != null">
+        point,
+      </if>
+      <if test="source != null">
+        source,
+      </if>
+      <if test="balance != null">
+        balance,
+      </if>
+      <if test="deviceCode != null">
+        device_code,
+      </if>
+      <if test="lastLoginTime != null">
+        last_login_time,
+      </if>
+      <if test="isDel != null">
+        is_del,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="identityType != null">
+        #{identityType,jdbcType=INTEGER},
+      </if>
+      <if test="account != null">
+        #{account,jdbcType=VARCHAR},
+      </if>
+      <if test="realName != null">
+        #{realName,jdbcType=VARCHAR},
+      </if>
+      <if test="nickName != null">
+        #{nickName,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="securityCode != null">
+        #{securityCode,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile != null">
+        #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null">
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="qq != null">
+        #{qq,jdbcType=VARCHAR},
+      </if>
+      <if test="wechat != null">
+        #{wechat,jdbcType=VARCHAR},
+      </if>
+      <if test="inviteCode != null">
+        #{inviteCode,jdbcType=VARCHAR},
+      </if>
+      <if test="cashRate != null">
+        #{cashRate,jdbcType=DECIMAL},
+      </if>
+      <if test="rebateStatus != null">
+        #{rebateStatus,jdbcType=INTEGER},
+      </if>
+      <if test="belowOddsStatus != null">
+        #{belowOddsStatus,jdbcType=INTEGER},
+      </if>
+      <if test="growthStatus != null">
+        #{growthStatus,jdbcType=INTEGER},
+      </if>
+      <if test="maxCashNum != null">
+        #{maxCashNum,jdbcType=INTEGER},
+      </if>
+      <if test="passErrorNum != null">
+        #{passErrorNum,jdbcType=INTEGER},
+      </if>
+      <if test="headUrl != null">
+        #{headUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="hierarchyId != null">
+        #{hierarchyId,jdbcType=BIGINT},
+      </if>
+      <if test="levelId != null">
+        #{levelId,jdbcType=BIGINT},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="point != null">
+        #{point,jdbcType=INTEGER},
+      </if>
+      <if test="source != null">
+        #{source,jdbcType=INTEGER},
+      </if>
+      <if test="balance != null">
+        #{balance,jdbcType=BIGINT},
+      </if>
+      <if test="deviceCode != null">
+        #{deviceCode,jdbcType=VARCHAR},
+      </if>
+      <if test="lastLoginTime != null">
+        #{lastLoginTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isDel != null">
+        #{isDel,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.indo.user.pojo.entity.MemBaseinfo">
+    update mem_baseinfo
+    <set>
+      <if test="identityType != null">
+        Identity_type = #{identityType,jdbcType=INTEGER},
+      </if>
+      <if test="account != null">
+        account = #{account,jdbcType=VARCHAR},
+      </if>
+      <if test="realName != null">
+        real_name = #{realName,jdbcType=VARCHAR},
+      </if>
+      <if test="nickName != null">
+        nick_name = #{nickName,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="securityCode != null">
+        security_code = #{securityCode,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile != null">
+        mobile = #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null">
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="qq != null">
+        qq = #{qq,jdbcType=VARCHAR},
+      </if>
+      <if test="wechat != null">
+        wechat = #{wechat,jdbcType=VARCHAR},
+      </if>
+      <if test="inviteCode != null">
+        invite_code = #{inviteCode,jdbcType=VARCHAR},
+      </if>
+      <if test="cashRate != null">
+        cash_rate = #{cashRate,jdbcType=DECIMAL},
+      </if>
+      <if test="rebateStatus != null">
+        rebate_status = #{rebateStatus,jdbcType=INTEGER},
+      </if>
+      <if test="belowOddsStatus != null">
+        below_odds_status = #{belowOddsStatus,jdbcType=INTEGER},
+      </if>
+      <if test="growthStatus != null">
+        growth_status = #{growthStatus,jdbcType=INTEGER},
+      </if>
+      <if test="maxCashNum != null">
+        max_cash_num = #{maxCashNum,jdbcType=INTEGER},
+      </if>
+      <if test="passErrorNum != null">
+        pass_error_num = #{passErrorNum,jdbcType=INTEGER},
+      </if>
+      <if test="headUrl != null">
+        head_url = #{headUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="hierarchyId != null">
+        hierarchy_id = #{hierarchyId,jdbcType=BIGINT},
+      </if>
+      <if test="levelId != null">
+        level_id = #{levelId,jdbcType=BIGINT},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="point != null">
+        point = #{point,jdbcType=INTEGER},
+      </if>
+      <if test="source != null">
+        source = #{source,jdbcType=INTEGER},
+      </if>
+      <if test="balance != null">
+        balance = #{balance,jdbcType=BIGINT},
+      </if>
+      <if test="deviceCode != null">
+        device_code = #{deviceCode,jdbcType=VARCHAR},
+      </if>
+      <if test="lastLoginTime != null">
+        last_login_time = #{lastLoginTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isDel != null">
+        is_del = #{isDel,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <select id="queryList" resultMap="MemBaseinfoVo">
+       SELECT t1.id, t1.Identity_type, t1.account, t1.real_name, t1.nick_name, t1.mobile, t1.email, t1.qq, t1.wechat, t1.invite_code, t1.cash_rate, t1.rebate_status, t1.below_odds_status, t1.growth_status, t1.max_cash_num, t1.pass_error_num, t1.head_url, t1.hierarchy_id, t1.level_id, t1.status, t1.point, t1.source, t1.balance, t1.device_code, t1.last_login_time, t1.is_del, t1.create_time, t1.update_time, t1.remark,TIMESTAMPDIFF(DAY,t1.last_login_time,DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%S')) AS leaveDays, t2.account AS superiorAgent, t2.level_num AS subordinateNum,t2.team_num as teamNum,t2.hierarchy FROM mem_baseinfo t1 left join(SELECT ms.mem_id,ms.hierarchy, ms.level_num,ms.team_num, mb.account FROM mem_subordinate ms LEFT JOIN mem_baseinfo mb ON (mb.id = ms.parent_id)) t2 ON (t1.id = t2.mem_id)
+       <where>
+         <if test="dto.id !=null and dto.id !=''">
+           and t1.id = #{dto.id,jdbcType=BIGINT}
+         </if>
+         <if test="dto.account !=null">
+           and t1.account like concat('%', #{dto.account,jdbcType=VARCHAR}, '%')
+         </if>
+         <if test="dto.levelId !=null and dto.levelId !=''">
+           and t1.level_id = #{dto.levelId,jdbcType=BIGINT}
+         </if>
+         <if test="dto.realName !=null">
+           and t1.real_name like concat('%', #{dto.realName,jdbcType=VARCHAR}, '%')
+         </if>
+         <if test="dto.inviteCode !=null">
+           and t1.invit_code = #{dto.inviteCode,jdbcType=VARCHAR}
+         </if>
+         <if test="dto.source !=null and dto.source !=''">
+           and t1.source = #{dto.source,jdbcType=INTEGER}
+         </if>
+         <if test="dto.beginTime != null and dto.beginTime != ''"><!-- 开始时间检索 -->
+           and date_format(t1.create_time,'%y%m%d') &gt;= date_format(#{dto.beginTime},'%y%m%d')
+         </if>
+         <if test="dto.endTime != null and dto.endTime != ''"><!-- 结束时间检索 -->
+           and date_format(t1.create_time,'%y%m%d') &lt;= date_format(#{dto.endTime},'%y%m%d')
+         </if>
+         <if test="dto.identityType !=null and dto.identityType !=''">
+           and t1.identity_type = #{dto.identityType,jdbcType=INTEGER}
+         </if>
+         <if test="dto.status !=null and dto.status !=''">
+           and t1.status = #{dto.status,jdbcType=INTEGER}
+         </if>
+         <if test="dto.ids != null and dto.ids.size()>0">
+           and t1.id in
+           <foreach collection="dto.ids" item="valueList" open="(" close=")" separator=",">
+             #{valueList}
+           </foreach>
+         </if>
+       </where>
+       ORDER BY t1.create_time desc
+  </select>
+
+  <select id="selectIdsByAccounts" resultType="java.lang.Long">
+    select
+    id
+    from mem_baseinfo
+    <where>
+      <if test="list != null and list.size()>0">
+        account IN
+        <foreach item="item" index="index" collection="list" open="("  close=")" separator=",">
+          #{item}
+        </foreach>
+      </if>
+    </where>
+  </select>
+
+  <select id="selectNickNameByAccounts" resultType="String">
+    select
+    nick_name
+    from mem_baseinfo
+    <where>
+      <if test="list != null and list.size()>0">
+        account IN
+        <foreach item="item" index="index" collection="list" open="("  close=")" separator=",">
+          #{item}
+        </foreach>
+      </if>
+    </where>
+  </select>
+
+  <select id="memReportList" resultType="com.indo.user.pojo.vo.MemReportVo">
+    SELECT t1.id, t1.Identity_type, t1.account, t1.real_name, t1.nick_name,
+    t1.mobile, t1.email, t1.qq, t1.wechat, t1.invite_code, t1.cash_rate, t1.rebate_status,
+    t1.below_odds_status, t1.growth_status, t1.max_cash_num, t1.pass_error_num, t1.head_url,
+    t1.hierarchy_id, t1.level_id, t1.status, t1.point, t1.source, t1.balance, t1.device_code,
+    t1.last_login_time, t1.is_del, t1.create_time, t1.update_time,
+    t1.remark FROM mem_baseinfo t1
+    <where>
+      t1.is_del = 0
+      <if test="dto.account !=null and dto.account !=''">
+        and t1.account like concat('%', #{dto.account,jdbcType=VARCHAR}, '%')
+      </if>
+      <if test="dto.levelId !=null ">
+        and t1.level_id = #{dto.levelId,jdbcType=BIGINT}
+      </if>
+      <if test="dto.realName !=null and dto.realName !=''">
+        and t1.real_name like concat('%', #{dto.realName,jdbcType=VARCHAR}, '%')
+      </if>
+      <if test="dto.beginTime != null and dto.beginTime != ''"><!-- 开始时间检索 -->
+        and date_format(t1.create_time,'%y%m%d') &gt;= date_format(#{dto.beginTime},'%y%m%d')
+      </if>
+      <if test="dto.endTime != null and dto.endTime != ''"><!-- 结束时间检索 -->
+        and date_format(t1.create_time,'%y%m%d') &lt;= date_format(#{dto.endTime},'%y%m%d')
+      </if>
+    </where>
+    ORDER BY t1.create_time desc
+  </select>
+
+  <select id="agentReportList" resultType="com.indo.user.pojo.vo.AgentReportVo">
+    SELECT t1.id, t1.Identity_type, t1.account, t1.real_name, t1.nick_name,
+    t1.mobile, t1.email, t1.qq, t1.wechat, t1.invite_code, t1.cash_rate, t1.rebate_status,
+    t1.below_odds_status, t1.growth_status, t1.max_cash_num, t1.pass_error_num, t1.head_url,
+    t1.hierarchy_id, t1.level_id, t1.status, t1.point, t1.source, t1.balance, t1.device_code,
+    t1.last_login_time, t1.is_del, t1.create_time, t1.update_time,
+    t1.remark FROM mem_baseinfo t1
+    <where>
+      t1.is_del = 0
+      <if test="dto.account !=null and dto.account !=''">
+        and t1.account like concat('%', #{dto.account,jdbcType=VARCHAR}, '%')
+      </if>
+      <if test="dto.beginTime != null and dto.beginTime != ''"><!-- 开始时间检索 -->
+        and date_format(t1.create_time,'%y%m%d') &gt;= date_format(#{dto.beginTime},'%y%m%d')
+      </if>
+      <if test="dto.endTime != null and dto.endTime != ''"><!-- 结束时间检索 -->
+        and date_format(t1.create_time,'%y%m%d') &lt;= date_format(#{dto.endTime},'%y%m%d')
+      </if>
+    </where>
+    ORDER BY t1.create_time desc
+  </select>
+
+   <select id="agentPage" resultMap="agentVo">
+        SELECT t2.id, t2.account, t1.superiorAgent, t1.accountType, t1.level_num as subordinateNum, t1.team_num as teamNum, t2.`status`, t2.create_time FROM(SELECT ms.mem_id, ms.hierarchy AS accountType, ms.level_num, ms.team_num, mb.account AS superiorAgent FROM mem_subordinate ms LEFT JOIN mem_baseinfo mb ON (mb.id = ms.parent_id)) t1 LEFT JOIN mem_baseinfo t2 ON (t1.mem_id = t2.id)
+        <where>
+            t2.Identity_type =1
+          <if test="dto.id !=null and dto.id != ''">
+            and t2.id = #{dto.id,jdbcType=BIGINT}
+          </if>
+          <if test="dto.account !=null">
+            and t2.account like concat('%', #{dto.account,jdbcType=VARCHAR}, '%')
+          </if>
+          <if test="dto.status !=null and dto.status != ''">
+            and t2.status = #{dto.status,jdbcType=BIGINT}
+          </if>
+        </where>
+   </select>
+
+  <select id="subordinateMemPage" resultMap="MemBaseinfoVo">
+        SELECT t1.id, t1.Identity_type, t1.account, t1.real_name, t1.nick_name, t1.mobile, t1.email, t1.qq, t1.wechat, t1.invite_code, t1.cash_rate, t1.rebate_status, t1.below_odds_status, t1.growth_status, t1.max_cash_num, t1.pass_error_num, t1.head_url, t1.hierarchy_id, t1.level_id, t1.status, t1.point, t1.source, t1.balance, t1.device_code, t1.last_login_time, t1.is_del, t1.create_time, t1.update_time, t1.remark,TIMESTAMPDIFF(DAY,t1.last_login_time,DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%S')) AS leaveDays, t2.account AS superiorAgent, t2.level_num AS subordinateNum,t2.team_num as teamNum,t2.hierarchy,t2.parent_id FROM mem_baseinfo t1 left join(SELECT ms.mem_id,ms.hierarchy,ms.parent_id, ms.level_num,ms.team_num, mb.account FROM mem_subordinate ms LEFT JOIN mem_baseinfo mb ON (mb.id = ms.parent_id)) t2 ON (t1.id = t2.mem_id)
+        <where>
+            <if test="dto.account !=null and dto.account !='' ">
+              and t2.account  = #{dto.account,jdbcType=VARCHAR}
+            </if>
+            <if test="dto.id !=null and dto.id != ''">
+              and t2.parent_id = #{dto.id,jdbcType=BIGINT}
+            </if>
+        </where>
+  </select>
+</mapper>
