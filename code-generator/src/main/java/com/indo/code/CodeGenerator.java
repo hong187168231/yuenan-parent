@@ -44,7 +44,7 @@ public class CodeGenerator {
         GlobalConfig gc = new GlobalConfig();
         String projectPath = System.getProperty("user.dir");
         gc.setOutputDir(projectPath + "/code-generator/src/main/java");
-        gc.setAuthor("puff");
+        gc.setAuthor("kevin");
         gc.setOpen(false);
 //        gc.setSwagger2(true);
         mpg.setGlobalConfig(gc);
