@@ -1,4 +1,4 @@
-package com.indo.user.pojo.req;
+package com.indo.user.pojo.req.mem;
 
 import com.indo.common.pojo.param.QueryParam;
 import io.swagger.annotations.ApiModel;
@@ -8,7 +8,8 @@ import lombok.Data;
 import java.util.Date;
 
 /**
- * 会员基础信息查询参数
+ * @des:会员基础信息查询参数
+ * @Author: kevin
  */
 
 @Data

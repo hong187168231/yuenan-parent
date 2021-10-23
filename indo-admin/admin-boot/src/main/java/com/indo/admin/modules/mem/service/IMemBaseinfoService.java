@@ -3,10 +3,11 @@ package com.indo.admin.modules.mem.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.indo.admin.modules.mem.entity.MemBaseinfo;
 import com.indo.common.mybatis.base.PageResult;
-import com.indo.user.pojo.dto.MsgPlatformAnnouncementDTO;
-import com.indo.user.pojo.req.MemBaseInfoPageReq;
+import com.indo.user.pojo.req.mem.MemAddReq;
+import com.indo.user.pojo.req.mem.MemBaseInfoPageReq;
+import com.indo.user.pojo.req.mem.MemEditReq;
 import com.indo.user.pojo.vo.MemBaseInfoVo;
-import com.indo.user.pojo.vo.MsgPlatformAnnouncementVO;
+import com.indo.user.pojo.vo.mem.MemBaseDetailVO;
 
 /**
  * <p>
@@ -23,4 +24,26 @@ public interface IMemBaseinfoService extends IService<MemBaseinfo> {
      * @return
      */
     PageResult<MemBaseInfoVo> queryList(MemBaseInfoPageReq memBaseInfoPageReq);
+
+    /**
+     * 后台新增会员
+     * @param memAddReq
+     * @return
+     */
+    int addMemBaseInfo(MemAddReq memAddReq);
+
+
+    /**
+     * 后台编辑会员
+     * @param memEditReq
+     * @return
+     */
+    int editMemBaseInfo(MemEditReq memEditReq);
+
+    /**
+     * 根据会员UID 查会员编辑详情
+     * @param uid
+     * @return
+     */
+    MemBaseDetailVO getMemBaseInfo(Long uid);
 }
