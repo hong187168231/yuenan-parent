@@ -16,7 +16,7 @@ import java.util.Date;
 public class AgentVo implements Serializable {
 
     @ApiModelProperty(value = "代理ID")
-    private Long id;
+    private Long agentId;
 
     @ApiModelProperty(value = "代理账户")
     private String account;

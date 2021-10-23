@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
  * @createTime 2021/4/23 23:30
  */
 @Slf4j
+
+
 public class UserBlockHandler {
 
     /**
@@ -18,7 +20,7 @@ public class UserBlockHandler {
      * @param blockException
      * @return
      */
-    public static Result<UserVO> handleGetCurrentUserBlock(BlockException blockException) {
+    public static Result<UserVO>  handleGetCurrentUserBlock(BlockException blockException) {
         return Result.success(new UserVO());
     }
 

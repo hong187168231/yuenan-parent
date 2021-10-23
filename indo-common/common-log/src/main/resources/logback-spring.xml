@@ -60,11 +60,19 @@
     </appender>
 
 
+<!--    <appender name="stash" class="net.logstash.logback.appender.LogstashTcpSocketAppender">-->
+<!--        <destination>192.168.37.189:4560</destination>-->
+<!--        &lt;!&ndash; encoder必须配置,有多种可选 &ndash;&gt;-->
+<!--        <encoder charset="UTF-8" class="net.logstash.logback.encoder.LogstashEncoder"/>-->
+<!--    </appender>-->
+
+
     <springProfile name="dev">
         <logger name="com.alibaba.nacos" level="OFF" addtivity="false"></logger>
         <root level="INFO">
             <appender-ref ref="CONSOLE"/>
             <appender-ref ref="FILE"/>
+<!--            <appender-ref ref="stash"/>-->
         </root>
     </springProfile>
 
@@ -73,6 +81,7 @@
         <root level="INFO">
             <appender-ref ref="CONSOLE"/>
             <appender-ref ref="FILE"/>
+<!--            <appender-ref ref="stash"/>-->
         </root>
     </springProfile>
 
@@ -80,6 +89,7 @@
         <root level="INFO">
             <appender-ref ref="CONSOLE"/>
             <appender-ref ref="FILE"/>
+<!--            <appender-ref ref="stash"/>-->
         </root>
     </springProfile>
 

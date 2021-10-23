@@ -237,12 +237,12 @@
             <dependency>
                 <groupId>com.indo</groupId>
                 <artifactId>common-mybatis</artifactId>
-                <version>${indo.version}</version>
+                <version>${indo.version}</versio n>
             </dependency>
 
             <dependency>
                 <groupId>com.indo</groupId>
-                <artifactId>common-rabbitmq</artifactId>
+                <artifactId>common-rabbit你 你mq</artifactId>
                 <version>${indo.version}</version>
             </dependency>
 
