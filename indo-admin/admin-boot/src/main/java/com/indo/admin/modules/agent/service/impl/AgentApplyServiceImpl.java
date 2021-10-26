@@ -6,13 +6,9 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.indo.admin.common.enums.AgentApplyEnum;
 import com.indo.admin.modules.agent.mapper.AgentApplyMapper;
 import com.indo.admin.modules.agent.service.IAgentApplyService;
+import com.indo.admin.pojo.dto.AgentApplyDTO;
 import com.indo.admin.pojo.entity.AgentApply;
-import com.indo.common.mybatis.base.PageResult;
-import com.indo.user.pojo.dto.AgentApplyDTO;
 import org.springframework.stereotype.Service;
-import org.w3c.dom.stylesheets.LinkStyle;
-
-import java.util.List;
 
 /**
  * <p>

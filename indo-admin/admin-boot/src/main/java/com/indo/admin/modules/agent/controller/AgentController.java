@@ -5,16 +5,11 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.common.enums.AgentApplyEnum;
 import com.indo.admin.modules.agent.service.IAgentApplyService;
 import com.indo.admin.modules.agent.service.IMemAgentService;
+import com.indo.admin.pojo.dto.AgentApplyDTO;
 import com.indo.admin.pojo.entity.AgentApply;
-import com.indo.admin.pojo.entity.SysUser;
-import com.indo.admin.pojo.vo.AgentApplyVO;
 import com.indo.admin.pojo.vo.AgentDetailVO;
 import com.indo.admin.pojo.vo.AgentVo;
-import com.indo.common.mybatis.base.PageResult;
 import com.indo.common.result.Result;
-import com.indo.pay.pojo.dto.PayBankConfigDto;
-import com.indo.pay.pojo.vo.PayBankConfigVO;
-import com.indo.user.pojo.dto.AgentApplyDTO;
 import com.indo.user.pojo.dto.AgentDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -66,10 +61,10 @@ public class AgentController {
 
     @ApiOperation(value = "代理列表")
     @GetMapping(value = "/list")
-    public Result<List<AgentVo>>  agentList(AgentDTO dto) {
+    public Result<List<AgentVo>> agentList(AgentDTO dto) {
         Page<AgentVo> page = new Page<>(dto.getPage(), dto.getLimit());
-        List list =  iMemAgentService.agentlist(page,dto);
-        return Result.success(list,page.getTotal());
+        List list = iMemAgentService.agentlist(page, dto);
+        return Result.success(list, page.getTotal());
     }
 
 
