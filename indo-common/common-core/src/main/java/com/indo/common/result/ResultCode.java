@@ -42,6 +42,11 @@ public enum ResultCode implements IResultCode, Serializable {
     PARAM_IS_NULL("A0410", "请求必填参数为空"),
     QUERY_MODE_IS_NULL("A0411", "查询模式为空"),
 
+
+    USERNAME_NONENTITY("AG0100", "用户名不存在"),
+    USER_ALREADY_AGENT("AG0200", "此用户已成为代理"),
+    AGENT_NONENTITY("AG0300", "该代理不存在"),
+
     USER_UPLOAD_FILE_ERROR("A0700", "用户上传文件异常"),
     USER_UPLOAD_FILE_TYPE_NOT_MATCH("A0701", "用户上传文件类型不匹配"),
     USER_UPLOAD_FILE_SIZE_EXCEEDS("A0702", "用户上传文件太大"),

@@ -8,6 +8,7 @@ import com.indo.admin.modules.agent.service.IMemAgentService;
 import com.indo.admin.pojo.entity.AgentApply;
 import com.indo.admin.pojo.entity.SysUser;
 import com.indo.admin.pojo.vo.AgentApplyVO;
+import com.indo.admin.pojo.vo.AgentDetailVO;
 import com.indo.admin.pojo.vo.AgentVo;
 import com.indo.common.mybatis.base.PageResult;
 import com.indo.common.result.Result;
@@ -73,12 +74,12 @@ public class AgentController {
 
 
     @ApiOperation(value = "根据用户名查询代理")
-    @GetMapping(value = "/queryAgentByNickName")
+    @GetMapping(value = "/queryAgentByUserName")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "nickName", value = "用户名", paramType = "query", dataType = "String")
+            @ApiImplicitParam(name = "userName", value = "用户名", paramType = "query", dataType = "String")
     })
-    public Result queryAgentByNickName(String nickName) {
-        return Result.success(iMemAgentService.queryAgentByNickName(nickName));
+    public Result queryAgentByNickName(String userName) {
+        return Result.success(iMemAgentService.queryAgentByNickName(userName));
     }
 
 
@@ -89,5 +90,25 @@ public class AgentController {
     })
     public Result addAgent(Long memId) {
         return Result.judge(iMemAgentService.addAgent(memId));
+    }
+
+
+    @ApiOperation(value = "修改代理")
+    @GetMapping(value = "/updateAgent")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "agentId", value = "代理id", paramType = "query", dataType = "Long")
+    })
+    public Result updateAgent(Long memId) {
+        return Result.judge(iMemAgentService.updateAgent(memId));
+    }
+
+
+    @ApiOperation(value = "查看代理")
+    @GetMapping(value = "/agentDetail")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "agentId", value = "代理id", paramType = "query", dataType = "Long")
+    })
+    public Result<AgentDetailVO> agentDetail(Long memId) {
+        return Result.success(iMemAgentService.agentDetail(memId));
     }
 }

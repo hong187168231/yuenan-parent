@@ -10,7 +10,7 @@ import java.util.Date;
  * @Author: Mr.liu
  * @Date: 2021/9/8 9:17
  * @Version: 1.0.0
- * @Desc: 代理对象
+ * @Desc: 代理对象agentDetail
  */
 @Data
 public class AgentVo implements Serializable {

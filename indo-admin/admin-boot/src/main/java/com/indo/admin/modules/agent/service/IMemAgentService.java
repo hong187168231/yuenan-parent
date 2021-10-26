@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.indo.admin.pojo.entity.AgentApply;
 import com.indo.admin.pojo.entity.MemAgent;
+import com.indo.admin.pojo.vo.AgentDetailVO;
 import com.indo.admin.pojo.vo.AgentVo;
 import com.indo.common.mybatis.base.PageResult;
 import com.indo.user.pojo.dto.AgentApplyDTO;
@@ -26,5 +27,11 @@ public interface IMemAgentService extends IService<MemAgent> {
     String queryAgentByNickName(String nickName);
 
     boolean addAgent(Long memId);
+
+    boolean updateAgent(Long agentId);
+
+    AgentDetailVO agentDetail(Long agentId);
+
+
 
 }

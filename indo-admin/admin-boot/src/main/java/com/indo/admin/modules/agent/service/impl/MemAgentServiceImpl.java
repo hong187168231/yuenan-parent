@@ -10,13 +10,18 @@ import com.indo.admin.pojo.dto.LogErrorDTO;
 import com.indo.admin.pojo.entity.AgentApply;
 import com.indo.admin.pojo.entity.MemAgent;
 import com.indo.admin.pojo.entity.SysUser;
+import com.indo.admin.pojo.vo.AgentDetailVO;
 import com.indo.admin.pojo.vo.AgentVo;
+import com.indo.common.base.BaseDTO;
 import com.indo.common.mybatis.base.PageResult;
+import com.indo.common.result.ResultCode;
+import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
 import com.indo.user.pojo.dto.AgentDTO;
 import com.indo.user.pojo.entity.MemBaseinfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindException;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -51,13 +56,13 @@ public class MemAgentServiceImpl extends ServiceImpl<MemAgentMapper, MemAgent> i
         wrapper.eq(MemBaseinfo::getNickName, nickName);
         MemBaseinfo memBaseinfo = memBaseInfoMapper.selectOne(wrapper);
         if (memBaseinfo == null) {
-
+            throw  new BizException(ResultCode.USERNAME_NONENTITY.getCode());
         }
         LambdaQueryWrapper<MemAgent> memAgentWrapper = new LambdaQueryWrapper<>();
         memAgentWrapper.eq(MemAgent::getMemId, memBaseinfo.getId());
         MemAgent memAgent = baseMapper.selectOne(memAgentWrapper);
         if (memAgent != null) {
-
+            throw  new BizException(ResultCode.USER_ALREADY_AGENT.getCode());
         }
         return "ok";
     }
@@ -67,5 +72,30 @@ public class MemAgentServiceImpl extends ServiceImpl<MemAgentMapper, MemAgent> i
         MemAgent memAgent = new MemAgent();
         memAgent.setMemId(memId);
         return baseMapper.insert(memAgent) > 0;
+    }
+
+    @Override
+    public boolean updateAgent(Long agentId) {
+        MemAgent memAgent = baseMapper.selectById(agentId);
+        if(memAgent == null){
+            throw  new BizException(ResultCode.AGENT_NONENTITY.getCode());
+        }
+        return true;
+    }
+
+    @Override
+    public AgentDetailVO agentDetail(Long agentId) {
+        MemAgent memAgent = baseMapper.selectById(agentId);
+        if(memAgent == null){
+            throw  new BizException(ResultCode.AGENT_NONENTITY.getCode());
+        }
+        AgentDetailVO agentDetailVO = new AgentDetailVO();
+        agentDetailVO.setAgentId(1L);
+        agentDetailVO.setMemId(1L);
+        agentDetailVO.setFacebook("facebook");
+        agentDetailVO.setWhatsapp("whatsapp");
+        agentDetailVO.setRealName("zs");
+        agentDetailVO.setMobile("12345776575");
+        return agentDetailVO;
     }
 }
