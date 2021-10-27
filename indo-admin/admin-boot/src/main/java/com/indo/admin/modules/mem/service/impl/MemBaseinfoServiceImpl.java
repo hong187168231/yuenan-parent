@@ -8,6 +8,7 @@ import com.indo.admin.modules.mem.service.IMemBaseinfoService;
 import com.indo.common.mybatis.base.PageResult;
 import com.indo.user.pojo.req.mem.MemAddReq;
 import com.indo.user.pojo.req.mem.MemBaseInfoPageReq;
+import com.indo.user.pojo.req.mem.MemEditFrozenStatusReq;
 import com.indo.user.pojo.req.mem.MemEditReq;
 import com.indo.user.pojo.vo.MemBaseInfoVo;
 import com.indo.user.pojo.vo.mem.MemBaseDetailVO;
@@ -43,5 +44,10 @@ public class MemBaseinfoServiceImpl extends ServiceImpl<MemBaseinfoMapper, MemBa
     @Override
     public MemBaseDetailVO getMemBaseInfo(Long uid) {
         return null;
+    }
+
+    @Override
+    public int editFrozenStatus(MemEditFrozenStatusReq frozenStatusReq) {
+        return 0;
     }
 }

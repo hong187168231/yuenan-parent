@@ -7,6 +7,7 @@ import com.indo.common.result.Result;
 import com.indo.user.pojo.dto.MsgPlatformAnnouncementDTO;
 import com.indo.user.pojo.req.mem.MemAddReq;
 import com.indo.user.pojo.req.mem.MemBaseInfoPageReq;
+import com.indo.user.pojo.req.mem.MemEditFrozenStatusReq;
 import com.indo.user.pojo.req.mem.MemEditReq;
 import com.indo.user.pojo.vo.MemBaseInfoVo;
 import com.indo.user.pojo.vo.mem.MemBaseDetailVO;
@@ -55,6 +56,17 @@ public class MemBaseinfoController {
     @PostMapping(value = "/edit")
     public Result editMemBaseInfo(@Validated MemEditReq memEditReq) {
         int count = memBaseinfoService.editMemBaseInfo(memEditReq);
+        if (count > 0) {
+            return Result.success();
+        } else {
+            return Result.failed();
+        }
+    }
+
+    @ApiOperation(value = "更改会员冻结状态")
+    @PostMapping(value = "/edit")
+    public Result editFrozenStatus(@Validated MemEditFrozenStatusReq frozenStatusReq) {
+        int count = memBaseinfoService.editFrozenStatus(frozenStatusReq);
         if (count > 0) {
             return Result.success();
         } else {

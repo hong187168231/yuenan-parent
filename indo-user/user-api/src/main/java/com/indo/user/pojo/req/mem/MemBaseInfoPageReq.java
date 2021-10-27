@@ -15,7 +15,7 @@ import java.util.Date;
 @Data
 @ApiModel
 public class MemBaseInfoPageReq extends QueryParam {
-    @ApiModelProperty("用户ID")
+    @ApiModelProperty("会员ID")
     private Long uid;
     @ApiModelProperty("用户等级")
     private String level;

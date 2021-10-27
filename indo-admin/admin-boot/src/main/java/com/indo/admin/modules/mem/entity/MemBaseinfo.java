@@ -26,8 +26,8 @@ public class MemBaseinfo extends BaseEntity {
     /**
      * 用户ID
      */
-    @TableId(value = "mem_id", type = IdType.AUTO)
-    private Long memId;
+    @TableId(value = "id", type = IdType.AUTO)
+    private Long id;
 
     /**
      * 真实姓名
@@ -97,7 +97,7 @@ public class MemBaseinfo extends BaseEntity {
     /**
      * 账户类型：1 玩家 2-代理
      */
-    private Boolean accountType;
+    private Integer acc_type;
 
     /**
      * 余额
@@ -120,34 +120,34 @@ public class MemBaseinfo extends BaseEntity {
     private String clientIp;
 
     /**
-     * 账户状态 0 正常 1 删除
+     * 账户状态 0 正常 1 删除 2冻结
      */
     private Integer status;
 
     /**
      * 禁止登陆
      */
-    private Boolean prohibitLogin;
+    private Integer prohibitLogin;
 
     /**
      * 是否禁止邀请发展下级和会员：0 否 1 是
      */
-    private Boolean prohibitInvite;
+    private Integer prohibitInvite;
 
     /**
      * 是否禁止投注：0 否 1 是
      */
-    private Boolean prohibitInvestment;
+    private Integer prohibitInvestment;
 
     /**
      * 是否禁止出款：0 否 1 是
      */
-    private Boolean prohibitDisbursement;
+    private Integer prohibitDisbursement;
 
     /**
      * 是否禁止充值：0 否 1 是
      */
-    private Boolean prohibitRecharge;
+    private Integer prohibitRecharge;
 
     /**
      * 备注
