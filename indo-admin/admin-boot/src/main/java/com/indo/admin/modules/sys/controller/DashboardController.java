@@ -72,7 +72,7 @@ public class DashboardController {
     private long getTodayIpCount() {
         String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         TermQueryBuilder termQueryBuilder = QueryBuilders.termQuery("date", date);
-        String indexName = "live-auth-login-" + date; //索引名称
+        String indexName = "indo-auth-login-" + date; //索引名称
         long todayIpCount = elasticSearchService.countDistinct(termQueryBuilder, "clientIP.keyword", indexName);
         return todayIpCount;
     }

@@ -35,7 +35,7 @@ public class SwaggerConfiguration {
         //schema
         List<GrantType> grantTypes = new ArrayList<>();
         //密码模式
-        String passwordTokenUrl = "http://localhost:9999/live-auth/oauth/token";
+        String passwordTokenUrl = "http://localhost:9999/indo-auth/oauth/token";
         ResourceOwnerPasswordCredentialsGrant resourceOwnerPasswordCredentialsGrant = new ResourceOwnerPasswordCredentialsGrant(passwordTokenUrl);
         grantTypes.add(resourceOwnerPasswordCredentialsGrant);
         OAuth oAuth = new OAuthBuilder().name("oauth2")
@@ -68,7 +68,7 @@ public class SwaggerConfiguration {
         return new ApiInfoBuilder()
                 .title("后台管理中心")
                 .description("<div style='font-size:14px;color:red;'>用户、角色、部门、菜单、权限、字典、客户端接口</div>")
-                .termsOfServiceUrl("https://www.live.viet")
+                .termsOfServiceUrl("https://www.indo.com")
                 .contact(new Contact("泡芙技术团队", "https://github.com/puff", "yinpuff@gmail.com"))
                 .license("Open Source")
                 .licenseUrl("https://www.apache.org/licenses/LICENSE-2.0")

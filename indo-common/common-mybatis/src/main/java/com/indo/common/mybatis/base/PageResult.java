@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.pagehelper.PageInfo;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 /**
  * PageBean
  *
@@ -103,6 +105,20 @@ public class PageResult<T> {
         pageResult.setData(data.getRecords());
         return pageResult;
     }
+
+    /**
+     * 从page获取分页总数
+     */
+    public static PageResult getPageResult(Page<?> data,List<?> list) {
+        Integer totalCount = null;
+        if (null != data && data.getTotal() > 0) {
+            totalCount = (int) data.getTotal();
+        }
+        PageResult pageResult = getPageResult((int) data.getCurrent(), (int) data.getSize(), totalCount);
+        pageResult.setData(list);
+        return pageResult;
+    }
+
 
 
     public static PageResult getPageResult(Integer pageNo, Integer pageSize, Integer totalCount) {
