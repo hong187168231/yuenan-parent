@@ -1,7 +1,7 @@
 package com.indo.admin.modules.report.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.indo.admin.modules.mem.service.IMemBaseInfoService;
+import com.indo.admin.modules.mem.service.IMemBaseinfoService;
 import com.indo.common.mybatis.base.PageResult;
 import com.indo.common.result.Result;
 import com.indo.user.pojo.dto.AgentReportDto;
@@ -28,7 +28,7 @@ public class DataReportController {
 
 
     @Resource
-    private IMemBaseInfoService iMemBaseInfoService;
+    private IMemBaseinfoService iMemBaseInfoService;
 
 
     @ApiOperation(value = "查询会员报表")
@@ -41,8 +41,8 @@ public class DataReportController {
             pageSize = dto.getLimit();
         }
         Page<MemReportVo> page = new Page<>(pageNum, pageSize);
-        List<MemReportVo> list = iMemBaseInfoService.memReportList(page, dto);
-        page.setRecords(list);
+//        List<MemReportVo> list = iMemBaseInfoService.memReportList(page, dto);
+//        page.setRecords(list);
         return Result.success(PageResult.getPageResult(page));
     }
 
@@ -50,7 +50,7 @@ public class DataReportController {
     @ApiImplicitParam(name = "ids", value = "用户ID，逗号拼接(1,2)")
     @GetMapping(value = "/memReportExport")
     public void memReportExport(HttpServletResponse response, @RequestParam(required = false) List<Long> ids) throws IOException {
-        iMemBaseInfoService.memReportExport(response, ids);
+//        iMemBaseInfoService.memReportExport(response, ids);
     }
 
     @ApiOperation(value = "查询代理报表")
@@ -63,8 +63,8 @@ public class DataReportController {
             pageSize = dto.getLimit();
         }
         Page<AgentReportVo> page = new Page<>(pageNum, pageSize);
-        List<AgentReportVo> list = iMemBaseInfoService.agentReportList(page, dto);
-        page.setRecords(list);
+//        List<AgentReportVo> list = iMemBaseInfoService.agentReportList(page, dto);
+//        page.setRecords(list);
         return Result.success(PageResult.getPageResult(page));
     }
 
@@ -72,6 +72,6 @@ public class DataReportController {
     @ApiImplicitParam(name = "ids", value = "用户ID，逗号拼接(1,2)")
     @GetMapping(value = "/agentReportExport")
     public void agentReportExport(HttpServletResponse response, @RequestParam(required = false) List<Long> ids) throws IOException {
-        iMemBaseInfoService.agentReportExport(response, ids);
+//        iMemBaseInfoService.agentReportExport(response, ids);
     }
 }

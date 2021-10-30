@@ -6,7 +6,7 @@ import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.modules.mem.excel.MemBanRebateVoExcel;
 import com.indo.admin.modules.mem.mapper.MemBanRebateMapper;
-import com.indo.admin.modules.mem.mapper.MemBaseInfoMapper;
+import com.indo.admin.modules.mem.mapper.MemBaseinfoMapper;
 import com.indo.admin.modules.mem.service.IMemBanRebateService;
 import com.indo.common.mybatis.base.service.impl.SuperServiceImpl;
 import com.indo.user.pojo.dto.MemBanRebateDto;
@@ -43,7 +43,7 @@ public class MemBanRebateServiceImpl extends SuperServiceImpl<MemBanRebateMapper
     private MemBanRebateMapper memBanRebateMapper;
 
     @Autowired
-    private MemBaseInfoMapper memBaseInfoMapper;
+    private MemBaseinfoMapper memBaseInfoMapper;
 
     public List<MemBanRebateVo> selectMemBanRebate(Page<MemBanRebateVo> page, MemBanRebateDto dto) {
         return memBanRebateMapper.selectMemBanRebate(page, dto);

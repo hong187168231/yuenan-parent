@@ -5,7 +5,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.indo.admin.modules.agent.mapper.MemAgentMapper;
 import com.indo.admin.modules.agent.service.IMemAgentService;
-import com.indo.admin.modules.mem.mapper.MemBaseInfoMapper;
+import com.indo.admin.modules.mem.entity.MemBaseinfo;
+import com.indo.admin.modules.mem.mapper.MemBaseinfoMapper;
 import com.indo.admin.pojo.dto.LogErrorDTO;
 import com.indo.admin.pojo.entity.AgentApply;
 import com.indo.admin.pojo.entity.MemAgent;
@@ -18,7 +19,6 @@ import com.indo.common.result.ResultCode;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
 import com.indo.user.pojo.dto.AgentDTO;
-import com.indo.user.pojo.entity.MemBaseinfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindException;
@@ -42,7 +42,7 @@ public class MemAgentServiceImpl extends ServiceImpl<MemAgentMapper, MemAgent> i
     private DozerUtil dozerUtil;
 
     @Autowired
-    private MemBaseInfoMapper memBaseInfoMapper;
+    private MemBaseinfoMapper memBaseInfoMapper;
 
     @Override
     public List<AgentVo> agentlist(Page<AgentVo> page, AgentDTO agentDTO) {

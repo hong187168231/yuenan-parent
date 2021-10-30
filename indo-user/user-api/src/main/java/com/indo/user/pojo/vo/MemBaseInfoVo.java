@@ -73,5 +73,11 @@ public class MemBaseInfoVo {
     @ApiModelProperty(value = "冻结项目 ")
     private String frozenContent;
 
+    @ApiModelProperty(value = "注册开始时间 ")
+    private Date registerDateStart;
+
+    @ApiModelProperty(value = "注册结束时间 ")
+    private Date registerDateEnd;
+
     private static final long serialVersionUID = -2839025782308943736L;
 }

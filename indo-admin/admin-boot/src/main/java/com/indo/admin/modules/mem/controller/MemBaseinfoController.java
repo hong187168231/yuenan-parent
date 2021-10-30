@@ -64,7 +64,7 @@ public class MemBaseinfoController {
     }
 
     @ApiOperation(value = "更改会员冻结状态")
-    @PostMapping(value = "/edit")
+    @PostMapping(value = "/editFrozenStatus")
     public Result editFrozenStatus(@RequestBody @Validated MemEditFrozenStatusReq frozenStatusReq) {
         int count = memBaseinfoService.editFrozenStatus(frozenStatusReq);
         if (count > 0) {
@@ -73,11 +73,11 @@ public class MemBaseinfoController {
             return Result.failed();
         }
     }
-
-    @ApiOperation(value = "查询会员详情")
-    @GetMapping(value = "/listByPage")
-    public Result<MemBaseDetailVO> getMemBaseInfo(@ApiParam("会员uid") @RequestParam("uid") Long uid) {
-        MemBaseDetailVO detailVO = memBaseinfoService.getMemBaseInfo(uid);
-        return Result.success(detailVO);
-    }
+//
+//    @ApiOperation(value = "查询会员详情")
+//    @GetMapping(value = "/listByPage")
+//    public Result<MemBaseDetailVO> getMemBaseInfo(@ApiParam("会员uid") @RequestParam("uid") Long uid) {
+//        MemBaseDetailVO detailVO = memBaseinfoService.getMemBaseInfo(uid);
+//        return Result.success(detailVO);
+//    }
 }

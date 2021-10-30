@@ -2,7 +2,7 @@ package com.indo.admin.modules.msg.service.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.indo.admin.modules.mem.mapper.MemBaseInfoMapper;
+import com.indo.admin.modules.mem.mapper.MemBaseinfoMapper;
 import com.indo.admin.modules.mem.mapper.MemLevelMapper;
 import com.indo.admin.modules.msg.mapper.MsgStationLetterMapper;
 import com.indo.admin.modules.msg.service.IMsgStationLetterService;
@@ -31,7 +31,7 @@ import java.util.List;
 public class MsgStationLetterServiceImpl extends ServiceImpl<MsgStationLetterMapper, MsgStationLetter> implements IMsgStationLetterService {
 
     @Autowired
-    private MemBaseInfoMapper memBaseInfoMapper;
+    private MemBaseinfoMapper memBaseInfoMapper;
     @Autowired
     private MemLevelMapper levelMapper;
     @Autowired
