@@ -42,7 +42,7 @@ public class MemBaseinfoController {
 
     @ApiOperation(value = "新增会员信息")
     @PostMapping(value = "/add")
-    public Result addMemBaseInfo(@Validated MemAddReq memAddReq) {
+    public Result addMemBaseInfo(@RequestBody @Validated MemAddReq memAddReq) {
         int count = memBaseinfoService.addMemBaseInfo(memAddReq);
         if (count > 0) {
             return Result.success();
@@ -65,7 +65,7 @@ public class MemBaseinfoController {
 
     @ApiOperation(value = "更改会员冻结状态")
     @PostMapping(value = "/edit")
-    public Result editFrozenStatus(@Validated MemEditFrozenStatusReq frozenStatusReq) {
+    public Result editFrozenStatus(@RequestBody @Validated MemEditFrozenStatusReq frozenStatusReq) {
         int count = memBaseinfoService.editFrozenStatus(frozenStatusReq);
         if (count > 0) {
             return Result.success();
