@@ -9,6 +9,7 @@ import com.indo.admin.pojo.dto.AgentApplyDTO;
 import com.indo.admin.pojo.entity.AgentApply;
 import com.indo.admin.pojo.vo.AgentDetailVO;
 import com.indo.admin.pojo.vo.AgentVo;
+import com.indo.admin.pojo.vo.SubordinateMemVo;
 import com.indo.common.result.Result;
 import com.indo.user.pojo.dto.AgentDTO;
 import io.swagger.annotations.Api;
@@ -106,4 +107,16 @@ public class AgentController {
     public Result<AgentDetailVO> agentDetail(Long memId) {
         return Result.success(iMemAgentService.agentDetail(memId));
     }
+
+
+    @ApiOperation(value = "下级会员")
+    @GetMapping(value = "/subordinateMemList")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "agentId", value = "代理Id", paramType = "query", dataType = "Long")
+    })
+    public Result<List<SubordinateMemVo>> subordinateMemList(Long agentId) {
+        List<SubordinateMemVo> list = iMemAgentService.subordinateMemList(agentId);
+        return Result.success(list);
+    }
+
 }
