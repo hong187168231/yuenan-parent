@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.indo.code.modules.baseinfo.mapper.MemBaseinfoMapper">
+<mapper namespace="com.indo.admin.modules.mem.mapper.MemBaseinfoMapper">
 
     <select id="queryList" resultType="com.indo.user.pojo.vo.MemBaseInfoVo">
         SELECT * FROM mem_baseinfo mb
@@ -9,27 +9,33 @@
                 and mb.id = #{dto.uid}
             </if>
             <if test="dto.level !=null and dto.type != ''">
-                and mb.memLevel = #{dto.level}
+                and mb.mem_level = #{dto.level}
             </if>
             <if test="dto.groupId !=null">
-                and mb.groupId = #{dto.groupId}
+                and mb.group_id = #{dto.groupId}
             </if>
             <if test="dto.frozenStatus !=null">
-                and mb.frozenStatus = #{dto.frozenStatus}
+                and mb.frozen_status = #{dto.frozenStatus}
             </if>
             <if test="dto.realName !=null and dto.realName !=''">
-                and mb.realName = #{dto.realName}
+                and mb.real_name like concat('%', #{dto.realName,jdbcType=VARCHAR}, '%')
             </if>
-            <if test="dto.registerInviteCode !=null and dto.registerInviteCode !=''">
-                and mb.registerInviteCode = #{dto.registerInviteCode}
+            <if test="dto.regInviteCode !=null and dto.regInviteCode !=''">
+                and mb.r_invite_code = #{dto.regInviteCode}
             </if>
-            <if test="dto.registerDateStart != null and dto.registerDateStart != ''"><!-- 开始时间检索 -->
-                and date_format(mb.registerDate,'%y%m%d') &gt;= date_format(#{dto.registerDate},'%y%m%d')
+            <if test="dto.regStartTime != null and dto.regStartTime != ''"><!-- 开始时间检索 -->
+                and date_format(mb.create_time,'%y%m%d') &gt;= date_format(#{dto.regStartTime},'%y%m%d')
             </if>
-            <if test="dto.registerDateEnd != null and dto.registerDateEnd != ''"><!-- 结束时间检索 -->
-                and date_format(mb.registerDateEnd,'%y%m%d') &lt;= date_format(#{dto.registerDateEnd},'%y%m%d')
+            <if test="dto.regEndTime != null and dto.regEndTime != ''"><!-- 结束时间检索 -->
+                and date_format(mb.create_time,'%y%m%d') &lt;= date_format(#{dto.regEndTime},'%y%m%d')
             </if>
         </where>
         ORDER BY mb.create_time desc
+    </select>
+    <select id="selectIdsByAccounts" resultType="java.lang.Long">
+
+    </select>
+    <select id="selectNickNameByAccounts" resultType="java.lang.String">
+
     </select>
 </mapper>

@@ -34,7 +34,7 @@ public class MemBaseinfoController {
     private IMemBaseinfoService memBaseinfoService;
 
     @ApiOperation(value = "分页查询")
-    @GetMapping(value = "/listByPage")
+    @PostMapping(value = "/listByPage")
     public Result<PageResult<MemBaseInfoVo>> getMemBaseInfo(@RequestBody MemBaseInfoPageReq baseInfoPageReq) {
         PageResult<MemBaseInfoVo> result = memBaseinfoService.queryList(baseInfoPageReq);
         return Result.success(result);
