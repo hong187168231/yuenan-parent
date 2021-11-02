@@ -5,28 +5,28 @@
     <select id="queryList" resultType="com.indo.user.pojo.vo.MemBaseInfoVo">
         SELECT * FROM mem_baseinfo mb
         <where>
-            <if test="dto.uid !=null">
-                and mb.id = #{dto.uid}
+            <if test="dto.id !=null">
+                and mb.id = #{dto.id}
             </if>
-            <if test="dto.level !=null and dto.type != ''">
-                and mb.mem_level = #{dto.level}
+            <if test="dto.memLevel !=null">
+                and mb.mem_level = #{dto.memLevel}
             </if>
             <if test="dto.groupId !=null">
                 and mb.group_id = #{dto.groupId}
             </if>
-            <if test="dto.frozenStatus !=null">
-                and mb.frozen_status = #{dto.frozenStatus}
+            <if test="dto.status !=null">
+                and mb.status = #{dto.status}
             </if>
             <if test="dto.realName !=null and dto.realName !=''">
                 and mb.real_name like concat('%', #{dto.realName,jdbcType=VARCHAR}, '%')
             </if>
-            <if test="dto.regInviteCode !=null and dto.regInviteCode !=''">
-                and mb.r_invite_code = #{dto.regInviteCode}
+            <if test="dto.rInviteCode !=null and dto.rInviteCode !=''">
+                and mb.r_invite_code = #{dto.rInviteCode}
             </if>
-            <if test="dto.regStartTime != null and dto.regStartTime != ''"><!-- 开始时间检索 -->
+            <if test="dto.regStartTime != null and dto.regStartTime != ''">
                 and date_format(mb.create_time,'%y%m%d') &gt;= date_format(#{dto.regStartTime},'%y%m%d')
             </if>
-            <if test="dto.regEndTime != null and dto.regEndTime != ''"><!-- 结束时间检索 -->
+            <if test="dto.regEndTime != null and dto.regEndTime != ''">
                 and date_format(mb.create_time,'%y%m%d') &lt;= date_format(#{dto.regEndTime},'%y%m%d')
             </if>
         </where>

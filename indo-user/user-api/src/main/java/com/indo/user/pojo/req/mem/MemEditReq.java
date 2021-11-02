@@ -13,15 +13,16 @@ import java.math.BigInteger;
 @Data
 @ApiModel
 public class MemEditReq {
-    private Long uid;
+    @ApiModelProperty("会员id")
+    private Long id;
     @ApiModelProperty("会员密码")
     private String password;
     @ApiModelProperty("会员姓名")
     private String realName;
     @ApiModelProperty("会员等级")
-    private String level;
+    private Integer memLevel;
     @ApiModelProperty("会员组别")
-    private BigInteger groupId;
+    private Integer groupId;
     @ApiModelProperty("邮箱")
     private String email;
     @ApiModelProperty("facebook")

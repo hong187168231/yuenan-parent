@@ -15,18 +15,19 @@ import java.util.Date;
 @Data
 @ApiModel
 public class MemBaseInfoPageReq extends QueryParam {
+
     @ApiModelProperty("会员ID")
-    private Long uid;
+    private Long id;
     @ApiModelProperty("用户等级")
-    private String level;
+    private String memLevel;
     @ApiModelProperty("层级ID")
-    private  Long groupId;
+    private Long groupId;
     @ApiModelProperty("真实姓名")
     private String realName;
     @ApiModelProperty("注册邀请码")
-    private String regInviteCode;
-    @ApiModelProperty("冻结状态")
-    private Integer frozenStatus;
+    private String rInviteCode;
+    @ApiModelProperty("账户状态:0-正常,1-删除,2-冻结")
+    private Integer status;
     @ApiModelProperty("注册开始时间")
     private Date regStartTime;
     @ApiModelProperty("注册结束时间")
