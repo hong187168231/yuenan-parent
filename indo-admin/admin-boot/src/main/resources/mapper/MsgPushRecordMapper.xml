@@ -5,7 +5,7 @@
         <id property="id" column="id" jdbcType="BIGINT"/>
         <result property="title" column="title" jdbcType="VARCHAR"/>
         <result property="content" column="content" jdbcType="VARCHAR"/>
-        <result property="type" column="type" jdbcType="INTEGER"/>
+        <result property="deviceType" column="device_type" jdbcType="INTEGER"/>
         <result property="remark" column="remark" jdbcType="VARCHAR"/>
         <result property="isDel" column="is_del" jdbcType="INTEGER"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>

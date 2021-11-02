@@ -1,9 +1,12 @@
 package com.indo.admin.modules.msg.controller;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.modules.msg.service.IMsgStationLetterService;
+import com.indo.admin.pojo.entity.AgentApply;
 import com.indo.common.mybatis.base.PageResult;
 import com.indo.common.result.Result;
 import com.indo.user.pojo.dto.MsgStationLetterDTO;
+import com.indo.user.pojo.dto.StationLetterAddDTO;
 import com.indo.user.pojo.vo.MsgStationLetterVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -35,14 +38,14 @@ public class MsgStationLetterController {
 
     @ApiOperation(value = "分页查询站内信")
     @GetMapping(value = "/list")
-    public Result list(MsgStationLetterDTO letterDTO){
-        PageResult<MsgStationLetterVO> result = stationLetterService.queryList(letterDTO);
-        return Result.success(result);
+    public Result<List<MsgStationLetterVO>> list(MsgStationLetterDTO letterDTO) {
+        Page relust = stationLetterService.queryList(letterDTO);
+        return Result.success(relust.getRecords(), relust.getTotal());
     }
 
     @ApiOperation(value = "增加站内信")
     @PostMapping(value = "/add")
-    public Result add(@Validated MsgStationLetterDTO letterDTO) {
+    public Result add(StationLetterAddDTO letterDTO) {
         int count = stationLetterService.add(letterDTO);
         if (count > 0) {
             return Result.success();

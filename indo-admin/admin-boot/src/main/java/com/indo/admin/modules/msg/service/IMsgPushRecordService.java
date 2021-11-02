@@ -1,8 +1,10 @@
 package com.indo.admin.modules.msg.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.indo.common.mybatis.base.PageResult;
 import com.indo.user.pojo.dto.MsgPushRecordDTO;
+import com.indo.user.pojo.dto.PushRecordAddDTO;
 import com.indo.user.pojo.entity.MsgPushRecord;
 import com.indo.user.pojo.vo.MsgPushRecordVO;
 
@@ -20,13 +22,13 @@ public interface IMsgPushRecordService extends IService<MsgPushRecord> {
      * @param pushRecordDTO
      * @return
      */
-    PageResult<MsgPushRecordVO> queryList(MsgPushRecordDTO pushRecordDTO);
+    Page<MsgPushRecordVO> queryList(MsgPushRecordDTO pushRecordDTO);
 
     /**
      * 新增推送
-     * @param pushRecord
+     * @param pushRecordAddDTO
      * @return
      */
-    void add(MsgPushRecord pushRecord);
+    void add(PushRecordAddDTO pushRecordAddDTO);
 
 }

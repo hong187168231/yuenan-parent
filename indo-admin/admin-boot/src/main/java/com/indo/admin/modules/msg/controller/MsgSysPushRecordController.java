@@ -1,10 +1,12 @@
 package com.indo.admin.modules.msg.controller;
 
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.modules.msg.service.IMsgPushRecordService;
 import com.indo.common.mybatis.base.PageResult;
 import com.indo.common.result.Result;
 import com.indo.user.pojo.dto.MsgPushRecordDTO;
+import com.indo.user.pojo.dto.PushRecordAddDTO;
 import com.indo.user.pojo.entity.MsgPushRecord;
 import com.indo.user.pojo.vo.MsgPushRecordVO;
 import io.swagger.annotations.Api;
@@ -37,14 +39,14 @@ public class MsgSysPushRecordController {
 
     @ApiOperation(value = "分页查询后台推送信息")
     @GetMapping(value = "/list")
-    public Result list(MsgPushRecordDTO pushRecordDTO){
-        PageResult<MsgPushRecordVO> result = pushRecordService.queryList(pushRecordDTO);
-        return Result.success(result);
+    public Result<List<MsgPushRecordVO>> list(MsgPushRecordDTO pushRecordDTO) {
+        Page result = pushRecordService.queryList(pushRecordDTO);
+        return Result.success(result.getRecords(), result.getTotal());
     }
 
     @ApiOperation(value = "增加后台推送信息记录")
     @PostMapping(value = "/add")
-    public Result add(@Validated MsgPushRecord msgPushRecord) {
+    public Result add(PushRecordAddDTO msgPushRecord) {
         pushRecordService.add(msgPushRecord);
         return Result.success();
     }

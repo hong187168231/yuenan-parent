@@ -6,8 +6,10 @@ import com.indo.admin.modules.msg.mapper.MsgPushRecordMapper;
 import com.indo.admin.modules.msg.service.IMsgPushRecordService;
 import com.indo.common.mybatis.base.PageResult;
 import com.indo.user.pojo.dto.MsgPushRecordDTO;
+import com.indo.user.pojo.dto.PushRecordAddDTO;
 import com.indo.user.pojo.entity.MsgPushRecord;
 import com.indo.user.pojo.vo.MsgPushRecordVO;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,25 +31,19 @@ public class MsgPushRecordServiceImpl extends ServiceImpl<MsgPushRecordMapper, M
     private MsgPushRecordMapper pushRecordMapper;
 
     @Override
-    public PageResult<MsgPushRecordVO> queryList(MsgPushRecordDTO pushRecordDTO) {
-        Integer pageNum = 1;
-        Integer pageSize = 10;
-        if (null != pushRecordDTO.getPage() && null != pushRecordDTO.getLimit()){
-            pageNum = pushRecordDTO.getPage();
-            pageSize = pushRecordDTO.getLimit();
-        }
-        Page<MsgPushRecordVO> page =  new Page<>(pageNum, pageSize);
+    public Page<MsgPushRecordVO> queryList(MsgPushRecordDTO pushRecordDTO) {
+        Page<MsgPushRecordVO> page =  new Page<>(pushRecordDTO.getPage(), pushRecordDTO.getLimit());
         List<MsgPushRecordVO> list = pushRecordMapper.queryList(page, pushRecordDTO);
         page.setRecords(list);
-        return PageResult.getPageResult(page);
+        return page;
     }
 
     @Override
-    public void add(MsgPushRecord pushRecord) {
+    public void add(PushRecordAddDTO pushRecordAddDTO) {
         // 向客户端推送 todo
-
+        MsgPushRecord pushRecord = new MsgPushRecord();
+        BeanUtils.copyProperties(pushRecordAddDTO, pushRecord);
         // 保存到记录表
-        pushRecord.setCreateTime(new Date());
         pushRecordMapper.insert(pushRecord);
     }
 }

@@ -9,6 +9,7 @@ import com.indo.admin.modules.msg.service.IMsgStationLetterService;
 import com.indo.admin.modules.pay.mapper.PayGroupConfigMapper;
 import com.indo.common.mybatis.base.PageResult;
 import com.indo.user.pojo.dto.MsgStationLetterDTO;
+import com.indo.user.pojo.dto.StationLetterAddDTO;
 import com.indo.user.pojo.entity.MsgStationLetter;
 import com.indo.user.pojo.vo.MsgStationLetterVO;
 import org.apache.commons.lang3.StringUtils;
@@ -40,47 +41,23 @@ public class MsgStationLetterServiceImpl extends ServiceImpl<MsgStationLetterMap
     private PayGroupConfigMapper payGroupConfigMapper;
 
     @Override
-    public PageResult<MsgStationLetterVO> queryList(MsgStationLetterDTO letterDTO) {
-        Integer pageNum = 1;
-        Integer pageSize = 10;
-        if (null != letterDTO.getPage() && null != letterDTO.getLimit()){
-            pageNum = letterDTO.getPage();
-            pageSize = letterDTO.getLimit();
-        }
-        Page<MsgStationLetterVO> page =  new Page<>(pageNum, pageSize);
+    public Page<MsgStationLetterVO> queryList(MsgStationLetterDTO letterDTO) {
+        Page<MsgStationLetterVO> page = new Page<>(letterDTO.getPage(), letterDTO.getLimit());
         List<MsgStationLetterVO> list = letterMapper.queryList(page, letterDTO);
         page.setRecords(list);
-        return PageResult.getPageResult(page);
+        return page;
     }
 
     @Override
-    public int add(MsgStationLetterDTO letterDTO) {
+    public int add(StationLetterAddDTO letterDTO) {
         MsgStationLetter letter = new MsgStationLetter();
-        BeanUtils.copyProperties(letterDTO,letter);
+        BeanUtils.copyProperties(letterDTO, letter);
         letter.setCreateTime(new Date());
-
-        // 按收件人发送
-        if(letterDTO.getType() == 1){
+        if (letterDTO.getSendType() == 1) {
             List<String> nickNames = memBaseInfoMapper.selectNickNameByAccounts(letterDTO.getReceiver());
-            letter.setReceiver(StringUtils.strip(letterDTO.getReceiver().toString(),"[]"));
-            letter.setReceiverName(StringUtils.strip(nickNames.toString(),"[]"));
+            letter.setReceiver(StringUtils.strip(letterDTO.getReceiver().toString(), "[]"));
         }
-        // 按会员等级发送
-        if(letterDTO.getType() == 2){
-            List<String> names = levelMapper.selectNameByIds(letterDTO.getReceiver());
-            letter.setReceiver(StringUtils.strip(letterDTO.getReceiver().toString(),"[]"));
-            letter.setReceiverName(StringUtils.strip(names.toString(),"[]"));
-        }
-
-        // 按支付层级发送
-        if(letterDTO.getType() == 3){
-            List<String> names = payGroupConfigMapper.selectNameByIds(letterDTO.getReceiver());
-            letter.setReceiver(StringUtils.strip(letterDTO.getReceiver().toString(),"[]"));
-            letter.setReceiverName(StringUtils.strip(names.toString(),"[]"));
-        }
-
         // 发送到客户端 todo
-
         return letterMapper.insert(letter);
     }
 }

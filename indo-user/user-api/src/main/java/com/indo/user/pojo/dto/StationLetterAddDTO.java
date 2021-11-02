@@ -1,6 +1,5 @@
 package com.indo.user.pojo.dto;
 
-import com.indo.common.base.BaseDTO;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -8,11 +7,11 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Data
-public class MsgStationLetterDTO extends BaseDTO {
+public class StationLetterAddDTO {
 
 
     @ApiModelProperty(value = "收件人")
-    private String receiver;
+    private List<String> receiver;
 
     @ApiModelProperty(value = "收件人")
     private Integer receiverLevel;
