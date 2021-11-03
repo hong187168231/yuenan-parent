@@ -1,22 +1,19 @@
 package com.indo.admin.modules.mem.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.indo.admin.modules.mem.req.MemLevelAddReq;
+import com.indo.admin.modules.mem.req.MemLevelPageReq;
+import com.indo.admin.modules.mem.req.MemLevelUpdateReq;
 import com.indo.admin.modules.mem.service.IMemLevelService;
+import com.indo.admin.modules.mem.vo.MemLevelVo;
 import com.indo.common.mybatis.base.PageResult;
 import com.indo.common.result.Result;
-import com.indo.user.pojo.entity.MemLevel;
-import com.indo.user.pojo.vo.MemLevelVo;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 /**
  * <p>
@@ -37,45 +34,23 @@ public class MemLevelController {
 
 
     @ApiOperation(value = "分页查询")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "page", value = "页码", paramType = "query", dataType = "Long"),
-            @ApiImplicitParam(name = "limit", value = "每页数量", paramType = "query", dataType = "Long")
-    })
-    @GetMapping(value = "/listByPage")
-    public Result<PageResult<MemLevelVo>> getMemLevels(Integer limit,
-                                                       Integer page) {
-        Integer pageNum = 1;
-        Integer pageSize = 10;
-        if (null != limit && null != page) {
-            pageNum = page;
-            pageSize = limit;
-        }
-        Page<MemLevelVo> p =  new Page<>(pageNum, pageSize);
-        List<MemLevelVo> list = memLevelService.selectByPage(p);
-        p.setRecords(list);
-        return Result.success(PageResult.getPageResult(p));
-    }
-
-    @ApiOperation(value = "全部查询")
-    @GetMapping(value = "/list")
-    public Result<List<MemLevel>> list(){
-        List<MemLevel> list = memLevelService.list(new QueryWrapper<MemLevel>().lambda()
-                .eq(MemLevel::getIsDel,0));
-        return Result.success(list);
+    @PostMapping(value = "/page")
+    public Result<PageResult<MemLevelVo>> page(@RequestBody MemLevelPageReq req) {
+        return Result.success(memLevelService.selectByPage(req));
     }
 
     @ApiOperation(value = "新增")
     @PostMapping(value = "/create")
-    public Result create(@Validated @RequestBody MemLevel memLevel) {
-        memLevelService.save(memLevel);
-        return Result.success(HttpStatus.CREATED);
+    public Result create(@Validated @RequestBody MemLevelAddReq req) {
+        memLevelService.saveOne(req);
+        return Result.success(HttpStatus.OK);
     }
 
     @ApiOperation(value = "修改")
     @PutMapping(value = "/update")
-    public Result update(@Validated @RequestBody MemLevel resources) {
-        memLevelService.saveOrUpdate(resources);
-        return Result.success(HttpStatus.NO_CONTENT);
+    public Result update(@Validated @RequestBody MemLevelUpdateReq req) {
+        memLevelService.updateOne(req);
+        return Result.success(HttpStatus.OK);
     }
 
     @ApiOperation(value = "删除")

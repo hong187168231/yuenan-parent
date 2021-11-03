@@ -1,10 +1,13 @@
 package com.indo.admin.modules.mem.service;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.indo.admin.modules.mem.entity.MemLevel;
+import com.indo.admin.modules.mem.req.MemLevelAddReq;
+import com.indo.admin.modules.mem.req.MemLevelPageReq;
+import com.indo.admin.modules.mem.req.MemLevelUpdateReq;
+import com.indo.admin.modules.mem.vo.MemLevelVo;
 import com.indo.admin.pojo.criteria.MemLevelQueryCriteria;
+import com.indo.common.mybatis.base.PageResult;
 import com.indo.common.mybatis.base.service.SuperService;
-import com.indo.user.pojo.entity.MemLevel;
-import com.indo.user.pojo.vo.MemLevelVo;
 
 import java.util.List;
 
@@ -24,7 +27,7 @@ public interface IMemLevelService extends SuperService<MemLevel> {
      *
      * @return PageResult
      */
-    List<MemLevelVo> selectByPage(Page<MemLevelVo> page);
+    PageResult<MemLevelVo> selectByPage(MemLevelPageReq page);
 
     /**
      * 查询所有数据不分页
@@ -33,4 +36,9 @@ public interface IMemLevelService extends SuperService<MemLevel> {
      * @return List<YxSystemUserLevelDto>
      */
     List<MemLevel> queryAll(MemLevelQueryCriteria criteria);
+
+    void saveOne(MemLevelAddReq req);
+
+    void updateOne(MemLevelUpdateReq req);
+
 }

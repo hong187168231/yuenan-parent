@@ -1,9 +1,9 @@
 package com.indo.admin.modules.mem.mapper;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.indo.admin.modules.mem.entity.MemLevel;
+import com.indo.admin.modules.mem.vo.MemLevelVo;
 import com.indo.common.mybatis.base.mapper.SuperMapper;
-import com.indo.user.pojo.entity.MemLevel;
-import com.indo.user.pojo.vo.MemLevelVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;

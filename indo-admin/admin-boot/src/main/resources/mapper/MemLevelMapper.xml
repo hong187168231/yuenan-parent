@@ -2,8 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.indo.admin.modules.mem.mapper.MemLevelMapper">
 
-    <select id="listByMemLevel" resultType="com.indo.user.pojo.vo.MemLevelVo" >
-        select a.*,(select count(*) from mem_baseinfo as b where b.level_id=a.level and b.is_del=0) count from mem_level as a where a.is_del=0 ORDER BY a.create_time desc
+    <select id="listByMemLevel" resultType="com.indo.admin.modules.mem.vo.MemLevelVo">
+        select *
+        from mem_level
     </select>
 
     <select id="selectNameByIds" resultType="String">
@@ -13,7 +14,7 @@
         <where>
             <if test="list != null and list.size()>0">
                 id IN
-                <foreach item="item" index="index" collection="list" open="("  close=")" separator=",">
+                <foreach item="item" index="index" collection="list" open="(" close=")" separator=",">
                     #{item}
                 </foreach>
             </if>
