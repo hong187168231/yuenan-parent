@@ -8,12 +8,10 @@ import com.indo.admin.modules.mem.mapper.MemBaseinfoMapper;
 import com.indo.admin.modules.mem.service.IMemBaseinfoService;
 import com.indo.common.mybatis.base.PageResult;
 import com.indo.common.utils.encrypt.MD5;
-import com.indo.common.utils.encrypt.MD5Util;
 import com.indo.user.pojo.req.mem.MemAddReq;
 import com.indo.user.pojo.req.mem.MemBaseInfoPageReq;
-import com.indo.user.pojo.req.mem.MemEditFrozenStatusReq;
+import com.indo.user.pojo.req.mem.MemEditStatusReq;
 import com.indo.user.pojo.req.mem.MemEditReq;
-import com.indo.user.pojo.vo.MemBankRelationVO;
 import com.indo.user.pojo.vo.MemBaseInfoVo;
 import com.indo.user.pojo.vo.mem.MemBaseDetailVO;
 import org.springframework.beans.BeanUtils;
@@ -51,18 +49,18 @@ public class MemBaseinfoServiceImpl extends ServiceImpl<MemBaseinfoMapper, MemBa
     }
 
     @Override
-    public int addMemBaseInfo(MemAddReq memAddReq) {
+    public int addMemBaseInfo(MemAddReq req) {
         MemBaseinfo memBaseinfo = new MemBaseinfo();
-        BeanUtils.copyProperties(memAddReq, memBaseinfo);
-        memBaseinfo.setPasswordMd5(MD5.md5(memAddReq.getPassword()));
+        BeanUtils.copyProperties(req, memBaseinfo);
+        memBaseinfo.setPasswordMd5(MD5.md5(req.getPassword()));
         return baseMapper.insert(memBaseinfo);
     }
 
     @Override
-    public int editMemBaseInfo(MemEditReq memEditReq) {
+    public int editMemBaseInfo(MemEditReq req) {
         MemBaseinfo memBaseinfo = new MemBaseinfo();
-        memBaseinfo.setId(memEditReq.getUid());
-        BeanUtils.copyProperties(memBaseinfo, memBaseinfo);
+        memBaseinfo.setId(req.getId());
+        BeanUtils.copyProperties(req, memBaseinfo);
         return baseMapper.updateById(memBaseinfo);
     }
 
@@ -75,9 +73,9 @@ public class MemBaseinfoServiceImpl extends ServiceImpl<MemBaseinfoMapper, MemBa
     }
 
     @Override
-    public int editFrozenStatus(MemEditFrozenStatusReq frozenStatusReq) {
+    public int editStatus(MemEditStatusReq req) {
         MemBaseinfo memBaseinfo = new MemBaseinfo();
-        memBaseinfo.setId(frozenStatusReq.getUid());
+        memBaseinfo.setId(req.getId());
         BeanUtils.copyProperties(memBaseinfo, memBaseinfo);
         return baseMapper.updateById(memBaseinfo);
     }

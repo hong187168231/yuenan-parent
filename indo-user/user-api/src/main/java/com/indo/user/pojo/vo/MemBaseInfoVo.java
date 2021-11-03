@@ -18,11 +18,15 @@ public class MemBaseInfoVo {
     /*********************会员信息*****************************/
 
     @ApiModelProperty(value = "用户ID")
-    private Long uid;
+    private Long id;
+    @ApiModelProperty(value = "用户账号")
+    private String account;
     @ApiModelProperty(value = "用户名")
     private String realName;
     @ApiModelProperty(value = "上级代理名称")
     private String agentName;
+    @ApiModelProperty(value = "账户状态:0-正常,1-删除,2-冻结")
+    private Integer status;
     @ApiModelProperty(value = "手机号")
     private String phone;
     @ApiModelProperty(value = "邮箱")
@@ -35,12 +39,12 @@ public class MemBaseInfoVo {
     private String memLevel;
     @ApiModelProperty(value = "会员层级")
     private Long groupId;
-    @ApiModelProperty(value = "注册来源 1 苹果 2 安卓 3 h5")
+    @ApiModelProperty(value = "注册来源:1-苹果,2-安卓,3-h5")
     private Integer registerSource;
-    @ApiModelProperty(value = "账户类型 0 普通会员 1 代理会员")
-    private Integer acountType;
+    @ApiModelProperty(value = "账户类型:0-普通会员 1-代理会员")
+    private Integer accType;
     @ApiModelProperty(value = "注册邀请码")
-    private String registerInviteCode;
+    private String rInviteCode;
     @ApiModelProperty(value = "团队人数")
     private Integer teamNum;
 
@@ -56,28 +60,16 @@ public class MemBaseInfoVo {
     @ApiModelProperty(value = "取款次数")
     private BigDecimal withdrawTimes;
 
-    @ApiModelProperty(value = "冻结状态")
-    private String frozenStatus;
-
     /*********************金额*****************************/
-    @ApiModelProperty(value = "注册时间")
-    private Date regTime;
-
     @ApiModelProperty(value = "首冲时间")
-    private Date firstChargTime;
+    private Date firstRcgTime;
     @ApiModelProperty(value = "最后登录时间")
     private Date lastLoginTime;
     @ApiModelProperty(value = "离开天数")
-    private int leveDays;
+    private int leaveDays;
+    @ApiModelProperty(value = "注册时间 ")
+    private Date createTime;
 
-    @ApiModelProperty(value = "冻结项目 ")
-    private String frozenContent;
-
-    @ApiModelProperty(value = "注册开始时间 ")
-    private Date registerDateStart;
-
-    @ApiModelProperty(value = "注册结束时间 ")
-    private Date registerDateEnd;
 
     private static final long serialVersionUID = -2839025782308943736L;
 }

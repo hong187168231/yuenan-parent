@@ -10,10 +10,10 @@ import lombok.Data;
  */
 @Data
 @ApiModel
-public class MemEditFrozenStatusReq {
+public class MemEditStatusReq {
 
     @ApiModelProperty("会员ID")
-    private Long uid;
+    private Long id;
     @ApiModelProperty("是否禁止会员登录 ,默认0，勾选后是1")
     private Integer prohibitLogin;
     @ApiModelProperty("是否禁止邀请发展下级和会员 ,默认0，勾选后是1")

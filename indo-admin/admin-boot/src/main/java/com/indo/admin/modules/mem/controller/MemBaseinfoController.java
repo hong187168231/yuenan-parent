@@ -4,15 +4,12 @@ package com.indo.admin.modules.mem.controller;
 import com.indo.admin.modules.mem.service.IMemBaseinfoService;
 import com.indo.common.mybatis.base.PageResult;
 import com.indo.common.result.Result;
-import com.indo.user.pojo.dto.MsgPlatformAnnouncementDTO;
 import com.indo.user.pojo.req.mem.MemAddReq;
 import com.indo.user.pojo.req.mem.MemBaseInfoPageReq;
-import com.indo.user.pojo.req.mem.MemEditFrozenStatusReq;
+import com.indo.user.pojo.req.mem.MemEditStatusReq;
 import com.indo.user.pojo.req.mem.MemEditReq;
 import com.indo.user.pojo.vo.MemBaseInfoVo;
-import com.indo.user.pojo.vo.mem.MemBaseDetailVO;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,7 +51,7 @@ public class MemBaseinfoController {
 
     @ApiOperation(value = "编辑会员信息")
     @PostMapping(value = "/edit")
-    public Result editMemBaseInfo(@Validated MemEditReq memEditReq) {
+    public Result editMemBaseInfo(@RequestBody @Validated MemEditReq memEditReq) {
         int count = memBaseinfoService.editMemBaseInfo(memEditReq);
         if (count > 0) {
             return Result.success();
@@ -63,10 +60,10 @@ public class MemBaseinfoController {
         }
     }
 
-    @ApiOperation(value = "更改会员冻结状态")
-    @PostMapping(value = "/editFrozenStatus")
-    public Result editFrozenStatus(@RequestBody @Validated MemEditFrozenStatusReq frozenStatusReq) {
-        int count = memBaseinfoService.editFrozenStatus(frozenStatusReq);
+    @ApiOperation(value = "更改会员状态")
+    @PostMapping(value = "/editStatus")
+    public Result editStatus(@RequestBody @Validated MemEditStatusReq frozenStatusReq) {
+        int count = memBaseinfoService.editStatus(frozenStatusReq);
         if (count > 0) {
             return Result.success();
         } else {

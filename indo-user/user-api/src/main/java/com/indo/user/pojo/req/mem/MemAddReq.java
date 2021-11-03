@@ -17,7 +17,7 @@ public class MemAddReq {
     private String accno;
     @ApiModelProperty("上级账号")
     private String superAccno;
-    @ApiModelProperty("账户类型")
+    @ApiModelProperty("账户类型，1-玩家 2-代理")
     private Integer accType;
     @ApiModelProperty("密码")
     private String password;
