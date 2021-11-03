@@ -2,6 +2,8 @@ package com.indo.admin.modules.act.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.indo.admin.pojo.entity.ActivityType;
+import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Repository;
 
 /**
  * <p>
@@ -11,6 +13,8 @@ import com.indo.admin.pojo.entity.ActivityType;
  * @author puff
  * @since 2021-11-02
  */
+@Mapper
+@Repository
 public interface ActivityTypeMapper extends BaseMapper<ActivityType> {
 
 }
