@@ -1,4 +1,4 @@
-package com.indo.user.pojo.vo.mem;
+package com.indo.admin.modules.mem.vo;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

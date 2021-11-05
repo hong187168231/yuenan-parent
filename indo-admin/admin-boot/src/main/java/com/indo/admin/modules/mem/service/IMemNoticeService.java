@@ -3,7 +3,7 @@ package com.indo.admin.modules.mem.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.indo.admin.modules.mem.entity.MemNotice;
-import com.indo.user.pojo.req.mem.MemNoticeAddReq;
+import com.indo.admin.modules.mem.req.MemNoticeAddReq;
 
 /**
  * <p>

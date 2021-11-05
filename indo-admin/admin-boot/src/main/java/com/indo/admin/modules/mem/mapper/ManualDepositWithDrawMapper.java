@@ -3,11 +3,8 @@ package com.indo.admin.modules.mem.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.user.pojo.dto.ManualDepositWithDrawDto;
-import com.indo.user.pojo.dto.MemBaseInfoDto;
 import com.indo.user.pojo.entity.ManualDepositWithDraw;
-import com.indo.user.pojo.entity.MemBaseinfo;
 import com.indo.user.pojo.vo.ManualDepositWithDrawVO;
-import com.indo.user.pojo.vo.MemBaseInfoVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

@@ -1,4 +1,4 @@
-package com.indo.user.pojo.req.mem;
+package com.indo.admin.modules.mem.req;
 
 import com.indo.common.pojo.param.QueryParam;
 import io.swagger.annotations.ApiModel;

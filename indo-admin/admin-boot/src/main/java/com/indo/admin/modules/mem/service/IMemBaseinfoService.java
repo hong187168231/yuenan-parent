@@ -3,12 +3,12 @@ package com.indo.admin.modules.mem.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.indo.admin.modules.mem.entity.MemBaseinfo;
 import com.indo.common.mybatis.base.PageResult;
-import com.indo.user.pojo.req.mem.MemAddReq;
-import com.indo.user.pojo.req.mem.MemBaseInfoPageReq;
-import com.indo.user.pojo.req.mem.MemEditStatusReq;
-import com.indo.user.pojo.req.mem.MemEditReq;
-import com.indo.user.pojo.vo.MemBaseInfoVo;
-import com.indo.user.pojo.vo.mem.MemBaseDetailVO;
+import com.indo.admin.modules.mem.req.MemAddReq;
+import com.indo.admin.modules.mem.req.MemBaseInfoPageReq;
+import com.indo.admin.modules.mem.req.MemEditStatusReq;
+import com.indo.admin.modules.mem.req.MemEditReq;
+import com.indo.admin.modules.mem.vo.MemBaseInfoVo;
+import com.indo.admin.modules.mem.vo.MemBaseDetailVO;
 
 /**
  * <p>

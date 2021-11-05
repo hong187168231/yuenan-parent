@@ -3,7 +3,7 @@ package com.indo.admin.modules.mem.controller;
 
 import com.indo.admin.modules.mem.service.IMemNoticeService;
 import com.indo.common.result.Result;
-import com.indo.user.pojo.req.mem.MemNoticeAddReq;
+import com.indo.admin.modules.mem.req.MemNoticeAddReq;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;

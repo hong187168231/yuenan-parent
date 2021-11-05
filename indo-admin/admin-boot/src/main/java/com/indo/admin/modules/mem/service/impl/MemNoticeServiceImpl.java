@@ -5,7 +5,7 @@ import com.indo.admin.modules.mem.entity.MemNotice;
 import com.indo.admin.modules.mem.mapper.MemNoticeMapper;
 import com.indo.admin.modules.mem.service.IMemNoticeService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.indo.user.pojo.req.mem.MemNoticeAddReq;
+import com.indo.admin.modules.mem.req.MemNoticeAddReq;
 import org.springframework.stereotype.Service;
 
 /**
