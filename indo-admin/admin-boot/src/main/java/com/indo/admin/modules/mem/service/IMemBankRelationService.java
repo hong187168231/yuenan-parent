@@ -1,29 +1,23 @@
 package com.indo.admin.modules.mem.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.indo.admin.modules.mem.entity.MemBankRelation;
+import com.indo.admin.modules.mem.req.MemBankRelationPageReq;
+import com.indo.admin.modules.mem.req.MemBankRelationSwitchStatusReq;
+import com.indo.admin.modules.mem.vo.MemBankRelationVO;
 import com.indo.common.mybatis.base.PageResult;
-import com.indo.user.pojo.dto.MembankRelationDTO;
-import com.indo.user.pojo.entity.MemBankRelation;
-import com.indo.user.pojo.vo.MemBankRelationExportVO;
-import com.indo.user.pojo.vo.MemBankRelationVO;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.List;
-
+/**
+ * <p>
+ * 用户绑定银行卡信息表 服务类
+ * </p>
+ *
+ * @author kevin
+ * @since 2021-11-06
+ */
 public interface IMemBankRelationService extends IService<MemBankRelation> {
 
-    /**
-     * 分页查询
-     * @param membankRelationDTO
-     * @return
-     */
-    PageResult<MemBankRelationVO> queryList(MembankRelationDTO membankRelationDTO);
+    PageResult<MemBankRelationVO> queryList(MemBankRelationPageReq req);
 
-    /**
-     * 数据导出
-     * @param ids
-     * @return
-     */
-    void exportList(HttpServletResponse response,List<Long> ids) throws IOException;
+    void switchStatus(MemBankRelationSwitchStatusReq req);
+
 }

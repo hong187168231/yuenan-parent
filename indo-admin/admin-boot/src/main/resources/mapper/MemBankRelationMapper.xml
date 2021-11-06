@@ -2,56 +2,22 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.indo.admin.modules.mem.mapper.MemBankRelationMapper">
 
-    <resultMap id="MemBankRelationVo" type="com.indo.user.pojo.vo.MemBankRelationVO">
-        <id column="memBankRelationId" jdbcType="BIGINT" property="memBankRelationId" />
-        <result column="mem_id" jdbcType="BIGINT" property="memId" />
-        <result column="account" jdbcType="VARCHAR" property="account" />
-        <result column="real_name" jdbcType="VARCHAR" property="realName" />
-        <result column="bankName" jdbcType="VARCHAR" property="bankName" />
-        <result column="bank_id" jdbcType="BIGINT" property="bankId" />
-        <result column="bank_card" jdbcType="VARCHAR" property="bankCard" />
-        <result column="account_opening_address" jdbcType="VARCHAR" property="accountOpeningAddress" />
-        <result column="status" jdbcType="TINYINT" property="status" />
-        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    </resultMap>
-
-    <select id="queryList" resultMap="MemBankRelationVo">
-        SELECT mbr.id as memBankRelationId, mbr.mem_id ,mb.account,mb.real_name,mbk.`name` as bankName, mbr.bank_id , mbr.bank_card , mbr.account_opening_address, mbr.`status`,mbr.create_time
-        FROM mem_bank_relation mbr
-        LEFT JOIN mem_baseinfo mb on mb.id = mbr.mem_id
-        LEFT JOIN mem_bank mbk on mbk.id = mbr.bank_id
+    <select id="queryList" resultType="com.indo.admin.modules.mem.vo.MemBankRelationVO">
+        SELECT * FROM mem_bank_relation mb
         <where>
-            <if test="dto.type !=null and dto.type == 0">
-                and mb.account like concat('%', #{dto.keywords,jdbcType=VARCHAR}, '%')
+            <if test="req.memId !=null">
+                and mb.memId = #{req.memId}
             </if>
-            <if test="dto.type !=null and dto.type == 1">
-                and mb.real_name like concat('%', #{dto.keywords,jdbcType=VARCHAR}, '%')
+            <if test="req.keyword !=null and req.keyword !=''">
+                and mb.city like concat('%', #{req.keyword,jdbcType=VARCHAR}, '%')
             </if>
-            <if test="dto.type !=null and dto.type == 2">
-                and mbr.bank_card like concat('%', #{dto.keywords,jdbcType=VARCHAR}, '%')
+            <if test="req.startTime != null and req.startTime != ''">
+                and mb.create_time &gt;= req.startTime
             </if>
-            <if test="dto.memType !=null">
-                and mb.Identity_type = #{dto.memType}
-            </if>
-            <if test="dto.beginTime != null and dto.beginTime != ''"><!-- 开始时间检索 -->
-                and date_format(mb.create_time,'%y%m%d') &gt;= date_format(#{dto.beginTime},'%y%m%d')
-            </if>
-            <if test="dto.endTime != null and dto.endTime != ''"><!-- 结束时间检索 -->
-                and date_format(mb.create_time,'%y%m%d') &lt;= date_format(#{dto.endTime},'%y%m%d')
+            <if test="req.endTime != null and req.endTime != ''">
+                and mb.create_time &gt;= req.endTime
             </if>
         </where>
-        ORDER BY mb.create_time desc
-    </select>
-
-    <select id="getListByIds" resultMap="MemBankRelationVo">
-        SELECT mbr.id as memBankRelationId, mbr.mem_id ,mb.account,mb.real_name,mbk.`name` as bankName, mbr.bank_id , mbr.bank_card , mbr.account_opening_address, mbr.`status`,mbr.create_time
-        FROM mem_bank_relation mbr
-        LEFT JOIN mem_baseinfo mb on mb.id = mbr.mem_id
-        LEFT JOIN mem_bank mbk on mbk.id = mbr.bank_id
-        where mbr.id in
-            <foreach collection="ids" item="item" open="(" separator="," close=")">
-                #{item}
-            </foreach>
         ORDER BY mb.create_time desc
     </select>
 </mapper>
