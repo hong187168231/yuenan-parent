@@ -3,21 +3,30 @@
 <mapper namespace="com.indo.admin.modules.mem.mapper.MemBankRelationMapper">
 
     <select id="queryList" resultType="com.indo.admin.modules.mem.vo.MemBankRelationVO">
-        SELECT * FROM mem_bank_relation mb
-        <where>
-            <if test="req.memId !=null">
-                and mb.memId = #{req.memId}
-            </if>
-            <if test="req.keyword !=null and req.keyword !=''">
-                and mb.city like concat('%', #{req.keyword,jdbcType=VARCHAR}, '%')
-            </if>
-            <if test="req.startTime != null and req.startTime != ''">
-                and mb.create_time &gt;= req.startTime
-            </if>
-            <if test="req.endTime != null and req.endTime != ''">
-                and mb.create_time &gt;= req.endTime
-            </if>
-        </where>
-        ORDER BY mb.create_time desc
+        SELECT mbr.*, mb.name as bankName FROM mem_bank_relation mbr
+        Left join mem_bank mb on mbr.bank_id = mb.id
+        where mbr.is_del = 0
+        <if test="req.memId !=null">
+            and mbr.memId = #{req.memId}
+        </if>
+        <if test="req.keyword !=null and req.keyword !=''">
+            and
+            (
+            mbr.city like concat('%', #{req.keyword,jdbcType=VARCHAR}, '%')
+            or
+            mbr.account_opening_address like concat('%', #{req.keyword,jdbcType=VARCHAR}, '%')
+            or
+            mbr.phone like concat('%', #{req.keyword,jdbcType=VARCHAR}, '%')
+            or
+            mbr.email like concat('%', #{req.keyword,jdbcType=VARCHAR}, '%')
+            )
+        </if>
+        <if test="req.startTime != null and req.startTime != ''">
+            and mbr.create_time &gt;= req.startTime
+        </if>
+        <if test="req.endTime != null and req.endTime != ''">
+            and mbr.create_time &lt;= req.endTime
+        </if>
+        ORDER BY mbr.create_time desc
     </select>
 </mapper>
