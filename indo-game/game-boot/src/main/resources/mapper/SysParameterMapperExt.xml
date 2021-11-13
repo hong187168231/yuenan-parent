@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.indo.game.mapper.SysParameterMapperExt">
+    <resultMap id="BaseResultMap" type="com.indo.admin.pojo.entity.SysParameter">
+        <id column="sysparamid" jdbcType="BIGINT" property="sysparamid"/>
+        <result column="sysparamcode" jdbcType="VARCHAR" property="sysparamcode"/>
+        <result column="sysparamname" jdbcType="VARCHAR" property="sysparamname"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="sysparamvalue" jdbcType="VARCHAR" property="sysparamvalue"/>
+        <result column="sortby" jdbcType="INTEGER" property="sortby"/>
+        <result column="status" jdbcType="DECIMAL" property="status"/>
+        <result column="is_delete" jdbcType="BIT" property="isDelete"/>
+        <result column="create_user" jdbcType="VARCHAR" property="createUser"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_user" jdbcType="VARCHAR" property="updateUser"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    sysparamid, sysparamcode, sysparamname, remark, sysparamvalue,sortby, status, is_delete, create_user, create_time, update_user, update_time
+    </sql>
+
+    <select id="selectByCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_parameter
+        where sysparamcode = #{sysparamcode,jdbcType=VARCHAR}
+        and is_delete = b'0'
+        limit 1
+    </select>
+
+<!--    <select id="getList" parameterType="SysParameter" resultMap="BaseResultMap">-->
+<!--        select <include refid="Base_Column_List"/>-->
+<!--        from sys_parameter s-->
+<!--        where s.is_delete = b'0'-->
+<!--        <if test="sysparamcode != null and sysparamcode !=''">-->
+<!--            and (-->
+<!--                    s.sysparamcode LIKE CONCAT('%',#{sysparamcode,jdbcType=VARCHAR},'%')-->
+<!--                    or-->
+<!--                    s.sysparamname LIKE CONCAT('%',#{sysparamcode,jdbcType=VARCHAR},'%')-->
+<!--                )-->
+<!--        </if>-->
+<!--        and s.sysparamid not in-->
+<!--            ( SELECT sysparamid-->
+<!--            from sys_parameter sp-->
+<!--            where sp.sysparamcode LIKE '%LIVE_BAS_ANCHOR_PLATFORM_%'-->
+<!--            or sp.sysparamcode='LIVE_WS_URL'-->
+<!--            or sp.sysparamcode='LIVE_SG_PUSH_ADDRESS_URL' )-->
+<!--        order by s.create_time desc-->
+<!--    </select>-->
+
+<!--    <select id="getRepeat" parameterType="SysParameter" resultMap="BaseResultMap">-->
+<!--        select-->
+<!--        <include refid="Base_Column_List"/>-->
+<!--        from sys_parameter s-->
+<!--        where-->
+<!--        sysparamcode = #{sysparamcode,jdbcType=VARCHAR}-->
+<!--        and is_delete = b'0'-->
+<!--        <if test="sysparamid != null">-->
+<!--            and sysparamid != #{sysparamid,jdbcType=TIMESTAMP}-->
+<!--        </if>-->
+<!--        limit 1-->
+<!--    </select>-->
+
+<!--    <select id="queryByCodeNames" parameterType="java.util.List" resultMap="BaseResultMap">-->
+<!--        select-->
+<!--        <include refid="Base_Column_List"/>-->
+<!--        from sys_parameter s-->
+<!--        where-->
+<!--        sysparamcode in-->
+<!--        <foreach collection="codeNames" item="code" open="(" close=")" separator=",">-->
+<!--            #{code}-->
+<!--        </foreach>-->
+<!--        and is_delete = b'0' and status = 0;-->
+<!--    </select>-->
+
+<!--    <select id="getSameCodeParamList" resultType="java.lang.String">-->
+<!--        select-->
+<!--        s.sysparamvalue-->
+<!--        from sys_parameter s-->
+<!--        where-->
+<!--        s.is_delete = b'0'-->
+<!--        and status = 0-->
+<!--        and  s.sysparamcode LIKE CONCAT('%',#{sysparamcode,jdbcType=VARCHAR},'%')-->
+<!--        order by s.sortby ${sort}-->
+
+<!--    </select>-->
+
+</mapper>

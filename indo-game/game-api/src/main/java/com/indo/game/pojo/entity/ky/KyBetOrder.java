@@ -1,0 +1,872 @@
+package com.indo.game.pojo.entity.ky;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
+
+public class KyBetOrder implements Serializable {
+    /**
+     * 字段: ky_bet_order.id<br/>
+     * 主键: 自动增长<br/>
+     * 必填: true<br/>
+     * 缺省: <br/>
+     * 长度: 10<br/>
+     * 说明: 
+     *
+     * @mbggenerated
+     */
+    private Integer id;
+
+    /**
+     * 字段: ky_bet_order.game_id<br/>
+     * 必填: false<br/>
+     * 缺省: <br/>
+     * 长度: 50<br/>
+     * 说明: 游戏局号列表
+     *
+     * @mbggenerated
+     */
+    private String gameId;
+
+    /**
+     * 字段: ky_bet_order.account<br/>
+     * 必填: false<br/>
+     * 缺省: <br/>
+     * 长度: 50<br/>
+     * 说明: 玩家帐号列表
+     *
+     * @mbggenerated
+     */
+    private String account;
+
+    /**
+     * 字段: ky_bet_order.server_id<br/>
+     * 必填: false<br/>
+     * 缺省: <br/>
+     * 长度: 10<br/>
+     * 说明: 房间 ID
+     *
+     * @mbggenerated
+     */
+    private Integer serverId;
+
+    /**
+     * 字段: ky_bet_order.kind_id<br/>
+     * 必填: false<br/>
+     * 缺省: <br/>
+     * 长度: 10<br/>
+     * 说明: 游戏 ID
+     *
+     * @mbggenerated
+     */
+    private Integer kindId;
+
+    /**
+     * 字段: ky_bet_order.table_id<br/>
+     * 必填: false<br/>
+     * 缺省: <br/>
+     * 长度: 10<br/>
+     * 说明: 桌子号
+     *
+     * @mbggenerated
+     */
+    private Integer tableId;
+
+    /**
+     * 字段: ky_bet_order.chair_id<br/>
+     * 必填: false<br/>
+     * 缺省: <br/>
+     * 长度: 10<br/>
+     * 说明: 椅子号
+     *
+     * @mbggenerated
+     */
+    private Integer chairId;
+
+    /**
+     * 字段: ky_bet_order.user_count<br/>
+     * 必填: false<br/>
+     * 缺省: <br/>
+     * 长度: 10<br/>
+     * 说明: 玩家数量
+     *
+     * @mbggenerated
+     */
+    private Integer userCount;
+
+    /**
+     * 字段: ky_bet_order.card_value<br/>
+     * 必填: false<br/>
+     * 缺省: <br/>
+     * 长度: 4000<br/>
+     * 说明: 手牌公共牌
+     *
+     * @mbggenerated
+     */
+    private String cardValue;
+
+    /**
+     * 字段: ky_bet_order.cell_score<br/>
+     * 必填: false<br/>
+     * 缺省: <br/>
+     * 长度: 10<br/>
+     * 说明: 有效下注
+     *
+     * @mbggenerated
+     */
+    private BigDecimal cellScore;
+
+    /**
+     * 字段: ky_bet_order.all_bet<br/>
+     * 必填: false<br/>
+     * 缺省: <br/>
+     * 长度: 10<br/>
+     * 说明: 总下注
+     *
+     * @mbggenerated
+     */
+    private BigDecimal allBet;
+
+    /**
+     * 字段: ky_bet_order.profit<br/>
+     * 必填: false<br/>
+     * 缺省: <br/>
+     * 长度: 10<br/>
+     * 说明: 盈利
+     *
+     * @mbggenerated
+     */
+    private BigDecimal profit;
+
+    /**
+     * 字段: ky_bet_order.revenue<br/>
+     * 必填: false<br/>
+     * 缺省: <br/>
+     * 长度: 10<br/>
+     * 说明: 抽水
+     *
+     * @mbggenerated
+     */
+    private BigDecimal revenue;
+
+    /**
+     * 字段: ky_bet_order.game_start_time<br/>
+     * 必填: false<br/>
+     * 缺省: <br/>
+     * 长度: 19<br/>
+     * 说明: 游戏开始时间
+     *
+     * @mbggenerated
+     */
+    @JsonFormat(
+            pattern = "yyyy-MM-dd HH:mm:ss",
+            timezone = "GMT+8"
+    )
+    private Date gameStartTime;
+
+    /**
+     * 字段: ky_bet_order.game_end_time<br/>
+     * 必填: false<br/>
+     * 缺省: <br/>
+     * 长度: 19<br/>
+     * 说明: 游戏结束时间
+     *
+     * @mbggenerated
+     */
+    @JsonFormat(
+            pattern = "yyyy-MM-dd HH:mm:ss",
+            timezone = "GMT+8"
+    )
+    private Date gameEndTime;
+
+    /**
+     * 字段: ky_bet_order.channel_id<br/>
+     * 必填: false<br/>
+     * 缺省: <br/>
+     * 长度: 10<br/>
+     * 说明: 渠道 ID
+     *
+     * @mbggenerated
+     */
+    private Integer channelId;
+
+    /**
+     * 字段: ky_bet_order.line_code<br/>
+     * 必填: false<br/>
+     * 缺省: <br/>
+     * 长度: 50<br/>
+     * 说明: 游戏结果对应玩家所属站点
+     *
+     * @mbggenerated
+     */
+    private String lineCode;
+
+    /**
+     * 字段: ky_bet_order.is_handle<br/>
+     * 必填: true<br/>
+     * 缺省: 0<br/>
+     * 长度: 10<br/>
+     * 说明: 打码量：0未处理，1已处理
+     *
+     * @mbggenerated
+     */
+    private Integer isHandle;
+
+    /**
+     * 字段: ky_bet_order.kind_name<br/>
+     * 必填: false<br/>
+     * 缺省: <br/>
+     * 长度: 255<br/>
+     * 说明: 游戏名称
+     *
+     * @mbggenerated
+     */
+    private String kindName;
+
+    /**
+     * 字段: ky_bet_order.server_name<br/>
+     * 必填: false<br/>
+     * 缺省: <br/>
+     * 长度: 255<br/>
+     * 说明: 房间名称
+     *
+     * @mbggenerated
+     */
+    private String serverName;
+
+    /**
+     * 字段: ky_bet_order.user_id<br/>
+     * 必填: false<br/>
+     * 缺省: <br/>
+     * 长度: 10<br/>
+     * 说明: 用户ID
+     *
+     * @mbggenerated
+     */
+    private Integer userId;
+
+    /**
+     * 字段: ky_bet_order.create_time<br/>
+     * 必填: true<br/>
+     * 缺省: CURRENT_TIMESTAMP<br/>
+     * 长度: 19<br/>
+     * 说明: 创建时间
+     *
+     * @mbggenerated
+     */
+    @JsonFormat(
+            pattern = "yyyy-MM-dd HH:mm:ss",
+            timezone = "GMT+8"
+    )
+    private Date createTime;
+
+    /**
+     * This field was generated by MyBatis Generator.
+     * This field corresponds to the database table ky_bet_order
+     *
+     * @mbggenerated
+     */
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * @return ky_bet_order.id: 
+     *
+     * @mbggenerated
+     */
+    public Integer getId() {
+        return id;
+    }
+
+    /**
+     * 字段: ky_bet_order.id<br/>
+     * 主键: 自动增长<br/>
+     * 必填: true<br/>
+     * 缺省: <br/>
+     * 长度: 10<br/>
+     * 说明: 
+     *
+     * @mbggenerated
+     */
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    /**
+     * @return ky_bet_order.game_id: 游戏局号列表
+     *
+     * @mbggenerated
+     */
+    public String getGameId() {
+        return gameId;
+    }
+
+    /**
+     * 字段: ky_bet_order.game_id<br/>
+     * 必填: false<br/>
+     * 缺省: <br/>
+     * 长度: 50<br/>
+     * 说明: 游戏局号列表
+     *
+     * @mbggenerated
+     */
+    public void setGameId(String gameId) {
+        this.gameId = gameId;
+    }
+
+    /**
+     * @return ky_bet_order.account: 玩家帐号列表
+     *
+     * @mbggenerated
+     */
+    public String getAccount() {
+        return account;
+    }
+
+    /**
+     * 字段: ky_bet_order.account<br/>
+     * 必填: false<br/>
+     * 缺省: <br/>
+     * 长度: 50<br/>
+     * 说明: 玩家帐号列表
+     *
+     * @mbggenerated
+     */
+    public void setAccount(String account) {
+        this.account = account;
+    }
+
+    /**
+     * @return ky_bet_order.server_id: 房间 ID
+     *
+     * @mbggenerated
+     */
+    public Integer getServerId() {
+        return serverId;
+    }
+
+    /**
+     * 字段: ky_bet_order.server_id<br/>
+     * 必填: false<br/>
+     * 缺省: <br/>
+     * 长度: 10<br/>
+     * 说明: 房间 ID
+     *
+     * @mbggenerated
+     */
+    public void setServerId(Integer serverId) {
+        this.serverId = serverId;
+    }
+
+    /**
+     * @return ky_bet_order.kind_id: 游戏 ID
+     *
+     * @mbggenerated
+     */
+    public Integer getKindId() {
+        return kindId;
+    }
+
+    /**
+     * 字段: ky_bet_order.kind_id<br/>
+     * 必填: false<br/>
+     * 缺省: <br/>
+     * 长度: 10<br/>
+     * 说明: 游戏 ID
+     *
+     * @mbggenerated
+     */
+    public void setKindId(Integer kindId) {
+        this.kindId = kindId;
+    }
+
+    /**
+     * @return ky_bet_order.table_id: 桌子号
+     *
+     * @mbggenerated
+     */
+    public Integer getTableId() {
+        return tableId;
+    }
+
+    /**
+     * 字段: ky_bet_order.table_id<br/>
+     * 必填: false<br/>
+     * 缺省: <br/>
+     * 长度: 10<br/>
+     * 说明: 桌子号
+     *
+     * @mbggenerated
+     */
+    public void setTableId(Integer tableId) {
+        this.tableId = tableId;
+    }
+
+    /**
+     * @return ky_bet_order.chair_id: 椅子号
+     *
+     * @mbggenerated
+     */
+    public Integer getChairId() {
+        return chairId;
+    }
+
+    /**
+     * 字段: ky_bet_order.chair_id<br/>
+     * 必填: false<br/>
+     * 缺省: <br/>
+     * 长度: 10<br/>
+     * 说明: 椅子号
+     *
+     * @mbggenerated
+     */
+    public void setChairId(Integer chairId) {
+        this.chairId = chairId;
+    }
+
+    /**
+     * @return ky_bet_order.user_count: 玩家数量
+     *
+     * @mbggenerated
+     */
+    public Integer getUserCount() {
+        return userCount;
+    }
+
+    /**
+     * 字段: ky_bet_order.user_count<br/>
+     * 必填: false<br/>
+     * 缺省: <br/>
+     * 长度: 10<br/>
+     * 说明: 玩家数量
+     *
+     * @mbggenerated
+     */
+    public void setUserCount(Integer userCount) {
+        this.userCount = userCount;
+    }
+
+    /**
+     * @return ky_bet_order.card_value: 手牌公共牌
+     *
+     * @mbggenerated
+     */
+    public String getCardValue() {
+        return cardValue;
+    }
+
+    /**
+     * 字段: ky_bet_order.card_value<br/>
+     * 必填: false<br/>
+     * 缺省: <br/>
+     * 长度: 4000<br/>
+     * 说明: 手牌公共牌
+     *
+     * @mbggenerated
+     */
+    public void setCardValue(String cardValue) {
+        this.cardValue = cardValue;
+    }
+
+    /**
+     * @return ky_bet_order.cell_score: 有效下注
+     *
+     * @mbggenerated
+     */
+    public BigDecimal getCellScore() {
+        return cellScore;
+    }
+
+    /**
+     * 字段: ky_bet_order.cell_score<br/>
+     * 必填: false<br/>
+     * 缺省: <br/>
+     * 长度: 10<br/>
+     * 说明: 有效下注
+     *
+     * @mbggenerated
+     */
+    public void setCellScore(BigDecimal cellScore) {
+        this.cellScore = cellScore;
+    }
+
+    /**
+     * @return ky_bet_order.all_bet: 总下注
+     *
+     * @mbggenerated
+     */
+    public BigDecimal getAllBet() {
+        return allBet;
+    }
+
+    /**
+     * 字段: ky_bet_order.all_bet<br/>
+     * 必填: false<br/>
+     * 缺省: <br/>
+     * 长度: 10<br/>
+     * 说明: 总下注
+     *
+     * @mbggenerated
+     */
+    public void setAllBet(BigDecimal allBet) {
+        this.allBet = allBet;
+    }
+
+    /**
+     * @return ky_bet_order.profit: 盈利
+     *
+     * @mbggenerated
+     */
+    public BigDecimal getProfit() {
+        return profit;
+    }
+
+    /**
+     * 字段: ky_bet_order.profit<br/>
+     * 必填: false<br/>
+     * 缺省: <br/>
+     * 长度: 10<br/>
+     * 说明: 盈利
+     *
+     * @mbggenerated
+     */
+    public void setProfit(BigDecimal profit) {
+        this.profit = profit;
+    }
+
+    /**
+     * @return ky_bet_order.revenue: 抽水
+     *
+     * @mbggenerated
+     */
+    public BigDecimal getRevenue() {
+        return revenue;
+    }
+
+    /**
+     * 字段: ky_bet_order.revenue<br/>
+     * 必填: false<br/>
+     * 缺省: <br/>
+     * 长度: 10<br/>
+     * 说明: 抽水
+     *
+     * @mbggenerated
+     */
+    public void setRevenue(BigDecimal revenue) {
+        this.revenue = revenue;
+    }
+
+    /**
+     * @return ky_bet_order.game_start_time: 游戏开始时间
+     *
+     * @mbggenerated
+     */
+    public Date getGameStartTime() {
+        return gameStartTime;
+    }
+
+    /**
+     * 字段: ky_bet_order.game_start_time<br/>
+     * 必填: false<br/>
+     * 缺省: <br/>
+     * 长度: 19<br/>
+     * 说明: 游戏开始时间
+     *
+     * @mbggenerated
+     */
+    public void setGameStartTime(Date gameStartTime) {
+        this.gameStartTime = gameStartTime;
+    }
+
+    /**
+     * @return ky_bet_order.game_end_time: 游戏结束时间
+     *
+     * @mbggenerated
+     */
+    public Date getGameEndTime() {
+        return gameEndTime;
+    }
+
+    /**
+     * 字段: ky_bet_order.game_end_time<br/>
+     * 必填: false<br/>
+     * 缺省: <br/>
+     * 长度: 19<br/>
+     * 说明: 游戏结束时间
+     *
+     * @mbggenerated
+     */
+    public void setGameEndTime(Date gameEndTime) {
+        this.gameEndTime = gameEndTime;
+    }
+
+    /**
+     * @return ky_bet_order.channel_id: 渠道 ID
+     *
+     * @mbggenerated
+     */
+    public Integer getChannelId() {
+        return channelId;
+    }
+
+    /**
+     * 字段: ky_bet_order.channel_id<br/>
+     * 必填: false<br/>
+     * 缺省: <br/>
+     * 长度: 10<br/>
+     * 说明: 渠道 ID
+     *
+     * @mbggenerated
+     */
+    public void setChannelId(Integer channelId) {
+        this.channelId = channelId;
+    }
+
+    /**
+     * @return ky_bet_order.line_code: 游戏结果对应玩家所属站点
+     *
+     * @mbggenerated
+     */
+    public String getLineCode() {
+        return lineCode;
+    }
+
+    /**
+     * 字段: ky_bet_order.line_code<br/>
+     * 必填: false<br/>
+     * 缺省: <br/>
+     * 长度: 50<br/>
+     * 说明: 游戏结果对应玩家所属站点
+     *
+     * @mbggenerated
+     */
+    public void setLineCode(String lineCode) {
+        this.lineCode = lineCode;
+    }
+
+    /**
+     * @return ky_bet_order.is_handle: 打码量：0未处理，1已处理
+     *
+     * @mbggenerated
+     */
+    public Integer getIsHandle() {
+        return isHandle;
+    }
+
+    /**
+     * 字段: ky_bet_order.is_handle<br/>
+     * 必填: true<br/>
+     * 缺省: 0<br/>
+     * 长度: 10<br/>
+     * 说明: 打码量：0未处理，1已处理
+     *
+     * @mbggenerated
+     */
+    public void setIsHandle(Integer isHandle) {
+        this.isHandle = isHandle;
+    }
+
+    /**
+     * @return ky_bet_order.kind_name: 游戏名称
+     *
+     * @mbggenerated
+     */
+    public String getKindName() {
+        return kindName;
+    }
+
+    /**
+     * 字段: ky_bet_order.kind_name<br/>
+     * 必填: false<br/>
+     * 缺省: <br/>
+     * 长度: 255<br/>
+     * 说明: 游戏名称
+     *
+     * @mbggenerated
+     */
+    public void setKindName(String kindName) {
+        this.kindName = kindName;
+    }
+
+    /**
+     * @return ky_bet_order.server_name: 房间名称
+     *
+     * @mbggenerated
+     */
+    public String getServerName() {
+        return serverName;
+    }
+
+    /**
+     * 字段: ky_bet_order.server_name<br/>
+     * 必填: false<br/>
+     * 缺省: <br/>
+     * 长度: 255<br/>
+     * 说明: 房间名称
+     *
+     * @mbggenerated
+     */
+    public void setServerName(String serverName) {
+        this.serverName = serverName;
+    }
+
+    /**
+     * @return ky_bet_order.user_id: 用户ID
+     *
+     * @mbggenerated
+     */
+    public Integer getUserId() {
+        return userId;
+    }
+
+    /**
+     * 字段: ky_bet_order.user_id<br/>
+     * 必填: false<br/>
+     * 缺省: <br/>
+     * 长度: 10<br/>
+     * 说明: 用户ID
+     *
+     * @mbggenerated
+     */
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
+    /**
+     * @return ky_bet_order.create_time: 创建时间
+     *
+     * @mbggenerated
+     */
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    /**
+     * 字段: ky_bet_order.create_time<br/>
+     * 必填: true<br/>
+     * 缺省: CURRENT_TIMESTAMP<br/>
+     * 长度: 19<br/>
+     * 说明: 创建时间
+     *
+     * @mbggenerated
+     */
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    /**
+     * This method was generated by MyBatis Generator.
+     * This method corresponds to the database table ky_bet_order
+     *
+     * @mbggenerated
+     */
+    @Override
+    public boolean equals(Object that) {
+        if (this == that) {
+            return true;
+        }
+        if (that == null) {
+            return false;
+        }
+        if (getClass() != that.getClass()) {
+            return false;
+        }
+        KyBetOrder other = (KyBetOrder) that;
+        return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
+            && (this.getGameId() == null ? other.getGameId() == null : this.getGameId().equals(other.getGameId()))
+            && (this.getAccount() == null ? other.getAccount() == null : this.getAccount().equals(other.getAccount()))
+            && (this.getServerId() == null ? other.getServerId() == null : this.getServerId().equals(other.getServerId()))
+            && (this.getKindId() == null ? other.getKindId() == null : this.getKindId().equals(other.getKindId()))
+            && (this.getTableId() == null ? other.getTableId() == null : this.getTableId().equals(other.getTableId()))
+            && (this.getChairId() == null ? other.getChairId() == null : this.getChairId().equals(other.getChairId()))
+            && (this.getUserCount() == null ? other.getUserCount() == null : this.getUserCount().equals(other.getUserCount()))
+            && (this.getCardValue() == null ? other.getCardValue() == null : this.getCardValue().equals(other.getCardValue()))
+            && (this.getCellScore() == null ? other.getCellScore() == null : this.getCellScore().equals(other.getCellScore()))
+            && (this.getAllBet() == null ? other.getAllBet() == null : this.getAllBet().equals(other.getAllBet()))
+            && (this.getProfit() == null ? other.getProfit() == null : this.getProfit().equals(other.getProfit()))
+            && (this.getRevenue() == null ? other.getRevenue() == null : this.getRevenue().equals(other.getRevenue()))
+            && (this.getGameStartTime() == null ? other.getGameStartTime() == null : this.getGameStartTime().equals(other.getGameStartTime()))
+            && (this.getGameEndTime() == null ? other.getGameEndTime() == null : this.getGameEndTime().equals(other.getGameEndTime()))
+            && (this.getChannelId() == null ? other.getChannelId() == null : this.getChannelId().equals(other.getChannelId()))
+            && (this.getLineCode() == null ? other.getLineCode() == null : this.getLineCode().equals(other.getLineCode()))
+            && (this.getIsHandle() == null ? other.getIsHandle() == null : this.getIsHandle().equals(other.getIsHandle()))
+            && (this.getKindName() == null ? other.getKindName() == null : this.getKindName().equals(other.getKindName()))
+            && (this.getServerName() == null ? other.getServerName() == null : this.getServerName().equals(other.getServerName()))
+            && (this.getUserId() == null ? other.getUserId() == null : this.getUserId().equals(other.getUserId()))
+            && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()));
+    }
+
+    /**
+     * This method was generated by MyBatis Generator.
+     * This method corresponds to the database table ky_bet_order
+     *
+     * @mbggenerated
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
+        result = prime * result + ((getGameId() == null) ? 0 : getGameId().hashCode());
+        result = prime * result + ((getAccount() == null) ? 0 : getAccount().hashCode());
+        result = prime * result + ((getServerId() == null) ? 0 : getServerId().hashCode());
+        result = prime * result + ((getKindId() == null) ? 0 : getKindId().hashCode());
+        result = prime * result + ((getTableId() == null) ? 0 : getTableId().hashCode());
+        result = prime * result + ((getChairId() == null) ? 0 : getChairId().hashCode());
+        result = prime * result + ((getUserCount() == null) ? 0 : getUserCount().hashCode());
+        result = prime * result + ((getCardValue() == null) ? 0 : getCardValue().hashCode());
+        result = prime * result + ((getCellScore() == null) ? 0 : getCellScore().hashCode());
+        result = prime * result + ((getAllBet() == null) ? 0 : getAllBet().hashCode());
+        result = prime * result + ((getProfit() == null) ? 0 : getProfit().hashCode());
+        result = prime * result + ((getRevenue() == null) ? 0 : getRevenue().hashCode());
+        result = prime * result + ((getGameStartTime() == null) ? 0 : getGameStartTime().hashCode());
+        result = prime * result + ((getGameEndTime() == null) ? 0 : getGameEndTime().hashCode());
+        result = prime * result + ((getChannelId() == null) ? 0 : getChannelId().hashCode());
+        result = prime * result + ((getLineCode() == null) ? 0 : getLineCode().hashCode());
+        result = prime * result + ((getIsHandle() == null) ? 0 : getIsHandle().hashCode());
+        result = prime * result + ((getKindName() == null) ? 0 : getKindName().hashCode());
+        result = prime * result + ((getServerName() == null) ? 0 : getServerName().hashCode());
+        result = prime * result + ((getUserId() == null) ? 0 : getUserId().hashCode());
+        result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
+        return result;
+    }
+
+    /**
+     * This method was generated by MyBatis Generator.
+     * This method corresponds to the database table ky_bet_order
+     *
+     * @mbggenerated
+     */
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getClass().getSimpleName());
+        sb.append(" [");
+        sb.append("Hash = ").append(hashCode());
+        sb.append(", id=").append(id);
+        sb.append(", gameId=").append(gameId);
+        sb.append(", account=").append(account);
+        sb.append(", serverId=").append(serverId);
+        sb.append(", kindId=").append(kindId);
+        sb.append(", tableId=").append(tableId);
+        sb.append(", chairId=").append(chairId);
+        sb.append(", userCount=").append(userCount);
+        sb.append(", cardValue=").append(cardValue);
+        sb.append(", cellScore=").append(cellScore);
+        sb.append(", allBet=").append(allBet);
+        sb.append(", profit=").append(profit);
+        sb.append(", revenue=").append(revenue);
+        sb.append(", gameStartTime=").append(gameStartTime);
+        sb.append(", gameEndTime=").append(gameEndTime);
+        sb.append(", channelId=").append(channelId);
+        sb.append(", lineCode=").append(lineCode);
+        sb.append(", isHandle=").append(isHandle);
+        sb.append(", kindName=").append(kindName);
+        sb.append(", serverName=").append(serverName);
+        sb.append(", userId=").append(userId);
+        sb.append(", createTime=").append(createTime);
+        sb.append("]");
+        return sb.toString();
+    }
+}

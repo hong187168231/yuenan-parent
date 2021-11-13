@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.indo.game.mapper.db.DbBetOrderMapperExt">
+    <insert id="insertBatch" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO `db_bet_order`(`seq_no`, `player_id`, `game_date`, `g_type`, `m_type`, `room_type`,
+        `currency`, `bet`, `win`, `total`, `denom`, `before_balance`, `after_balance`, `last_modify_time`, `player_ip`, `client_type`, `game_name`, `member_id`) VALUES
+        <foreach collection="list" item="bet" separator=",">
+            (#{bet.seqNo}, #{bet.playerId}, #{bet.gameDate}, #{bet.gType}, #{bet.mType}, #{bet.roomType}, #{bet.currency}, #{bet.bet},
+            #{bet.win}, #{bet.total}, #{bet.denom}, #{bet.beforeBalance}, #{bet.afterBalance}, #{bet.lastModifyTime}, #{bet.playerIp}, #{bet.clientType}, #{bet.gameName}, #{bet.memberId})
+        </foreach>
+        ON DUPLICATE KEY UPDATE seq_no = VALUES(seq_no)
+    </insert>
+
+    <select id="statisticalDayData" resultType="com.indo.game.pojo.dto.GameDailyDataDO">
+        SELECT date_format(game_date, '%Y-%m-%d') AS date,
+               SUM(ABS(bet))                      AS gameamt,
+               SUM(total)                           AS gameawardamt
+        FROM db_bet_order
+        WHERE game_date BETWEEN #{startTime} and #{endTime}
+        GROUP BY date;
+    </select>
+
+    <select id="statisticalDataByUser" resultType="com.indo.game.pojo.dto.GameUserDataDO">
+        SELECT member_id     as userid,
+               SUM(ABS(bet)) AS gameamt,
+               SUM(total)      AS gameawardamt
+        FROM db_bet_order
+        WHERE game_date BETWEEN #{startTime} and #{endTime}
+        GROUP BY member_id;
+    </select>
+
+    <select id="queryJdbOrderList"
+            resultType="com.indo.game.pojo.entity.db.DbBetOrder">
+        select
+          member_id as memberId
+        from db_bet_order
+        where
+         is_handle = 0
+        group  by
+        member_id
+    </select>
+
+</mapper>

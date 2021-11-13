@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.indo.game.mapper.ae.AeBetOrderMapperExt">
+    <insert id="insertBatch" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO `ae_bet_order`(`order_no`, `uname`, `game_id`, `battle_id`, `room_id`,
+        `bet`, `allbet`, `profit`, `revenue`, `stime`, `etime`, `playernum`, `xiqian`, `result`,
+        `chair_id`, `create_time`, `game_name`, `room_name`, `user_id`) VALUES
+        <foreach collection="list" item="bet" separator=",">
+            (#{bet.orderNo}, #{bet.uname}, #{bet.gameId}, #{bet.battleId}, #{bet.roomId}, #{bet.bet},
+            #{bet.allbet}, #{bet.profit}, #{bet.revenue}, #{bet.stime}, #{bet.etime}, #{bet.playernum}, #{bet.xiqian},
+            #{bet.result}, #{bet.chairId}, #{bet.createTime}, #{bet.gameName}, #{bet.roomName}, #{bet.userId})
+        </foreach>
+        ON DUPLICATE KEY UPDATE battle_id = VALUES(battle_id)
+    </insert>
+
+    <select id="statisticalDayData" resultType="com.indo.game.pojo.dto.GameDailyDataDO">
+        SELECT date_format(etime, '%Y-%m-%d') AS date,
+               SUM(abs(allbet))                    AS gameamt,
+               SUM(profit)                    AS gameawardamt
+        FROM ae_bet_order
+        WHERE etime BETWEEN #{startTime} and #{endTime}
+        GROUP BY date;
+    </select>
+
+    <select id="statisticalDataByUser" resultType="com.indo.game.pojo.dto.GameUserDataDO">
+        SELECT user_id as userid,
+               SUM(abs(allbet)) AS gameamt,
+               SUM(profit) AS gameawardamt
+        FROM ae_bet_order
+        WHERE etime BETWEEN #{startTime} and #{endTime}
+        GROUP BY user_id;
+    </select>
+
+    <select id="queryAeList"
+            resultType="com.indo.game.pojo.entity.ae.AeBetOrder">
+        select
+        user_id as userId
+        from ae_bet_order
+        where
+         is_handle = 0
+        group  by
+        user_id
+    </select>
+</mapper>

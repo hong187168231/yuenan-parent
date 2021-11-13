@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.indo.game.mapper.ag.AgBetOrderMapperExt">
+    <insert id="insertBatch" parameterType="java.util.List" useGeneratedKeys="true"
+            keyProperty="id">
+        INSERT INTO `ag_bet_order`(`data_type`, `player_name`, `agent_code`, `game_code`,
+        `net_amount`,
+        `bet_time`, `game_type`, `bet_amount`, `valid_bet_amount`, `flag`, `play_type`, `currency`,
+        `table_code`, `login_ip`,
+        `recalcu_time`, `platform_id`, `platform_type`, `stringex`, `remark`, `round`, `result`,
+        `before_credit`, `device_type`,
+        `bet_amount_bonus`, `net_amount_bonus`, `game_category`, `cancel_reason`, bill_no,
+        create_time, game_name, pay_name, platform_name, round_name, user_id) VALUES
+        <foreach collection="list" item="bet" separator=",">
+            (#{bet.dataType}, #{bet.playerName}, #{bet.agentCode}, #{bet.gameCode},
+            #{bet.netAmount}, #{bet.betTime},
+            #{bet.gameType}, #{bet.betAmount}, #{bet.validBetAmount}, #{bet.flag}, #{bet.playType},
+            #{bet.currency}, #{bet.tableCode},
+            #{bet.loginIp}, #{bet.recalcuTime}, #{bet.platformId}, #{bet.platformType},
+            #{bet.stringex}, #{bet.remark}, #{bet.round},
+            #{bet.result}, #{bet.beforeCredit}, #{bet.deviceType}, #{bet.betAmountBonus},
+            #{bet.netAmountBonus}, #{bet.gameCategory}, #{bet.cancelReason}
+            , #{bet.billNo}, #{bet.createTime}, #{bet.gameName}, #{bet.payName},
+            #{bet.platformName}, #{bet.roundName}, #{bet.userId})
+        </foreach>
+        ON DUPLICATE KEY UPDATE bill_no = VALUES(bill_no)
+    </insert>
+
+
+    <insert id="insertFishBatch" parameterType="java.util.List" useGeneratedKeys="true"
+            keyProperty="id">
+        INSERT INTO `ag_fish_bet_order`(`data_type`, `hsr_id`, `trade_no`, `platform_type`,
+        `scene_id`,
+        `player_name`, `type`, `scene_start_Time`, `scene_end_time`, `room_id`, `roombet`, `cost`,
+        `earn`, `jack_pot_comm`,
+        `transfer_amount`, `previous_amount`, `current_amount`, `currency`, `exchange_rate`, `ip`,
+        `flag`, `creation_time`, `game_name`,
+        `game_code`, `device_type`, `member_id`) VALUES
+        <foreach collection="list" item="bet" separator=",">
+            (#{bet.dataType}, #{bet.hsrId}, #{bet.tradeNo}, #{bet.platformType}, #{bet.sceneId},
+            #{bet.playerName},
+            #{bet.type}, #{bet.sceneStartTime}, #{bet.sceneEndTime}, #{bet.roomId}, #{bet.roombet},
+            #{bet.cost}, #{bet.earn},
+            #{bet.jackPotComm}, #{bet.transferAmount}, #{bet.previousAmount}, #{bet.currentAmount},
+            #{bet.currency}, #{bet.exchangeRate}, #{bet.ip},
+            #{bet.flag}, #{bet.creationTime}, #{bet.gameName}, #{bet.gameCode}, #{bet.deviceType},
+            #{bet.memberId})
+        </foreach>
+        ON DUPLICATE KEY UPDATE trade_no = VALUES(trade_no)
+    </insert>
+
+    <select id="statisticalDayData"
+            resultType="com.indo.game.pojo.dto.GameDailyDataDO">
+        SELECT date_format(bet_time, '%Y-%m-%d') AS date,
+               SUM(abs(bet_amount))                 AS gameamt,
+               SUM(net_amount)                   AS gameawardamt
+        FROM ag_bet_order
+        WHERE bet_time BETWEEN #{startTime} and #{endTime}
+        GROUP BY date;
+    </select>
+    <select id="statisticalDataByUser"
+            resultType="com.indo.game.pojo.dto.GameUserDataDO">
+        SELECT user_id         as userid ,
+               SUM(abs(bet_amount)) AS gameamt,
+               SUM(net_amount) AS gameawardamt
+        FROM ag_bet_order
+        WHERE bet_time BETWEEN #{startTime} and #{endTime}
+        GROUP BY user_id;
+    </select>
+
+    <select id="batchFishOrderList"
+            resultType="com.indo.game.pojo.entity.ag.AgFishBetOrder">
+        select
+         member_id as memberId
+        from ag_fish_bet_order
+        where
+         is_hald = 0
+        group  by
+        member_id
+    </select>
+
+    <select id="batchOrderBetList"
+            resultType="com.indo.game.pojo.entity.ag.AgBetOrder">
+        select
+         user_id as userId
+        from ag_bet_order
+        where
+         is_handle = 0
+        group  by
+        user_id
+    </select>
+</mapper>
