@@ -1,15 +1,15 @@
 server:
-  port: 8500
+  port: 8400
 
 spring:
   application:
-    name: indo-game
+    name: indo-pay
   cloud:
     nacos:
       # 注册中心
       discovery:
         server-addr: http://45.207.55.209:8848
-        namespace: indo-dev
+        namespace: indo-test
       # 配置中心
 
       config:

@@ -1,29 +1,18 @@
-package com.indo.pay.pojo.entity;
+package com.indo.pay.pojo.vo;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.indo.common.pojo.entity.BaseEntity;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 /**
- * <p>
- * 支付方式配置
- * </p>
- *
- * @author puff
- * @since 2021-11-13
+ * 支付渠道配置返回
  */
 @Data
-@EqualsAndHashCode(callSuper = true)
-@TableName("pay_way_config")
-@ApiModel(value="WayConfig对象", description="支付方式配置")
-public class PayWayConfig extends BaseEntity {
-
+public class PayWayVO extends BaseEntity {
     private static final long serialVersionUID = 1L;
+
 
     @ApiModelProperty(value = "支付方式id")
     @TableId(value = "pay_way_id", type = IdType.AUTO)
@@ -35,6 +24,7 @@ public class PayWayConfig extends BaseEntity {
     @ApiModelProperty(value = "支付方式名称")
     private String wayName;
 
+    @ApiModelProperty(value = "银行名称")
     private String bankName;
 
     @ApiModelProperty(value = "支付账号")
@@ -69,6 +59,5 @@ public class PayWayConfig extends BaseEntity {
 
     @ApiModelProperty(value = "备注")
     private String remark;
-
 
 }
