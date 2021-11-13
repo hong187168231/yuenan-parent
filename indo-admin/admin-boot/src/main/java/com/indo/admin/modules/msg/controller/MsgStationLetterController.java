@@ -2,18 +2,15 @@ package com.indo.admin.modules.msg.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.modules.msg.service.IMsgStationLetterService;
-import com.indo.admin.pojo.entity.AgentApply;
-import com.indo.common.mybatis.base.PageResult;
+import com.indo.admin.pojo.vo.MsgStationLetterVO;
 import com.indo.common.result.Result;
 import com.indo.user.pojo.dto.MsgStationLetterDTO;
 import com.indo.user.pojo.dto.StationLetterAddDTO;
-import com.indo.user.pojo.vo.MsgStationLetterVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

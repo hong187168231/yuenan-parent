@@ -1,19 +1,20 @@
 package com.indo.admin.modules.msg.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.indo.admin.modules.msg.mapper.MsgPushRecordMapper;
 import com.indo.admin.modules.msg.service.IMsgPushRecordService;
-import com.indo.common.mybatis.base.PageResult;
+import com.indo.admin.pojo.dto.MsgDTO;
+import com.indo.admin.pojo.entity.MsgPushRecord;
+import com.indo.admin.pojo.vo.MsgPushRecordVO;
+import com.indo.common.result.PageResult;
 import com.indo.user.pojo.dto.MsgPushRecordDTO;
 import com.indo.user.pojo.dto.PushRecordAddDTO;
-import com.indo.user.pojo.entity.MsgPushRecord;
-import com.indo.user.pojo.vo.MsgPushRecordVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -45,5 +46,15 @@ public class MsgPushRecordServiceImpl extends ServiceImpl<MsgPushRecordMapper, M
         BeanUtils.copyProperties(pushRecordAddDTO, pushRecord);
         // 保存到记录表
         pushRecordMapper.insert(pushRecord);
+    }
+
+
+    @Override
+    public PageResult<MsgPushRecord> getSysMsg(MsgDTO msgDTO) {
+        Page<MsgPushRecord> page = new Page<>(msgDTO.getPage(), msgDTO.getLimit());
+        LambdaQueryWrapper<MsgPushRecord> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(MsgPushRecord::getDeviceType, msgDTO.getDeviceNo());
+        Page<MsgPushRecord> pageList = baseMapper.selectPage(page, wrapper);
+        return PageResult.getPageResult(pageList);
     }
 }

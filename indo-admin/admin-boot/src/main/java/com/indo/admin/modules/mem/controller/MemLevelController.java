@@ -5,7 +5,7 @@ import com.indo.admin.modules.mem.req.MemLevelPageReq;
 import com.indo.admin.modules.mem.req.MemLevelUpdateReq;
 import com.indo.admin.modules.mem.service.IMemLevelService;
 import com.indo.admin.modules.mem.vo.MemLevelVo;
-import com.indo.common.mybatis.base.PageResult;
+import com.indo.common.result.PageResult;
 import com.indo.common.result.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

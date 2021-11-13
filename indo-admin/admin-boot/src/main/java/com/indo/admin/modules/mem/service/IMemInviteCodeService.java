@@ -5,7 +5,7 @@ import com.indo.admin.modules.mem.entity.MemInviteCode;
 import com.indo.admin.modules.mem.req.MemInviteCodeSwitchStatusReq;
 import com.indo.admin.modules.mem.req.MeminviteCodePageReq;
 import com.indo.admin.modules.mem.vo.MemInviteCodeVo;
-import com.indo.common.mybatis.base.PageResult;
+import com.indo.common.result.PageResult;
 
 /**
  * <p>

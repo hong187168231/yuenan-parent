@@ -2,21 +2,21 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.indo.admin.modules.msg.mapper.MsgStationLetterMapper">
 
-    <resultMap id="SysStationLetter" type="com.indo.user.pojo.entity.MsgStationLetter">
+    <resultMap id="SysStationLetter" type="com.indo.admin.pojo.entity.MsgStationLetter">
         <id property="id" column="id" jdbcType="BIGINT"/>
         <result property="title" column="title" jdbcType="VARCHAR"/>
         <result property="content" column="content" jdbcType="VARCHAR"/>
         <result property="sendMemId" column="send_mem_id" jdbcType="BIGINT"/>
-        <result property="type" column="type" jdbcType="INTEGER"/>
+        <result property="sendType" column="send_type" jdbcType="INTEGER"/>
         <result property="receiver" column="receiver" jdbcType="VARCHAR"/>
-        <result property="receiverName" column="receiver_name" jdbcType="VARCHAR"/>
+        <result property="receiver" column="receiver" jdbcType="VARCHAR"/>
         <result property="remark" column="remark" jdbcType="VARCHAR"/>
         <result property="isDel" column="is_del" jdbcType="INTEGER"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
         <result  property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
     </resultMap>
 
-    <resultMap id="SysStationLetterVo" extends="SysStationLetter" type="com.indo.user.pojo.vo.MsgStationLetterVO">
+    <resultMap id="SysStationLetterVo" extends="SysStationLetter" type="com.indo.admin.pojo.vo.MsgStationLetterVO">
     </resultMap>
 
     <select id="queryList" resultMap="SysStationLetterVo">

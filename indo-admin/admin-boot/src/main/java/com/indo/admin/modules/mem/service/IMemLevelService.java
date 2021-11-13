@@ -6,8 +6,8 @@ import com.indo.admin.modules.mem.req.MemLevelPageReq;
 import com.indo.admin.modules.mem.req.MemLevelUpdateReq;
 import com.indo.admin.modules.mem.vo.MemLevelVo;
 import com.indo.admin.pojo.criteria.MemLevelQueryCriteria;
-import com.indo.common.mybatis.base.PageResult;
 import com.indo.common.mybatis.base.service.SuperService;
+import com.indo.common.result.PageResult;
 
 import java.util.List;
 

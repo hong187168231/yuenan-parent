@@ -1,22 +1,25 @@
 package com.indo.admin.modules.msg.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.indo.admin.modules.mem.mapper.MemBaseinfoMapper;
 import com.indo.admin.modules.mem.mapper.MemLevelMapper;
 import com.indo.admin.modules.msg.mapper.MsgStationLetterMapper;
 import com.indo.admin.modules.msg.service.IMsgStationLetterService;
-import com.indo.admin.modules.pay.mapper.PayGroupConfigMapper;
-import com.indo.common.mybatis.base.PageResult;
+import com.indo.admin.pojo.dto.MsgDTO;
+import com.indo.admin.pojo.entity.MsgStationLetter;
+import com.indo.admin.pojo.vo.MsgStationLetterVO;
+import com.indo.common.result.PageResult;
+import com.indo.common.web.util.DozerUtil;
 import com.indo.user.pojo.dto.MsgStationLetterDTO;
 import com.indo.user.pojo.dto.StationLetterAddDTO;
-import com.indo.user.pojo.entity.MsgStationLetter;
-import com.indo.user.pojo.vo.MsgStationLetterVO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
 
@@ -37,8 +40,8 @@ public class MsgStationLetterServiceImpl extends ServiceImpl<MsgStationLetterMap
     private MemLevelMapper levelMapper;
     @Autowired
     private MsgStationLetterMapper letterMapper;
-    @Autowired
-    private PayGroupConfigMapper payGroupConfigMapper;
+    @Resource
+    private DozerUtil dozerUtil;
 
     @Override
     public Page<MsgStationLetterVO> queryList(MsgStationLetterDTO letterDTO) {
@@ -59,5 +62,14 @@ public class MsgStationLetterServiceImpl extends ServiceImpl<MsgStationLetterMap
         }
         // 发送到客户端 todo
         return letterMapper.insert(letter);
+    }
+
+    @Override
+    public PageResult<MsgStationLetter> getPersonalMsg(MsgDTO msgDTO) {
+        Page<MsgStationLetter> page = new Page<>(msgDTO.getPage(), msgDTO.getLimit());
+        LambdaQueryWrapper<MsgStationLetter> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(MsgStationLetter::getReceiver, msgDTO.getUserId());
+        Page<MsgStationLetter> pageList = baseMapper.selectPage(page, wrapper);
+        return PageResult.getPageResult(pageList);
     }
 }

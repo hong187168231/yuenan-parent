@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.indo.admin.modules.mem.entity.MemBaseinfo;
 import com.indo.admin.modules.mem.mapper.MemBaseinfoMapper;
 import com.indo.admin.modules.mem.service.IMemBaseinfoService;
-import com.indo.common.mybatis.base.PageResult;
+import com.indo.common.result.PageResult;
 import com.indo.common.utils.encrypt.MD5;
 import com.indo.admin.modules.mem.req.MemAddReq;
 import com.indo.admin.modules.mem.req.MemBaseInfoPageReq;

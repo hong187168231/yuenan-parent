@@ -2,9 +2,9 @@ package com.indo.admin.modules.msg.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.indo.admin.pojo.entity.MsgPushRecord;
+import com.indo.admin.pojo.vo.MsgPushRecordVO;
 import com.indo.user.pojo.dto.MsgPushRecordDTO;
-import com.indo.user.pojo.entity.MsgPushRecord;
-import com.indo.user.pojo.vo.MsgPushRecordVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

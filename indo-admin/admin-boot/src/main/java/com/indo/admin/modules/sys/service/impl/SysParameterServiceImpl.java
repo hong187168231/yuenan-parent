@@ -8,7 +8,7 @@ import com.indo.admin.modules.sys.mapper.SysParameterMapper;
 import com.indo.admin.modules.sys.service.ISysParameterService;
 import com.indo.admin.pojo.entity.SysParameter;
 import com.indo.common.enums.SysParameterEnum;
-import com.indo.common.mybatis.base.PageResult;
+import com.indo.common.result.PageResult;
 import com.indo.common.result.ResultCode;
 import com.indo.common.utils.StringUtils;
 import com.indo.common.web.exception.BizException;

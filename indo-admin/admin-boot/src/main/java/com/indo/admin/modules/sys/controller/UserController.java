@@ -10,7 +10,7 @@ import com.indo.admin.pojo.vo.UserVO;
 import com.indo.admin.modules.sys.service.ISysPermissionService;
 import com.indo.admin.modules.sys.service.ISysUserRoleService;
 import com.indo.admin.modules.sys.service.ISysUserService;
-import com.indo.common.mybatis.base.PageResult;
+import com.indo.common.result.PageResult;
 import com.indo.common.result.Result;
 import com.indo.common.web.util.JwtUtils;
 import io.swagger.annotations.Api;

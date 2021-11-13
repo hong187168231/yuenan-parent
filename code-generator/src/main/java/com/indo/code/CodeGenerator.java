@@ -44,9 +44,11 @@ public class CodeGenerator {
         GlobalConfig gc = new GlobalConfig();
         String projectPath = System.getProperty("user.dir");
         gc.setOutputDir(projectPath + "/code-generator/src/main/java");
-        gc.setAuthor("kevin");
+        gc.setAuthor("xxx");
         gc.setOpen(false);
-//        gc.setSwagger2(true);
+        gc.setSwagger2(true);
+        gc.setBaseResultMap(true);
+        gc.setBaseColumnList(true);
         mpg.setGlobalConfig(gc);
 
         // 数据源配置

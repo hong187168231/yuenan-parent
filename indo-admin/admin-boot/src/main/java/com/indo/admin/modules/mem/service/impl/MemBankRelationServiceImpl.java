@@ -8,7 +8,7 @@ import com.indo.admin.modules.mem.req.MemBankRelationPageReq;
 import com.indo.admin.modules.mem.req.MemBankRelationSwitchStatusReq;
 import com.indo.admin.modules.mem.service.IMemBankRelationService;
 import com.indo.admin.modules.mem.vo.MemBankRelationVO;
-import com.indo.common.mybatis.base.PageResult;
+import com.indo.common.result.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

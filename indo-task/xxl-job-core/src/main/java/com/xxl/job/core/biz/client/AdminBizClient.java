@@ -22,7 +22,7 @@ public class AdminBizClient implements AdminBiz {
         this.accessToken = accessToken;
 
         // valid
-        if (!this.addressUrl.endsWith("/")) {
+        if (!this.addressUrl.endsWith("/")  ) {
             this.addressUrl = this.addressUrl + "/";
         }
     }

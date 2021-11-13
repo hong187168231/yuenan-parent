@@ -2,7 +2,7 @@ package com.indo.admin.modules.file.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.indo.admin.pojo.entity.FileInfo;
-import com.indo.common.mybatis.base.PageResult;
+import com.indo.common.result.PageResult;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.OutputStream;

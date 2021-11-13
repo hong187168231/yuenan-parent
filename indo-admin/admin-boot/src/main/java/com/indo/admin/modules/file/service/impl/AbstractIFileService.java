@@ -7,7 +7,7 @@ import com.indo.admin.modules.file.mapper.FileMapper;
 import com.indo.admin.modules.file.service.IFileService;
 import com.indo.admin.pojo.bo.ObjectInfo;
 import com.indo.admin.pojo.entity.FileInfo;
-import com.indo.common.mybatis.base.PageResult;
+import com.indo.common.result.PageResult;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.MapUtils;
 import org.springframework.web.multipart.MultipartFile;

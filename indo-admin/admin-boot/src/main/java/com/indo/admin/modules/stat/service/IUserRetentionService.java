@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.indo.admin.modules.stat.entity.StatUserRetention;
 import com.indo.admin.modules.stat.req.UserRetentionPageReq;
 import com.indo.admin.modules.stat.vo.UserRetentionVo;
-import com.indo.common.mybatis.base.PageResult;
+import com.indo.common.result.PageResult;
 
 /**
  * <p>

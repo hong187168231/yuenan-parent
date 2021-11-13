@@ -1,6 +1,7 @@
 package com.indo.user.config;
 
 import com.google.common.collect.Lists;
+import com.indo.common.annotation.LoginUser;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -41,6 +42,7 @@ public class SwaggerConfiguration {
         pars.add(ticketPar.build());
         
         return new Docket(DocumentationType.SWAGGER_2)
+                .ignoredParameterTypes(LoginUser.class)
                 .apiInfo(apiInfo())
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.indo"))  //设置扫描 swagger的注解包路径 所有的需要用swagger显示的

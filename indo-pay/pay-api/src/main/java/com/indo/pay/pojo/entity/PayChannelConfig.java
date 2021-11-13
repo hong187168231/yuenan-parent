@@ -2,22 +2,31 @@ package com.indo.pay.pojo.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.indo.common.pojo.entity.BaseEntity;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.util.Date;
-
 /**
- * 支付渠道置实体类
+ * <p>
+ * 支付渠道配置
+ * </p>
+ *
+ * @author puff
+ * @since 2021-11-13
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
+@TableName("pay_channel_config")
+@ApiModel(value = "ChannelConfig对象", description = "支付渠道配置")
 public class PayChannelConfig extends BaseEntity {
+
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "id", type = IdType.AUTO)
+    @ApiModelProperty(value = "支付渠道id")
+    @TableId(value = "pay_channel_id", type = IdType.AUTO)
     private Long payChannelId;
 
     @ApiModelProperty(value = "支付渠道名称")
@@ -26,14 +35,8 @@ public class PayChannelConfig extends BaseEntity {
     @ApiModelProperty(value = "支付渠道描述")
     private String channelDesc;
 
-    @ApiModelProperty(value = "支付渠道类型")
-    private String channeType;
-
-    @ApiModelProperty(value = "支付地址")
-    private String payUrl;
-
-    @ApiModelProperty(value = "是否正常 0 正常 1 停用")
-    private Boolean isDel;
+    @ApiModelProperty(value = "支付渠道类型 1 第三方 2 银联 3 人工")
+    private Integer channelType;
 
     @ApiModelProperty(value = "排序字段")
     private Integer sortBy;
@@ -41,16 +44,13 @@ public class PayChannelConfig extends BaseEntity {
     @ApiModelProperty(value = "创建人")
     private String createUser;
 
-    @ApiModelProperty(value = "最后更新人")
+    @ApiModelProperty(value = "更新人")
     private String updateUser;
-
-    @ApiModelProperty(value = "创建时间")
-    private Date createTime;
-
-    @ApiModelProperty(value = "最后更新时间")
-    private Date updateTime;
 
     @ApiModelProperty(value = "备注")
     private String remark;
+
+    private Integer isDel;
+
 
 }
