@@ -2,7 +2,7 @@ package com.indo.admin.modules.mem.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.modules.mem.service.IWithdrawService;
-import com.indo.common.mybatis.base.PageResult;
+import com.indo.common.result.PageResult;
 import com.indo.common.result.Result;
 import com.indo.user.pojo.dto.WithdrawDto;
 import com.indo.user.pojo.vo.WithdrawVo;

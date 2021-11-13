@@ -2,12 +2,12 @@ package com.indo.admin.modules.msg.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.indo.admin.pojo.entity.AgentApply;
-import com.indo.common.mybatis.base.PageResult;
+import com.indo.admin.pojo.dto.MsgDTO;
+import com.indo.admin.pojo.entity.MsgStationLetter;
+import com.indo.admin.pojo.vo.MsgStationLetterVO;
+import com.indo.common.result.PageResult;
 import com.indo.user.pojo.dto.MsgStationLetterDTO;
 import com.indo.user.pojo.dto.StationLetterAddDTO;
-import com.indo.user.pojo.entity.MsgStationLetter;
-import com.indo.user.pojo.vo.MsgStationLetterVO;
 
 /**
  * <p>
@@ -32,7 +32,9 @@ public interface IMsgStationLetterService extends IService<MsgStationLetter> {
      * @param
      * @return
      */
-    int add(StationLetterAddDTO
-                    letterDTO);
+    int add(StationLetterAddDTO letterDTO);
+
+
+    PageResult<MsgStationLetter> getPersonalMsg(MsgDTO msgDTO);
 
 }

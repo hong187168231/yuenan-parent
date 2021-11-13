@@ -1,14 +1,10 @@
 package com.indo.admin.modules.ade.service;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.indo.admin.pojo.entity.AdvertiseRecord;
 import com.indo.admin.pojo.vo.AdvertiseRecordVO;
 import com.indo.common.result.Result;
 import com.indo.user.pojo.dto.AdvertiseRecordDTO;
-import com.indo.user.pojo.dto.MsgPushRecordDTO;
-import com.indo.user.pojo.dto.PushRecordAddDTO;
-import com.indo.user.pojo.vo.MsgPushRecordVO;
 
 import java.util.List;
 

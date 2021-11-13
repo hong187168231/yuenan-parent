@@ -2,7 +2,7 @@ package com.indo.admin.modules.report.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.modules.mem.service.IMemBaseinfoService;
-import com.indo.common.mybatis.base.PageResult;
+import com.indo.common.result.PageResult;
 import com.indo.common.result.Result;
 import com.indo.user.pojo.dto.AgentReportDto;
 import com.indo.user.pojo.dto.MemReportDto;

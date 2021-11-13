@@ -5,14 +5,11 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.indo.admin.modules.ade.mapper.AdvertiseRecordMapper;
 import com.indo.admin.modules.ade.service.IAdvertiseRecordService;
-import com.indo.admin.pojo.dto.LogSmallDTO;
 import com.indo.admin.pojo.entity.AdvertiseRecord;
-import com.indo.admin.pojo.entity.AgentApply;
 import com.indo.admin.pojo.vo.AdvertiseRecordVO;
 import com.indo.common.result.Result;
 import com.indo.common.web.util.DozerUtil;
 import com.indo.user.pojo.dto.AdvertiseRecordDTO;
-import com.indo.user.pojo.vo.MsgPushRecordVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 

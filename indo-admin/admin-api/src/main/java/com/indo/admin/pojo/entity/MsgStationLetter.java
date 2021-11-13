@@ -1,4 +1,4 @@
-package com.indo.user.pojo.entity;
+package com.indo.admin.pojo.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;

@@ -1,15 +1,10 @@
 package com.indo.admin.modules.ade.controller;
 
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.modules.ade.service.IAdvertiseRecordService;
-import com.indo.admin.modules.msg.service.IMsgStationLetterService;
 import com.indo.admin.pojo.vo.AdvertiseRecordVO;
 import com.indo.common.result.Result;
 import com.indo.user.pojo.dto.AdvertiseRecordDTO;
-import com.indo.user.pojo.dto.MsgStationLetterDTO;
-import com.indo.user.pojo.dto.StationLetterAddDTO;
-import com.indo.user.pojo.vo.MsgStationLetterVO;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

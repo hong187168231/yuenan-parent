@@ -2,7 +2,7 @@ package com.indo.admin.modules.file.controller;
 
 import com.indo.admin.modules.file.service.IFileService;
 import com.indo.admin.pojo.entity.FileInfo;
-import com.indo.common.mybatis.base.PageResult;
+import com.indo.common.result.PageResult;
 import com.indo.common.result.Result;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;

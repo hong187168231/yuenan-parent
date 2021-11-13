@@ -1,6 +1,6 @@
-package com.indo.user.pojo.vo;
+package com.indo.admin.pojo.vo;
 
-import com.indo.user.pojo.entity.MsgStationLetter;
+import com.indo.admin.pojo.entity.MsgStationLetter;
 import lombok.Data;
 
 @Data

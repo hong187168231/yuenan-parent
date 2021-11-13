@@ -1,11 +1,10 @@
 package com.indo.admin.modules.stat.controller;
 
 
-import com.indo.admin.modules.mem.vo.MemBaseInfoVo;
 import com.indo.admin.modules.stat.req.UserRetentionPageReq;
 import com.indo.admin.modules.stat.service.IUserRetentionService;
 import com.indo.admin.modules.stat.vo.UserRetentionVo;
-import com.indo.common.mybatis.base.PageResult;
+import com.indo.common.result.PageResult;
 import com.indo.common.result.Result;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;

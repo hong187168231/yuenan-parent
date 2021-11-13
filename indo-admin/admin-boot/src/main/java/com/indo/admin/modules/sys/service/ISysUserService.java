@@ -4,7 +4,7 @@ package com.indo.admin.modules.sys.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.indo.admin.pojo.entity.SysUser;
-import com.indo.common.mybatis.base.PageResult;
+import com.indo.common.result.PageResult;
 
 public interface ISysUserService extends IService<SysUser> {
 

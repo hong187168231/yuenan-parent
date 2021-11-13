@@ -3,7 +3,7 @@ package com.indo.admin.modules.mem.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.modules.mem.service.IManualDepositWithDrawService;
-import com.indo.common.mybatis.base.PageResult;
+import com.indo.common.result.PageResult;
 import com.indo.common.result.Result;
 import com.indo.user.pojo.dto.ManualDepositWithDrawDto;
 import com.indo.user.pojo.vo.ManualDepositWithDrawVO;

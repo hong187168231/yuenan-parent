@@ -2,11 +2,12 @@ package com.indo.admin.modules.msg.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.indo.common.mybatis.base.PageResult;
+import com.indo.admin.pojo.dto.MsgDTO;
+import com.indo.admin.pojo.entity.MsgPushRecord;
+import com.indo.admin.pojo.vo.MsgPushRecordVO;
+import com.indo.common.result.PageResult;
 import com.indo.user.pojo.dto.MsgPushRecordDTO;
 import com.indo.user.pojo.dto.PushRecordAddDTO;
-import com.indo.user.pojo.entity.MsgPushRecord;
-import com.indo.user.pojo.vo.MsgPushRecordVO;
 
 /**
  * <p>
@@ -31,4 +32,6 @@ public interface IMsgPushRecordService extends IService<MsgPushRecord> {
      */
     void add(PushRecordAddDTO pushRecordAddDTO);
 
+
+    PageResult<MsgPushRecord> getSysMsg(MsgDTO msgDTO);
 }

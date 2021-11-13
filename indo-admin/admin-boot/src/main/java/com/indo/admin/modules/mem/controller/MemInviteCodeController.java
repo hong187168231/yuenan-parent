@@ -4,7 +4,7 @@ import com.indo.admin.modules.mem.req.MemInviteCodeSwitchStatusReq;
 import com.indo.admin.modules.mem.req.MeminviteCodePageReq;
 import com.indo.admin.modules.mem.service.IMemInviteCodeService;
 import com.indo.admin.modules.mem.vo.MemInviteCodeVo;
-import com.indo.common.mybatis.base.PageResult;
+import com.indo.common.result.PageResult;
 import com.indo.common.result.Result;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -10,7 +10,7 @@ import com.indo.admin.pojo.entity.SysUserRole;
 import com.indo.admin.modules.sys.service.ISysUserRoleService;
 import com.indo.admin.modules.sys.service.ISysUserService;
 import com.indo.common.constant.GlobalConstants;
-import com.indo.common.mybatis.base.PageResult;
+import com.indo.common.result.PageResult;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
