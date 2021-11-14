@@ -11,7 +11,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(value = ServiceIdConstant.ADMIN_SERVICE_ID, fallback = UserFeignFallbackClient.class)
+@FeignClient(value = ServiceIdConstant.ADMIN_SERVICE_ID, fallbackFactory = UserFeignFallbackClient.class)
 public interface MsgFeignClient {
 
     @GetMapping("/api/v1/msg/personal")

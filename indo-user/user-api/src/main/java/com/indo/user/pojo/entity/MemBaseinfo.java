@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -24,165 +25,149 @@ public class MemBaseinfo extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 用户ID
+     */
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     /**
-     * 会员类型 0 普通会员 1 代理会员 2带玩会员
-     */
-    @ApiModelProperty(value = "会员类型 0 普通会员 1 代理会员 2带玩会员")
-    private Integer IdentityType;
-
-    /**
-     * 用户账户
-     */
-    @ApiModelProperty(value = "用户账户")
-    private String account;
-
-    /**
      * 真实姓名
      */
-    @ApiModelProperty(value = "真实姓名")
     private String realName;
 
     /**
      * 昵称
      */
-    @ApiModelProperty(value = "昵称")
     private String nickName;
 
-    @ApiModelProperty(value = "密码")
+    /**
+     * 用户唯一标识
+     */
+    private String accno;
+
+    /**
+     * 密码盐值
+     */
+    private String salt;
+
+    /**
+     * 登陆密码
+     */
     private String password;
 
     /**
-     * 安全码
+     * 登录密码MD5
      */
-    @ApiModelProperty(value = "安全码")
-    private String securityCode;
+    private String passwordMd5;
 
     /**
      * 手机号
      */
-    @ApiModelProperty(value = "手机号")
-    private String mobile;
+    private String phone;
 
-    @ApiModelProperty(value = "邮箱")
+    /**
+     * 电子邮件
+     */
     private String email;
 
-    @ApiModelProperty(value = "qq")
-    private String qq;
-
-    @ApiModelProperty(value = "微信")
-    private String wechat;
+    /**
+     * facebook
+     */
+    private String faceBook;
 
     /**
-     * 邀请码
+     * whatsapp
      */
-    @ApiModelProperty(value = "邀请码")
-    private String inviteCode;
+    private String whatsApp;
 
     /**
-     * 提现费率
+     * 注册时使用的邀请码（上级的）
      */
-    @ApiModelProperty(value = "提现费率")
-    private BigDecimal cashRate;
+    private String rInviteCode;
 
     /**
-     * 第三方反水状态 0 停止 1正常
+     * 用户层级id
      */
-    @ApiModelProperty(value = "第三方反水状态 0 停止 1正常")
-    private Integer rebateStatus;
+    private Long groupId;
 
     /**
-     * 能否修改下级返水 0 不能 1 能
+     * 用户等级
      */
-    @ApiModelProperty(value = "能否修改下级返水 0 不能 1 能")
-    private Integer belowOddsStatus;
+    private Integer memLevel;
 
     /**
-     * 成长值和等级更新状态 0 正常 1 停止
+     * 账户类型：1 玩家 2-代理
      */
-    @ApiModelProperty(value = "成长值和等级更新状态 0 正常 1 停止")
-    private Integer growthStatus;
-
-    /**
-     * 当天最大提款次数
-     */
-    @ApiModelProperty(value = "当天最大提款次数")
-    private Integer maxCashNum;
-
-    /**
-     * 今日密码错误次数
-     */
-    @ApiModelProperty(value = "今日密码错误次数")
-    private Integer passErrorNum;
-
-    /**
-     * 头像地址
-     */
-    @ApiModelProperty(value = "头像地址")
-    private String headUrl;
-
-    @ApiModelProperty(value = "层级id")
-    private Long hierarchyId;
-
-    @ApiModelProperty(value = "等级id")
-    private Long levelId;
-
-    /**
-     * 用户状态 0 正常 1 冻结
-     */
-    @ApiModelProperty(value = "用户状态 0 正常 1 冻结 2 停用")
-    private Boolean status;
-
-    /**
-     * 会员积分
-     */
-    @ApiModelProperty(value = "会员积分")
-    private Integer point;
-
-    /**
-     * 注册来源 1 苹果 2 安卓 3 h5
-     */
-    @ApiModelProperty(value = "注册来源 1 苹果 2 安卓 3 h5")
-    private Integer source;
+    private Integer acc_type;
 
     /**
      * 余额
      */
-    @ApiModelProperty(value = "余额")
-    private Long balance;
+    private BigDecimal balance;
 
     /**
-     * 是否删除
+     * 注册来源 ios、android
      */
-    @ApiModelProperty(value = "是否删除")
-    private Boolean isDel;
+    private String registerSource;
+
+    /**
+     * 注册ip
+     */
+    private String registerIp;
+
+    /**
+     * 登录ip地址
+     */
+    private String clientIp;
+
+    /**
+     * 账户状态 0 正常 1 删除 2冻结
+     */
+    private Integer status;
+
+    /**
+     * 禁止登陆
+     */
+    private Integer prohibitLogin;
+
+    /**
+     * 是否禁止邀请发展下级和会员：0 否 1 是
+     */
+    private Integer prohibitInvite;
+
+    /**
+     * 是否禁止投注：0 否 1 是
+     */
+    private Integer prohibitInvestment;
+
+    /**
+     * 是否禁止出款：0 否 1 是
+     */
+    private Integer prohibitDisbursement;
+
+    /**
+     * 是否禁止充值：0 否 1 是
+     */
+    private Integer prohibitRecharge;
 
     /**
      * 备注
      */
-    @ApiModelProperty(value = "备注")
     private String remark;
 
-    @ApiModelProperty(value = "设备号")
-    private String deviceCode;
+    /**
+     * 创建人
+     */
+    private String createUser;
 
-    @ApiModelProperty(value = "最后登录时间")
-    private Date lastLoginTime;
+    /**
+     * 最后登录时间
+     */
+    private LocalDateTime lastLoginTime;
 
-    @ApiModelProperty(value = "是否禁止邀请发展下级和会员：0 否 1 是")
-    private Boolean prohibitInvite;
-
-    @ApiModelProperty(value = "是否禁止投注：0 否 1 是")
-    private Boolean prohibitInvestment;
-
-    @ApiModelProperty(value = "是否禁止出款：0 否 1 是")
-    private Boolean prohibitDisbursement;
-
-    @ApiModelProperty(value = "是否禁止充值：0 否 1 是")
-    private Boolean prohibitRecharge;
-
-    @ApiModelProperty(value = "每期投注限额")
-    private Long stageInvestmentLimit;
+    /**
+     * 最后修改人
+     */
+    private String updateUser;
 }

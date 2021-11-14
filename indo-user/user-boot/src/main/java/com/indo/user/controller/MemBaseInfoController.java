@@ -1,5 +1,7 @@
 package com.indo.user.controller;
 
+import com.indo.user.pojo.req.mem.MemInfoReq;
+import com.indo.user.pojo.vo.mem.MemBaseInfoVo;
 import com.indo.user.service.MemBaseInfoService;
 import com.indo.common.annotation.AllowAccess;
 import com.indo.common.result.Result;
@@ -41,5 +43,10 @@ public class MemBaseInfoController {
         return memBaseInfoService.register(req);
     }
 
-
+    @ApiOperation(value = "个人基本信息", httpMethod = "POST")
+    @PostMapping(value = "/info")
+    @AllowAccess
+    public Result<MemBaseInfoVo> info(@RequestBody MemInfoReq req) {
+        return Result.success(memBaseInfoService.getMemBaseInfoByAccount(req.getAccount())) ;
+    }
 }

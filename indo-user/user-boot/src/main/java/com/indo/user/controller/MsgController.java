@@ -27,35 +27,35 @@ import java.util.ArrayList;
 @AllArgsConstructor
 public class MsgController {
 
-    @Resource
-    private MsgFeignClient msgFeignClient;
-
-    @ApiOperation(value = "个人消息接口", httpMethod = "GET")
-    @PostMapping(value = "/personal")
-    @AllowAccess
-    public Result<PageResult<MsgStationLetter>> loginDo(@RequestBody MsgDTO msgDTO) {
-        Result result = msgFeignClient.getPersonalMsg(msgDTO);
-        if (Result.success().getCode().equals(result.getCode())) {
-            PageResult<MsgStationLetter> data = (PageResult<MsgStationLetter>) result.getData();
-            return Result.success(data);
-        } else {
-            throw new BizException("远程调用异常");
-        }
-    }
-
-
-    @ApiOperation(value = "系统消息接口", httpMethod = "GET")
-    @PostMapping(value = "/sys")
-    @AllowAccess
-    public Result<PageResult<MsgPushRecord>> register(@RequestBody MsgDTO msgDTO) {
-        Result result = msgFeignClient.getSysMsg(msgDTO);
-        if (Result.success().getCode().equals(result.getCode())) {
-            PageResult<MsgPushRecord> data = (PageResult<MsgPushRecord>) result.getData();
-            return Result.success(data);
-        } else {
-            throw new BizException("远程调用异常");
-        }
-    }
+//    @Resource
+//    private MsgFeignClient msgFeignClient;
+//
+//    @ApiOperation(value = "个人消息接口", httpMethod = "GET")
+//    @PostMapping(value = "/personal")
+//    @AllowAccess
+//    public Result<PageResult<MsgStationLetter>> loginDo(@RequestBody MsgDTO msgDTO) {
+//        Result result = msgFeignClient.getPersonalMsg(msgDTO);
+//        if (Result.success().getCode().equals(result.getCode())) {
+//            PageResult<MsgStationLetter> data = (PageResult<MsgStationLetter>) result.getData();
+//            return Result.success(data);
+//        } else {
+//            throw new BizException("远程调用异常");
+//        }
+//    }
+//
+//
+//    @ApiOperation(value = "系统消息接口", httpMethod = "GET")
+//    @PostMapping(value = "/sys")
+//    @AllowAccess
+//    public Result<PageResult<MsgPushRecord>> register(@RequestBody MsgDTO msgDTO) {
+//        Result result = msgFeignClient.getSysMsg(msgDTO);
+//        if (Result.success().getCode().equals(result.getCode())) {
+//            PageResult<MsgPushRecord> data = (PageResult<MsgPushRecord>) result.getData();
+//            return Result.success(data);
+//        } else {
+//            throw new BizException("远程调用异常");
+//        }
+//    }
 
 
 }

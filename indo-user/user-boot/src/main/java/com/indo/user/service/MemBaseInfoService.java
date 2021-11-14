@@ -4,9 +4,11 @@ package com.indo.user.service;
 import com.indo.common.mybatis.base.service.SuperService;
 import com.indo.common.result.Result;
 import com.indo.user.pojo.entity.MemBaseinfo;
+import com.indo.user.pojo.req.mem.MemInfoReq;
 import com.indo.user.pojo.vo.AppLoginVo;
 import com.indo.user.pojo.req.LoginReq;
 import com.indo.user.pojo.req.RegisterReq;
+import com.indo.user.pojo.vo.mem.MemBaseInfoVo;
 
 public interface MemBaseInfoService extends SuperService<MemBaseinfo> {
 
@@ -32,6 +34,7 @@ public interface MemBaseInfoService extends SuperService<MemBaseinfo> {
      * @param account
      * @return
      */
-    MemBaseinfo getMemBaseInfoByAccount(String account);
+    MemBaseInfoVo getMemBaseInfoByAccount(String account);
 
+    Result<MemBaseInfoVo> getMemInfo(MemInfoReq req);
 }

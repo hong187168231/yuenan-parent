@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 
 @Api(tags = "会员接口")
 @RestController
@@ -33,15 +34,15 @@ public class TestController {
 
     @Resource
     private SysParameterClient sysParameterClient;
-    @Resource
-    private UserFeignClient uerFeignClient;
+//    @Resource
+//    private UserFeignClient uerFeignClient;
 
     @ApiOperation(value = "hello")
     @GetMapping("/hello")
     public String detail(@LoginUser LoginInfo loginInfo) {
         MemBaseinfo memBaseInfo = new MemBaseinfo();
-        memBaseInfo.setAccount("dd");
-        memBaseInfo.setBalance(2000L);
+        memBaseInfo.setAccno("dd");
+        memBaseInfo.setBalance(new BigDecimal(2000));
         redisUtils.set("dsd", memBaseInfo);
         return "ok";
     }
@@ -56,13 +57,13 @@ public class TestController {
     }
 
 
-    @AllowAccess
-    @ApiOperation(value = "hello3")
-    @GetMapping("/hello3")
-    public Object helloTwoT() {
-        Result<SysUser> parameter = uerFeignClient.getUserByUsername("admin");
-        return JSON.toJSONString(parameter);
-    }
+//    @AllowAccess
+//    @ApiOperation(value = "hello3")
+//    @GetMapping("/hello3")
+//    public Object helloTwoT() {
+//        Result<SysUser> parameter = uerFeignClient.getUserByUsername("admin");
+//        return JSON.toJSONString(parameter);
+//    }
 
 
 }
