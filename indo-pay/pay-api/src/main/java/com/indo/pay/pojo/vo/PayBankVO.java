@@ -13,7 +13,7 @@ import java.util.Date;
  * 银行支付配置返回
  */
 @Data
-public class PayBankConfigVO extends BaseEntity {
+public class PayBankVO extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
     @TableId(value = "id", type = IdType.AUTO)

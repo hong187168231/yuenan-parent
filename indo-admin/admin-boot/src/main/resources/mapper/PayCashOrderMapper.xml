@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.indo.admin.modules.pay.mapper.PayCashOrderMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.indo.pay.pojo.entity.PayCashOrder">
+        <id column="cash_order_id" property="cashOrderId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="bank_card_id" property="bankCardId"/>
+        <result column="order_no" property="orderNo"/>
+        <result column="user_id" property="userId"/>
+        <result column="applyTime" property="applyTime"/>
+        <result column="apply_amount" property="applyAmount"/>
+        <result column="actual_amount" property="actualAmount"/>
+        <result column="bank_name" property="bankName"/>
+        <result column="bank_card" property="bankCard"/>
+        <result column="bank_city" property="bankCity"/>
+        <result column="ifsc_code" property="ifscCode"/>
+        <result column="order_status" property="orderStatus"/>
+        <result column="remit_time" property="remitTime"/>
+        <result column="order_note" property="orderNote"/>
+        <result column="operator_user" property="operatorUser"/>
+        <result column="create_user" property="createUser"/>
+        <result column="update_user" property="updateUser"/>
+    </resultMap>
+
+
+    <resultMap id="cashApplyMap" type="com.indo.pay.pojo.vo.PayCashOrderApplyVO" extends="BaseResultMap">
+        <result column="user_id" property="userId"/>
+        <result column="mem_level" property="memLevel"/>
+    </resultMap>
+
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        create_time
+        ,
+        update_time,
+        cash_order_id, bank_card_id, order_no, user_id, applyTime, apply_amount, actual_amount, bank_name, bank_card, bank_city, ifsc_code, order_status, remit_time, order_note, operator_user, create_user, update_user
+    </sql>
+
+    <sql id="cash_Apply_Column_List">
+        user_id
+        , mem_level,
+        cash_order_id, bank_card_id, order_no, user_id, applyTime, apply_amount, actual_amount, bank_name, bank_card, bank_city, ifsc_code, order_status, remit_time, order_note, operator_user, create_user, update_user
+    </sql>
+
+    <!-- 通用查询结果列 -->
+    <select id="cashApplyList" resultMap="cashApplyMap">
+        SELECT
+        pco.*, mb.id AS user_id,
+        mb.mem_level
+        FROM
+        pay_cash_order pco
+        INNER JOIN mem_baseinfo mb ON pco.user_id = mb.id
+        where 1=1
+        <if test="dto.dto.orderNo != null ">
+            and pco.order_no = #{dto.orderNo}
+        </if>
+        <if test="dto.dto.orderStatus != null ">
+            and pco.order_status = #{dto.orderStatus}
+        </if>
+        <if test="dto.dto.userId != null ">
+            and mb.user_id = #{dto.userId}
+        </if>
+        <if test="dto.beginAmount != null ">
+            and pco.actual_amount &gt;= #{dto.beginAmount}
+        </if>
+        <if test="dto.endAmount ">
+            and pco.actual_amount &lt;= #{dto.endAmount}
+        </if>
+        <if test="dto.beginTime != null">
+            and pco.create_time &gt;= #{dto.beginTime}
+        </if>
+        <if test="dto.endTime != null ">
+            and pco.create_time &lt;= #{dto.endTime}
+        </if>
+
+
+    </select>
+
+
+</mapper>
