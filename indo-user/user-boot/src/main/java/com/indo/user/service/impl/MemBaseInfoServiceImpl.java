@@ -4,6 +4,7 @@ import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.indo.common.constant.RedisConstants;
 import com.indo.common.mybatis.base.service.impl.SuperServiceImpl;
 import com.indo.common.pojo.bo.LoginInfo;
@@ -13,12 +14,17 @@ import com.indo.common.utils.BaseUtil;
 import com.indo.common.utils.CopyUtils;
 import com.indo.common.utils.DeviceInfoUtil;
 import com.indo.common.utils.NameGeneratorUtil;
+import com.indo.common.utils.encrypt.MD5;
 import com.indo.user.common.util.UserBusinessRedisUtils;
 import com.indo.user.mapper.MemBaseInfoMapper;
 import com.indo.user.mapper.MemSubordinateMapper;
+import com.indo.user.pojo.entity.MemBankRelation;
 import com.indo.user.pojo.entity.MemBaseinfo;
 import com.indo.user.pojo.entity.MemSubordinate;
+import com.indo.user.pojo.req.mem.AddBankCardReq;
 import com.indo.user.pojo.req.mem.MemInfoReq;
+import com.indo.user.pojo.req.mem.UpdateBaseInfoReq;
+import com.indo.user.pojo.req.mem.UpdatePasswordReq;
 import com.indo.user.pojo.vo.AppLoginVo;
 import com.indo.user.pojo.req.LoginReq;
 import com.indo.user.pojo.req.RegisterReq;
@@ -191,6 +197,29 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
     public Result<MemBaseInfoVo> getMemInfo(MemInfoReq req) {
 
         return null;
+    }
+
+    @Override
+    public void updatePassword(UpdatePasswordReq req) {
+        MemBaseinfo memBaseinfo = new MemBaseinfo();
+        memBaseinfo.setAccno(req.getAccno());
+        memBaseinfo.setPassword(MD5.md5(req.getNewPassword()));
+        this.baseMapper.update(memBaseinfo, new UpdateWrapper<MemBaseinfo>().lambda().eq(MemBaseinfo::getAccno, req.getAccno()));
+    }
+
+    @Override
+    public void updateBaseInfo(UpdateBaseInfoReq req) {
+        MemBaseinfo memBaseinfo = new MemBaseinfo();
+        memBaseinfo.setPhone(req.getPhone());
+        memBaseinfo.setFaceBook(req.getFacebook());
+        memBaseinfo.setWhatsApp(req.getWhatsapp());
+        this.baseMapper.update(memBaseinfo, new UpdateWrapper<MemBaseinfo>().lambda().eq(MemBaseinfo::getAccno, req.getAccno()));
+    }
+
+    @Override
+    public void addbankCard(AddBankCardReq req) {
+        MemBankRelation memBankRelation = new MemBankRelation();
+
     }
 
     /**

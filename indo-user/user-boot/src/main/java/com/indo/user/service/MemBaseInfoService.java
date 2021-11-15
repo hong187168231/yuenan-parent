@@ -4,7 +4,10 @@ package com.indo.user.service;
 import com.indo.common.mybatis.base.service.SuperService;
 import com.indo.common.result.Result;
 import com.indo.user.pojo.entity.MemBaseinfo;
+import com.indo.user.pojo.req.mem.AddBankCardReq;
 import com.indo.user.pojo.req.mem.MemInfoReq;
+import com.indo.user.pojo.req.mem.UpdateBaseInfoReq;
+import com.indo.user.pojo.req.mem.UpdatePasswordReq;
 import com.indo.user.pojo.vo.AppLoginVo;
 import com.indo.user.pojo.req.LoginReq;
 import com.indo.user.pojo.req.RegisterReq;
@@ -37,4 +40,11 @@ public interface MemBaseInfoService extends SuperService<MemBaseinfo> {
     MemBaseInfoVo getMemBaseInfoByAccount(String account);
 
     Result<MemBaseInfoVo> getMemInfo(MemInfoReq req);
+
+    void updatePassword(UpdatePasswordReq req);
+
+    void updateBaseInfo(UpdateBaseInfoReq req);
+
+    void addbankCard(AddBankCardReq req);
+
 }
