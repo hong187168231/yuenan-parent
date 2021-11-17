@@ -4,6 +4,7 @@ import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.indo.common.constant.RedisConstants;
 import com.indo.common.mybatis.base.service.impl.SuperServiceImpl;
 import com.indo.common.pojo.bo.LoginInfo;
@@ -13,18 +14,26 @@ import com.indo.common.utils.BaseUtil;
 import com.indo.common.utils.CopyUtils;
 import com.indo.common.utils.DeviceInfoUtil;
 import com.indo.common.utils.NameGeneratorUtil;
+import com.indo.common.utils.encrypt.MD5;
 import com.indo.user.common.util.UserBusinessRedisUtils;
 import com.indo.user.mapper.MemBaseInfoMapper;
 import com.indo.user.mapper.MemSubordinateMapper;
+import com.indo.user.pojo.entity.MemBankRelation;
 import com.indo.user.pojo.entity.MemBaseinfo;
 import com.indo.user.pojo.entity.MemSubordinate;
+import com.indo.user.pojo.req.mem.AddBankCardReq;
+import com.indo.user.pojo.req.mem.MemInfoReq;
+import com.indo.user.pojo.req.mem.UpdateBaseInfoReq;
+import com.indo.user.pojo.req.mem.UpdatePasswordReq;
 import com.indo.user.pojo.vo.AppLoginVo;
 import com.indo.user.pojo.req.LoginReq;
 import com.indo.user.pojo.req.RegisterReq;
+import com.indo.user.pojo.vo.mem.MemBaseInfoVo;
 import com.indo.user.service.MemBaseInfoService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,7 +65,7 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
         }
         req.setPassword(req.getPassword().toLowerCase());
         MemBaseinfo userInfo = memBaseInfoMapper.
-                selectOne(new LambdaQueryWrapper<MemBaseinfo>().eq(MemBaseinfo::getAccount, req.getAccount()));
+                selectOne(new LambdaQueryWrapper<MemBaseinfo>().eq(MemBaseinfo::getAccno, req.getAccount()));
         //判断密码是否正确
         if (!req.getPassword().equals(userInfo.getPassword())) {
             return Result.failed("密码错误！");
@@ -95,7 +104,7 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
         req.setPassword(req.getPassword().toLowerCase());
         // 验证邀请码
         if (StringUtils.isNotBlank(req.getInviteCode())) {
-            MemBaseinfo baseinfo = this.baseMapper.selectOne(new QueryWrapper<MemBaseinfo>().lambda().eq(MemBaseinfo::getInviteCode, req.getInviteCode()));
+            MemBaseinfo baseinfo = this.baseMapper.selectOne(new QueryWrapper<MemBaseinfo>().lambda().eq(MemBaseinfo::getRInviteCode, req.getInviteCode()));
             if (Objects.isNull(baseinfo)) {
                 return Result.failed("邀请码无效！");
             }
@@ -105,14 +114,14 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
             return Result.failed("账号已存在！");
         }
         MemBaseinfo userInfo = new MemBaseinfo();
-        userInfo.setAccount(req.getAccount());
+        userInfo.setAccno(req.getAccount());
         //userInfo.setSource(Integer.valueOf(DeviceInfoUtil.getSource()));
         userInfo.setPassword(req.getPassword());
         if (StringUtils.isNotBlank(req.getDeviceCode())) {
-            userInfo.setDeviceCode(req.getDeviceCode());
+//            userInfo.setDeviceCode(req.getDeviceCode());
         }
-        userInfo.setMobile(req.getMobile());
-        userInfo.setInviteCode(req.getInviteCode());
+        userInfo.setPhone(req.getMobile());
+        userInfo.setRInviteCode(req.getInviteCode());
         //保存注册信息
         initRegister(userInfo);
         String accToken = UserBusinessRedisUtils.createMemAccToken(userInfo);
@@ -131,19 +140,19 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
      * @return
      */
     private MemBaseinfo initRegister(MemBaseinfo userInfo) {
-        String inviteCode = userInfo.getInviteCode();
+        String inviteCode = userInfo.getRInviteCode();
         //初始化
         Date nowDate = new Date();
 
         if (StringUtils.isBlank(userInfo.getNickName())) {
             userInfo.setNickName(NameGeneratorUtil.generate());
         }
-        userInfo.setInviteCode(productInviteCode());
-        userInfo.setLastLoginTime(nowDate);
-        userInfo.setIdentityType(0);
-        userInfo.setLastLoginTime(nowDate);
-        userInfo.setHeadUrl("");
-        userInfo.setDeviceCode(DeviceInfoUtil.getDeviceId());
+        userInfo.setRInviteCode(productInviteCode());
+//        userInfo.setLastLoginTime(nowDate);
+        userInfo.setAcc_type(0);
+//        userInfo.setLastLoginTime(nowDate);
+//        userInfo.setHeadUrl("");
+//        userInfo.setDeviceCode(DeviceInfoUtil.getDeviceId());
         this.baseMapper.insert(userInfo);
         //初始化钱包
         Long uid = userInfo.getId();
@@ -154,13 +163,13 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
         memSubordinate.setParentId(0L);
         memSubordinate.setHierarchy(1);
         if (StringUtils.isNotBlank(inviteCode)) {
-            MemBaseinfo baseinfo = this.baseMapper.selectOne(new QueryWrapper<MemBaseinfo>().lambda().eq(MemBaseinfo::getInviteCode, inviteCode));
+            MemBaseinfo baseinfo = this.baseMapper.selectOne(new QueryWrapper<MemBaseinfo>().lambda().eq(MemBaseinfo::getRInviteCode, inviteCode));
             MemSubordinate subordinate = memSubordinateMapper.selectOne(new QueryWrapper<MemSubordinate>().lambda().eq(MemSubordinate::getMemId, baseinfo.getId()));
-            subordinate.setLevelNum(subordinate.getLevelNum()+1);
-            subordinate.setLevelUserIds(StringUtils.isBlank(subordinate.getLevelUserIds()) ? userInfo.getId().toString() : subordinate.getLevelUserIds()+","+userInfo.getId());
+            subordinate.setLevelNum(subordinate.getLevelNum() + 1);
+            subordinate.setLevelUserIds(StringUtils.isBlank(subordinate.getLevelUserIds()) ? userInfo.getId().toString() : subordinate.getLevelUserIds() + "," + userInfo.getId());
             subordinate.setUpdateTime(new Date());
-            subordinate.setTeamNum(subordinate.getTeamNum()+1);
-            memSubordinate.setHierarchy(subordinate.getHierarchy()+1);
+            subordinate.setTeamNum(subordinate.getTeamNum() + 1);
+            memSubordinate.setHierarchy(subordinate.getHierarchy() + 1);
             memSubordinateMapper.updateById(subordinate);
             memSubordinate.setParentId(baseinfo.getId());
             //更新团队数
@@ -177,8 +186,40 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
 
 
     @Override
-    public MemBaseinfo getMemBaseInfoByAccount(String account) {
-        return this.baseMapper.selectOne(new QueryWrapper<MemBaseinfo>().lambda().eq(MemBaseinfo::getAccount, account));
+    public MemBaseInfoVo getMemBaseInfoByAccount(String account) {
+        MemBaseinfo memBaseinfo = this.baseMapper.selectOne(new QueryWrapper<MemBaseinfo>().lambda().eq(MemBaseinfo::getAccno, account));
+        MemBaseInfoVo vo = new MemBaseInfoVo();
+        BeanUtils.copyProperties(memBaseinfo, vo);
+        return vo;
+    }
+
+    @Override
+    public Result<MemBaseInfoVo> getMemInfo(MemInfoReq req) {
+
+        return null;
+    }
+
+    @Override
+    public void updatePassword(UpdatePasswordReq req) {
+        MemBaseinfo memBaseinfo = new MemBaseinfo();
+        memBaseinfo.setAccno(req.getAccno());
+        memBaseinfo.setPassword(MD5.md5(req.getNewPassword()));
+        this.baseMapper.update(memBaseinfo, new UpdateWrapper<MemBaseinfo>().lambda().eq(MemBaseinfo::getAccno, req.getAccno()));
+    }
+
+    @Override
+    public void updateBaseInfo(UpdateBaseInfoReq req) {
+        MemBaseinfo memBaseinfo = new MemBaseinfo();
+        memBaseinfo.setPhone(req.getPhone());
+        memBaseinfo.setFaceBook(req.getFacebook());
+        memBaseinfo.setWhatsApp(req.getWhatsapp());
+        this.baseMapper.update(memBaseinfo, new UpdateWrapper<MemBaseinfo>().lambda().eq(MemBaseinfo::getAccno, req.getAccno()));
+    }
+
+    @Override
+    public void addbankCard(AddBankCardReq req) {
+        MemBankRelation memBankRelation = new MemBankRelation();
+
     }
 
     /**
@@ -209,25 +250,27 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
 
     /**
      * 生成邀请码
+     *
      * @return
      */
     private String productInviteCode() {
         String inviteCode = RandomUtil.randomString(3);
-        redisUtil.incr(RedisConstants.MEM_GENERATE_INVITATION_CODE,1);
+        redisUtil.incr(RedisConstants.MEM_GENERATE_INVITATION_CODE, 1);
         String redisStr = String.format("%03d", redisUtil.get(RedisConstants.MEM_GENERATE_INVITATION_CODE));
         return inviteCode + redisStr;
     }
 
     /**
      * 团队数更新
+     *
      * @param inviteUserId
      */
     private void updateTeamNum(Long inviteUserId) {
-        if(inviteUserId == 0){
+        if (inviteUserId == 0) {
             return;
         }
         MemSubordinate subordinate = memSubordinateMapper.selectOne(new QueryWrapper<MemSubordinate>().lambda().eq(MemSubordinate::getMemId, inviteUserId));
-        subordinate.setTeamNum(subordinate.getTeamNum()+1);
+        subordinate.setTeamNum(subordinate.getTeamNum() + 1);
         memSubordinateMapper.updateById(subordinate);
         updateTeamNum(subordinate.getParentId());
     }
