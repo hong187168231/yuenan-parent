@@ -12,6 +12,7 @@ import com.indo.game.common.constant.Constants;
 import com.indo.game.common.enums.CaipiaoTypeEnum;
 import com.indo.game.config.OpenAPIProperties;
 import com.indo.game.pojo.entity.CptOpenMember;
+import com.indo.game.pojo.entity.MemBaseinfo;
 import com.indo.game.pojo.entity.es.EsBetOrder;
 import com.indo.game.services.CptOpenMemberService;
 import com.indo.game.services.ExternalService;
@@ -21,7 +22,6 @@ import com.indo.game.services.es.ESGameService;
 import com.indo.game.services.es.EsbetOrderService;
 import com.indo.game.utils.AGUtil;
 import com.indo.game.utils.SnowflakeIdWorker;
-import com.indo.user.pojo.entity.MemBaseinfo;
 import org.apache.commons.lang3.StringUtils;
 import org.redisson.api.RReadWriteLock;
 import org.redisson.api.RedissonClient;
@@ -123,7 +123,7 @@ public class ESGameServiceImpl implements ESGameService {
                 }
                 String esAccount = null;
                 String esPassword = null;
-                Long uid = xiazhuren.getId();
+                Long uid = xiazhuren.getMemid();
                 // 验证且绑定（电竞-CPT第三方会员关系）
                 CptOpenMember cptOpenMember = externalService.getCptOpenMember(loginUser.getId().intValue(), Constants.ES_ACCOUNT_TYPE);
                 String goGameUrl = null;
@@ -204,30 +204,30 @@ public class ESGameServiceImpl implements ESGameService {
                     logger.error("eslog {} initAccountES appMember is null:" + xiazhuren);
                     return;
                 }
-                if (xiazhuren.getBalance().intValue() <= 0) {
-                    logger.error("eslog {} initAccountES appMember balance {} is lt=; zero", loginUser.getId(), xiazhuren.getBalance());
+                if (xiazhuren.getGoldnum().intValue() <= 0) {
+                    logger.error("eslog {} initAccountES appMember balance {} is lt=; zero", loginUser.getId(), xiazhuren.getGoldnum());
                     return;
                 }
                 String orderNo = SnowflakeIdWorker.createOrderSn();
                 //先扣款
-                gameCommonService.inOrOutBalanceCommon(-1, BigDecimal.valueOf(xiazhuren.getBalance()), xiazhuren, MessageUtils.get("ttesg") + orderNo,
+                gameCommonService.inOrOutBalanceCommon(-1, xiazhuren.getGoldnum(), xiazhuren, MessageUtils.get("ttesg") + orderNo,
                         cptOpenMember, Constants.ES_ACCOUNT_TYPE);
 
-                JSONObject transferResult = initGame(orderNo, BigDecimal.valueOf(xiazhuren.getBalance()), cptOpenMember, ip);
+                JSONObject transferResult = initGame(orderNo, xiazhuren.getGoldnum(), cptOpenMember, ip);
                 //失败则把钱加上
                 if (transferResult != null && !transferResult.get("Code").equals(200)) {
                     logger.info("eslog {} esGameInit orderNo {}  result {}",
-                            xiazhuren.getId(), orderNo, transferResult);
+                            xiazhuren.getMemid(), orderNo, transferResult);
 
-                    gameCommonService.inOrOutBalanceCommon(1, BigDecimal.valueOf(xiazhuren.getBalance()), xiazhuren, MessageUtils.get("esato") + orderNo,
+                    gameCommonService.inOrOutBalanceCommon(1, xiazhuren.getGoldnum(), xiazhuren, MessageUtils.get("esato") + orderNo,
                             cptOpenMember, Constants.ES_ACCOUNT_TYPE);
                 } else {
                     int checkOrderNum = 0;
                     while (checkOrderNum <= 3) {
-                        logger.info("eslog {} esGameInit orderNo {} ", xiazhuren.getId(), orderNo);
+                        logger.info("eslog {} esGameInit orderNo {} ", xiazhuren.getMemid(), orderNo);
                         JSONObject status = getOrderNo(orderNo, cptOpenMember, ip);
                         logger.info("{}eslog {} aeGameInit orderNo {} result {}",
-                                xiazhuren.getId(), orderNo, JSONObject.toJSONString(status));
+                                xiazhuren.getMemid(), orderNo, JSONObject.toJSONString(status));
                         if (status != null && status.get("Code").equals(200)) {
                             JSONObject dataJson = JSONObject.parseObject(status.get("Data").toString());
                             if (dataJson.getBigDecimal("OrderAmount").compareTo(BigDecimal.ZERO) == 1) {
@@ -235,8 +235,8 @@ public class ESGameServiceImpl implements ESGameService {
                             } else {
                                 //失败则加回去
                                 logger.info("eslog {} esGameInit error orderNo {}  result {}",
-                                        xiazhuren.getId(), orderNo, dataJson);
-                                gameCommonService.inOrOutBalanceCommon(1, BigDecimal.valueOf(xiazhuren.getBalance()), xiazhuren, MessageUtils.get("esato"),
+                                        xiazhuren.getMemid(), orderNo, dataJson);
+                                gameCommonService.inOrOutBalanceCommon(1, xiazhuren.getGoldnum(), xiazhuren, MessageUtils.get("esato"),
                                         cptOpenMember, Constants.ES_ACCOUNT_TYPE);
                                 break;
                             }
@@ -312,9 +312,9 @@ public class ESGameServiceImpl implements ESGameService {
                     } else {
                         int checkOrderNum = 0;
                         while (checkOrderNum <= 3) {
-                            logger.info("eslog {} autoXf orderNo {} ", memBaseinfo.getId(), orderNo);
+                            logger.info("eslog {} autoXf orderNo {} ", memBaseinfo.getMemid(), orderNo);
                             JSONObject status = getXfOrderNo(orderNo, cptOpenMember, ip);
-                            logger.info("eslog {} autoXf orderNo {} result {}", memBaseinfo.getId(), orderNo, JSONObject.toJSONString(status));
+                            logger.info("eslog {} autoXf orderNo {} result {}", memBaseinfo.getMemid(), orderNo, JSONObject.toJSONString(status));
                             if (status != null && status.get("Code").equals(200)) {
                                 JSONObject dataJson = JSONObject.parseObject(status.get("Data").toString());
                                 if (dataJson.getBigDecimal("OrderAmount").compareTo(BigDecimal.ZERO) == 1) {

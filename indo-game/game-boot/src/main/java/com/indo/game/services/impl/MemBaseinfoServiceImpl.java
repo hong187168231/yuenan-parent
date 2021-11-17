@@ -3,9 +3,9 @@ package com.indo.game.services.impl;
 import com.indo.game.game.RedisBusinessUtil;
 import com.indo.game.mapper.MemBaseinfoMapper;
 import com.indo.game.mapper.MemBaseinfoMapperExt;
+import com.indo.game.pojo.entity.MemBaseinfo;
 import com.indo.game.pojo.entity.MemBaseinfoExample;
 import com.indo.game.services.MemBaseinfoService;
-import com.indo.user.pojo.entity.MemBaseinfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -399,7 +399,7 @@ public class MemBaseinfoServiceImpl implements MemBaseinfoService {
     @Override
     public int updateByPrimaryKeySelective(MemBaseinfo record) {
         int num = memBaseinfoMapper.updateByPrimaryKeySelective(record);
-        RedisBusinessUtil.deleteAppMember(record.getId());
+        RedisBusinessUtil.deleteAppMember(record.getMemid());
         return num;
     }
 

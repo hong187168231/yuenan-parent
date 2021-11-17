@@ -5,8 +5,9 @@ import java.util.List;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.indo.game.pojo.entity.SysChessBalance;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-
+@Mapper
 public interface SysChessBalanceMapper  extends BaseMapper<SysChessBalance> {
     /**
      * 增加额度(下分)

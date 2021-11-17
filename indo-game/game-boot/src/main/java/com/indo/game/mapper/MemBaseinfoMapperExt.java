@@ -1,6 +1,6 @@
 package com.indo.game.mapper;
 
-import com.indo.user.pojo.entity.MemBaseinfo;
+import com.indo.game.pojo.entity.MemBaseinfo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;

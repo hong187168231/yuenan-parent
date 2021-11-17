@@ -17,6 +17,7 @@ import com.indo.game.common.enums.GoldchangeEnum;
 import com.indo.game.config.OpenAPIProperties;
 import com.indo.game.mapper.db.DbGameMapper;
 import com.indo.game.pojo.entity.CptOpenMember;
+import com.indo.game.pojo.entity.MemBaseinfo;
 import com.indo.game.pojo.entity.db.DbBetOrder;
 import com.indo.game.pojo.entity.db.DbGame;
 import com.indo.game.pojo.entity.db.DbGameExample;
@@ -25,7 +26,6 @@ import com.indo.game.services.db.DbService;
 import com.indo.game.services.db.JdbBetOrderService;
 import com.indo.game.utils.DbUtil;
 import com.indo.game.utils.SnowflakeIdWorker;
-import com.indo.user.pojo.entity.MemBaseinfo;
 import org.apache.commons.lang3.StringUtils;
 import org.redisson.api.RLock;
 import org.redisson.api.RReadWriteLock;
@@ -207,12 +207,12 @@ public class DbServiceImpl implements DbService {
                 logger.error("dblog {}  autoSF appMember is null", loginUser.getId());
                 return;
             }
-            if (BigDecimal.valueOf(xiazhuren.getBalance()).compareTo(BigDecimal.ZERO) < 1) {
-                logger.error("dblog {} autoSF appMember balance {} is lt=; zero", xiazhuren.getBalance(), loginUser.getId());
+            if (xiazhuren.getGoldnum().compareTo(BigDecimal.ZERO) < 1) {
+                logger.error("dblog {} autoSF appMember balance {} is lt=; zero", xiazhuren.getGoldnum(), loginUser.getId());
                 return;
             }
             //用户余额
-            BigDecimal balance = BigDecimal.valueOf(xiazhuren.getBalance());
+            BigDecimal balance = xiazhuren.getGoldnum();
 
             //验证站点棋牌余额
             if (!verificationBalanceInChess(ChessBalanceTypeEnum.JDB.getCode(), balance, loginUser)) {

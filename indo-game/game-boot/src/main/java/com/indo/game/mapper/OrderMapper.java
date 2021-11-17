@@ -1,14 +1,17 @@
 package com.indo.game.mapper;
 
 
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
+import org.springframework.stereotype.Repository;
 
 import java.util.Date;
 import java.util.Map;
 
-
+@Mapper //标记mapper文件位置，否则在Application.class启动类上配置mapper包扫描
+@Repository
 public interface OrderMapper {
 
 

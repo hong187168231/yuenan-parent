@@ -5,6 +5,7 @@ import com.indo.game.game.RedisLock;
 import com.indo.game.common.constant.Constants;
 import com.indo.game.common.enums.GoldchangeEnum;
 import com.indo.game.pojo.dto.MemGoldchangeDO;
+import com.indo.game.pojo.entity.MemBaseinfo;
 import com.indo.game.pojo.entity.MemBaseinfoExample;
 import com.indo.game.pojo.entity.MemGoldchange;
 import com.indo.game.services.MemBaseinfoService;
@@ -12,7 +13,6 @@ import com.indo.game.services.MemBaseinfoWriteService;
 import com.indo.game.services.MemGoldchangeService;
 import com.indo.game.utils.JsonUtil;
 import com.indo.game.utils.SnowflakeIdWorker;
-import com.indo.user.pojo.entity.MemBaseinfo;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.redisson.api.RReadWriteLock;
@@ -63,7 +63,7 @@ public class MemBaseinfoWriteServiceImpl implements MemBaseinfoWriteService {
                 logger.error("{}.updateUserBalance 对应用户不存在：{}", getClass().getName(), JsonUtil.toJson(change));
                 throw new BadRequestException("对应用户不存在");
             }
-            change.setUserId(m.getId().intValue());
+            change.setUserId(m.getMemid().intValue());
         }
 
         logger.info("{} updateUserBalance change info:{}", change.getUserId(), change);
@@ -79,13 +79,13 @@ public class MemBaseinfoWriteServiceImpl implements MemBaseinfoWriteService {
                 begin = System.currentTimeMillis();
                 logger.info("用户修改余额拿到锁{}", userId);
                 MemBaseinfo memBaseinfo = memBaseinfoService.selectByPrimaryKey(Long.valueOf(change.getUserId()));
-                change.setAccno(memBaseinfo.getAccount());
+                change.setAccno(memBaseinfo.getAccno());
                 if (memBaseinfo == null) {
                     logger.info("{} updateUserBalance member is null,memBaseinfo: {}", userId, memBaseinfo);
                     throw new BadRequestException("用户不存在");
                 }
                 // 获取变动金额（余额）
-                BigDecimal currentBalance = BigDecimal.valueOf(memBaseinfo.getBalance());
+                BigDecimal currentBalance = memBaseinfo.getGoldnum();
                 BigDecimal changeMoney = change.getQuantity() == null ? BigDecimal.ZERO : change.getQuantity();
                 BigDecimal newBalance = currentBalance.add(changeMoney);
                 // 获取变动记录值（只用户记录账变记录）
@@ -156,8 +156,8 @@ public class MemBaseinfoWriteServiceImpl implements MemBaseinfoWriteService {
                 }
                 // 获取打码量
                 BigDecimal consumeAcmount = getTradeOffAmount(caclConsumeAmount(namount, change.getChangetype()));
-                calcRechargeInfo(memBaseinfo.getAccount(), amount, change.getChangetype());
-                int i = memBaseinfoService.updateMemberAmount(amount, pamount, bamount, namount, consumeAcmount, wamount, waitAmount, memBaseinfo.getAccount(), memBaseinfo.getId());
+                calcRechargeInfo(memBaseinfo.getAccno(), amount, change.getChangetype());
+                int i = memBaseinfoService.updateMemberAmount(amount, pamount, bamount, namount, consumeAcmount, wamount, waitAmount, memBaseinfo.getAccno(), memBaseinfo.getMemid());
                 if (i != 1) {
                     logger.error("{} updateUserBalance updateMemberAmount 更新余额失败. return:{}", change.getUserId(), i);
                     throw new BadRequestException("操作失败");

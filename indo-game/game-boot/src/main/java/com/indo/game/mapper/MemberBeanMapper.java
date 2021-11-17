@@ -2,14 +2,15 @@ package com.indo.game.mapper;
 
 
 import com.indo.game.pojo.entity.CptOpenMember;
-import com.indo.user.pojo.entity.MemBaseinfo;
+import com.indo.game.pojo.entity.MemBaseinfo;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import java.math.BigDecimal;
 
-
+@Mapper
 public interface MemberBeanMapper {
 
 

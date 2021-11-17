@@ -1,7 +1,7 @@
 package com.indo.game.services;
 
 import com.indo.game.pojo.entity.CptOpenMember;
-import com.indo.user.pojo.entity.MemBaseinfo;
+import com.indo.game.pojo.entity.MemBaseinfo;
 
 import java.math.BigDecimal;
 

@@ -12,11 +12,11 @@ import com.indo.game.pojo.dto.MemGoldchangeDO;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.game.pojo.entity.GameBetamountRecord;
 import com.indo.game.pojo.entity.Lottery;
+import com.indo.game.pojo.entity.MemBaseinfo;
 import com.indo.game.services.GameCommonService;
 import com.indo.game.services.MemBaseinfoService;
 import com.indo.game.services.MemBaseinfoWriteService;
 import com.indo.game.services.OrderCommonService;
-import com.indo.user.pojo.entity.MemBaseinfo;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,10 +82,10 @@ public class GameCommonServiceImpl implements GameCommonService {
     @Override
     public Boolean inOrOutBalanceCommon(int type, BigDecimal changeAmount, MemBaseinfo xiazhuren, String remark, CptOpenMember cptOpenMember, String iotType) {
         MemGoldchangeDO dto = new MemGoldchangeDO();
-        Integer userId = xiazhuren.getId().intValue();
+        Integer userId = xiazhuren.getMemid().intValue();
         //用户账号
         String accountCache = this.getAccountCache(userId, cptOpenMember);
-        dto.setAccno(xiazhuren.getAccount());
+        dto.setAccno(xiazhuren.getAccno());
         dto.setOpnote(remark);
         dto.setUserId(userId);
         //设置创建人
@@ -186,7 +186,7 @@ public class GameCommonServiceImpl implements GameCommonService {
     public boolean syncCodeSize(CptOpenMember cptOpenMember, String type, String remark, int changeType) {
         try {
             MemBaseinfo xiazhuren = memBaseinfoService.getMemById(Long.valueOf(cptOpenMember.getUserId()));
-            Integer userId = xiazhuren.getId().intValue();
+            Integer userId = xiazhuren.getMemid().intValue();
             Map<String, Date> dateTime = get2dateTime();
             Date beginTime = dateTime.get("beginTime");
             Date endTime = dateTime.get("endTime");
@@ -211,7 +211,7 @@ public class GameCommonServiceImpl implements GameCommonService {
                 MemGoldchangeDO dto = new MemGoldchangeDO();
                 //用户账号
                 String accountCache = this.getAccountCache(userId, cptOpenMember);
-                dto.setAccno(xiazhuren.getAccount());
+                dto.setAccno(xiazhuren.getAccno());
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append(MessageUtils.get("synchronize")).append(remark).append(MessageUtils.get("codeamount")+"/").append(changeNoWithdrawalAmount);
                 dto.setOpnote(stringBuilder.toString());

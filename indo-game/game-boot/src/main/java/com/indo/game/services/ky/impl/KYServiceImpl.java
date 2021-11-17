@@ -25,7 +25,6 @@ import com.indo.game.services.*;
 import com.indo.game.services.ky.KYService;
 import com.indo.game.services.ky.KybetOrderService;
 import com.indo.game.utils.KYUtil;
-import com.indo.user.pojo.entity.MemBaseinfo;
 import org.apache.commons.lang3.StringUtils;
 import org.redisson.api.RLock;
 import org.redisson.api.RReadWriteLock;
@@ -221,13 +220,13 @@ public class KYServiceImpl implements KYService {
                 logger.error("kylog {}  autoSF appMember is null", userId);
                 throw new BadRequestException(MessageUtils.get("tbdne"));
             }
-            if (BigDecimal.valueOf(xiazhuren.getBalance()).compareTo(BigDecimal.ZERO) <= 0) {
-                logger.error("kylog {} autoSF appMember balance {} is lt=; zero" + BigDecimal.valueOf(xiazhuren.getBalance()), userId);
+            if (xiazhuren.getGoldnum().compareTo(BigDecimal.ZERO) <= 0) {
+                logger.error("kylog {} autoSF appMember balance {} is lt=; zero" + xiazhuren.getGoldnum(), userId);
                 throw new BadRequestException(MessageUtils.get("ibpr"));
             }
 
             //先扣款
-            String money = String.valueOf(BigDecimal.valueOf(xiazhuren.getBalance()));
+            String money = String.valueOf(xiazhuren.getGoldnum());
             //验证站点棋牌余额
             if (!verificationBalanceInChess(ChessBalanceTypeEnum.KY.getCode(), new BigDecimal(money), loginUser)) {
                 logger.info("站点开元棋牌余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), new BigDecimal(money));
@@ -235,7 +234,7 @@ public class KYServiceImpl implements KYService {
                 throw new BadRequestException(MessageUtils.get("tcgqifpccs"));
             }
 
-            gameCommonService.inOrOutBalanceCommon(-1, BigDecimal.valueOf(xiazhuren.getBalance()),
+            gameCommonService.inOrOutBalanceCommon(-1, xiazhuren.getGoldnum(),
                     xiazhuren, openAPIProperties.platformName +  MessageUtils.get("btotk") + "/" + orderId,
                     cptOpenMember, Constants.KY_ACCOUNT_TYPE);
 

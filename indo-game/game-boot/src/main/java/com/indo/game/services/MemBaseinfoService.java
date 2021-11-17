@@ -1,8 +1,8 @@
 package com.indo.game.services;
 
 import com.github.pagehelper.Page;
+import com.indo.game.pojo.entity.MemBaseinfo;
 import com.indo.game.pojo.entity.MemBaseinfoExample;
-import com.indo.user.pojo.entity.MemBaseinfo;
 import org.apache.ibatis.session.RowBounds;
 
 import java.math.BigDecimal;

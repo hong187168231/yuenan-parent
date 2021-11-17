@@ -6,6 +6,7 @@ import com.google.common.base.Charsets;
 import com.indo.common.constant.RedisKeys;
 import com.indo.common.exception.BadRequestException;
 import com.indo.common.pojo.bo.LoginInfo;
+import com.indo.common.utils.StringUtils;
 import com.indo.game.game.RedisBaseUtil;
 import com.indo.game.game.RedisBusinessUtil;
 import com.indo.common.result.Result;
@@ -23,8 +24,6 @@ import com.indo.game.services.ag.AgService;
 import com.indo.game.services.ag.AgbetOrderService;
 import com.indo.game.utils.AGFTPUtil;
 import com.indo.game.utils.AGUtil;
-import com.indo.user.pojo.entity.MemBaseinfo;
-import org.apache.commons.lang.StringUtils;
 import org.redisson.api.RLock;
 import org.redisson.api.RReadWriteLock;
 import org.redisson.api.RedissonClient;
@@ -261,7 +260,7 @@ public class AgServiceImpl implements AgService {
 //                    return;
 //                }
 //                BigDecimal money = xiazhuren.getGoldnum().setScale(2, BigDecimal.ROUND_DOWN);
-                BigDecimal money = BigDecimal.valueOf(xiazhuren.getBalance());
+                BigDecimal money = xiazhuren.getGoldnum();
                 //验证站点棋牌余额
                 if (!verificationBalanceInChess(ChessBalanceTypeEnum.AG.getCode(), money, loginUser)) {
                     logger.info("站点AG棋牌余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), money);
@@ -349,7 +348,7 @@ public class AgServiceImpl implements AgService {
                         logger.info("aglog {} AGExit  method {}  resultGB {}", loginUser.getId(), Constants.AG_METHOD_GB, resultGB);
                         BigDecimal balanceAG = AGUtil.checkResponseBalance(resultGB);
                         MemBaseinfo xiazhuren = new MemBaseinfo();
-                        xiazhuren.setId(loginUser.getId());
+                        xiazhuren.setMemid(loginUser.getId());
 
                         // ag余额转出至CPT
                         if (balanceAG != null && balanceAG.compareTo(BigDecimal.ZERO) == 1) {
@@ -382,7 +381,7 @@ public class AgServiceImpl implements AgService {
     private void transferCredit(BigDecimal balanceAG, MemBaseinfo xiazhuren, HashMap<Object, Object> hashMap,
                                 String actype, int type, String remark, String ip, CptOpenMember cptOpenMember) throws Exception {
         // 预备转账
-        Integer uid = xiazhuren.getId().intValue();
+        Integer uid = xiazhuren.getMemid().intValue();
         String billNo = OpenAPIProperties.AG_CAGENT_VALUE + AGUtil.buildBillNo(uid);
         logger.info("aglog {}  transferCredit, account{}, billNo{}", uid, cptOpenMember.getUsername(), billNo);
         String resultTC = this.transferCreditPrepare(uid, billNo, hashMap, balanceAG, ip);

@@ -103,6 +103,7 @@ import com.indo.admin.pojo.entity.SysParameter;
 import com.indo.common.constant.RedisKeys;
 //import org.apache.ibatis.session.RowBounds;
 import com.indo.game.common.constant.Constants;
+import com.indo.game.pojo.entity.MemBaseinfo;
 import com.indo.game.pojo.entity.ae.AeGame;
 import com.indo.game.pojo.entity.ae.AeRoom;
 import com.indo.game.pojo.entity.ag.AgGame;
@@ -113,7 +114,6 @@ import com.indo.game.pojo.entity.db.DbGame;
 import com.indo.game.pojo.entity.ky.KyKind;
 import com.indo.game.pojo.entity.ky.KyServer;
 import com.indo.game.pojo.entity.mg.MgGame;
-import com.indo.user.pojo.entity.MemBaseinfo;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -203,14 +203,14 @@ public class RedisBusinessUtil extends RedisBaseUtil {
      * @param appMember
      */
     public static void addAppMember(MemBaseinfo appMember) {
-        if (null == appMember || null == appMember.getId()) {
+        if (null == appMember || null == appMember.getMemid()) {
             return;
         }
-        set(RedisKeys.APP_MEMBER + appMember.getId(), appMember, 12L, TimeUnit.HOURS);
+        set(RedisKeys.APP_MEMBER + appMember.getMemid(), appMember, 12L, TimeUnit.HOURS);
         //添加ACCNO 与 MEMID的关系映射
-        set(RedisKeys.ACCNO_MAP_MEMID + appMember.getAccount(), appMember.getId(), 7L, TimeUnit.DAYS);
+        set(RedisKeys.ACCNO_MAP_MEMID + appMember.getAccno(), appMember.getMemid(), 7L, TimeUnit.DAYS);
         //建立用户 uniqueId 和 memid 的关系
-        set(RedisKeys.UNIQUE_ID_MAP_MEMID + appMember.getId(), appMember.getId(), 7L, TimeUnit.DAYS);
+        set(RedisKeys.UNIQUE_ID_MAP_MEMID + appMember.getMemid(), appMember.getMemid(), 7L, TimeUnit.DAYS);
     }
 
 

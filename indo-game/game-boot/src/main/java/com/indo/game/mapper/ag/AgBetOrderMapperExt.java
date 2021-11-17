@@ -4,11 +4,12 @@ import com.indo.game.pojo.dto.GameDailyDataDO;
 import com.indo.game.pojo.dto.GameUserDataDO;
 import com.indo.game.pojo.entity.ag.AgBetOrder;
 import com.indo.game.pojo.entity.ag.AgFishBetOrder;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
-
+@Mapper
 public interface AgBetOrderMapperExt {
 
     int insertBatch(List<AgBetOrder> list);
