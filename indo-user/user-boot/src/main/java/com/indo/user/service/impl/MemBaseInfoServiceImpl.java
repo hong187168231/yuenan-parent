@@ -216,11 +216,7 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
         this.baseMapper.update(memBaseinfo, new UpdateWrapper<MemBaseinfo>().lambda().eq(MemBaseinfo::getAccno, req.getAccno()));
     }
 
-    @Override
-    public void addbankCard(AddBankCardReq req) {
-        MemBankRelation memBankRelation = new MemBankRelation();
 
-    }
 
     /**
      * 功能描述: 返回登录信息

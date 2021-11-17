@@ -45,6 +45,6 @@ public interface MemBaseInfoService extends SuperService<MemBaseinfo> {
 
     void updateBaseInfo(UpdateBaseInfoReq req);
 
-    void addbankCard(AddBankCardReq req);
+
 
 }
