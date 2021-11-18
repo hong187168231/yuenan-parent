@@ -25,9 +25,4 @@ public class GameDownload  extends BaseEntity {
     @ApiModelProperty(value = "是否启用")
     private String isStart;//0关闭  1启用
 
-    @ApiModelProperty(value = "创建时间")
-    private String createTime;
-
-    @ApiModelProperty(value = "修改时间")
-    private String updateTime;
 }

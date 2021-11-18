@@ -18,10 +18,10 @@ public interface GameCommonService {
     /**
      * 判断游戏（彩种）是否开启
      *
-     * @param lotteryId
+     * @param platformCode
      * @return
      */
-    boolean isGameEnabled(Integer lotteryId);
+    boolean isGameEnabled(String platformCode);
 
 
     /**

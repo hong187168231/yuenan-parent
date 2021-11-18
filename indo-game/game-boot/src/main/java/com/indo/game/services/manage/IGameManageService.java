@@ -17,7 +17,9 @@ public interface IGameManageService {
 
     public void modifiyGameCategory(GameCategory category);
 
-    public Result<GamePlatform> queryAllGamePlatform();
+    public Result<List<GamePlatform>> queryAllGamePlatform();
+
+    public Result<List<GamePlatform>> queryHotGamePlatform();
 
     public void addGamePlatform(GamePlatform platform);
 

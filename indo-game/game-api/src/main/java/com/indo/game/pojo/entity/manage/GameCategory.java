@@ -25,10 +25,4 @@ public class GameCategory extends BaseEntity {
     @ApiModelProperty(value = "游戏类型名称")
     @NotNull(message = "游戏类型名称不能为空")
     private String gameName;
-
-    @ApiModelProperty(value = "创建时间")
-    private String createTime;
-
-    @ApiModelProperty(value = "修改时间")
-    private String updateTime;
-}
+   }

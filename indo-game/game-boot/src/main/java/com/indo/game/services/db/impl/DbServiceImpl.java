@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.indo.common.constant.RedisKeys;
 import com.indo.common.exception.BadRequestException;
 import com.indo.common.pojo.bo.LoginInfo;
+import com.indo.game.common.enums.CaipiaoTypeEnum;
 import com.indo.game.game.RedisBaseUtil;
 import com.indo.game.game.RedisBusinessUtil;
 import com.indo.game.game.RedisLock;
@@ -79,7 +80,7 @@ public class DbServiceImpl implements DbService {
     public Result<String> dbGame(LoginInfo loginUser, Integer gameCode, Integer gameType) {
         logger.info("dblog {} mgGame account:{}, mgCodeId:{}", loginUser.getId(), loginUser.getNickName(), gameCode);
         // 是否开售校验
-        if (!gameCommonService.isGameEnabled(gameCode)) {
+        if (!gameCommonService.isGameEnabled(CaipiaoTypeEnum.JDB_GAME.getTagType())) {
             logger.info("此游戏禁用 Code{}", gameCode);
             return Result.failed(MessageUtils.get("tgocinyo"));
         }
@@ -152,7 +153,7 @@ public class DbServiceImpl implements DbService {
     @Override
     public void initAccountInfo(LoginInfo loginUser, Integer gameCode) {
         // 是否开售校验
-        if (!gameCommonService.isGameEnabled(gameCode)) {
+        if (!gameCommonService.isGameEnabled(CaipiaoTypeEnum.JDB_GAME.getTagType())) {
             logger.info("此游戏禁用 Code{}", gameCode);
             return;
         }

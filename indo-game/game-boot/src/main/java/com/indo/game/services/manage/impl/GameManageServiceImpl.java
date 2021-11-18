@@ -43,9 +43,18 @@ public class GameManageServiceImpl implements IGameManageService {
         gameCategoryMapper.updateById(category);
     }
 
-    public Result<GamePlatform> queryAllGamePlatform(){
-        Result<GamePlatform> result = new Result<GamePlatform>();
+    public Result<List<GamePlatform>> queryAllGamePlatform(){
+        Result<List<GamePlatform>> result = new Result<List<GamePlatform>>();
         LambdaQueryWrapper<GamePlatform> wrapper = new LambdaQueryWrapper<>();
+        List<GamePlatform> categoryList = gamePlatformMapper.selectList(wrapper);
+        result.success(categoryList);
+        return result;
+    }
+
+    public Result<List<GamePlatform>> queryHotGamePlatform(){
+        Result<List<GamePlatform>> result = new Result<List<GamePlatform>>();
+        LambdaQueryWrapper<GamePlatform> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(GamePlatform::getIsHotShow,"1");
         List<GamePlatform> categoryList = gamePlatformMapper.selectList(wrapper);
         result.success(categoryList);
         return result;

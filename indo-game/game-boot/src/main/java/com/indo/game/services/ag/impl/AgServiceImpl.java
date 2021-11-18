@@ -96,12 +96,9 @@ public class AgServiceImpl implements AgService {
 
     @Override
     public Result<String> agJump(LoginInfo loginUser, String actype, String gameType, String ip) {
-        logger.info("aglog:=========kaishi======");
         logger.info("aglog: {} agJump accno {} lotteryId {}", loginUser.getId(), loginUser.getAccount(), CaipiaoTypeEnum.AG_GAME.getTagType());
-        //获取彩票id
-        Integer lotteryId = CaipiaoTypeEnum.AG_GAME.getIntegerTagType();
         // 是否开售校验
-        if (!gameCommonService.isGameEnabled(lotteryId)) {
+        if (!gameCommonService.isGameEnabled(CaipiaoTypeEnum.AG_GAME.getTagType())) {
             return Result.failed(MessageUtils.get("tgocinyo"));
         }
         //初次判断站点棋牌余额是否够该用户
@@ -138,7 +135,6 @@ public class AgServiceImpl implements AgService {
                 hashMap.put(Constants.AG_API_PARAM_CUR, CurEnum.VND.getKeyName());
                 //国际语言编码
                 hashMap.put(Constants.AG_API_PARAM_LANG,"8");
-                logger.info("aglog:=========888888======");
                 hashMap.put(Constants.AG_API_PARAM_METHOD, Constants.AG_METHOD_LG);
                 hashMap.put(Constants.AG_API_PARAM_CAGENT, OpenAPIProperties.AG_CAGENT_VALUE);
                 // 跳转AG参数
@@ -225,7 +221,7 @@ public class AgServiceImpl implements AgService {
     public void initAndStartGanmeAG(LoginInfo loginUser, String actype, String gameType, String ip) {
         // 是否开售校验
         Integer lotteryId = CaipiaoTypeEnum.AG_GAME.getIntegerTagType();
-        if (!gameCommonService.isGameEnabled(lotteryId)) {
+        if (!gameCommonService.isGameEnabled(CaipiaoTypeEnum.AG_GAME.getTagType())) {
             return;
         }
         String key = OpenAPIProperties.AG_CAGENT_VALUE + "_" + loginUser.getId();

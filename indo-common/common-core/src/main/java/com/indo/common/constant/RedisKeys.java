@@ -30,11 +30,11 @@ public class RedisKeys {
     public static final String SYS_PARAMETER_CODE = "SYS:PARAMETER_CODE:";
 
 
-    public static final String LOTTERY_KEY = "LIVE_LOTTERY_KEY_";
+    public static final String GAME_PLATFORM_KEY = "GAME_PLATFORM_KEY_";
     /**
      * 用户对象key: key后拼接id
      */
-    public static final String APP_MEMBER = "LIVE_APP_MEMBER_";
+    public static final String APP_MEMBER = "INDO_APP_MEMBER_";
     /**
      * ACCNO 与MEMID的映射关系
      */
@@ -44,32 +44,32 @@ public class RedisKeys {
      */
     public static final String UNIQUE_ID_MAP_MEMID = "UNIQUE_ID_MAP_MEMID_";
     //开元注单游戏名称缓存key
-    public static final String KY_KIND_KEY = "LIVE_KY_KIND_KEY";
+    public static final String KY_KIND_KEY = "INDO_KY_KIND_KEY";
     //开元注单房间缓存key
-    public static final String KY_SERVER_KEY = "LIVE_KY_SERVER_KEY";
+    public static final String KY_SERVER_KEY = "INDO_KY_SERVER_KEY";
     //ag 注单  游戏名称缓存 key
-    public static final String AG_GANE_KEY = "LIVE_AG_GANE_KEY";
+    public static final String AG_GANE_KEY = "INDO_AG_GANE_KEY";
     //ag 注单  玩法名称缓存 key
-    public static final String AG_PAY_KEY = "LIVE_AG_PAY_KEY";
+    public static final String AG_PAY_KEY = "INDO_AG_PAY_KEY";
     //ag 注单  平台名称缓存 key
-    public static final String AG_PLATFORM_KEY = "LIVE_AG_PLATFORM_KEY";
+    public static final String AG_PLATFORM_KEY = "INDO_AG_PLATFORM_KEY";
     //ag 注单  大厅类型名称缓存 key
-    public static final String AG_ROUND_KEY = "LIVE_AG_ROUND_KEY";
+    public static final String AG_ROUND_KEY = "INDO_AG_ROUND_KEY";
     //ae 注单  游戏名称缓存 key
-    public static final String AE_GANE_KEY = "LIVE_AE_GANE_KEY";
+    public static final String AE_GANE_KEY = "INDO_AE_GANE_KEY";
     //ae 注单  房间名称缓存 key
-    public static final String AE_ROOM_KEY = "LIVE_AE_ROOM_KEY";
+    public static final String AE_ROOM_KEY = "INDO_AE_ROOM_KEY";
     //mg TAG 游戏CODE缓存 key
-    public static final String MG_GANE_KEY = "LIVE_MG_GANE_KEY";
+    public static final String MG_GANE_KEY = "INDO_MG_GANE_KEY";
 
     //mg 注单  游戏名称缓存 key
-    public static final String MG_GANE_NAME_KEY = "LIVE_MG_GANE_NAME_KEY";
+    public static final String MG_GANE_NAME_KEY = "INDO_MG_GANE_NAME_KEY";
 
     //DB 捕鱼注单  游戏名称缓存 key
-    public static final String DB_GANE_NAME_KEY = "LIVE_DB_GANE_NAME_KEY";
+    public static final String DB_GANE_NAME_KEY = "INDO_DB_GANE_NAME_KEY";
     /**
      * MG 游戏 注单时间
      */
-    public static final String LIVE_MG_ORDER_RECORD_KEY = "LIVE_MG_ORDER_RECORD_KEY";
+    public static final String INDO_MG_ORDER_RECORD_KEY = "INDO_MG_ORDER_RECORD_KEY";
 
 }

@@ -40,9 +40,4 @@ public class GamePlatform extends BaseEntity {
     @ApiModelProperty(value = "维护内容")
     private String maintenanceContent;
 
-    @ApiModelProperty(value = "创建时间")
-    private String createTime;
-
-    @ApiModelProperty(value = "修改时间")
-    private String updateTime;
 }

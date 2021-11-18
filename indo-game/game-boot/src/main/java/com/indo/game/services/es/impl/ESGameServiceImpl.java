@@ -96,8 +96,7 @@ public class ESGameServiceImpl implements ESGameService {
     public Result<String> go(LoginInfo loginUser, String ip) {
         logger.info("eslog {} go：Come here numbers  account:{}", loginUser.getId(), loginUser.getNickName());
         // 是否开售校验
-        Integer lotteryId = CaipiaoTypeEnum.ES_GAME.getIntegerTagType();
-        if (!gameCommonService.isGameEnabled(lotteryId)) {
+        if (!gameCommonService.isGameEnabled(CaipiaoTypeEnum.ES_GAME.getTagType())) {
             return Result.failed(MessageUtils.get("tgocinyo"));
         }
         String key = Constants.ES_ACCOUNT_TYPE + "_" + loginUser.getId();
@@ -174,8 +173,7 @@ public class ESGameServiceImpl implements ESGameService {
     @Override
     public void initAccountInfo(LoginInfo loginUser, String ip) {
         // 是否开售校验
-        Integer lotteryId = CaipiaoTypeEnum.ES_GAME.getIntegerTagType();
-        if (!gameCommonService.isGameEnabled(lotteryId)) {
+        if (!gameCommonService.isGameEnabled(CaipiaoTypeEnum.ES_GAME.getTagType())) {
             return;
         }
         String key = CaipiaoTypeEnum.ES_GAME.getTagType() + "_" + loginUser.getId();

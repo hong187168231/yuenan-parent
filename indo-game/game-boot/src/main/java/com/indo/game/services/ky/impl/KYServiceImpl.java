@@ -75,9 +75,8 @@ public class KYServiceImpl implements KYService {
     public Result<String> kyGame(LoginInfo loginUser, String kindId, String ip) {
         logger.info("kylog {} kyGame：Come here numbers  account {}", loginUser.getId(), loginUser.getNickName());
         // 是否开售校验
-        Integer lotteryId = Integer.parseInt(kindId);
         // 是否开售校验
-        if (!gameCommonService.isGameEnabled(lotteryId)) {
+        if (!gameCommonService.isGameEnabled(CaipiaoTypeEnum.KY_GAME.getTagType())) {
             return Result.failed(MessageUtils.get("tgocinyo"));
         }
         //初次判断站点棋牌余额是否够该用户
@@ -149,8 +148,7 @@ public class KYServiceImpl implements KYService {
     public void initAccountInfo(LoginInfo loginUser, String ip, String kindId) {
         logger.info("kylog {} InitAccountInfo：Come here numbers  kindId {}", loginUser.getId(), kindId);
         // 是否开售校验
-        Integer lotteryId = Integer.parseInt(kindId);
-        if (!gameCommonService.isGameEnabled(lotteryId)) {
+        if (!gameCommonService.isGameEnabled(CaipiaoTypeEnum.KY_GAME.getTagType())) {
             return;
         }
         String key = CaipiaoTypeEnum.KY_GAME.getTagType() + "_" + loginUser.getId();

@@ -194,13 +194,25 @@ public enum CaipiaoTypeEnum {
      */
     AG_GAME("AG_GAME", "AG游戏", "20000"),
     /**
-     * 开元棋牌游戏 210009 开关标识
+     * 开元棋牌游戏 21000 开关标识
      */
-    KY_GAME("KY_GAME", "开元棋牌游戏 ", "210009"),
+    KY_GAME("KY_GAME", "开元棋牌游戏 ", "21000"),
     /**
-     * AE棋牌游戏 210010 开关标识
+     * AE棋牌游戏 22000 开关标识
      */
-    AE_GAME("AE_GAME", "AE棋牌游戏 ", "210010"),
+    AE_GAME("AE_GAME", "AE棋牌游戏 ", "22000"),
+    /**
+     * JDB捕鱼 23000 开关标识
+     */
+    JDB_GAME("JDB_GAME", "JDB捕鱼", "23000"),
+    /**
+     * 电竞游戏 24000 开关标识
+     */
+    ES_GAME("ES_GAME", "电竞游戏", "24000"),
+    /**
+     * MG游戏 25000 开关标识
+     */
+    MG_GAME("MG_GAME", "MG游戏", "25000"),
     /**
      * ID:2301
      * 澳洲快三
@@ -210,11 +222,8 @@ public enum CaipiaoTypeEnum {
      * ID:2302
      * 德洲快三
      */
-    DZKS("dzks", "德洲快三", "2302"),
-    /**
-     * 电竞游戏 40000 开关标识
-     */
-    ES_GAME("ES_GAME", "电竞游戏", "40000");
+    DZKS("dzks", "德洲快三", "2302");
+
 
 
     private String tagEnName;

@@ -7,6 +7,7 @@ import com.indo.common.result.Result;
 import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.common.enums.GoldchangeEnum;
 import com.indo.game.mapper.OrderMapper;
+import com.indo.game.pojo.entity.MemBaseinfo;
 import com.indo.game.services.ExternalGameService;
 import com.indo.game.services.MemBaseinfoService;
 import com.indo.game.services.ae.AeService;
@@ -15,7 +16,6 @@ import com.indo.game.services.db.DbService;
 import com.indo.game.services.es.ESGameService;
 import com.indo.game.services.ky.KYService;
 import com.indo.game.services.mg.MgService;
-import com.indo.user.pojo.entity.MemBaseinfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,7 +104,7 @@ public class ExternalGameServiceImpl implements ExternalGameService {
                 MemBaseinfo memBaseinfo = memBaseinfoService.selectById(loginUser.getId());
                 BigDecimal mebBalance = BigDecimal.ZERO;
                 if (null != memBaseinfo) {
-                    mebBalance = BigDecimal.valueOf(memBaseinfo.getBalance());
+                    mebBalance = memBaseinfo.getGoldnum();
                 }
                 logger.info("exit{} 结束毫秒", (System.currentTimeMillis() - start));
                 return Result.success(mebBalance);

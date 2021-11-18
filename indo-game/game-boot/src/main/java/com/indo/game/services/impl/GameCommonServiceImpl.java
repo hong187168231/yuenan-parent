@@ -1,18 +1,19 @@
 package com.indo.game.services.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.indo.common.constant.RedisKeys;
 import com.indo.game.game.RedisBaseUtil;
 import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.common.constant.Constants;
 import com.indo.game.common.enums.GoldchangeEnum;
 import com.indo.game.mapper.GameBetamountRecordMapper;
-import com.indo.game.mapper.LotteryMapperExt;
 import com.indo.game.mapper.OrderMapper;
+import com.indo.game.mapper.manage.GamePlatformMapper;
 import com.indo.game.pojo.dto.MemGoldchangeDO;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.game.pojo.entity.GameBetamountRecord;
-import com.indo.game.pojo.entity.Lottery;
 import com.indo.game.pojo.entity.MemBaseinfo;
+import com.indo.game.pojo.entity.manage.GamePlatform;
 import com.indo.game.services.GameCommonService;
 import com.indo.game.services.MemBaseinfoService;
 import com.indo.game.services.MemBaseinfoWriteService;
@@ -39,7 +40,7 @@ public class GameCommonServiceImpl implements GameCommonService {
     //private RedisTemplate redisTemplate;
 
     @Autowired
-    private LotteryMapperExt lotteryMapperExt;
+    private GamePlatformMapper gamePlatformMapper;
     @Autowired
     private OrderMapper orderMapper;
     @Autowired
@@ -52,18 +53,18 @@ public class GameCommonServiceImpl implements GameCommonService {
     private MemBaseinfoService memBaseinfoService;
 
     @Override
-    public boolean isGameEnabled(Integer lotteryId) {
-        if (null == lotteryId || lotteryId <= 0) {
+    public boolean isGameEnabled(String platformCode) {
+        if (null == platformCode || platformCode.equals("")) {
             return false;
         }
-        //Lottery lottery = (Lottery) redisTemplate.opsForValue().get(RedisKeys.LOTTERY_KEY + lotteryId);
-        Lottery lottery = RedisBaseUtil.get(RedisKeys.LOTTERY_KEY + lotteryId);
-        Integer isWork;
-        if (null == lottery) {
-            isWork = lotteryMapperExt.selectLotteryIsWork(lotteryId);
-        } else {
-            isWork = lottery.getIsWork();
+        GamePlatform gamePlatform = RedisBaseUtil.get(RedisKeys.GAME_PLATFORM_KEY + platformCode);
+        String isWork;
+        if (null == gamePlatform) {
+            LambdaQueryWrapper<GamePlatform> wrapper = new LambdaQueryWrapper<GamePlatform>();
+            wrapper.eq(GamePlatform::getIsStart,platformCode);
+            gamePlatform = gamePlatformMapper.selectOne(wrapper);
         }
+        isWork = gamePlatform.getIsStart();
         return null != isWork && isWork.equals(1);
     }
 

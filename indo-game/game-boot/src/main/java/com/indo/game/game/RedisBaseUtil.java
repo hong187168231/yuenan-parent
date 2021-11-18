@@ -135,7 +135,12 @@ public class RedisBaseUtil {
         if (StringUtils.isEmpty(keys)) {
             return;
         }
-        List<String> idList = StringUtils.splitStringList(keys);
+//        List<String> idList = StringUtils.splitStringList(keys);
+        String[] arr = keys.split(",");
+        List<String> idList = new ArrayList<>();
+        for (String item : arr) {
+            idList.add(item);
+        }
         delete(idList);
     }
 

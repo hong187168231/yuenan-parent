@@ -92,11 +92,18 @@ public class GameManageController {
         return result;
     }
 
-    @ApiOperation(value = "平台名称", httpMethod = "Get")
+    @ApiOperation(value = "查询所有平台", httpMethod = "Get")
     @GetMapping(value = "/allGamePlatform")
     @AllowAccess
-    public Result<GamePlatform> queryAllGamePlatform(){
+    public Result<List<GamePlatform>> queryAllGamePlatform(){
         return iGameManageService.queryAllGamePlatform();
+    }
+
+    @ApiOperation(value = "查询热门平台", httpMethod = "Get")
+    @GetMapping(value = "/allGamePlatform")
+    @AllowAccess
+    public Result<List<GamePlatform>> queryHotGamePlatform(){
+        return iGameManageService.queryHotGamePlatform();
     }
 
     @ApiOperation(value = "新增平台名称", httpMethod = "POST")

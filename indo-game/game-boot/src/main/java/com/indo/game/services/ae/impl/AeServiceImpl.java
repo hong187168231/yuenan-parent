@@ -105,7 +105,7 @@ public class AeServiceImpl implements AeService {
     public Result<String> aeGame(LoginInfo loginUser, Integer aeCodeId, String ip) {
         logger.info("aelog {} aeGame account:{}, aeCodeId:{}", loginUser.getId(), loginUser.getNickName(), aeCodeId);
         // 是否开售校验
-        if (!gameCommonService.isGameEnabled(aeCodeId)) {
+        if (!gameCommonService.isGameEnabled(CaipiaoTypeEnum.AE_GAME.getTagType())) {
             return Result.failed(MessageUtils.get("tgocinyo"));
         }
         String gameId = AE_GAME_ID_MAP.get(aeCodeId);
@@ -213,7 +213,7 @@ public class AeServiceImpl implements AeService {
             if (bool) {
 
                 // 是否开售校验
-                if (!gameCommonService.isGameEnabled(aeCodeId)) {
+                if (!gameCommonService.isGameEnabled(CaipiaoTypeEnum.AE_GAME.getTagType())) {
                     return;
                 }
                 String gameId = AE_GAME_ID_MAP.get(aeCodeId);

@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.indo.common.constant.RedisKeys;
 import com.indo.common.exception.BadRequestException;
 import com.indo.common.pojo.bo.LoginInfo;
+import com.indo.game.common.enums.CaipiaoTypeEnum;
 import com.indo.game.game.RedisBaseUtil;
 import com.indo.game.game.RedisBusinessUtil;
 import com.indo.game.game.RedisLock;
@@ -18,6 +19,7 @@ import com.indo.game.common.enums.GoldchangeEnum;
 import com.indo.game.config.OpenAPIProperties;
 import com.indo.game.mapper.mg.MgGameMapper;
 import com.indo.game.pojo.entity.CptOpenMember;
+import com.indo.game.pojo.entity.MemBaseinfo;
 import com.indo.game.pojo.entity.mg.MgBetOrder;
 import com.indo.game.pojo.entity.mg.MgGame;
 import com.indo.game.pojo.entity.mg.MgGameExample;
@@ -26,7 +28,6 @@ import com.indo.game.services.mg.MgService;
 import com.indo.game.services.mg.MgbetOrderService;
 import com.indo.game.utils.MgUtil;
 import com.indo.game.utils.SnowflakeIdWorker;
-import com.indo.user.pojo.entity.MemBaseinfo;
 import org.apache.commons.lang3.StringUtils;
 import org.redisson.api.RLock;
 import org.redisson.api.RReadWriteLock;
@@ -77,7 +78,7 @@ public class MgServiceImpl implements MgService {
             logger.info("没有此游戏配置Code{}", gameCode);
             return Result.failed(MessageUtils.get("tgdne"));
         }
-        if (!gameCommonService.isGameEnabled(gameCode)) {
+        if (!gameCommonService.isGameEnabled(CaipiaoTypeEnum.MG_GAME.getTagType())) {
             logger.info("此游戏禁用 Code{}", gameCode);
             return Result.failed(MessageUtils.get("tgocinyo"));
         }
@@ -159,7 +160,7 @@ public class MgServiceImpl implements MgService {
             return;
         }
         // 是否开售校验
-        if (!gameCommonService.isGameEnabled(gameCode)) {
+        if (!gameCommonService.isGameEnabled(CaipiaoTypeEnum.MG_GAME.getTagType())) {
             logger.info("此游戏禁用 Code{}", gameCode);
             return;
         }
@@ -215,11 +216,11 @@ public class MgServiceImpl implements MgService {
                 logger.error("mglog {}  autoSF appMember is null", loginUser.getId());
                 return;
             }
-            if (BigDecimal.valueOf(xiazhuren.getBalance()).compareTo(BigDecimal.ZERO) < 1) {
-                logger.error("mglog {} autoSF appMember balance {} is lt=; zero", BigDecimal.valueOf(xiazhuren.getBalance()), loginUser.getId());
+            if (xiazhuren.getGoldnum().compareTo(BigDecimal.ZERO) < 1) {
+                logger.error("mglog {} autoSF appMember balance {} is lt=; zero", xiazhuren.getGoldnum(), loginUser.getId());
                 return;
             }
-            BigDecimal balance = BigDecimal.valueOf(xiazhuren.getBalance());
+            BigDecimal balance = xiazhuren.getGoldnum();
             //验证站点棋牌余额
             if (!verificationBalanceInChess(ChessBalanceTypeEnum.MG.getCode(), balance, loginUser)) {
                 logger.info("站点MG棋牌余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
@@ -432,7 +433,7 @@ public class MgServiceImpl implements MgService {
                 if (mgBetOrderList.size() > 0) {
                     mgbetOrderService.insertBatch(mgBetOrderList);
                     //redisTemplate.opsForValue().set(RedisKeys.LIVE_MG_ORDER_RECORD_KEY, object.getJSONObject("data").getString("last_record_time"));
-                    RedisBaseUtil.set(RedisKeys.LIVE_MG_ORDER_RECORD_KEY, object.getJSONObject("data").getString("last_record_time"));
+                    RedisBaseUtil.set(RedisKeys.INDO_MG_ORDER_RECORD_KEY, object.getJSONObject("data").getString("last_record_time"));
                     synMgOrderList(mgbetOrderService.queryMgOrderList());
                 }
             }
@@ -650,7 +651,7 @@ public class MgServiceImpl implements MgService {
         JSONObject result = null;
         try {
             //String versionTime = (String) redisTemplate.opsForValue().get(RedisKeys.LIVE_MG_ORDER_RECORD_KEY);
-            String versionTime = RedisBaseUtil.get(RedisKeys.LIVE_MG_ORDER_RECORD_KEY);
+            String versionTime = RedisBaseUtil.get(RedisKeys.INDO_MG_ORDER_RECORD_KEY);
             Map<String, String> map = new HashMap<>();
             if (StringUtils.isEmpty(versionTime)) {
                 versionTime = "0";
