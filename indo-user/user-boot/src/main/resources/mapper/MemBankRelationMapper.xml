@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.indo.code.modules.mem.mapper.BankRelationMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.indo.code.modules.mem.entity.BankRelation">
+        <id column="id" property="id"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="mem_id" property="memId"/>
+        <result column="user_name" property="userName"/>
+        <result column="bank_id" property="bankId"/>
+        <result column="card_number" property="cardNumber"/>
+        <result column="bank_branch" property="bankBranch"/>
+        <result column="ifsc" property="ifsc"/>
+        <result column="email" property="email"/>
+        <result column="phone" property="phone"/>
+        <result column="status" property="status"/>
+        <result column="is_del" property="isDel"/>
+        <result column="remark" property="remark"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        create_time,
+        update_time,
+        id, mem_id, user_name, bank_id, card_number, bank_branch, ifsc, email, phone, status, is_del, remark
+    </sql>
+
+    <select id="queryList" resultMap="BaseResultMap">
+        SELECT mbr.*, mb.name as bankName FROM mem_bank_relation mbr
+        Left join mem_bank mb on mbr.bank_id = mb.id
+        where mbr.is_del = 0
+        <if test="req.memId !=null">
+            and mbr.memId = #{req.memId}
+        </if>
+    </select>
+</mapper>

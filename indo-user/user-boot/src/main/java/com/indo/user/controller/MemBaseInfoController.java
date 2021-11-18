@@ -69,11 +69,5 @@ public class MemBaseInfoController {
         return Result.success();
     }
 
-    @ApiOperation(value = "添加银行卡", httpMethod = "POST")
-    @PostMapping(value = "/addbankCard")
-    @AllowAccess
-    public Result addbankCard(@RequestBody AddBankCardReq req) {
-        memBaseInfoService.addbankCard(req);
-        return Result.success();
-    }
+
 }
