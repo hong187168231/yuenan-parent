@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author puff
@@ -23,12 +23,11 @@ public class MemBank extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(value = "id")
+    @ApiModelProperty(value = "Id")
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     @ApiModelProperty(value = "银行名称")
-    @NotNull(message = "银行名称不能为空")
     private String name;
 
     @ApiModelProperty(value = "银行简称：eg:ICBC")
