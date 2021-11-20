@@ -3,7 +3,7 @@
 <mapper namespace="com.indo.user.mapper.MemAgentApplyMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.indo.code.modules.mem.entity.MemAgentApply">
+    <resultMap id="BaseResultMap" type="com.indo.user.pojo.entity.MemAgentApply">
         <id column="agent_apply_id" property="agentApplyId" />
         <result column="create_time" property="createTime" />
         <result column="update_time" property="updateTime" />

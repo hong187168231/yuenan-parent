@@ -58,6 +58,5 @@ public class MemBankRelationServiceImpl extends ServiceImpl<MemBankRelationMappe
     @Override
     public List<MemBank> findAllBank() {
         return memBankMapper.selectList(new QueryWrapper<>());
-        ;
     }
 }

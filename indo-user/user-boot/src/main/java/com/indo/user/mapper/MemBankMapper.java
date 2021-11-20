@@ -2,6 +2,9 @@ package com.indo.user.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.indo.user.pojo.entity.MemBank;
+import org.apache.ibatis.annotations.Mapper;
+
+import javax.annotation.ManagedBean;
 
 /**
  * <p>
@@ -11,6 +14,7 @@ import com.indo.user.pojo.entity.MemBank;
  * @author xxx
  * @since 2021-11-19
  */
+@Mapper
 public interface MemBankMapper extends BaseMapper<MemBank> {
 
 }
