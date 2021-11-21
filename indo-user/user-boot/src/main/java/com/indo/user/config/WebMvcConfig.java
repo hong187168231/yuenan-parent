@@ -20,7 +20,7 @@ public class WebMvcConfig extends com.indo.common.web.config.WebMvcConfig {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(authorizationInterceptor).addPathPatterns("/**");
+//        registry.addInterceptor(authorizationInterceptor).addPathPatterns("/**");
     }
 
     @Override

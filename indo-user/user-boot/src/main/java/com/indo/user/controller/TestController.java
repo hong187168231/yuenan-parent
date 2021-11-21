@@ -41,7 +41,7 @@ public class TestController {
     @GetMapping("/hello")
     public String detail(@LoginUser LoginInfo loginInfo) {
         MemBaseinfo memBaseInfo = new MemBaseinfo();
-        memBaseInfo.setAccno("dd");
+        memBaseInfo.setAccount("dd");
         memBaseInfo.setBalance(new BigDecimal(2000));
         redisUtils.set("dsd", memBaseInfo);
         return "ok";
