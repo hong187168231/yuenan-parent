@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.indo.user.mapper.MemNoticeMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.indo.user.pojo.entity.MemNotice">
+        <id column="id" property="id"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="mem_id" property="memId"/>
+        <result column="title" property="title"/>
+        <result column="content" property="content"/>
+        <result column="create_user" property="createUser"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        create_time,
+        update_time,
+        id, mem_id, title, content, create_user
+    </sql>
+
+    <select id="queryList" resultMap="BaseResultMap">
+        SELECT * from mem_notice m
+        where 1 = 1
+        <if test="req.memId !=null">
+            and m.mem_id = #{req.memId}
+        </if>
+        ORDER BY m.create_time desc
+    </select>
+</mapper>

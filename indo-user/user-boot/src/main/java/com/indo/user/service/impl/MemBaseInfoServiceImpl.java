@@ -4,6 +4,7 @@ import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.indo.common.constant.RedisConstants;
 import com.indo.common.mybatis.base.service.impl.SuperServiceImpl;
 import com.indo.common.pojo.bo.LoginInfo;
@@ -13,12 +14,17 @@ import com.indo.common.utils.BaseUtil;
 import com.indo.common.utils.CopyUtils;
 import com.indo.common.utils.DeviceInfoUtil;
 import com.indo.common.utils.NameGeneratorUtil;
+import com.indo.common.utils.encrypt.MD5;
 import com.indo.user.common.util.UserBusinessRedisUtils;
 import com.indo.user.mapper.MemBaseInfoMapper;
 import com.indo.user.mapper.MemSubordinateMapper;
+import com.indo.user.pojo.entity.MemBankRelation;
 import com.indo.user.pojo.entity.MemBaseinfo;
 import com.indo.user.pojo.entity.MemSubordinate;
+import com.indo.user.pojo.req.mem.AddBankCardReq;
 import com.indo.user.pojo.req.mem.MemInfoReq;
+import com.indo.user.pojo.req.mem.UpdateBaseInfoReq;
+import com.indo.user.pojo.req.mem.UpdatePasswordReq;
 import com.indo.user.pojo.vo.AppLoginVo;
 import com.indo.user.pojo.req.LoginReq;
 import com.indo.user.pojo.req.RegisterReq;
@@ -59,7 +65,7 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
         }
         req.setPassword(req.getPassword().toLowerCase());
         MemBaseinfo userInfo = memBaseInfoMapper.
-                selectOne(new LambdaQueryWrapper<MemBaseinfo>().eq(MemBaseinfo::getAccno, req.getAccount()));
+                selectOne(new LambdaQueryWrapper<MemBaseinfo>().eq(MemBaseinfo::getAccount, req.getAccount()));
         //判断密码是否正确
         if (!req.getPassword().equals(userInfo.getPassword())) {
             return Result.failed("密码错误！");
@@ -108,7 +114,7 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
             return Result.failed("账号已存在！");
         }
         MemBaseinfo userInfo = new MemBaseinfo();
-        userInfo.setAccno(req.getAccount());
+        userInfo.setAccount(req.getAccount());
         //userInfo.setSource(Integer.valueOf(DeviceInfoUtil.getSource()));
         userInfo.setPassword(req.getPassword());
         if (StringUtils.isNotBlank(req.getDeviceCode())) {
@@ -143,7 +149,7 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
         }
         userInfo.setRInviteCode(productInviteCode());
 //        userInfo.setLastLoginTime(nowDate);
-        userInfo.setAcc_type(0);
+        userInfo.setAccType(false);
 //        userInfo.setLastLoginTime(nowDate);
 //        userInfo.setHeadUrl("");
 //        userInfo.setDeviceCode(DeviceInfoUtil.getDeviceId());
@@ -181,7 +187,7 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
 
     @Override
     public MemBaseInfoVo getMemBaseInfoByAccount(String account) {
-        MemBaseinfo memBaseinfo = this.baseMapper.selectOne(new QueryWrapper<MemBaseinfo>().lambda().eq(MemBaseinfo::getAccno, account));
+        MemBaseinfo memBaseinfo = this.baseMapper.selectOne(new QueryWrapper<MemBaseinfo>().lambda().eq(MemBaseinfo::getAccount, account));
         MemBaseInfoVo vo = new MemBaseInfoVo();
         BeanUtils.copyProperties(memBaseinfo, vo);
         return vo;
@@ -192,6 +198,28 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
 
         return null;
     }
+
+    @Override
+    public void updatePassword(UpdatePasswordReq req) {
+        MemBaseinfo memBaseinfo = this.baseMapper.selectOne(new QueryWrapper<MemBaseinfo>().lambda().eq(MemBaseinfo::getAccount, req.getAccno()));
+        if (memBaseinfo.getPassword().equals(req.getOldPassword())) {
+            throw new RuntimeException("old password is not correct");
+        }
+        MemBaseinfo newMemBaseinfo = new MemBaseinfo();
+        newMemBaseinfo.setAccount(req.getAccno());
+        newMemBaseinfo.setPassword(req.getNewPassword());
+        this.baseMapper.update(newMemBaseinfo, new UpdateWrapper<MemBaseinfo>().lambda().eq(MemBaseinfo::getAccount, req.getAccno()));
+    }
+
+    @Override
+    public void updateBaseInfo(UpdateBaseInfoReq req) {
+        MemBaseinfo memBaseinfo = new MemBaseinfo();
+        memBaseinfo.setPhone(req.getPhone());
+        memBaseinfo.setFaceBook(req.getFacebook());
+        memBaseinfo.setWhatsApp(req.getWhatsapp());
+        this.baseMapper.update(memBaseinfo, new UpdateWrapper<MemBaseinfo>().lambda().eq(MemBaseinfo::getAccount, req.getAccno()));
+    }
+
 
     /**
      * 功能描述: 返回登录信息
