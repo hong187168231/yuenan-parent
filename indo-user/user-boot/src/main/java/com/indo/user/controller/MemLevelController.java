@@ -6,6 +6,7 @@ import com.indo.common.result.Result;
 import com.indo.user.pojo.entity.MemBank;
 import com.indo.user.pojo.entity.MemLevel;
 import com.indo.user.service.IMemLevelService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,6 +23,7 @@ import java.util.List;
  * @author xxx
  * @since 2021-11-21
  */
+@Api(tags = "会员等级")
 @RestController
 @RequestMapping("/mem/level")
 public class MemLevelController {

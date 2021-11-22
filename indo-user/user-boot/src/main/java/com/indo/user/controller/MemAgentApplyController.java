@@ -6,6 +6,7 @@ import com.indo.user.pojo.req.mem.MemAgentApplyReq;
 import com.indo.user.pojo.req.mem.MemInfoReq;
 import com.indo.user.pojo.vo.mem.MemBaseInfoVo;
 import com.indo.user.service.IMemAgentApplyService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,8 +22,10 @@ import org.springframework.web.bind.annotation.RestController;
  * @author xxx
  * @since 2021-11-19
  */
+
+@Api(tags = "代理申请")
 @RestController
-@RequestMapping("/mem/agent-apply")
+@RequestMapping("/mem/agentApply")
 public class MemAgentApplyController {
 
     @Autowired
