@@ -4,6 +4,7 @@ import com.indo.admin.modules.file.service.IFileService;
 import com.indo.admin.pojo.entity.FileInfo;
 import com.indo.common.result.PageResult;
 import com.indo.common.result.Result;
+import io.swagger.annotations.Api;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,6 +16,7 @@ import java.util.Map;
  *
  * @author 作者 owen E-mail: 624191343@qq.com
  */
+@Api(tags = "文件上传")
 @RestController
 public class FileController {
     @Resource

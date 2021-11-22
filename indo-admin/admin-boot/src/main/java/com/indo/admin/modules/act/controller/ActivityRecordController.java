@@ -8,6 +8,7 @@ import com.indo.admin.pojo.dto.ActivityTypeDTO;
 import com.indo.admin.pojo.vo.ActivityRecordVO;
 import com.indo.admin.pojo.vo.ActivityTypeVO;
 import com.indo.common.result.Result;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +26,7 @@ import java.util.List;
  * @author puff
  * @since 2021-11-02
  */
+@Api(tags = "活动记录")
 @RestController
 @RequestMapping("/act/activityRecord")
 public class ActivityRecordController {

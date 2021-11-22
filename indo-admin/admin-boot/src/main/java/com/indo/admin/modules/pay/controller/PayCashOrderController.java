@@ -9,6 +9,7 @@ import com.indo.pay.pojo.dto.PayCashOrderDTO;
 import com.indo.pay.pojo.vo.PayBankVO;
 import com.indo.pay.pojo.vo.PayCashOrderApplyVO;
 import com.indo.pay.pojo.vo.PayCashOrderVO;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ import java.util.List;
  * @author xxx
  * @since 2021-11-13
  */
+@Api(tags = "提现")
 @RestController
 @RequestMapping("/pay/takeCash")
 public class PayCashOrderController {
