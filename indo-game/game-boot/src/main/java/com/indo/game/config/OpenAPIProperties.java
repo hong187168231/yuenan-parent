@@ -199,6 +199,17 @@ public class OpenAPIProperties implements InitializingBean {
     public static String DB_API_DC;
     public static String DB_API_PARENT;
 
+    //AWC
+    public static String AWC_CERT;
+    public static String AWC_AGENTID;
+    public static String AWC_API_URL_LOGIN;
+    @Value("${awc.cert}")
+    private String awcCert;
+    @Value("${awc.agentId}")
+    private String awcAgentId;
+    @Value("${awc.awcApiId}")
+    private String awcApiId;
+
     @Override
     public void afterPropertiesSet() throws Exception {
         PROXY_HOST_NAME = proxyHostName;
@@ -273,6 +284,8 @@ public class OpenAPIProperties implements InitializingBean {
         DB_PROXY_HOST = dbApiProxy;
         DB_API_URL = dbApiUrl + "/apiRequest.do";
 
-
+        AWC_CERT = awcCert;
+        AWC_AGENTID = awcAgentId;
+        AWC_API_URL_LOGIN = awcApiId;
     }
 }

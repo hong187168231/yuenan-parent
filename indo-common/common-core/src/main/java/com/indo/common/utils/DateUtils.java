@@ -34,6 +34,8 @@ public class DateUtils {
 
     public final static String timeFormat = "HHmmss";
 
+    public static final String TIME_PATTERN = "HH:mm:ss";
+
     public final static String monthFormat = "yyyyMM";
 
     public final static String yearFormat = "yyyy";
@@ -49,6 +51,8 @@ public class DateUtils {
     public final static String FULL_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS";
 
     public final static String UTC_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+
+    public final static String ISO8601_DATE_FORMAT = "yyyy-MM-dd'T'hh:mm:ss+|-hh:mm";
 
     public final static String HOURMINUTEFormat = "HH:mm";
 

@@ -4,27 +4,38 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.indo.common.pojo.entity.BaseEntity;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import javax.validation.constraints.NotNull;
-
+/**
+ * <p>
+ * 
+ * </p>
+ *
+ * @author xxx
+ * @since 2021-11-22
+ */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("game_download")
-public class GameDownload  extends BaseEntity {
+@TableName("game_language_type")
+@ApiModel(value="LanguageType对象", description="")
+public class GameLanguageType extends BaseEntity {
+
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(value = "id")
     @TableId(value = "id", type = IdType.AUTO)
-    private Long id;
+    private Integer id;
 
-    @ApiModelProperty(value = "下载地址")
-    @NotNull(message = "下载地址不能为空")
-    private String download;
+    @ApiModelProperty(value = "语言标准代码")
+    private String code;
 
-    @ApiModelProperty(value = "是否启用")
-    private String isStart;//0关闭  1启用
+    @ApiModelProperty(value = "英文名称")
+    private String enName;
+
+    @ApiModelProperty(value = "中文名称")
+    private String cnName;
+
 
 }

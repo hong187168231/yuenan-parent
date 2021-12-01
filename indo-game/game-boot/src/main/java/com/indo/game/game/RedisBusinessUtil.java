@@ -103,17 +103,7 @@ import com.indo.admin.pojo.entity.SysParameter;
 import com.indo.common.constant.RedisKeys;
 //import org.apache.ibatis.session.RowBounds;
 import com.indo.game.common.constant.Constants;
-import com.indo.game.pojo.entity.MemBaseinfo;
-import com.indo.game.pojo.entity.ae.AeGame;
-import com.indo.game.pojo.entity.ae.AeRoom;
-import com.indo.game.pojo.entity.ag.AgGame;
-import com.indo.game.pojo.entity.ag.AgPayType;
-import com.indo.game.pojo.entity.ag.AgPlatform;
-import com.indo.game.pojo.entity.ag.AgRound;
-import com.indo.game.pojo.entity.db.DbGame;
-import com.indo.game.pojo.entity.ky.KyKind;
-import com.indo.game.pojo.entity.ky.KyServer;
-import com.indo.game.pojo.entity.mg.MgGame;
+import com.indo.user.pojo.entity.MemBaseinfo;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -203,14 +193,14 @@ public class RedisBusinessUtil extends RedisBaseUtil {
      * @param appMember
      */
     public static void addAppMember(MemBaseinfo appMember) {
-        if (null == appMember || null == appMember.getMemid()) {
+        if (null == appMember || null == appMember.getId()) {
             return;
         }
-        set(RedisKeys.APP_MEMBER + appMember.getMemid(), appMember, 12L, TimeUnit.HOURS);
+        set(RedisKeys.APP_MEMBER + appMember.getId(), appMember, 12L, TimeUnit.HOURS);
         //添加ACCNO 与 MEMID的关系映射
-        set(RedisKeys.ACCNO_MAP_MEMID + appMember.getAccno(), appMember.getMemid(), 7L, TimeUnit.DAYS);
+        set(RedisKeys.ACCNO_MAP_MEMID + appMember.getAccno(), appMember.getId(), 7L, TimeUnit.DAYS);
         //建立用户 uniqueId 和 memid 的关系
-        set(RedisKeys.UNIQUE_ID_MAP_MEMID + appMember.getMemid(), appMember.getMemid(), 7L, TimeUnit.DAYS);
+        set(RedisKeys.UNIQUE_ID_MAP_MEMID + appMember.getId(), appMember.getId(), 7L, TimeUnit.DAYS);
     }
 
 
@@ -1344,61 +1334,6 @@ public class RedisBusinessUtil extends RedisBaseUtil {
 //        return get(redisKeys);
 //    }
 
-    /**
-     * 第三方ae_room表缓存
-     */
-    public static List<AeRoom> getAllAeRoom() {
-        return get(RedisKeys.AE_ROOM_KEY);
-    }
-
-    /**
-     * 第三方ae_game表缓存
-     */
-    public static List<AeGame> getAllAeGame() {
-        return get(RedisKeys.AE_GANE_KEY);
-    }
-
-    /**
-     * 第三方ag_play_type表缓存
-     */
-    public static List<AgPayType> getAllAgPlayType() {
-        return get(RedisKeys.AG_PAY_KEY);
-    }
-
-    /**
-     * 第三方Ag_platform表缓存
-     */
-    public static List<AgPlatform> getAllGgPlatform() {
-        return get(RedisKeys.AG_PLATFORM_KEY);
-    }
-
-    /**
-     * 第三方Ag_round表缓存
-     */
-    public static List<AgRound> getAllAgRound() {
-        return get(RedisKeys.AG_ROUND_KEY);
-    }
-
-    /**
-     * 第三方Ag_game表缓存
-     */
-    public static List<AgGame> getAllAgGame() {
-        return get(RedisKeys.AG_GANE_KEY);
-    }
-
-    /**
-     * 第三方ky_kind表缓存
-     */
-    public static List<KyKind> getAllKyKind() {
-        return get(RedisKeys.KY_KIND_KEY);
-    }
-
-    /**
-     * 第三方ky_server表缓存
-     */
-    public static List<KyServer> getAllKyServer() {
-        return get(RedisKeys.KY_SERVER_KEY);
-    }
 
 //    public static void addSameParamsList(String code, String sort, List<String> list) {
 //        if (CollectionUtil.isEmpty(list)) {
@@ -1416,26 +1351,6 @@ public class RedisBusinessUtil extends RedisBaseUtil {
 //        return lRange(code + sort.toUpperCase(), 0, -1);
 //    }
 //
-    /**
-     * 第三方mg_game表缓存
-     */
-    public static List<MgGame> getAllMgGame() {
-        return get(RedisKeys.MG_GANE_KEY);
-    }
-
-    /**
-     * 第三方mg_game表缓存
-     */
-    public static List<MgGame> getAllMgGameOrder() {
-        return get(RedisKeys.MG_GANE_NAME_KEY);
-    }
-
-    /**
-     * 第三方db_game表缓存
-     */
-    public static List<DbGame> getAllDbGameOrder() {
-        return get(RedisKeys.DB_GANE_NAME_KEY);
-    }
 
 //    //======================财务相关=========================
 //    public static SysPayset getPaysetCacheBySetType(Integer setType) {

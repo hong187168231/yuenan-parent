@@ -72,4 +72,9 @@ public class RedisKeys {
      */
     public static final String INDO_MG_ORDER_RECORD_KEY = "INDO_MG_ORDER_RECORD_KEY";
 
+    //AE真人 注单  游戏名称缓存 key
+    public static final String AWCAESEXYBCRT_GANE_KEY = "INDO_AWCAESEXYBCRT_GANE_KEY";
+
+    //AE真人 注单  房间名称缓存 key
+    public static final String AWCAESEXYBCRT_ROOM_KEY = "INDO_AWCAESEXYBCRT_ROOM_KEY";
 }
