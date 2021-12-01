@@ -38,7 +38,7 @@ public class MsgRpc {
      * @param msgDTO
      * @return
      */
-    @GetMapping("/personal")
+    @PostMapping("/personal")
     public Result<PageResult<MsgStationLetter>> getPersonalMsg(@RequestBody MsgDTO msgDTO) {
         return Result.success(iMsgStationLetterService.getPersonalMsg(msgDTO));
     }
@@ -47,10 +47,9 @@ public class MsgRpc {
     /**
      * 根据参数code 获取系统参数
      *
-     * @param msgDTO
      * @return
      */
-    @GetMapping("/sys")
+    @PostMapping("/sys")
     public Result<PageResult<MsgPushRecord>> getSysMsg(@RequestBody MsgDTO msgDTO) {
         return Result.success(iMsgPushRecordService.getSysMsg(msgDTO));
     }

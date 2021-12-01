@@ -6,11 +6,13 @@ import com.indo.common.pojo.entity.BaseEntity;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * 提取方式配置返回
  */
 @Data
-public class PayCashConfigVO extends BaseEntity {
+public class PayCashOrderVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @TableId(value = "id", type = IdType.AUTO)

@@ -1,8 +1,10 @@
 package com.indo.user.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.indo.common.result.PageResult;
+import com.indo.user.mapper.MemBankMapper;
 import com.indo.user.mapper.MemBankRelationMapper;
 import com.indo.user.pojo.entity.MemBank;
 import com.indo.user.pojo.entity.MemBankRelation;
@@ -28,6 +30,8 @@ public class MemBankRelationServiceImpl extends ServiceImpl<MemBankRelationMappe
 
     @Autowired
     private MemBankRelationMapper memBankRelationMapper;
+    @Autowired
+    private MemBankMapper memBankMapper;
 
 
     @Override
@@ -53,6 +57,6 @@ public class MemBankRelationServiceImpl extends ServiceImpl<MemBankRelationMappe
 
     @Override
     public List<MemBank> findAllBank() {
-        return null;
+        return memBankMapper.selectList(new QueryWrapper<>());
     }
 }

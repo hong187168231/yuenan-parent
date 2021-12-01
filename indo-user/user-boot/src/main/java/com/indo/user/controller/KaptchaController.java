@@ -52,6 +52,7 @@ public class KaptchaController {
             put("img", captcha.toBase64());
             put("uuid", uuid);
         }};
+
         return Result.success(imgResult);
 
     }

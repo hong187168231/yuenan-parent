@@ -2,57 +2,66 @@ package com.indo.user.pojo.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.indo.common.pojo.entity.BaseEntity;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.math.BigDecimal;
+
 /**
  * <p>
- * 用户等级表
+ * 会员等级表
  * </p>
  *
- * @author puff
- * @since 2021-08-26
+ * @author xxx
+ * @since 2021-11-21
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
+@TableName("mem_level")
+@ApiModel(value="Level对象", description="会员等级表")
 public class MemLevel extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
     @TableId(value = "id", type = IdType.AUTO)
-    private Long id;
+    private Integer id;
 
     @ApiModelProperty(value = "会员等级")
-    private Integer level;
+    private String level;
 
-    @ApiModelProperty(value = "会员层级")
-    private Integer hierarchy;
+    @ApiModelProperty(value = "所需存款")
+    private BigDecimal needDeposit;
 
-    @ApiModelProperty(value = "所需积分")
-    private Integer needIntegral;
-
-    @ApiModelProperty(value = "等级名称（头衔）")
-    private String name;
+    @ApiModelProperty(value = "所需投注")
+    private BigDecimal needBet;
 
     @ApiModelProperty(value = "晋级奖励")
-    private Integer reward;
+    private BigDecimal reward;
 
-    @ApiModelProperty(value = "跳级奖励")
-    private Integer skipReward;
+    @ApiModelProperty(value = "每日礼金")
+    private BigDecimal everydayGift;
 
-    @ApiModelProperty(value = "有效时间")
-    private Integer validDate;
+    @ApiModelProperty(value = "每周礼金")
+    private BigDecimal weekGift;
 
-    @ApiModelProperty(value = "会员卡背景")
-    private String image;
+    @ApiModelProperty(value = "每月礼金")
+    private BigDecimal monthGift;
 
-    @ApiModelProperty(value = "会员图标")
+    @ApiModelProperty(value = "每年礼金")
+    private BigDecimal yearGift;
+
+    @ApiModelProperty(value = "生日礼金")
+    private BigDecimal birthdayGift;
+
+    @ApiModelProperty(value = "会员人数")
+    private Integer memNum;
+
+    @ApiModelProperty(value = "图标")
     private String icon;
-
-    @ApiModelProperty(value = "是否删除.1=删除,0=未删除")
-    private Boolean isDel;
 
 
 }

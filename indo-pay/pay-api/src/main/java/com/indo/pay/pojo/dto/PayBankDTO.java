@@ -8,9 +8,10 @@ import lombok.Data;
  * 银行支付配置请求参数
  */
 @Data
-public class PayBankConfigDto extends BaseDTO {
+public class PayBankDTO extends BaseDTO {
     private static final long serialVersionUID = 1L;
 
 
+    private  String bankName;
 
 }

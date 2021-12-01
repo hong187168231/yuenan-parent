@@ -3,6 +3,7 @@ package com.indo.admin.modules.mem.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.indo.common.pojo.entity.BaseEntity;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -23,150 +24,96 @@ public class MemBaseinfo extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 用户ID
-     */
+    @ApiModelProperty(value = "用户ID")
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
-    /**
-     * 真实姓名
-     */
+    @ApiModelProperty(value = "真实姓名")
     private String realName;
 
-    /**
-     * 昵称
-     */
+    @ApiModelProperty(value = "昵称")
     private String nickName;
 
-    /**
-     * 用户唯一标识
-     */
-    private String accno;
+    @ApiModelProperty(value = "用户唯一标识")
+    private String account;
 
-    /**
-     * 密码盐值
-     */
+    @ApiModelProperty(value = "密码盐值")
     private String salt;
 
-    /**
-     * 登陆密码
-     */
+    @ApiModelProperty(value = "登陆密码")
     private String password;
 
-    /**
-     * 登录密码MD5
-     */
+    @ApiModelProperty(value = "登录密码MD5")
     private String passwordMd5;
 
-    /**
-     * 手机号
-     */
+    @ApiModelProperty(value = "手机号")
     private String phone;
 
-    /**
-     * 电子邮件
-     */
+    @ApiModelProperty(value = "电子邮件")
     private String email;
 
-    /**
-     * facebook
-     */
+    @ApiModelProperty(value = "facebook")
     private String faceBook;
 
-    /**
-     * whatsapp
-     */
+    @ApiModelProperty(value = "whatsapp")
     private String whatsApp;
 
-    /**
-     * 注册时使用的邀请码（上级的）
-     */
+    @ApiModelProperty(value = "注册时使用的邀请码（上级的）")
     private String rInviteCode;
 
-    /**
-     * 用户层级id
-     */
+    @ApiModelProperty(value = "支付层级id")
     private Long groupId;
 
-    /**
-     * 用户等级
-     */
+    @ApiModelProperty(value = "用户等级")
     private Integer memLevel;
 
-    /**
-     * 账户类型：1 玩家 2-代理
-     */
-    private Integer acc_type;
+    @ApiModelProperty(value = "账户类型：1 玩家 2-代理")
+    private Boolean accType;
 
-    /**
-     * 余额
-     */
+    private BigDecimal totalDeposit;
+
+    private BigDecimal totalEnchashment;
+
+    @ApiModelProperty(value = "余额")
     private BigDecimal balance;
 
-    /**
-     * 注册来源 ios、android
-     */
+    @ApiModelProperty(value = "注册来源 ios、android")
     private String registerSource;
 
-    /**
-     * 注册ip
-     */
+    @ApiModelProperty(value = "注册ip")
     private String registerIp;
 
-    /**
-     * 登录ip地址
-     */
+    @ApiModelProperty(value = "登录ip地址")
     private String clientIp;
 
-    /**
-     * 账户状态 0 正常 1 删除 2冻结
-     */
+    @ApiModelProperty(value = "账户状态 0 正常 1 删除 2冻结")
     private Integer status;
 
-    /**
-     * 禁止登陆
-     */
-    private Integer prohibitLogin;
+    @ApiModelProperty(value = "禁止登陆")
+    private Boolean prohibitLogin;
 
-    /**
-     * 是否禁止邀请发展下级和会员：0 否 1 是
-     */
-    private Integer prohibitInvite;
+    @ApiModelProperty(value = "是否禁止邀请发展下级和会员：0 否 1 是")
+    private Boolean prohibitInvite;
 
-    /**
-     * 是否禁止投注：0 否 1 是
-     */
-    private Integer prohibitInvestment;
+    @ApiModelProperty(value = "是否禁止投注：0 否 1 是")
+    private Boolean prohibitInvestment;
 
-    /**
-     * 是否禁止出款：0 否 1 是
-     */
-    private Integer prohibitDisbursement;
+    @ApiModelProperty(value = "是否禁止出款：0 否 1 是")
+    private Boolean prohibitDisbursement;
 
-    /**
-     * 是否禁止充值：0 否 1 是
-     */
-    private Integer prohibitRecharge;
+    @ApiModelProperty(value = "是否禁止充值：0 否 1 是")
+    private Boolean prohibitRecharge;
 
-    /**
-     * 备注
-     */
+    @ApiModelProperty(value = "备注")
     private String remark;
 
-    /**
-     * 创建人
-     */
+    @ApiModelProperty(value = "创建人")
     private String createUser;
 
-    /**
-     * 最后登录时间
-     */
+    @ApiModelProperty(value = "最后登录时间")
     private LocalDateTime lastLoginTime;
 
-    /**
-     * 最后修改人
-     */
+    @ApiModelProperty(value = "最后修改人")
     private String updateUser;
 
 

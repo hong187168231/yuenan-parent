@@ -5,6 +5,7 @@ import com.indo.admin.modules.ade.service.IAdvertiseRecordService;
 import com.indo.admin.pojo.vo.AdvertiseRecordVO;
 import com.indo.common.result.Result;
 import com.indo.user.pojo.dto.AdvertiseRecordDTO;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,7 @@ import java.util.List;
  * @author puff
  * @since 2021-11-02
  */
+@Api(tags = "广告")
 @RestController
 @RequestMapping("/api/v1/ade/advertiseRecord")
 public class AdvertiseRecordController {
