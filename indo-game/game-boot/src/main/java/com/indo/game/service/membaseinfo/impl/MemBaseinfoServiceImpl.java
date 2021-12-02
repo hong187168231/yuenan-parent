@@ -23,7 +23,7 @@ public class MemBaseinfoServiceImpl implements MemBaseinfoService {
 
     @Resource
     private MemBaseInfoMapper memBaseinfoMapper;
-    @Resource
+//    @Resource
 //    private MemBaseinfoMapperExt memBaseinfoMapperExt;
 //    @Resource
 //    private TraOrderinfomMapperExt traOrderinfomMapperExt;
