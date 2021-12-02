@@ -51,12 +51,14 @@ public abstract class AbstractOnlinePaymentService implements OnlinePaymentServi
 
     protected abstract <T> T callPayService(BasePayReq req, Class<T> clazz);
 
+
     /**
      * 支付订单入库
      *
      * @return 成功返回true，失败返回false
      */
     protected abstract <R extends BasePayReq> boolean insertPayment(R req);
+
 
     /**
      * 参数检测，如果此方法不符合你的逻辑，可重写此方法
@@ -66,11 +68,11 @@ public abstract class AbstractOnlinePaymentService implements OnlinePaymentServi
      */
     protected boolean checkParams(BasePayReq req) {
         boolean flag = true;
-        if (ObjectUtils.isEmpty(req.getAmount())
-                || ObjectUtils.isEmpty(req.getMerchantNo()) || ObjectUtils.isEmpty(req.getOrderNo())) {
+        if (ObjectUtils.isEmpty(req.getTradeAmount())
+                || ObjectUtils.isEmpty(req.getMerchantNo()) || ObjectUtils.isEmpty(req.getMerchantOrderNo())) {
             flag = false;
         }
-        Integer amount = req.getAmount().intValue();
+        Integer amount = req.getTradeAmount().intValue();
         if (amount.intValue() <= 0) {
             flag = false;
         }

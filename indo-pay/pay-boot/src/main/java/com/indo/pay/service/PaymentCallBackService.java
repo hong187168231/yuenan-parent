@@ -29,12 +29,12 @@ public class PaymentCallBackService {
     private PayRechargeOrderMapper payRechargeOrderMapper;
 
 
-    @Resource(name = "diLeiOnlinePaymentService")
-    private OnlinePaymentService diLeiOnlinePaymentService;
+    @Resource(name = "huaRenOnlinePaymentService")
+    private OnlinePaymentService huaRenOnlinePaymentService;
 
 
     public String diLeiCallback(DiLeiCallbackReq req) {
-        return commonCallback(diLeiOnlinePaymentService.callBackProcess(req), PayConstants.PAY_CALLBACK_FAIL, PayConstants.PAY_CALLBACK_BIG_OK);
+        return commonCallback(huaRenOnlinePaymentService.callBackProcess(req), PayConstants.PAY_CALLBACK_FAIL, PayConstants.PAY_CALLBACK_BIG_OK);
     }
 
     public String commonCallback(boolean result, String msgFail, String msgSuccess) {

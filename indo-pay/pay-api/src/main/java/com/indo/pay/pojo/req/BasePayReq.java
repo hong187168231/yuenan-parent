@@ -20,7 +20,8 @@ public class BasePayReq implements Serializable {
     private String payType; //支付通道编码
     private BigDecimal tradeAmount; //支付金额
     private String merchantNo; //商户号
-    private String merchantOrderNo; //商户订单号
+    private String transactionNo; //第三方订单号
+    private String merchantOrderNo; //商户订单号  -- 自己
     private String payUrl;//支付地址
     private String notifyUrl; //异步通知地址
     private String pageUrl; //支付结束跳转地址
