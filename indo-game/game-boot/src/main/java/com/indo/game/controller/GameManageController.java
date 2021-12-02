@@ -6,7 +6,7 @@ import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.pojo.entity.manage.GameCategory;
 import com.indo.game.pojo.entity.manage.GameDownload;
 import com.indo.game.pojo.entity.manage.GamePlatform;
-import com.indo.game.services.manage.IGameManageService;
+import com.indo.game.service.manage.IGameManageService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;

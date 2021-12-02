@@ -14,17 +14,15 @@ import java.math.BigDecimal;
 
 @Data
 public class BasePayReq implements Serializable {
-    private String orderNo; //商户订单号
-    private Long uid;//支付方式id
-    private Long payWayId;//支付方式id
-    private String payWayCode; //支付通道
-    private BigDecimal amount; //支付金额
-    private String merchantNo; //商户号
-    private String shopUrl;//标识
-    private String notifyUrl; //异步回调地址
-    private String callBackUrl; //支付结束跳转地址
-    private String acclogin; //用户标识
-    private String typeCode;//方式类型 NETBANK 网银转账  WECHAT 微信收款  ALIPAY 支付宝支付
-    private String secretKey;
 
+    private Long userId;//用户id
+    private Long payWayId;//支付方式id
+    private String payType; //支付通道编码
+    private BigDecimal tradeAmount; //支付金额
+    private String merchantNo; //商户号
+    private String merchantOrderNo; //商户订单号
+    private String payUrl;//支付地址
+    private String notifyUrl; //异步通知地址
+    private String pageUrl; //支付结束跳转地址
+    private String secretKey;
 }

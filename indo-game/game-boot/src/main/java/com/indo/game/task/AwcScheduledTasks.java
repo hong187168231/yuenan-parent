@@ -2,7 +2,7 @@ package com.indo.game.task;
 
 import com.indo.game.game.RedisBaseUtil;
 import com.indo.common.utils.DateUtils;
-import com.indo.game.services.awc.AwcService;
+import com.indo.game.service.awc.AwcService;
 import org.redisson.api.RReadWriteLock;
 import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;

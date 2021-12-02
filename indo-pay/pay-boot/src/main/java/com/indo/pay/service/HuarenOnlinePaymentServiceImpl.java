@@ -1,22 +1,25 @@
 //package com.indo.pay.service;
 //
+//import cn.hutool.core.util.IdUtil;
 //import com.alibaba.fastjson.JSON;
 //import com.alibaba.fastjson.JSONObject;
 //import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-//import com.indo.pay.factory.AbstractOnlinePaymentService;
-//import com.indo.pay.mapper.PayRechargeOrderMapper;
-//import com.indo.pay.pojo.entity.PayRechargeOrder;
-//import com.indo.pay.util.SignMd5Utils;
-//import com.indo.pay.common.constant.PayConstants;
 //import com.indo.common.utils.DateUtils;
 //import com.indo.common.web.util.http.HttpClient;
+//import com.indo.pay.common.constant.PayConstants;
+//import com.indo.pay.factory.AbstractOnlinePaymentService;
+//import com.indo.pay.mapper.PayRechargeOrderMapper;
 //import com.indo.pay.pojo.dto.PaymentVastDto;
 //import com.indo.pay.pojo.dto.RechargeRequestDTO;
+//import com.indo.pay.pojo.entity.PayRechargeOrder;
 //import com.indo.pay.pojo.req.BaseCallBackReq;
 //import com.indo.pay.pojo.req.BasePayReq;
 //import com.indo.pay.pojo.req.DiLeiPayReq;
+//import com.indo.pay.pojo.req.HuaRenPayReq;
 //import com.indo.pay.pojo.resp.DiLeiCallbackReq;
 //import com.indo.pay.pojo.resp.DiLeiPayResp;
+//import com.indo.pay.pojo.resp.HuaRenPayResp;
+//import com.indo.pay.util.SignMd5Utils;
 //import lombok.extern.slf4j.Slf4j;
 //import org.springframework.stereotype.Service;
 //import org.springframework.util.ObjectUtils;
@@ -27,11 +30,12 @@
 //
 ///**
 // * @Description
-// * @Author puff 地雷支付service
+// * @Author puff
+// * HrPay支付service
 // **/
 //@Slf4j
-//@Service("diLeiOnlinePaymentService")
-//public class DiLeiOnlinePaymentServiceImpl extends AbstractOnlinePaymentService {
+//@Service("huaRenOnlinePaymentService")
+//public class HuarenOnlinePaymentServiceImpl extends AbstractOnlinePaymentService {
 //
 //    @Resource
 //    private PayRechargeOrderMapper payRechargeOrderMapper;
@@ -45,30 +49,35 @@
 //    @Override
 //    protected <T> T callPayService(BasePayReq req, Class<T> clazz) {
 //        // 检验参数
-//        DiLeiPayReq diLeiPayReq;
-//        if (req instanceof DiLeiPayReq) {
-//            diLeiPayReq = (DiLeiPayReq) req;
+//        HuaRenPayReq huaRenPayReq;
+//        if (req instanceof HuaRenPayReq) {
+//            huaRenPayReq = (HuaRenPayReq) req;
 //        } else {
-//            log.error("paylog 众宝支付 创建订单 {} callPayService 入口参数错误 {}", this.getClass().getName(), JSON.toJSONString(req));
+//            log.error("paylog HrPay支付 创建订单 {} callPayService 入口参数错误 {}", this.getClass().getName(), JSON.toJSONString(req));
 //            return null;
 //        }
 //        // 生成验签
-//        LinkedHashMap<String, String> reqMap = new LinkedHashMap<String, String>();
-//        reqMap.put("pay_memberid", diLeiPayReq.getMerchantNo());
-//        reqMap.put("pay_orderid", diLeiPayReq.getOrderNo());
-//        reqMap.put("pay_amount", diLeiPayReq.getAmount().toString());
-//        reqMap.put("pay_applydate", DateUtils.getDateString(new Date()));
-//        reqMap.put("pay_bankcode", "111");
-//        reqMap.put("pay_notifyurl", diLeiPayReq.getNotifyUrl());
-//        reqMap.put("pay_callbackurl", diLeiPayReq.getCallBackUrl());
-//        reqMap.put("pay_attach", "test");
-//        reqMap.put("pay_productname", "shop");
-//        String signStr = SignMd5Utils.createSign(reqMap, diLeiPayReq.getSecretKey());
-//        reqMap.put("pay_md5sign", signStr);
+//
+//
+//        Map<String, String> reqMap = new TreeMap<>();
+//        reqMap.put("version", "1.0");
+//        reqMap.put("mch_id", "101103004");
+//        reqMap.put("notify_url", "www.baidu.com");
+//        reqMap.put("page_url", "www.baidu.com");
+//        reqMap.put("mch_order_no", IdUtil.simpleUUID());
+//        reqMap.put("pay_type", "102");
+//        reqMap.put("trade_amount", "100");
+//        reqMap.put("order_date", DateUtils.getNewFormatDateString(new Date()));
+//        reqMap.put("bank_code", "IDPT0001");
+//        reqMap.put("goods_name", "indotest");
+//        reqMap.put("payer_phone", "855973559275");
+//        String sign = SignMd5Utils.createSmallSign(reqMap, "47f57ddf74bb4e00b61b0ef96130fb8b");
+//        reqMap.put("sign_type", "MD5");
+//        reqMap.put("sign", sign);
 //        // http请求
 //        String httpRet = "";
 //        Map<String, Object> responseMap = new HashMap<>();
-//        DiLeiPayResp zbPayResp = new DiLeiPayResp();
+//        HuaRenPayResp huaRenPayResp = new HuaRenPayResp();
 //        try {
 //            httpRet = HttpClient.formPost(diLeiPayReq.getShopUrl(), reqMap);
 //            log.info("paylog ai支付 创建订单请求 {} callPayService {}", this.getClass().getName(), reqMap);

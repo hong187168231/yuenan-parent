@@ -7,7 +7,7 @@ import com.indo.common.result.Result;
 import com.indo.common.result.ResultCode;
 import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.game.RedisLock;
-import com.indo.game.services.awc.AwcService;
+import com.indo.game.service.awc.AwcService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

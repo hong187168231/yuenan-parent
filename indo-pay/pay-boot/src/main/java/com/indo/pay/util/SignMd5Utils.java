@@ -122,41 +122,6 @@ public class SignMd5Utils {
         }
     }
 
-    /**
-     * 生成签名
-     */
-    public static String createSignTest(Map<String, String> packageParams, String signKey, String payType) {
-        TreeMap sortedMap = new TreeMap(packageParams);
-        StringBuilder toSign = new StringBuilder();
-        Iterator i$ = sortedMap.keySet().iterator();
-
-        while (i$.hasNext()) {
-            String key = (String) i$.next();
-            String value = (String) packageParams.get(key);
-            if (StringUtils.isNotEmpty(value) && !"sign".equals(key) && !"key".equals(key) && !"type".equals(key)) {
-                toSign.append(key + "=" + value + "&");
-            }
-        }
-        toSign.append("type=").append(payType).append(signKey);
-        return DigestUtils.md5Hex(toSign.toString());
-    }
-
-
-    public static String createLltSign(Map<String, String> packageParams, String signKey) {
-        TreeMap sortedMap = new TreeMap(packageParams);
-        StringBuilder toSign = new StringBuilder();
-        Iterator i$ = sortedMap.keySet().iterator();
-
-        while (i$.hasNext()) {
-            String key = (String) i$.next();
-            String value = (String) packageParams.get(key);
-            if (StringUtils.isNotEmpty(value) && !"sign".equals(key) && !"key".equals(key) && !"type".equals(key)) {
-                toSign.append(key + "=" + value + "&");
-            }
-        }
-        toSign.append("token=").append(signKey);
-        return DigestUtils.md5Hex(toSign.toString());
-    }
 
     public static String createSignMd5(Map<String, String> packageParams, String signKey) {
         TreeMap sortedMap = new TreeMap(packageParams);
@@ -178,48 +143,7 @@ public class SignMd5Utils {
     }
 
 
-    /**
-     * 777生成签名
-     */
-    public static String createSignDemo(Map<String, String> packageParams, String signKey) {
-        TreeMap sortedMap = new TreeMap(packageParams);
-        StringBuilder toSign = new StringBuilder();
-        Iterator i$ = sortedMap.keySet().iterator();
 
-        while (i$.hasNext()) {
-            String key = (String) i$.next();
-            String value = (String) packageParams.get(key);
-            if (StringUtils.isNotEmpty(value) && !"sign".equals(key)) {
-                toSign.append(key + "=" + value + "&");
-            }
-        }
-
-        String str = toSign.toString();
-        str = str.substring(0, str.length() - 1);
-        StringBuilder toSignMdBuilder = new StringBuilder();
-        toSignMdBuilder.append("apiKey=").append(signKey).append("&").append(str);
-        return DigestUtils.md5Hex(toSignMdBuilder.toString());
-    }
-
-    /**
-     * 富豪
-     */
-    public static String createfhSign(Map<String, String> packageParams, String signKey) {
-        TreeMap sortedMap = new TreeMap(packageParams);
-        StringBuilder toSign = new StringBuilder();
-        Iterator i$ = sortedMap.keySet().iterator();
-
-        while (i$.hasNext()) {
-            String key = (String) i$.next();
-            String value = (String) packageParams.get(key);
-            if (StringUtils.isNotEmpty(value) && !"sign".equals(key) && !"key".equals(key)) {
-                toSign.append(key + "=" + value + "&");
-            }
-        }
-
-        toSign.append(signKey);
-        return DigestUtils.md5Hex(toSign.toString());
-    }
 
     /**
      * Srust 拼接
