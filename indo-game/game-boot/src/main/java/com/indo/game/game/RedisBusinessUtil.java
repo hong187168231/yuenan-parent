@@ -198,7 +198,7 @@ public class RedisBusinessUtil extends RedisBaseUtil {
         }
         set(RedisKeys.APP_MEMBER + appMember.getId(), appMember, 12L, TimeUnit.HOURS);
         //添加ACCNO 与 MEMID的关系映射
-        set(RedisKeys.ACCNO_MAP_MEMID + appMember.getAccno(), appMember.getId(), 7L, TimeUnit.DAYS);
+        set(RedisKeys.ACCNO_MAP_MEMID + appMember.getAccount(), appMember.getId(), 7L, TimeUnit.DAYS);
         //建立用户 uniqueId 和 memid 的关系
         set(RedisKeys.UNIQUE_ID_MAP_MEMID + appMember.getId(), appMember.getId(), 7L, TimeUnit.DAYS);
     }

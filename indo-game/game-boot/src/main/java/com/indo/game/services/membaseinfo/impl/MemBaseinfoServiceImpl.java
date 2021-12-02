@@ -100,7 +100,7 @@ public class MemBaseinfoServiceImpl implements MemBaseinfoService {
         Long mid = RedisBusinessUtil.getAccnoMapMemidByAccno(accno);
         if (mid == null) {
             LambdaQueryWrapper<MemBaseinfo> wrapper = new LambdaQueryWrapper<>();
-            wrapper.eq(MemBaseinfo::getAccno,accno);
+            wrapper.eq(MemBaseinfo::getAccount,accno);
             MemBaseinfo baseinfo = memBaseinfoMapper.selectOne(wrapper);
             //RedisBusinessUtil.addAccnoMapMemid(baseinfo);
             // 优化 获取memid时MemBaseinfo就可以存入缓存
