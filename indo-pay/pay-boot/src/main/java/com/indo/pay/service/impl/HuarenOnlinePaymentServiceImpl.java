@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.indo.common.utils.DateUtils;
+import com.indo.common.utils.StringUtils;
 import com.indo.common.web.util.http.HttpClient;
 import com.indo.pay.common.constant.PayConstants;
 import com.indo.pay.factory.AbstractOnlinePaymentService;
@@ -128,15 +129,15 @@ public class HuarenOnlinePaymentServiceImpl extends AbstractOnlinePaymentService
         // 平台订单号、交易金额、商户订单号
         PaymentVastDto paymentVastVo = new PaymentVastDto();
         paymentVastVo.setTransactionNo(req.getTransactionNo());
-//        paymentVastVo.setPrice(req.getTradeAmount());
-//        paymentVastVo.setOrderNo(req.getOrderNo());
-//        // 根据商户订单号，查询订单信息
-//        QueryWrapper<PayRechargeOrder> query = new QueryWrapper<>();
-//        query.lambda().eq(PayRechargeOrder::getOrderNo, req.getMerchantOrderNo());
-//        PayRechargeOrder rechargeOrder = payRechargeOrderMapper.selectOne(query);
+        paymentVastVo.setPrice(new BigDecimal(req.getAmount()));
+        paymentVastVo.setOrderNo(req.getMchOrderNo());
+        // 根据商户订单号，查询订单信息
+        QueryWrapper<PayRechargeOrder> query = new QueryWrapper<>();
+        query.lambda().eq(PayRechargeOrder::getOrderNo, req.getMchOrderNo());
+        PayRechargeOrder rechargeOrder = payRechargeOrderMapper.selectOne(query);
         // 完结订单，更新订单信息
-//        boolean SuccessFlag = paymentCallBackService.paymentSuccess(paymentVastVo, rechargeOrder);
-        return true;
+        boolean SuccessFlag = paymentCallBackService.paymentSuccess(paymentVastVo, rechargeOrder);
+        return SuccessFlag;
     }
 
     /**
@@ -166,13 +167,19 @@ public class HuarenOnlinePaymentServiceImpl extends AbstractOnlinePaymentService
 //            return false;
 //        }
         // 生成验签
-//        Map<String, String> metaSignMap = new TreeMap<>();
-//        metaSignMap.put("memberid", diLeiCallbackReq.getMemberid());
-//        metaSignMap.put("orderid", diLeiCallbackReq.getOrderid());
-//        metaSignMap.put("amount", diLeiCallbackReq.getAmount().toString());
-//        metaSignMap.put("transaction_id", diLeiCallbackReq.getTransaction_id());
-//        metaSignMap.put("datetime", diLeiCallbackReq.getDatetime());
-//        metaSignMap.put("returncode", diLeiCallbackReq.getReturncode());
+        Map<String, String> metaSignMap = new TreeMap<>();
+        metaSignMap.put("tradeResult", huaRenCallbackReq.getStatus());
+        metaSignMap.put("mchId", huaRenCallbackReq.getMchId());
+        metaSignMap.put("mchOrderNo", huaRenCallbackReq.getMchOrderNo());
+        metaSignMap.put("oriAmount", huaRenCallbackReq.getOriAmount());
+        metaSignMap.put("amount", huaRenCallbackReq.getAmount());
+        metaSignMap.put("orderDate", huaRenCallbackReq.getOrderTime());
+        metaSignMap.put("orderNo", huaRenCallbackReq.getTransactionNo());
+        if (StringUtils.isNotBlank(huaRenCallbackReq.getMerRetMsg())) {
+            metaSignMap.put("merRetMsg", huaRenCallbackReq.getMerRetMsg());
+        }
+
+
 //        // 商户key
 ////        String signStr = SignMd5Utils.createSign(metaSignMap, payWayCfg.getSecretKey());
 ////        if (!signStr.equals(diLeiCallbackReq.getSign())) {
