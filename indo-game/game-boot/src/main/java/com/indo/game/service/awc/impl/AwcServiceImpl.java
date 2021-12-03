@@ -185,7 +185,7 @@ public class AwcServiceImpl implements AwcService {
 //            ※每个玩家每个最多允许 6 组下注限红 ID
             trr.put("betLimit", "{\""+gamePlatform.getPlatformEnName()+"\":{\"LIVE\":{\"limitId\":["+gamePlatform.getMinBetLimit()+","+gamePlatform.getMaxBetLimit()+"]}}}");//下注限红
 
-            return commonRequest(trr, OpenAPIProperties.AWC_API_URL_LOGIN, cptOpenMember.getUserId(), ip, "createMember");
+            return commonRequest(trr, OpenAPIProperties.AWC_API_URL_LOGIN+"/wallet/createMember", cptOpenMember.getUserId(), ip, "createMember");
         } catch (Exception e) {
             logger.error("awclog game error {} ", e);
             return null;
@@ -232,54 +232,12 @@ public class AwcServiceImpl implements AwcService {
 //            ※每个玩家每个最多允许 6 组下注限红 ID
             trr.put("betLimit", "");//下注限红
 
-            return commonRequest(trr, OpenAPIProperties.AWC_API_URL_LOGIN, cptOpenMember.getUserId(), ip, "initGame");
+            return commonRequest(trr, OpenAPIProperties.AWC_API_URL_LOGIN+"/wallet/doLoginAndLaunchGame", cptOpenMember.getUserId(), ip, "initGame");
         } catch (Exception e) {
             logger.error("awclog game error {} ", e);
             return null;
         }
     }
-
-
-
-    /**
-     * 查询订单
-     */
-    public AwcApiResponseData gameOrderNo(CptOpenMember cptOpenMember, String orderNo, String ip) {
-        try {
-            Map<String, String> trr = new HashMap<>();
-            trr.put("txCode", orderNo);
-            logger.info("awclog {} start gameOrderNo orderNo {} balance{}", cptOpenMember.getUserId(), orderNo);
-            return commonRequest(trr, OpenAPIProperties.AE_API_URL_CHECK_ORDERSTATUS, cptOpenMember.getUserId().intValue(), ip, "gameOrderNo");
-//            logger.info("AWCAESEXYBCRTlog {} end gameOrderNo orderNo {} balance{} result{}", cptOpenMember.getUserId(), orderNo, JSONObject.toJSONString(result));
-        } catch (Exception e) {
-            logger.error("awclog gameOrderNo error {} orderNo{}", e);
-            return null;
-        }
-    }
-
-
-
-
-    /**
-     * 取得玩家余额
-     */
-    public AwcApiResponseData gameBalance(CptOpenMember cptOpenMember, String ip) {
-        try {
-            String timestamp = System.currentTimeMillis() / 1000 + "";
-            Map<String, String> trr = new HashMap<String, String>();
-            trr.put("alluser", "0");
-            trr.put("userIds", String.valueOf(cptOpenMember.getUserId()));
-            trr.put("isFilterBalance", "");
-            logger.info("awclog {} start gameBalance balance{}", cptOpenMember.getUserId());
-            return commonRequest(trr, OpenAPIProperties.AWC_API_URL_LOGIN, cptOpenMember.getUserId().intValue(), ip, "gameBalance");
-//            logger.info("awclog {} end gameBalance  balance{} result{}", cptOpenMember.getUserId(), JSONObject.toJSONString(result));
-        } catch (Exception e) {
-            logger.error("awclog gameOrderNo error {} orderNo{}", e);
-            return null;
-        }
-    }
-
-
 
     @Override
     public void awcPullOrder(String platform) {
@@ -370,14 +328,14 @@ public class AwcServiceImpl implements AwcService {
         AwcApiResponseData awcApiResponse = null;
         paramsMap.put("cert", OpenAPIProperties.AWC_CERT);
         paramsMap.put("agentId", OpenAPIProperties.AWC_AGENTID);
-        String resultString = AWCUtil.doProxyPostJson(OpenAPIProperties.PROXY_HOST_NAME, OpenAPIProperties.PROXY_PORT, "http", url, paramsMap, type, userId);
+        String resultString = AWCUtil.doProxyPostJson(url, paramsMap, type, userId);
+        logger.info("acw_api_response:"+resultString);
         if (StringUtils.isNotEmpty(resultString)) {
             awcApiResponse = JSONObject.parseObject(resultString, AwcApiResponseData.class);
             //String operateFlag = (String) redisTemplate.opsForValue().get(Constants.AE_GAME_OPERATE_FLAG + userId);
             logger.info("awclog {}:commonRequest type:{}, operateFlag:{}, url:{}, hostName:{}, params:{}, result:{}, awcApiResponse:{}",
                     //userId, type, operateFlag, url,
-                    userId, type, null, url,
-                    OpenAPIProperties.PROXY_HOST_NAME, sortParams.toString(), resultString, JSONObject.toJSONString(awcApiResponse));
+                    userId, type, null, url, sortParams.toString(), resultString, JSONObject.toJSONString(awcApiResponse));
         }
         return awcApiResponse;
     }

@@ -24,7 +24,7 @@ public class GameCommonServiceImpl implements GameCommonService {
         GamePlatform gamePlatform = RedisBaseUtil.get(RedisKeys.GAME_PLATFORM_KEY + platformCode);
         if (null == gamePlatform) {
             LambdaQueryWrapper<GamePlatform> wrapper = new LambdaQueryWrapper<GamePlatform>();
-            wrapper.eq(GamePlatform::getIsStart,platformCode);
+            wrapper.eq(GamePlatform::getPlatformCode,platformCode);
             gamePlatform = gamePlatformMapper.selectOne(wrapper);
         }
         return gamePlatform;

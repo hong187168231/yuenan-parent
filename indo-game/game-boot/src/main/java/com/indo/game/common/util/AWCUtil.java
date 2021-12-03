@@ -121,20 +121,17 @@ public class AWCUtil  extends HttpCommonUtils {
     /**
      * 需要设置代理POST请求（带json参数）
      *
-     * @param proxyIp   代理IP
-     * @param port      端口号
-     * @param tcp       协议（例：http、https）
      * @param url       请求地址
      * @param paramsMap
      * @param userId
      * @return
      */
-    public static String doProxyPostJson(String proxyIp, int port, String tcp, String url, Map<String, String> paramsMap, String type, Integer userId) {
+    public static String doProxyPostJson(String url, Map<String, String> paramsMap, String type, Integer userId) {
         // 设置代理IP、端口、协议
         // 创建HttpClientBuilder
         HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
         // 依次是代理地址，代理端口号，协议类型
-        HttpHost proxy = new HttpHost(proxyIp, port, tcp);
+//        HttpHost proxy = new HttpHost(proxyIp, port, tcp);
 
         CloseableHttpClient closeableHttpClient = null;
         CloseableHttpResponse response = null;
@@ -152,7 +149,7 @@ public class AWCUtil  extends HttpCommonUtils {
                     // 请求获取数据的超时时间,单位毫秒;
                     .setSocketTimeout(SOCKET_TIMEOUT)
                     //设置代理
-                    .setProxy(proxy)
+//                    .setProxy(proxy)
                     .build();
             //如果访问一个接口,多少时间内无法返回数据,就直接放弃此次调用。
             httpPost.setConfig(requestConfig);
@@ -179,7 +176,7 @@ public class AWCUtil  extends HttpCommonUtils {
             EntityUtils.consume(entity);
         } catch (Exception e) {
             logger.error("aelog {}:{} doProxyPostJson occur error:{}, url:{}, proxyHost:{}, proxyPort:{}, originParams:{}",
-                    userId, type, e.getMessage(), url, proxyIp, port, paramsString, e);
+                    userId, type, e.getMessage(), url, paramsString, e);
             return resultString;
         } finally {
             closeHttpClientAndResponse(response, closeableHttpClient, url, paramsString);

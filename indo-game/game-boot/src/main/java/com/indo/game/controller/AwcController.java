@@ -1,6 +1,7 @@
 package com.indo.game.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.indo.common.annotation.AllowAccess;
 import com.indo.common.annotation.LoginUser;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
@@ -8,6 +9,10 @@ import com.indo.common.result.ResultCode;
 import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.game.RedisLock;
 import com.indo.game.service.awc.AwcService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +23,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/awc")
+@Slf4j
+@AllArgsConstructor
+@Api(tags = "AE真人、SV388斗鸡游戏登录并初始化用户游戏账号")
 public class AwcController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -26,9 +34,11 @@ public class AwcController {
 
 
     /**
-     * 进去AE棋牌并初始化用户游戏账号
+     * AE真人、SV388斗鸡游戏登录并初始化用户游戏账号
      */
-    @PostMapping("/initGame.json")
+    @ApiOperation(value = "AE真人、SV388斗鸡游戏登录并初始化用户游戏账号", httpMethod = "POST")
+    @PostMapping("/initGame")
+    @AllowAccess
     public Result<String> initGame( @LoginUser LoginInfo loginUser, String isMobileLogin,String gameCode,String platform) {
         logger.info("aelog {} initGame 进入游戏。。。loginUser:{}", loginUser.getId(), loginUser);
         String params = "";

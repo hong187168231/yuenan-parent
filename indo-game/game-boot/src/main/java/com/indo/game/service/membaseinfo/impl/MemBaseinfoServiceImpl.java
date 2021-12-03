@@ -2,8 +2,8 @@ package com.indo.game.service.membaseinfo.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.indo.game.game.RedisBusinessUtil;
+import com.indo.game.mapper.membaseinfo.MemBaseInfoMapper;
 import com.indo.game.service.membaseinfo.MemBaseinfoService;
-import com.indo.user.mapper.MemBaseInfoMapper;
 import com.indo.user.pojo.entity.MemBaseinfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +23,7 @@ public class MemBaseinfoServiceImpl implements MemBaseinfoService {
 
     @Resource
     private MemBaseInfoMapper memBaseinfoMapper;
-    @Resource
+//    @Resource
 //    private MemBaseinfoMapperExt memBaseinfoMapperExt;
 //    @Resource
 //    private TraOrderinfomMapperExt traOrderinfomMapperExt;

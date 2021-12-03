@@ -40,7 +40,7 @@ public class GameManageController {
         return null;
     }
 
-    @ApiOperation(value = "游戏类别", httpMethod = "Get")
+    @ApiOperation(value = "游戏类别", httpMethod = "GET")
     @GetMapping(value = "/allGameCategory")
     @AllowAccess
     public Result<GameCategory> queryAllGameCategory(){
@@ -92,15 +92,15 @@ public class GameManageController {
         return result;
     }
 
-    @ApiOperation(value = "查询所有平台", httpMethod = "Get")
-    @GetMapping(value = "/allGamePlatform")
+    @ApiOperation(value = "查询所有平台", httpMethod = "GET")
+    @GetMapping(value = "/queryAllGamePlatform")
     @AllowAccess
     public Result<List<GamePlatform>> queryAllGamePlatform(){
         return iGameManageService.queryAllGamePlatform();
     }
 
-    @ApiOperation(value = "查询热门平台", httpMethod = "Get")
-    @GetMapping(value = "/allGamePlatform")
+    @ApiOperation(value = "查询热门平台", httpMethod = "GET")
+    @GetMapping(value = "/queryHotGamePlatform")
     @AllowAccess
     public Result<List<GamePlatform>> queryHotGamePlatform(){
         return iGameManageService.queryHotGamePlatform();
@@ -151,7 +151,7 @@ public class GameManageController {
         return result;
     }
 
-    @ApiOperation(value = "下载地址", httpMethod = "Get")
+    @ApiOperation(value = "下载地址", httpMethod = "GET")
     @GetMapping(value = "/allGameDownload")
     @AllowAccess
     public Result<GameDownload> allGameDownload(){
