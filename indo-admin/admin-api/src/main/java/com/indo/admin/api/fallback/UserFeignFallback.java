@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Slf4j
-public class UserFeignFallbackClient implements UserFeignClient {
+public class UserFeignFallback implements UserFeignClient {
 
     @Override
     public Result<SysUser> getUserByUsername(String username) {

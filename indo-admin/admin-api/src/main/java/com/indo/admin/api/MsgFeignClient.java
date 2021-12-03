@@ -1,7 +1,6 @@
 package com.indo.admin.api;
 
 import com.indo.admin.api.fallback.MsgFeignFallback;
-import com.indo.admin.api.fallback.UserFeignFallbackClient;
 import com.indo.admin.pojo.dto.MsgDTO;
 import com.indo.admin.pojo.entity.MsgPushRecord;
 import com.indo.admin.pojo.entity.MsgStationLetter;

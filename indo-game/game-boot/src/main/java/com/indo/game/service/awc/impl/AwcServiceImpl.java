@@ -22,8 +22,7 @@ import com.indo.game.pojo.entity.manage.GameType;
 import com.indo.game.service.awc.AwcService;
 import com.indo.game.common.util.AWCUtil;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
-import com.indo.game.service.gamecommon.GameCommonService;
-import com.indo.game.service.gamecommon.MemBaseInfoFeignClient;
+import com.indo.game.service.common.GameCommonService;
 import com.indo.user.pojo.entity.MemBaseinfo;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -50,7 +49,6 @@ public class AwcServiceImpl implements AwcService {
     @Autowired
     private GameCommonService gameCommonService;
 
-    private MemBaseInfoFeignClient memBaseInfoFeignClient;
     @Autowired
     GameTypeMapper gameTypeMapper;
     @Autowired
@@ -75,7 +73,7 @@ public class AwcServiceImpl implements AwcService {
             return Result.failed(MessageUtils.get("tgocinyo"));
         }
         //初次判断站点棋牌余额是否够该用户
-        MemBaseinfo memBaseinfo = memBaseInfoFeignClient.getMemBaseInfoById(loginUser.getId().intValue());
+        MemBaseinfo memBaseinfo =gameCommonService.getMemBaseInfo(loginUser.getId()+"");
         BigDecimal balance = memBaseinfo.getBalance();
         //验证站点棋牌余额
         if (null==balance || BigDecimal.ZERO==balance) {
