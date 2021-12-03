@@ -32,13 +32,24 @@ public class PayChannelConfig extends BaseEntity {
     @ApiModelProperty(value = "支付渠道名称")
     private String channelName;
 
+    private String channelCode;
+
     @ApiModelProperty(value = "支付渠道描述")
     private String channelDesc;
+
+    private String merchantNo;
+
+    private String payUrl;
+
+    private String notifyUrl;
+
+    private String pageUrl;
+
+    private String secretKey;
 
     @ApiModelProperty(value = "支付渠道类型 1 第三方 2 银联 3 人工")
     private Integer channelType;
 
-    @ApiModelProperty(value = "排序字段")
     private Integer sortBy;
 
     @ApiModelProperty(value = "创建人")

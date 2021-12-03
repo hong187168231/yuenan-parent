@@ -65,11 +65,11 @@ public class PayCallBackController {
             huaRenCallbackReq.setSign(sign);
             huaRenCallbackReq.setSignType(signType);
 
-            result = paymentCallBackService.diLeiCallback(huaRenCallbackReq);
+            result = paymentCallBackService.huaRenCallback(huaRenCallbackReq);
         } catch (BizException e) {
-            log.error("{}.dileiCallback 失败:{},params:{}", this.getClass().getName(), e.getMessage(), JSONObject.toJSON(huaRenCallbackReq), e);
+            log.error("{}.huaRenCallback 失败:{},params:{}", this.getClass().getName(), e.getMessage(), JSONObject.toJSON(huaRenCallbackReq), e);
         } catch (Exception e) {
-            log.error("{}.dileiCallback 出错:{},params:{}", this.getClass().getName(), e.getMessage(), JSONObject.toJSON(huaRenCallbackReq), e);
+            log.error("{}.huaRenCallback 出错:{},params:{}", this.getClass().getName(), e.getMessage(), JSONObject.toJSON(huaRenCallbackReq), e);
         }
         return result;
 
