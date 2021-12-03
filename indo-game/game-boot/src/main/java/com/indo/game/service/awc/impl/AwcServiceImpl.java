@@ -75,54 +75,39 @@ public class AwcServiceImpl implements AwcService {
             return Result.failed(MessageUtils.get("tgocinyo"));
         }
         //初次判断站点棋牌余额是否够该用户
-        MemBaseinfo memBaseinfo = memBaseInfoFeignClient.getMemBaseInfoById(loginUser.getId().intValue());
-        BigDecimal balance = memBaseinfo.getBalance();
-        //验证站点棋牌余额
-        if (null==balance || BigDecimal.ZERO==balance) {
-            logger.info("站点awc余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
-            //站点棋牌余额不足
-            return Result.failed(MessageUtils.get("tcgqifpccs"));
-        }
+//        MemBaseinfo memBaseinfo = memBaseInfoFeignClient.getMemBaseInfoById(loginUser.getId().intValue());
+//        BigDecimal balance = memBaseinfo.getBalance();
+//        //验证站点棋牌余额
+//        if (null==balance || BigDecimal.ZERO==balance) {
+//            logger.info("站点awc余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
+//            //站点棋牌余额不足
+//            return Result.failed(MessageUtils.get("tcgqifpccs"));
+//        }
 
-        String initKey = "AWC_AESEXYBCRT_GAME_LOGIN_" + loginUser.getId();
-        RedisLock lock = new RedisLock(initKey, 0, Constants.AE_TIMEOUT_MSECS);
         try {
-            if (lock.lock()) {
-                String key = Constants.AWC_AESEXYBCRT_ACCOUNT_TYPE + "_" + loginUser.getId();
-                long total = RedisBaseUtil.increment(key, 1);
-                RedisBaseUtil.setExpire(key, 3, TimeUnit.SECONDS);
-                if (total > 1) {
-                    logger.error("awclog cyCallback[{}] ", loginUser.getId());
-                    return Result.failed(MessageUtils.get("frequentoperation"));
-                }
 
-                // 验证且绑定（KY-CPT第三方会员关系）
-                CptOpenMember cptOpenMember = externalService.getCptOpenMember(loginUser.getId().intValue(), Constants.AWC_AESEXYBCRT_ACCOUNT_TYPE);
-                if (cptOpenMember == null) {
-                    cptOpenMember = new CptOpenMember();
-                    cptOpenMember.setUserId(loginUser.getId().intValue());
-                    cptOpenMember.setUsername(loginUser.getAccount());
-                    cptOpenMember.setPassword(loginUser.getAccount());
-                    cptOpenMember.setCreateTime(new Date());
-                    cptOpenMember.setLoginTime(new Date());
-                    cptOpenMember.setType(Constants.AWC_AESEXYBCRT_ACCOUNT_TYPE);
-                    //创建玩家
-                    return createMemberGame(gamePlatform, ip, cptOpenMember);
-                } else {
-                    CptOpenMember updateCptOpenMember = new CptOpenMember();
-                    updateCptOpenMember.setId(cptOpenMember.getId());
-                    updateCptOpenMember.setLoginTime(new Date());
-                    externalService.updateCptOpenMember(updateCptOpenMember);
-                }
-                //登录
-                return initGame(gamePlatform, ip, cptOpenMember,isMobileLogin,gameCode);
+            // 验证且绑定（KY-CPT第三方会员关系）
+            CptOpenMember cptOpenMember = externalService.getCptOpenMember(loginUser.getId().intValue(), Constants.AWC_AESEXYBCRT_ACCOUNT_TYPE);
+            if (cptOpenMember == null) {
+                cptOpenMember = new CptOpenMember();
+                cptOpenMember.setUserId(loginUser.getId().intValue());
+                cptOpenMember.setUsername(loginUser.getAccount());
+                cptOpenMember.setPassword(loginUser.getAccount());
+                cptOpenMember.setCreateTime(new Date());
+                cptOpenMember.setLoginTime(new Date());
+                cptOpenMember.setType(Constants.AWC_AESEXYBCRT_ACCOUNT_TYPE);
+                //创建玩家
+                return createMemberGame(gamePlatform, ip, cptOpenMember);
             } else {
-                return Result.failed(MessageUtils.get("etgptal"));
+                CptOpenMember updateCptOpenMember = new CptOpenMember();
+                updateCptOpenMember.setId(cptOpenMember.getId());
+                updateCptOpenMember.setLoginTime(new Date());
+                externalService.updateCptOpenMember(updateCptOpenMember);
             }
+            //登录
+            return initGame(gamePlatform, ip, cptOpenMember,isMobileLogin,gameCode);
         } catch (Exception e) {
             return Result.failed(MessageUtils.get("tnibptal"));
-        } finally {
-            lock.unlock();
         }
     }
 
