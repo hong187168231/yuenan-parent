@@ -130,6 +130,23 @@ public class RedisUtils {
         }
     }
 
+    public static void setExpire(String key, long second) {
+        setExpire(key, second, TimeUnit.SECONDS);
+    }
+
+    public static void setExpire(String key, long second, TimeUnit unit) {
+        try {
+            if (com.indo.common.utils.StringUtils.isEmpty(key) || second <= 0) {
+                return;
+            }
+            unit = null == unit ? TimeUnit.SECONDS : unit;
+            redisTemplate.expire(key, second, unit);
+        } catch (Exception e) {
+            log.error("redis setExpireTime:{} second:{} occur error.", key, second, e);
+        }
+    }
+
+
 
     /**
      * 普通缓存放入并设置时间
@@ -616,6 +633,47 @@ public class RedisUtils {
         } catch (Exception e) {
             e.printStackTrace();
             return new HashSet<>();
+        }
+    }
+
+
+    /////////////////////////////////////////redis bitmap 相关方法 end/////////////////////////////////////////
+
+    /**
+     * 递增 此时value值必须为int类型 否则报错
+     *
+     * @param key   键
+     * @param delta 要增加几(大于0)
+     * @return
+     */
+    public static Long increment(String key, long delta) {
+        if (delta < 0) {
+            throw new RuntimeException("递增因子必须大于0");
+        }
+        try {
+            return redisTemplate.opsForValue().increment(key, delta);
+        } catch (Exception e) {
+            log.error("redis increment occur error. key:{}", key, e);
+            return 0L;
+        }
+    }
+
+    /**
+     * 递减
+     *
+     * @param key   键
+     * @param delta 要减少几(小于0)
+     * @return
+     */
+    public static Long decrement(String key, long delta) {
+        if (delta < 0) {
+            throw new RuntimeException("递减因子必须大于0");
+        }
+        try {
+            return redisTemplate.opsForValue().decrement(key, delta);
+        } catch (Exception e) {
+            log.error("redis decrement occur error. key:{}", key, e);
+            return 0L;
         }
     }
 
