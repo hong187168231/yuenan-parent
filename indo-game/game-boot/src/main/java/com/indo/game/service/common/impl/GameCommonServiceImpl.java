@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.indo.common.constant.RedisKeys;
 import com.indo.common.result.Result;
 import com.indo.common.web.exception.BizException;
-import com.indo.game.game.RedisBaseUtil;
 import com.indo.game.mapper.manage.GamePlatformMapper;
 import com.indo.game.pojo.entity.manage.GamePlatform;
 import com.indo.game.service.common.GameCommonService;
