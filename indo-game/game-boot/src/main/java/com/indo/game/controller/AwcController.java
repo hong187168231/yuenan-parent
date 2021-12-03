@@ -13,12 +13,16 @@ import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/awc")
@@ -31,6 +35,8 @@ public class AwcController {
     @Autowired
     private AwcService awcAeSexybcrtService;
 
+    @Autowired
+    private RedissonClient redissonClient;
 
     /**
      * AE真人、SV388斗鸡游戏登录并初始化用户游戏账号
@@ -38,17 +44,18 @@ public class AwcController {
     @ApiOperation(value = "AE真人、SV388斗鸡游戏登录并初始化用户游戏账号", httpMethod = "POST")
     @PostMapping("/initGame")
     @AllowAccess
-    public Result<String> initGame( @LoginUser LoginInfo loginUser, String isMobileLogin,String gameCode,String platform) {
+    public Result<String> initGame(@LoginUser LoginInfo loginUser, String isMobileLogin, String gameCode, String platform) throws InterruptedException {
         logger.info("aelog {} initGame 进入游戏。。。loginUser:{}", loginUser.getId(), loginUser);
         String params = "";
         if (loginUser == null || StringUtils.isBlank(loginUser.getNickName())) {
             return Result.failed(MessageUtils.get("ParameterError"));
         }
-        RedisLock lock = RedisLock.newRequestLock("AWC_GAME_" + loginUser.getId(), 5000);
+        RLock lock = redissonClient.getLock("AWC_GAME_" + loginUser.getId());
+        boolean res = lock.tryLock(5, TimeUnit.SECONDS);
         try {
-            if (lock.lock()) {
+            if (res) {
                 String ip = "";
-                Result<String> resultInfo = awcAeSexybcrtService.awcGame(loginUser,isMobileLogin,gameCode, ip,platform);
+                Result<String> resultInfo = awcAeSexybcrtService.awcGame(loginUser, isMobileLogin, gameCode, ip, platform);
                 if (resultInfo == null) {
                     logger.info("aelog {} initGame result is null. params:{},ip:{}", loginUser.getId(), params, ip);
                     return Result.failed(MessageUtils.get("networktimeout"));
@@ -69,8 +76,7 @@ public class AwcController {
             logger.error("aelog {} initGame occur error:{}. params:{}", loginUser.getId(), e.getMessage(), params);
             return Result.failed(MessageUtils.get("networktimeout"));
         } finally {
-            //lock.unlockByHoldTime(3000);
-            lock.unlockWhenHoldTime();
+            lock.unlock();
         }
     }
 }
