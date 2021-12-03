@@ -25,8 +25,8 @@ import java.util.Date;
 public class PaymentService {
 
 
-    @Resource(name = "diLeiOnlinePaymentService")
-    private OnlinePaymentService diLeiOnlinePaymentService;
+    @Resource(name = "huaRenOnlinePaymentService")
+    private OnlinePaymentService huaRenOnlinePaymentService;
 
     @Autowired
     private PayRechargeOrderMapper payRechargeOrderMapper;
@@ -36,7 +36,7 @@ public class PaymentService {
 
         Date nowDate = new Date();
         PayRechargeOrder rechargeOrder = new PayRechargeOrder();
-        rechargeOrder.setUserId(payRequestVo.getMemId());
+        rechargeOrder.setUserId(payRequestVo.getUserId());
         rechargeOrder.setOrderNo(payRequestVo.getOrderNo());
         rechargeOrder.setCreateTime(nowDate);
 //        rechargeOrder.setPayWayId(payRequestVo.getChannelWay());

@@ -194,6 +194,11 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
     }
 
     @Override
+    public MemBaseinfo getMemBaseInfoById(int id){
+        return this.baseMapper.selectById(id);
+    }
+
+    @Override
     public Result<MemBaseInfoVo> getMemInfo(MemInfoReq req) {
 
         return null;

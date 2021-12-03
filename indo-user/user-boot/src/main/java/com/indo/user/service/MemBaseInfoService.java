@@ -39,6 +39,8 @@ public interface MemBaseInfoService extends SuperService<MemBaseinfo> {
      */
     MemBaseInfoVo getMemBaseInfoByAccount(String account);
 
+    MemBaseinfo getMemBaseInfoById(int id);
+
     Result<MemBaseInfoVo> getMemInfo(MemInfoReq req);
 
     void updatePassword(UpdatePasswordReq req);

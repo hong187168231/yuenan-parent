@@ -3,7 +3,7 @@ package com.indo.pay.pojo.resp;
 
 /**
  * @ClassName
- * @Description hrPay支付 创建订单 返回结果
+ * @Description hr支付 创建订单 返回结果
  * @Author puff
  * @Date 2019/11/7 15:37
  * @Version 1.0

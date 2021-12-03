@@ -7,7 +7,7 @@ public class RechargeRequestDTO {
 	/**
 	 * 用户ID
 	 */
-	private Long memId;
+	private Long userId;
 	/**
 	 * 订单号
 	 */

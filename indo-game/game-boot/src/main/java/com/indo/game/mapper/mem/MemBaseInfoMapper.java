@@ -1,4 +1,4 @@
-package com.indo.game.mapper.membaseinfo;
+package com.indo.game.mapper.mem;
 
 import com.indo.common.mybatis.base.mapper.SuperMapper;
 import com.indo.user.pojo.entity.MemBaseinfo;

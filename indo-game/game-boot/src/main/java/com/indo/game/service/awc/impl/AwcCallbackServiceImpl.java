@@ -8,7 +8,7 @@ import com.indo.game.pojo.vo.callback.CallBackParentSuccess;
 import com.indo.game.pojo.vo.callback.GetBalanceSuccess;
 import com.indo.game.pojo.vo.callback.CallBackSuccess;
 import com.indo.game.service.gamecommon.GameCommonService;
-import com.indo.game.service.membaseinfo.MemBaseinfoService;
+import com.indo.game.service.gamecommon.MemBaseInfoFeignClient;
 import com.indo.game.service.awc.AwcCallbackService;
 import com.indo.user.pojo.entity.MemBaseinfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +20,8 @@ import java.util.Map;
 
 @Service
 public class AwcCallbackServiceImpl implements AwcCallbackService {
-    @Autowired
-    private MemBaseinfoService memBaseinfoService;
+    
+    private MemBaseInfoFeignClient memBaseInfoFeignClient;
     @Autowired
     private GameCommonService gameCommonService;
 
@@ -101,7 +101,8 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
     //Get Balance 取得玩家余额
     private String getBalance(Map<String,Object> params){
         String userId = params.get("userId").toString();
-        BigDecimal balance = memBaseinfoService.getBalanceById(Integer.valueOf(userId));
+        MemBaseinfo memBaseinfo = memBaseInfoFeignClient.getMemBaseInfoById(Integer.valueOf(userId));
+        BigDecimal balance = memBaseinfo.getBalance();
         if(null==balance){
             CallBackFail callBacekFail = new CallBackFail();
             callBacekFail.setStatus("1002");
@@ -123,7 +124,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
         PlaceBetTxns placeBetTxns = apiRequestData.getTxns();
         String userId = placeBetTxns.getUserId();
 
-        MemBaseinfo memBaseinfo = memBaseinfoService.getMemById(Long.valueOf(userId));
+        MemBaseinfo memBaseinfo = memBaseInfoFeignClient.getMemBaseInfoById(Integer.valueOf(userId));
         if(null==memBaseinfo){
             CallBackFail callBacekFail = new CallBackFail();
             callBacekFail.setStatus("1002");
@@ -144,7 +145,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
         AwcApiRequestData<CancelBetTxns> apiRequestData = (AwcApiRequestData<CancelBetTxns>)awcApiRequestData.getMessage();
         CancelBetTxns cancelBetTxns = apiRequestData.getTxns();
         String userId = cancelBetTxns.getUserId();
-        MemBaseinfo memBaseinfo = memBaseinfoService.getMemById(Long.valueOf(userId));
+        MemBaseinfo memBaseinfo = memBaseInfoFeignClient.getMemBaseInfoById(Integer.valueOf(userId));
         if(null==memBaseinfo){
             CallBackFail callBacekFail = new CallBackFail();
             callBacekFail.setStatus("1002");
@@ -164,7 +165,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
         AwcApiRequestData<AdjustBetTxns> apiRequestData = (AwcApiRequestData<AdjustBetTxns>)awcApiRequestData.getMessage();
         AdjustBetTxns adjustBetTxns = apiRequestData.getTxns();
         String userId = adjustBetTxns.getUserId();
-        MemBaseinfo memBaseinfo = memBaseinfoService.getMemById(Long.valueOf(userId));
+        MemBaseinfo memBaseinfo = memBaseInfoFeignClient.getMemBaseInfoById(Integer.valueOf(userId));
         if(null==memBaseinfo){
             CallBackFail callBacekFail = new CallBackFail();
             callBacekFail.setStatus("1002");
@@ -184,7 +185,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
         AwcApiRequestData<VoidBetTxns> apiRequestData = (AwcApiRequestData<VoidBetTxns>)awcApiRequestData.getMessage();
         VoidBetTxns voidBetTxns = apiRequestData.getTxns();
         String userId = voidBetTxns.getUserId();
-        MemBaseinfo memBaseinfo = memBaseinfoService.getMemById(Long.valueOf(userId));
+        MemBaseinfo memBaseinfo = memBaseInfoFeignClient.getMemBaseInfoById(Integer.valueOf(userId));
         if(null==memBaseinfo){
             CallBackFail callBacekFail = new CallBackFail();
             callBacekFail.setStatus("1002");
@@ -202,7 +203,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
         AwcApiRequestData<UnvoidBetTxns> apiRequestData = (AwcApiRequestData<UnvoidBetTxns>)awcApiRequestData.getMessage();
         UnvoidBetTxns unvoidBetTxns = apiRequestData.getTxns();
         String userId = unvoidBetTxns.getUserId();
-        MemBaseinfo memBaseinfo = memBaseinfoService.getMemById(Long.valueOf(userId));
+        MemBaseinfo memBaseinfo = memBaseInfoFeignClient.getMemBaseInfoById(Integer.valueOf(userId));
         if(null==memBaseinfo){
             CallBackFail callBacekFail = new CallBackFail();
             callBacekFail.setStatus("1002");
@@ -220,7 +221,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
         AwcApiRequestData<RefundTxns> apiRequestData = (AwcApiRequestData<RefundTxns>)awcApiRequestData.getMessage();
         RefundTxns refundTxns = apiRequestData.getTxns();
         String userId = refundTxns.getUserId();
-        MemBaseinfo memBaseinfo = memBaseinfoService.getMemById(Long.valueOf(userId));
+        MemBaseinfo memBaseinfo = memBaseInfoFeignClient.getMemBaseInfoById(Integer.valueOf(userId));
         if(null==memBaseinfo){
             CallBackFail callBacekFail = new CallBackFail();
             callBacekFail.setStatus("1002");
@@ -238,7 +239,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
         AwcApiRequestData<SettleTxns> apiRequestData = (AwcApiRequestData<SettleTxns>)awcApiRequestData.getMessage();
         SettleTxns settleTxns = apiRequestData.getTxns();
         String userId = settleTxns.getUserId();
-        MemBaseinfo memBaseinfo = memBaseinfoService.getMemById(Long.valueOf(userId));
+        MemBaseinfo memBaseinfo = memBaseInfoFeignClient.getMemBaseInfoById(Integer.valueOf(userId));
         if(null==memBaseinfo){
             CallBackFail callBacekFail = new CallBackFail();
             callBacekFail.setStatus("1002");
@@ -256,7 +257,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
         AwcApiRequestData<UnsettleTxns> apiRequestData = (AwcApiRequestData<UnsettleTxns>)awcApiRequestData.getMessage();
         UnsettleTxns unsettleTxns = apiRequestData.getTxns();
         String userId = unsettleTxns.getUserId();
-        MemBaseinfo memBaseinfo = memBaseinfoService.getMemById(Long.valueOf(userId));
+        MemBaseinfo memBaseinfo = memBaseInfoFeignClient.getMemBaseInfoById(Integer.valueOf(userId));
         if(null==memBaseinfo){
             CallBackFail callBacekFail = new CallBackFail();
             callBacekFail.setStatus("1002");
@@ -274,7 +275,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
         AwcApiRequestData<VoidSettleTxns> apiRequestData = (AwcApiRequestData<VoidSettleTxns>)awcApiRequestData.getMessage();
         VoidSettleTxns voidSettleTxns = apiRequestData.getTxns();
         String userId = voidSettleTxns.getUserId();
-        MemBaseinfo memBaseinfo = memBaseinfoService.getMemById(Long.valueOf(userId));
+        MemBaseinfo memBaseinfo = memBaseInfoFeignClient.getMemBaseInfoById(Integer.valueOf(userId));
         if(null==memBaseinfo){
             CallBackFail callBacekFail = new CallBackFail();
             callBacekFail.setStatus("1002");
@@ -292,7 +293,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
         AwcApiRequestData<UnvoidSettleTxns> apiRequestData = (AwcApiRequestData<UnvoidSettleTxns>)awcApiRequestData.getMessage();
         UnvoidSettleTxns unvoidSettleTxns = apiRequestData.getTxns();
         String userId = unvoidSettleTxns.getUserId();
-        MemBaseinfo memBaseinfo = memBaseinfoService.getMemById(Long.valueOf(userId));
+        MemBaseinfo memBaseinfo = memBaseInfoFeignClient.getMemBaseInfoById(Integer.valueOf(userId));
         if(null==memBaseinfo){
             CallBackFail callBacekFail = new CallBackFail();
             callBacekFail.setStatus("1002");
@@ -312,7 +313,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
         AwcApiRequestData<BetNSettleTxns> apiRequestData = (AwcApiRequestData<BetNSettleTxns>)awcApiRequestData.getMessage();
         BetNSettleTxns betNSettleTxns = apiRequestData.getTxns();
         String userId = betNSettleTxns.getUserId();
-        MemBaseinfo memBaseinfo = memBaseinfoService.getMemById(Long.valueOf(userId));
+        MemBaseinfo memBaseinfo = memBaseInfoFeignClient.getMemBaseInfoById(Integer.valueOf(userId));
         if(null==memBaseinfo){
             CallBackFail callBacekFail = new CallBackFail();
             callBacekFail.setStatus("1002");
@@ -332,7 +333,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
         AwcApiRequestData<CancelBetNSettleTxns> apiRequestData = (AwcApiRequestData<CancelBetNSettleTxns>)awcApiRequestData.getMessage();
         CancelBetNSettleTxns cancelBetNSettleTxns = apiRequestData.getTxns();
         String userId = cancelBetNSettleTxns.getUserId();
-        MemBaseinfo memBaseinfo = memBaseinfoService.getMemById(Long.valueOf(userId));
+        MemBaseinfo memBaseinfo = memBaseInfoFeignClient.getMemBaseInfoById(Integer.valueOf(userId));
         if(null==memBaseinfo){
             CallBackFail callBacekFail = new CallBackFail();
             callBacekFail.setStatus("1002");
@@ -352,7 +353,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
         AwcApiRequestData<FreeSpinTxns> apiRequestData = (AwcApiRequestData<FreeSpinTxns>)awcApiRequestData.getMessage();
         FreeSpinTxns freeSpinTxns = apiRequestData.getTxns();
         String userId = freeSpinTxns.getUserId();
-        MemBaseinfo memBaseinfo = memBaseinfoService.getMemById(Long.valueOf(userId));
+        MemBaseinfo memBaseinfo = memBaseInfoFeignClient.getMemBaseInfoById(Integer.valueOf(userId));
         if(null==memBaseinfo){
             CallBackFail callBacekFail = new CallBackFail();
             callBacekFail.setStatus("1002");
@@ -370,7 +371,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
         AwcApiRequestData<GiveTxns> apiRequestData = (AwcApiRequestData<GiveTxns>)awcApiRequestData.getMessage();
         GiveTxns giveTxns = apiRequestData.getTxns();
         String userId = giveTxns.getUserId();
-        MemBaseinfo memBaseinfo = memBaseinfoService.getMemById(Long.valueOf(userId));
+        MemBaseinfo memBaseinfo = memBaseInfoFeignClient.getMemBaseInfoById(Integer.valueOf(userId));
         if(null==memBaseinfo){
             CallBackFail callBacekFail = new CallBackFail();
             callBacekFail.setStatus("1002");
@@ -390,7 +391,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
         AwcApiRequestData<TipTxns> apiRequestData = (AwcApiRequestData<TipTxns>)awcApiRequestData.getMessage();
         TipTxns tipTxns = apiRequestData.getTxns();
         String userId = tipTxns.getUserId();
-        MemBaseinfo memBaseinfo = memBaseinfoService.getMemById(Long.valueOf(userId));
+        MemBaseinfo memBaseinfo = memBaseInfoFeignClient.getMemBaseInfoById(Integer.valueOf(userId));
         if(null==memBaseinfo){
             CallBackFail callBacekFail = new CallBackFail();
             callBacekFail.setStatus("1002");
@@ -410,7 +411,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
         AwcApiRequestData<CancelTipTxns> apiRequestData = (AwcApiRequestData<CancelTipTxns>)awcApiRequestData.getMessage();
         CancelTipTxns cancelTipTxns = apiRequestData.getTxns();
         String userId = cancelTipTxns.getUserId();
-        MemBaseinfo memBaseinfo = memBaseinfoService.getMemById(Long.valueOf(userId));
+        MemBaseinfo memBaseinfo = memBaseInfoFeignClient.getMemBaseInfoById(Integer.valueOf(userId));
         if(null==memBaseinfo){
             CallBackFail callBacekFail = new CallBackFail();
             callBacekFail.setStatus("1002");

@@ -23,7 +23,8 @@ import com.indo.game.service.awc.AwcService;
 import com.indo.game.common.util.AWCUtil;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
 import com.indo.game.service.gamecommon.GameCommonService;
-import com.indo.game.service.membaseinfo.MemBaseinfoService;
+import com.indo.game.service.gamecommon.MemBaseInfoFeignClient;
+import com.indo.user.pojo.entity.MemBaseinfo;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,8 +49,8 @@ public class AwcServiceImpl implements AwcService {
     private CptOpenMemberService externalService;
     @Autowired
     private GameCommonService gameCommonService;
-    @Autowired
-    private MemBaseinfoService memBaseinfoService;
+
+    private MemBaseInfoFeignClient memBaseInfoFeignClient;
     @Autowired
     GameTypeMapper gameTypeMapper;
     @Autowired
@@ -74,7 +75,8 @@ public class AwcServiceImpl implements AwcService {
             return Result.failed(MessageUtils.get("tgocinyo"));
         }
         //初次判断站点棋牌余额是否够该用户
-        BigDecimal balance = memBaseinfoService.getBalanceById(loginUser.getId().intValue());
+        MemBaseinfo memBaseinfo = memBaseInfoFeignClient.getMemBaseInfoById(loginUser.getId().intValue());
+        BigDecimal balance = memBaseinfo.getBalance();
         //验证站点棋牌余额
         if (null==balance || BigDecimal.ZERO==balance) {
             logger.info("站点awc余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);

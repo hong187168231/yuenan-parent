@@ -7,6 +7,7 @@ import com.indo.pay.common.constant.PayConstants;
 import com.indo.common.utils.ViewUtil;
 import com.indo.pay.pojo.dto.PaymentVastDto;
 import com.indo.pay.pojo.resp.DiLeiCallbackReq;
+import com.indo.pay.pojo.resp.HuaRenCallbackReq;
 import com.indo.user.pojo.entity.MemBaseinfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -29,12 +30,12 @@ public class PaymentCallBackService {
     private PayRechargeOrderMapper payRechargeOrderMapper;
 
 
-    @Resource(name = "diLeiOnlinePaymentService")
-    private OnlinePaymentService diLeiOnlinePaymentService;
+    @Resource(name = "huaRenOnlinePaymentService")
+    private OnlinePaymentService huaRenOnlinePaymentService;
 
 
-    public String diLeiCallback(DiLeiCallbackReq req) {
-        return commonCallback(diLeiOnlinePaymentService.callBackProcess(req), PayConstants.PAY_CALLBACK_FAIL, PayConstants.PAY_CALLBACK_BIG_OK);
+    public String diLeiCallback(HuaRenCallbackReq req) {
+        return commonCallback(huaRenOnlinePaymentService.callBackProcess(req), PayConstants.PAY_CALLBACK_FAIL, PayConstants.PAY_CALLBACK_BIG_OK);
     }
 
     public String commonCallback(boolean result, String msgFail, String msgSuccess) {
