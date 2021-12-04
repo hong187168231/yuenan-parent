@@ -30,5 +30,10 @@ public class MemBaseInfoRpc {
         return memBaseInfoService.getMemBaseInfoById(id);
     }
 
+    @GetMapping("/getByAccountNo/{accno}")
+    public MemBaseinfo getMemBaseInfo(@PathVariable String accountNo){
+        return memBaseInfoService.getByAccountNo(accountNo);
+    }
+
 }    
     

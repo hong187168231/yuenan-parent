@@ -49,4 +49,6 @@ public interface MemBaseInfoService extends SuperService<MemBaseinfo> {
 
     MemBaseinfo getMemBaseInfoById(Long id);
 
+    MemBaseinfo getByAccountNo(String accountNo);
+
 }
