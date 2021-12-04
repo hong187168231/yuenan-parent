@@ -113,37 +113,29 @@ public class AwcServiceImpl implements AwcService {
      * 登录
      */
     private Result initGame(GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember,String isMobileLogin,String gameCode) throws Exception {
-        AwcApiResponseData result = game(gamePlatform, ip, cptOpenMember,isMobileLogin,gameCode);
-        if (null == result ) {
+        AwcApiResponseData awcApiResponseData = game(gamePlatform, ip, cptOpenMember,isMobileLogin,gameCode);
+        if (null == awcApiResponseData ) {
             return Result.failed(MessageUtils.get("etgptal"));
         }
-        if("0000".equals(result.getStatus())){
-            return Result.success(result);
+        if("0000".equals(awcApiResponseData.getStatus())){
+            return Result.success(awcApiResponseData);
         }else {
-            if("cn".equals(gamePlatform.getLanguageType())){
-                return Result.failed(result.getCodeCnMsg());
-            }else {
-                return Result.failed(result.getCodeEnMsg());
-            }
+            return Result.failed(awcApiResponseData.getStatus(),awcApiResponseData.getDesc());
         }
     }
     /**
      * 创建玩家
      */
     private Result createMemberGame(GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember) throws Exception {
-        AwcApiResponseData result = createMember(gamePlatform, ip, cptOpenMember);
-        if (null == result ) {
+        AwcApiResponseData awcApiResponseData = createMember(gamePlatform, ip, cptOpenMember);
+        if (null == awcApiResponseData ) {
             return Result.failed(MessageUtils.get("etgptal"));
         }
-        if("0000".equals(result.getStatus())){
+        if("0000".equals(awcApiResponseData.getStatus())){
             externalService.saveCptOpenMember(cptOpenMember);
-            return Result.success(result);
+            return Result.success(awcApiResponseData);
         }else {
-            if("cn".equals(gamePlatform.getLanguageType())){
-                return Result.failed(result.getCodeCnMsg());
-            }else {
-                return Result.failed(result.getCodeEnMsg());
-            }
+            return Result.failed(awcApiResponseData.getStatus(),awcApiResponseData.getDesc());
         }
     }
 
