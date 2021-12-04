@@ -30,7 +30,7 @@ public class MemBaseInfoRpc {
         return memBaseInfoService.getMemBaseInfoById(id);
     }
 
-    @GetMapping("/getByAccountNo/{accno}")
+    @GetMapping("/getByAccountNo/{accountNo}")
     public MemBaseinfo getMemBaseInfo(@PathVariable String accountNo){
         return memBaseInfoService.getByAccountNo(accountNo);
     }

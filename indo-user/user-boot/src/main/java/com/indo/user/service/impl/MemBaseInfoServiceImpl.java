@@ -230,6 +230,11 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
         return null;
     }
 
+    @Override
+    public MemBaseinfo getByAccountNo(String accountNo) {
+        return null;
+    }
+
 
     /**
      * 功能描述: 返回登录信息
