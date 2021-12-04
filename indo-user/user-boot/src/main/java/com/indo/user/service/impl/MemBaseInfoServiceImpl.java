@@ -194,11 +194,6 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
     }
 
     @Override
-    public MemBaseinfo getMemBaseInfoById(int id){
-        return this.baseMapper.selectById(id);
-    }
-
-    @Override
     public Result<MemBaseInfoVo> getMemInfo(MemInfoReq req) {
 
         return null;
@@ -223,6 +218,16 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
         memBaseinfo.setFaceBook(req.getFacebook());
         memBaseinfo.setWhatsApp(req.getWhatsapp());
         this.baseMapper.update(memBaseinfo, new UpdateWrapper<MemBaseinfo>().lambda().eq(MemBaseinfo::getAccount, req.getAccno()));
+    }
+
+    @Override
+    public void addbankCard(AddBankCardReq req) {
+
+    }
+
+    @Override
+    public MemBaseinfo getMemBaseInfoById(Long id) {
+        return null;
     }
 
 

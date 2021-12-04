@@ -1,17 +1,18 @@
-package com.indo.game.service.gamecommon;
+package com.indo.user.api;
 
-import com.indo.admin.api.fallback.UserFeignFallbackClient;
-import com.indo.admin.pojo.entity.SysUser;
+
 import com.indo.common.constant.ServiceIdConstant;
 import com.indo.common.result.Result;
+import com.indo.user.api.fallback.MemBaseInfoFeignFallback;
 import com.indo.user.pojo.entity.MemBaseinfo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@FeignClient(value = ServiceIdConstant.USER_SERVICE_ID, fallback = UserFeignFallbackClient.class)
+@FeignClient(value = ServiceIdConstant.USER_SERVICE_ID, fallback = MemBaseInfoFeignFallback.class)
 public interface MemBaseInfoFeignClient {
 
-    @GetMapping("/membaseinfo/getMemBaseInfoById")
-    MemBaseinfo getMemBaseInfoById(int id);
+    @GetMapping("/rpc/memBaseInfo/getMemBaseInfo/{userId}")
+    Result<MemBaseinfo> getMemBaseInfo(@PathVariable Long userId);
+
 }

@@ -9,10 +9,14 @@ import com.indo.common.utils.StringUtils;
 import com.indo.common.web.util.http.HttpClient;
 import com.indo.pay.common.constant.PayConstants;
 import com.indo.pay.factory.AbstractOnlinePaymentService;
+import com.indo.pay.mapper.PayChannelConfigMapper;
 import com.indo.pay.mapper.PayRechargeOrderMapper;
+import com.indo.pay.mapper.PayWayConfigMapper;
 import com.indo.pay.pojo.dto.PaymentVastDto;
 import com.indo.pay.pojo.dto.RechargeRequestDTO;
+import com.indo.pay.pojo.entity.PayChannelConfig;
 import com.indo.pay.pojo.entity.PayRechargeOrder;
+import com.indo.pay.pojo.entity.PayWayConfig;
 import com.indo.pay.pojo.req.BaseCallBackReq;
 import com.indo.pay.pojo.req.BasePayReq;
 import com.indo.pay.pojo.req.HuaRenPayReq;
@@ -47,6 +51,8 @@ public class HuarenOnlinePaymentServiceImpl extends AbstractOnlinePaymentService
     @Resource
     private PaymentCallBackService paymentCallBackService;
 
+    @Resource
+    private PayChannelConfigMapper payChannelConfigMapper;
 
     @Override
     protected <T> T callPayService(BasePayReq req, Class<T> clazz) {
@@ -161,11 +167,11 @@ public class HuarenOnlinePaymentServiceImpl extends AbstractOnlinePaymentService
             log.info("众宝支付参数验证异常,查无此订单,req={}", JSON.toJSONString(req));
             return false;
         }
-//        PayWayCfg payWayCfg = payWayCfgMapper.selectById(rechargeOrder.getPayWayId());
-//        if (ObjectUtils.isEmpty(payWayCfg)) {
-//            log.info("众宝支付参数验证异常,商户无,req={}", JSON.toJSONString(req));
-//            return false;
-//        }
+        PayChannelConfig payChannelConfig = payChannelConfigMapper.selectById(rechargeOrder.getPayChannelId());
+        if (ObjectUtils.isEmpty(payChannelConfig)) {
+            log.info("hr支付参数验证异常,商户无,req={}", JSON.toJSONString(req));
+            return false;
+        }
         // 生成验签
         Map<String, String> metaSignMap = new TreeMap<>();
         metaSignMap.put("tradeResult", huaRenCallbackReq.getStatus());
@@ -179,27 +185,22 @@ public class HuarenOnlinePaymentServiceImpl extends AbstractOnlinePaymentService
             metaSignMap.put("merRetMsg", huaRenCallbackReq.getMerRetMsg());
         }
 
-
-//        // 商户key
-////        String signStr = SignMd5Utils.createSign(metaSignMap, payWayCfg.getSecretKey());
-////        if (!signStr.equals(diLeiCallbackReq.getSign())) {
-////            log.error("地雷支付宝签名不在确=={}", signStr);
-////            return false;
-////        }
-//        if (PayConstants.PAY_RECHARGE_STATUS_COMPLETE.equals(rechargeOrder.getOrderStatus())) {
-//            log.error("地雷支付此单号已经处理=={}", diLeiCallbackReq.getTransaction_id());
-//            return false;
-//        }
-//        // 验证金额
-//        BigDecimal payAmt = rechargeOrder.getRealAmount().setScale(2, BigDecimal.ROUND_HALF_UP);
-//        if (diLeiCallbackReq.getAmount().compareTo(payAmt) != 0) {
-//            log.error("paylog 众宝支付 回调参数验证 {} checkCallBackParams 金额不一致 {} {}", this.getClass().getName(), diLeiCallbackReq.getAmount(), payAmt);
-//            return false;
-//        }
-//        if (!diLeiCallbackReq.getReturncode().equals("00")) {
-//            log.error("paylog 众宝支付 回调参数验证 {} checkCallBackParams 支付状态为失败 {} {}", this.getClass().getName(), diLeiCallbackReq.getAmount(), payAmt);
-//            return true;
-//        }
+        // 商户key
+        String signStr = SignMd5Utils.createSign(metaSignMap, payChannelConfig.getSecretKey());
+        if (!signStr.equals(huaRenCallbackReq.getSign())) {
+            log.error("hr支付宝签名不在确=={}", signStr);
+            return false;
+        }
+        if (PayConstants.PAY_RECHARGE_STATUS_COMPLETE.equals(rechargeOrder.getOrderStatus())) {
+            log.error("hr支付此单号已经处理=={}", huaRenCallbackReq.getTransactionNo());
+            return false;
+        }
+        // 验证金额
+        BigDecimal payAmt = rechargeOrder.getRealAmount().setScale(2, BigDecimal.ROUND_HALF_UP);
+        if (new BigDecimal(huaRenCallbackReq.getAmount()).compareTo(payAmt) != 0) {
+            log.error("paylog hr支付 回调参数验证 {} checkCallBackParams 金额不一致 {} {}", this.getClass().getName(), huaRenCallbackReq.getAmount(), payAmt);
+            return false;
+        }
         return true;
     }
 }

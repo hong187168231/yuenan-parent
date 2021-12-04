@@ -1,6 +1,7 @@
-package com.indo.game.service.gamecommon;
+package com.indo.game.service.common;
 
 import com.indo.game.pojo.entity.manage.GamePlatform;
+import com.indo.user.pojo.entity.MemBaseinfo;
 
 public interface GameCommonService {
 
@@ -12,5 +13,14 @@ public interface GameCommonService {
      * @return
      */
     GamePlatform getGamePlatformByplatformCode(String platformCode);
+
+    /**
+     * 查询用户信息
+     *
+     * @param userId
+     * @return
+     */
+    MemBaseinfo getMemBaseInfo(String userId);
+
 
 }

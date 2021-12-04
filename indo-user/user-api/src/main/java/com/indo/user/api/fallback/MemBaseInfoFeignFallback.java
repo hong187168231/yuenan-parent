@@ -1,9 +1,9 @@
-package com.indo.admin.api.fallback;
+package com.indo.user.api.fallback;
 
-import com.indo.admin.api.UserFeignClient;
-import com.indo.admin.pojo.entity.SysUser;
 import com.indo.common.result.Result;
 import com.indo.common.result.ResultCode;
+import com.indo.user.api.MemBaseInfoFeignClient;
+import com.indo.user.pojo.entity.MemBaseinfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -13,10 +13,10 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Slf4j
-public class UserFeignFallbackClient implements UserFeignClient {
+public class MemBaseInfoFeignFallback implements MemBaseInfoFeignClient {
 
     @Override
-    public Result<SysUser> getUserByUsername(String username) {
+    public Result<MemBaseinfo> getMemBaseInfo(Long userId) {
         log.error("feign远程调用系统用户服务异常后的降级方法");
         return Result.failed(ResultCode.DEGRADATION);
     }

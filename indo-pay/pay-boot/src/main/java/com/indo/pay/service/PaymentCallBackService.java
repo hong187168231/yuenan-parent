@@ -34,8 +34,8 @@ public class PaymentCallBackService {
     private OnlinePaymentService huaRenOnlinePaymentService;
 
 
-    public String diLeiCallback(HuaRenCallbackReq req) {
-        return commonCallback(huaRenOnlinePaymentService.callBackProcess(req), PayConstants.PAY_CALLBACK_FAIL, PayConstants.PAY_CALLBACK_BIG_OK);
+    public String huaRenCallback(HuaRenCallbackReq req) {
+        return commonCallback(huaRenOnlinePaymentService.callBackProcess(req), PayConstants.PAY_CALLBACK_FAIL, PayConstants.PAY_CALLBACK_BIG_SUCCESS);
     }
 
     public String commonCallback(boolean result, String msgFail, String msgSuccess) {

@@ -32,7 +32,7 @@ public class PayRechargeOrder extends BaseEntity {
     @TableId(value = "recharge_order_id", type = IdType.AUTO)
     private Long rechargeOrderId;
 
-    private Integer payChannelId;
+    private Long payChannelId;
 
     @ApiModelProperty(value = "支付方式ID")
     private Long payWayId;

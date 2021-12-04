@@ -8,8 +8,6 @@ import com.indo.common.utils.DateUtils;
 import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.common.constant.Constants;
 import com.indo.game.config.OpenAPIProperties;
-import com.indo.game.game.RedisBaseUtil;
-import com.indo.game.game.RedisLock;
 import com.indo.game.mapper.awc.AwcAeSexybcrtTransactionMapper;
 import com.indo.game.mapper.manage.GameCategoryMapper;
 import com.indo.game.mapper.manage.GameTypeMapper;
@@ -21,9 +19,9 @@ import com.indo.game.pojo.entity.manage.GamePlatform;
 import com.indo.game.pojo.entity.manage.GameType;
 import com.indo.game.service.awc.AwcService;
 import com.indo.game.common.util.AWCUtil;
+import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
-import com.indo.game.service.gamecommon.GameCommonService;
-import com.indo.game.service.gamecommon.MemBaseInfoFeignClient;
+import com.indo.user.api.MemBaseInfoFeignClient;
 import com.indo.user.pojo.entity.MemBaseinfo;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -244,7 +242,7 @@ public class AwcServiceImpl implements AwcService {
             String endTime = dateFormat.format(calendar1.getTime());
 
 
-            commonAwcPullOrder(startTime, endTime,platform);
+            commonAwcPullOrder(startTime, endTime, platform);
         } catch (Exception e) {
             logger.error("awclog aePullOrder error", e);
         }
@@ -257,7 +255,7 @@ public class AwcServiceImpl implements AwcService {
      * @param startTime 开始时间
      * @param endTime   结束时间
      */
-    private void commonAwcPullOrder(String startTime, String endTime,String platform) {
+    private void commonAwcPullOrder(String startTime, String endTime, String platform) {
         long start = System.currentTimeMillis();
         try {
             // 拼接参数
