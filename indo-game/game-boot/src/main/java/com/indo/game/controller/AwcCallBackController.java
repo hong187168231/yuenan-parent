@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/awc")
+@RequestMapping("/awcCallBack")
 public class AwcCallBackController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 

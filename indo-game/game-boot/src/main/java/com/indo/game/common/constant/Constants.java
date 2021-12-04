@@ -21,7 +21,7 @@ public final class Constants {
     public static final String THIRD_GAME_OUT = "0";
     // 第三方游戏账号类型
 
-    public static final String AWC_AESEXYBCRT_ACCOUNT_TYPE = "T_AWCAESEXYBCRT";
+//    public static final String AWC_AESEXYBCRT_ACCOUNT_TYPE = "T_AWCAESEXYBCRT";
 
 
     public static final String AWC_AESEXYBCRT_EXIT_KEY = "AWC_AESEXYBCRT_KEY_";
