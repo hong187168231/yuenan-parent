@@ -23,4 +23,13 @@ public interface GameCommonService {
     MemBaseinfo getMemBaseInfo(String userId);
 
 
+    /**
+     * 查询用户信息
+     *
+     * @param accountNo
+     * @return
+     */
+    MemBaseinfo getByAccountNo(String accountNo);
+
+
 }
