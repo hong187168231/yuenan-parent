@@ -87,15 +87,15 @@ public class AwcServiceImpl implements AwcService {
         try {
 
             // 验证且绑定（KY-CPT第三方会员关系）
-            CptOpenMember cptOpenMember = externalService.getCptOpenMember(loginUser.getId().intValue(), Constants.AWC_AESEXYBCRT_ACCOUNT_TYPE);
+            CptOpenMember cptOpenMember = externalService.getCptOpenMember(loginUser.getId().intValue(), platform);
             if (cptOpenMember == null) {
                 cptOpenMember = new CptOpenMember();
                 cptOpenMember.setUserId(loginUser.getId().intValue());
-                cptOpenMember.setUsername(loginUser.getAccount());
+                cptOpenMember.setUserName(loginUser.getAccount());
                 cptOpenMember.setPassword(loginUser.getAccount());
                 cptOpenMember.setCreateTime(new Date());
                 cptOpenMember.setLoginTime(new Date());
-                cptOpenMember.setType(Constants.AWC_AESEXYBCRT_ACCOUNT_TYPE);
+                cptOpenMember.setType(platform);
                 //创建玩家
                 return createMemberGame(gamePlatform, ip, cptOpenMember);
             } else {
@@ -161,7 +161,7 @@ public class AwcServiceImpl implements AwcService {
             String time = System.currentTimeMillis() / 1000 + "";
             Map<String, String> trr = new HashMap<>();
             trr.put("userId", String.valueOf(cptOpenMember.getUserId()));
-            trr.put("currency", "");//玩家货币代码
+            trr.put("currency", gamePlatform.getCurrencyType());//玩家货币代码
             trr.put("language", gamePlatform.getLanguageType());
             trr.put("userName", "");//玩家名称
 //           platform: SEXYBCRT
@@ -311,10 +311,11 @@ public class AwcServiceImpl implements AwcService {
     @Override
     public AwcApiResponseData commonRequest(Map<String, String> paramsMap, String url, Integer userId, String ip, String type) throws Exception {
         logger.info("awclog {} commonRequest AE_AES_KEY:{},url:{},paramsMap:{}", userId, url, paramsMap);
-        JSONObject sortParams = AWCUtil.sortMap(paramsMap);
+
         AwcApiResponseData awcApiResponse = null;
         paramsMap.put("cert", OpenAPIProperties.AWC_CERT);
         paramsMap.put("agentId", OpenAPIProperties.AWC_AGENTID);
+        JSONObject sortParams = AWCUtil.sortMap(paramsMap);
         String resultString = AWCUtil.doProxyPostJson(url, paramsMap, type, userId);
         logger.info("acw_api_response:"+resultString);
         if (StringUtils.isNotEmpty(resultString)) {
