@@ -15,4 +15,8 @@ public interface MemBaseInfoFeignClient {
     @GetMapping("/rpc/memBaseInfo/getMemBaseInfo/{userId}")
     Result<MemBaseinfo> getMemBaseInfo(@PathVariable Long userId);
 
+
+    @GetMapping("/rpc/memBaseInfo/getByAccountNo/{accountNo}")
+    Result<MemBaseinfo> getByAccountNo(@PathVariable String accountNo);
+
 }
