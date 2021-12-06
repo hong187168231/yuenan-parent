@@ -36,7 +36,7 @@ public class MemBaseinfo extends BaseEntity {
     private String nickName;
 
     @ApiModelProperty(value = "用户唯一标识")
-    private String account;
+    private String accountNo;
 
     @ApiModelProperty(value = "密码盐值")
     private String salt;
