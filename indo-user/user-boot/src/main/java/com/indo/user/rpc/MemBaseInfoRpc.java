@@ -26,13 +26,13 @@ public class MemBaseInfoRpc {
     private MemBaseInfoService memBaseInfoService;
 
     @GetMapping("/getMemBaseInfo/{userId}")
-    public MemBaseinfo getMemBaseInfo(@PathVariable Long id){
-        return memBaseInfoService.getMemBaseInfoById(id);
+    public Result<MemBaseinfo> getMemBaseInfo(@PathVariable Long id) {
+        return Result.success(memBaseInfoService.getMemBaseInfoById(id));
     }
 
     @GetMapping("/getByAccountNo/{accountNo}")
-    public MemBaseinfo getMemBaseInfo(@PathVariable String accountNo){
-        return memBaseInfoService.getByAccountNo(accountNo);
+    public Result<MemBaseinfo> getMemBaseInfo(@PathVariable String accountNo) {
+        return Result.success(memBaseInfoService.getByAccountNo(accountNo));
     }
 
 }    
