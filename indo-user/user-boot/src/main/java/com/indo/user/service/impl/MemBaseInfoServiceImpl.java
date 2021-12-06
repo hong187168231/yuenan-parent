@@ -65,7 +65,7 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
         }
         req.setPassword(req.getPassword().toLowerCase());
         MemBaseinfo userInfo = memBaseInfoMapper.
-                selectOne(new LambdaQueryWrapper<MemBaseinfo>().eq(MemBaseinfo::getAccount, req.getAccount()));
+                selectOne(new LambdaQueryWrapper<MemBaseinfo>().eq(MemBaseinfo::getAccountNo, req.getAccount()));
         //判断密码是否正确
         if (!req.getPassword().equals(userInfo.getPassword())) {
             return Result.failed("密码错误！");
@@ -114,7 +114,7 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
             return Result.failed("账号已存在！");
         }
         MemBaseinfo userInfo = new MemBaseinfo();
-        userInfo.setAccount(req.getAccount());
+        userInfo.setAccountNo(req.getAccount());
         //userInfo.setSource(Integer.valueOf(DeviceInfoUtil.getSource()));
         userInfo.setPassword(req.getPassword());
         if (StringUtils.isNotBlank(req.getDeviceCode())) {
@@ -187,7 +187,7 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
 
     @Override
     public MemBaseInfoVo getMemBaseInfoByAccount(String account) {
-        MemBaseinfo memBaseinfo = this.baseMapper.selectOne(new QueryWrapper<MemBaseinfo>().lambda().eq(MemBaseinfo::getAccount, account));
+        MemBaseinfo memBaseinfo = this.baseMapper.selectOne(new QueryWrapper<MemBaseinfo>().lambda().eq(MemBaseinfo::getAccountNo, account));
         MemBaseInfoVo vo = new MemBaseInfoVo();
         BeanUtils.copyProperties(memBaseinfo, vo);
         return vo;
@@ -201,14 +201,14 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
 
     @Override
     public void updatePassword(UpdatePasswordReq req) {
-        MemBaseinfo memBaseinfo = this.baseMapper.selectOne(new QueryWrapper<MemBaseinfo>().lambda().eq(MemBaseinfo::getAccount, req.getAccno()));
+        MemBaseinfo memBaseinfo = this.baseMapper.selectOne(new QueryWrapper<MemBaseinfo>().lambda().eq(MemBaseinfo::getAccountNo, req.getAccno()));
         if (memBaseinfo.getPassword().equals(req.getOldPassword())) {
             throw new RuntimeException("old password is not correct");
         }
         MemBaseinfo newMemBaseinfo = new MemBaseinfo();
-        newMemBaseinfo.setAccount(req.getAccno());
+        newMemBaseinfo.setAccountNo(req.getAccno());
         newMemBaseinfo.setPassword(req.getNewPassword());
-        this.baseMapper.update(newMemBaseinfo, new UpdateWrapper<MemBaseinfo>().lambda().eq(MemBaseinfo::getAccount, req.getAccno()));
+        this.baseMapper.update(newMemBaseinfo, new UpdateWrapper<MemBaseinfo>().lambda().eq(MemBaseinfo::getAccountNo, req.getAccno()));
     }
 
     @Override
@@ -217,7 +217,7 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
         memBaseinfo.setPhone(req.getPhone());
         memBaseinfo.setFaceBook(req.getFacebook());
         memBaseinfo.setWhatsApp(req.getWhatsapp());
-        this.baseMapper.update(memBaseinfo, new UpdateWrapper<MemBaseinfo>().lambda().eq(MemBaseinfo::getAccount, req.getAccno()));
+        this.baseMapper.update(memBaseinfo, new UpdateWrapper<MemBaseinfo>().lambda().eq(MemBaseinfo::getAccountNo, req.getAccno()));
     }
 
     @Override
@@ -227,12 +227,12 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
 
     @Override
     public MemBaseinfo getMemBaseInfoById(Long id) {
-        return null;
+        return baseMapper.selectById(id);
     }
 
     @Override
     public MemBaseinfo getByAccountNo(String accountNo) {
-        return null;
+        return baseMapper.selectOne(new QueryWrapper<MemBaseinfo>().lambda().eq(MemBaseinfo::getAccountNo, accountNo));
     }
 
 
