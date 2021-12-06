@@ -31,11 +31,13 @@ public class PayCallBackController {
     @RequestMapping("/huaRenCallback")
     public String dileiCallback(HttpServletRequest request) {
         log.info("进入hr支付回调接口==============================");
+
         String result = "";
         HuaRenCallbackReq huaRenCallbackReq = new HuaRenCallbackReq();
         try {
             // 订单状态
             String tradeResult = request.getParameter("tradeResult");
+                log.info("进入hr支付回调接口2=============================="+tradeResult);
             // 商户号
             String mchId = request.getParameter("mchId");
             // 商家订单号
@@ -64,6 +66,7 @@ public class PayCallBackController {
             huaRenCallbackReq.setMerRetMsg(merRetMsg);
             huaRenCallbackReq.setSign(sign);
             huaRenCallbackReq.setSignType(signType);
+            log.info("进入hr支付回调接口3=============================="+ JSONObject.toJSONString(huaRenCallbackReq));
 
             result = paymentCallBackService.huaRenCallback(huaRenCallbackReq);
         } catch (BizException e) {
