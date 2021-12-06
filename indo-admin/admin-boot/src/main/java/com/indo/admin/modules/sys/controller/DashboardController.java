@@ -95,7 +95,7 @@ public class DashboardController {
         for (int i = 0; i < days; i++) {
             String date = now.plusDays(-i).format(formatter);
             xData[i] = date;
-            indices[i] = "live-auth-login-"+ date;
+            indices[i] = "indo-auth-login-"+ date;
         }
 
         // 查询条件，范围内日期统计
@@ -173,13 +173,13 @@ public class DashboardController {
             queryBuilder.must(QueryBuilders.wildcardQuery("clientIP", "*" + clientIP + "*"));
         }
         // 总记录数
-        long count = elasticSearchService.count(queryBuilder, "live-auth-login-*");
+        long count = elasticSearchService.count(queryBuilder, "indo-auth-login-*");
 
         // 排序
         FieldSortBuilder sortBuilder = new FieldSortBuilder("@timestamp").order(SortOrder.DESC);
 
         // 分页查询
-        List<LoginRecord> list = elasticSearchService.search(queryBuilder, sortBuilder, page, limit, LoginRecord.class, "live-auth-login-*");
+        List<LoginRecord> list = elasticSearchService.search(queryBuilder, sortBuilder, page, limit, LoginRecord.class, "indo-auth-login-*");
 
         // 遍历获取会话状态
         list.forEach(item -> {
