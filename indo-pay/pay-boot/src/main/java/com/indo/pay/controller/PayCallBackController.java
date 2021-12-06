@@ -37,7 +37,7 @@ public class PayCallBackController {
         try {
             // 订单状态
             String tradeResult = request.getParameter("tradeResult");
-            log.info("进入hr支付回调接口2=============================="+tradeResult);
+                log.info("进入hr支付回调接口2=============================="+tradeResult);
             // 商户号
             String mchId = request.getParameter("mchId");
             // 商家订单号
