@@ -52,12 +52,12 @@ public class GameCommonServiceImpl implements GameCommonService {
     @Override
     public MemBaseinfo getByAccountNo(String accountNo) {
         Result<MemBaseinfo> result = memBaseInfoFeignClient.getByAccountNo(accountNo);
-        if (Result.success().getCode().equals(result.getCode())) {
-            MemBaseinfo memBaseinfo = result.getData();
-            return memBaseinfo;
-        } else {
-            throw new BizException("No client with requested id: " + accountNo);
+        MemBaseinfo memBaseinfo = null;
+        if(null!=result&&Result.success().getCode().equals(result.getCode())) {
+            memBaseinfo = result.getData();
+
         }
+        return memBaseinfo;
     }
 
 

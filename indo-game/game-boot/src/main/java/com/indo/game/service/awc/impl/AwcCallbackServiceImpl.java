@@ -1,6 +1,8 @@
 package com.indo.game.service.awc.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.indo.common.utils.DateUtils;
 import com.indo.game.pojo.entity.awc.*;
 import com.indo.game.pojo.vo.callback.CallBackFail;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -24,11 +27,11 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
     private GameCommonService gameCommonService;
 
     public String awcAeSexybcrtCallback(AwcApiRequestParentData awcApiRequestData) {
-        Map<String, Object> params = (Map<String, Object>) awcApiRequestData.getMessage();
-        String action = params.get("action").toString();
+        JSONObject jsonObject = JSONObject.parseObject(String.valueOf(awcApiRequestData.getMessage()));
+        String action = jsonObject.getString("action");
         //Get Balance 取得玩家余额
         if ("getBalance".equals(action)) {
-            return getBalance(params);
+            return getBalance(jsonObject);
         }
         //Place Bet 下注
         if ("bet".equals(action)) {
@@ -98,11 +101,10 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
     }
 
     //Get Balance 取得玩家余额
-    private String getBalance(Map<String, Object> params) {
-        String userId = params.get("userId").toString();
-        MemBaseinfo memBaseinfo = gameCommonService.getMemBaseInfo(userId);
-        BigDecimal balance = memBaseinfo.getBalance();
-        if (null == balance) {
+    private String getBalance(JSONObject jsonObject) {
+        String userId = jsonObject.getString("userId");
+        MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
+        if (null == memBaseinfo) {
             CallBackFail callBacekFail = new CallBackFail();
             callBacekFail.setStatus("1002");
             callBacekFail.setDesc("Account is not exists");
@@ -110,7 +112,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
         } else {
             GetBalanceSuccess getBalanceSuccess = new GetBalanceSuccess();
             getBalanceSuccess.setStatus("0000");
-            getBalanceSuccess.setBalance(balance.toString());
+            getBalanceSuccess.setBalance(memBaseinfo.getBalance().toString());
             getBalanceSuccess.setBalanceTs(DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT));
             getBalanceSuccess.setUserId(userId);
             return JSONObject.toJSONString(getBalanceSuccess);
@@ -122,310 +124,471 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
 
     //Place Bet 下注
     private String bet(AwcApiRequestParentData awcApiRequestData) {
-        AwcApiRequestData<PlaceBetTxns> apiRequestData = (AwcApiRequestData<PlaceBetTxns>) awcApiRequestData.getMessage();
-        PlaceBetTxns placeBetTxns = apiRequestData.getTxns();
-        String userId = placeBetTxns.getUserId();
+        AwcApiRequestData<List<PlaceBetTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()), new TypeReference<AwcApiRequestData<List<PlaceBetTxns>>>() {});
+        List<PlaceBetTxns> placeBetTxnsList = apiRequestData.getTxns();
+        if (null != placeBetTxnsList && placeBetTxnsList.size() > 0) {
+            for (PlaceBetTxns placeBetTxns : placeBetTxnsList) {
+                String userId = placeBetTxns.getUserId();
 
-        MemBaseinfo memBaseinfo = gameCommonService.getMemBaseInfo(userId);
-        if (null == memBaseinfo) {
-            CallBackFail callBacekFail = new CallBackFail();
-            callBacekFail.setStatus("1002");
-            callBacekFail.setDesc("Account is not exists");
-            return JSONObject.toJSONString(callBacekFail);
+                MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
+                if (null == memBaseinfo) {
+                    CallBackFail callBacekFail = new CallBackFail();
+                    callBacekFail.setStatus("1002");
+                    callBacekFail.setDesc("Account is not exists");
+                    return JSONObject.toJSONString(callBacekFail);
+                } else {
+                    CallBackSuccess placeBetSuccess = new CallBackSuccess();
+                    placeBetSuccess.setStatus("0000");
+                    placeBetSuccess.setBalance(userId);
+                    placeBetSuccess.setBalanceTs(DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT));
+                    return JSONObject.toJSONString(placeBetSuccess);
+                }
+            }
         } else {
-            CallBackSuccess placeBetSuccess = new CallBackSuccess();
-            placeBetSuccess.setStatus("0000");
-            placeBetSuccess.setBalance(userId);
-            placeBetSuccess.setBalanceTs(DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT));
-            return JSONObject.toJSONString(placeBetSuccess);
+            CallBackFail callBacekFail = new CallBackFail();
+            callBacekFail.setStatus("1036");
+            callBacekFail.setDesc("Invalid parameters.");
+            return JSONObject.toJSONString(callBacekFail);
         }
-//        gameCommonService.inOrOutBalanceCommon(GoldchangeEnum.AWCAESEXYBCRT_IN.getValue(), balance, memBaseinfo, content, cptOpenMember, Constants.AWC_AESEXYBCRT_ACCOUNT_TYPE);
+        return null;
     }
+
+//        gameCommonService.inOrOutBalanceCommon(GoldchangeEnum.AWCAESEXYBCRT_IN.getValue(), balance, memBaseinfo, content, cptOpenMember, Constants.AWC_AESEXYBCRT_ACCOUNT_TYPE);
 
     //Cancel Bet 取消注单
     private String cancelBet(AwcApiRequestParentData awcApiRequestData) {
-        AwcApiRequestData<CancelBetTxns> apiRequestData = (AwcApiRequestData<CancelBetTxns>) awcApiRequestData.getMessage();
-        CancelBetTxns cancelBetTxns = apiRequestData.getTxns();
-        String userId = cancelBetTxns.getUserId();
-        MemBaseinfo memBaseinfo = gameCommonService.getMemBaseInfo(userId);
-        if (null == memBaseinfo) {
+        AwcApiRequestData<List<CancelBetTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()),new TypeReference<AwcApiRequestData<List<CancelBetTxns>>>(){});
+        List<CancelBetTxns> cancelBetTxnsList = apiRequestData.getTxns();
+        if (null != cancelBetTxnsList && cancelBetTxnsList.size() > 0) {
+            for (CancelBetTxns cancelBetTxns : cancelBetTxnsList) {
+                String userId = cancelBetTxns.getUserId();
+                MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
+                if (null == memBaseinfo) {
+                    CallBackFail callBacekFail = new CallBackFail();
+                    callBacekFail.setStatus("1002");
+                    callBacekFail.setDesc("Account is not exists");
+                    return JSONObject.toJSONString(callBacekFail);
+                } else {
+                    CallBackSuccess placeBetSuccess = new CallBackSuccess();
+                    placeBetSuccess.setStatus("0000");
+                    placeBetSuccess.setBalance(userId);
+                    placeBetSuccess.setBalanceTs(DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT));
+                    return JSONObject.toJSONString(placeBetSuccess);
+                }
+            }
+        }else {
             CallBackFail callBacekFail = new CallBackFail();
-            callBacekFail.setStatus("1002");
-            callBacekFail.setDesc("Account is not exists");
+            callBacekFail.setStatus("1036");
+            callBacekFail.setDesc("Invalid parameters.");
             return JSONObject.toJSONString(callBacekFail);
-        } else {
-            CallBackSuccess placeBetSuccess = new CallBackSuccess();
-            placeBetSuccess.setStatus("0000");
-            placeBetSuccess.setBalance(userId);
-            placeBetSuccess.setBalanceTs(DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT));
-            return JSONObject.toJSONString(placeBetSuccess);
         }
+        return null;
     }
 
     //Adjust Bet 调整投注
     private String adjustBet(AwcApiRequestParentData awcApiRequestData) {
-        AwcApiRequestData<AdjustBetTxns> apiRequestData = (AwcApiRequestData<AdjustBetTxns>) awcApiRequestData.getMessage();
-        AdjustBetTxns adjustBetTxns = apiRequestData.getTxns();
-        String userId = adjustBetTxns.getUserId();
-        MemBaseinfo memBaseinfo = gameCommonService.getMemBaseInfo(userId);
-        if (null == memBaseinfo) {
+        AwcApiRequestData<List<AdjustBetTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()),new TypeReference<AwcApiRequestData<List<AdjustBetTxns>>>(){});
+        List<AdjustBetTxns> adjustBetTxnsList = apiRequestData.getTxns();
+        if (null != adjustBetTxnsList && adjustBetTxnsList.size() > 0) {
+            for (AdjustBetTxns adjustBetTxns : adjustBetTxnsList) {
+                String userId = adjustBetTxns.getUserId();
+                MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
+                if (null == memBaseinfo) {
+                    CallBackFail callBacekFail = new CallBackFail();
+                    callBacekFail.setStatus("1002");
+                    callBacekFail.setDesc("Account is not exists");
+                    return JSONObject.toJSONString(callBacekFail);
+                } else {
+                    CallBackSuccess placeBetSuccess = new CallBackSuccess();
+                    placeBetSuccess.setStatus("0000");
+                    placeBetSuccess.setBalance(userId);
+                    placeBetSuccess.setBalanceTs(DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT));
+                    return JSONObject.toJSONString(placeBetSuccess);
+                }
+            }
+        }else {
             CallBackFail callBacekFail = new CallBackFail();
-            callBacekFail.setStatus("1002");
-            callBacekFail.setDesc("Account is not exists");
+            callBacekFail.setStatus("1036");
+            callBacekFail.setDesc("Invalid parameters.");
             return JSONObject.toJSONString(callBacekFail);
-        } else {
-            CallBackSuccess placeBetSuccess = new CallBackSuccess();
-            placeBetSuccess.setStatus("0000");
-            placeBetSuccess.setBalance(userId);
-            placeBetSuccess.setBalanceTs(DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT));
-            return JSONObject.toJSONString(placeBetSuccess);
         }
+        return null;
     }
 
     //Void Bet 交易作废
     private String voidBet(AwcApiRequestParentData awcApiRequestData) {
-        AwcApiRequestData<VoidBetTxns> apiRequestData = (AwcApiRequestData<VoidBetTxns>) awcApiRequestData.getMessage();
-        VoidBetTxns voidBetTxns = apiRequestData.getTxns();
-        String userId = voidBetTxns.getUserId();
-        MemBaseinfo memBaseinfo = gameCommonService.getMemBaseInfo(userId);
-        if (null == memBaseinfo) {
+        AwcApiRequestData<List<VoidBetTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()),new TypeReference<AwcApiRequestData<List<VoidBetTxns>>>(){});
+        List<VoidBetTxns> voidBetTxnsList = apiRequestData.getTxns();
+        if (null != voidBetTxnsList && voidBetTxnsList.size() > 0) {
+            for (VoidBetTxns voidBetTxns : voidBetTxnsList) {
+                String userId = voidBetTxns.getUserId();
+                MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
+                if (null == memBaseinfo) {
+                    CallBackFail callBacekFail = new CallBackFail();
+                    callBacekFail.setStatus("1002");
+                    callBacekFail.setDesc("Account is not exists");
+                    return JSONObject.toJSONString(callBacekFail);
+                } else {
+                    CallBackParentSuccess callBackSuccess = new CallBackParentSuccess();
+                    callBackSuccess.setStatus("0000");
+                    return JSONObject.toJSONString(callBackSuccess);
+                }
+            }
+        }else {
             CallBackFail callBacekFail = new CallBackFail();
-            callBacekFail.setStatus("1002");
-            callBacekFail.setDesc("Account is not exists");
+            callBacekFail.setStatus("1036");
+            callBacekFail.setDesc("Invalid parameters.");
             return JSONObject.toJSONString(callBacekFail);
-        } else {
-            CallBackParentSuccess callBackSuccess = new CallBackParentSuccess();
-            callBackSuccess.setStatus("0000");
-            return JSONObject.toJSONString(callBackSuccess);
         }
+        return null;
     }
 
     //Unvoid Bet 取消交易作废
     private String unvoidBet(AwcApiRequestParentData awcApiRequestData) {
-        AwcApiRequestData<UnvoidBetTxns> apiRequestData = (AwcApiRequestData<UnvoidBetTxns>) awcApiRequestData.getMessage();
-        UnvoidBetTxns unvoidBetTxns = apiRequestData.getTxns();
-        String userId = unvoidBetTxns.getUserId();
-        MemBaseinfo memBaseinfo = gameCommonService.getMemBaseInfo(userId);
-        if (null == memBaseinfo) {
+        AwcApiRequestData<List<UnvoidBetTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()),new TypeReference<AwcApiRequestData<List<UnvoidBetTxns>>>(){});
+        List<UnvoidBetTxns> unvoidBetTxnsList = apiRequestData.getTxns();
+        if (null != unvoidBetTxnsList && unvoidBetTxnsList.size() > 0) {
+            for (UnvoidBetTxns unvoidBetTxns : unvoidBetTxnsList) {
+                String userId = unvoidBetTxns.getUserId();
+                MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
+                if (null == memBaseinfo) {
+                    CallBackFail callBacekFail = new CallBackFail();
+                    callBacekFail.setStatus("1002");
+                    callBacekFail.setDesc("Account is not exists");
+                    return JSONObject.toJSONString(callBacekFail);
+                } else {
+                    CallBackParentSuccess callBackSuccess = new CallBackParentSuccess();
+                    callBackSuccess.setStatus("0000");
+                    return JSONObject.toJSONString(callBackSuccess);
+                }
+            }
+        }else {
             CallBackFail callBacekFail = new CallBackFail();
-            callBacekFail.setStatus("1002");
-            callBacekFail.setDesc("Account is not exists");
+            callBacekFail.setStatus("1036");
+            callBacekFail.setDesc("Invalid parameters.");
             return JSONObject.toJSONString(callBacekFail);
-        } else {
-            CallBackParentSuccess callBackSuccess = new CallBackParentSuccess();
-            callBackSuccess.setStatus("0000");
-            return JSONObject.toJSONString(callBackSuccess);
         }
+        return null;
     }
 
     //Refund 返还金额
     private String refund(AwcApiRequestParentData awcApiRequestData) {
-        AwcApiRequestData<RefundTxns> apiRequestData = (AwcApiRequestData<RefundTxns>) awcApiRequestData.getMessage();
-        RefundTxns refundTxns = apiRequestData.getTxns();
-        String userId = refundTxns.getUserId();
-        MemBaseinfo memBaseinfo = gameCommonService.getMemBaseInfo(userId);
-        if (null == memBaseinfo) {
+        AwcApiRequestData<List<RefundTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()),new TypeReference<AwcApiRequestData<List<RefundTxns>>>(){});
+        List<RefundTxns> refundTxnsList = apiRequestData.getTxns();
+        if (null != refundTxnsList && refundTxnsList.size() > 0) {
+            for (RefundTxns refundTxns : refundTxnsList) {
+                String userId = refundTxns.getUserId();
+                MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
+                if (null == memBaseinfo) {
+                    CallBackFail callBacekFail = new CallBackFail();
+                    callBacekFail.setStatus("1002");
+                    callBacekFail.setDesc("Account is not exists");
+                    return JSONObject.toJSONString(callBacekFail);
+                } else {
+                    CallBackParentSuccess callBackSuccess = new CallBackParentSuccess();
+                    callBackSuccess.setStatus("0000");
+                    return JSONObject.toJSONString(callBackSuccess);
+                }
+            }
+        }else {
             CallBackFail callBacekFail = new CallBackFail();
-            callBacekFail.setStatus("1002");
-            callBacekFail.setDesc("Account is not exists");
+            callBacekFail.setStatus("1036");
+            callBacekFail.setDesc("Invalid parameters.");
             return JSONObject.toJSONString(callBacekFail);
-        } else {
-            CallBackParentSuccess callBackSuccess = new CallBackParentSuccess();
-            callBackSuccess.setStatus("0000");
-            return JSONObject.toJSONString(callBackSuccess);
         }
+        return null;
     }
 
     //Settle 已结帐派彩
     private String settle(AwcApiRequestParentData awcApiRequestData) {
-        AwcApiRequestData<SettleTxns> apiRequestData = (AwcApiRequestData<SettleTxns>) awcApiRequestData.getMessage();
-        SettleTxns settleTxns = apiRequestData.getTxns();
-        String userId = settleTxns.getUserId();
-        MemBaseinfo memBaseinfo = gameCommonService.getMemBaseInfo(userId);
-        if (null == memBaseinfo) {
+        AwcApiRequestData<List<SettleTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()),new TypeReference<AwcApiRequestData<List<SettleTxns>>>(){});
+        List<SettleTxns> settleTxnsList = apiRequestData.getTxns();
+        if (null != settleTxnsList && settleTxnsList.size() > 0) {
+            for (SettleTxns settleTxns : settleTxnsList) {
+                String userId = settleTxns.getUserId();
+                MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
+                if (null == memBaseinfo) {
+                    CallBackFail callBacekFail = new CallBackFail();
+                    callBacekFail.setStatus("1002");
+                    callBacekFail.setDesc("Account is not exists");
+                    return JSONObject.toJSONString(callBacekFail);
+                } else {
+                    CallBackParentSuccess callBackSuccess = new CallBackParentSuccess();
+                    callBackSuccess.setStatus("0000");
+                    return JSONObject.toJSONString(callBackSuccess);
+                }
+            }
+        }else {
             CallBackFail callBacekFail = new CallBackFail();
-            callBacekFail.setStatus("1002");
-            callBacekFail.setDesc("Account is not exists");
+            callBacekFail.setStatus("1036");
+            callBacekFail.setDesc("Invalid parameters.");
             return JSONObject.toJSONString(callBacekFail);
-        } else {
-            CallBackParentSuccess callBackSuccess = new CallBackParentSuccess();
-            callBackSuccess.setStatus("0000");
-            return JSONObject.toJSONString(callBackSuccess);
         }
+        return null;
     }
 
     //Unsettle 取消结帐派彩
     private String unsettle(AwcApiRequestParentData awcApiRequestData) {
-        AwcApiRequestData<UnsettleTxns> apiRequestData = (AwcApiRequestData<UnsettleTxns>) awcApiRequestData.getMessage();
-        UnsettleTxns unsettleTxns = apiRequestData.getTxns();
-        String userId = unsettleTxns.getUserId();
-        MemBaseinfo memBaseinfo = gameCommonService.getMemBaseInfo(userId);
-        if (null == memBaseinfo) {
+        AwcApiRequestData<List<UnsettleTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()),new TypeReference<AwcApiRequestData<List<UnsettleTxns>>>(){});
+        List<UnsettleTxns> unsettleTxnsList = apiRequestData.getTxns();
+        if (null != unsettleTxnsList && unsettleTxnsList.size() > 0) {
+            for (UnsettleTxns unsettleTxns : unsettleTxnsList) {
+                String userId = unsettleTxns.getUserId();
+                MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
+                if (null == memBaseinfo) {
+                    CallBackFail callBacekFail = new CallBackFail();
+                    callBacekFail.setStatus("1002");
+                    callBacekFail.setDesc("Account is not exists");
+                    return JSONObject.toJSONString(callBacekFail);
+                } else {
+                    CallBackParentSuccess callBackSuccess = new CallBackParentSuccess();
+                    callBackSuccess.setStatus("0000");
+                    return JSONObject.toJSONString(callBackSuccess);
+                }
+            }
+        }else {
             CallBackFail callBacekFail = new CallBackFail();
-            callBacekFail.setStatus("1002");
-            callBacekFail.setDesc("Account is not exists");
+            callBacekFail.setStatus("1036");
+            callBacekFail.setDesc("Invalid parameters.");
             return JSONObject.toJSONString(callBacekFail);
-        } else {
-            CallBackParentSuccess callBackSuccess = new CallBackParentSuccess();
-            callBackSuccess.setStatus("0000");
-            return JSONObject.toJSONString(callBackSuccess);
         }
+        return null;
     }
 
     //Void Settle 结帐单转为无效
     private String voidSettle(AwcApiRequestParentData awcApiRequestData) {
-        AwcApiRequestData<VoidSettleTxns> apiRequestData = (AwcApiRequestData<VoidSettleTxns>) awcApiRequestData.getMessage();
-        VoidSettleTxns voidSettleTxns = apiRequestData.getTxns();
-        String userId = voidSettleTxns.getUserId();
-        MemBaseinfo memBaseinfo = gameCommonService.getMemBaseInfo(userId);
-        if (null == memBaseinfo) {
+        AwcApiRequestData<List<VoidSettleTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()),new TypeReference<AwcApiRequestData<List<VoidSettleTxns>>>(){});
+        List<VoidSettleTxns> voidSettleTxnsList = apiRequestData.getTxns();
+        if (null != voidSettleTxnsList && voidSettleTxnsList.size() > 0) {
+            for (VoidSettleTxns voidSettleTxns : voidSettleTxnsList) {
+                String userId = voidSettleTxns.getUserId();
+                MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
+                if (null == memBaseinfo) {
+                    CallBackFail callBacekFail = new CallBackFail();
+                    callBacekFail.setStatus("1002");
+                    callBacekFail.setDesc("Account is not exists");
+                    return JSONObject.toJSONString(callBacekFail);
+                } else {
+                    CallBackParentSuccess callBackSuccess = new CallBackParentSuccess();
+                    callBackSuccess.setStatus("0000");
+                    return JSONObject.toJSONString(callBackSuccess);
+                }
+            }
+        }else {
             CallBackFail callBacekFail = new CallBackFail();
-            callBacekFail.setStatus("1002");
-            callBacekFail.setDesc("Account is not exists");
+            callBacekFail.setStatus("1036");
+            callBacekFail.setDesc("Invalid parameters.");
             return JSONObject.toJSONString(callBacekFail);
-        } else {
-            CallBackParentSuccess callBackSuccess = new CallBackParentSuccess();
-            callBackSuccess.setStatus("0000");
-            return JSONObject.toJSONString(callBackSuccess);
         }
+        return null;
     }
 
     //Unvoid Settle 无效单结账
     private String unvoidSettle(AwcApiRequestParentData awcApiRequestData) {
-        AwcApiRequestData<UnvoidSettleTxns> apiRequestData = (AwcApiRequestData<UnvoidSettleTxns>) awcApiRequestData.getMessage();
-        UnvoidSettleTxns unvoidSettleTxns = apiRequestData.getTxns();
-        String userId = unvoidSettleTxns.getUserId();
-        MemBaseinfo memBaseinfo = gameCommonService.getMemBaseInfo(userId);
-        if (null == memBaseinfo) {
+        AwcApiRequestData<List<UnvoidSettleTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()),new TypeReference<AwcApiRequestData<List<UnvoidSettleTxns>>>(){});
+        List<UnvoidSettleTxns> unvoidSettleTxnsList = apiRequestData.getTxns();
+        if (null != unvoidSettleTxnsList && unvoidSettleTxnsList.size() > 0) {
+            for (UnvoidSettleTxns unvoidSettleTxns : unvoidSettleTxnsList) {
+                String userId = unvoidSettleTxns.getUserId();
+                MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
+                if (null == memBaseinfo) {
+                    CallBackFail callBacekFail = new CallBackFail();
+                    callBacekFail.setStatus("1002");
+                    callBacekFail.setDesc("Account is not exists");
+                    return JSONObject.toJSONString(callBacekFail);
+                } else {
+                    CallBackSuccess placeBetSuccess = new CallBackSuccess();
+                    placeBetSuccess.setStatus("0000");
+                    placeBetSuccess.setBalance(userId);
+                    placeBetSuccess.setBalanceTs(DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT));
+                    return JSONObject.toJSONString(placeBetSuccess);
+                }
+            }
+        }else {
             CallBackFail callBacekFail = new CallBackFail();
-            callBacekFail.setStatus("1002");
-            callBacekFail.setDesc("Account is not exists");
+            callBacekFail.setStatus("1036");
+            callBacekFail.setDesc("Invalid parameters.");
             return JSONObject.toJSONString(callBacekFail);
-        } else {
-            CallBackSuccess placeBetSuccess = new CallBackSuccess();
-            placeBetSuccess.setStatus("0000");
-            placeBetSuccess.setBalance(userId);
-            placeBetSuccess.setBalanceTs(DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT));
-            return JSONObject.toJSONString(placeBetSuccess);
         }
+        return null;
     }
 
     // BetNSettle 下注并直接结算
     private String betNSettle(AwcApiRequestParentData awcApiRequestData) {
-        AwcApiRequestData<BetNSettleTxns> apiRequestData = (AwcApiRequestData<BetNSettleTxns>) awcApiRequestData.getMessage();
-        BetNSettleTxns betNSettleTxns = apiRequestData.getTxns();
-        String userId = betNSettleTxns.getUserId();
-        MemBaseinfo memBaseinfo = gameCommonService.getMemBaseInfo(userId);
-        if (null == memBaseinfo) {
+        AwcApiRequestData<List<BetNSettleTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()),new TypeReference<AwcApiRequestData<List<BetNSettleTxns>>>(){});
+        List<BetNSettleTxns> betNSettleTxnsList = apiRequestData.getTxns();
+        if (null != betNSettleTxnsList && betNSettleTxnsList.size() > 0) {
+            for (BetNSettleTxns betNSettleTxns : betNSettleTxnsList) {
+                String userId = betNSettleTxns.getUserId();
+                MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
+                if (null == memBaseinfo) {
+                    CallBackFail callBacekFail = new CallBackFail();
+                    callBacekFail.setStatus("1002");
+                    callBacekFail.setDesc("Account is not exists");
+                    return JSONObject.toJSONString(callBacekFail);
+                } else {
+                    CallBackSuccess placeBetSuccess = new CallBackSuccess();
+                    placeBetSuccess.setStatus("0000");
+                    placeBetSuccess.setBalance(userId);
+                    placeBetSuccess.setBalanceTs(DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT));
+                    return JSONObject.toJSONString(placeBetSuccess);
+                }
+            }
+        }else {
             CallBackFail callBacekFail = new CallBackFail();
-            callBacekFail.setStatus("1002");
-            callBacekFail.setDesc("Account is not exists");
+            callBacekFail.setStatus("1036");
+            callBacekFail.setDesc("Invalid parameters.");
             return JSONObject.toJSONString(callBacekFail);
-        } else {
-            CallBackSuccess placeBetSuccess = new CallBackSuccess();
-            placeBetSuccess.setStatus("0000");
-            placeBetSuccess.setBalance(userId);
-            placeBetSuccess.setBalanceTs(DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT));
-            return JSONObject.toJSONString(placeBetSuccess);
         }
+        return null;
     }
 
     // Cancel BetNSettle 取消结算并取消注单
     private String cancelBetNSettle(AwcApiRequestParentData awcApiRequestData) {
-        AwcApiRequestData<CancelBetNSettleTxns> apiRequestData = (AwcApiRequestData<CancelBetNSettleTxns>) awcApiRequestData.getMessage();
-        CancelBetNSettleTxns cancelBetNSettleTxns = apiRequestData.getTxns();
-        String userId = cancelBetNSettleTxns.getUserId();
-        MemBaseinfo memBaseinfo = gameCommonService.getMemBaseInfo(userId);
-        if (null == memBaseinfo) {
+        AwcApiRequestData<List<CancelBetNSettleTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()),new TypeReference<AwcApiRequestData<List<CancelBetNSettleTxns>>>(){});
+        List<CancelBetNSettleTxns> cancelBetNSettleTxnsList = apiRequestData.getTxns();
+        if (null != cancelBetNSettleTxnsList && cancelBetNSettleTxnsList.size() > 0) {
+            for (CancelBetNSettleTxns cancelBetNSettleTxns : cancelBetNSettleTxnsList) {
+                String userId = cancelBetNSettleTxns.getUserId();
+                MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
+                if (null == memBaseinfo) {
+                    CallBackFail callBacekFail = new CallBackFail();
+                    callBacekFail.setStatus("1002");
+                    callBacekFail.setDesc("Account is not exists");
+                    return JSONObject.toJSONString(callBacekFail);
+                } else {
+                    CallBackSuccess placeBetSuccess = new CallBackSuccess();
+                    placeBetSuccess.setStatus("0000");
+                    placeBetSuccess.setBalance(userId);
+                    placeBetSuccess.setBalanceTs(DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT));
+                    return JSONObject.toJSONString(placeBetSuccess);
+                }
+            }
+        }else {
             CallBackFail callBacekFail = new CallBackFail();
-            callBacekFail.setStatus("1002");
-            callBacekFail.setDesc("Account is not exists");
+            callBacekFail.setStatus("1036");
+            callBacekFail.setDesc("Invalid parameters.");
             return JSONObject.toJSONString(callBacekFail);
-        } else {
-            CallBackSuccess placeBetSuccess = new CallBackSuccess();
-            placeBetSuccess.setStatus("0000");
-            placeBetSuccess.setBalance(userId);
-            placeBetSuccess.setBalanceTs(DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT));
-            return JSONObject.toJSONString(placeBetSuccess);
         }
+        return null;
     }
 
     // Free Spin 免费旋转
     private String freeSpin(AwcApiRequestParentData awcApiRequestData) {
-        AwcApiRequestData<FreeSpinTxns> apiRequestData = (AwcApiRequestData<FreeSpinTxns>) awcApiRequestData.getMessage();
-        FreeSpinTxns freeSpinTxns = apiRequestData.getTxns();
-        String userId = freeSpinTxns.getUserId();
-        MemBaseinfo memBaseinfo = gameCommonService.getMemBaseInfo(userId);
-        if (null == memBaseinfo) {
+        AwcApiRequestData<List<FreeSpinTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()),new TypeReference<AwcApiRequestData<List<FreeSpinTxns>>>(){});
+        List<FreeSpinTxns> freeSpinTxnsList = apiRequestData.getTxns();
+        if (null != freeSpinTxnsList && freeSpinTxnsList.size() > 0) {
+            for (FreeSpinTxns freeSpinTxns : freeSpinTxnsList) {
+                String userId = freeSpinTxns.getUserId();
+                MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
+                if (null == memBaseinfo) {
+                    CallBackFail callBacekFail = new CallBackFail();
+                    callBacekFail.setStatus("1002");
+                    callBacekFail.setDesc("Account is not exists");
+                    return JSONObject.toJSONString(callBacekFail);
+                } else {
+                    CallBackParentSuccess callBackSuccess = new CallBackParentSuccess();
+                    callBackSuccess.setStatus("0000");
+                    return JSONObject.toJSONString(callBackSuccess);
+                }
+            }
+        }else {
             CallBackFail callBacekFail = new CallBackFail();
-            callBacekFail.setStatus("1002");
-            callBacekFail.setDesc("Account is not exists");
+            callBacekFail.setStatus("1036");
+            callBacekFail.setDesc("Invalid parameters.");
             return JSONObject.toJSONString(callBacekFail);
-        } else {
-            CallBackParentSuccess callBackSuccess = new CallBackParentSuccess();
-            callBackSuccess.setStatus("0000");
-            return JSONObject.toJSONString(callBackSuccess);
         }
+        return null;
     }
 
     //  Give (Promotion Bonus) 活动派彩
     private String give(AwcApiRequestParentData awcApiRequestData) {
-        AwcApiRequestData<GiveTxns> apiRequestData = (AwcApiRequestData<GiveTxns>) awcApiRequestData.getMessage();
-        GiveTxns giveTxns = apiRequestData.getTxns();
-        String userId = giveTxns.getUserId();
-        MemBaseinfo memBaseinfo = gameCommonService.getMemBaseInfo(userId);
-        if (null == memBaseinfo) {
+        AwcApiRequestData<List<GiveTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()),new TypeReference<AwcApiRequestData<List<GiveTxns>>>(){});
+        List<GiveTxns> giveTxnsList = apiRequestData.getTxns();
+        if (null != giveTxnsList && giveTxnsList.size() > 0) {
+            for (GiveTxns giveTxns : giveTxnsList) {
+                String userId = giveTxns.getUserId();
+                MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
+                if (null == memBaseinfo) {
+                    CallBackFail callBacekFail = new CallBackFail();
+                    callBacekFail.setStatus("1002");
+                    callBacekFail.setDesc("Account is not exists");
+                    return JSONObject.toJSONString(callBacekFail);
+                } else {
+                    CallBackSuccess placeBetSuccess = new CallBackSuccess();
+                    placeBetSuccess.setStatus("0000");
+                    placeBetSuccess.setBalance(userId);
+                    placeBetSuccess.setBalanceTs(DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT));
+                    return JSONObject.toJSONString(placeBetSuccess);
+                }
+            }
+        }else {
             CallBackFail callBacekFail = new CallBackFail();
-            callBacekFail.setStatus("1002");
-            callBacekFail.setDesc("Account is not exists");
+            callBacekFail.setStatus("1036");
+            callBacekFail.setDesc("Invalid parameters.");
             return JSONObject.toJSONString(callBacekFail);
-        } else {
-            CallBackSuccess placeBetSuccess = new CallBackSuccess();
-            placeBetSuccess.setStatus("0000");
-            placeBetSuccess.setBalance(userId);
-            placeBetSuccess.setBalanceTs(DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT));
-            return JSONObject.toJSONString(placeBetSuccess);
         }
+        return null;
     }
 
     //  Tip 打赏
     private String tip(AwcApiRequestParentData awcApiRequestData) {
-        AwcApiRequestData<TipTxns> apiRequestData = (AwcApiRequestData<TipTxns>) awcApiRequestData.getMessage();
-        TipTxns tipTxns = apiRequestData.getTxns();
-        String userId = tipTxns.getUserId();
-        MemBaseinfo memBaseinfo = gameCommonService.getMemBaseInfo(userId);
-        if (null == memBaseinfo) {
+        AwcApiRequestData<List<TipTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()),new TypeReference<AwcApiRequestData<List<TipTxns>>>(){});
+        List<TipTxns> tipTxnsList = apiRequestData.getTxns();
+        if (null != tipTxnsList && tipTxnsList.size() > 0) {
+            for (TipTxns tipTxns : tipTxnsList) {
+                String userId = tipTxns.getUserId();
+                MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
+                if (null == memBaseinfo) {
+                    CallBackFail callBacekFail = new CallBackFail();
+                    callBacekFail.setStatus("1002");
+                    callBacekFail.setDesc("Account is not exists");
+                    return JSONObject.toJSONString(callBacekFail);
+                } else {
+                    CallBackSuccess placeBetSuccess = new CallBackSuccess();
+                    placeBetSuccess.setStatus("0000");
+                    placeBetSuccess.setBalance(userId);
+                    placeBetSuccess.setBalanceTs(DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT));
+                    return JSONObject.toJSONString(placeBetSuccess);
+                }
+            }
+        }else {
             CallBackFail callBacekFail = new CallBackFail();
-            callBacekFail.setStatus("1002");
-            callBacekFail.setDesc("Account is not exists");
+            callBacekFail.setStatus("1036");
+            callBacekFail.setDesc("Invalid parameters.");
             return JSONObject.toJSONString(callBacekFail);
-        } else {
-            CallBackSuccess placeBetSuccess = new CallBackSuccess();
-            placeBetSuccess.setStatus("0000");
-            placeBetSuccess.setBalance(userId);
-            placeBetSuccess.setBalanceTs(DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT));
-            return JSONObject.toJSONString(placeBetSuccess);
         }
+        return null;
     }
 
     //  Cancel Tip 取消打赏
     private String cancelTip(AwcApiRequestParentData awcApiRequestData) {
-        AwcApiRequestData<CancelTipTxns> apiRequestData = (AwcApiRequestData<CancelTipTxns>) awcApiRequestData.getMessage();
-        CancelTipTxns cancelTipTxns = apiRequestData.getTxns();
-        String userId = cancelTipTxns.getUserId();
-        MemBaseinfo memBaseinfo = gameCommonService.getMemBaseInfo(userId);
-        if (null == memBaseinfo) {
+        AwcApiRequestData<List<CancelTipTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()),new TypeReference<AwcApiRequestData<List<CancelTipTxns>>>(){});
+        List<CancelTipTxns> cancelTipTxnsList = apiRequestData.getTxns();
+        if (null != cancelTipTxnsList && cancelTipTxnsList.size() > 0) {
+            for (CancelTipTxns cancelTipTxns : cancelTipTxnsList) {
+                String userId = cancelTipTxns.getUserId();
+                MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
+                if (null == memBaseinfo) {
+                    CallBackFail callBacekFail = new CallBackFail();
+                    callBacekFail.setStatus("1002");
+                    callBacekFail.setDesc("Account is not exists");
+                    return JSONObject.toJSONString(callBacekFail);
+                } else {
+                    CallBackSuccess placeBetSuccess = new CallBackSuccess();
+                    placeBetSuccess.setStatus("0000");
+                    placeBetSuccess.setBalance(userId);
+                    placeBetSuccess.setBalanceTs(DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT));
+                    return JSONObject.toJSONString(placeBetSuccess);
+                }
+            }
+        }else {
             CallBackFail callBacekFail = new CallBackFail();
-            callBacekFail.setStatus("1002");
-            callBacekFail.setDesc("Account is not exists");
+            callBacekFail.setStatus("1036");
+            callBacekFail.setDesc("Invalid parameters.");
             return JSONObject.toJSONString(callBacekFail);
-        } else {
-            CallBackSuccess placeBetSuccess = new CallBackSuccess();
-            placeBetSuccess.setStatus("0000");
-            placeBetSuccess.setBalance(userId);
-            placeBetSuccess.setBalanceTs(DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT));
-            return JSONObject.toJSONString(placeBetSuccess);
         }
+        return null;
     }
 
 

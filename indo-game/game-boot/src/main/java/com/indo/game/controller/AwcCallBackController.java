@@ -20,10 +20,11 @@ public class AwcCallBackController {
     /**
      * 回调
      */
-    @ResponseBody
     @RequestMapping(value="/callBack",method=RequestMethod.POST)
-    public String initGame(@RequestBody AwcApiRequestParentData awcApiRequestData) {
+    public String initGame(AwcApiRequestParentData awcApiRequestData) {
         logger.info("awcCallBack {} initGame 回调, params:{}",JSONObject.toJSONString(awcApiRequestData));
-        return awcAeSexybcrtCallbackService.awcAeSexybcrtCallback(awcApiRequestData);
+        String callBack = awcAeSexybcrtCallbackService.awcAeSexybcrtCallback(awcApiRequestData);
+        logger.info("awcCallBack {} initGame 回调返回数据, params:{}",callBack);
+        return callBack;
     }
 }
