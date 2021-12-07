@@ -3,6 +3,7 @@ package com.indo.user.common.util;
 
 import com.alibaba.fastjson.JSON;
 import com.indo.common.constant.AppConstants;
+import com.indo.common.constant.RedisKeys;
 import com.indo.common.redis.utils.RedisUtils;
 import com.indo.common.utils.RandomUtil;
 import com.indo.common.utils.encrypt.MD5;
@@ -22,6 +23,17 @@ public class UserBusinessRedisUtils extends RedisUtils {
         set(AppConstants.USER_LOGIN_ACCTOKEN + accToken, JSON.toJSONString(userInfo), 60 * 60 * 24 * 7);
         set(AppConstants.USER_LOGIN_INFO_KEY + userInfo.getAccountNo(), accToken, 60 * 60 * 24 * 7);
         return accToken;
+    }
+
+    /**
+     * 删除用户缓存
+     *
+     * @param id
+     */
+    public static void deleteAppMember(Long id) {
+        if (null != id && id > 0) {
+            redisTemplate.delete(RedisKeys.APP_MEMBER + id);
+        }
     }
 
 

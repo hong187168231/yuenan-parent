@@ -39,6 +39,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Objects;
 
@@ -287,6 +288,15 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
         subordinate.setTeamNum(subordinate.getTeamNum() + 1);
         memSubordinateMapper.updateById(subordinate);
         updateTeamNum(subordinate.getParentId());
+    }
+
+
+
+    @Override
+    public int updateMemberAmount(BigDecimal amount, BigDecimal canAmount, Long userId) {
+        int row = baseMapper.updateMemberAmount(amount, canAmount, userId);
+        UserBusinessRedisUtils.deleteAppMember(userId);
+        return row;
     }
 
 }

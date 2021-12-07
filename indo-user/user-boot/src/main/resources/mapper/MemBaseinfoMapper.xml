@@ -9,7 +9,7 @@
         <result column="update_time" property="updateTime" />
         <result column="real_name" property="realName" />
         <result column="nick_name" property="nickName" />
-        <result column="account" property="account" />
+        <result column="accountNo" property="accountNo" />
         <result column="salt" property="salt" />
         <result column="password" property="password" />
         <result column="password_md5" property="passwordMd5" />
@@ -43,7 +43,31 @@
     <sql id="Base_Column_List">
         create_time,
         update_time,
-        id, real_name, nick_name, account, salt, password, password_md5, phone, email, face_book, whats_app, r_invite_code, group_id, mem_level, acc_type, total_deposit, total_enchashment, balance, register_source, register_ip, client_ip, status, prohibit_login, prohibit_invite, prohibit_investment, prohibit_disbursement, prohibit_recharge, remark, create_user, last_login_time, update_user
+        id, real_name, nick_name, accountNo, salt, password, password_md5, phone, email, face_book, whats_app, r_invite_code, group_id, mem_level, acc_type, total_deposit, total_enchashment, balance, register_source, register_ip, client_ip, status, prohibit_login, prohibit_invite, prohibit_investment, prohibit_disbursement, prohibit_recharge, remark, create_user, last_login_time, update_user
     </sql>
+
+
+    <update id="updateMemberAmount">
+        <![CDATA[
+        UPDATE mem_baseinfo m
+        SET m.balance    = (
+            CASE
+                WHEN m.balance + #{balance} < 0 THEN
+                    0
+                WHEN m.balance + #{balance} >= 0 THEN
+                    m.balance + #{balance}
+                END
+            ),
+            m.can_amount = (
+                CASE
+                    WHEN m.can_amount + #{canAmount} > 0 THEN
+                        m.can_amount + #{canAmount}
+                    WHEN m.can_amount + #{canAmount} <= 0 THEN
+                        0
+                    END
+                )
+        WHERE m.uid = #{uid}
+        ]]>
+    </update>
 
 </mapper>

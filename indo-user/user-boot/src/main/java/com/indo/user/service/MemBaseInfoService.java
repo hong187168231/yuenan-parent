@@ -13,6 +13,8 @@ import com.indo.user.pojo.req.LoginReq;
 import com.indo.user.pojo.req.RegisterReq;
 import com.indo.user.pojo.vo.mem.MemBaseInfoVo;
 
+import java.math.BigDecimal;
+
 public interface MemBaseInfoService extends SuperService<MemBaseinfo> {
 
     /**
@@ -50,5 +52,7 @@ public interface MemBaseInfoService extends SuperService<MemBaseinfo> {
     MemBaseinfo getMemBaseInfoById(Long id);
 
     MemBaseinfo getByAccountNo(String accountNo);
+
+    int updateMemberAmount(BigDecimal amount, BigDecimal canAmount, Long userId);
 
 }

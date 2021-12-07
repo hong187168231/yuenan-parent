@@ -78,6 +78,10 @@ public class MemBaseinfo extends BaseEntity {
     @ApiModelProperty(value = "余额")
     private BigDecimal balance;
 
+
+    @ApiModelProperty(value = "可提金额")
+    private BigDecimal canAmount;
+
     @ApiModelProperty(value = "注册来源 ios、android")
     private String registerSource;
 
