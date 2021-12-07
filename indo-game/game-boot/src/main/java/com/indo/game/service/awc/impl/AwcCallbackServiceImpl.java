@@ -139,7 +139,9 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 } else {
                     CallBackSuccess placeBetSuccess = new CallBackSuccess();
                     placeBetSuccess.setStatus("0000");
-                    placeBetSuccess.setBalance(userId);
+                    BigDecimal betAmount = BigDecimal.valueOf(Double.valueOf(placeBetTxns.getBetAmount()));
+                    BigDecimal balance = memBaseinfo.getBalance().subtract(betAmount);
+                    placeBetSuccess.setBalance(balance.toString());
                     placeBetSuccess.setBalanceTs(DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT));
                     return JSONObject.toJSONString(placeBetSuccess);
                 }
@@ -171,7 +173,10 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 } else {
                     CallBackSuccess placeBetSuccess = new CallBackSuccess();
                     placeBetSuccess.setStatus("0000");
-                    placeBetSuccess.setBalance(userId);
+                    //查询下注订单
+                    BigDecimal betAmount = BigDecimal.valueOf(Double.valueOf(0));
+                    BigDecimal balance = memBaseinfo.getBalance().add(betAmount);
+                    placeBetSuccess.setBalance(balance.toString());
                     placeBetSuccess.setBalanceTs(DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT));
                     return JSONObject.toJSONString(placeBetSuccess);
                 }
@@ -201,7 +206,12 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 } else {
                     CallBackSuccess placeBetSuccess = new CallBackSuccess();
                     placeBetSuccess.setStatus("0000");
-                    placeBetSuccess.setBalance(userId);
+                    // 下注金额
+                    BigDecimal adjustAmount = BigDecimal.valueOf(Double.valueOf(adjustBetTxns.getAdjustAmount()));
+                    //需要调整的超收金额，返还因为赔率超收金额 下注金额减去实际的下注金额
+                    BigDecimal realWinAmount = adjustAmount.subtract(BigDecimal.valueOf(Double.valueOf(adjustBetTxns.getBetAmount())));
+                    BigDecimal balance = memBaseinfo.getBalance().add(realWinAmount);
+                    placeBetSuccess.setBalance(balance.toString());
                     placeBetSuccess.setBalanceTs(DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT));
                     return JSONObject.toJSONString(placeBetSuccess);
                 }
@@ -547,6 +557,10 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 } else {
                     CallBackSuccess placeBetSuccess = new CallBackSuccess();
                     placeBetSuccess.setStatus("0000");
+                    //打赏给直播主的金额
+                    BigDecimal tip = BigDecimal.valueOf(Double.valueOf(tipTxns.getTip()));
+                    BigDecimal balance = memBaseinfo.getBalance().subtract(tip);
+                    placeBetSuccess.setBalance(balance.toString());
                     placeBetSuccess.setBalance(userId);
                     placeBetSuccess.setBalanceTs(DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT));
                     return JSONObject.toJSONString(placeBetSuccess);
@@ -577,7 +591,10 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 } else {
                     CallBackSuccess placeBetSuccess = new CallBackSuccess();
                     placeBetSuccess.setStatus("0000");
-                    placeBetSuccess.setBalance(userId);
+                    //打赏给直播主的金额
+                    BigDecimal tip = BigDecimal.valueOf(Double.valueOf(0));
+                    BigDecimal balance = memBaseinfo.getBalance().subtract(tip);
+                    placeBetSuccess.setBalance(balance.toString());
                     placeBetSuccess.setBalanceTs(DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT));
                     return JSONObject.toJSONString(placeBetSuccess);
                 }
