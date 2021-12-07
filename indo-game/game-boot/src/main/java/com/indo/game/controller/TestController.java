@@ -1,6 +1,8 @@
 package com.indo.game.controller;
 
 import com.indo.common.annotation.AllowAccess;
+import com.indo.common.enums.GoldchangeEnum;
+import com.indo.common.enums.TradingEnum;
 import com.indo.common.result.Result;
 import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.pojo.entity.manage.GameCategory;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
@@ -39,6 +42,17 @@ public class TestController {
     @AllowAccess
     public Result<?> queryGameRecord(){
         MemBaseinfo memBaseinfo = iGameManageService.getByAccountNo("1");
+        return  Result.success(memBaseinfo);
+    }
+
+    @ApiOperation(value = "游戏记录", httpMethod = "GET")
+    @GetMapping(value = "/hello2")
+    @AllowAccess
+    public Result<?> queryGameRecord2(){
+        MemBaseinfo memBaseinfo = new MemBaseinfo();
+        memBaseinfo.setId(1L);
+        memBaseinfo.setAccountNo("1");
+        iGameManageService.updateUserBalance(memBaseinfo, new BigDecimal(22), GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
         return  Result.success(memBaseinfo);
     }
 

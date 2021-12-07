@@ -41,7 +41,7 @@ public class MemBaseInfoRpc {
     }
 
     @PostMapping("/updateMemGoldChange")
-    public boolean updateMemGoldChange(@RequestBody MemGoldChangeDTO goldChangeDTO) {
+    public Boolean updateMemGoldChange(@RequestBody MemGoldChangeDTO goldChangeDTO) {
         return iMemGoldChangeService.updateMemGoldChange(goldChangeDTO);
     }
 

@@ -29,8 +29,10 @@ public class MemBaseInfoFeignFallback implements MemBaseInfoFeignClient {
     }
 
     @Override
-    public boolean updateMemGoldChange(MemGoldChangeDTO memGoldChangeDTO) {
+    public Boolean updateMemGoldChange(MemGoldChangeDTO memGoldChangeDTO) {
         log.error("feign远程调用用户账表服务异常后的降级方法");
         return false;
     }
+
+
 }

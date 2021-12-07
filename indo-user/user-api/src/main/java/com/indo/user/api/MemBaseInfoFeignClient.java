@@ -9,6 +9,7 @@ import com.indo.user.pojo.entity.MemBaseinfo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @FeignClient(value = ServiceIdConstant.USER_SERVICE_ID, fallback = MemBaseInfoFeignFallback.class)
@@ -22,7 +23,7 @@ public interface MemBaseInfoFeignClient {
     Result<MemBaseinfo> getByAccountNo(@PathVariable String accountNo);
 
 
-    @GetMapping("/rpc/memBaseInfo/updateMemGoldChange")
-    boolean updateMemGoldChange(@RequestBody MemGoldChangeDTO memGoldChangeDTO);
+    @PostMapping("/rpc/memBaseInfo/updateMemGoldChange")
+    Boolean updateMemGoldChange(MemGoldChangeDTO memGoldChangeDTO);
 
 }
