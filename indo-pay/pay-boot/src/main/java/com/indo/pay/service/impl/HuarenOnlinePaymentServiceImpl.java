@@ -161,7 +161,7 @@ public class HuarenOnlinePaymentServiceImpl extends AbstractOnlinePaymentService
         }
         // 根据商户订单号，查询订单信息
         QueryWrapper<PayRechargeOrder> query = new QueryWrapper<>();
-        query.lambda().eq(PayRechargeOrder::getOrderNo, "");
+        query.lambda().eq(PayRechargeOrder::getOrderNo, req.getMchOrderNo());
         PayRechargeOrder rechargeOrder = payRechargeOrderMapper.selectOne(query);
         if (ObjectUtils.isEmpty(rechargeOrder)) {
             log.info("众宝支付参数验证异常,查无此订单,req={}", JSON.toJSONString(req));
@@ -186,7 +186,7 @@ public class HuarenOnlinePaymentServiceImpl extends AbstractOnlinePaymentService
         }
 
         // 商户key
-        String signStr = SignMd5Utils.createSign(metaSignMap, payChannelConfig.getSecretKey());
+        String signStr = SignMd5Utils.createSmallSign(metaSignMap, payChannelConfig.getSecretKey());
         if (!signStr.equals(huaRenCallbackReq.getSign())) {
             log.error("hr支付宝签名不在确=={}", signStr);
             return false;

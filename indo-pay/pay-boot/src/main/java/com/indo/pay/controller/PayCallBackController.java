@@ -57,6 +57,7 @@ public class PayCallBackController {
             // 签名方式
             String signType = request.getParameter("signType");
 
+            huaRenCallbackReq.setMchId(mchId);
             huaRenCallbackReq.setMchOrderNo(mchOrderNo);
             huaRenCallbackReq.setTransactionNo(orderNo);
             huaRenCallbackReq.setStatus(tradeResult);
