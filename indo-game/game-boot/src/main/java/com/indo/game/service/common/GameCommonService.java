@@ -1,7 +1,12 @@
 package com.indo.game.service.common;
 
+import com.indo.common.enums.GoldchangeEnum;
+import com.indo.common.enums.TradingEnum;
 import com.indo.game.pojo.entity.manage.GamePlatform;
+import com.indo.user.pojo.dto.MemGoldChangeDTO;
 import com.indo.user.pojo.entity.MemBaseinfo;
+
+import java.math.BigDecimal;
 
 public interface GameCommonService {
 
@@ -30,6 +35,16 @@ public interface GameCommonService {
      * @return
      */
     MemBaseinfo getByAccountNo(String accountNo);
+
+    /**
+     * 修改用户余额
+     * @param memBaseinfo
+     * @param changeAmount
+     * @param goldchangeEnum
+     * @param tradingEnum
+     * @return
+     */
+    void updateUserBalance(MemBaseinfo memBaseinfo, BigDecimal changeAmount, GoldchangeEnum goldchangeEnum, TradingEnum tradingEnum);
 
 
 }

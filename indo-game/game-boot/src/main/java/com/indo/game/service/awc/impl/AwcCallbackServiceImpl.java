@@ -3,6 +3,8 @@ package com.indo.game.service.awc.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
+import com.indo.common.enums.GoldchangeEnum;
+import com.indo.common.enums.TradingEnum;
 import com.indo.common.utils.DateUtils;
 import com.indo.game.pojo.entity.awc.*;
 import com.indo.game.pojo.vo.callback.CallBackFail;
@@ -11,6 +13,7 @@ import com.indo.game.pojo.vo.callback.GetBalanceSuccess;
 import com.indo.game.pojo.vo.callback.CallBackSuccess;
 import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.awc.AwcCallbackService;
+import com.indo.user.pojo.dto.MemGoldChangeDTO;
 import com.indo.user.pojo.entity.MemBaseinfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -124,7 +127,8 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
 
     //Place Bet 下注
     private String bet(AwcApiRequestParentData awcApiRequestData) {
-        AwcApiRequestData<List<PlaceBetTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()), new TypeReference<AwcApiRequestData<List<PlaceBetTxns>>>() {});
+        AwcApiRequestData<List<PlaceBetTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()), new TypeReference<AwcApiRequestData<List<PlaceBetTxns>>>() {
+        });
         List<PlaceBetTxns> placeBetTxnsList = apiRequestData.getTxns();
         if (null != placeBetTxnsList && placeBetTxnsList.size() > 0) {
             for (PlaceBetTxns placeBetTxns : placeBetTxnsList) {
@@ -135,12 +139,18 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     CallBackFail callBacekFail = new CallBackFail();
                     callBacekFail.setStatus("1002");
                     callBacekFail.setDesc("Account is not exists");
+
+                    gameCommonService.updateUserBalance(memBaseinfo, new BigDecimal(0), GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
+
+
                     return JSONObject.toJSONString(callBacekFail);
                 } else {
                     CallBackSuccess placeBetSuccess = new CallBackSuccess();
                     placeBetSuccess.setStatus("0000");
                     BigDecimal betAmount = BigDecimal.valueOf(Double.valueOf(placeBetTxns.getBetAmount()));
                     BigDecimal balance = memBaseinfo.getBalance().subtract(betAmount);
+
+
                     placeBetSuccess.setBalance(balance.toString());
                     placeBetSuccess.setBalanceTs(DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT));
                     return JSONObject.toJSONString(placeBetSuccess);
@@ -159,7 +169,8 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
 
     //Cancel Bet 取消注单
     private String cancelBet(AwcApiRequestParentData awcApiRequestData) {
-        AwcApiRequestData<List<CancelBetTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()),new TypeReference<AwcApiRequestData<List<CancelBetTxns>>>(){});
+        AwcApiRequestData<List<CancelBetTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()), new TypeReference<AwcApiRequestData<List<CancelBetTxns>>>() {
+        });
         List<CancelBetTxns> cancelBetTxnsList = apiRequestData.getTxns();
         if (null != cancelBetTxnsList && cancelBetTxnsList.size() > 0) {
             for (CancelBetTxns cancelBetTxns : cancelBetTxnsList) {
@@ -181,7 +192,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     return JSONObject.toJSONString(placeBetSuccess);
                 }
             }
-        }else {
+        } else {
             CallBackFail callBacekFail = new CallBackFail();
             callBacekFail.setStatus("1036");
             callBacekFail.setDesc("Invalid parameters.");
@@ -192,7 +203,8 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
 
     //Adjust Bet 调整投注
     private String adjustBet(AwcApiRequestParentData awcApiRequestData) {
-        AwcApiRequestData<List<AdjustBetTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()),new TypeReference<AwcApiRequestData<List<AdjustBetTxns>>>(){});
+        AwcApiRequestData<List<AdjustBetTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()), new TypeReference<AwcApiRequestData<List<AdjustBetTxns>>>() {
+        });
         List<AdjustBetTxns> adjustBetTxnsList = apiRequestData.getTxns();
         if (null != adjustBetTxnsList && adjustBetTxnsList.size() > 0) {
             for (AdjustBetTxns adjustBetTxns : adjustBetTxnsList) {
@@ -216,7 +228,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     return JSONObject.toJSONString(placeBetSuccess);
                 }
             }
-        }else {
+        } else {
             CallBackFail callBacekFail = new CallBackFail();
             callBacekFail.setStatus("1036");
             callBacekFail.setDesc("Invalid parameters.");
@@ -227,7 +239,8 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
 
     //Void Bet 交易作废
     private String voidBet(AwcApiRequestParentData awcApiRequestData) {
-        AwcApiRequestData<List<VoidBetTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()),new TypeReference<AwcApiRequestData<List<VoidBetTxns>>>(){});
+        AwcApiRequestData<List<VoidBetTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()), new TypeReference<AwcApiRequestData<List<VoidBetTxns>>>() {
+        });
         List<VoidBetTxns> voidBetTxnsList = apiRequestData.getTxns();
         if (null != voidBetTxnsList && voidBetTxnsList.size() > 0) {
             for (VoidBetTxns voidBetTxns : voidBetTxnsList) {
@@ -244,7 +257,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     return JSONObject.toJSONString(callBackSuccess);
                 }
             }
-        }else {
+        } else {
             CallBackFail callBacekFail = new CallBackFail();
             callBacekFail.setStatus("1036");
             callBacekFail.setDesc("Invalid parameters.");
@@ -255,7 +268,8 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
 
     //Unvoid Bet 取消交易作废
     private String unvoidBet(AwcApiRequestParentData awcApiRequestData) {
-        AwcApiRequestData<List<UnvoidBetTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()),new TypeReference<AwcApiRequestData<List<UnvoidBetTxns>>>(){});
+        AwcApiRequestData<List<UnvoidBetTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()), new TypeReference<AwcApiRequestData<List<UnvoidBetTxns>>>() {
+        });
         List<UnvoidBetTxns> unvoidBetTxnsList = apiRequestData.getTxns();
         if (null != unvoidBetTxnsList && unvoidBetTxnsList.size() > 0) {
             for (UnvoidBetTxns unvoidBetTxns : unvoidBetTxnsList) {
@@ -272,7 +286,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     return JSONObject.toJSONString(callBackSuccess);
                 }
             }
-        }else {
+        } else {
             CallBackFail callBacekFail = new CallBackFail();
             callBacekFail.setStatus("1036");
             callBacekFail.setDesc("Invalid parameters.");
@@ -283,7 +297,8 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
 
     //Refund 返还金额
     private String refund(AwcApiRequestParentData awcApiRequestData) {
-        AwcApiRequestData<List<RefundTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()),new TypeReference<AwcApiRequestData<List<RefundTxns>>>(){});
+        AwcApiRequestData<List<RefundTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()), new TypeReference<AwcApiRequestData<List<RefundTxns>>>() {
+        });
         List<RefundTxns> refundTxnsList = apiRequestData.getTxns();
         if (null != refundTxnsList && refundTxnsList.size() > 0) {
             for (RefundTxns refundTxns : refundTxnsList) {
@@ -300,7 +315,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     return JSONObject.toJSONString(callBackSuccess);
                 }
             }
-        }else {
+        } else {
             CallBackFail callBacekFail = new CallBackFail();
             callBacekFail.setStatus("1036");
             callBacekFail.setDesc("Invalid parameters.");
@@ -311,7 +326,8 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
 
     //Settle 已结帐派彩
     private String settle(AwcApiRequestParentData awcApiRequestData) {
-        AwcApiRequestData<List<SettleTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()),new TypeReference<AwcApiRequestData<List<SettleTxns>>>(){});
+        AwcApiRequestData<List<SettleTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()), new TypeReference<AwcApiRequestData<List<SettleTxns>>>() {
+        });
         List<SettleTxns> settleTxnsList = apiRequestData.getTxns();
         if (null != settleTxnsList && settleTxnsList.size() > 0) {
             for (SettleTxns settleTxns : settleTxnsList) {
@@ -328,7 +344,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     return JSONObject.toJSONString(callBackSuccess);
                 }
             }
-        }else {
+        } else {
             CallBackFail callBacekFail = new CallBackFail();
             callBacekFail.setStatus("1036");
             callBacekFail.setDesc("Invalid parameters.");
@@ -339,7 +355,8 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
 
     //Unsettle 取消结帐派彩
     private String unsettle(AwcApiRequestParentData awcApiRequestData) {
-        AwcApiRequestData<List<UnsettleTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()),new TypeReference<AwcApiRequestData<List<UnsettleTxns>>>(){});
+        AwcApiRequestData<List<UnsettleTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()), new TypeReference<AwcApiRequestData<List<UnsettleTxns>>>() {
+        });
         List<UnsettleTxns> unsettleTxnsList = apiRequestData.getTxns();
         if (null != unsettleTxnsList && unsettleTxnsList.size() > 0) {
             for (UnsettleTxns unsettleTxns : unsettleTxnsList) {
@@ -356,7 +373,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     return JSONObject.toJSONString(callBackSuccess);
                 }
             }
-        }else {
+        } else {
             CallBackFail callBacekFail = new CallBackFail();
             callBacekFail.setStatus("1036");
             callBacekFail.setDesc("Invalid parameters.");
@@ -367,7 +384,8 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
 
     //Void Settle 结帐单转为无效
     private String voidSettle(AwcApiRequestParentData awcApiRequestData) {
-        AwcApiRequestData<List<VoidSettleTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()),new TypeReference<AwcApiRequestData<List<VoidSettleTxns>>>(){});
+        AwcApiRequestData<List<VoidSettleTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()), new TypeReference<AwcApiRequestData<List<VoidSettleTxns>>>() {
+        });
         List<VoidSettleTxns> voidSettleTxnsList = apiRequestData.getTxns();
         if (null != voidSettleTxnsList && voidSettleTxnsList.size() > 0) {
             for (VoidSettleTxns voidSettleTxns : voidSettleTxnsList) {
@@ -384,7 +402,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     return JSONObject.toJSONString(callBackSuccess);
                 }
             }
-        }else {
+        } else {
             CallBackFail callBacekFail = new CallBackFail();
             callBacekFail.setStatus("1036");
             callBacekFail.setDesc("Invalid parameters.");
@@ -395,7 +413,8 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
 
     //Unvoid Settle 无效单结账
     private String unvoidSettle(AwcApiRequestParentData awcApiRequestData) {
-        AwcApiRequestData<List<UnvoidSettleTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()),new TypeReference<AwcApiRequestData<List<UnvoidSettleTxns>>>(){});
+        AwcApiRequestData<List<UnvoidSettleTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()), new TypeReference<AwcApiRequestData<List<UnvoidSettleTxns>>>() {
+        });
         List<UnvoidSettleTxns> unvoidSettleTxnsList = apiRequestData.getTxns();
         if (null != unvoidSettleTxnsList && unvoidSettleTxnsList.size() > 0) {
             for (UnvoidSettleTxns unvoidSettleTxns : unvoidSettleTxnsList) {
@@ -414,7 +433,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     return JSONObject.toJSONString(placeBetSuccess);
                 }
             }
-        }else {
+        } else {
             CallBackFail callBacekFail = new CallBackFail();
             callBacekFail.setStatus("1036");
             callBacekFail.setDesc("Invalid parameters.");
@@ -425,7 +444,8 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
 
     // BetNSettle 下注并直接结算
     private String betNSettle(AwcApiRequestParentData awcApiRequestData) {
-        AwcApiRequestData<List<BetNSettleTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()),new TypeReference<AwcApiRequestData<List<BetNSettleTxns>>>(){});
+        AwcApiRequestData<List<BetNSettleTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()), new TypeReference<AwcApiRequestData<List<BetNSettleTxns>>>() {
+        });
         List<BetNSettleTxns> betNSettleTxnsList = apiRequestData.getTxns();
         if (null != betNSettleTxnsList && betNSettleTxnsList.size() > 0) {
             for (BetNSettleTxns betNSettleTxns : betNSettleTxnsList) {
@@ -444,7 +464,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     return JSONObject.toJSONString(placeBetSuccess);
                 }
             }
-        }else {
+        } else {
             CallBackFail callBacekFail = new CallBackFail();
             callBacekFail.setStatus("1036");
             callBacekFail.setDesc("Invalid parameters.");
@@ -455,7 +475,8 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
 
     // Cancel BetNSettle 取消结算并取消注单
     private String cancelBetNSettle(AwcApiRequestParentData awcApiRequestData) {
-        AwcApiRequestData<List<CancelBetNSettleTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()),new TypeReference<AwcApiRequestData<List<CancelBetNSettleTxns>>>(){});
+        AwcApiRequestData<List<CancelBetNSettleTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()), new TypeReference<AwcApiRequestData<List<CancelBetNSettleTxns>>>() {
+        });
         List<CancelBetNSettleTxns> cancelBetNSettleTxnsList = apiRequestData.getTxns();
         if (null != cancelBetNSettleTxnsList && cancelBetNSettleTxnsList.size() > 0) {
             for (CancelBetNSettleTxns cancelBetNSettleTxns : cancelBetNSettleTxnsList) {
@@ -474,7 +495,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     return JSONObject.toJSONString(placeBetSuccess);
                 }
             }
-        }else {
+        } else {
             CallBackFail callBacekFail = new CallBackFail();
             callBacekFail.setStatus("1036");
             callBacekFail.setDesc("Invalid parameters.");
@@ -485,7 +506,8 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
 
     // Free Spin 免费旋转
     private String freeSpin(AwcApiRequestParentData awcApiRequestData) {
-        AwcApiRequestData<List<FreeSpinTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()),new TypeReference<AwcApiRequestData<List<FreeSpinTxns>>>(){});
+        AwcApiRequestData<List<FreeSpinTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()), new TypeReference<AwcApiRequestData<List<FreeSpinTxns>>>() {
+        });
         List<FreeSpinTxns> freeSpinTxnsList = apiRequestData.getTxns();
         if (null != freeSpinTxnsList && freeSpinTxnsList.size() > 0) {
             for (FreeSpinTxns freeSpinTxns : freeSpinTxnsList) {
@@ -502,7 +524,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     return JSONObject.toJSONString(callBackSuccess);
                 }
             }
-        }else {
+        } else {
             CallBackFail callBacekFail = new CallBackFail();
             callBacekFail.setStatus("1036");
             callBacekFail.setDesc("Invalid parameters.");
@@ -513,7 +535,8 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
 
     //  Give (Promotion Bonus) 活动派彩
     private String give(AwcApiRequestParentData awcApiRequestData) {
-        AwcApiRequestData<List<GiveTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()),new TypeReference<AwcApiRequestData<List<GiveTxns>>>(){});
+        AwcApiRequestData<List<GiveTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()), new TypeReference<AwcApiRequestData<List<GiveTxns>>>() {
+        });
         List<GiveTxns> giveTxnsList = apiRequestData.getTxns();
         if (null != giveTxnsList && giveTxnsList.size() > 0) {
             for (GiveTxns giveTxns : giveTxnsList) {
@@ -532,7 +555,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     return JSONObject.toJSONString(placeBetSuccess);
                 }
             }
-        }else {
+        } else {
             CallBackFail callBacekFail = new CallBackFail();
             callBacekFail.setStatus("1036");
             callBacekFail.setDesc("Invalid parameters.");
@@ -543,7 +566,8 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
 
     //  Tip 打赏
     private String tip(AwcApiRequestParentData awcApiRequestData) {
-        AwcApiRequestData<List<TipTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()),new TypeReference<AwcApiRequestData<List<TipTxns>>>(){});
+        AwcApiRequestData<List<TipTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()), new TypeReference<AwcApiRequestData<List<TipTxns>>>() {
+        });
         List<TipTxns> tipTxnsList = apiRequestData.getTxns();
         if (null != tipTxnsList && tipTxnsList.size() > 0) {
             for (TipTxns tipTxns : tipTxnsList) {
@@ -566,7 +590,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     return JSONObject.toJSONString(placeBetSuccess);
                 }
             }
-        }else {
+        } else {
             CallBackFail callBacekFail = new CallBackFail();
             callBacekFail.setStatus("1036");
             callBacekFail.setDesc("Invalid parameters.");
@@ -577,7 +601,8 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
 
     //  Cancel Tip 取消打赏
     private String cancelTip(AwcApiRequestParentData awcApiRequestData) {
-        AwcApiRequestData<List<CancelTipTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()),new TypeReference<AwcApiRequestData<List<CancelTipTxns>>>(){});
+        AwcApiRequestData<List<CancelTipTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()), new TypeReference<AwcApiRequestData<List<CancelTipTxns>>>() {
+        });
         List<CancelTipTxns> cancelTipTxnsList = apiRequestData.getTxns();
         if (null != cancelTipTxnsList && cancelTipTxnsList.size() > 0) {
             for (CancelTipTxns cancelTipTxns : cancelTipTxnsList) {
@@ -599,7 +624,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     return JSONObject.toJSONString(placeBetSuccess);
                 }
             }
-        }else {
+        } else {
             CallBackFail callBacekFail = new CallBackFail();
             callBacekFail.setStatus("1036");
             callBacekFail.setDesc("Invalid parameters.");

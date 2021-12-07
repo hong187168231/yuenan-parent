@@ -49,15 +49,11 @@ public class MemGoldChangeServiceImpl extends ServiceImpl<MemGoldChangeMapper, M
     /**
      * 需要修改可提现金额的账变类型
      */
-    private static final List<GoldchangeEnum> enumList = new ArrayList<>(6);
+    private static final List<GoldchangeEnum> enumList = new ArrayList<>();
 
     static {
-        enumList.add(GoldchangeEnum.TXKK);
-        enumList.add(GoldchangeEnum.JJPS);
-        enumList.add(GoldchangeEnum.TXJJ);
-        enumList.add(GoldchangeEnum.TXTH);
-        enumList.add(GoldchangeEnum.TZKK);
-        enumList.add(GoldchangeEnum.TZKK);
+        enumList.add(GoldchangeEnum.CANCEL_BET);
+
     }
 
 
