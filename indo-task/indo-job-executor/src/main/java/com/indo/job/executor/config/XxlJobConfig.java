@@ -1,4 +1,4 @@
-package com.xxl.job.executor.config;
+package com.indo.job.executor.config;
 
 import com.xxl.job.core.executor.impl.XxlJobSpringExecutor;
 import org.slf4j.Logger;

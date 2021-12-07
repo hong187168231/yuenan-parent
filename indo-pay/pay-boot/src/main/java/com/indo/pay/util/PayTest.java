@@ -17,7 +17,7 @@ public class PayTest {
         Map<String, String> metaSignMap = new TreeMap<>();
         metaSignMap.put("version", "1.0");
         metaSignMap.put("mch_id", "101103004");
-        metaSignMap.put("notify_url", "www.baidu.com");
+        metaSignMap.put("notify_url", "http://154.204.57.207:9999/indo-pay/callback/huaRenCallback");
         metaSignMap.put("page_url", "www.baidu.com");
         metaSignMap.put("mch_order_no", IdUtil.simpleUUID());
         metaSignMap.put("pay_type", "102");
