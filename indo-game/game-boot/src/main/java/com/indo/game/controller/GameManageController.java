@@ -3,9 +3,7 @@ package com.indo.game.controller;
 import com.indo.common.annotation.AllowAccess;
 import com.indo.common.result.Result;
 import com.indo.common.utils.i18n.MessageUtils;
-import com.indo.game.pojo.entity.manage.GameCategory;
-import com.indo.game.pojo.entity.manage.GameDownload;
-import com.indo.game.pojo.entity.manage.GamePlatform;
+import com.indo.game.pojo.entity.manage.*;
 import com.indo.game.service.manage.IGameManageService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -201,6 +199,20 @@ public class GameManageController {
             result.failed(MessageUtils.get("modifygamedownload"));
         }
         return result;
+    }
+
+    @ApiOperation(value = "语言标准代码", httpMethod = "GET")
+    @GetMapping(value = "/queryLanguageType")
+    @AllowAccess
+    public Result<GameLanguageType> queryLanguageType(){
+        return iGameManageService.queryLanguageType();
+    }
+
+    @ApiOperation(value = "币种代码", httpMethod = "GET")
+    @GetMapping(value = "/queryCurrencyType")
+    @AllowAccess
+    public Result<GameCurrencyType> queryGameCurrencyType(){
+        return iGameManageService.queryGameCurrencyType();
     }
 
     public List<String> getIdList(String ids) {

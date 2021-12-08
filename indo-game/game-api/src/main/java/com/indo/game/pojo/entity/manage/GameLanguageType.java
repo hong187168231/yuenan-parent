@@ -18,10 +18,9 @@ import lombok.EqualsAndHashCode;
  * @since 2021-11-22
  */
 @Data
-@EqualsAndHashCode(callSuper = true)
 @TableName("game_language_type")
 @ApiModel(value="LanguageType对象", description="")
-public class GameLanguageType extends BaseEntity {
+public class GameLanguageType{
 
     private static final long serialVersionUID = 1L;
 

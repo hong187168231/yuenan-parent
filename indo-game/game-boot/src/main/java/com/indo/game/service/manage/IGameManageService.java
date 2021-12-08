@@ -1,9 +1,7 @@
 package com.indo.game.service.manage;
 
 import com.indo.common.result.Result;
-import com.indo.game.pojo.entity.manage.GameCategory;
-import com.indo.game.pojo.entity.manage.GameDownload;
-import com.indo.game.pojo.entity.manage.GamePlatform;
+import com.indo.game.pojo.entity.manage.*;
 
 import java.util.List;
 
@@ -34,4 +32,8 @@ public interface IGameManageService {
     public void deleteBatchGameDownload(List idList);
 
     public void modifiyGameDownload(GameDownload gameDownload);
+
+    public Result<GameLanguageType> queryLanguageType();
+
+    public Result<GameCurrencyType> queryGameCurrencyType();
 }

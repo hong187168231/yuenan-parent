@@ -22,6 +22,7 @@ public class AwcApiResponseData{
     private String method;//"WITHDRAW" 显示 "取款"
     private String currentBalance;//取款后余额
     private List<?> transactions;//拉取注单结果集
+    private String logoutUsers;//所有被强制登出的玩家ID
 
     private static Map<Integer, String> MSG_EN_MAP;
 
@@ -273,5 +274,13 @@ public class AwcApiResponseData{
 
     public void setTransactions(List<?> transactions) {
         this.transactions = transactions;
+    }
+
+    public String getLogoutUsers() {
+        return logoutUsers;
+    }
+
+    public void setLogoutUsers(String logoutUsers) {
+        this.logoutUsers = logoutUsers;
     }
 }

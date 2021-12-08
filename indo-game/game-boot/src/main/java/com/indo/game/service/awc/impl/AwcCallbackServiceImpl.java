@@ -29,7 +29,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
     @Autowired
     private GameCommonService gameCommonService;
 
-    public String awcAeSexybcrtCallback(AwcApiRequestParentData awcApiRequestData) {
+    public String awcCallback(AwcApiRequestParentData awcApiRequestData) {
         JSONObject jsonObject = JSONObject.parseObject(String.valueOf(awcApiRequestData.getMessage()));
         String action = jsonObject.getString("action");
         //Get Balance 取得玩家余额
@@ -139,18 +139,13 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     CallBackFail callBacekFail = new CallBackFail();
                     callBacekFail.setStatus("1002");
                     callBacekFail.setDesc("Account is not exists");
-
-                    gameCommonService.updateUserBalance(memBaseinfo, new BigDecimal(0), GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
-
-
                     return JSONObject.toJSONString(callBacekFail);
                 } else {
                     CallBackSuccess placeBetSuccess = new CallBackSuccess();
                     placeBetSuccess.setStatus("0000");
                     BigDecimal betAmount = BigDecimal.valueOf(Double.valueOf(placeBetTxns.getBetAmount()));
                     BigDecimal balance = memBaseinfo.getBalance().subtract(betAmount);
-
-
+                    gameCommonService.updateUserBalance(memBaseinfo, new BigDecimal(0), GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
                     placeBetSuccess.setBalance(balance.toString());
                     placeBetSuccess.setBalanceTs(DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT));
                     return JSONObject.toJSONString(placeBetSuccess);

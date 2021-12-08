@@ -9,9 +9,14 @@ import java.util.Map;
 public interface AwcService {
 
     /**
-     * 登录游戏AWC-AE真人
+     * 登录游戏AWC-AE真人、SV388斗鸡
      */
-    public Result<String> awcGame(LoginInfo loginUser, String isMobileLogin,String gameCode, String ip,String platform) ;
+    public Result awcGame(LoginInfo loginUser, String isMobileLogin,String gameCode, String ip,String platform) ;
+
+    /**
+     * AE真人、SV388斗鸡游戏 强迫登出玩家
+     */
+    public Result logout(LoginInfo loginUser,String ip,String userIds);
 
     /**
      * 同步注单

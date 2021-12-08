@@ -50,9 +50,7 @@ public class GamePlatform extends BaseEntity {
     @ApiModelProperty(value = "支持币种")
     private String currencyType;
 
-    @ApiModelProperty(value = "最小投注限额")
-    private String minBetLimit;
+    @ApiModelProperty(value = "每个玩家每个最多允许 6 组下注限红 ID")
+    private String betLimit;
 
-    @ApiModelProperty(value = "最大投注限额")
-    private String maxBetLimit;
 }

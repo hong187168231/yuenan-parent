@@ -18,10 +18,9 @@ import lombok.EqualsAndHashCode;
  * @since 2021-11-22
  */
 @Data
-@EqualsAndHashCode(callSuper = true)
 @TableName("game_currency_type")
 @ApiModel(value="CurrencyType对象", description="")
-public class GameCurrencyType extends BaseEntity {
+public class GameCurrencyType {
 
     private static final long serialVersionUID = 1L;
 

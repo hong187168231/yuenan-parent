@@ -2,12 +2,8 @@ package com.indo.game.service.manage.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.indo.common.result.Result;
-import com.indo.game.mapper.manage.GameCategoryMapper;
-import com.indo.game.mapper.manage.GameDownloadMapper;
-import com.indo.game.mapper.manage.GamePlatformMapper;
-import com.indo.game.pojo.entity.manage.GameCategory;
-import com.indo.game.pojo.entity.manage.GameDownload;
-import com.indo.game.pojo.entity.manage.GamePlatform;
+import com.indo.game.mapper.manage.*;
+import com.indo.game.pojo.entity.manage.*;
 import com.indo.game.service.manage.IGameManageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +18,10 @@ public class GameManageServiceImpl implements IGameManageService {
     private GameCategoryMapper gameCategoryMapper;
     @Autowired
     private GameDownloadMapper gameDownloadMapper;
+    @Autowired
+    private GameLanguageTypeMapper gameLanguageTypeMapper;
+    @Autowired
+    private GameCurrencyTypeMapper gameCurrencyTypeMapper;
 
     public Result<GameCategory> queryAllGameCategory(){
         Result<GameCategory> result = new Result<>();
@@ -89,5 +89,21 @@ public class GameManageServiceImpl implements IGameManageService {
 
     public void modifiyGameDownload(GameDownload gameDownload){
         gameDownloadMapper.updateById(gameDownload);
+    }
+
+    public Result<GameLanguageType> queryLanguageType(){
+        Result<GameLanguageType> result = new Result<GameLanguageType>();
+        LambdaQueryWrapper<GameLanguageType> wrapper = new LambdaQueryWrapper<>();
+        List<GameLanguageType> categoryList = gameLanguageTypeMapper.selectList(wrapper);
+        result.success(categoryList);
+        return result;
+    }
+
+    public Result<GameCurrencyType> queryGameCurrencyType(){
+        Result<GameCurrencyType> result = new Result<GameCurrencyType>();
+        LambdaQueryWrapper<GameCurrencyType> wrapper = new LambdaQueryWrapper<>();
+        List<GameCurrencyType> categoryList = gameCurrencyTypeMapper.selectList(wrapper);
+        result.success(categoryList);
+        return result;
     }
 }

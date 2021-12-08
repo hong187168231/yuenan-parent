@@ -23,7 +23,7 @@ public class AwcCallBackController {
     @RequestMapping(value="/callBack",method=RequestMethod.POST)
     public String initGame(AwcApiRequestParentData awcApiRequestData) {
         logger.info("awcCallBack {} initGame 回调, params:{}",JSONObject.toJSONString(awcApiRequestData));
-        String callBack = awcAeSexybcrtCallbackService.awcAeSexybcrtCallback(awcApiRequestData);
+        String callBack = awcAeSexybcrtCallbackService.awcCallback(awcApiRequestData);
         logger.info("awcCallBack {} initGame 回调返回数据, params:{}",callBack);
         return callBack;
     }
