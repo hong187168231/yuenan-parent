@@ -145,7 +145,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     placeBetSuccess.setStatus("0000");
                     BigDecimal betAmount = BigDecimal.valueOf(Double.valueOf(placeBetTxns.getBetAmount()));
                     BigDecimal balance = memBaseinfo.getBalance().subtract(betAmount);
-                    gameCommonService.updateUserBalance(memBaseinfo, new BigDecimal(0), GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
+                    gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
                     placeBetSuccess.setBalance(balance.toString());
                     placeBetSuccess.setBalanceTs(DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT));
                     return JSONObject.toJSONString(placeBetSuccess);
