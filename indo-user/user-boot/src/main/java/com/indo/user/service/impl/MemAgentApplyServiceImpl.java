@@ -21,6 +21,10 @@ public class MemAgentApplyServiceImpl extends ServiceImpl<MemAgentApplyMapper, M
 
     @Override
     public void add(MemAgentApplyReq req) {
-
+        MemAgentApply memAgentApply = new MemAgentApply();
+        memAgentApply.setMemId(req.getMemId());
+        memAgentApply.setMobile(req.getMobile());
+        memAgentApply.setStatus(0);
+        baseMapper.insert(memAgentApply);
     }
 }

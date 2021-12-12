@@ -9,7 +9,7 @@ import lombok.Data;
 public class MemAgentApplyReq {
 
     @ApiModelProperty(value = "用户id", required = true)
-    private String memId;
+    private Long memId;
 
     @ApiModelProperty(value = "用户名", required = true)
     private String account;
