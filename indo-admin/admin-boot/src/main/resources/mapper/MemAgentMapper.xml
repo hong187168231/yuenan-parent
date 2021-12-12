@@ -4,15 +4,15 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.indo.code.modules.mem.entity.Agent">
-        <id column="agent_id" property="agentId" />
-        <result column="create_time" property="createTime" />
-        <result column="update_time" property="updateTime" />
-        <result column="mem_id" property="memId" />
-        <result column="team_num" property="teamNum" />
-        <result column="level_user_ids" property="levelUserIds" />
-        <result column="parent_id" property="parentId" />
-        <result column="is_del" property="isDel" />
-        <result column="remark" property="remark" />
+        <id column="agent_id" property="agentId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="mem_id" property="memId"/>
+        <result column="team_num" property="teamNum"/>
+        <result column="level_user_ids" property="levelUserIds"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="is_del" property="isDel"/>
+        <result column="remark" property="remark"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
@@ -30,6 +30,15 @@
         </if>
         <if test="req. !=null and req.mobile !=''">
             and ma.mobile = #{req.mobile}
+        </if>
+        ORDER BY ma.create_time desc
+    </select>
+
+    <select id="subordinateList" resultMap="BaseResultMap">
+        SELECT * FROM mem_agent ma
+        where ma.is_del = 0
+        <if test="req.memId !=null">
+            and ma.parentId = #{req.memId}
         </if>
         ORDER BY ma.create_time desc
     </select>

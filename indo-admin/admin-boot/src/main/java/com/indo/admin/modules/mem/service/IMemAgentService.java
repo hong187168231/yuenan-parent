@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.indo.admin.modules.mem.entity.MemAgent;
 import com.indo.admin.modules.mem.req.MemAgentPageReq;
 import com.indo.common.result.PageResult;
+import com.indo.admin.modules.mem.req.SubordinateReq;
 
 /**
  * <p>
@@ -16,4 +17,6 @@ import com.indo.common.result.PageResult;
 public interface IMemAgentService extends IService<MemAgent> {
 
     PageResult<MemAgent> getPage(MemAgentPageReq req);
+
+    PageResult<MemAgent> subordinatePage(SubordinateReq req);
 }
