@@ -18,7 +18,7 @@ import java.util.List;
  * @since 2021-12-11
  */
 @Mapper
-public interface MemAgentMapper extends BaseMapper<MemAgent> {
+public interface MemAgent1Mapper extends BaseMapper<MemAgent> {
 
     List<MemAgent> queryList(Page<MemAgent> page, MemAgentPageReq req);
 

@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 @ApiModel
 public class MemAddReq {
     @ApiModelProperty("会员账号，4-15位只能包含数字和字母")
-    private String accno;
+    private String accountNo;
     @ApiModelProperty("上级账号")
     private String superAccno;
     @ApiModelProperty("账户类型，1-玩家 2-代理")
@@ -22,7 +22,7 @@ public class MemAddReq {
     @ApiModelProperty("密码")
     private String password;
     @ApiModelProperty("等级")
-    private String level;
+    private Integer memLevel;
     @ApiModelProperty("姓名")
     private String realName;
     @ApiModelProperty("余额")

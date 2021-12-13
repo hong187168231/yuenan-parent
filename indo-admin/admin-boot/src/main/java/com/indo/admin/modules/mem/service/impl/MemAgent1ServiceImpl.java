@@ -3,8 +3,7 @@ package com.indo.admin.modules.mem.service.impl;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.indo.admin.modules.mem.entity.MemAgent;
-import com.indo.admin.modules.mem.entity.MemAgentApply;
-import com.indo.admin.modules.mem.mapper.MemAgentMapper;
+import com.indo.admin.modules.mem.mapper.MemAgent1Mapper;
 import com.indo.admin.modules.mem.req.MemAgentPageReq;
 import com.indo.admin.modules.mem.service.IMemAgentService;
 import com.indo.common.result.PageResult;
@@ -23,10 +22,10 @@ import java.util.List;
  * @since 2021-12-11
  */
 @Service
-public class MemAgentServiceImpl extends ServiceImpl<MemAgentMapper, MemAgent> implements IMemAgentService {
+public class MemAgent1ServiceImpl extends ServiceImpl<MemAgent1Mapper, MemAgent> implements IMemAgentService {
 
     @Autowired
-    private MemAgentMapper memAgentMapper;
+    private MemAgent1Mapper memAgent1Mapper;
 
     @Override
     public PageResult<MemAgent> getPage(MemAgentPageReq req) {
@@ -37,7 +36,7 @@ public class MemAgentServiceImpl extends ServiceImpl<MemAgentMapper, MemAgent> i
             pageSize = req.getLimit();
         }
         Page<MemAgent> page = new Page<>(pageNum, pageSize);
-        List<MemAgent> list = memAgentMapper.queryList(page, req);
+        List<MemAgent> list = memAgent1Mapper.queryList(page, req);
         page.setRecords(list);
         return PageResult.getPageResult(page);
     }
@@ -51,7 +50,7 @@ public class MemAgentServiceImpl extends ServiceImpl<MemAgentMapper, MemAgent> i
             pageSize = req.getLimit();
         }
         Page<MemAgent> page = new Page<>(pageNum, pageSize);
-        List<MemAgent> list = memAgentMapper.subordinateList(page, req);
+        List<MemAgent> list = memAgent1Mapper.subordinateList(page, req);
         page.setRecords(list);
         return PageResult.getPageResult(page);
     }

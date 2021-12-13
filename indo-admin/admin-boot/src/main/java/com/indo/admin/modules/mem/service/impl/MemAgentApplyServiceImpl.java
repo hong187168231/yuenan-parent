@@ -8,13 +8,12 @@ import com.indo.admin.modules.mem.entity.MemAgentApply;
 import com.indo.admin.modules.mem.entity.MemBaseinfo;
 import com.indo.admin.modules.mem.entity.MemInviteCode;
 import com.indo.admin.modules.mem.mapper.MemAgentApplyMapper;
-import com.indo.admin.modules.mem.mapper.MemAgentMapper;
+import com.indo.admin.modules.mem.mapper.MemAgent1Mapper;
 import com.indo.admin.modules.mem.mapper.MemBaseinfoMapper;
 import com.indo.admin.modules.mem.mapper.MemInviteCodeMapper;
 import com.indo.admin.modules.mem.req.MemAgentApplyPageReq;
 import com.indo.admin.modules.mem.req.MemApplyAuditReq;
 import com.indo.admin.modules.mem.service.IMemAgentApplyService;
-import com.indo.admin.modules.mem.vo.MemBankRelationVO;
 import com.indo.common.result.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,7 +36,7 @@ public class MemAgentApplyServiceImpl extends ServiceImpl<MemAgentApplyMapper, M
     @Autowired
     private MemBaseinfoMapper memBaseinfoMapper;
     @Autowired
-    private MemAgentMapper memAgentMapper;
+    private MemAgent1Mapper memAgent1Mapper;
     @Autowired
     private MemInviteCodeMapper memInviteCodeMapper;
 
@@ -71,6 +70,6 @@ public class MemAgentApplyServiceImpl extends ServiceImpl<MemAgentApplyMapper, M
         memAgent.setIsDel(false);
         memAgent.setTeamNum(0);
         memAgent.setParentId(memInviteCode.getMemId());
-        memAgentMapper.insert(memAgent);
+        memAgent1Mapper.insert(memAgent);
     }
 }
