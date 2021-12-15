@@ -19,7 +19,6 @@ import java.util.List;
  * @since 2021-11-05
  */
 @Mapper
-@Repository
 public interface MemInviteCodeMapper extends BaseMapper<MemInviteCode> {
 
     List<MemInviteCodeVo> queryList(Page<MemInviteCodeVo> page, MeminviteCodePageReq req);

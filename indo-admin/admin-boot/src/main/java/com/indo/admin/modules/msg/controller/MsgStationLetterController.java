@@ -35,14 +35,14 @@ public class MsgStationLetterController {
 
     @ApiOperation(value = "分页查询站内信")
     @GetMapping(value = "/list")
-    public Result<List<MsgStationLetterVO>> list(MsgStationLetterDTO letterDTO) {
+    public Result<List<MsgStationLetterVO>> list(@RequestBody MsgStationLetterDTO letterDTO) {
         Page relust = stationLetterService.queryList(letterDTO);
         return Result.success(relust.getRecords(), relust.getTotal());
     }
 
     @ApiOperation(value = "增加站内信")
     @PostMapping(value = "/add")
-    public Result add(StationLetterAddDTO letterDTO) {
+    public Result add(@RequestBody StationLetterAddDTO letterDTO) {
         int count = stationLetterService.add(letterDTO);
         if (count > 0) {
             return Result.success();
@@ -55,10 +55,6 @@ public class MsgStationLetterController {
     @DeleteMapping(value = "/delete")
     public Result deleteBrand(@RequestParam("ids") List<Long> ids) {
         Boolean flag = stationLetterService.removeByIds(ids);
-        if (flag) {
-            return Result.success();
-        } else {
-            return Result.failed();
-        }
+        return Result.judge(flag);
     }
 }

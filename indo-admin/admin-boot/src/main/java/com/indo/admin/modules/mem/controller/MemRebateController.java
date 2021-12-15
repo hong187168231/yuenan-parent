@@ -5,6 +5,7 @@ import com.indo.admin.modules.mem.req.MemRebateAddReq;
 import com.indo.admin.modules.mem.service.IMemRebateService;
 import com.indo.admin.modules.mem.vo.MemRebateVo;
 import com.indo.common.result.Result;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,7 @@ import java.util.List;
  * @author kevin
  * @since 2021-11-04
  */
+@Api(tags = "返点配置")
 @RestController
 @RequestMapping("/api/v1/mem/rebate")
 public class MemRebateController {
@@ -27,9 +29,9 @@ public class MemRebateController {
     private IMemRebateService memRebateService;
 
     @ApiOperation(value = "分页查询")
-    @PostMapping(value = "/list")
-    public Result<List<MemRebateVo>> list() {
-        List<MemRebateVo> result = memRebateService.queryAll();
+    @PostMapping(value = "query")
+    public Result<MemRebateVo> list() {
+        MemRebateVo result = memRebateService.queryMemRabate();
         return Result.success(result);
     }
 
@@ -40,10 +42,5 @@ public class MemRebateController {
         return Result.success();
     }
 
-    @ApiOperation(value = "删除")
-    @DeleteMapping(value = "/delete/{id}")
-    public Result add(@PathVariable Integer id) {
-        memRebateService.deleteOne(id);
-        return Result.success();
-    }
+
 }

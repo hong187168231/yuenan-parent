@@ -4,6 +4,10 @@
 
     <select id="queryList" resultType="com.indo.admin.modules.mem.vo.MemBaseInfoVo">
         SELECT * FROM mem_baseinfo mb
+        left join mem_invite_code mic
+        on mb.id = mic.mem_id
+        LEFT JOIN mem_agent ma
+        on mb.id = ma.mem_id
         <where>
             <if test="dto.id !=null">
                 and mb.id = #{dto.id}
@@ -20,18 +24,20 @@
             <if test="dto.realName !=null and dto.realName !=''">
                 and mb.real_name like concat('%', #{dto.realName,jdbcType=VARCHAR}, '%')
             </if>
-            <if test="dto.rInviteCode !=null and dto.rInviteCode !=''">
-                and mb.r_invite_code = #{dto.rInviteCode}
+            <if test="dto.inviteCode !=null and dto.inviteCode !=''">
+                and mb.invite_code = #{dto.inviteCode}
             </if>
-            <if test="dto.regStartTime != null and dto.regStartTime != ''">
-                and date_format(mb.create_time,'%y%m%d') &gt;= date_format(#{dto.regStartTime},'%y%m%d')
+            <if test="dto.startTime != null and dto.startTime != ''">
+                and date_format(mb.create_time,'%y%m%d') &gt;= date_format(#{dto.startTime},'%y%m%d')
             </if>
-            <if test="dto.regEndTime != null and dto.regEndTime != ''">
-                and date_format(mb.create_time,'%y%m%d') &lt;= date_format(#{dto.regEndTime},'%y%m%d')
+            <if test="dto.endTime != null and dto.endTime != ''">
+                and date_format(mb.create_time,'%y%m%d') &lt;= date_format(#{dto.endTime},'%y%m%d')
             </if>
         </where>
         ORDER BY mb.create_time desc
     </select>
+
+
     <select id="selectIdsByAccounts" resultType="java.lang.Long">
 
     </select>

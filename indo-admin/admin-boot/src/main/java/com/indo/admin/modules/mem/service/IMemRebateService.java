@@ -17,9 +17,8 @@ import java.util.List;
  */
 public interface IMemRebateService extends IService<MemRebate> {
 
-    List<MemRebateVo> queryAll();
+    MemRebateVo queryMemRabate();
 
-    void saveOne(MemRebateAddReq req);
+    boolean saveOne(MemRebateAddReq req);
 
-    void deleteOne(Integer id);
 }

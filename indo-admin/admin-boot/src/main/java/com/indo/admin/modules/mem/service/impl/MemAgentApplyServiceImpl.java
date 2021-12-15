@@ -8,7 +8,7 @@ import com.indo.admin.modules.mem.entity.MemAgentApply;
 import com.indo.admin.modules.mem.entity.MemBaseinfo;
 import com.indo.admin.modules.mem.entity.MemInviteCode;
 import com.indo.admin.modules.mem.mapper.MemAgentApplyMapper;
-import com.indo.admin.modules.mem.mapper.MemAgent1Mapper;
+import com.indo.admin.modules.mem.mapper.MemAgentMapper;
 import com.indo.admin.modules.mem.mapper.MemBaseinfoMapper;
 import com.indo.admin.modules.mem.mapper.MemInviteCodeMapper;
 import com.indo.admin.modules.mem.req.MemAgentApplyPageReq;
@@ -36,7 +36,7 @@ public class MemAgentApplyServiceImpl extends ServiceImpl<MemAgentApplyMapper, M
     @Autowired
     private MemBaseinfoMapper memBaseinfoMapper;
     @Autowired
-    private MemAgent1Mapper memAgent1Mapper;
+    private MemAgentMapper memAgent1Mapper;
     @Autowired
     private MemInviteCodeMapper memInviteCodeMapper;
 

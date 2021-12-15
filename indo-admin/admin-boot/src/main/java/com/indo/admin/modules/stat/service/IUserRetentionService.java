@@ -1,5 +1,6 @@
 package com.indo.admin.modules.stat.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.indo.admin.modules.stat.entity.StatUserRetention;
 import com.indo.admin.modules.stat.req.UserRetentionPageReq;
@@ -16,5 +17,5 @@ import com.indo.common.result.PageResult;
  */
 public interface IUserRetentionService extends IService<StatUserRetention> {
 
-    PageResult<UserRetentionVo> queryList(UserRetentionPageReq req);
+    Page<UserRetentionVo> queryList(UserRetentionPageReq req);
 }

@@ -37,7 +37,7 @@ public interface IMemLevelService extends SuperService<MemLevel> {
      */
     List<MemLevel> queryAll(MemLevelQueryCriteria criteria);
 
-    void saveOne(MemLevelAddReq req);
+    boolean saveOne(MemLevelAddReq req);
 
     void updateOne(MemLevelUpdateReq req);
 

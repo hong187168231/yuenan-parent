@@ -68,7 +68,7 @@ public class MemBaseinfo extends BaseEntity {
     private Integer memLevel;
 
     @ApiModelProperty(value = "账户类型：1 玩家 2-代理")
-    private Boolean accType;
+    private Integer accType;
 
     private BigDecimal totalDeposit;
 
@@ -93,19 +93,19 @@ public class MemBaseinfo extends BaseEntity {
     private Integer status;
 
     @ApiModelProperty(value = "禁止登陆")
-    private Boolean prohibitLogin;
+    private Integer prohibitLogin;
 
     @ApiModelProperty(value = "是否禁止邀请发展下级和会员：0 否 1 是")
-    private Boolean prohibitInvite;
+    private Integer prohibitInvite;
 
     @ApiModelProperty(value = "是否禁止投注：0 否 1 是")
-    private Boolean prohibitInvestment;
+    private Integer prohibitInvestment;
 
     @ApiModelProperty(value = "是否禁止出款：0 否 1 是")
-    private Boolean prohibitDisbursement;
+    private Integer prohibitDisbursement;
 
     @ApiModelProperty(value = "是否禁止充值：0 否 1 是")
-    private Boolean prohibitRecharge;
+    private Integer prohibitRecharge;
 
     @ApiModelProperty(value = "备注")
     private String remark;
@@ -115,6 +115,10 @@ public class MemBaseinfo extends BaseEntity {
 
     @ApiModelProperty(value = "最后登录时间")
     private LocalDateTime lastLoginTime;
+
+
+    @ApiModelProperty(value = "最后登录时间")
+    private LocalDateTime firstRechargeTime;
 
     @ApiModelProperty(value = "最后修改人")
     private String updateUser;

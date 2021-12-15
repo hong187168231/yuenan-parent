@@ -10,6 +10,7 @@ import com.indo.admin.modules.mem.mapper.MemBaseinfoMapper;
 import com.indo.admin.modules.mem.mapper.MemInviteCodeMapper;
 import com.indo.admin.modules.mem.service.IMemBaseinfoService;
 import com.indo.common.result.PageResult;
+import com.indo.common.utils.ShareCodeUtils;
 import com.indo.common.utils.StringUtils;
 import com.indo.common.utils.encrypt.MD5;
 import com.indo.admin.modules.mem.req.MemAddReq;
@@ -41,21 +42,15 @@ public class MemBaseinfoServiceImpl extends ServiceImpl<MemBaseinfoMapper, MemBa
     private MemInviteCodeMapper memInviteCodeMapper;
 
     @Override
-    public PageResult<MemBaseInfoVo> queryList(MemBaseInfoPageReq req) {
-        Integer pageNum = 1;
-        Integer pageSize = 10;
-        if (null != req.getPage() && null != req.getLimit()) {
-            pageNum = req.getPage();
-            pageSize = req.getLimit();
-        }
-        Page<MemBaseInfoVo> page = new Page<>(pageNum, pageSize);
+    public Page<MemBaseInfoVo> queryList(MemBaseInfoPageReq req) {
+        Page<MemBaseInfoVo> page = new Page<>(req.getPage(), req.getLimit());
         List<MemBaseInfoVo> list = memBaseInfoMapper.queryList(page, req);
         page.setRecords(list);
-        return PageResult.getPageResult(page);
+        return page;
     }
 
     @Override
-    public int addMemBaseInfo(MemAddReq req) {
+    public boolean addMemBaseInfo(MemAddReq req) {
         MemBaseinfo memBaseinfo = new MemBaseinfo();
         BeanUtils.copyProperties(req, memBaseinfo);
         memBaseinfo.setPasswordMd5(MD5.md5(req.getPassword()));
@@ -64,15 +59,22 @@ public class MemBaseinfoServiceImpl extends ServiceImpl<MemBaseinfoMapper, MemBa
             MemInviteCode memInviteCode = memInviteCodeMapper.selectOne(new QueryWrapper<MemInviteCode>().lambda().eq(MemInviteCode::getMemId, memBaseinfo1.getId()));
             memBaseinfo.setRInviteCode(memInviteCode.getInviteCode());
         }
-        return baseMapper.insert(memBaseinfo);
+        if (baseMapper.insert(memBaseinfo) > 0) {
+            String code = ShareCodeUtils.idToCode(memBaseinfo.getId());
+            MemInviteCode memInviteCode = new MemInviteCode();
+            memInviteCode.setMemId(memBaseinfo.getId());
+            memInviteCode.setInviteCode(code);
+            return memInviteCodeMapper.insert(memInviteCode) > 0;
+        }
+        return false;
     }
 
     @Override
-    public int editMemBaseInfo(MemEditReq req) {
+    public boolean editMemBaseInfo(MemEditReq req) {
         MemBaseinfo memBaseinfo = new MemBaseinfo();
         memBaseinfo.setId(req.getId());
         BeanUtils.copyProperties(req, memBaseinfo);
-        return baseMapper.updateById(memBaseinfo);
+        return baseMapper.updateById(memBaseinfo) > 0;
     }
 
     @Override
@@ -84,10 +86,18 @@ public class MemBaseinfoServiceImpl extends ServiceImpl<MemBaseinfoMapper, MemBa
     }
 
     @Override
-    public int editStatus(MemEditStatusReq req) {
+    public boolean editStatus(MemEditStatusReq req) {
         MemBaseinfo memBaseinfo = new MemBaseinfo();
         memBaseinfo.setId(req.getId());
-        BeanUtils.copyProperties(memBaseinfo, memBaseinfo);
-        return baseMapper.updateById(memBaseinfo);
+        BeanUtils.copyProperties(req, memBaseinfo);
+        return baseMapper.updateById(memBaseinfo) > 0;
+    }
+
+    @Override
+    public boolean resetPassword(Long memId) {
+        MemBaseinfo memBaseinfo = new MemBaseinfo();
+        memBaseinfo.setId(memId);
+        memBaseinfo.setPasswordMd5(MD5.md5("12345678"));
+        return baseMapper.updateById(memBaseinfo) > 0;
     }
 }

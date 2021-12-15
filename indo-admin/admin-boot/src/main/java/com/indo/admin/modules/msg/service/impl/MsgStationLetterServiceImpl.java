@@ -55,13 +55,15 @@ public class MsgStationLetterServiceImpl extends ServiceImpl<MsgStationLetterMap
     public int add(StationLetterAddDTO letterDTO) {
         MsgStationLetter letter = new MsgStationLetter();
         BeanUtils.copyProperties(letterDTO, letter);
-        letter.setCreateTime(new Date());
+//        letter.setCreateTime(new Date());
         if (letterDTO.getSendType() == 1) {
-            List<String> nickNames = memBaseInfoMapper.selectNickNameByAccounts(letterDTO.getReceiver());
-            letter.setReceiver(StringUtils.strip(letterDTO.getReceiver().toString(), "[]"));
+            List<String> list = letterDTO.getReceiver();
+            list.forEach(item -> {
+                letter.setReceiver(item);
+                letterMapper.insert(letter);
+            });
         }
-        // 发送到客户端 todo
-        return letterMapper.insert(letter);
+        return 1;
     }
 
     @Override

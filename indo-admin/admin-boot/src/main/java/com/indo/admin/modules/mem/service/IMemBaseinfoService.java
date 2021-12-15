@@ -1,5 +1,6 @@
 package com.indo.admin.modules.mem.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.indo.admin.modules.mem.entity.MemBaseinfo;
 import com.indo.admin.modules.mem.req.MemAddReq;
@@ -9,6 +10,8 @@ import com.indo.admin.modules.mem.req.MemEditReq;
 import com.indo.admin.modules.mem.vo.MemBaseInfoVo;
 import com.indo.admin.modules.mem.vo.MemBaseDetailVO;
 import com.indo.common.result.PageResult;
+
+import java.util.List;
 
 /**
  * <p>
@@ -24,14 +27,14 @@ public interface IMemBaseinfoService extends IService<MemBaseinfo> {
      * @param memBaseInfoPageReq
      * @return
      */
-    PageResult<MemBaseInfoVo> queryList(MemBaseInfoPageReq memBaseInfoPageReq);
+    Page<MemBaseInfoVo> queryList(MemBaseInfoPageReq memBaseInfoPageReq);
 
     /**
      * 后台新增会员
      * @param memAddReq
      * @return
      */
-    int addMemBaseInfo(MemAddReq memAddReq);
+    boolean addMemBaseInfo(MemAddReq memAddReq);
 
 
     /**
@@ -39,7 +42,7 @@ public interface IMemBaseinfoService extends IService<MemBaseinfo> {
      * @param memEditReq
      * @return
      */
-    int editMemBaseInfo(MemEditReq memEditReq);
+    boolean editMemBaseInfo(MemEditReq memEditReq);
 
     /**
      * 根据会员UID 查会员编辑详情
@@ -53,5 +56,8 @@ public interface IMemBaseinfoService extends IService<MemBaseinfo> {
      * @param frozenStatusReq
      * @return
      */
-    int editStatus(MemEditStatusReq frozenStatusReq);
+    boolean editStatus(MemEditStatusReq frozenStatusReq);
+
+
+    boolean resetPassword(Long memId);
 }

@@ -42,8 +42,7 @@ public class MemLevelController {
     @ApiOperation(value = "新增")
     @PostMapping(value = "/create")
     public Result create(@Validated @RequestBody MemLevelAddReq req) {
-        memLevelService.saveOne(req);
-        return Result.success(HttpStatus.OK);
+        return Result.judge(memLevelService.saveOne(req));
     }
 
     @ApiOperation(value = "修改")

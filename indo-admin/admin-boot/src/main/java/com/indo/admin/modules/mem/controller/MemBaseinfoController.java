@@ -1,6 +1,7 @@
 package com.indo.admin.modules.mem.controller;
 
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.modules.mem.service.IMemBaseinfoService;
 import com.indo.common.result.PageResult;
 import com.indo.common.result.Result;
@@ -9,11 +10,15 @@ import com.indo.admin.modules.mem.req.MemBaseInfoPageReq;
 import com.indo.admin.modules.mem.req.MemEditStatusReq;
 import com.indo.admin.modules.mem.req.MemEditReq;
 import com.indo.admin.modules.mem.vo.MemBaseInfoVo;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * <p>
@@ -23,6 +28,7 @@ import javax.annotation.Resource;
  * @author kevin
  * @since 2021-10-23
  */
+@Api(tags = "会员基本信息接口")
 @RestController
 @RequestMapping("/api/v1/memBaseinfo")
 public class MemBaseinfoController {
@@ -32,44 +38,44 @@ public class MemBaseinfoController {
 
     @ApiOperation(value = "分页查询")
     @PostMapping(value = "/listByPage")
-    public Result<PageResult<MemBaseInfoVo>> getMemBaseInfo(@RequestBody MemBaseInfoPageReq baseInfoPageReq) {
-        PageResult<MemBaseInfoVo> result = memBaseinfoService.queryList(baseInfoPageReq);
-        return Result.success(result);
+    public Result<List<MemBaseInfoVo>> getMemBaseInfo(@RequestBody MemBaseInfoPageReq baseInfoPageReq) {
+        Page<MemBaseInfoVo> result = memBaseinfoService.queryList(baseInfoPageReq);
+        return Result.success(result.getRecords(), result.getTotal());
     }
 
     @ApiOperation(value = "新增会员信息")
     @PostMapping(value = "/add")
     public Result addMemBaseInfo(@RequestBody @Validated MemAddReq memAddReq) {
-        int count = memBaseinfoService.addMemBaseInfo(memAddReq);
-        if (count > 0) {
-            return Result.success();
-        } else {
-            return Result.failed();
-        }
+        boolean flag = memBaseinfoService.addMemBaseInfo(memAddReq);
+        return Result.judge(flag);
     }
 
 
     @ApiOperation(value = "编辑会员信息")
     @PostMapping(value = "/edit")
     public Result editMemBaseInfo(@RequestBody @Validated MemEditReq memEditReq) {
-        int count = memBaseinfoService.editMemBaseInfo(memEditReq);
-        if (count > 0) {
-            return Result.success();
-        } else {
-            return Result.failed();
-        }
+        boolean flag = memBaseinfoService.editMemBaseInfo(memEditReq);
+        return Result.judge(flag);
+
     }
 
     @ApiOperation(value = "更改会员状态")
     @PostMapping(value = "/editStatus")
     public Result editStatus(@RequestBody @Validated MemEditStatusReq frozenStatusReq) {
-        int count = memBaseinfoService.editStatus(frozenStatusReq);
-        if (count > 0) {
-            return Result.success();
-        } else {
-            return Result.failed();
-        }
+        boolean flag = memBaseinfoService.editStatus(frozenStatusReq);
+        return Result.judge(flag);
     }
+
+    @ApiOperation(value = "重置密码")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "memId", value = "用户ID", required = true, paramType = "path", dataType = "Long")
+    })
+    @GetMapping(value = "/resetPassword/{memId}")
+    public Result resetPassword(@PathVariable Long memId) {
+        boolean flag = memBaseinfoService.resetPassword(memId);
+        return Result.judge(flag);
+    }
+
 //
 //    @ApiOperation(value = "查询会员详情")
 //    @GetMapping(value = "/listByPage")

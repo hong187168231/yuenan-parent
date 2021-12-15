@@ -29,17 +29,11 @@ public class MemBankRelationServiceImpl extends ServiceImpl<MemBankRelationMappe
     private MemBankRelationMapper memBankRelationMapper;
 
     @Override
-    public PageResult<MemBankRelationVO> queryList(MemBankRelationPageReq req) {
-        Integer pageNum = 1;
-        Integer pageSize = 10;
-        if (null != req.getPage() && null != req.getLimit()) {
-            pageNum = req.getPage();
-            pageSize = req.getLimit();
-        }
-        Page<MemBankRelationVO> page = new Page<>(pageNum, pageSize);
+    public Page<MemBankRelationVO> queryList(MemBankRelationPageReq req) {
+        Page<MemBankRelationVO> page = new Page<>(req.getPage(), req.getLimit());
         List<MemBankRelationVO> list = memBankRelationMapper.queryList(page, req);
         page.setRecords(list);
-        return PageResult.getPageResult(page);
+        return page;
     }
 
     @Override

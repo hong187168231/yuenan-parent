@@ -52,11 +52,10 @@ public class MemLevelServiceImpl extends SuperServiceImpl<MemLevelMapper, MemLev
     }
 
     @Override
-    public void saveOne(MemLevelAddReq req) {
+    public boolean saveOne(MemLevelAddReq req) {
         MemLevel memLevel = new MemLevel();
         BeanUtils.copyProperties(req, memLevel);
-        baseMapper.insert(memLevel);
-        return;
+        return baseMapper.insert(memLevel) > 0;
     }
 
     @Override

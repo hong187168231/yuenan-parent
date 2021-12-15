@@ -10,6 +10,9 @@ public class UserRetentionVo {
     @ApiModelProperty(value = "主键")
     private Long id;
 
+    @ApiModelProperty(value = "当前时间")
+    private String currentDate;
+
     @ApiModelProperty(value = "新增用户数")
     private Integer newUsers;
 
@@ -24,4 +27,7 @@ public class UserRetentionVo {
 
     @ApiModelProperty(value = "30日留存")
     private Double thirtyDay;
+
+
+
 }

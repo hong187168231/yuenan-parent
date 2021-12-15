@@ -52,7 +52,7 @@ public class MemBankRelation extends BaseEntity {
     private String phone;
 
     @ApiModelProperty(value = "状态：0 开启 1 禁用")
-    private Boolean status;
+    private Integer status;
 
     @ApiModelProperty(value = "是否删除 0 未删除 1 删除")
     private Boolean isDel;

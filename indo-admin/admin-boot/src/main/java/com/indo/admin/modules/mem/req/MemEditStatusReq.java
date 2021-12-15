@@ -14,6 +14,10 @@ public class MemEditStatusReq {
 
     @ApiModelProperty("会员ID")
     private Long id;
+    @ApiModelProperty("会员等级")
+    private Integer memLevel;
+    @ApiModelProperty("账户状态 0 正常 1 删除 2冻结")
+    private Integer status;
     @ApiModelProperty("是否禁止会员登录 ,默认0，勾选后是1")
     private Integer prohibitLogin;
     @ApiModelProperty("是否禁止邀请发展下级和会员 ,默认0，勾选后是1")

@@ -1,5 +1,6 @@
 package com.indo.admin.modules.mem.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.indo.admin.modules.mem.entity.MemBankRelation;
 import com.indo.admin.modules.mem.req.MemBankRelationPageReq;
@@ -17,7 +18,7 @@ import com.indo.common.result.PageResult;
  */
 public interface IMemBankRelationService extends IService<MemBankRelation> {
 
-    PageResult<MemBankRelationVO> queryList(MemBankRelationPageReq req);
+    Page<MemBankRelationVO> queryList(MemBankRelationPageReq req);
 
     void switchStatus(MemBankRelationSwitchStatusReq req);
 

@@ -15,7 +15,7 @@ import java.util.List;
 
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author kevin
@@ -28,16 +28,10 @@ public class UserRetentionServiceImpl extends ServiceImpl<StatUserRetentionMappe
     private StatUserRetentionMapper userRetentionMapper;
 
     @Override
-    public PageResult<UserRetentionVo> queryList(UserRetentionPageReq req) {
-        Integer pageNum = 1;
-        Integer pageSize = 10;
-        if (null != req.getPage() && null != req.getLimit()) {
-            pageNum = req.getPage();
-            pageSize = req.getLimit();
-        }
-        Page<UserRetentionVo> page = new Page<>(pageNum, pageSize);
+    public Page<UserRetentionVo> queryList(UserRetentionPageReq req) {
+        Page<UserRetentionVo> page = new Page<>(req.getPage(), req.getLimit());
         List<UserRetentionVo> list = userRetentionMapper.queryList(page, req);
         page.setRecords(list);
-        return PageResult.getPageResult(page);
+        return page;
     }
 }
