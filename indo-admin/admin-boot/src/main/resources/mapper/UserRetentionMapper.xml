@@ -5,11 +5,11 @@
     <select id="queryList" resultType="com.indo.admin.modules.stat.vo.UserRetentionVo">
         SELECT * FROM stat_user_retention s
         <where>
-            <if test="req.startTime != null and req.startTime != ''">
-                and s.create_time &gt;= req.startTime
+            <if test="req.startTime != null ">
+                and s.create_time &gt;= #{req.startTime}
             </if>
-            <if test="req.endTime != null and req.endTime != ''">
-                and s.create_time &lt;= req.endTime
+            <if test="req.endTime != null">
+                and s.create_time &lt;= #{req.endTime}
             </if>
         </where>
         ORDER BY s.create_time desc

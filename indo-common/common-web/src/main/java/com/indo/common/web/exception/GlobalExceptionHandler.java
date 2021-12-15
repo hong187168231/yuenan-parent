@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -21,6 +23,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
+import java.util.List;
 import java.util.concurrent.CompletionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -56,6 +59,16 @@ public class GlobalExceptionHandler {
             }
         });
         return Result.failed(ResultCode.PARAM_ERROR, msg.toString());
+    }
+
+
+    @ExceptionHandler(value = MethodArgumentNotValidException.class)
+    public <T> Result<T> methodArgumentNotValid(HttpServletRequest req, MethodArgumentNotValidException  ex)  {
+        List<ObjectError> errors =ex.getBindingResult().getAllErrors();
+        StringBuffer errorMsg=new StringBuffer();
+        errors.stream().forEach(x -> errorMsg.append(x.getDefaultMessage()).append(";"));
+        log.error("---MethodArgumentNotValidException Handler--- ERROR: {}", errorMsg.toString());
+        return  Result.failed(ResultCode.PARAM_ERROR, errorMsg.toString());
     }
 
     /**

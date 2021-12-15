@@ -1,8 +1,11 @@
 package com.indo.admin.modules.stat.vo;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.util.Date;
 
 @Data
 public class UserRetentionVo {
@@ -11,7 +14,8 @@ public class UserRetentionVo {
     private Long id;
 
     @ApiModelProperty(value = "当前时间")
-    private String currentDate;
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    private Date currentDate = new Date();
 
     @ApiModelProperty(value = "新增用户数")
     private Integer newUsers;
@@ -27,7 +31,6 @@ public class UserRetentionVo {
 
     @ApiModelProperty(value = "30日留存")
     private Double thirtyDay;
-
 
 
 }

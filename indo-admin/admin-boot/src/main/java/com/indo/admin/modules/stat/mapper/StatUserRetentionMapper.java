@@ -6,6 +6,7 @@ import com.indo.admin.modules.stat.entity.StatUserRetention;
 import com.indo.admin.modules.stat.req.UserRetentionPageReq;
 import com.indo.admin.modules.stat.vo.UserRetentionVo;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -20,5 +21,5 @@ import java.util.List;
 @Mapper
 public interface StatUserRetentionMapper extends BaseMapper<StatUserRetention> {
 
-    List<UserRetentionVo> queryList(Page<UserRetentionVo> page, UserRetentionPageReq req);
+    List<UserRetentionVo> queryList( @Param("page")Page<UserRetentionVo> page, @Param("req") UserRetentionPageReq req);
 }
