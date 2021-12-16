@@ -8,6 +8,7 @@ import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.redis.utils.RedisUtils;
 import com.indo.common.result.ResultCode;
 import com.indo.common.utils.BaseUtil;
+import com.indo.common.utils.DateUtils;
 import com.indo.common.utils.DeviceInfoUtil;
 import com.indo.common.utils.IPAddressUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
 
 @Slf4j
 @Component
@@ -37,13 +39,13 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
         DeviceInfoUtil.setArea(IPAddressUtil.getClientArea(request));
         DeviceInfoUtil.setType(IPAddressUtil.getMobileDevice(request));
         String source = request.getHeader("source");
-        log.info("hq_source:{}",source);
-        if(StringUtils.isNotBlank(source)){
+        log.info("hq_source:{}", source);
+        if (StringUtils.isNotBlank(source)) {
             DeviceInfoUtil.setSource(source);
         }
         String deviceId = request.getHeader("deviceId");
-        log.info("hq_deviceId:{}",deviceId);
-        if(StringUtils.isNotBlank(deviceId)){
+        log.info("hq_deviceId:{}", deviceId);
+        if (StringUtils.isNotBlank(deviceId)) {
             DeviceInfoUtil.setDeviceId(deviceId);
         }
 
@@ -75,6 +77,8 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
                     redisUtils.del(token);
                     return false;
                 }
+                String today = DateUtils.format(new Date(), DateUtils.shortFormat);
+                redisUtils.sSetAndTime(AppConstants.USER_DAILY_VISIT_LOG + today, 24 * 2 * 60 * 60, loginInfo.getId());
                 return super.preHandle(request, response, handler);
             }
         }

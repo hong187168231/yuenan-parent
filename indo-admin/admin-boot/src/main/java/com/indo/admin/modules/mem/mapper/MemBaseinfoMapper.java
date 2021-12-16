@@ -8,6 +8,7 @@ import com.indo.admin.modules.mem.vo.MemBaseInfoVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -26,4 +27,6 @@ public interface MemBaseinfoMapper extends BaseMapper<MemBaseinfo> {
     List<String> selectNickNameByAccounts(List<String> receiver);
 
     List<MemBaseInfoVo> queryList(@Param("page") Page<MemBaseInfoVo> page,@Param("dto") MemBaseInfoPageReq dto);
+
+    List<Long> findIdListByCreateTime(@Param("date") String date);
 }

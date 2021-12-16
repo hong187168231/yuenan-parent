@@ -10,6 +10,7 @@ import com.indo.admin.modules.mem.mapper.MemBaseinfoMapper;
 import com.indo.admin.modules.mem.mapper.MemInviteCodeMapper;
 import com.indo.admin.modules.mem.service.IMemBaseinfoService;
 import com.indo.common.result.PageResult;
+import com.indo.common.utils.DateUtils;
 import com.indo.common.utils.ShareCodeUtils;
 import com.indo.common.utils.StringUtils;
 import com.indo.common.utils.encrypt.MD5;
@@ -23,6 +24,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -99,5 +101,10 @@ public class MemBaseinfoServiceImpl extends ServiceImpl<MemBaseinfoMapper, MemBa
         memBaseinfo.setId(memId);
         memBaseinfo.setPasswordMd5(MD5.md5("12345678"));
         return baseMapper.updateById(memBaseinfo) > 0;
+    }
+
+    @Override
+    public List<Long> findIdListByCreateTime(Date date) {
+        return memBaseInfoMapper.findIdListByCreateTime(DateUtils.format(date,DateUtils.webFormat));
     }
 }

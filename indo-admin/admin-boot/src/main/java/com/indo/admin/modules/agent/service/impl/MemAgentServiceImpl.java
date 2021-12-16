@@ -3,7 +3,7 @@ package com.indo.admin.modules.agent.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.indo.admin.modules.agent.mapper.MemAgentMapper;
+import com.indo.admin.modules.agent.mapper.MemAgentOldMapper;
 import com.indo.admin.modules.agent.service.IMemAgentService;
 import com.indo.admin.modules.mem.entity.MemBaseinfo;
 import com.indo.admin.modules.mem.mapper.MemBaseinfoMapper;
@@ -30,7 +30,7 @@ import java.util.List;
  * @since 2021-10-23
  */
 @Service
-public class MemAgentServiceImpl extends ServiceImpl<MemAgentMapper, MemAgent> implements IMemAgentService {
+public class MemAgentServiceImpl extends ServiceImpl<MemAgentOldMapper, MemAgent> implements IMemAgentService {
 
 
     @Resource

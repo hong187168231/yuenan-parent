@@ -11,6 +11,7 @@ import com.indo.admin.modules.mem.vo.MemBaseInfoVo;
 import com.indo.admin.modules.mem.vo.MemBaseDetailVO;
 import com.indo.common.result.PageResult;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -60,4 +61,7 @@ public interface IMemBaseinfoService extends IService<MemBaseinfo> {
 
 
     boolean resetPassword(Long memId);
+
+    List<Long> findIdListByCreateTime(Date addDay);
+
 }
