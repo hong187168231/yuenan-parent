@@ -17,7 +17,7 @@
         <result column="email" property="email" />
         <result column="face_book" property="faceBook" />
         <result column="whats_app" property="whatsApp" />
-        <result column="r_invite_code" property="rInviteCode" />
+        <result column="invite_code" property="inviteCode" />
         <result column="group_id" property="groupId" />
         <result column="mem_level" property="memLevel" />
         <result column="acc_type" property="accType" />
@@ -43,7 +43,7 @@
     <sql id="Base_Column_List">
         create_time,
         update_time,
-        id, real_name, nick_name, accountNo, salt, password, password_md5, phone, email, face_book, whats_app, r_invite_code, group_id, mem_level, acc_type, total_deposit, total_enchashment, balance, register_source, register_ip, client_ip, status, prohibit_login, prohibit_invite, prohibit_investment, prohibit_disbursement, prohibit_recharge, remark, create_user, last_login_time, update_user
+        id, real_name, nick_name, accountNo, salt, password, password_md5, phone, email, face_book, whats_app, invite_code, group_id, mem_level, acc_type, total_deposit, total_enchashment, balance, register_source, register_ip, client_ip, status, prohibit_login, prohibit_invite, prohibit_investment, prohibit_disbursement, prohibit_recharge, remark, create_user, last_login_time, update_user
     </sql>
 
 

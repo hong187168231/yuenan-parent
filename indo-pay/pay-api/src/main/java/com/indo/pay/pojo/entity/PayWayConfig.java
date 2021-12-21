@@ -2,7 +2,6 @@ package com.indo.pay.pojo.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.indo.common.pojo.entity.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -14,13 +13,12 @@ import lombok.EqualsAndHashCode;
  * 支付方式配置
  * </p>
  *
- * @author puff
- * @since 2021-11-13
+ * @author xxx
+ * @since 2021-12-20
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("pay_way_config")
-@ApiModel(value="WayConfig对象", description="支付方式配置")
+@ApiModel(value="PayWayConfig对象", description="支付方式配置")
 public class PayWayConfig extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
@@ -56,7 +54,7 @@ public class PayWayConfig extends BaseEntity {
     private Integer maxAmount;
 
     @ApiModelProperty(value = "状态 0 正常 1停用")
-    private String isDel;
+    private Integer status;
 
     @ApiModelProperty(value = "排序")
     private Integer sortBy;

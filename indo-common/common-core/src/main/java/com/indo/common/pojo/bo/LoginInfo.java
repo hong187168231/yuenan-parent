@@ -12,9 +12,13 @@ public class LoginInfo implements Serializable {
 
     private Integer gender;
 
+    private Integer memLevel;
+
     private String nickName;
 
     private String account;
+
+    private String accountNo;
 
     private String mobile;
 

@@ -36,7 +36,7 @@ public class SwaggerConfiguration {
 
         ParameterBuilder ticketPar = new ParameterBuilder();
         List<Parameter> pars = new ArrayList<>();
-        ticketPar.name("dd").description("登录TOKEN")
+        ticketPar.name("Authorization").description("登录TOKEN")
                 .modelRef(new ModelRef("string")).parameterType("header")
                 .required(false).defaultValue("").build();
         pars.add(ticketPar.build());

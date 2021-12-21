@@ -10,14 +10,14 @@ import java.util.List;
 public class StationLetterAddDTO {
 
 
-    @ApiModelProperty(value = "收件人")
+    @ApiModelProperty(value = "收件人集合")
     private List<String> receiver;
 
-    @ApiModelProperty(value = "收件人")
-    private Integer receiverLevel;
-
-    @ApiModelProperty(value = "收件人")
-    private Integer receiverPayGroup;
+//    @ApiModelProperty(value = "收件人")
+//    private Integer receiverLevel;
+//
+//    @ApiModelProperty(value = "收件人")
+//    private Integer receiverPayGroup;
 
     @ApiModelProperty(value = "标题")
     @NotNull(message = "标题不能为空")

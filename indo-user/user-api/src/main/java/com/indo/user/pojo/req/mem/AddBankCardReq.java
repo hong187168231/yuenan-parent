@@ -5,7 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-@ApiModel(value = "更新个人信息请求参数类")
+@ApiModel(value = "添加请求参数类")
 public class AddBankCardReq {
 
     @ApiModelProperty(value = "用户id", required = true)

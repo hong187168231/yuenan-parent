@@ -1,6 +1,8 @@
 package com.indo.user.controller;
 
 import com.indo.common.annotation.AllowAccess;
+import com.indo.common.annotation.LoginUser;
+import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
 import com.indo.user.pojo.req.LoginReq;
 import com.indo.user.pojo.req.RegisterReq;
@@ -55,17 +57,15 @@ public class MemBaseInfoController {
 
     @ApiOperation(value = "更改密码", httpMethod = "POST")
     @PostMapping(value = "/updatePassword")
-    @AllowAccess
-    public Result updatePassword(@RequestBody UpdatePasswordReq req) {
-        memBaseInfoService.updatePassword(req);
-        return Result.success();
+    public Result updatePassword(@RequestBody UpdatePasswordReq req, @LoginUser LoginInfo loginUser) {
+        boolean flag = memBaseInfoService.updatePassword(req, loginUser);
+        return Result.judge(flag);
     }
 
     @ApiOperation(value = "更新个人信息", httpMethod = "POST")
     @PostMapping(value = "/updateBaseInfo")
-    @AllowAccess
-    public Result updateBaseInfo(@RequestBody UpdateBaseInfoReq req) {
-        memBaseInfoService.updateBaseInfo(req);
+    public Result updateBaseInfo(@RequestBody UpdateBaseInfoReq req, @LoginUser LoginInfo loginUser) {
+        memBaseInfoService.updateBaseInfo(req, loginUser);
         return Result.success();
     }
 

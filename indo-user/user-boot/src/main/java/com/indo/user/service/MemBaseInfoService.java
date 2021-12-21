@@ -2,6 +2,7 @@ package com.indo.user.service;
 
 
 import com.indo.common.mybatis.base.service.SuperService;
+import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
 import com.indo.user.pojo.entity.MemBaseinfo;
 import com.indo.user.pojo.req.mem.AddBankCardReq;
@@ -12,6 +13,7 @@ import com.indo.user.pojo.vo.AppLoginVo;
 import com.indo.user.pojo.req.LoginReq;
 import com.indo.user.pojo.req.RegisterReq;
 import com.indo.user.pojo.vo.mem.MemBaseInfoVo;
+import com.indo.user.pojo.vo.mem.MemTradingVo;
 
 import java.math.BigDecimal;
 
@@ -43,9 +45,9 @@ public interface MemBaseInfoService extends SuperService<MemBaseinfo> {
 
     Result<MemBaseInfoVo> getMemInfo(MemInfoReq req);
 
-    void updatePassword(UpdatePasswordReq req);
+    boolean updatePassword(UpdatePasswordReq req, LoginInfo loginUser);
 
-    void updateBaseInfo(UpdateBaseInfoReq req);
+    void updateBaseInfo(UpdateBaseInfoReq req, LoginInfo loginUser);
 
     void addbankCard(AddBankCardReq req);
 
@@ -54,5 +56,9 @@ public interface MemBaseInfoService extends SuperService<MemBaseinfo> {
     MemBaseinfo getByAccountNo(String accountNo);
 
     int updateMemberAmount(BigDecimal amount, BigDecimal canAmount, Long userId);
+
+
+    MemTradingVo tradingInfo(Long memId);
+
 
 }

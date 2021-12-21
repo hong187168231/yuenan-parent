@@ -1,6 +1,7 @@
 package com.indo.user.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.user.mapper.MemAgentApplyMapper;
 import com.indo.user.pojo.entity.MemAgentApply;
 import com.indo.user.pojo.req.mem.MemAgentApplyReq;
@@ -20,9 +21,9 @@ public class MemAgentApplyServiceImpl extends ServiceImpl<MemAgentApplyMapper, M
 
 
     @Override
-    public void add(MemAgentApplyReq req) {
+    public void add(MemAgentApplyReq req, LoginInfo loginInfo) {
         MemAgentApply memAgentApply = new MemAgentApply();
-        memAgentApply.setMemId(req.getMemId());
+        memAgentApply.setMemId(loginInfo.getId());
         memAgentApply.setMobile(req.getMobile());
         memAgentApply.setStatus(0);
         baseMapper.insert(memAgentApply);

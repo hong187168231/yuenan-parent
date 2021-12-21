@@ -22,7 +22,7 @@ import java.math.BigDecimal;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @TableName("mem_agent")
-@ApiModel(value="Agent对象", description="会员下级表")
+@ApiModel(value = "Agent对象", description = "会员下级表")
 public class MemAgent extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
@@ -36,8 +36,15 @@ public class MemAgent extends BaseEntity {
     @ApiModelProperty(value = "团队数")
     private Integer teamNum;
 
+    @ApiModelProperty(value = "下级数量")
+    private Integer subNum;
+
     @ApiModelProperty(value = "下级用户ID")
     private String levelUserIds;
+
+
+    @ApiModelProperty(value = "上级代理")
+    private String superior;
 
     @ApiModelProperty(value = "父ID")
     private Long parentId;

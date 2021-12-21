@@ -1,12 +1,14 @@
 package com.indo.user.pojo.vo.mem;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * @Author: kevin
@@ -29,10 +31,14 @@ public class MemBaseInfoVo {
     private String nickName;
 
     @ApiModelProperty(value = "用户账号")
-    private String accno;
+    private String account;
 
     @ApiModelProperty(value = "手机号")
     private String phone;
+
+    @ApiModelProperty(value = "生日")
+    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private Date birthday;
 
     @ApiModelProperty(value = "电子邮件")
     private String email;
@@ -44,7 +50,7 @@ public class MemBaseInfoVo {
     private String whatsApp;
 
     @ApiModelProperty(value = "注册时使用的邀请码（上级的）")
-    private String rInviteCode;
+    private String inviteCode;
 
     @ApiModelProperty(value = "用户层级id")
     private Long groupId;
@@ -53,7 +59,7 @@ public class MemBaseInfoVo {
     private Integer memLevel;
 
     @ApiModelProperty(value = "账户类型：1 玩家 2-代理")
-    private Integer acc_type;
+    private Integer accType;
 
     @ApiModelProperty(value = "余额")
     private BigDecimal balance;
@@ -67,7 +73,12 @@ public class MemBaseInfoVo {
     @ApiModelProperty(value = "备注")
     private String remark;
 
+    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @ApiModelProperty(value = "注册时间")
+    private Date createTime;
+
+    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @ApiModelProperty(value = "最后登录时间")
-    private LocalDateTime lastLoginTime;
+    private Date lastLoginTime;
 
 }

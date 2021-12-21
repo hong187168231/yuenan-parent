@@ -8,8 +8,6 @@ import lombok.Data;
 @ApiModel(value = "更改密码请求参数类")
 public class UpdatePasswordReq {
 
-    @ApiModelProperty(value = "账号", required = true)
-    private String accno;
 
     @ApiModelProperty(value = "旧密码", required = true)
     private String oldPassword;

@@ -1,6 +1,8 @@
 package com.indo.user.controller;
 
 import com.indo.common.annotation.AllowAccess;
+import com.indo.common.annotation.LoginUser;
+import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
 import com.indo.user.pojo.req.mem.MemAgentApplyReq;
 import com.indo.user.pojo.req.mem.MemInfoReq;
@@ -34,8 +36,8 @@ public class MemAgentApplyController {
     @ApiOperation(value = "申请", httpMethod = "POST")
     @PostMapping(value = "/add")
     @AllowAccess
-    public Result add(@RequestBody MemAgentApplyReq req) {
-        memAgentApplyService.add(req);
+    public Result add(@RequestBody MemAgentApplyReq req, @LoginUser LoginInfo loginInfo) {
+        memAgentApplyService.add(req,loginInfo);
         return Result.success();
     }
 }

@@ -14,12 +14,6 @@ public class MsgStationLetterDTO extends BaseDTO {
     @ApiModelProperty(value = "收件人")
     private String receiver;
 
-    @ApiModelProperty(value = "收件人")
-    private Integer receiverLevel;
-
-    @ApiModelProperty(value = "收件人")
-    private Integer receiverPayGroup;
-
     @ApiModelProperty(value = "标题")
     @NotNull(message = "标题不能为空")
     private String title;

@@ -47,6 +47,9 @@ public class MemBaseinfo extends BaseEntity {
     @ApiModelProperty(value = "登录密码MD5")
     private String passwordMd5;
 
+    @ApiModelProperty(value = "生日")
+    private Date birthday;
+
     @ApiModelProperty(value = "手机号")
     private String phone;
 
@@ -60,7 +63,7 @@ public class MemBaseinfo extends BaseEntity {
     private String whatsApp;
 
     @ApiModelProperty(value = "注册时使用的邀请码（上级的）")
-    private String rInviteCode;
+    private String inviteCode;
 
     @ApiModelProperty(value = "支付层级id")
     private Long groupId;
@@ -69,7 +72,7 @@ public class MemBaseinfo extends BaseEntity {
     private Integer memLevel;
 
     @ApiModelProperty(value = "账户类型：1 玩家 2-代理")
-    private Boolean accType;
+    private Integer accType;
 
     private BigDecimal totalDeposit;
 
@@ -116,7 +119,7 @@ public class MemBaseinfo extends BaseEntity {
     private String createUser;
 
     @ApiModelProperty(value = "最后登录时间")
-    private LocalDateTime lastLoginTime;
+    private Date lastLoginTime;
 
     @ApiModelProperty(value = "最后修改人")
     private String updateUser;

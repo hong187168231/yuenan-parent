@@ -1,6 +1,7 @@
 package com.indo.user.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.user.pojo.entity.MemAgentApply;
 import com.indo.user.pojo.req.mem.MemAgentApplyReq;
 
@@ -14,5 +15,5 @@ import com.indo.user.pojo.req.mem.MemAgentApplyReq;
  */
 public interface IMemAgentApplyService extends IService<MemAgentApply> {
 
-    void add(MemAgentApplyReq req);
+    void add(MemAgentApplyReq req, LoginInfo loginInfo);
 }

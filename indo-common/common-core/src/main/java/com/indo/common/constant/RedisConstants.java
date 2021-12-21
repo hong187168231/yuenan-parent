@@ -24,9 +24,5 @@ public interface RedisConstants {
      */
     String SMS_USER_COUPON_EXPIRED_KEY = "sms_user_coupon_expired_";
 
-    /**
-     * 记录生成邀请码自增数
-     */
-    String MEM_GENERATE_INVITATION_CODE = "mem_generate_invitation_code";
 
 }

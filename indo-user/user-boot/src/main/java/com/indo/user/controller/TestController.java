@@ -10,14 +10,14 @@ import com.indo.common.annotation.LoginUser;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.redis.utils.RedisUtils;
 import com.indo.common.result.Result;
+import com.indo.user.pojo.dto.TestDTO;
 import com.indo.user.pojo.entity.MemBaseinfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -54,6 +54,13 @@ public class TestController {
     public Object helloTwo() {
         Result<SysParameter> parameter = sysParameterClient.getByParamCode("test11");
         return JSON.toJSONString(parameter);
+    }
+
+
+    @AllowAccess
+    @PostMapping("/testValidated")
+    public Result Validated(@Validated @RequestBody TestDTO testDTO) {
+        return Result.success(testDTO);
     }
 
 

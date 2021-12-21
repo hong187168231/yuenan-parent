@@ -2,7 +2,6 @@ package com.indo.pay.pojo.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.indo.common.pojo.entity.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -14,13 +13,12 @@ import lombok.EqualsAndHashCode;
  * 支付渠道配置
  * </p>
  *
- * @author puff
- * @since 2021-11-13
+ * @author xxx
+ * @since 2021-12-20
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("pay_channel_config")
-@ApiModel(value = "ChannelConfig对象", description = "支付渠道配置")
+@ApiModel(value="PayChannelConfig对象", description="支付渠道配置")
 public class PayChannelConfig extends BaseEntity {
 
     private static final long serialVersionUID = 1L;

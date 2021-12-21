@@ -1,7 +1,9 @@
 package com.indo.user.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.user.pojo.entity.MemLevel;
+import com.indo.user.pojo.vo.MemLevelVo;
 
 import java.util.List;
 
@@ -15,6 +17,6 @@ import java.util.List;
  */
 public interface IMemLevelService extends IService<MemLevel> {
 
-    List<MemLevel> findAllVips();
+    MemLevelVo findInfo(LoginInfo loginInfo);
 
 }
