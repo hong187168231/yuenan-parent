@@ -53,4 +53,10 @@ public class GamePlatform extends BaseEntity {
     @ApiModelProperty(value = "每个玩家每个最多允许 6 组下注限红 ID")
     private String betLimit;
 
+    @ApiModelProperty(value = "白名单IP")
+    private String ipAddr;
+
+    @ApiModelProperty(value = "总平台名称")
+    private String parentName;
+
 }

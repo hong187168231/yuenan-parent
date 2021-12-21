@@ -6,7 +6,9 @@ import com.alibaba.fastjson.TypeReference;
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.common.utils.DateUtils;
+import com.indo.game.config.OpenAPIProperties;
 import com.indo.game.pojo.entity.awc.*;
+import com.indo.game.pojo.entity.manage.GamePlatform;
 import com.indo.game.pojo.vo.callback.awc.AwcCallBackParentRespSuccess;
 import com.indo.game.pojo.vo.callback.awc.AwcCallBackRespFail;
 import com.indo.game.pojo.vo.callback.awc.AwcCallBackRespSuccess;
@@ -27,7 +29,13 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
     @Autowired
     private GameCommonService gameCommonService;
 
-    public String awcCallback(AwcApiRequestParentData awcApiRequestData) {
+    public String awcCallback(AwcApiRequestParentData awcApiRequestData,String ip) {
+        if(OpenAPIProperties.AWC_API_SECRET_KEY.equals(awcApiRequestData.getKey())){
+            AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
+            callBacekFail.setStatus("1008");
+            callBacekFail.setDesc("Invalid token!");
+            return JSONObject.toJSONString(callBacekFail);
+        }
         JSONObject jsonObject = JSONObject.parseObject(String.valueOf(awcApiRequestData.getMessage()));
         String action = jsonObject.getString("action");
         //Get Balance 取得玩家余额
@@ -36,67 +44,67 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
         }
         //Place Bet 下注
         if ("bet".equals(action)) {
-            return bet(awcApiRequestData);
+            return bet(awcApiRequestData,ip);
         }
         //Cancel Bet 取消注单
         if ("cancelBet".equals(action)) {
-            return cancelBet(awcApiRequestData);
+            return cancelBet(awcApiRequestData,ip);
         }
         //Adjust Bet 调整投注
         if ("adjustBet".equals(action)) {
-            return adjustBet(awcApiRequestData);
+            return adjustBet(awcApiRequestData,ip);
         }
         //Void Bet 交易作废
         if ("voidBet".equals(action)) {
-            return voidBet(awcApiRequestData);
+            return voidBet(awcApiRequestData,ip);
         }
         //Unvoid Bet 取消交易作废
         if ("unvoidBet".equals(action)) {
-            return unvoidBet(awcApiRequestData);
+            return unvoidBet(awcApiRequestData,ip);
         }
         //Refund 返还金额
         if ("refund".equals(action)) {
-            return refund(awcApiRequestData);
+            return refund(awcApiRequestData,ip);
         }
         //Settle 已结帐派彩
         if ("settle".equals(action)) {
-            return settle(awcApiRequestData);
+            return settle(awcApiRequestData,ip);
         }
         //Unsettle 取消结帐派彩
         if ("unsettle".equals(action)) {
-            return unsettle(awcApiRequestData);
+            return unsettle(awcApiRequestData,ip);
         }
         //Void Settle 结帐单转为无效
         if ("voidSettle".equals(action)) {
-            return voidSettle(awcApiRequestData);
+            return voidSettle(awcApiRequestData,ip);
         }
         //Unvoid Settle 无效单结账
         if ("unvoidSettle".equals(action)) {
-            return unvoidSettle(awcApiRequestData);
+            return unvoidSettle(awcApiRequestData,ip);
         }
         // BetNSettle 下注并直接结算
         if ("betNSettle".equals(action)) {
-            return betNSettle(awcApiRequestData);
+            return betNSettle(awcApiRequestData,ip);
         }
         // Cancel BetNSettle 取消结算并取消注单
         if ("cancelBetNSettle".equals(action)) {
-            return cancelBetNSettle(awcApiRequestData);
+            return cancelBetNSettle(awcApiRequestData,ip);
         }
         // Free Spin 免费旋转
         if ("freeSpin".equals(action)) {
-            return freeSpin(awcApiRequestData);
+            return freeSpin(awcApiRequestData,ip);
         }
         //  Give (Promotion Bonus) 活动派彩
         if ("give".equals(action)) {
-            return give(awcApiRequestData);
+            return give(awcApiRequestData,ip);
         }
         //  Tip 打赏
         if ("tip".equals(action)) {
-            return tip(awcApiRequestData);
+            return tip(awcApiRequestData,ip);
         }
         //  Cancel Tip 取消打赏
         if ("cancelTip".equals(action)) {
-            return cancelTip(awcApiRequestData);
+            return cancelTip(awcApiRequestData,ip);
         }
         return "";
     }
@@ -124,12 +132,18 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
 
 
     //Place Bet 下注
-    private String bet(AwcApiRequestParentData awcApiRequestData) {
+    private String bet(AwcApiRequestParentData awcApiRequestData,String ip) {
         AwcApiRequestData<List<PlaceBetTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()), new TypeReference<AwcApiRequestData<List<PlaceBetTxns>>>() {
         });
         List<PlaceBetTxns> placeBetTxnsList = apiRequestData.getTxns();
         if (null != placeBetTxnsList && placeBetTxnsList.size() > 0) {
             for (PlaceBetTxns placeBetTxns : placeBetTxnsList) {
+                if(!checkIp(ip,placeBetTxns.getPlatform())){
+                    AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
+                    callBacekFail.setStatus("1029");
+                    callBacekFail.setDesc("invalid IP address.");
+                    return JSONObject.toJSONString(callBacekFail);
+                }
                 String userId = placeBetTxns.getUserId();
 
                 MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
@@ -161,12 +175,18 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
 //        gameCommonService.inOrOutBalanceCommon(GoldchangeEnum.AWCAESEXYBCRT_IN.getValue(), balance, memBaseinfo, content, cptOpenMember, Constants.AWC_AESEXYBCRT_ACCOUNT_TYPE);
 
     //Cancel Bet 取消注单
-    private String cancelBet(AwcApiRequestParentData awcApiRequestData) {
+    private String cancelBet(AwcApiRequestParentData awcApiRequestData,String ip) {
         AwcApiRequestData<List<CancelBetTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()), new TypeReference<AwcApiRequestData<List<CancelBetTxns>>>() {
         });
         List<CancelBetTxns> cancelBetTxnsList = apiRequestData.getTxns();
         if (null != cancelBetTxnsList && cancelBetTxnsList.size() > 0) {
             for (CancelBetTxns cancelBetTxns : cancelBetTxnsList) {
+                if(!checkIp(ip,cancelBetTxns.getPlatform())){
+                    AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
+                    callBacekFail.setStatus("1029");
+                    callBacekFail.setDesc("invalid IP address.");
+                    return JSONObject.toJSONString(callBacekFail);
+                }
                 String userId = cancelBetTxns.getUserId();
                 MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
                 if (null == memBaseinfo) {
@@ -195,12 +215,18 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
     }
 
     //Adjust Bet 调整投注
-    private String adjustBet(AwcApiRequestParentData awcApiRequestData) {
+    private String adjustBet(AwcApiRequestParentData awcApiRequestData,String ip) {
         AwcApiRequestData<List<AdjustBetTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()), new TypeReference<AwcApiRequestData<List<AdjustBetTxns>>>() {
         });
         List<AdjustBetTxns> adjustBetTxnsList = apiRequestData.getTxns();
         if (null != adjustBetTxnsList && adjustBetTxnsList.size() > 0) {
             for (AdjustBetTxns adjustBetTxns : adjustBetTxnsList) {
+                if(!checkIp(ip,adjustBetTxns.getPlatform())){
+                    AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
+                    callBacekFail.setStatus("1029");
+                    callBacekFail.setDesc("invalid IP address.");
+                    return JSONObject.toJSONString(callBacekFail);
+                }
                 String userId = adjustBetTxns.getUserId();
                 MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
                 if (null == memBaseinfo) {
@@ -231,12 +257,18 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
     }
 
     //Void Bet 交易作废
-    private String voidBet(AwcApiRequestParentData awcApiRequestData) {
+    private String voidBet(AwcApiRequestParentData awcApiRequestData,String ip) {
         AwcApiRequestData<List<VoidBetTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()), new TypeReference<AwcApiRequestData<List<VoidBetTxns>>>() {
         });
         List<VoidBetTxns> voidBetTxnsList = apiRequestData.getTxns();
         if (null != voidBetTxnsList && voidBetTxnsList.size() > 0) {
             for (VoidBetTxns voidBetTxns : voidBetTxnsList) {
+                if(!checkIp(ip,voidBetTxns.getPlatform())){
+                    AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
+                    callBacekFail.setStatus("1029");
+                    callBacekFail.setDesc("invalid IP address.");
+                    return JSONObject.toJSONString(callBacekFail);
+                }
                 String userId = voidBetTxns.getUserId();
                 MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
                 if (null == memBaseinfo) {
@@ -260,12 +292,18 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
     }
 
     //Unvoid Bet 取消交易作废
-    private String unvoidBet(AwcApiRequestParentData awcApiRequestData) {
+    private String unvoidBet(AwcApiRequestParentData awcApiRequestData,String ip) {
         AwcApiRequestData<List<UnvoidBetTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()), new TypeReference<AwcApiRequestData<List<UnvoidBetTxns>>>() {
         });
         List<UnvoidBetTxns> unvoidBetTxnsList = apiRequestData.getTxns();
         if (null != unvoidBetTxnsList && unvoidBetTxnsList.size() > 0) {
             for (UnvoidBetTxns unvoidBetTxns : unvoidBetTxnsList) {
+                if(!checkIp(ip,unvoidBetTxns.getPlatform())){
+                    AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
+                    callBacekFail.setStatus("1029");
+                    callBacekFail.setDesc("invalid IP address.");
+                    return JSONObject.toJSONString(callBacekFail);
+                }
                 String userId = unvoidBetTxns.getUserId();
                 MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
                 if (null == memBaseinfo) {
@@ -289,12 +327,18 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
     }
 
     //Refund 返还金额
-    private String refund(AwcApiRequestParentData awcApiRequestData) {
+    private String refund(AwcApiRequestParentData awcApiRequestData,String ip) {
         AwcApiRequestData<List<RefundTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()), new TypeReference<AwcApiRequestData<List<RefundTxns>>>() {
         });
         List<RefundTxns> refundTxnsList = apiRequestData.getTxns();
         if (null != refundTxnsList && refundTxnsList.size() > 0) {
             for (RefundTxns refundTxns : refundTxnsList) {
+                if(!checkIp(ip,refundTxns.getPlatform())){
+                    AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
+                    callBacekFail.setStatus("1029");
+                    callBacekFail.setDesc("invalid IP address.");
+                    return JSONObject.toJSONString(callBacekFail);
+                }
                 String userId = refundTxns.getUserId();
                 MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
                 if (null == memBaseinfo) {
@@ -318,12 +362,18 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
     }
 
     //Settle 已结帐派彩
-    private String settle(AwcApiRequestParentData awcApiRequestData) {
+    private String settle(AwcApiRequestParentData awcApiRequestData,String ip) {
         AwcApiRequestData<List<SettleTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()), new TypeReference<AwcApiRequestData<List<SettleTxns>>>() {
         });
         List<SettleTxns> settleTxnsList = apiRequestData.getTxns();
         if (null != settleTxnsList && settleTxnsList.size() > 0) {
             for (SettleTxns settleTxns : settleTxnsList) {
+                if(!checkIp(ip,settleTxns.getPlatform())){
+                    AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
+                    callBacekFail.setStatus("1029");
+                    callBacekFail.setDesc("invalid IP address.");
+                    return JSONObject.toJSONString(callBacekFail);
+                }
                 String userId = settleTxns.getUserId();
                 MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
                 if (null == memBaseinfo) {
@@ -347,12 +397,18 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
     }
 
     //Unsettle 取消结帐派彩
-    private String unsettle(AwcApiRequestParentData awcApiRequestData) {
+    private String unsettle(AwcApiRequestParentData awcApiRequestData,String ip) {
         AwcApiRequestData<List<UnsettleTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()), new TypeReference<AwcApiRequestData<List<UnsettleTxns>>>() {
         });
         List<UnsettleTxns> unsettleTxnsList = apiRequestData.getTxns();
         if (null != unsettleTxnsList && unsettleTxnsList.size() > 0) {
             for (UnsettleTxns unsettleTxns : unsettleTxnsList) {
+                if(!checkIp(ip,unsettleTxns.getPlatform())){
+                    AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
+                    callBacekFail.setStatus("1029");
+                    callBacekFail.setDesc("invalid IP address.");
+                    return JSONObject.toJSONString(callBacekFail);
+                }
                 String userId = unsettleTxns.getUserId();
                 MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
                 if (null == memBaseinfo) {
@@ -376,12 +432,18 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
     }
 
     //Void Settle 结帐单转为无效
-    private String voidSettle(AwcApiRequestParentData awcApiRequestData) {
+    private String voidSettle(AwcApiRequestParentData awcApiRequestData,String ip) {
         AwcApiRequestData<List<VoidSettleTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()), new TypeReference<AwcApiRequestData<List<VoidSettleTxns>>>() {
         });
         List<VoidSettleTxns> voidSettleTxnsList = apiRequestData.getTxns();
         if (null != voidSettleTxnsList && voidSettleTxnsList.size() > 0) {
             for (VoidSettleTxns voidSettleTxns : voidSettleTxnsList) {
+                if(!checkIp(ip,voidSettleTxns.getPlatform())){
+                    AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
+                    callBacekFail.setStatus("1029");
+                    callBacekFail.setDesc("invalid IP address.");
+                    return JSONObject.toJSONString(callBacekFail);
+                }
                 String userId = voidSettleTxns.getUserId();
                 MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
                 if (null == memBaseinfo) {
@@ -405,12 +467,18 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
     }
 
     //Unvoid Settle 无效单结账
-    private String unvoidSettle(AwcApiRequestParentData awcApiRequestData) {
+    private String unvoidSettle(AwcApiRequestParentData awcApiRequestData,String ip) {
         AwcApiRequestData<List<UnvoidSettleTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()), new TypeReference<AwcApiRequestData<List<UnvoidSettleTxns>>>() {
         });
         List<UnvoidSettleTxns> unvoidSettleTxnsList = apiRequestData.getTxns();
         if (null != unvoidSettleTxnsList && unvoidSettleTxnsList.size() > 0) {
             for (UnvoidSettleTxns unvoidSettleTxns : unvoidSettleTxnsList) {
+                if(!checkIp(ip,unvoidSettleTxns.getPlatform())){
+                    AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
+                    callBacekFail.setStatus("1029");
+                    callBacekFail.setDesc("invalid IP address.");
+                    return JSONObject.toJSONString(callBacekFail);
+                }
                 String userId = unvoidSettleTxns.getUserId();
                 MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
                 if (null == memBaseinfo) {
@@ -436,12 +504,18 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
     }
 
     // BetNSettle 下注并直接结算
-    private String betNSettle(AwcApiRequestParentData awcApiRequestData) {
+    private String betNSettle(AwcApiRequestParentData awcApiRequestData,String ip) {
         AwcApiRequestData<List<BetNSettleTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()), new TypeReference<AwcApiRequestData<List<BetNSettleTxns>>>() {
         });
         List<BetNSettleTxns> betNSettleTxnsList = apiRequestData.getTxns();
         if (null != betNSettleTxnsList && betNSettleTxnsList.size() > 0) {
             for (BetNSettleTxns betNSettleTxns : betNSettleTxnsList) {
+                if(!checkIp(ip,betNSettleTxns.getPlatform())){
+                    AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
+                    callBacekFail.setStatus("1029");
+                    callBacekFail.setDesc("invalid IP address.");
+                    return JSONObject.toJSONString(callBacekFail);
+                }
                 String userId = betNSettleTxns.getUserId();
                 MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
                 if (null == memBaseinfo) {
@@ -467,12 +541,18 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
     }
 
     // Cancel BetNSettle 取消结算并取消注单
-    private String cancelBetNSettle(AwcApiRequestParentData awcApiRequestData) {
+    private String cancelBetNSettle(AwcApiRequestParentData awcApiRequestData,String ip) {
         AwcApiRequestData<List<CancelBetNSettleTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()), new TypeReference<AwcApiRequestData<List<CancelBetNSettleTxns>>>() {
         });
         List<CancelBetNSettleTxns> cancelBetNSettleTxnsList = apiRequestData.getTxns();
         if (null != cancelBetNSettleTxnsList && cancelBetNSettleTxnsList.size() > 0) {
             for (CancelBetNSettleTxns cancelBetNSettleTxns : cancelBetNSettleTxnsList) {
+                if(!checkIp(ip,cancelBetNSettleTxns.getPlatform())){
+                    AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
+                    callBacekFail.setStatus("1029");
+                    callBacekFail.setDesc("invalid IP address.");
+                    return JSONObject.toJSONString(callBacekFail);
+                }
                 String userId = cancelBetNSettleTxns.getUserId();
                 MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
                 if (null == memBaseinfo) {
@@ -498,12 +578,18 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
     }
 
     // Free Spin 免费旋转
-    private String freeSpin(AwcApiRequestParentData awcApiRequestData) {
+    private String freeSpin(AwcApiRequestParentData awcApiRequestData,String ip) {
         AwcApiRequestData<List<FreeSpinTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()), new TypeReference<AwcApiRequestData<List<FreeSpinTxns>>>() {
         });
         List<FreeSpinTxns> freeSpinTxnsList = apiRequestData.getTxns();
         if (null != freeSpinTxnsList && freeSpinTxnsList.size() > 0) {
             for (FreeSpinTxns freeSpinTxns : freeSpinTxnsList) {
+                if(!checkIp(ip,freeSpinTxns.getPlatform())){
+                    AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
+                    callBacekFail.setStatus("1029");
+                    callBacekFail.setDesc("invalid IP address.");
+                    return JSONObject.toJSONString(callBacekFail);
+                }
                 String userId = freeSpinTxns.getUserId();
                 MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
                 if (null == memBaseinfo) {
@@ -527,12 +613,18 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
     }
 
     //  Give (Promotion Bonus) 活动派彩
-    private String give(AwcApiRequestParentData awcApiRequestData) {
+    private String give(AwcApiRequestParentData awcApiRequestData,String ip) {
         AwcApiRequestData<List<GiveTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()), new TypeReference<AwcApiRequestData<List<GiveTxns>>>() {
         });
         List<GiveTxns> giveTxnsList = apiRequestData.getTxns();
         if (null != giveTxnsList && giveTxnsList.size() > 0) {
             for (GiveTxns giveTxns : giveTxnsList) {
+                if(!checkIp(ip,giveTxns.getPlatform())){
+                    AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
+                    callBacekFail.setStatus("1029");
+                    callBacekFail.setDesc("invalid IP address.");
+                    return JSONObject.toJSONString(callBacekFail);
+                }
                 String userId = giveTxns.getUserId();
                 MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
                 if (null == memBaseinfo) {
@@ -558,12 +650,18 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
     }
 
     //  Tip 打赏
-    private String tip(AwcApiRequestParentData awcApiRequestData) {
+    private String tip(AwcApiRequestParentData awcApiRequestData,String ip) {
         AwcApiRequestData<List<TipTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()), new TypeReference<AwcApiRequestData<List<TipTxns>>>() {
         });
         List<TipTxns> tipTxnsList = apiRequestData.getTxns();
         if (null != tipTxnsList && tipTxnsList.size() > 0) {
             for (TipTxns tipTxns : tipTxnsList) {
+                if(!checkIp(ip,tipTxns.getPlatform())){
+                    AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
+                    callBacekFail.setStatus("1029");
+                    callBacekFail.setDesc("invalid IP address.");
+                    return JSONObject.toJSONString(callBacekFail);
+                }
                 String userId = tipTxns.getUserId();
                 MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
                 if (null == memBaseinfo) {
@@ -593,12 +691,18 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
     }
 
     //  Cancel Tip 取消打赏
-    private String cancelTip(AwcApiRequestParentData awcApiRequestData) {
+    private String cancelTip(AwcApiRequestParentData awcApiRequestData,String ip) {
         AwcApiRequestData<List<CancelTipTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()), new TypeReference<AwcApiRequestData<List<CancelTipTxns>>>() {
         });
         List<CancelTipTxns> cancelTipTxnsList = apiRequestData.getTxns();
         if (null != cancelTipTxnsList && cancelTipTxnsList.size() > 0) {
             for (CancelTipTxns cancelTipTxns : cancelTipTxnsList) {
+                if(!checkIp(ip,cancelTipTxns.getPlatform())){
+                    AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
+                    callBacekFail.setStatus("1029");
+                    callBacekFail.setDesc("invalid IP address.");
+                    return JSONObject.toJSONString(callBacekFail);
+                }
                 String userId = cancelTipTxns.getUserId();
                 MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
                 if (null == memBaseinfo) {
@@ -626,5 +730,16 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
         return null;
     }
 
+    private boolean checkIp(String ip,String platform){
+        GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(platform);
+        if(null==gamePlatform){
+            return false;
+        }else if(null==gamePlatform.getIpAddr()||"".equals(gamePlatform.getIpAddr())){
+            return true;
+        }else if(gamePlatform.getIpAddr().equals(ip)) {
+            return true;
+        }
+        return false;
+    }
 
 }

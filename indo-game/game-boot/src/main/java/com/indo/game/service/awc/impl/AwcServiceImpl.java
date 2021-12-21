@@ -190,6 +190,7 @@ public class AwcServiceImpl implements AwcService {
 //            ※每个玩家每个最多允许 6 组下注限红 ID
             LambdaQueryWrapper<GamePlatform> wrapper = new LambdaQueryWrapper<>();
             wrapper.eq(GamePlatform::getIsStart,"1");
+            wrapper.eq(GamePlatform::getParentName,"AWC");
             List<GamePlatform> categoryList = gamePlatformMapper.selectList(wrapper);
             String betLimit = "";
             for (int i=0;i<categoryList.size();i++){

@@ -7,6 +7,7 @@ import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
 import com.indo.common.result.ResultCode;
 import com.indo.common.utils.i18n.MessageUtils;
+import com.indo.game.common.util.IpUtil;
 import com.indo.game.service.sbo.SboService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.concurrent.TimeUnit;
 
 @RestController
@@ -44,7 +46,7 @@ public class SboController {
     @ApiOperation(value = "sbo进入游戏", httpMethod = "POST")
     @PostMapping("/initGame")
     @AllowAccess
-    public Result initGame(@LoginUser LoginInfo loginUser, String platform) throws InterruptedException {
+    public Result initGame(@LoginUser LoginInfo loginUser, String platform, HttpServletRequest request) throws InterruptedException {
         logger.info("sbolog {} initGame 进入游戏。。。loginUser:{}", loginUser.getId(), loginUser);
         String params = "";
         if (loginUser == null || StringUtils.isBlank(loginUser.getNickName())) {
@@ -54,7 +56,7 @@ public class SboController {
         boolean res = lock.tryLock(5, TimeUnit.SECONDS);
         try {
             if (res) {
-                String ip = "";
+                String ip = IpUtil.getIpAddr(request);
                 Result resultInfo = sboSportsService.sboGame(loginUser, ip, platform);
                 if (resultInfo == null) {
                     logger.info("sbolog {} initGame result is null. params:{},ip:{}", loginUser.getId(), params, ip);

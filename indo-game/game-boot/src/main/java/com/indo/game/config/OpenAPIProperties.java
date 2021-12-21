@@ -11,12 +11,15 @@ public class OpenAPIProperties implements InitializingBean {
     public static String AWC_CERT;
     public static String AWC_AGENTID;
     public static String AWC_API_URL_LOGIN;
+    public static String AWC_API_SECRET_KEY;
     @Value("${awc.cert}")
     private String awcCert;
     @Value("${awc.agentId}")
     private String awcAgentId;
     @Value("${awc.awcApiId}")
     private String awcApiId;
+    @Value("${awc.awcApiSecretKey}")
+    private String awcApiSecretKey;
 
     //SBO
     public static String SBO_KEY;
@@ -53,6 +56,7 @@ public class OpenAPIProperties implements InitializingBean {
         AWC_CERT = awcCert;
         AWC_AGENTID = awcAgentId;
         AWC_API_URL_LOGIN = awcApiId;
+        AWC_API_SECRET_KEY = awcApiSecretKey;
 
         SBO_KEY = companyKey;
         SBO_SERVERID = serverId;
