@@ -1,5 +1,6 @@
 package com.indo.admin.modules.mem.req;
 
+import com.indo.common.base.BaseDTO;
 import com.indo.common.pojo.param.QueryParam;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -9,7 +10,7 @@ import java.util.Date;
 
 @Data
 @ApiModel
-public class MeminviteCodePageReq extends QueryParam {
+public class MeminviteCodePageReq extends BaseDTO {
 
     @ApiModelProperty("会员ID")
     private Long memId;

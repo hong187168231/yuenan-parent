@@ -3,6 +3,7 @@ package com.indo.admin.modules.mem.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.modules.mem.service.IMemBaseinfoService;
+import com.indo.admin.modules.mem.vo.MemBaseDetailVO;
 import com.indo.common.result.PageResult;
 import com.indo.common.result.Result;
 import com.indo.admin.modules.mem.req.MemAddReq;
@@ -76,11 +77,15 @@ public class MemBaseinfoController {
         return Result.judge(flag);
     }
 
-//
-//    @ApiOperation(value = "查询会员详情")
-//    @GetMapping(value = "/listByPage")
-//    public Result<MemBaseDetailVO> getMemBaseInfo(@ApiParam("会员uid") @RequestParam("uid") Long uid) {
-//        MemBaseDetailVO detailVO = memBaseinfoService.getMemBaseInfo(uid);
-//        return Result.success(detailVO);
-//    }
+
+    @ApiOperation(value = "查询会员详情")
+    @GetMapping(value = "/getByAccount")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "account", value = "用户账号", required = true, paramType = "query", dataType = "String")
+    })
+    public Result<MemBaseDetailVO> getMemBaseInfo(@RequestParam("account") String account) {
+        MemBaseDetailVO detailVO = memBaseinfoService.getMemBaseInfoByAccount(account);
+        return Result.success(detailVO);
+    }
+
 }

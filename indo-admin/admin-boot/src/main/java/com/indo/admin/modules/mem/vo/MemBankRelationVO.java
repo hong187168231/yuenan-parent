@@ -26,14 +26,20 @@ public class MemBankRelationVO {
     @ApiModelProperty(value = "银行卡用户名")
     private String userName;
 
+    @ApiModelProperty(value = "银行卡用户名")
+    private String bankName;
+
     @ApiModelProperty(value = "银行id")
     private Long bankId;
 
     @ApiModelProperty(value = "银行卡号")
-    private String cardNumber;
+    private String bankCardNo;
 
     @ApiModelProperty(value = "支行")
     private String bankBranch;
+
+    @ApiModelProperty(value = "城市")
+    private String city;
 
     @ApiModelProperty(value = "ifsc")
     private String ifsc;
@@ -45,10 +51,10 @@ public class MemBankRelationVO {
     private String phone;
 
     @ApiModelProperty(value = "状态：0 开启 1 禁用")
-    private Boolean status;
+    private Integer status;
 
-    @ApiModelProperty(value = "是否删除 0 未删除 1 删除")
-    private Boolean isDel;
+    @ApiModelProperty(value = "添加时间")
+    private Date createTime;
 
     @ApiModelProperty(value = "备注")
     private String remark;

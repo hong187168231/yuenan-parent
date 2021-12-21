@@ -17,19 +17,22 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        create_time,
+        create_time
+        ,
         update_time,
-        agent_id, mem_id, team_num, level_user_ids, parent_id, is_del, remark
+        agent_id, mem_id, team_num, level_user_ids, parent_id,superior, is_del, remark
     </sql>
 
     <select id="queryList" resultMap="BaseResultMap">
         SELECT * FROM mem_agent ma
+        left join mem_baseinfo mb
+        on ma.mem_id = mb.id
         where ma.is_del = 0
         <if test="req.memId !=null">
-            and ma.memId = #{req.memId}
+            and ma.mem_id = #{req.memId}
         </if>
-        <if test="req. !=null and req.mobile !=''">
-            and ma.mobile = #{req.mobile}
+        <if test="req.memAgentId !=null">
+            and ma.agent_id = #{req.memAgentId}
         </if>
         ORDER BY ma.create_time desc
     </select>

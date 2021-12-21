@@ -3,7 +3,8 @@
 <mapper namespace="com.indo.admin.modules.mem.mapper.MemInviteCodeMapper">
 
     <select id="queryList" resultType="com.indo.admin.modules.mem.vo.MemInviteCodeVo">
-        SELECT * FROM mem_invite_code mb
+        SELECT * FROM mem_invite_code mb  left  join  mem_agent ma
+         on mb.mem_id = ma.mem_id
         <where>
             <if test="req.memId !=null">
                 and mb.mem_id = #{req.memId}
@@ -11,14 +12,17 @@
             <if test="req.inviteCode !=null and req.inviteCode != '' ">
                 and mb.inviteCode = #{req.inviteCode}
             </if>
-            <if test="req.startTime != null and req.startTime != ''">
-                and mb.create_time &gt;= req.startTime
+            <if test="req.startTime != null">
+                and mb.create_time &gt;= #{req.startTime}
             </if>
-            <if test="req.endTime != null and req.endTime != ''">
-                and mb.create_time &lt;= req.endTime
+            <if test="req.endTime != null">
+                and mb.create_time &lt;= #{req.endTime}
             </if>
         </where>
         ORDER BY mb.create_time desc
     </select>
+
+
+
 
 </mapper>

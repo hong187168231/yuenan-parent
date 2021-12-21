@@ -42,13 +42,7 @@ public class MemAgentApplyServiceImpl extends ServiceImpl<MemAgentApplyMapper, M
 
     @Override
     public PageResult<MemAgentApply> getPage(MemAgentApplyPageReq req) {
-        Integer pageNum = 1;
-        Integer pageSize = 10;
-        if (null != req.getPage() && null != req.getLimit()) {
-            pageNum = req.getPage();
-            pageSize = req.getLimit();
-        }
-        Page<MemAgentApply> page = new Page<>(pageNum, pageSize);
+        Page<MemAgentApply> page = new Page<>(req.getPage(), req.getLimit());
         List<MemAgentApply> list = memAgentApplyMapper.queryList(page, req);
         page.setRecords(list);
         return PageResult.getPageResult(page);

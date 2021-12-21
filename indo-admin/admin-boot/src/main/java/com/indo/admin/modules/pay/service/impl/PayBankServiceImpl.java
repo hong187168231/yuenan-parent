@@ -25,7 +25,7 @@ import java.util.List;
  * 支付银行表 服务实现类
  * </p>
  *
- * @author xxx
+ * @author puff
  * @since 2021-11-13
  */
 @Service
@@ -42,12 +42,12 @@ public class PayBankServiceImpl extends ServiceImpl<PayBankMapper, PayBank> impl
     }
 
     @Override
-    public  Result<List<PayBankVO>> bankList(PayBankDTO bankDTO) {
+    public Result<List<PayBankVO>> bankList(PayBankDTO bankDTO) {
         Page<PayBank> page = new Page<>(bankDTO.getPage(), bankDTO.getLimit());
         LambdaQueryWrapper<PayBank> wrapper = new LambdaQueryWrapper<>();
         wrapper.like(PayBank::getBankName, bankDTO.getBankName());
         Page<PayBank> pageList = baseMapper.selectPage(page, wrapper);
         List<PayBankVO> result = dozerUtil.convert(pageList.getRecords(), PayBankVO.class);
-        return Result.success(result,page.getTotal());
+        return Result.success(result, page.getTotal());
     }
 }

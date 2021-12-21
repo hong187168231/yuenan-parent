@@ -6,6 +6,7 @@ import com.indo.admin.modules.mem.entity.MemInviteCode;
 import com.indo.admin.modules.mem.req.MeminviteCodePageReq;
 import com.indo.admin.modules.mem.vo.MemInviteCodeVo;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -21,5 +22,5 @@ import java.util.List;
 @Mapper
 public interface MemInviteCodeMapper extends BaseMapper<MemInviteCode> {
 
-    List<MemInviteCodeVo> queryList(Page<MemInviteCodeVo> page, MeminviteCodePageReq req);
+    List<MemInviteCodeVo> queryList(@Param("page") Page<MemInviteCodeVo> page, @Param("req") MeminviteCodePageReq req);
 }

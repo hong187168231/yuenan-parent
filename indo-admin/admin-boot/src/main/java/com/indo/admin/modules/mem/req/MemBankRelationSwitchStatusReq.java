@@ -11,6 +11,6 @@ public class MemBankRelationSwitchStatusReq {
     @ApiModelProperty("id")
     private Long id;
 
-    @ApiModelProperty(value = "状态：true-启用 false-禁用")
+    @ApiModelProperty(value = "状态：0-启用 1-禁用")
     private Integer status;
 }

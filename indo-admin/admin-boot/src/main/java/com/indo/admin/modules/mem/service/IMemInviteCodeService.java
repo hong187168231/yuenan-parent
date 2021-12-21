@@ -1,5 +1,6 @@
 package com.indo.admin.modules.mem.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.indo.admin.modules.mem.entity.MemInviteCode;
 import com.indo.admin.modules.mem.req.MemInviteCodeSwitchStatusReq;
@@ -17,7 +18,7 @@ import com.indo.common.result.PageResult;
  */
 public interface IMemInviteCodeService extends IService<MemInviteCode> {
 
-    PageResult<MemInviteCodeVo> queryList(MeminviteCodePageReq req);
+    Page<MemInviteCodeVo> queryList(MeminviteCodePageReq req);
 
     void switchStatus(MemInviteCodeSwitchStatusReq req);
 }

@@ -33,6 +33,12 @@ public class MemInviteCode extends BaseEntity {
      */
     private Long memId;
 
+
+    /**
+     * 会员账号
+     */
+    private String account;
+
     /**
      * 会员邀请码
      */
@@ -41,7 +47,7 @@ public class MemInviteCode extends BaseEntity {
     /**
      * 状态：1启用 2-禁用
      */
-    private Boolean status;
+    private Integer status;
 
 
 }

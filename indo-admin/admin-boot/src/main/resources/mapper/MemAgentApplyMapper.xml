@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.indo.user.mapper.MemAgentApplyMapper">
+<mapper namespace="com.indo.admin.modules.mem.mapper.MemAgentApplyMapper">
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.indo.user.pojo.entity.MemAgentApply">
@@ -25,10 +25,10 @@
         SELECT * FROM mem_agent_apply ma
         where ma.status = 0
         <if test="req.memId !=null">
-            and ma.memId = #{req.memId}
+            and ma.mem_id = #{req.memId}
         </if>
-        <if test="req.memAgentId !=null">
-            and ma.agent_id = #{req.memAgentId}
+        <if test="req.mobile !=null">
+            and ma.mobile = #{req.mobile}
         </if>
         ORDER BY ma.create_time desc
     </select>

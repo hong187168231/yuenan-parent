@@ -29,17 +29,11 @@ public class MemInviteCodeServiceImpl extends ServiceImpl<MemInviteCodeMapper, M
     private MemInviteCodeMapper memInviteCodeMapper;
 
     @Override
-    public PageResult<MemInviteCodeVo> queryList(MeminviteCodePageReq req) {
-        Integer pageNum = 1;
-        Integer pageSize = 10;
-        if (null != req.getPage() && null != req.getLimit()) {
-            pageNum = req.getPage();
-            pageSize = req.getLimit();
-        }
-        Page<MemInviteCodeVo> page = new Page<>(pageNum, pageSize);
+    public Page<MemInviteCodeVo> queryList(MeminviteCodePageReq req) {
+        Page<MemInviteCodeVo> page = new Page<>(req.getPage(), req.getLimit());
         List<MemInviteCodeVo> list = memInviteCodeMapper.queryList(page, req);
         page.setRecords(list);
-        return PageResult.getPageResult(page);
+        return page;
     }
 
     @Override
