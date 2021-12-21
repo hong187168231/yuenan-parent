@@ -1,9 +1,9 @@
-package com.indo.game.pojo.vo.callback;
+package com.indo.game.pojo.vo.callback.awc;
 
 import lombok.Data;
 
 @Data
-public class CallBackFail {
+public class AwcCallBackRespFail {
     private String status;
     private String desc;
 }

@@ -7,13 +7,12 @@ import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.common.utils.DateUtils;
 import com.indo.game.pojo.entity.awc.*;
-import com.indo.game.pojo.vo.callback.CallBackFail;
-import com.indo.game.pojo.vo.callback.CallBackParentSuccess;
-import com.indo.game.pojo.vo.callback.GetBalanceSuccess;
-import com.indo.game.pojo.vo.callback.CallBackSuccess;
+import com.indo.game.pojo.vo.callback.awc.AwcCallBackParentRespSuccess;
+import com.indo.game.pojo.vo.callback.awc.AwcCallBackRespFail;
+import com.indo.game.pojo.vo.callback.awc.AwcCallBackRespSuccess;
+import com.indo.game.pojo.vo.callback.awc.AwcGetBalanceRespSuccess;
 import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.awc.AwcCallbackService;
-import com.indo.user.pojo.dto.MemGoldChangeDTO;
 import com.indo.user.pojo.entity.MemBaseinfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,7 +20,6 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class AwcCallbackServiceImpl implements AwcCallbackService {
@@ -108,12 +106,12 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
         String userId = jsonObject.getString("userId");
         MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
         if (null == memBaseinfo) {
-            CallBackFail callBacekFail = new CallBackFail();
+            AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
             callBacekFail.setStatus("1002");
             callBacekFail.setDesc("Account is not exists");
             return JSONObject.toJSONString(callBacekFail);
         } else {
-            GetBalanceSuccess getBalanceSuccess = new GetBalanceSuccess();
+            AwcGetBalanceRespSuccess getBalanceSuccess = new AwcGetBalanceRespSuccess();
             getBalanceSuccess.setStatus("0000");
             getBalanceSuccess.setBalance(memBaseinfo.getBalance().toString());
             getBalanceSuccess.setBalanceTs(DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT));
@@ -136,12 +134,12 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
 
                 MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
                 if (null == memBaseinfo) {
-                    CallBackFail callBacekFail = new CallBackFail();
+                    AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                     callBacekFail.setStatus("1002");
                     callBacekFail.setDesc("Account is not exists");
                     return JSONObject.toJSONString(callBacekFail);
                 } else {
-                    CallBackSuccess placeBetSuccess = new CallBackSuccess();
+                    AwcCallBackRespSuccess placeBetSuccess = new AwcCallBackRespSuccess();
                     placeBetSuccess.setStatus("0000");
                     BigDecimal betAmount = BigDecimal.valueOf(Double.valueOf(placeBetTxns.getBetAmount()));
                     BigDecimal balance = memBaseinfo.getBalance().subtract(betAmount);
@@ -152,7 +150,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 }
             }
         } else {
-            CallBackFail callBacekFail = new CallBackFail();
+            AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
             callBacekFail.setStatus("1036");
             callBacekFail.setDesc("Invalid parameters.");
             return JSONObject.toJSONString(callBacekFail);
@@ -172,12 +170,12 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 String userId = cancelBetTxns.getUserId();
                 MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
                 if (null == memBaseinfo) {
-                    CallBackFail callBacekFail = new CallBackFail();
+                    AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                     callBacekFail.setStatus("1002");
                     callBacekFail.setDesc("Account is not exists");
                     return JSONObject.toJSONString(callBacekFail);
                 } else {
-                    CallBackSuccess placeBetSuccess = new CallBackSuccess();
+                    AwcCallBackRespSuccess placeBetSuccess = new AwcCallBackRespSuccess();
                     placeBetSuccess.setStatus("0000");
                     //查询下注订单
                     BigDecimal betAmount = BigDecimal.valueOf(Double.valueOf(0));
@@ -188,7 +186,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 }
             }
         } else {
-            CallBackFail callBacekFail = new CallBackFail();
+            AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
             callBacekFail.setStatus("1036");
             callBacekFail.setDesc("Invalid parameters.");
             return JSONObject.toJSONString(callBacekFail);
@@ -206,12 +204,12 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 String userId = adjustBetTxns.getUserId();
                 MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
                 if (null == memBaseinfo) {
-                    CallBackFail callBacekFail = new CallBackFail();
+                    AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                     callBacekFail.setStatus("1002");
                     callBacekFail.setDesc("Account is not exists");
                     return JSONObject.toJSONString(callBacekFail);
                 } else {
-                    CallBackSuccess placeBetSuccess = new CallBackSuccess();
+                    AwcCallBackRespSuccess placeBetSuccess = new AwcCallBackRespSuccess();
                     placeBetSuccess.setStatus("0000");
                     // 下注金额
                     BigDecimal adjustAmount = BigDecimal.valueOf(Double.valueOf(adjustBetTxns.getAdjustAmount()));
@@ -224,7 +222,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 }
             }
         } else {
-            CallBackFail callBacekFail = new CallBackFail();
+            AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
             callBacekFail.setStatus("1036");
             callBacekFail.setDesc("Invalid parameters.");
             return JSONObject.toJSONString(callBacekFail);
@@ -242,18 +240,18 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 String userId = voidBetTxns.getUserId();
                 MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
                 if (null == memBaseinfo) {
-                    CallBackFail callBacekFail = new CallBackFail();
+                    AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                     callBacekFail.setStatus("1002");
                     callBacekFail.setDesc("Account is not exists");
                     return JSONObject.toJSONString(callBacekFail);
                 } else {
-                    CallBackParentSuccess callBackSuccess = new CallBackParentSuccess();
+                    AwcCallBackParentRespSuccess callBackSuccess = new AwcCallBackParentRespSuccess();
                     callBackSuccess.setStatus("0000");
                     return JSONObject.toJSONString(callBackSuccess);
                 }
             }
         } else {
-            CallBackFail callBacekFail = new CallBackFail();
+            AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
             callBacekFail.setStatus("1036");
             callBacekFail.setDesc("Invalid parameters.");
             return JSONObject.toJSONString(callBacekFail);
@@ -271,18 +269,18 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 String userId = unvoidBetTxns.getUserId();
                 MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
                 if (null == memBaseinfo) {
-                    CallBackFail callBacekFail = new CallBackFail();
+                    AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                     callBacekFail.setStatus("1002");
                     callBacekFail.setDesc("Account is not exists");
                     return JSONObject.toJSONString(callBacekFail);
                 } else {
-                    CallBackParentSuccess callBackSuccess = new CallBackParentSuccess();
+                    AwcCallBackParentRespSuccess callBackSuccess = new AwcCallBackParentRespSuccess();
                     callBackSuccess.setStatus("0000");
                     return JSONObject.toJSONString(callBackSuccess);
                 }
             }
         } else {
-            CallBackFail callBacekFail = new CallBackFail();
+            AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
             callBacekFail.setStatus("1036");
             callBacekFail.setDesc("Invalid parameters.");
             return JSONObject.toJSONString(callBacekFail);
@@ -300,18 +298,18 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 String userId = refundTxns.getUserId();
                 MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
                 if (null == memBaseinfo) {
-                    CallBackFail callBacekFail = new CallBackFail();
+                    AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                     callBacekFail.setStatus("1002");
                     callBacekFail.setDesc("Account is not exists");
                     return JSONObject.toJSONString(callBacekFail);
                 } else {
-                    CallBackParentSuccess callBackSuccess = new CallBackParentSuccess();
+                    AwcCallBackParentRespSuccess callBackSuccess = new AwcCallBackParentRespSuccess();
                     callBackSuccess.setStatus("0000");
                     return JSONObject.toJSONString(callBackSuccess);
                 }
             }
         } else {
-            CallBackFail callBacekFail = new CallBackFail();
+            AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
             callBacekFail.setStatus("1036");
             callBacekFail.setDesc("Invalid parameters.");
             return JSONObject.toJSONString(callBacekFail);
@@ -329,18 +327,18 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 String userId = settleTxns.getUserId();
                 MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
                 if (null == memBaseinfo) {
-                    CallBackFail callBacekFail = new CallBackFail();
+                    AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                     callBacekFail.setStatus("1002");
                     callBacekFail.setDesc("Account is not exists");
                     return JSONObject.toJSONString(callBacekFail);
                 } else {
-                    CallBackParentSuccess callBackSuccess = new CallBackParentSuccess();
+                    AwcCallBackParentRespSuccess callBackSuccess = new AwcCallBackParentRespSuccess();
                     callBackSuccess.setStatus("0000");
                     return JSONObject.toJSONString(callBackSuccess);
                 }
             }
         } else {
-            CallBackFail callBacekFail = new CallBackFail();
+            AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
             callBacekFail.setStatus("1036");
             callBacekFail.setDesc("Invalid parameters.");
             return JSONObject.toJSONString(callBacekFail);
@@ -358,18 +356,18 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 String userId = unsettleTxns.getUserId();
                 MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
                 if (null == memBaseinfo) {
-                    CallBackFail callBacekFail = new CallBackFail();
+                    AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                     callBacekFail.setStatus("1002");
                     callBacekFail.setDesc("Account is not exists");
                     return JSONObject.toJSONString(callBacekFail);
                 } else {
-                    CallBackParentSuccess callBackSuccess = new CallBackParentSuccess();
+                    AwcCallBackParentRespSuccess callBackSuccess = new AwcCallBackParentRespSuccess();
                     callBackSuccess.setStatus("0000");
                     return JSONObject.toJSONString(callBackSuccess);
                 }
             }
         } else {
-            CallBackFail callBacekFail = new CallBackFail();
+            AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
             callBacekFail.setStatus("1036");
             callBacekFail.setDesc("Invalid parameters.");
             return JSONObject.toJSONString(callBacekFail);
@@ -387,18 +385,18 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 String userId = voidSettleTxns.getUserId();
                 MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
                 if (null == memBaseinfo) {
-                    CallBackFail callBacekFail = new CallBackFail();
+                    AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                     callBacekFail.setStatus("1002");
                     callBacekFail.setDesc("Account is not exists");
                     return JSONObject.toJSONString(callBacekFail);
                 } else {
-                    CallBackParentSuccess callBackSuccess = new CallBackParentSuccess();
+                    AwcCallBackParentRespSuccess callBackSuccess = new AwcCallBackParentRespSuccess();
                     callBackSuccess.setStatus("0000");
                     return JSONObject.toJSONString(callBackSuccess);
                 }
             }
         } else {
-            CallBackFail callBacekFail = new CallBackFail();
+            AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
             callBacekFail.setStatus("1036");
             callBacekFail.setDesc("Invalid parameters.");
             return JSONObject.toJSONString(callBacekFail);
@@ -416,12 +414,12 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 String userId = unvoidSettleTxns.getUserId();
                 MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
                 if (null == memBaseinfo) {
-                    CallBackFail callBacekFail = new CallBackFail();
+                    AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                     callBacekFail.setStatus("1002");
                     callBacekFail.setDesc("Account is not exists");
                     return JSONObject.toJSONString(callBacekFail);
                 } else {
-                    CallBackSuccess placeBetSuccess = new CallBackSuccess();
+                    AwcCallBackRespSuccess placeBetSuccess = new AwcCallBackRespSuccess();
                     placeBetSuccess.setStatus("0000");
                     placeBetSuccess.setBalance(userId);
                     placeBetSuccess.setBalanceTs(DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT));
@@ -429,7 +427,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 }
             }
         } else {
-            CallBackFail callBacekFail = new CallBackFail();
+            AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
             callBacekFail.setStatus("1036");
             callBacekFail.setDesc("Invalid parameters.");
             return JSONObject.toJSONString(callBacekFail);
@@ -447,12 +445,12 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 String userId = betNSettleTxns.getUserId();
                 MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
                 if (null == memBaseinfo) {
-                    CallBackFail callBacekFail = new CallBackFail();
+                    AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                     callBacekFail.setStatus("1002");
                     callBacekFail.setDesc("Account is not exists");
                     return JSONObject.toJSONString(callBacekFail);
                 } else {
-                    CallBackSuccess placeBetSuccess = new CallBackSuccess();
+                    AwcCallBackRespSuccess placeBetSuccess = new AwcCallBackRespSuccess();
                     placeBetSuccess.setStatus("0000");
                     placeBetSuccess.setBalance(userId);
                     placeBetSuccess.setBalanceTs(DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT));
@@ -460,7 +458,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 }
             }
         } else {
-            CallBackFail callBacekFail = new CallBackFail();
+            AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
             callBacekFail.setStatus("1036");
             callBacekFail.setDesc("Invalid parameters.");
             return JSONObject.toJSONString(callBacekFail);
@@ -478,12 +476,12 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 String userId = cancelBetNSettleTxns.getUserId();
                 MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
                 if (null == memBaseinfo) {
-                    CallBackFail callBacekFail = new CallBackFail();
+                    AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                     callBacekFail.setStatus("1002");
                     callBacekFail.setDesc("Account is not exists");
                     return JSONObject.toJSONString(callBacekFail);
                 } else {
-                    CallBackSuccess placeBetSuccess = new CallBackSuccess();
+                    AwcCallBackRespSuccess placeBetSuccess = new AwcCallBackRespSuccess();
                     placeBetSuccess.setStatus("0000");
                     placeBetSuccess.setBalance(userId);
                     placeBetSuccess.setBalanceTs(DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT));
@@ -491,7 +489,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 }
             }
         } else {
-            CallBackFail callBacekFail = new CallBackFail();
+            AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
             callBacekFail.setStatus("1036");
             callBacekFail.setDesc("Invalid parameters.");
             return JSONObject.toJSONString(callBacekFail);
@@ -509,18 +507,18 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 String userId = freeSpinTxns.getUserId();
                 MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
                 if (null == memBaseinfo) {
-                    CallBackFail callBacekFail = new CallBackFail();
+                    AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                     callBacekFail.setStatus("1002");
                     callBacekFail.setDesc("Account is not exists");
                     return JSONObject.toJSONString(callBacekFail);
                 } else {
-                    CallBackParentSuccess callBackSuccess = new CallBackParentSuccess();
+                    AwcCallBackParentRespSuccess callBackSuccess = new AwcCallBackParentRespSuccess();
                     callBackSuccess.setStatus("0000");
                     return JSONObject.toJSONString(callBackSuccess);
                 }
             }
         } else {
-            CallBackFail callBacekFail = new CallBackFail();
+            AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
             callBacekFail.setStatus("1036");
             callBacekFail.setDesc("Invalid parameters.");
             return JSONObject.toJSONString(callBacekFail);
@@ -538,12 +536,12 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 String userId = giveTxns.getUserId();
                 MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
                 if (null == memBaseinfo) {
-                    CallBackFail callBacekFail = new CallBackFail();
+                    AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                     callBacekFail.setStatus("1002");
                     callBacekFail.setDesc("Account is not exists");
                     return JSONObject.toJSONString(callBacekFail);
                 } else {
-                    CallBackSuccess placeBetSuccess = new CallBackSuccess();
+                    AwcCallBackRespSuccess placeBetSuccess = new AwcCallBackRespSuccess();
                     placeBetSuccess.setStatus("0000");
                     placeBetSuccess.setBalance(userId);
                     placeBetSuccess.setBalanceTs(DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT));
@@ -551,7 +549,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 }
             }
         } else {
-            CallBackFail callBacekFail = new CallBackFail();
+            AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
             callBacekFail.setStatus("1036");
             callBacekFail.setDesc("Invalid parameters.");
             return JSONObject.toJSONString(callBacekFail);
@@ -569,12 +567,12 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 String userId = tipTxns.getUserId();
                 MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
                 if (null == memBaseinfo) {
-                    CallBackFail callBacekFail = new CallBackFail();
+                    AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                     callBacekFail.setStatus("1002");
                     callBacekFail.setDesc("Account is not exists");
                     return JSONObject.toJSONString(callBacekFail);
                 } else {
-                    CallBackSuccess placeBetSuccess = new CallBackSuccess();
+                    AwcCallBackRespSuccess placeBetSuccess = new AwcCallBackRespSuccess();
                     placeBetSuccess.setStatus("0000");
                     //打赏给直播主的金额
                     BigDecimal tip = BigDecimal.valueOf(Double.valueOf(tipTxns.getTip()));
@@ -586,7 +584,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 }
             }
         } else {
-            CallBackFail callBacekFail = new CallBackFail();
+            AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
             callBacekFail.setStatus("1036");
             callBacekFail.setDesc("Invalid parameters.");
             return JSONObject.toJSONString(callBacekFail);
@@ -604,12 +602,12 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 String userId = cancelTipTxns.getUserId();
                 MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
                 if (null == memBaseinfo) {
-                    CallBackFail callBacekFail = new CallBackFail();
+                    AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                     callBacekFail.setStatus("1002");
                     callBacekFail.setDesc("Account is not exists");
                     return JSONObject.toJSONString(callBacekFail);
                 } else {
-                    CallBackSuccess placeBetSuccess = new CallBackSuccess();
+                    AwcCallBackRespSuccess placeBetSuccess = new AwcCallBackRespSuccess();
                     placeBetSuccess.setStatus("0000");
                     //打赏给直播主的金额
                     BigDecimal tip = BigDecimal.valueOf(Double.valueOf(0));
@@ -620,7 +618,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 }
             }
         } else {
-            CallBackFail callBacekFail = new CallBackFail();
+            AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
             callBacekFail.setStatus("1036");
             callBacekFail.setDesc("Invalid parameters.");
             return JSONObject.toJSONString(callBacekFail);

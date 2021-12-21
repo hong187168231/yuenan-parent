@@ -1,4 +1,4 @@
-package com.indo.game.controller;
+package com.indo.game.controller.awc;
 
 import com.alibaba.fastjson.JSONObject;
 import com.indo.game.pojo.entity.awc.AwcApiRequestParentData;
@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/awcCallBack")
+@RequestMapping("/awc")
 public class AwcCallBackController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -22,9 +22,9 @@ public class AwcCallBackController {
      */
     @RequestMapping(value="/callBack",method=RequestMethod.POST)
     public String initGame(AwcApiRequestParentData awcApiRequestData) {
-        logger.info("awcCallBack {} initGame 回调, params:{}",JSONObject.toJSONString(awcApiRequestData));
+        logger.info("awcCallBack {} callBack 回调, params:{}",JSONObject.toJSONString(awcApiRequestData));
         String callBack = awcAeSexybcrtCallbackService.awcCallback(awcApiRequestData);
-        logger.info("awcCallBack {} initGame 回调返回数据, params:{}",callBack);
+        logger.info("awcCallBack {} callBack 回调返回数据, params:{}",callBack);
         return callBack;
     }
 }

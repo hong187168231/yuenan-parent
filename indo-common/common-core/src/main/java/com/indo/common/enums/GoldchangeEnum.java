@@ -25,6 +25,7 @@ public enum GoldchangeEnum {
     TIP(214, "打赏"),
     CANCEL_TIP(215, "取消打赏"),
     REFUND(216, "返还金额"),
+    DSFYXZZ(217, "第三方游戏平台转账"),
 
     JJTC(407, "奖金提出");
 

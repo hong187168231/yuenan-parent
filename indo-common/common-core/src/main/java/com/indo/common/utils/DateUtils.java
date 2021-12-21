@@ -54,6 +54,8 @@ public class DateUtils {
 
     public final static String ISO8601_DATE_FORMAT = "yyyy-MM-dd'T'hh:mm:ss+|-hh:mm";
 
+    public final static String ISO8601_DATE_FORMAT1 = "YYYY-MM-DD'T'hh:mm:ss.sss";
+
     public final static String HOURMINUTEFormat = "HH:mm";
 
     static {

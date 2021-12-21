@@ -1,4 +1,4 @@
-package com.indo.game.controller;
+package com.indo.game.controller.ug;
 
 import com.alibaba.fastjson.JSONObject;
 import com.indo.common.annotation.AllowAccess;
@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @AllArgsConstructor
 @Api(tags = "AE真人、SV388斗鸡游戏登录并初始化用户游戏账号")
-public class AwcController {
+public class UgController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired

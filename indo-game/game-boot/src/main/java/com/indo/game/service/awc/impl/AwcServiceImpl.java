@@ -6,7 +6,6 @@ import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
 import com.indo.common.utils.DateUtils;
 import com.indo.common.utils.i18n.MessageUtils;
-import com.indo.game.common.constant.Constants;
 import com.indo.game.config.OpenAPIProperties;
 import com.indo.game.mapper.awc.AwcAeSexybcrtTransactionMapper;
 import com.indo.game.mapper.manage.GameCategoryMapper;
@@ -22,7 +21,6 @@ import com.indo.game.service.awc.AwcService;
 import com.indo.game.common.util.AWCUtil;
 import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
-import com.indo.user.api.MemBaseInfoFeignClient;
 import com.indo.user.pojo.entity.MemBaseinfo;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -49,7 +47,6 @@ public class AwcServiceImpl implements AwcService {
     @Autowired
     private GameCommonService gameCommonService;
 
-    private MemBaseInfoFeignClient memBaseInfoFeignClient;
     @Autowired
     GameTypeMapper gameTypeMapper;
     @Autowired
@@ -76,14 +73,14 @@ public class AwcServiceImpl implements AwcService {
             return Result.failed(MessageUtils.get("tgocinyo"));
         }
         //初次判断站点棋牌余额是否够该用户
-//        MemBaseinfo memBaseinfo = memBaseInfoFeignClient.getMemBaseInfoById(loginUser.getId().intValue());
-//        BigDecimal balance = memBaseinfo.getBalance();
-//        //验证站点棋牌余额
-//        if (null==balance || BigDecimal.ZERO==balance) {
-//            logger.info("站点awc余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
-//            //站点棋牌余额不足
-//            return Result.failed(MessageUtils.get("tcgqifpccs"));
-//        }
+        MemBaseinfo memBaseinfo = gameCommonService.getMemBaseInfo(loginUser.getId().toString());
+        BigDecimal balance = memBaseinfo.getBalance();
+        //验证站点棋牌余额
+        if (null==balance || BigDecimal.ZERO==balance) {
+            logger.info("站点awc余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
+            //站点棋牌余额不足
+            return Result.failed(MessageUtils.get("tcgqifpccs"));
+        }
 
         try {
 

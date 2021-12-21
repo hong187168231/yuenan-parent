@@ -1,4 +1,4 @@
-package com.indo.game.controller;
+package com.indo.game.controller.manage;
 
 import com.indo.common.annotation.AllowAccess;
 import com.indo.common.result.Result;
