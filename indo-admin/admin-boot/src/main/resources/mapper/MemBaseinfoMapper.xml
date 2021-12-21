@@ -44,4 +44,9 @@
     <select id="selectNickNameByAccounts" resultType="java.lang.String">
 
     </select>
+
+    <select id="findIdListByCreateTime" resultType="java.lang.Long">
+        SELECT id FROM mem_baseinfo where
+        DATE_FORMART(create_time,"%Y-%m-%d") = #{date}
+    </select>
 </mapper>
