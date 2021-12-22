@@ -11,8 +11,8 @@ import lombok.EqualsAndHashCode;
 import java.util.Date;
 
 @Data
-@TableName("game_awc_ae_sexybcrt_Transaction")
-public class AwcAeSexybcrtTransaction {
+@TableName("game_awc_Transaction")
+public class AwcTransaction {
     @ApiModelProperty(value = "id")
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;

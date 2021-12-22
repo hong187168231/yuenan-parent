@@ -1,7 +1,7 @@
 package com.indo.game.mapper.awc;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.indo.game.pojo.entity.awc.AwcAeSexybcrtTransaction;
+import com.indo.game.pojo.entity.awc.AwcTransaction;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -9,7 +9,7 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 @Mapper
-public interface AwcAeSexybcrtTransactionMapper extends BaseMapper<AwcAeSexybcrtTransaction> {
+public interface AwcTransactionMapper extends BaseMapper<AwcTransaction> {
 
     @Insert({
             "<script>",
@@ -19,5 +19,5 @@ public interface AwcAeSexybcrtTransactionMapper extends BaseMapper<AwcAeSexybcrt
             "</foreach>",
             "</script>"
     })
-    int insertBatch(@Param(value="awcAeSexybcrtTransactionList") List<AwcAeSexybcrtTransaction> awcAeSexybcrtTransactionList);
+    int insertBatch(@Param(value="awcAeSexybcrtTransactionList") List<AwcTransaction> awcAeSexybcrtTransactionList);
 }

@@ -8,11 +8,13 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
-@TableName("game_awc_ae_sexybcrt_Transaction")
-public class txns {
+@TableName("game_awc_txns")
+public class Txns {
     @ApiModelProperty(value = "id")
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
@@ -42,7 +44,7 @@ public class txns {
     private String betType;
 
     @ApiModelProperty(value = "下注金额")
-    private String betAmount;
+    private BigDecimal betAmount;
 
     @ApiModelProperty(value = "玩家下注时间")
     private String betTime;
@@ -57,13 +59,13 @@ public class txns {
     private String updateTime;
 
     @ApiModelProperty(value = "真实下注金额")
-    private String realBetAmount;
+    private BigDecimal realBetAmount;
 
     @ApiModelProperty(value = "真实返还金额")
-    private String realWinAmount;
+    private BigDecimal realWinAmount;
 
     @ApiModelProperty(value = "返还金额 (包含下注金额)")
-    private String winAmount;
+    private BigDecimal winAmount;
 
     @ApiModelProperty(value = "游戏平台有效投注")
     private String turnover;
@@ -86,7 +88,7 @@ public class txns {
     private String requireAmount;
 
     @ApiModelProperty(value = "玩家获得的活动派彩")
-    private String amount;
+    private BigDecimal amount;
 
     @ApiModelProperty(value = "活动的交易代码")
     private String promotionTxId;
@@ -98,13 +100,23 @@ public class txns {
     private String promotionTypeId;
 
     @ApiModelProperty(value = "打赏给直播主的金额")
-    private String tip;
+    private BigDecimal tip;
 
     @ApiModelProperty(value = "打赏资讯，此参数仅游戏商有提供资讯时才会出现")
     private String tipinfo;
 
+    @ApiModelProperty(value = "操作状态")
+    private String status;
+
+    @ApiModelProperty(value = "操作名称")
+    @NotNull(message = "操作名称")
+    private String method;
+
+    @ApiModelProperty(value = "余额")
+    @NotNull(message = "余额")
+    private BigDecimal balance;
 
     @ApiModelProperty(value = "创建时间")
-    private Date createTime;
+    private String createTime;
 
 }

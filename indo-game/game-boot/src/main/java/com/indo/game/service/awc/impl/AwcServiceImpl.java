@@ -7,12 +7,12 @@ import com.indo.common.result.Result;
 import com.indo.common.utils.DateUtils;
 import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.config.OpenAPIProperties;
-import com.indo.game.mapper.awc.AwcAeSexybcrtTransactionMapper;
+import com.indo.game.mapper.awc.AwcTransactionMapper;
 import com.indo.game.mapper.manage.GameCategoryMapper;
 import com.indo.game.mapper.manage.GamePlatformMapper;
 import com.indo.game.mapper.manage.GameTypeMapper;
 import com.indo.game.pojo.entity.CptOpenMember;
-import com.indo.game.pojo.entity.awc.AwcAeSexybcrtTransaction;
+import com.indo.game.pojo.entity.awc.AwcTransaction;
 import com.indo.game.pojo.entity.awc.AwcApiResponseData;
 import com.indo.game.pojo.entity.manage.GameCategory;
 import com.indo.game.pojo.entity.manage.GamePlatform;
@@ -31,7 +31,6 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 /**
  * awc ae真人 游戏业务类
@@ -50,7 +49,7 @@ public class AwcServiceImpl implements AwcService {
     @Autowired
     GameTypeMapper gameTypeMapper;
     @Autowired
-    AwcAeSexybcrtTransactionMapper awcAeSexybcrtTransactionMapper;
+    AwcTransactionMapper awcTransactionMapper;
     @Autowired
     GameCategoryMapper gameCategoryMapper;
     @Autowired
@@ -312,10 +311,10 @@ public class AwcServiceImpl implements AwcService {
             // 获取游戏注单
             AwcApiResponseData result = commonRequest(trr, OpenAPIProperties.AWC_API_URL_LOGIN, 0, "127.0.0.1", "commonAePullOrder");
             if (null != result && "0000".equals(result.getStatus())) {
-                List<AwcAeSexybcrtTransaction> list = (List<AwcAeSexybcrtTransaction>)result.getTransactions();
+                List<AwcTransaction> list = (List<AwcTransaction>)result.getTransactions();
 
                 if (null!=list && list.size() > 0) {
-                    awcAeSexybcrtTransactionMapper.insertBatch(list);
+                    awcTransactionMapper.insertBatch(list);
                 }
             }
         } catch (Exception e) {
