@@ -19,6 +19,10 @@ public class GamePlatform extends BaseEntity {
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
+    @ApiModelProperty(value = "游戏类型ID")
+    @NotNull(message = "游戏类型ID不能为空")
+    private Long categoryId;
+
     @ApiModelProperty(value = "平台代码")
     @NotNull(message = "平台代码不能为空")
     private String platformCode;
