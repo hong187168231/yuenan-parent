@@ -30,7 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.concurrent.TimeUnit;
 
 @RestController
-@RequestMapping("/awc")
+@RequestMapping("/api/v1/games/awc")
 @Slf4j
 @Api(tags = "AE真人、SV388斗鸡游戏登录并初始化用户游戏账号")
 public class AwcController {
