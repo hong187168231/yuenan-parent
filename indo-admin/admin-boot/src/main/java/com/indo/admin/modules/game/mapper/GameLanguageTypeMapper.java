@@ -1,7 +1,7 @@
-package com.indo.game.mapper.manage;
+package com.indo.admin.modules.game.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.indo.game.pojo.entity.manage.GameCurrencyType;
+import com.indo.game.pojo.entity.manage.GameLanguageType;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -13,6 +13,6 @@ import org.apache.ibatis.annotations.Mapper;
  * @since 2021-11-22
  */
 @Mapper
-public interface GameCurrencyTypeMapper extends BaseMapper<GameCurrencyType> {
+public interface GameLanguageTypeMapper extends BaseMapper<GameLanguageType> {
 
 }

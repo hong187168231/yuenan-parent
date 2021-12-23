@@ -32,10 +32,8 @@ import java.util.concurrent.TimeUnit;
 @RestController
 @RequestMapping("/api/v1/games/sbo")
 @Slf4j
-@AllArgsConstructor
 @Api(tags = "SBO Sports游戏登录并初始化用户游戏账号")
 public class SboController {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private SboService sboSportsService;
@@ -53,7 +51,7 @@ public class SboController {
     })
     public Result initGame(@LoginUser LoginInfo loginUser, @RequestParam("gameCode") String platform,
                            HttpServletRequest request) throws InterruptedException {
-        logger.info("sbolog {} initGame 进入游戏。。。loginUser:{}", loginUser.getId(), loginUser);
+        log.info("sbolog {} initGame 进入游戏。。。loginUser:{}", loginUser.getId(), loginUser);
         String params = "";
         if (loginUser == null || StringUtils.isBlank(loginUser.getNickName())) {
             return Result.failed(MessageUtils.get("ParameterError"));
@@ -65,23 +63,23 @@ public class SboController {
                 String ip = IpUtil.getIpAddr(request);
                 Result resultInfo = sboSportsService.sboGame(loginUser, ip, platform);
                 if (resultInfo == null) {
-                    logger.info("sbolog {} initGame result is null. params:{},ip:{}", loginUser.getId(), params, ip);
+                    log.info("sbolog {} initGame result is null. params:{},ip:{}", loginUser.getId(), params, ip);
                     return Result.failed(MessageUtils.get("networktimeout"));
                 } else {
                     if (!resultInfo.getCode().equals(ResultCode.SUCCESS)) {
                         return resultInfo;
                     }
                 }
-                logger.info("sbolog {} initGame resultInfo:{}, params:{}", loginUser.getId(), JSONObject.toJSONString(resultInfo), params);
+                log.info("sbolog {} initGame resultInfo:{}, params:{}", loginUser.getId(), JSONObject.toJSONString(resultInfo), params);
                 return resultInfo;
             } else {
-                logger.info("sbolog {} initGame lock  repeat request. error");
+                log.info("sbolog {} initGame lock  repeat request. error");
                 String sboInitGame3 = MessageUtils.get("networktimeout");
                 return Result.failed(sboInitGame3);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            logger.error("sbolog {} initGame occur error:{}. params:{}", loginUser.getId(), e.getMessage(), params);
+            log.error("sbolog {} initGame occur error:{}. params:{}", loginUser.getId(), e.getMessage(), params);
             return Result.failed(MessageUtils.get("networktimeout"));
         } finally {
             lock.unlock();

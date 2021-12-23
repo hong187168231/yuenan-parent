@@ -44,12 +44,12 @@ public class MemBankRelationController {
     @ApiOperation(value = "添加银行卡", httpMethod = "POST")
     @PostMapping(value = "/add")
     public Result addBankCard(@RequestBody AddBankCardReq req, @LoginUser LoginInfo loginUser) {
-        memBankRelationService.addBankCard(req, loginUser);
-        return Result.success();
+        boolean flag = memBankRelationService.addBankCard(req, loginUser);
+        return Result.judge(flag);
     }
 
-    @ApiOperation(value = "查询个人银行卡列表", httpMethod = "POST")
-    @PostMapping(value = "/list")
+    @ApiOperation(value = "查询个人银行卡列表", httpMethod = "GET")
+    @GetMapping(value = "/list")
     public Result<List<MemBankVo>> findPage(@LoginUser LoginInfo loginUser) {
         return Result.success(memBankRelationService.findPage(loginUser));
     }

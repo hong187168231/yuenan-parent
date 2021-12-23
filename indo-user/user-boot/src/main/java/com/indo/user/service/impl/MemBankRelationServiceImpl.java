@@ -44,11 +44,11 @@ public class MemBankRelationServiceImpl extends ServiceImpl<MemBankRelationMappe
     private DozerUtil dozerUtil;
 
     @Override
-    public void addBankCard(AddBankCardReq req, LoginInfo loginUser) {
+    public boolean addBankCard(AddBankCardReq req, LoginInfo loginUser) {
         MemBankRelation memBankRelation = new MemBankRelation();
         BeanUtils.copyProperties(req, memBankRelation);
         memBankRelation.setMemId(loginUser.getId());
-        baseMapper.insert(memBankRelation);
+        return baseMapper.insert(memBankRelation) > 0;
     }
 
     @Override
