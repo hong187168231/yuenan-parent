@@ -22,7 +22,7 @@ import java.util.List;
  */
 public interface IMemBankRelationService extends IService<MemBankRelation> {
 
-    void addBankCard(AddBankCardReq req,LoginInfo loginUser);
+    boolean addBankCard(AddBankCardReq req,LoginInfo loginUser);
 
     List<MemBankVo> findPage(LoginInfo loginUser);
 

@@ -8,9 +8,6 @@ import lombok.Data;
 @ApiModel(value = "添加请求参数类")
 public class AddBankCardReq {
 
-    @ApiModelProperty(value = "用户id", required = true)
-    private String memId;
-
     @ApiModelProperty(value = "银行卡用户名", required = true)
     private String userName;
 
