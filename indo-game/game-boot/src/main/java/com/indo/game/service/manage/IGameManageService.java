@@ -19,6 +19,8 @@ public interface IGameManageService {
 
     public Result<List<GamePlatform>> queryHotGamePlatform();
 
+    public Result<List<GamePlatform>> queryGamePlatformByCategory(Long categoryId);
+
     public void addGamePlatform(GamePlatform platform);
 
     public void deleteBatchGamePlatform(List idList);

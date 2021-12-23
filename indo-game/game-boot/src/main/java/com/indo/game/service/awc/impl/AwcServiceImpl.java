@@ -47,8 +47,6 @@ public class AwcServiceImpl implements AwcService {
     private GameCommonService gameCommonService;
 
     @Autowired
-    GameTypeMapper gameTypeMapper;
-    @Autowired
     AwcTransactionMapper awcTransactionMapper;
     @Autowired
     GameCategoryMapper gameCategoryMapper;
@@ -57,12 +55,11 @@ public class AwcServiceImpl implements AwcService {
 
     /**
      * 登录游戏AWC-AE真人
-     * @param gameCode
      * @return loginUser 用户信息
      */
     @Override
-    public Result awcGame(LoginInfo loginUser, String isMobileLogin,String gameCode, String ip,String platform) {
-        logger.info("awclog {} aeGame account:{}, aeCodeId:{}", loginUser.getId(), loginUser.getNickName(), gameCode);
+    public Result awcGame(LoginInfo loginUser, String isMobileLogin,String ip,String platform) {
+        logger.info("awclog {} aeGame account:{}, aeCodeId:{}", loginUser.getId(), loginUser.getNickName(), platform);
         // 是否开售校验
         GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(platform);
         if(null==gamePlatform){
@@ -94,14 +91,14 @@ public class AwcServiceImpl implements AwcService {
                 cptOpenMember.setLoginTime(new Date());
                 cptOpenMember.setType(platform);
                 //创建玩家
-                return createMemberGame(gamePlatform, ip, cptOpenMember,isMobileLogin,gameCode);
+                return createMemberGame(gamePlatform, ip, cptOpenMember,isMobileLogin);
             } else {
                 CptOpenMember updateCptOpenMember = new CptOpenMember();
                 updateCptOpenMember.setId(cptOpenMember.getId());
                 updateCptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(updateCptOpenMember);
                 //登录
-                return initGame(gamePlatform, ip, cptOpenMember,isMobileLogin,gameCode);
+                return initGame(gamePlatform, ip, cptOpenMember,isMobileLogin);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -137,8 +134,8 @@ public class AwcServiceImpl implements AwcService {
     /**
      * 登录
      */
-    private Result initGame(GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember,String isMobileLogin,String gameCode) throws Exception {
-        AwcApiResponseData awcApiResponseData = game(gamePlatform, ip, cptOpenMember,isMobileLogin,gameCode);
+    private Result initGame(GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember,String isMobileLogin) throws Exception {
+        AwcApiResponseData awcApiResponseData = game(gamePlatform, ip, cptOpenMember,isMobileLogin);
         if (null == awcApiResponseData ) {
             return Result.failed(MessageUtils.get("etgptal"));
         }
@@ -151,7 +148,7 @@ public class AwcServiceImpl implements AwcService {
     /**
      * 创建玩家
      */
-    private Result createMemberGame(GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember,String isMobileLogin,String gameCode) throws Exception {
+    private Result createMemberGame(GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember,String isMobileLogin) throws Exception {
         AwcApiResponseData awcApiResponseData = createMember(gamePlatform, ip, cptOpenMember);
 //        AwcApiResponseData awcApiResponseData = new AwcApiResponseData();
 //        awcApiResponseData.setStatus("0000");
@@ -160,7 +157,7 @@ public class AwcServiceImpl implements AwcService {
         }
         if("0000".equals(awcApiResponseData.getStatus())||"1001".equals(awcApiResponseData.getStatus())){
             externalService.saveCptOpenMember(cptOpenMember);
-            return initGame(gamePlatform, ip, cptOpenMember,isMobileLogin,gameCode);
+            return initGame(gamePlatform, ip, cptOpenMember,isMobileLogin);
         }else {
             return Result.failed(awcApiResponseData.getStatus(),awcApiResponseData.getDesc());
         }
@@ -217,7 +214,7 @@ public class AwcServiceImpl implements AwcService {
      * @param cptOpenMember
      * @return
      */
-    public AwcApiResponseData game(GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember,String isMobileLogin,String gameCode) {
+    public AwcApiResponseData game(GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember,String isMobileLogin) {
         try {
             Map<String, String> trr = new HashMap<>();
             trr.put("userId", cptOpenMember.getUserName());
@@ -233,14 +230,10 @@ public class AwcServiceImpl implements AwcService {
             trr.put("externalURL", "");
             trr.put("platform", gamePlatform.getPlatformEnName());//游戏平台名称
 
-            LambdaQueryWrapper<GameType> wrapper = new LambdaQueryWrapper<GameType>();
-            wrapper.eq(GameType::getGameCode,gameCode);
-            GameType gameType = gameTypeMapper.selectOne(wrapper);
-            GameCategory gameCategory = gameCategoryMapper.selectById(gameType.getCategoryId());
-            trr.put("gameType", gameCategory.getGameType());//平台游戏类型
-            trr.put("gameCode", gameCode);//平台游戏代码 Example范例: MX-LIVE-001
+//            GameCategory gameCategory = gameCategoryMapper.selectById(gamePlatform.getCategoryId());
+            trr.put("gameType", "LIVE");//平台游戏类型
             trr.put("language", gamePlatform.getLanguageType());
-            trr.put("hall", "");//仅针对 SEXYBCRT 进入特殊游戏大厅  Example 范例：SEXY
+            trr.put("gameForbidden", "");//仅针对 SEXYBCRT 进入特殊游戏大厅  Example 范例：SEXY
 //           platform: SEXYBCRT
 //                   - gameType: LIVE
 //                   - value (ID): {"limitId":[IDs]}
