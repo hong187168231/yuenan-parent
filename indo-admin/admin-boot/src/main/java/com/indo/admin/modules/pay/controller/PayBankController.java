@@ -10,6 +10,7 @@ import com.indo.pay.pojo.dto.PayBankDTO;
 import com.indo.pay.pojo.vo.PayBankVO;
 import com.indo.user.pojo.dto.MsgStationLetterDTO;
 import com.indo.user.pojo.dto.StationLetterAddDTO;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,7 @@ import java.util.List;
  * @author puff
  * @since 2021-11-13
  */
+@Api(tags = "银行管理")
 @RestController
 @RequestMapping("/pay/bank")
 public class PayBankController {

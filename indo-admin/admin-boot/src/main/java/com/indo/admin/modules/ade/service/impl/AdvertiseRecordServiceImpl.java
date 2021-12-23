@@ -9,6 +9,7 @@ import com.indo.admin.pojo.entity.AdvertiseRecord;
 import com.indo.admin.pojo.vo.AdvertiseRecordVO;
 import com.indo.common.result.Result;
 import com.indo.common.web.util.DozerUtil;
+import com.indo.user.pojo.dto.AdvertiseQueryDTO;
 import com.indo.user.pojo.dto.AdvertiseRecordDTO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -32,8 +33,8 @@ public class AdvertiseRecordServiceImpl extends ServiceImpl<AdvertiseRecordMappe
     private DozerUtil dozerUtil;
 
     @Override
-    public Result<List<AdvertiseRecordVO>> queryList(AdvertiseRecordDTO pushRecordDTO) {
-        Page<AdvertiseRecord> agentApplyPage = new Page<>(pushRecordDTO.getPage(), pushRecordDTO.getLimit());
+    public Result<List<AdvertiseRecordVO>> queryList(AdvertiseQueryDTO queryDTO) {
+        Page<AdvertiseRecord> agentApplyPage = new Page<>(queryDTO.getPage(), queryDTO.getLimit());
         LambdaQueryWrapper<AdvertiseRecord> wrapper = new LambdaQueryWrapper<>();
         Page<AdvertiseRecord> pageList = this.baseMapper.selectPage(agentApplyPage, wrapper);
         List<AdvertiseRecordVO> result = dozerUtil.convert(pageList.getRecords(), AdvertiseRecordVO.class);

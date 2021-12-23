@@ -14,6 +14,7 @@ import com.indo.common.result.PageResult;
 import com.indo.common.web.util.DozerUtil;
 import com.indo.user.pojo.dto.MsgStationLetterDTO;
 import com.indo.user.pojo.dto.StationLetterAddDTO;
+import com.indo.user.pojo.dto.StationLetterQueryDTO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,9 +45,9 @@ public class MsgStationLetterServiceImpl extends ServiceImpl<MsgStationLetterMap
     private DozerUtil dozerUtil;
 
     @Override
-    public Page<MsgStationLetterVO> queryList(MsgStationLetterDTO letterDTO) {
-        Page<MsgStationLetterVO> page = new Page<>(letterDTO.getPage(), letterDTO.getLimit());
-        List<MsgStationLetterVO> list = letterMapper.queryList(page, letterDTO);
+    public Page<MsgStationLetterVO> queryList(StationLetterQueryDTO queryDTO) {
+        Page<MsgStationLetterVO> page = new Page<>(queryDTO.getPage(), queryDTO.getLimit());
+        List<MsgStationLetterVO> list = letterMapper.queryList(page, queryDTO);
         page.setRecords(list);
         return page;
     }
@@ -67,11 +68,11 @@ public class MsgStationLetterServiceImpl extends ServiceImpl<MsgStationLetterMap
     }
 
     @Override
-    public PageResult<MsgStationLetter> getPersonalMsg(MsgDTO msgDTO) {
+    public List<MsgStationLetter> getPersonalMsg(MsgDTO msgDTO) {
         Page<MsgStationLetter> page = new Page<>(msgDTO.getPage(), msgDTO.getLimit());
         LambdaQueryWrapper<MsgStationLetter> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(MsgStationLetter::getReceiver, msgDTO.getUserId());
+        wrapper.eq(MsgStationLetter::getMemId, msgDTO.getMemId());
         Page<MsgStationLetter> pageList = baseMapper.selectPage(page, wrapper);
-        return PageResult.getPageResult(pageList);
+        return pageList.getRecords();
     }
 }

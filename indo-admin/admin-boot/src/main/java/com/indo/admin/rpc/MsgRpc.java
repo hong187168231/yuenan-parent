@@ -11,6 +11,8 @@ import com.indo.common.result.Result;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -39,8 +41,9 @@ public class MsgRpc {
      * @return
      */
     @PostMapping("/personal")
-    public Result<PageResult<MsgStationLetter>> getPersonalMsg(@RequestBody MsgDTO msgDTO) {
-        return Result.success(iMsgStationLetterService.getPersonalMsg(msgDTO));
+    public Result<List<MsgStationLetter>> getPersonalMsg(@RequestBody MsgDTO msgDTO) {
+        List<MsgStationLetter> pageResult = iMsgStationLetterService.getPersonalMsg(msgDTO);
+        return Result.success(pageResult);
     }
 
 
@@ -50,7 +53,7 @@ public class MsgRpc {
      * @return
      */
     @PostMapping("/sys")
-    public Result<PageResult<MsgPushRecord>> getSysMsg(@RequestBody MsgDTO msgDTO) {
+    public Result<List<MsgPushRecord>> getSysMsg(@RequestBody MsgDTO msgDTO) {
         return Result.success(iMsgPushRecordService.getSysMsg(msgDTO));
     }
 

@@ -8,6 +8,9 @@ import com.indo.admin.pojo.vo.MsgStationLetterVO;
 import com.indo.common.result.PageResult;
 import com.indo.user.pojo.dto.MsgStationLetterDTO;
 import com.indo.user.pojo.dto.StationLetterAddDTO;
+import com.indo.user.pojo.dto.StationLetterQueryDTO;
+
+import java.util.List;
 
 /**
  * <p>
@@ -21,10 +24,10 @@ public interface IMsgStationLetterService extends IService<MsgStationLetter> {
     /**
      * 分页查询
      *
-     * @param letterDTO
+     * @param queryDTO
      * @return
      */
-    Page<MsgStationLetterVO> queryList(MsgStationLetterDTO letterDTO);
+    Page<MsgStationLetterVO> queryList(StationLetterQueryDTO queryDTO);
 
     /**
      * 新增站内信
@@ -35,6 +38,6 @@ public interface IMsgStationLetterService extends IService<MsgStationLetter> {
     int add(StationLetterAddDTO letterDTO);
 
 
-    PageResult<MsgStationLetter> getPersonalMsg(MsgDTO msgDTO);
+    List<MsgStationLetter> getPersonalMsg(MsgDTO msgDTO);
 
 }

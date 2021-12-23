@@ -8,6 +8,9 @@ import com.indo.admin.pojo.vo.MsgPushRecordVO;
 import com.indo.common.result.PageResult;
 import com.indo.user.pojo.dto.MsgPushRecordDTO;
 import com.indo.user.pojo.dto.PushRecordAddDTO;
+import com.indo.user.pojo.dto.PushRecordQueryDTO;
+
+import java.util.List;
 
 /**
  * <p>
@@ -23,7 +26,7 @@ public interface IMsgPushRecordService extends IService<MsgPushRecord> {
      * @param pushRecordDTO
      * @return
      */
-    Page<MsgPushRecordVO> queryList(MsgPushRecordDTO pushRecordDTO);
+    Page<MsgPushRecordVO> queryList(PushRecordQueryDTO queryDTO);
 
     /**
      * 新增推送
@@ -33,5 +36,5 @@ public interface IMsgPushRecordService extends IService<MsgPushRecord> {
     void add(PushRecordAddDTO pushRecordAddDTO);
 
 
-    PageResult<MsgPushRecord> getSysMsg(MsgDTO msgDTO);
+    List<MsgPushRecord> getSysMsg(MsgDTO msgDTO);
 }

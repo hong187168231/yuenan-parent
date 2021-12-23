@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.indo.common.pojo.entity.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.models.auth.In;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -31,31 +32,31 @@ public class MemLevel extends BaseEntity {
     private Integer id;
 
     @ApiModelProperty(value = "会员等级")
-    private String level;
+    private Integer level;
 
     @ApiModelProperty(value = "所需存款")
-    private BigDecimal needDeposit;
+    private Integer needDeposit;
 
     @ApiModelProperty(value = "所需投注")
-    private BigDecimal needBet;
+    private Integer needBet;
 
     @ApiModelProperty(value = "晋级奖励")
-    private BigDecimal reward;
+    private Integer reward;
 
     @ApiModelProperty(value = "每日礼金")
-    private BigDecimal everydayGift;
+    private Integer everydayGift;
 
     @ApiModelProperty(value = "每周礼金")
-    private BigDecimal weekGift;
+    private Integer weekGift;
 
     @ApiModelProperty(value = "每月礼金")
-    private BigDecimal monthGift;
+    private Integer monthGift;
 
     @ApiModelProperty(value = "每年礼金")
-    private BigDecimal yearGift;
+    private Integer yearGift;
 
     @ApiModelProperty(value = "生日礼金")
-    private BigDecimal birthdayGift;
+    private Integer birthdayGift;
 
     @ApiModelProperty(value = "会员人数")
     private Integer memNum;

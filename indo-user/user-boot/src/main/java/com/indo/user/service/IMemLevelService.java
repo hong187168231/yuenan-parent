@@ -3,9 +3,7 @@ package com.indo.user.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.user.pojo.entity.MemLevel;
-import com.indo.user.pojo.vo.MemLevelVo;
-
-import java.util.List;
+import com.indo.user.pojo.vo.level.MemLevelVo;
 
 /**
  * <p>

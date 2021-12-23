@@ -23,7 +23,7 @@ import javax.annotation.Resource;
  * @author puff
  * @since 2021-08-26
  */
-@Api(tags = "用户等级接口")
+@Api(tags = {"用户等级接口"})
 @RestController
 @RequestMapping("/api/v1/memLevel")
 public class MemLevelController {

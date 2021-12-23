@@ -25,15 +25,6 @@ public class PushRecordAddDTO extends BaseDTO {
      * 推送终端: 0 全部 1 ios  2 android
      */
     @NotNull(message = "推送终端类型不能为空")
-    private Integer type;
+    private Integer deviceType;
 
-    /**
-     * 是否删除 0 未删除 1 删除
-     */
-    private Boolean isDel;
-
-    /**
-     * 备注
-     */
-    private String remark;
 }

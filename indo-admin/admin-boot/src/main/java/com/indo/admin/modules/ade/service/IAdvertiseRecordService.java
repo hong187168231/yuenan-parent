@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.indo.admin.pojo.entity.AdvertiseRecord;
 import com.indo.admin.pojo.vo.AdvertiseRecordVO;
 import com.indo.common.result.Result;
+import com.indo.user.pojo.dto.AdvertiseQueryDTO;
 import com.indo.user.pojo.dto.AdvertiseRecordDTO;
 
 import java.util.List;
@@ -23,7 +24,7 @@ public interface IAdvertiseRecordService extends IService<AdvertiseRecord> {
      * @param pushRecordDTO
      * @return
      */
-    Result<List<AdvertiseRecordVO>> queryList(AdvertiseRecordDTO pushRecordDTO);
+    Result<List<AdvertiseRecordVO>> queryList(AdvertiseQueryDTO pushRecordDTO);
 
     /**
      * 新增广告

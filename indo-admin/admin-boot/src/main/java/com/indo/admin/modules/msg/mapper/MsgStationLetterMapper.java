@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.pojo.entity.MsgStationLetter;
 import com.indo.admin.pojo.vo.MsgStationLetterVO;
 import com.indo.user.pojo.dto.MsgStationLetterDTO;
+import com.indo.user.pojo.dto.StationLetterQueryDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -25,5 +26,5 @@ public interface MsgStationLetterMapper extends BaseMapper<MsgStationLetter> {
      * @param
      * @return
      */
-    List<MsgStationLetterVO> queryList(@Param("page") Page<MsgStationLetterVO> page, @Param("dto") MsgStationLetterDTO dto);
+    List<MsgStationLetterVO> queryList(@Param("page") Page<MsgStationLetterVO> page, @Param("dto") StationLetterQueryDTO dto);
 }

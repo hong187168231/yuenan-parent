@@ -88,6 +88,14 @@ public class MemBaseinfoServiceImpl extends ServiceImpl<MemBaseinfoMapper, MemBa
     }
 
     @Override
+    public MemBaseDetailVO getMemBaseInfoByAccount(String account) {
+        MemBaseinfo memBaseinfo = baseMapper.selectOne(new QueryWrapper<MemBaseinfo>().lambda().eq(MemBaseinfo::getAccountNo, account));
+        MemBaseDetailVO memBaseDetailVO = new MemBaseDetailVO();
+        BeanUtils.copyProperties(memBaseinfo, memBaseDetailVO);
+        return memBaseDetailVO;
+    }
+
+    @Override
     public boolean editStatus(MemEditStatusReq req) {
         MemBaseinfo memBaseinfo = new MemBaseinfo();
         memBaseinfo.setId(req.getId());
@@ -105,6 +113,6 @@ public class MemBaseinfoServiceImpl extends ServiceImpl<MemBaseinfoMapper, MemBa
 
     @Override
     public List<Long> findIdListByCreateTime(Date date) {
-        return memBaseInfoMapper.findIdListByCreateTime(DateUtils.format(date,DateUtils.webFormat));
+        return memBaseInfoMapper.findIdListByCreateTime(DateUtils.format(date, DateUtils.webFormat));
     }
 }

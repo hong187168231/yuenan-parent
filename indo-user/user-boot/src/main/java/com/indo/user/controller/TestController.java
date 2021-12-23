@@ -39,11 +39,12 @@ public class TestController {
 
     @ApiOperation(value = "hello")
     @GetMapping("/hello")
+    @AllowAccess
     public String detail(@LoginUser LoginInfo loginInfo) {
         MemBaseinfo memBaseInfo = new MemBaseinfo();
         memBaseInfo.setAccountNo("dd");
         memBaseInfo.setBalance(new BigDecimal(2000));
-        redisUtils.set("dsd", memBaseInfo);
+        redisUtils.set("dsd", memBaseInfo, 60 * 60 * 24 * 7);
         return "ok";
     }
 

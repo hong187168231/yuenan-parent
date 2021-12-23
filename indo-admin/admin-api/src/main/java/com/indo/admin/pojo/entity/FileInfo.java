@@ -51,7 +51,6 @@ public class FileInfo extends Model<FileInfo> {
      * FileType字段
      */
     private String source;
-    @TableField(fill = FieldFill.INSERT)
     private Date createTime;
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private Date updateTime;

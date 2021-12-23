@@ -13,7 +13,7 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.util.IOUtils;
 import com.indo.admin.modules.file.properties.AwsS3Properties;
-import com.indo.admin.pojo.bo.ObjectInfo;
+import com.indo.common.pojo.bo.ObjectInfo;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,12 +45,12 @@ public class S3Template implements InitializingBean {
     public void afterPropertiesSet() {
         ClientConfiguration config = new ClientConfiguration();
         config.setProtocol(Protocol.HTTPS);//访问协议
-        AWSCredentials credentials = new BasicAWSCredentials("s3.getAccessKey()", "s3.getAccessKeySecret()");
+        AWSCredentials credentials = new BasicAWSCredentials(s3.getAccessKey(), s3.getAccessKeySecret());
 
         this.amazonS3 = AmazonS3Client.builder()
                 .withClientConfiguration(config)
                 .withCredentials(new AWSStaticCredentialsProvider(credentials))
-                .withRegion("s3.getRegion()")
+                .withRegion(s3.getRegion())
                 .disableChunkedEncoding()
                 .withPathStyleAccessEnabled(true)
                 .build();

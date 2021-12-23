@@ -29,7 +29,7 @@ import java.util.List;
  * @author kevin
  * @since 2021-10-23
  */
-@Api(tags = "会员基本信息接口")
+@Api(value="用户controller",tags={"会员基本信息接口"})
 @RestController
 @RequestMapping("/api/v1/memBaseinfo")
 public class MemBaseinfoController {

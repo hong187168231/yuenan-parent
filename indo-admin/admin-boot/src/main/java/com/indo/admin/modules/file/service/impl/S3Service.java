@@ -2,8 +2,8 @@ package com.indo.admin.modules.file.service.impl;
 
 import cn.hutool.core.util.StrUtil;
 import com.indo.admin.modules.file.template.S3Template;
-import com.indo.admin.pojo.bo.ObjectInfo;
 import com.indo.admin.pojo.entity.FileInfo;
+import com.indo.common.pojo.bo.ObjectInfo;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Service;

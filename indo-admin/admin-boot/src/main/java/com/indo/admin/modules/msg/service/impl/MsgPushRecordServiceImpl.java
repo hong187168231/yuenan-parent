@@ -9,8 +9,11 @@ import com.indo.admin.pojo.dto.MsgDTO;
 import com.indo.admin.pojo.entity.MsgPushRecord;
 import com.indo.admin.pojo.vo.MsgPushRecordVO;
 import com.indo.common.result.PageResult;
+import com.indo.common.web.util.JwtUtils;
 import com.indo.user.pojo.dto.MsgPushRecordDTO;
 import com.indo.user.pojo.dto.PushRecordAddDTO;
+import com.indo.user.pojo.dto.PushRecordQueryDTO;
+import org.elasticsearch.action.search.SearchTask;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,9 +35,9 @@ public class MsgPushRecordServiceImpl extends ServiceImpl<MsgPushRecordMapper, M
     private MsgPushRecordMapper pushRecordMapper;
 
     @Override
-    public Page<MsgPushRecordVO> queryList(MsgPushRecordDTO pushRecordDTO) {
-        Page<MsgPushRecordVO> page =  new Page<>(pushRecordDTO.getPage(), pushRecordDTO.getLimit());
-        List<MsgPushRecordVO> list = pushRecordMapper.queryList(page, pushRecordDTO);
+    public Page<MsgPushRecordVO> queryList(PushRecordQueryDTO queryDTO) {
+        Page<MsgPushRecordVO> page = new Page<>(queryDTO.getPage(), queryDTO.getLimit());
+        List<MsgPushRecordVO> list = pushRecordMapper.queryList(page, queryDTO);
         page.setRecords(list);
         return page;
     }
@@ -43,6 +46,7 @@ public class MsgPushRecordServiceImpl extends ServiceImpl<MsgPushRecordMapper, M
     public void add(PushRecordAddDTO pushRecordAddDTO) {
         // 向客户端推送 todo
         MsgPushRecord pushRecord = new MsgPushRecord();
+        pushRecord.setCreateUser(JwtUtils.getUsername());
         BeanUtils.copyProperties(pushRecordAddDTO, pushRecord);
         // 保存到记录表
         pushRecordMapper.insert(pushRecord);
@@ -50,11 +54,11 @@ public class MsgPushRecordServiceImpl extends ServiceImpl<MsgPushRecordMapper, M
 
 
     @Override
-    public PageResult<MsgPushRecord> getSysMsg(MsgDTO msgDTO) {
+    public List<MsgPushRecord> getSysMsg(MsgDTO msgDTO) {
         Page<MsgPushRecord> page = new Page<>(msgDTO.getPage(), msgDTO.getLimit());
         LambdaQueryWrapper<MsgPushRecord> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(MsgPushRecord::getDeviceType, msgDTO.getDeviceNo());
+        wrapper.eq(MsgPushRecord::getDeviceType, msgDTO.getDeviceType());
         Page<MsgPushRecord> pageList = baseMapper.selectPage(page, wrapper);
-        return PageResult.getPageResult(pageList);
+        return pageList.getRecords();
     }
 }

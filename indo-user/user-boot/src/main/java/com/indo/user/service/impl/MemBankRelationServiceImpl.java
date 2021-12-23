@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.indo.admin.pojo.entity.AdvertiseRecord;
 import com.indo.admin.pojo.vo.AdvertiseRecordVO;
+import com.indo.common.annotation.LoginUser;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.PageResult;
 import com.indo.common.web.util.DozerUtil;
@@ -43,9 +44,10 @@ public class MemBankRelationServiceImpl extends ServiceImpl<MemBankRelationMappe
     private DozerUtil dozerUtil;
 
     @Override
-    public void addBankCard(AddBankCardReq req) {
+    public void addBankCard(AddBankCardReq req, LoginInfo loginUser) {
         MemBankRelation memBankRelation = new MemBankRelation();
         BeanUtils.copyProperties(req, memBankRelation);
+        memBankRelation.setMemId(loginUser.getId());
         baseMapper.insert(memBankRelation);
     }
 

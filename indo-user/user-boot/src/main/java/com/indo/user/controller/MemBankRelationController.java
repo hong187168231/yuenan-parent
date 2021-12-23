@@ -43,8 +43,8 @@ public class MemBankRelationController {
 
     @ApiOperation(value = "添加银行卡", httpMethod = "POST")
     @PostMapping(value = "/add")
-    public Result addBankCard(@RequestBody AddBankCardReq req) {
-        memBankRelationService.addBankCard(req);
+    public Result addBankCard(@RequestBody AddBankCardReq req, @LoginUser LoginInfo loginUser) {
+        memBankRelationService.addBankCard(req, loginUser);
         return Result.success();
     }
 
@@ -55,8 +55,9 @@ public class MemBankRelationController {
     }
 
     @ApiOperation(value = "会员可绑定银行列表")
-    @GetMapping("/bankList")
-    public Result<List<PayBankVO>> bankList() {
+    @AllowAccess
+    @GetMapping("/bindList")
+    public Result<List<PayBankVO>> bindList() {
         return Result.success(iPayBankService.bankList());
     }
 

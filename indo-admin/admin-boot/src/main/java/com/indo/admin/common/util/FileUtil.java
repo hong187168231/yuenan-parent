@@ -29,7 +29,7 @@ public class FileUtil {
 		fileInfo.setContentType(file.getContentType());
 		fileInfo.setIsImg(fileInfo.getContentType().startsWith("image/"));
 		fileInfo.setSize(file.getSize());
-		fileInfo.setCreateTime(new Date());
+//		fileInfo.setCreateTime(new Date());
 		return fileInfo;
 	}
 

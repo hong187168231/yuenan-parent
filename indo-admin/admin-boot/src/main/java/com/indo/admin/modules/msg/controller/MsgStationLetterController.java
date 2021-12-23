@@ -6,6 +6,7 @@ import com.indo.admin.pojo.vo.MsgStationLetterVO;
 import com.indo.common.result.Result;
 import com.indo.user.pojo.dto.MsgStationLetterDTO;
 import com.indo.user.pojo.dto.StationLetterAddDTO;
+import com.indo.user.pojo.dto.StationLetterQueryDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -27,7 +28,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/stationLetter")
 @Slf4j
-@AllArgsConstructor
 public class MsgStationLetterController {
 
     @Autowired
@@ -35,8 +35,8 @@ public class MsgStationLetterController {
 
     @ApiOperation(value = "分页查询站内信")
     @GetMapping(value = "/list")
-    public Result<List<MsgStationLetterVO>> list(@RequestBody MsgStationLetterDTO letterDTO) {
-        Page relust = stationLetterService.queryList(letterDTO);
+    public Result<List<MsgStationLetterVO>> list(StationLetterQueryDTO queryDto) {
+        Page relust = stationLetterService.queryList(queryDto);
         return Result.success(relust.getRecords(), relust.getTotal());
     }
 

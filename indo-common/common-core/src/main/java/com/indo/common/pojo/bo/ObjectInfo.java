@@ -1,4 +1,4 @@
-package com.indo.admin.pojo.bo;
+package com.indo.common.pojo.bo;
 
 import lombok.Getter;
 import lombok.Setter;

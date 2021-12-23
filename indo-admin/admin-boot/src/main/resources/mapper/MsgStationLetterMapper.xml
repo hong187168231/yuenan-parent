@@ -3,17 +3,18 @@
 <mapper namespace="com.indo.admin.modules.msg.mapper.MsgStationLetterMapper">
 
     <resultMap id="SysStationLetter" type="com.indo.admin.pojo.entity.MsgStationLetter">
-        <id property="id" column="id" jdbcType="BIGINT"/>
-        <result property="title" column="title" jdbcType="VARCHAR"/>
-        <result property="content" column="content" jdbcType="VARCHAR"/>
-        <result property="sendMemId" column="send_mem_id" jdbcType="BIGINT"/>
-        <result property="sendType" column="send_type" jdbcType="INTEGER"/>
-        <result property="receiver" column="receiver" jdbcType="VARCHAR"/>
-        <result property="receiver" column="receiver" jdbcType="VARCHAR"/>
-        <result property="remark" column="remark" jdbcType="VARCHAR"/>
-        <result property="isDel" column="is_del" jdbcType="INTEGER"/>
-        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
-        <result  property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <id column="id" property="id"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="title" property="title"/>
+        <result column="content" property="content"/>
+        <result column="mem_id" property="memId"/>
+        <result column="receiver" property="receiver"/>
+        <result column="receiver_level" property="receiverLevel"/>
+        <result column="receive_pay_group" property="receivePayGroup"/>
+        <result column="send_type" property="sendType"/>
+        <result column="is_del" property="isDel"/>
+        <result column="remark" property="remark"/>
     </resultMap>
 
     <resultMap id="SysStationLetterVo" extends="SysStationLetter" type="com.indo.admin.pojo.vo.MsgStationLetterVO">
@@ -23,11 +24,11 @@
         SELECT *
         FROM msg_station_letter
         <where>
-            <if test="dto.receiverName !=null and dto.receiverName != ''">
-                and receiver_name like concat('%', #{dto.receiverName,jdbcType=VARCHAR}, '%')
+            <if test="dto.receiver !=null and dto.receiver != ''">
+                and receiver like concat('%', #{dto.receiver,jdbcType=VARCHAR}, '%')
             </if>
-            <if test="dto.beginTime != null and dto.beginTime != ''"><!-- 开始时间检索 -->
-                and date_format(create_time,'%y%m%d') &gt;= date_format(#{dto.beginTime},'%y%m%d')
+            <if test="dto.startTime != null and dto.startTime != ''"><!-- 开始时间检索 -->
+                and date_format(create_time,'%y%m%d') &gt;= date_format(#{dto.startTime},'%y%m%d')
             </if>
             <if test="dto.endTime != null and dto.endTime != ''"><!-- 结束时间检索 -->
                 and date_format(create_time,'%y%m%d') &lt;= date_format(#{dto.endTime},'%y%m%d')

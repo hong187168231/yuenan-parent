@@ -9,16 +9,19 @@ import com.indo.common.result.PageResult;
 import com.indo.common.result.Result;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+
+import java.util.List;
 
 @FeignClient(value = ServiceIdConstant.ADMIN_SERVICE_ID, fallback = MsgFeignFallback.class)
 public interface MsgFeignClient {
 
-    @GetMapping("/rpc/msg/personal")
-    Result<PageResult<MsgStationLetter>> getPersonalMsg(@RequestBody MsgDTO msgDTO);
+    @PostMapping("/rpc/msg/personal")
+    Result<List<MsgStationLetter>> getPersonalMsg(MsgDTO msgDTO);
 
-    @GetMapping("/rpc/msg/sys")
-    Result<PageResult<MsgPushRecord>> getSysMsg(@RequestBody MsgDTO msgDTO);
+    @PostMapping("/rpc/msg/sys")
+    Result<List<MsgPushRecord>> getSysMsg(MsgDTO msgDTO);
 
 
 }

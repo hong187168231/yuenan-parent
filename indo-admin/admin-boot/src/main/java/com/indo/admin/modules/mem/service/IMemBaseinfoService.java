@@ -25,6 +25,7 @@ import java.util.List;
 public interface IMemBaseinfoService extends IService<MemBaseinfo> {
     /**
      * 分页查询
+     *
      * @param memBaseInfoPageReq
      * @return
      */
@@ -32,6 +33,7 @@ public interface IMemBaseinfoService extends IService<MemBaseinfo> {
 
     /**
      * 后台新增会员
+     *
      * @param memAddReq
      * @return
      */
@@ -40,6 +42,7 @@ public interface IMemBaseinfoService extends IService<MemBaseinfo> {
 
     /**
      * 后台编辑会员
+     *
      * @param memEditReq
      * @return
      */
@@ -47,13 +50,19 @@ public interface IMemBaseinfoService extends IService<MemBaseinfo> {
 
     /**
      * 根据会员UID 查会员编辑详情
+     *
      * @param uid
      * @return
      */
     MemBaseDetailVO getMemBaseInfo(Long uid);
 
+
+    MemBaseDetailVO getMemBaseInfoByAccount(String account);
+
+
     /**
      * 根据会员UID 修改会员冻结状态
+     *
      * @param frozenStatusReq
      * @return
      */
@@ -61,6 +70,7 @@ public interface IMemBaseinfoService extends IService<MemBaseinfo> {
 
 
     boolean resetPassword(Long memId);
+
 
     List<Long> findIdListByCreateTime(Date addDay);
 

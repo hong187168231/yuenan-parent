@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.pojo.entity.MsgPushRecord;
 import com.indo.admin.pojo.vo.MsgPushRecordVO;
 import com.indo.user.pojo.dto.MsgPushRecordDTO;
+import com.indo.user.pojo.dto.PushRecordQueryDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -25,5 +26,5 @@ public interface MsgPushRecordMapper extends BaseMapper<MsgPushRecord> {
      * @param
      * @return
      */
-    List<MsgPushRecordVO> queryList(@Param("page") Page<MsgPushRecordVO> page, @Param("dto") MsgPushRecordDTO dto);
+    List<MsgPushRecordVO> queryList(@Param("page") Page<MsgPushRecordVO> page, @Param("dto") PushRecordQueryDTO dto);
 }

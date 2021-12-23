@@ -1,6 +1,7 @@
 package com.indo.user.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.indo.common.annotation.LoginUser;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.PageResult;
 import com.indo.user.pojo.entity.MemBank;
@@ -21,7 +22,7 @@ import java.util.List;
  */
 public interface IMemBankRelationService extends IService<MemBankRelation> {
 
-    void addBankCard(AddBankCardReq req);
+    void addBankCard(AddBankCardReq req,LoginInfo loginUser);
 
     List<MemBankVo> findPage(LoginInfo loginUser);
 

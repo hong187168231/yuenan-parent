@@ -1,23 +1,17 @@
 package com.indo.user.controller;
 
 
-import com.indo.common.annotation.AllowAccess;
 import com.indo.common.annotation.LoginUser;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
-import com.indo.user.pojo.entity.MemBank;
-import com.indo.user.pojo.entity.MemLevel;
-import com.indo.user.pojo.vo.MemLevelVo;
+import com.indo.user.pojo.vo.level.MemLevelVo;
 import com.indo.user.service.IMemLevelService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 /**
  * <p>

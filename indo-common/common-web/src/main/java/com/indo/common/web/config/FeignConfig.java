@@ -5,11 +5,14 @@ import feign.RequestInterceptor;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Scope;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.DispatcherServlet;
 
 import javax.servlet.http.HttpServletRequest;
+import java.beans.Encoder;
 import java.util.Enumeration;
 
 
@@ -57,5 +60,8 @@ public class FeignConfig {
             }
         };
     }
+
+
+//
 }
 

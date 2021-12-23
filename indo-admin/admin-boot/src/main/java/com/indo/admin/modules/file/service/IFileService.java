@@ -12,13 +12,13 @@ import java.util.Map;
  * 文件service
  *
  * @author 作者 owen E-mail: 624191343@qq.com
-*/
+ */
 public interface IFileService extends IService<FileInfo> {
-	FileInfo upload(MultipartFile file ) throws Exception;
-	
-	PageResult<FileInfo> findList(Map<String, Object> params);
+    FileInfo upload(MultipartFile file);
 
-	void delete(String id);
+    PageResult<FileInfo> findList(Map<String, Object> params);
 
-	void out(String id, OutputStream os);
+    void delete(String id);
+
+    void out(String id, OutputStream os);
 }

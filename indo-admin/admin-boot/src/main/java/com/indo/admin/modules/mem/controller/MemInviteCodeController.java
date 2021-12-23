@@ -7,6 +7,7 @@ import com.indo.admin.modules.mem.service.IMemInviteCodeService;
 import com.indo.admin.modules.mem.vo.MemInviteCodeVo;
 import com.indo.common.result.PageResult;
 import com.indo.common.result.Result;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,6 +25,7 @@ import java.util.List;
  * @author kevin
  * @since 2021-11-05
  */
+@Api(tags = {"邀请码管理"})
 @RestController
 @RequestMapping("/api/v1/mem/invite-code")
 public class MemInviteCodeController {

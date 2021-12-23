@@ -7,6 +7,7 @@ import com.indo.admin.pojo.vo.MsgPushRecordVO;
 import com.indo.common.result.Result;
 import com.indo.user.pojo.dto.MsgPushRecordDTO;
 import com.indo.user.pojo.dto.PushRecordAddDTO;
+import com.indo.user.pojo.dto.PushRecordQueryDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -36,8 +37,8 @@ public class MsgSysPushRecordController {
 
     @ApiOperation(value = "分页查询后台推送信息")
     @GetMapping(value = "/list")
-    public Result<List<MsgPushRecordVO>> list(MsgPushRecordDTO pushRecordDTO) {
-        Page result = pushRecordService.queryList(pushRecordDTO);
+    public Result<List<MsgPushRecordVO>> list(PushRecordQueryDTO queryDTO) {
+        Page result = pushRecordService.queryList(queryDTO);
         return Result.success(result.getRecords(), result.getTotal());
     }
 
