@@ -79,7 +79,7 @@ public class Txns {
     @ApiModelProperty(value = "请依据此参数来决定结算方法")
     private String settleType;
 
-//- 2 Void game 游戏无效、现场操作问题等
+    //- 2 Void game 游戏无效、现场操作问题等
 //- 9 Cheat (hide in the report) 有作弊 (不会呈现在后台报表)
     @ApiModelProperty(value = "标示无效的原因")
     private String voidType;
