@@ -126,6 +126,13 @@
             <version>${indo.version}</version>
         </dependency>
 
+        <!--游戏api-->
+        <dependency>
+            <groupId>com.indo</groupId>
+            <artifactId>game-api</artifactId>
+            <version>${indo.version}</version>
+        </dependency>
+
         <!--用户api-->
         <dependency>
             <groupId>com.indo</groupId>

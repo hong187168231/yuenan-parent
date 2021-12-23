@@ -1,4 +1,4 @@
-package com.indo.game.mapper.manage;
+package com.indo.admin.modules.game.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.indo.game.pojo.entity.manage.GameCurrencyType;

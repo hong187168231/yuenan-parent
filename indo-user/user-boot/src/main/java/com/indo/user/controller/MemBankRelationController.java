@@ -48,8 +48,8 @@ public class MemBankRelationController {
         return Result.success();
     }
 
-    @ApiOperation(value = "查询个人银行卡列表", httpMethod = "POST")
-    @PostMapping(value = "/list")
+    @ApiOperation(value = "查询个人银行卡列表", httpMethod = "GET")
+    @GetMapping(value = "/list")
     public Result<List<MemBankVo>> findPage(@LoginUser LoginInfo loginUser) {
         return Result.success(memBankRelationService.findPage(loginUser));
     }

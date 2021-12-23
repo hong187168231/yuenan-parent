@@ -31,6 +31,9 @@ public class MemBankVo {
     @ApiModelProperty(value = "银行id")
     private Long bankId;
 
+    @ApiModelProperty(value = "银行名称")
+    private String bankName;
+
     @ApiModelProperty(value = "银行卡号")
     private String bankCardNo;
 
