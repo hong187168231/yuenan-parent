@@ -63,4 +63,7 @@ public class GamePlatform extends BaseEntity {
     @ApiModelProperty(value = "总平台名称")
     private String parentName;
 
+    @ApiModelProperty(value = "排序序号")
+    private int sortNumber;
+
 }

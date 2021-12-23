@@ -1,10 +1,10 @@
-package com.indo.game.controller.manage;
+package com.indo.game.controller.frontend;
 
 import com.indo.common.annotation.AllowAccess;
 import com.indo.common.result.Result;
 import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.pojo.entity.manage.*;
-import com.indo.game.service.manage.IGameManageService;
+import com.indo.game.service.frontend.IFrontEndGameManageService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -27,27 +27,27 @@ import java.util.List;
 public class FrontEndGameManageController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
-    private IGameManageService iGameManageService;
+    private IFrontEndGameManageService iFrontEndGameManageService;
 
     @ApiOperation(value = "查询所有游戏类别", httpMethod = "GET")
     @GetMapping(value = "/allGameCategory")
     @AllowAccess
     public Result<GameCategory> queryAllGameCategory(){
-        return iGameManageService.queryAllGameCategory();
+        return iFrontEndGameManageService.queryAllGameCategory();
     }
 
     @ApiOperation(value = "查询所有游戏平台", httpMethod = "GET")
     @GetMapping(value = "/queryAllGamePlatform")
     @AllowAccess
     public Result<List<GamePlatform>> queryAllGamePlatform(){
-        return iGameManageService.queryAllGamePlatform();
+        return iFrontEndGameManageService.queryAllGamePlatform();
     }
 
     @ApiOperation(value = "查询热门游戏平台", httpMethod = "GET")
     @GetMapping(value = "/queryHotGamePlatform")
     @AllowAccess
     public Result<List<GamePlatform>> queryHotGamePlatform(){
-        return iGameManageService.queryHotGamePlatform();
+        return iFrontEndGameManageService.queryHotGamePlatform();
     }
 
     @ApiOperation(value = "依据类别查询游戏平台", httpMethod = "GET")
@@ -55,7 +55,8 @@ public class FrontEndGameManageController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "categoryId", value = "游戏类别ID ", paramType = "query", dataType = "int", required = true)
     })
+    @AllowAccess
     public Result<List<GamePlatform>> queryGamePlatformByCategory(@RequestParam("categoryId") Long categoryId){
-        return iGameManageService.queryGamePlatformByCategory(categoryId);
+        return iFrontEndGameManageService.queryGamePlatformByCategory(categoryId);
     }
 }

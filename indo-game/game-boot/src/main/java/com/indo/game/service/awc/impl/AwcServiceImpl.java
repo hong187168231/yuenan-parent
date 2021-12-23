@@ -69,7 +69,10 @@ public class AwcServiceImpl implements AwcService {
             return Result.failed(MessageUtils.get("tgocinyo"));
         }
         //初次判断站点棋牌余额是否够该用户
-        MemBaseinfo memBaseinfo = gameCommonService.getMemBaseInfo(loginUser.getId().toString());
+        MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(loginUser.getAccountNo());
+        if (null==memBaseinfo){
+            return Result.failed(loginUser.getAccountNo()+"用户不存在");
+        }
         BigDecimal balance = memBaseinfo.getBalance();
         //验证站点棋牌余额
         if (null==balance || BigDecimal.ZERO==balance) {
@@ -81,15 +84,15 @@ public class AwcServiceImpl implements AwcService {
         try {
 
             // 验证且绑定（KY-CPT第三方会员关系）
-            CptOpenMember cptOpenMember = externalService.getCptOpenMember(loginUser.getId().intValue(), platform);
+            CptOpenMember cptOpenMember = externalService.getCptOpenMember(loginUser.getId().intValue(), "AWC");
             if (cptOpenMember == null) {
                 cptOpenMember = new CptOpenMember();
                 cptOpenMember.setUserId(loginUser.getId().intValue());
-                cptOpenMember.setUserName(loginUser.getAccount());
-                cptOpenMember.setPassword(loginUser.getAccount());
+                cptOpenMember.setUserName(loginUser.getAccountNo());
+                cptOpenMember.setPassword(loginUser.getAccountNo());
                 cptOpenMember.setCreateTime(new Date());
                 cptOpenMember.setLoginTime(new Date());
-                cptOpenMember.setType(platform);
+                cptOpenMember.setType("AWC");
                 //创建玩家
                 return createMemberGame(gamePlatform, ip, cptOpenMember,isMobileLogin);
             } else {
@@ -109,9 +112,9 @@ public class AwcServiceImpl implements AwcService {
     /**
      * AE真人、SV388斗鸡游戏 强迫登出玩家
      */
-    public Result logout(LoginInfo loginUser,String ip,String userIds){
+    public Result logout(LoginInfo loginUser,String ip){
         Map<String, String> trr = new HashMap<>();
-        trr.put("userId", userIds);
+        trr.put("userIds", loginUser.getAccountNo());
 
         AwcApiResponseData awcApiResponseData = null;
         try {
