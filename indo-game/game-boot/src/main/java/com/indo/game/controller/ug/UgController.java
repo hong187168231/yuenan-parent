@@ -10,6 +10,8 @@ import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.common.util.IpUtil;
 import com.indo.game.service.ug.UgService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,13 +23,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.concurrent.TimeUnit;
 
 @RestController
-@RequestMapping("/ug")
+@RequestMapping("/api/v1/games/ug")
 @Slf4j
 @AllArgsConstructor
 @Api(tags = "UG Sports登录并初始化用户游戏账号")
@@ -45,8 +48,11 @@ public class UgController {
      */
     @ApiOperation(value = "UG Sports登录并初始化用户游戏账号", httpMethod = "POST")
     @PostMapping("/initGame")
-    @AllowAccess
-    public Result initGame(@LoginUser LoginInfo loginUser, String platform, HttpServletRequest request) throws InterruptedException {
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "platform", value = "平台 ", paramType = "query", dataType = "string", required = true)
+    })
+    public Result initGame(@LoginUser LoginInfo loginUser, @RequestParam("gameCode") String platform,
+                           HttpServletRequest request) throws InterruptedException {
         logger.info("uglog {} initGame 进入游戏。。。loginUser:{}", loginUser.getId(), loginUser);
         String params = "";
         if (loginUser == null || StringUtils.isBlank(loginUser.getNickName())) {
@@ -57,7 +63,7 @@ public class UgController {
         try {
             if (res) {
                 String ip = IpUtil.getIpAddr(request);
-                Result resultInfo = ugService.ugGame(loginUser,  ip, platform);
+                Result resultInfo = ugService.ugGame(loginUser, ip, platform);
                 if (resultInfo == null) {
                     logger.info("uglog {} initGame result is null. params:{},ip:{}", loginUser.getId(), params, ip);
                     return Result.failed(MessageUtils.get("networktimeout"));
