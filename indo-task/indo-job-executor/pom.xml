@@ -73,10 +73,10 @@
             <artifactId>common-redis</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>com.indo</groupId>
-            <artifactId>common-log</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.indo</groupId>-->
+<!--            <artifactId>common-log</artifactId>-->
+<!--        </dependency>-->
 
     </dependencies>
 
