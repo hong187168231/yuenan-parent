@@ -1,0 +1,1988 @@
+
+SET NAMES utf8mb4;
+SET FOREIGN_KEY_CHECKS = 0;
+
+/*INSERT INTO `bd_user`(`accno`, `bdusername`, `phoneno`,`wechat`, `email`, `is_delete`,`create_user`, `update_user`) VALUES ('28883d4a8d584128a9443111ac0c93fe', '后台管理员', '13800000001', '15800000001', '', 0, '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+
+INSERT INTO `mem_login` (accno, acclogin, logintype,`password`, passwordmd5, paypassword,accstatus, lastlogindate, loginnum,clintipadd)VALUES ('28883d4a8d584128a9443111ac0c93fe', 'superadmin', 8, '96e79218965eb72c92a549dd5a330112', '96e79218965eb72c92a549dd5a330112', NULL, 1, '2020-03-20 17:35:08', 145, '103.73.164.37');
+*/
+
+INSERT INTO `sys_roleinfo`(`sysroleid`, `sysrolename`, `sysrolestatus`) VALUES (1, '超级系统管理员', 0);
+
+INSERT INTO `sys_whitelist` (syscode,sysname,ipaddress,status,remark,is_delete,create_user,update_user)VALUES ( 'live-manage', '后台管理系统', '103.114.91.101', 0, NULL, b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_whitelist` (syscode,sysname,ipaddress,status,remark,is_delete,create_user,update_user)VALUES ( 'live-manage', '后台管理系统', '180.191.103.87', 0, NULL, b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_whitelist` (syscode,sysname,ipaddress,status,remark,is_delete,create_user,update_user)VALUES ( 'live-manage', '后台管理系统', '119.123.29.86', 0, NULL, b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+
+INSERT INTO `sys_busparameter` (busparamcode, pbusparamcode, busparamname,remark, `status`, sortby,is_delete, create_user,update_user)VALUES ( 'mobileprefix', '', '手机号前缀', '', 0, 0, b'0', '', 'ede0f9179a184576bcb2c242b8eae451' );
+INSERT INTO `sys_busparameter` (busparamcode, pbusparamcode, busparamname,remark, `status`, sortby,is_delete, create_user,update_user)VALUES ( '86', 'mobileprefix', '中国大陆', '2', 0, 0, b'0', NULL, '1');
+INSERT INTO `sys_busparameter` (busparamcode, pbusparamcode, busparamname,remark, `status`, sortby,is_delete, create_user,update_user)VALUES ( 'banklist', '', '开户银行', '支付、提现开户银行', 0, 0, b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6' );
+INSERT INTO `sys_busparameter` (busparamcode, pbusparamcode, busparamname,remark, `status`, sortby,is_delete, create_user,update_user)VALUES ('ICBC', 'banklist', '工商银行', '', 0, 0, b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6' );
+INSERT INTO `sys_busparameter` (busparamcode, pbusparamcode, busparamname,remark, `status`, sortby,is_delete, create_user,update_user)VALUES ( 'CCB', 'banklist', '建设银行', '', 0, 0, b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6' );
+INSERT INTO `sys_busparameter` (busparamcode, pbusparamcode, busparamname,remark, `status`, sortby,is_delete, create_user,update_user)VALUES ( 'ABC', 'banklist', '农业银行', '', 0, 0, b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_busparameter` (busparamcode, pbusparamcode, busparamname,remark, `status`, sortby,is_delete, create_user,update_user)VALUES ('PSBS', 'banklist', '邮政储蓄银行', '', 0, 0, b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_busparameter` (busparamcode, pbusparamcode, busparamname,remark, `status`, sortby,is_delete, create_user,update_user)VALUES ( 'BOC', 'banklist', '中国银行', '', 0, 0, b'0',  '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_busparameter` (busparamcode, pbusparamcode, busparamname,remark, `status`, sortby,is_delete, create_user,update_user)VALUES ( 'BOCO', 'banklist', '交通银行', '', 0, 0, b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_busparameter` (busparamcode, pbusparamcode, busparamname,remark, `status`, sortby,is_delete, create_user,update_user)VALUES ( 'CMB', 'banklist', '招商银行', '', 0, 0, b'0',  '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_busparameter` (busparamcode, pbusparamcode, busparamname,remark, `status`, sortby,is_delete, create_user,update_user)VALUES ( 'CEB', 'banklist', '广大银行', '', 0, 0, b'0',  '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_busparameter` (busparamcode, pbusparamcode, busparamname,remark, `status`, sortby,is_delete, create_user,update_user)VALUES ( 'CIB', 'banklist', '兴业银行', '', 0, 0, b'0',  '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_busparameter` (busparamcode, pbusparamcode, busparamname,remark, `status`, sortby,is_delete, create_user,update_user)VALUES ( 'CMBC', 'banklist', '民生银行', '', 0, 0, b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_busparameter` (busparamcode, pbusparamcode, busparamname,remark, `status`, sortby,is_delete, create_user,update_user)VALUES ( 'BCCB', 'banklist', '北京银行', '', 0, 0, b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_busparameter` (busparamcode, pbusparamcode, busparamname,remark, `status`, sortby,is_delete, create_user,update_user)VALUES ( 'CTTIC', 'banklist', '中信银行', '', 0, 0, b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_busparameter` (busparamcode, pbusparamcode, busparamname,remark, `status`, sortby,is_delete, create_user,update_user)VALUES ( 'GDB', 'banklist', '广东发展银行', '', 0, 0, b'0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_busparameter` (busparamcode, pbusparamcode, busparamname,remark, `status`, sortby,is_delete, create_user,update_user)VALUES ('SDB', 'banklist', '深圳发展银行', '', 0, 0, b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_busparameter` (busparamcode, pbusparamcode, busparamname,remark, `status`, sortby,is_delete, create_user,update_user)VALUES ( 'SPDB', 'banklist', '浦东发展银行', '', 0, 0, b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_busparameter` (busparamcode, pbusparamcode, busparamname,remark, `status`, sortby,is_delete, create_user,update_user)VALUES ( 'PINGANBANK', 'banklist', '平安银行', '', 0, 0, b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_busparameter` (busparamcode, pbusparamcode, busparamname,remark, `status`, sortby,is_delete, create_user,update_user)VALUES ( 'HXB', 'banklist', '华夏银行', '', 0, 0, b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_busparameter` (busparamcode, pbusparamcode, busparamname,remark, `status`, sortby,is_delete, create_user,update_user)VALUES ( 'SHB', 'banklist', '上海银行', '', 0, 0, b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_busparameter` (busparamcode, pbusparamcode, busparamname,remark, `status`, sortby,is_delete, create_user,update_user)VALUES ( 'CBHB', 'banklist', '渤海银行', '', 0, 0, b'0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_busparameter` (busparamcode, pbusparamcode, busparamname,remark, `status`, sortby,is_delete, create_user,update_user)VALUES ( 'HKBEA', 'banklist', '东亚银行', '', 0, 0, b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_busparameter` (busparamcode, pbusparamcode, busparamname,remark, `status`, sortby,is_delete, create_user,update_user)VALUES ( 'NBCB', 'banklist', '宁波银行', '', 0, 0, b'0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_busparameter` (busparamcode, pbusparamcode, busparamname,remark, `status`, sortby,is_delete, create_user,update_user)VALUES ( 'CZB', 'banklist', '浙商银行', '', 0, 0, b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_busparameter` (busparamcode, pbusparamcode, busparamname,remark, `status`, sortby,is_delete, create_user,update_user)VALUES ('NJCB', 'banklist', '南京银行', '', 0, 0, b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_busparameter` (busparamcode, pbusparamcode, busparamname,remark, `status`, sortby,is_delete, create_user,update_user)VALUES ( 'HZCB', 'banklist', '杭州银行', '', 0, 0, b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_busparameter` (busparamcode, pbusparamcode, busparamname,remark, `status`, sortby,is_delete, create_user,update_user)VALUES ('BJRCB', 'banklist', '北京农村商业银行', '', 0, 0, b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_busparameter` (busparamcode, pbusparamcode, busparamname,remark, `status`, sortby,is_delete, create_user,update_user)VALUES ( 'SRCB', 'banklist', '上海农商银行', '', 0, 0, b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_busparameter` (busparamcode, pbusparamcode, busparamname,remark, `status`, sortby,is_delete, create_user,update_user)VALUES ( 'lottery_ticket', '', '彩种', '彩种', 0, 0, b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_busparameter` (busparamcode, pbusparamcode, busparamname,remark, `status`, sortby,is_delete, create_user,update_user)VALUES ( 'big_lottery', 'lottery_ticket', '大乐透', '大乐透', 0, 0, b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_busparameter` (busparamcode, pbusparamcode, busparamname,remark, `status`, sortby,is_delete, create_user,update_user)VALUES ( 'two_color_ball', 'lottery_ticket', '双色球', '双色球', 0, 0, b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_busparameter` (busparamcode, pbusparamcode, busparamname,remark, `status`, sortby,is_delete, create_user,update_user)VALUES ( 'yi_cai_yun', 'lottery_ticket', '易彩云', '易彩云', 0, 0, b'0', '28883d4a8d584128a9443111ac0c93fe', '28883d4a8d584128a9443111ac0c93fe');
+INSERT INTO `sys_busparameter` (busparamcode, pbusparamcode, busparamname,remark, `status`, sortby,is_delete, create_user,update_user)VALUES ('third_pay_merchants', '', '第三方支付商家', '第三方支付商家', 0, 0, b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_busparameter` (busparamcode, pbusparamcode, busparamname,remark, `status`, sortby,is_delete, create_user,update_user)VALUES ('niuniu', 'third_pay_merchants', '牛牛', '商家支付-牛牛', 0, 0, b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_busparameter` (busparamcode, pbusparamcode, busparamname,remark, `status`, sortby,is_delete, create_user,update_user)VALUES ('gongzhufu', 'third_pay_merchants', '公主', '商家支付-公主', 0, 0, b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_busparameter` (busparamcode, pbusparamcode, busparamname,remark, `status`, sortby,is_delete, create_user,update_user)VALUES ( 'newbiaobai', 'third_pay_merchants', '喷射', '商家支付-喷射', 9, 0, b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+
+
+/*INSERT INTO `sys_cdn` (cdnstore, `domain`, secretkey,domainkind, region, cname,note, `status`, is_delete,create_user, update_user)VALUES ( 'S3图片', 'http://pic.sancif.cn', '6fb7b7667cdd4151dd69dd51b5', 7, '中国', '', '正式环境s3图片桶(http://sancif.cn/)', 0, b'0', NULL,  NULL);
+INSERT INTO `sys_cdn` (cdnstore, `domain`, secretkey,domainkind, region, cname,note, `status`, is_delete,create_user,  update_user)VALUES ('S3视频', 'http://db.sancif.cn', '43e4878062ef429b62dd42718e', 6, '中国', '', '正式环境s3视频桶(http://sancif.cn/)', 0, b'0', NULL,  NULL);
+INSERT INTO `sys_cdn` (cdnstore, `domain`, secretkey, domainkind, region, cname, note, `status`, is_delete, create_user, update_user)VALUES ( 'h5彩票', '', '54k22d3s4i4o25g353l5', 8, '南方', '', 'H5彩票', 0, b'0', NULL,  NULL );
+INSERT INTO `sys_cdn` (cdnstore, `domain`, secretkey,domainkind, region, cname,note, `status`, is_delete,create_user,  update_user)VALUES ( 'app接口', '', 'Ts5E5Io29dV4dk4gD4S5kD', 0, '南方', '', 'app接口', 0, b'0', '8bd082bedada4454ac5f5f3a32133888',  '8bd082bedada4454ac5f5f3a32133888');
+INSERT INTO `sys_cdn` (cdnstore, `domain`, secretkey,domainkind, region, cname,note, `status`, is_delete,create_user,  update_user)VALUES ( 'h5个人中心支付', '', '8d6k3iof10v9F9E434fsr432394jfks', 10, '南方', '', 'h5个人中心支付', 0, b'0', '28883d4a8d584128a9443111ac0c93fe',  '735e5947c01c4d6fa98d45f3638e97b0');
+INSERT INTO `sys_cdn` (cdnstore, `domain`, secretkey,domainkind, region, cname,note, `status`, is_delete,create_user,  update_user)VALUES ( 'h5彩票', '', 'T4ke2323D4oe2V323kd30dg3fv', 8, '北方', '', 'H5彩票', 0, b'0', NULL, NULL );
+INSERT INTO `sys_cdn` (cdnstore, `domain`, secretkey,domainkind, region, cname,note, `status`, is_delete,create_user,  update_user)VALUES ( 'app接口', '', '8Df4E93K439F1oF4G0E2dP3e3D5F2', 0, '北方', '', 'app接口', 0, b'0', '8bd082bedada4454ac5f5f3a32133888','8bd082bedada4454ac5f5f3a32133888');
+INSERT INTO `sys_cdn` (cdnstore, `domain`, secretkey, domainkind, region, cname, note, `status`, is_delete, create_user, update_user)VALUES ('h5个人中心支付', '', '8d6k3iof10v9F9E434fsr432394jfks', 10, '北方', '', 'h5个人中心支付', 0, b'0', '28883d4a8d584128a9443111ac0c93fe', '735e5947c01c4d6fa98d45f3638e97b0');
+*/
+
+/*Duplicate entry '1' for key 'PRIMARY'
+*/
+
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (1, NULL, 'live-manage', 'menu', '系统首页', 0, '/Home', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (2, NULL, 'live-manage', 'menu', '资源发布', 0, '/Resource', b'1', '065d4aed0b4a47bc9406d39ae182g3e6', 'a60534baa8e9496abf9554af3ffb1ac7');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (3, NULL, 'live-manage', 'menu', '直播管理', 0, '/Live', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (4, NULL, 'live-manage', 'menu', '广告管理', 0, '/Ad', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (5, NULL, 'live-manage', 'menu', '标签管理', 0, '/Title', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (6, NULL, 'live-manage', 'menu', '审核管理', 0, '/Review', b'1', '065d4aed0b4a47bc9406d39ae182g3e6', 'a60534baa8e9496abf9554af3ffb1ac7');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (7, NULL, 'live-manage', 'menu', '财务管理', 0, '/Finance', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (8, NULL, 'live-manage', 'menu', '彩票游戏管理', 0, '/Game', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (9, NULL, 'live-manage', 'menu', '注单管理', 0, '/Note', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (10, NULL, 'live-manage', 'menu', '圈子管理', 0, '/Circle', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (11, NULL, 'live-manage', 'menu', '三方游戏管理', 0, '/PartyGame', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (12, NULL, 'live-manage', 'menu', '大神计划', 0, '/Plan', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (13, NULL, 'live-manage', 'menu', '用户管理', 0, '/User', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (14, NULL, 'live-manage', 'menu', '权限管理', 0, '/Auth', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (15, NULL, 'live-manage', 'menu', '系统管理', 0, '/System', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (16, 2, 'live-manage', 'menu', '发布短视讯', 0, '/ShortVideoAdd', b'1', '065d4aed0b4a47bc9406d39ae182g3e6', 'a60534baa8e9496abf9554af3ffb1ac7');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (17, 2, 'live-manage', 'menu', '短视讯管理', 0, '/ShortVideos', b'1', '065d4aed0b4a47bc9406d39ae182g3e6', 'a60534baa8e9496abf9554af3ffb1ac7');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (18, 17, 'live-manage', 'button', '短视讯删除', 0, 'Delete', b'1', '065d4aed0b4a47bc9406d39ae182g3e6', 'a60534baa8e9496abf9554af3ffb1ac7');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (19, 17, 'live-manage', 'button', '短视讯编辑', 0, 'Update', b'1', '065d4aed0b4a47bc9406d39ae182g3e6', 'a60534baa8e9496abf9554af3ffb1ac7');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (20, 17, 'live-manage', 'button', '发布短视讯', 0, 'Detail', b'1', '065d4aed0b4a47bc9406d39ae182g3e6', 'a60534baa8e9496abf9554af3ffb1ac7');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (21, 3, 'live-manage', 'menu', '直播管理', 0, '/Studio', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (22, 3, 'live-manage', 'button', '频道管理', 0, '/Channe', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (23, 3, 'live-manage', 'button', '礼物管理', 0, '/Gift', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (24, 21, 'live-manage', 'button', '直播间详情', 0, 'Manage', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (25, 21, 'live-manage', 'button', '直播间编辑', 0, 'Update', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (26, 22, 'live-manage', 'button', '频道删除', 0, 'Delete', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (27, 22, 'live-manage', 'button', '频道保存', 0, 'Create', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (28, 22, 'live-manage', 'button', '频道编辑', 0, 'Update', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (29, 23, 'live-manage', 'button', '礼物保存', 0, 'Create', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (30, 23, 'live-manage', 'button', '礼物删除', 0, 'Delete', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (31, 23, 'live-manage', 'button', '礼物编辑', 0, 'Update', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (32, 4, 'live-manage', 'menu', '广告位管理', 0, '/AdLoction', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (33, 4, 'live-manage', 'menu', '广告客户管理', 0, '/AdClients', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (34, 32, 'live-manage', 'button', '创建广告位', 0, 'Create', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (35, 32, 'live-manage', 'button', '广告列表管理', 0, 'Manage', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (36, 32, 'live-manage', 'button', '广告位删除', 0, 'Delete', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (37, 32, 'live-manage', 'button', '广告位编辑', 0, 'Update', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (38, 33, 'live-manage', 'button', '创建广告客户', 0, 'Create', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (39, 33, 'live-manage', 'button', '广告客户编辑  ', 0, 'Update', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (40, 33, 'live-manage', 'button', '广告客户删除', 0, 'Delete', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (41, 5, 'live-manage', 'menu', '话题管理', 0, '/Topics', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (42, 5, 'live-manage', 'menu', '标签管理', 0, '/Tags', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (43, 42, 'live-manage', 'button', '标签删除', 0, 'Delete', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (44, 42, 'live-manage', 'button', '标签编辑', 0, 'Update', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (45, 42, 'live-manage', 'button', '标签保存', 0, 'Create', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (46, 41, 'live-manage', 'button', '话题删除', 0, 'Delete', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (47, 41, 'live-manage', 'button', '话题编辑', 0, 'Update', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (48, 41, 'live-manage', 'button', '话题保存  ', 0, 'Create', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (49, 6, 'live-manage', 'menu', '短视讯审核', 0, '/Review-ShortVideos', b'1', '065d4aed0b4a47bc9406d39ae182g3e6', 'a60534baa8e9496abf9554af3ffb1ac7');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (50, 6, 'live-manage', 'menu', '主播审核', 0, '/Review-Streamer', b'1', '065d4aed0b4a47bc9406d39ae182g3e6', 'a60534baa8e9496abf9554af3ffb1ac7');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (51, 49, 'live-manage', 'button', '短视讯审核操作', 0, 'Apply', b'1', '065d4aed0b4a47bc9406d39ae182g3e6', 'a60534baa8e9496abf9554af3ffb1ac7');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (52, 50, 'live-manage', 'button', '主播审核操作', 0, 'Apply', b'1', '065d4aed0b4a47bc9406d39ae182g3e6', 'a60534baa8e9496abf9554af3ffb1ac7');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (53, 7, 'live-manage', 'menu', '公司入款订单', 0, '/Finance-Companye-Orders', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (54, 7, 'live-manage', 'menu', '线上入款订单', 0, '/Finance-Online-Orders', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (55, 7, 'live-manage', 'menu', '公司入款设定', 0, '/Finance-Companye-Income', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (56, 7, 'live-manage', 'menu', '线上入款设定', 0, '/Finance-Online-Income', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (57, 7, 'live-manage', 'menu', '出帐订单管理', 0, '/Finance-Incarnate-Order', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (58, 7, 'live-manage', 'menu', '家族提现订单', 0, '/Finance-Family-Orders', b'1', '065d4aed0b4a47bc9406d39ae182g3e6', 'a60534baa8e9496abf9554af3ffb1ac7');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (59, 7, 'live-manage', 'menu', '支付商管理', 0, '/Finance-Payers', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (60, 7, 'live-manage', 'menu', '支付设定  ', 0, '/Finance-PaySettings', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (61, 53, 'live-manage', 'button', '公司入款订单处理', 0, 'Apply', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (62, 53, 'live-manage', 'button', '公司入款订单查看', 0, 'Detail', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (63, 54, 'live-manage', 'button', '线上入款订单处理', 0, 'Apply', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (64, 54, 'live-manage', 'button', '线上入款订单查看', 0, 'Detail', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (65, 55, 'live-manage', 'button', '公司入款设定新增', 0, 'Create', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (66, 55, 'live-manage', 'button', '公司入款设定编辑', 0, 'Update', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (67, 55, 'live-manage', 'button', '公司入款设定删除', 0, 'Delete', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (68, 55, 'live-manage', 'button', '公司入款设定禁用启用', 0, 'Status', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (69, 56, 'live-manage', 'button', '线上入款设定新增', 0, 'Create', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (70, 56, 'live-manage', 'button', '线上入款设定编辑', 0, 'Update', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (71, 56, 'live-manage', 'button', '线上入款设定删除', 0, 'Delete', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (72, 56, 'live-manage', 'button', '线上入款设定禁用启用', 0, 'Status', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (73, 57, 'live-manage', 'button', '出账订单查看', 0, 'Detail', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', 'a60534baa8e9496abf9554af3ffb1ac7');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (74, 57, 'live-manage', 'button', '出账订单确认', 0, 'Subordinate', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', 'a60534baa8e9496abf9554af3ffb1ac7');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (75, 57, 'live-manage', 'button', '出账订单取消', 0, 'Refresh', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', 'a60534baa8e9496abf9554af3ffb1ac7');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (76, 57, 'live-manage', 'button', '出账订单处理', 0, 'Apply', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', 'a60534baa8e9496abf9554af3ffb1ac7');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (77, 58, 'live-manage', 'button', '家族长提现处理', 0, 'Process', b'1', '065d4aed0b4a47bc9406d39ae182g3e6', 'a60534baa8e9496abf9554af3ffb1ac7');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (78, 58, 'live-manage', 'button', '家族长提现结算', 0, 'Settle', b'1', '065d4aed0b4a47bc9406d39ae182g3e6', 'a60534baa8e9496abf9554af3ffb1ac7');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (79, 59, 'live-manage', 'button', '支付商定新增', 0, 'Create', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (80, 59, 'live-manage', 'button', '支付商编辑', 0, 'Update', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (81, 59, 'live-manage', 'button', '支付商删除', 0, 'Delete', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (82, 59, 'live-manage', 'button', '支付商禁用启用', 0, 'Status', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (83, 60, 'live-manage', 'button', '支付设定新增', 0, 'Create', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (84, 60, 'live-manage', 'button', '支付设定编辑', 0, 'Update', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (85, 60, 'live-manage', 'button', '支付设定删除', 0, 'Delete', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (86, 60, 'live-manage', 'button', '支付设定禁用启用', 0, 'Status', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (87, 60, 'live-manage', 'button', '支付设定禁用查看', 0, 'Detail', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (88, 8, 'live-manage', 'menu', '彩种管理', 0, '/Games', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (89, 8, 'live-manage', 'menu', '彩种分类', 0, '/Gamer-Sort', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (90, 8, 'live-manage', 'menu', '杀号配置', 0, '/Game-Kill', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (91, 8, 'live-manage', 'menu', '投注限制设置', 0, '/Game-Record', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (92, 88, 'live-manage', 'button', '彩种新增', 0, 'Create', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (93, 88, 'live-manage', 'button', '彩种编辑', 0, 'Update', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (94, 88, 'live-manage', 'menu', '玩法规则', 0, '/Games-Play', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (95, 94, 'live-manage', 'menu', '玩法列表', 0, '/Play-Lists', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (96, 94, 'live-manage', 'button', '玩法新增', 0, 'Create', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (97, 94, 'live-manage', 'button', '玩法编辑', 0, 'Update', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (98, 94, 'live-manage', 'button', '玩法删除', 0, 'Delete', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (99, 89, 'live-manage', 'button', '彩种分类新增', 0, 'Create', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (100, 89, 'live-manage', 'button', '彩种分类编辑', 0, 'Update', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (101, 89, 'live-manage', 'button', '彩种分类删除', 0, 'Delete', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (102, 90, 'live-manage', 'button', '人工开奖', 0, 'Lottery', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (103, 90, 'live-manage', 'button', '新增开奖', 0, 'Create', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (104, 9, 'live-manage', 'menu', '投注管理', 0, '/Note-Bet', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (105, 9, 'live-manage', 'menu', '盈亏统计', 0, '/Note-Win', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (106, 9, 'live-manage', 'menu', '风控管理', 0, '/Note-Wind', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (107, 10, 'live-manage', 'menu', '圈规', 0, '/Circle-Rule', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (108, 10, 'live-manage', 'menu', '帖子管理', 0, '/Circle-Post', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (109, 107, 'live-manage', 'button', '圈规保存', 0, 'Create', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (110, 108, 'live-manage', 'menu', '帖子回复', 0, '/Circle-Reply', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (111, 11, 'live-manage', 'menu', '游戏分类', 0, '/Party-Sort', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (112, 11, 'live-manage', 'menu', '游戏管理', 0, '/Game-Manage', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (113, 11, 'live-manage', 'menu', '游戏注单管理', 0, '/Game-Setting', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (114, 111, 'live-manage', 'button', '游戏分类新增', 0, 'Create', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (115, 111, 'live-manage', 'button', '游戏注单编辑', 0, 'Update', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (116, 111, 'live-manage', 'button', '游戏注单删除', 0, 'Delete', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (117, 112, 'live-manage', 'button', '游戏管理新增', 0, 'Create', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (118, 112, 'live-manage', 'button', '游戏管理编辑', 0, 'Update', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (119, 112, 'live-manage', 'button', '游戏管理删除', 0, 'Delete', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (120, 12, 'live-manage', 'menu', '大神计划管理', 0, '/PlanManage', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (121, 12, 'live-manage', 'menu', '大神计划打赏', 0, '/PlanReward', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (122, 13, 'live-manage', 'menu', '普通用户', 0, '/Members', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (123, 13, 'live-manage', 'menu', '主播管理', 0, '/Streamer', b'1', '065d4aed0b4a47bc9406d39ae182g3e6', 'a60534baa8e9496abf9554af3ffb1ac7');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (124, 13, 'live-manage', 'menu', '家族管理', 0, '/Family', b'1', '065d4aed0b4a47bc9406d39ae182g3e6', 'a60534baa8e9496abf9554af3ffb1ac7');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (125, 13, 'live-manage', 'menu', '代理报表', 0, '/ProxyStats', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (126, 13, 'live-manage', 'menu', '代理设置', 0, '/ProxySettings', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (127, 122, 'live-manage', 'button', '普通用户禁用启用', 0, 'Status', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (128, 122, 'live-manage', 'button', '普通用户删除', 0, 'Delete', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (129, 123, 'live-manage', 'button', '主播管理禁用启用', 0, 'Status', b'1', '065d4aed0b4a47bc9406d39ae182g3e6', 'a60534baa8e9496abf9554af3ffb1ac7');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (130, 123, 'live-manage', 'button', '主播管理删除', 0, 'Delete', b'1', '065d4aed0b4a47bc9406d39ae182g3e6', 'a60534baa8e9496abf9554af3ffb1ac7');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (131, 124, 'live-manage', 'button', '创建家族', 0, 'Create', b'1', '065d4aed0b4a47bc9406d39ae182g3e6', 'a60534baa8e9496abf9554af3ffb1ac7');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (132, 124, 'live-manage', 'button', '编辑家族', 0, 'Update', b'1', '065d4aed0b4a47bc9406d39ae182g3e6', 'a60534baa8e9496abf9554af3ffb1ac7');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (133, 124, 'live-manage', 'button', '删除家族', 0, 'Delete', b'1', '065d4aed0b4a47bc9406d39ae182g3e6', 'a60534baa8e9496abf9554af3ffb1ac7');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (134, 124, 'live-manage', 'button', '成员管理', 0, 'Manage', b'1', '065d4aed0b4a47bc9406d39ae182g3e6', 'a60534baa8e9496abf9554af3ffb1ac7');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (135, 124, 'live-manage', 'button', '家族提现历史', 0, '/FamilyHistory', b'1', '065d4aed0b4a47bc9406d39ae182g3e6', 'a60534baa8e9496abf9554af3ffb1ac7');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (136, 134, 'live-manage', 'button', '开聊主播', 0, 'open', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (137, 134, 'live-manage', 'button', '取消开聊', 0, 'cancel', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (138, 125, 'live-manage', 'button', '代理报表查看下级', 0, 'Subordinate', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (139, 125, 'live-manage', 'button', '代理报表查看明细', 0, 'Detail', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (140, 126, 'live-manage', 'button', '代理设置新增', 0, 'Create', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (141, 126, 'live-manage', 'button', '代理设置编辑', 0, 'Update', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (142, 126, 'live-manage', 'button', '代理设置删除', 0, 'Delete', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (143, 14, 'live-manage', 'menu', '模块管理', 0, '/System-Modules', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (144, 14, 'live-manage', 'menu', '角色管理', 0, '/System-Roles', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (145, 14, 'live-manage', 'menu', '用户管理', 0, '/System-Users', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (146, 143, 'live-manage', 'button', '模块新增', 0, 'Create', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (147, 143, 'live-manage', 'button', '模块编辑', 0, 'Update', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (148, 143, 'live-manage', 'button', '模块删除', 0, 'Delete', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (149, 143, 'live-manage', 'button', '模块禁用启用', 0, 'Status', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (150, 144, 'live-manage', 'button', '角色新增', 0, 'Create', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (151, 144, 'live-manage', 'button', '角色编辑', 0, 'Update', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (152, 144, 'live-manage', 'button', '角色删除', 0, 'Delete', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (153, 144, 'live-manage', 'button', '管理用户', 0, 'Manage', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (154, 144, 'live-manage', 'button', '配置权限', 0, 'Setting', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (155, 145, 'live-manage', 'button', '系统用户新增', 0, 'Create', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (156, 145, 'live-manage', 'button', '系统用户编辑', 0, 'Update', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (157, 145, 'live-manage', 'button', '系统用户删除', 0, 'Delete', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (158, 145, 'live-manage', 'button', '系统用户禁用启用', 0, 'Status', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (159, 15, 'live-manage', 'menu', '版本管理', 0, '/System-Version', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (160, 15, 'live-manage', 'menu', '系统通知', 0, '/System-Notification', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (161, 15, 'live-manage', 'menu', '短信管理', 0, '/System-Sms', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (162, 15, 'live-manage', 'menu', '会员业务参数', 0, '/System-MemberBus', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', 'a60534baa8e9496abf9554af3ffb1ac7');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (163, 15, 'live-manage', 'menu', '会员系统参数', 0, '/System-MemberParmas', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', 'a60534baa8e9496abf9554af3ffb1ac7');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (164, 15, 'live-manage', 'menu', '意见反馈', 0, '/System-Feeds', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (165, 15, 'live-manage', 'menu', '系统错误日志', 0, '/System-ErrorsLog', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (166, 15, 'live-manage', 'menu', '系统日志', 0, '/System-Logs', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (167, 15, 'live-manage', 'menu', 'CDN管理', 0, '/System-CDN', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (168, 15, 'live-manage', 'menu', '白名单', 0, '/System-IPManage', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (169, 15, 'live-manage', 'menu', '直播服务器管理', 0, '/System-LiveServer', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (170, 15, 'live-manage', 'menu', '公告管理', 0, '/System-Notice', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (171, 15, 'live-manage', 'menu', '缓存管理', 0, '/System-Cache', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (172, 159, 'live-manage', 'button', '发布新版本', 0, 'Create', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (173, 159, 'live-manage', 'button', '版本编辑', 0, 'Update', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (174, 160, 'live-manage', 'button', '发送通知', 0, 'Create', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (175, 160, 'live-manage', 'button', '通知删除', 0, 'Delete', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (176, 162, 'live-manage', 'button', '业务参数保存', 0, 'Create', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (177, 162, 'live-manage', 'button', '业务参数编辑', 0, 'Update', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (178, 162, 'live-manage', 'button', '业务参数删除', 0, 'Delete', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (179, 162, 'live-manage', 'button', '业务参数禁用启用', 0, 'Status', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (180, 163, 'live-manage', 'button', '系统参数保存', 0, 'Create', b'1', '065d4aed0b4a47bc9406d39ae182g3e6', 'a60534baa8e9496abf9554af3ffb1ac7');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (181, 163, 'live-manage', 'button', '会员系统参数编辑', 0, 'Update', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', 'a60534baa8e9496abf9554af3ffb1ac7');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (182, 163, 'live-manage', 'button', '系统参数删除', 0, 'Delete', b'1', '065d4aed0b4a47bc9406d39ae182g3e6', 'a60534baa8e9496abf9554af3ffb1ac7');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (183, 163, 'live-manage', 'button', '会员系统参数禁用启用', 0, 'Status', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', 'a60534baa8e9496abf9554af3ffb1ac7');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (184, 164, 'live-manage', 'button', '意见反馈审核操作', 0, 'Apply', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (185, 164, 'live-manage', 'button', '意见审核详情查看', 0, 'Detail', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (186, 167, 'live-manage', 'button', 'CDN保存', 0, 'Create', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (187, 167, 'live-manage', 'button', 'CDN编辑', 0, 'Update', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (188, 167, 'live-manage', 'button', 'CDN删除', 0, 'Delete', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (189, 167, 'live-manage', 'button', 'CDN禁用启用', 0, 'Status', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (190, 167, 'live-manage', 'button', '刷新CDN', 0, 'Refresh', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (191, 168, 'live-manage', 'button', '白名单保存', 0, 'Create', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (192, 168, 'live-manage', 'button', '白名单编辑', 0, 'Update', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (193, 168, 'live-manage', 'button', '白名单删除', 0, 'Delete', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (194, 169, 'live-manage', 'button', '直播服务器新增', 0, 'Create', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (195, 169, 'live-manage', 'button', '直播服务器编辑', 0, 'Update', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (196, 169, 'live-manage', 'button', '直播服务器删除', 0, 'Delete', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (197, 169, 'live-manage', 'button', '直播服务器禁用启用', 0, 'Status', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (198, 169, 'live-manage', 'button', '刷新直播服务器', 0, 'Refresh', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (199, 170, 'live-manage', 'button', '公告新增', 0, 'Create', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (200, 170, 'live-manage', 'button', '公告编辑', 0, 'Update', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (201, 170, 'live-manage', 'button', '公告删除', 0, 'Delete', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (202, NULL, 'live-manage', 'menu', '统计', 0, '/Statistic', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (203, 202, 'live-manage', 'menu', '账变记录', 0, '/Record-Stat', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (204, 202, 'live-manage', 'menu', '出入账目汇总', 0, '/Acount-Total', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (205, 202, 'live-manage', 'menu', '报表统计', 0, '/Report-Stat', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (206, 13, 'live-manage', 'menu', ' 返水管理', 0, '/Back-Water', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (207, 13, 'live-manage', 'menu', '会员等级', 0, '/User-Level', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (208, 206, 'live-manage', 'button', ' 返水管理保存', 0, 'Create', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (209, 206, 'live-manage', 'button', ' 返水管理修改', 0, 'Update', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (210, 207, 'live-manage', 'button', '会员等级创建', 0, 'Create', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (211, 207, 'live-manage', 'button', '会员等级编辑', 0, 'Update', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (212, 207, 'live-manage', 'button', '会员等级删除', 0, 'Delete', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (213, 7, 'live-manage', 'menu', '会员加款/扣款', 0, '/Member-Deduct', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (214, 7, 'live-manage', 'menu', '会员加减可提', 0, '/Member-Withdraw', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (215, 213, 'live-manage', 'button', '加款', 0, 'Create', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (216, 213, 'live-manage', 'button', '扣款', 0, 'Update', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (217, 213, 'live-manage', 'button', '批量加款', 0, 'BatchCreate', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (218, 213, 'live-manage', 'button', '批量扣款', 0, 'BatchUpdate', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (219, 214, 'live-manage', 'button', '加码', 0, 'Create', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (220, 214, 'live-manage', 'button', '减码', 0, 'Update', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (221, 214, 'live-manage', 'button', '批量加码', 0, 'BatchCreate', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (222, 214, 'live-manage', 'button', '批量减码', 0, 'BatchUpdate', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (223, 15, 'live-manage', 'menu', '系统维护', 0, '/System-Maintenance', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (224, 202, 'happyrun', 'menu', '资金报表', 0, '/Fund-Statement', b'0', 'c9b2ea2a8f94476684f39b31203d44bd', 'c9b2ea2a8f94476684f39b31203d44bd');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (225, 13, 'happyrun', 'menu', '会员状态管理', 0, '/MemberStatus', b'0', 'c9b2ea2a8f94476684f39b31203d44bd', 'c9b2ea2a8f94476684f39b31203d44bd');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (226, 225, 'happyrun', 'button', '解除', 0, 'Clear', b'0', 'c9b2ea2a8f94476684f39b31203d44bd', 'c9b2ea2a8f94476684f39b31203d44bd');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (227, 3, 'happyrun', 'menu', '主播管理', 0, '/Streamer', b'0', 'c9b2ea2a8f94476684f39b31203d44bd', 'c9b2ea2a8f94476684f39b31203d44bd');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (228, 227, 'happyrun', 'button', '新增主播', 0, 'Create', b'0', 'c9b2ea2a8f94476684f39b31203d44bd', 'c9b2ea2a8f94476684f39b31203d44bd');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (229, 227, 'happyrun', 'button', '主播管理禁用启用', 0, 'Status', b'0', 'c9b2ea2a8f94476684f39b31203d44bd', 'c9b2ea2a8f94476684f39b31203d44bd');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (230, 227, 'happyrun', 'button', '直播时长', 0, 'Detail', b'0', 'c9b2ea2a8f94476684f39b31203d44bd', 'c9b2ea2a8f94476684f39b31203d44bd');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (231, 3, 'happyrun', 'menu', '家族管理', 0, '/Family', b'0', 'c9b2ea2a8f94476684f39b31203d44bd', 'c9b2ea2a8f94476684f39b31203d44bd');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (232, 231, 'happyrun', 'button', '家族提现历史', 0, 'Detail', b'0', 'c9b2ea2a8f94476684f39b31203d44bd', 'c9b2ea2a8f94476684f39b31203d44bd');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (233, 231, 'happyrun', 'button', '成员管理', 0, 'Manage', b'0', 'c9b2ea2a8f94476684f39b31203d44bd', 'c9b2ea2a8f94476684f39b31203d44bd');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (234, 231, 'happyrun', 'button', '删除家族', 0, 'Delete', b'0', 'c9b2ea2a8f94476684f39b31203d44bd', 'c9b2ea2a8f94476684f39b31203d44bd');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (235, 231, 'happyrun', 'button', '编辑家族', 0, 'Update', b'0', 'c9b2ea2a8f94476684f39b31203d44bd', 'c9b2ea2a8f94476684f39b31203d44bd');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (236, 231, 'happyrun', 'button', '创建家族', 0, 'Create', b'0', 'c9b2ea2a8f94476684f39b31203d44bd', 'c9b2ea2a8f94476684f39b31203d44bd');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (237, 3, 'happyrun', 'menu', '家族提现订单', 0, '/Family-Orders', b'0', 'c9b2ea2a8f94476684f39b31203d44bd', 'c9b2ea2a8f94476684f39b31203d44bd');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (238, 237, 'happyrun', 'button', '打款', 0, 'BatchCreate', b'0', 'c9b2ea2a8f94476684f39b31203d44bd', 'c9b2ea2a8f94476684f39b31203d44bd');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (239, 237, 'happyrun', 'button', '确认', 0, 'Subordinate', b'0', 'c9b2ea2a8f94476684f39b31203d44bd', 'c9b2ea2a8f94476684f39b31203d44bd');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (240, 122, 'happyrun', 'button', '手机号权限', 0, 'Manage', b'0', 'c9b2ea2a8f94476684f39b31203d44bd', 'c9b2ea2a8f94476684f39b31203d44bd');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (241, 122, 'happyrun', 'button', '查看备注', 0, 'Detail', b'0', 'c9b2ea2a8f94476684f39b31203d44bd', 'c9b2ea2a8f94476684f39b31203d44bd');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (242, 122, 'happyrun', 'button', '普通用户编辑', 0, 'Update', b'0', 'c9b2ea2a8f94476684f39b31203d44bd', 'c9b2ea2a8f94476684f39b31203d44bd');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (243, 125, 'happyrun', 'button', '编辑渠道链接', 0, 'Update', b'0', 'c9b2ea2a8f94476684f39b31203d44bd', 'c9b2ea2a8f94476684f39b31203d44bd');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (244, 125, 'happyrun', 'button', '查看全部代理', 0, 'Create', b'0', 'c9b2ea2a8f94476684f39b31203d44bd', 'c9b2ea2a8f94476684f39b31203d44bd');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (245, 224, 'happyrun', 'button', '拉取数据', 0, 'Update', b'0', 'c9b2ea2a8f94476684f39b31203d44bd', 'c9b2ea2a8f94476684f39b31203d44bd');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (246, 224, 'happyrun', 'button', '资金报表导出', 0, 'Manage', b'0', 'c9b2ea2a8f94476684f39b31203d44bd', 'c9b2ea2a8f94476684f39b31203d44bd');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (247, 15, 'happyrun', 'menu', '主播业务参数', 0, '/System-AnchorBus', b'0', 'c9b2ea2a8f94476684f39b31203d44bd', 'c9b2ea2a8f94476684f39b31203d44bd');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (248, 15, 'happyrun', 'menu', '主播系统参数', 0, '/System-AnchorParmas', b'0', 'c9b2ea2a8f94476684f39b31203d44bd', 'c9b2ea2a8f94476684f39b31203d44bd');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (249, 248, 'happyrun', 'button', '主播系统参数编辑', 0, 'Update', b'0', 'c9b2ea2a8f94476684f39b31203d44bd', 'c9b2ea2a8f94476684f39b31203d44bd');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (250, 248, 'happyrun', 'button', '主播系统参数禁用启用', 0, 'Status', b'0', 'c9b2ea2a8f94476684f39b31203d44bd', 'c9b2ea2a8f94476684f39b31203d44bd');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (251, 247, 'happyrun', 'button', '主播业务参数创建', 0, 'Create', b'0', 'c9b2ea2a8f94476684f39b31203d44bd', 'c9b2ea2a8f94476684f39b31203d44bd');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (252, 247, 'happyrun', 'button', '主播业务参数编辑', 0, 'Update', b'0', 'c9b2ea2a8f94476684f39b31203d44bd', 'c9b2ea2a8f94476684f39b31203d44bd');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (253, 247, 'happyrun', 'button', '主播业务参数删除', 0, 'Delete', b'0', 'c9b2ea2a8f94476684f39b31203d44bd', 'c9b2ea2a8f94476684f39b31203d44bd');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (254, 247, 'happyrun', 'button', '主播业务参数禁用启用', 0, 'Status', b'0', 'c9b2ea2a8f94476684f39b31203d44bd', 'c9b2ea2a8f94476684f39b31203d44bd');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (255, 89, 'happyrun', 'button', '彩种生成压缩包', 0, 'Lottery', b'0', 'c9b2ea2a8f94476684f39b31203d44bd', '398e0e127f3c448aafddbc80782b4d33');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (256, 111, 'happyrun', 'button', '游戏生成压缩包', 0, 'Lottery', b'0', 'c9b2ea2a8f94476684f39b31203d44bd', 'c9b2ea2a8f94476684f39b31203d44bd');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (257, 88, 'happyrun', 'button', '彩种玩法', 0, 'Detail', b'0', 'c9b2ea2a8f94476684f39b31203d44bd', 'c9b2ea2a8f94476684f39b31203d44bd');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (258, 55, 'happyrun', 'button', '公司入款设定清零', 0, 'Clear', b'0', 'c9b2ea2a8f94476684f39b31203d44bd', 'c9b2ea2a8f94476684f39b31203d44bd');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (259, 202, 'happyrun', 'menu', '入款报表', 0, '/Payment-Report', b'0', 'a60534baa8e9496abf9554af3ffb1ac7', 'a60534baa8e9496abf9554af3ffb1ac7');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (260, 259, 'happyrun', 'button', '入款报表查看', 0, 'Detail', b'0', 'a60534baa8e9496abf9554af3ffb1ac7', 'a60534baa8e9496abf9554af3ffb1ac7');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (261, 259, 'happyrun', 'menu', '会员报表', 0, '/Member-Report', b'1', 'a60534baa8e9496abf9554af3ffb1ac7', 'a60534baa8e9496abf9554af3ffb1ac7');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (262, 202, 'happyrun', 'menu', '会员报表', 0, '/Member-Report', b'0', 'a60534baa8e9496abf9554af3ffb1ac7', 'a60534baa8e9496abf9554af3ffb1ac7');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (263, 262, 'happyrun', 'button', '明细', 0, 'Detail', b'0', 'a60534baa8e9496abf9554af3ffb1ac7', 'a60534baa8e9496abf9554af3ffb1ac7');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (264, 7, 'happyrun', 'menu', '代充入款订单', 0, '/Finance-Surrogate', b'0', 'a60534baa8e9496abf9554af3ffb1ac7', 'a60534baa8e9496abf9554af3ffb1ac7');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (265, 7, 'happyrun', 'menu', '代充银行卡', 0, '/Surrogate-Bank-Card', b'0', 'a60534baa8e9496abf9554af3ffb1ac7', 'a60534baa8e9496abf9554af3ffb1ac7');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (266, 265, 'happyrun', 'button', '代充银行卡删除', 0, 'Delete', b'0', 'a60534baa8e9496abf9554af3ffb1ac7', 'a60534baa8e9496abf9554af3ffb1ac7');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (267, 265, 'happyrun', 'button', '代充银行卡启用禁用', 0, 'Status', b'0', 'a60534baa8e9496abf9554af3ffb1ac7', 'a60534baa8e9496abf9554af3ffb1ac7');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (268, 265, 'happyrun', 'button', '编辑', 0, 'Update', b'0', 'a60534baa8e9496abf9554af3ffb1ac7', 'a60534baa8e9496abf9554af3ffb1ac7');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (269, 265, 'happyrun', 'button', '创建', 0, 'Create', b'0', 'a60534baa8e9496abf9554af3ffb1ac7', 'a60534baa8e9496abf9554af3ffb1ac7');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (270, 7, 'happyrun', 'menu', '代充人入款', 0, '/Surrogate-Person', b'0', 'a60534baa8e9496abf9554af3ffb1ac7', 'a60534baa8e9496abf9554af3ffb1ac7');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (271, 270, 'happyrun', 'button', '代充人入款查看', 0, 'Detail', b'0', 'a60534baa8e9496abf9554af3ffb1ac7', 'a60534baa8e9496abf9554af3ffb1ac7');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (272, 270, 'happyrun', 'button', '代充人入款处理', 0, 'Apply', b'0', 'a60534baa8e9496abf9554af3ffb1ac7', 'a60534baa8e9496abf9554af3ffb1ac7');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (273, 7, 'happyrun', 'menu', '代充人管理', 0, '/Surrogate-Management', b'0', 'a60534baa8e9496abf9554af3ffb1ac7', 'a60534baa8e9496abf9554af3ffb1ac7');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (274, 273, 'happyrun', 'button', '代充人管理启用禁用', 0, 'Status', b'0', 'a60534baa8e9496abf9554af3ffb1ac7', 'a60534baa8e9496abf9554af3ffb1ac7');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (275, 273, 'happyrun', 'button', '代充人管理编辑', 0, 'Update', b'0', 'a60534baa8e9496abf9554af3ffb1ac7', 'a60534baa8e9496abf9554af3ffb1ac7');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (276, 273, 'happyrun', 'button', '代充人管理创建', 0, 'Create', b'0', 'a60534baa8e9496abf9554af3ffb1ac7', 'a60534baa8e9496abf9554af3ffb1ac7');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (277, 7, 'happyrun', 'menu', '代充存提', 0, '/Surrogate-Save', b'0', 'a60534baa8e9496abf9554af3ffb1ac7', 'a60534baa8e9496abf9554af3ffb1ac7');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (278, 277, 'happyrun', 'button', '代充存提提出', 0, 'Lottery', b'0', 'a60534baa8e9496abf9554af3ffb1ac7', 'a60534baa8e9496abf9554af3ffb1ac7');
+INSERT INTO `sys_functionorg`(`sfunid`, `parsfunid`, `ofsystem`, `sfuntype`, `sfunname`, `sfunstatus`, `sfunurl`, `is_delete`, `create_user`, `update_user`) VALUES (279, 277, 'happyrun', 'button', '代充存提存入', 0, 'Refresh', b'0', 'a60534baa8e9496abf9554af3ffb1ac7', 'a60534baa8e9496abf9554af3ffb1ac7');
+
+
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, `status`, is_delete, create_user,update_user) VALUES ('SESSION_TIME', 'App的token有效期', '单位分钟', '7200', 0, b'0', NULL, NULL);
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, `status`, is_delete, create_user,update_user) VALUES ('SMS_SENDWAIT', '短信验证码发送等待时间', '单位秒', '60', 0, b'0', NULL, NULL);
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, `status`, is_delete, create_user,update_user) VALUES ('SMS_VALIDATE', '短信验证码有效期', '单位分钟', '10', 0, b'0', NULL, NULL);
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, `status`, is_delete, create_user,update_user) VALUES ('H5_URL', '分享H5注册页面地址', 'url地址', '', 0, b'0', NULL, NULL);
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, `status`, is_delete, create_user,update_user) VALUES ('OFFLINE_TIME', '直播强制下线时间', '单位分钟', '30', 0, b'0', NULL, NULL);
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, `status`, is_delete, create_user,update_user) VALUES ('NOTALK_TIME', '禁言时间', '单位分钟', '30', 0, b'0', NULL, NULL);
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, `status`, is_delete, create_user,update_user) VALUES ('SHORTMSG_LIMIT', '同IP同手机号短信发送限制条数', '单位条数', '10', 0, b'0', NULL, NULL);
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, `status`, is_delete, create_user,update_user) VALUES ('SRS_KEY', '直播服务加密key', '直播服务加密key', 'Live$$BB2020Key', 0, b'0', NULL, NULL);
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, `status`, is_delete, create_user,update_user) VALUES ('ONLINE_MERGER', '直播间断上线记录合并时间', '单位分钟', '10', 0, b'0', NULL, NULL);
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, `status`, is_delete, create_user,update_user) VALUES ('VIDEO_GOLDNUM', '发表短视讯', '发表短视讯获取金币', '1', 0, b'0', NULL, NULL);
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, `status`, is_delete, create_user,update_user) VALUES ('ARTICLE_GOLDNUM', '发表贴文', '发表贴文获取金币', '1', 0, b'0', NULL, NULL);
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, `status`, is_delete, create_user,update_user) VALUES ('RECOMMEND_USER', '推荐用户', '推荐用户获取金币', '3', 0, b'0', NULL, NULL);
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, `status`, is_delete, create_user,update_user) VALUES ('H5_APPDOWNLOAD', 'H5下载页', 'APP的H5下载页', '1t.click/bcJW', 0, b'0', NULL, NULL);
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, `status`, is_delete, create_user,update_user) VALUES ('APPDOWNLOAD_SENTENCE', '分享的文本', '引导下载页的APP的文本', '播播直播,链接如被QQ微信屏蔽,请复制链接到外部浏览器打开.下载地址：', 0, b'0', NULL, NULL);
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, `status`, is_delete, create_user,update_user) VALUES ('SMS_ONOFF', '短信开关', '短信开关 1开', '1', 0, b'0', NULL, NULL);
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, `status`, is_delete, create_user,update_user) VALUES ('REQ_FREQUENCY', '直播在线数据刷新频率', '单位秒', '20', 0, b'0', NULL, NULL);
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, `status`, is_delete, create_user,update_user) VALUES ('SESSION_TIME_BACK', '后台token有效期', '单位分钟', '120', 0, b'0', NULL, NULL);
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, `status`, is_delete, create_user,update_user) VALUES ('RECHARGEMEAL_NUM', '充值套餐个数', '充值套餐个数', '6', 0, b'0', NULL, NULL);
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, `status`, is_delete, create_user,update_user) VALUES ('FAMILY_INCARNATE_DAY', '家族提现日期', '家族提现日期(每个月初1-5日)', '1-5', 0, b'0', NULL, NULL);
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, `status`, is_delete, create_user,update_user) VALUES ('ANCHOR_INCAR_WEEKDAY', '主播每周几提现', '0 周一;1 周二;2周三 。。。', '1', 0, b'0', NULL, NULL);
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, `status`, is_delete, create_user,update_user) VALUES ('ANCHOR_INCAR_TIME', '主播提现时间段', '格式HH:mm-HHmm', '12:00-20:00', 0, b'0', NULL, NULL);
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, `status`, is_delete, create_user,update_user) VALUES ('OFF_RECHARGE_KEFU', '线下充值订单客服', '线下充值订单客服', 'yuliu1', 0, b'0', NULL, NULL);
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, `status`, is_delete, create_user,update_user) VALUES ('H5_SHORT_URL', '分享H5注册页面地址', 'url短地址', 'j.mp/2ETclRA', 0, b'0', NULL, NULL);
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, `status`, is_delete, create_user,update_user) VALUES ('LIVE_HOME_KEFU', '直播列表得客服微信', '直播列表得客服微信', 'yuliu2', 0, b'0', NULL, NULL);
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, `status`, is_delete, create_user,update_user) VALUES ('MANAGE_ISIP', '后台是否启用白名单', '后台是否启用白名单(0,否；1是)', '1', 0, b'0', NULL, NULL);
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, `status`, is_delete, create_user,update_user) VALUES ('PAY_URL', '请求支付中心路径', '请求支付中心路径', 'http://xxx/', 0, b'0', NULL, NULL);
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, `status`, is_delete, create_user,update_user) VALUES ('TENLIVE_SECRETID', '腾讯云直播SecretId', '腾讯云直播SecretId', 'AKIDDCvMWQWF4bt65EchOowiLiocdNq2P1gW', 0, b'0', NULL, NULL);
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, `status`, is_delete, create_user,update_user) VALUES ('TENLIVE_SECRETKEY', '腾讯云直播SecretKey', '腾讯云直播SecretKey', 'oLM6Zk6ByThZMuDm9F8kqRouqc7KLI0R', 0, b'0', NULL, NULL);
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, `status`, is_delete, create_user,update_user) VALUES ('TENLIVE_CALLBACKKEY', '腾讯云推流回调key', '腾讯云推流回调key', '488efaaa687749cf95913c110ed9ba83', 0, b'0', NULL, NULL);
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, `status`, is_delete, create_user,update_user) VALUES ('LIVE_INVITE_CODE', '直播间邀请码', '直播间邀请码', 'PC1BTM', 0, b'0', NULL, NULL);
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, `status`, is_delete, create_user,update_user) VALUES ('OFFICE_INVITE_CODE', '官方邀请码', '官方邀请码', 'R0XQGN', 0, b'0', NULL, NULL);
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, `status`, is_delete, create_user,update_user) VALUES ('DOWNLOAD_URL', 'App下载地址', 'App下载地址', '', 0, b'0', NULL, NULL);
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, `status`, is_delete, create_user,update_user) VALUES ('SWIPE_VERIFICATION_SWIFT', '登录验证码', '第三方网易验证码', '开启/关闭', 0, b'0', NULL,  NULL);
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, status, is_delete, create_user, update_user ) VALUES ( 'KEFU_QQ_LINK_NUMBER', 'KEFU_QQ_LINK_NUMBER', '客服1', '41713619', 0, b'0', NULL,  NULL);
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, status, is_delete, create_user, update_user) VALUES ( 'KEFU_QQ_LINK_NUMBER', 'KEFU_QQ_LINK_NUMBER', '客服2', '784506241', 0, b'0', NULL,  NULL);
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, status, is_delete, create_user, update_user) VALUES ( 'KEFU_QQ_LINK_NUMBER', 'KEFU_QQ_LINK_NUMBER', '客服3', '272234669', 0, b'0', NULL,  NULL);
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, status, is_delete, create_user, update_user) VALUES ( 'ROOMTALK_LEVEL', 'ROOMTALK_LEVEL', '用户发言等级', '5', 0, b'0', NULL, 'df30e0bc1e1d446aa283ac8b1512992f');
+
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '1', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '2', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '3', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '4', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '5', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '6', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '7', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '8', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '9', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '10', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '11', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '12', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '13', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '14', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '15', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '16', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '17', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '21', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '22', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '23', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '32', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '33', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '41', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '42', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '49', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '50', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '53', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '54', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '55', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '56', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '57', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '58', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '59', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '60', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '88', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '89', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '90', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '91', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '104', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '105', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '106', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '107', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '108', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '111', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '112', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '113', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '120', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '121', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '122', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '123', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '124', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '125', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '126', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '143', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '144', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '145', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '159', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '160', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '161', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '162', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '163', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '164', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '165', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '166', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '167', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '168', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '169', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '170', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '171', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '18', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '19', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '20', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '24', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '25', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '26', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '27', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '28', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '29', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '30', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '31', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '34', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '35', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '36', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '37', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '38', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '39', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '40', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '46', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '47', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '48', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '43', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '44', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '45', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '51', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '52', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '61', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '62', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '63', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '64', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '65', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '66', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '67', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '68', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '69', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '70', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '71', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '72', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '73', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '74', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '75', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '76', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '77', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '78', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '79', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '80', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '81', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '82', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '83', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '84', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '85', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '86', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '87', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '92', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '93', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '94', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '99', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '100', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '101', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '102', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '103', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '95', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '96', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '97', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '98', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '109', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '110', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '114', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '115', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '116', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '117', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '118', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '119', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '127', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '128', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '129', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '130', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '131', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '132', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '133', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '134', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '135', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '138', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '139', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '140', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '141', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '142', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '136', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '137', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '146', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '147', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '148', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '149', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '150', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '151', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '152', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '153', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '154', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '155', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '156', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '157', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '158', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '172', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '173', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '174', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '175', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '176', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '177', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '178', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '179', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '180', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '181', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '182', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '183', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '184', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '185', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '186', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '187', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '188', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '189', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '190', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '191', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '192', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '193', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '194', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '195', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '196', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '197', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '198', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '199', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '200', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '201', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '202', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '203', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '204', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '205', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '206', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '207', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '208', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '209', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '210', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '211', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '212', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '213', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '214', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '215', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '216', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '217', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '218', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '219', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '220', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '221', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '222', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+
+INSERT INTO `sys_bduserrole`( `sysroleid`, `accno`, `is_delete`, `create_user`, `update_user`) VALUES ( 1, '28883d4a8d584128a9443111ac0c93fe',  b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+
+
+
+
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '910', '9104', '百家乐高级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '920', '9201', '森林舞会体验房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '920', '9202', '森林舞会初级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '920', '9203', '森林舞会中级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '920', '9204', '森林舞会高级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '930', '9301', '百人牛牛体验房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '930', '9302', '百人牛牛初级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '930', '9303', '百人牛牛中级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '930', '9304', '百人牛牛高级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1950', '19501', '万人炸金花体验房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1950', '19502', '万人炸金花初级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1950', '19503', '万人炸金花中级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1950', '19504', '万人炸金花高级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '650', '6501', '血流成河体验房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '650', '6502', '血流成河初级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '650', '6503', '血流成河中级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '650', '6504', '血流成河高级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '890', '8901', '看牌抢庄牛牛体验房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '890', '8902', '看牌抢庄牛牛初级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ('890', '8903', '看牌抢庄牛牛中级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '890', '8904', '看牌抢庄牛牛高级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '890', '8905', '看牌抢庄牛牛至尊房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '890', '8906', '看牌抢庄牛牛王者房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '740', '7401', '二人麻将体验房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '740', '7402', '二人麻将初级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '740', '7403', '二人麻将中级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '740', '7404', '二人麻将高级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1350', '13501', '幸运转盘');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1350', '13502', '幸运转盘');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1350', '13503', '幸运转盘');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1940', '19401', '金鲨银鲨体验房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1940', '19402', '金鲨银鲨初级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1940', '19403', '金鲨银鲨中级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1940', '19404', '金鲨银鲨高级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1960', '19601', '奔驰宝马体验房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1960', '19602', '奔驰宝马初级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1960', '19603', '奔驰宝马中级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1960', '19604', '奔驰宝马高级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '620', '3600', '德州扑克新手房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '620', '3601', '德州扑克初级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '620', '3602', '德州扑克中级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '620', '3603', '德州扑克高级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '620', '3700', '德州扑克财大气粗房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '620', '3701', '德州扑克腰缠万贯房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '620', '3702', '德州扑克挥金如土房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ('620', '3703', '德州扑克富贵逼人房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '720', '7201', '二八杠体验房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '720', '7202', '二八杠初级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '720', '7203', '二八杠中级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '720', '7204', '二八杠高级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '720', '7205', '二八杠至尊房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '720', '7206', '二八杠王者房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ('830', '8301', '抢庄牛牛体验房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '830', '8302', '抢庄牛牛初级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '830', '8303', '抢庄牛牛中级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '830', '8304', '抢庄牛牛高级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '830', '8305', '抢庄牛牛至尊房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '830', '8306', '抢庄牛牛王者房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '220', '2201', '炸金花体验房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '220', '2202', '炸金花初级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '220', '2203', '炸金花中级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '220', '2204', '炸金花高级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '860', '8601', '三公体验房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '860', '8602', '三公初级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '860', '8603', '三公中级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '860', '8604', '三公高级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '860', '8605', '三公至尊房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '860', '8606', '三公王者房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '900', '9001', '龙虎体验房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '900', '9002', '龙虎初级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '900', '9003', '龙虎中级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '900', '9004', '龙虎高级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '600', '6001', '21 点体验房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '600', '6002', '21 点初级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '600', '6003', '21 点中级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '600', '6004', '21 点高级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '870', '8701', '通比牛牛体验房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '870', '8702', '通比牛牛初级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '870', '8703', '通比牛牛中级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '870', '8704', '通比牛牛高级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '870', '8705', '通比牛牛至尊房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '870', '8706', '通比牛牛王者房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '880', '8801', '欢乐红包体验房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '880', '8802', '欢乐红包初级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '880', '8803', '欢乐红包中级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '880', '8804', '欢乐红包高级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '230', '2301', '极速炸金花新手房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '230', '2302', '极速炸金花初级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '230', '2303', '极速炸金花中级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '230', '2304', '极速炸金花高级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '730', '7301', '抢庄牌九新手房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '730', '7302', '抢庄牌九初级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '730', '7303', '抢庄牌九中级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '730', '7304', '抢庄牌九高级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '730', '7305', '抢庄牌九至尊房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '730', '7306', '抢庄牌九王者房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '610', '6101', '斗地主体验房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '610', '6102', '斗地主初级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '610', '6103', '斗地主中级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '610', '6104', '斗地主高级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '630', '6301', '十三水常规场新手房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '630', '6302', '十三水常规场初级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '630', '6303', '十三水常规场中级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '630', '6304', '十三水常规场高级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '630', '6305', '十三水极速场新手房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '630', '6306', '十三水极速场初级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '630', '6307', '十三水极速场中级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '630', '6308', '十三水极速场高级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '380', '3801', '幸运五张体验房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '380', '3802', '幸运五张初级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '380', '3803', '幸运五张中级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '380', '3804', '幸运五张高级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '390', '3901', '射龙门经典房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '390', '3902', '射龙门暴击房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '910', '9101', '百家乐体验房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '910', '9102', '百家乐初级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '910', '9103', '百家乐中级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1980', '19801', '百人骰宝体验房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1980', '19802', '百人骰宝初级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1980', '19803', '百人骰宝中级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1980', '19804', '百人骰宝高级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1810', '18101', '单挑牛牛体验房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1810', '18102', '单挑牛牛初级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1810', '18103', '单挑牛牛中级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1810', '18104', '单挑牛牛高级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1810', '18105', '单挑牛牛至尊房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1810', '18106', '单挑牛牛王者房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1990', '19901', '炸金牛体验房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1990', '19902', '炸金牛初级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1990', '19903', '炸金牛中级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1990', '19904', '炸金牛高级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1990', '19905', '炸金牛至尊房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1990', '19906', '炸金牛王者房');
+
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1850', '18501', '押宝抢庄牛牛体验房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1850', '18502', '押宝抢庄牛牛初级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1850', '18503', '押宝抢庄牛牛中级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1850', '18504', '押宝抢庄牛牛高级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1850', '18505', '押宝抢庄牛牛至尊房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1850', '18506', '押宝抢庄牛牛王者房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1660', '16601', '血战到底体验房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1660', '16602', '血战到底初级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1660', '16603', '血战到底中级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1660', '16604', '血战到底高级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1970', '19701', '五星宏辉体验房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1970', '19702', '五星宏辉初级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1970', '19703', '五星宏辉中级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1970', '19704', '五星宏辉高级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1860', '18601', '赌场扑克体验房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1860', '18602', '赌场扑克初级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1860', '18603', '赌场扑克中级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1860', '18604', '赌场扑克高级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1370', '13701', '港式梭哈新手房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1370', '13702', '港式梭哈初级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1370', '13703', '港式梭哈中级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1370', '13704', '港式梭哈高级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1690', '16901', '血战骰宝体验房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1690', '16902', '血战骰宝体验房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1690', '16903', '血战骰宝中级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1690', '16904', '血战骰宝高级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1890', '19803', '水果机体验房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1890', '19804', '水果机初级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1890', '19803', '水果机中级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1890', '19804', '水果机高级房');
+INSERT INTO ky_server ( `kind_id`, `server_id`, `server_name`) VALUES ( '1610', '16101', '幸运夺宝');
+
+
+
+INSERT INTO ky_kind ( `kind_id`, `kind_name`) VALUES ( '0', '大厅');
+INSERT INTO ky_kind ( `kind_id`, `kind_name`) VALUES ( '620', '德州扑克');
+INSERT INTO ky_kind ( `kind_id`, `kind_name`) VALUES ( '720', '二八杠 ');
+INSERT INTO ky_kind ( `kind_id`, `kind_name`) VALUES ( '830', '抢庄牛牛');
+INSERT INTO ky_kind ( `kind_id`, `kind_name`) VALUES ( '220', '炸金花 ');
+INSERT INTO ky_kind ( `kind_id`, `kind_name`) VALUES ( '860', '三公 ');
+INSERT INTO ky_kind ( `kind_id`, `kind_name`) VALUES ( '900', '押庄龙虎');
+INSERT INTO ky_kind ( `kind_id`, `kind_name`) VALUES ( '600', '21 点 ');
+INSERT INTO ky_kind ( `kind_id`, `kind_name`) VALUES ( '870', '通比牛牛');
+INSERT INTO ky_kind ( `kind_id`, `kind_name`) VALUES ( '880', '欢乐红包');
+INSERT INTO ky_kind ( `kind_id`, `kind_name`) VALUES ( '230', '极速炸金花');
+INSERT INTO ky_kind ( `kind_id`, `kind_name`) VALUES ( '730', '抢庄牌九 ');
+INSERT INTO ky_kind ( `kind_id`, `kind_name`) VALUES ( '630', '十三水 ');
+INSERT INTO ky_kind ( `kind_id`, `kind_name`) VALUES ( '380', '幸运五张 ');
+INSERT INTO ky_kind ( `kind_id`, `kind_name`) VALUES ( '610', '斗地主 ');
+INSERT INTO ky_kind ( `kind_id`, `kind_name`) VALUES ( '390', '射龙门 ');
+INSERT INTO ky_kind ( `kind_id`, `kind_name`) VALUES ( '910', '百家乐 ');
+INSERT INTO ky_kind ( `kind_id`, `kind_name`) VALUES ( '920', '森林舞会 ');
+INSERT INTO ky_kind ( `kind_id`, `kind_name`) VALUES ( '930', '百人牛牛 ');
+INSERT INTO ky_kind ( `kind_id`, `kind_name`) VALUES ( '1950', '万人炸金花 ');
+INSERT INTO ky_kind ( `kind_id`, `kind_name`) VALUES ( '650', '血流成河 ');
+INSERT INTO ky_kind ( `kind_id`, `kind_name`) VALUES ( '890', '看牌抢庄牛牛 ');
+INSERT INTO ky_kind ( `kind_id`, `kind_name`) VALUES ( '740', '二人麻将 ');
+INSERT INTO ky_kind ( `kind_id`, `kind_name`) VALUES ( '1350', '幸运转盘 ');
+INSERT INTO ky_kind ( `kind_id`, `kind_name`) VALUES ( '1940', '金鲨银鲨 ');
+INSERT INTO ky_kind ( `kind_id`, `kind_name`) VALUES ( '1960', '奔驰宝马 ');
+INSERT INTO ky_kind ( `kind_id`, `kind_name`) VALUES ( '1980', '百人骰宝  ');
+INSERT INTO ky_kind ( `kind_id`, `kind_name`) VALUES ( '1850', '押宝抢庄牛牛');
+INSERT INTO ky_kind ( `kind_id`, `kind_name`) VALUES ( '1810', '单挑牛牛 ');
+INSERT INTO ky_kind ( `kind_id`, `kind_name`) VALUES ( '1990', '炸金牛  ');
+INSERT INTO ky_kind ( `kind_id`, `kind_name`) VALUES ( '510', '红包捕鱼');
+INSERT INTO ky_kind ( `kind_id`, `kind_name`) VALUES ( '1660', '血战到底');
+INSERT INTO ky_kind ( `kind_id`, `kind_name`) VALUES ( '1970', '五星宏辉');
+INSERT INTO ky_kind ( `kind_id`, `kind_name`) VALUES ( '1860', '赌场扑克');
+INSERT INTO ky_kind ( `kind_id`, `kind_name`) VALUES ( '1370', '港式梭哈');
+INSERT INTO ky_kind ( `kind_id`, `kind_name`) VALUES ( '1690', '血战骰宝');
+INSERT INTO ky_kind ( `kind_id`, `kind_name`) VALUES ( '1890', '水果机');
+INSERT INTO ky_kind ( `kind_id`, `kind_name`) VALUES ( '1610', '幸运夺宝');
+
+
+
+INSERT into ag_game(game_type,game_name) VALUES('BAC','百家乐');
+INSERT into ag_game(game_type,game_name) VALUES('CBAC','包桌百家乐');
+INSERT into ag_game(game_type,game_name) VALUES('LINK','多台');
+INSERT into ag_game(game_type,game_name) VALUES('DT','龙虎');
+INSERT into ag_game(game_type,game_name) VALUES('SHB','骰宝');
+INSERT into ag_game(game_type,game_name) VALUES('ROU','轮盘');
+INSERT into ag_game(game_type,game_name) VALUES('FT','番摊');
+INSERT into ag_game(game_type,game_name) VALUES('LBAC','竞咪百家乐');
+INSERT into ag_game(game_type,game_name) VALUES('ULPK','终极德州扑克');
+INSERT into ag_game(game_type,game_name) VALUES('SBAC','保险百家乐');
+INSERT into ag_game(game_type,game_name) VALUES('NN','牛牛');
+INSERT into ag_game(game_type,game_name) VALUES('BJ','21点');
+INSERT into ag_game(game_type,game_name) VALUES('ZJH','炸金花');
+INSERT into ag_game(game_type,game_name) VALUES('BF','斗牛');
+INSERT into ag_game(game_type,game_name) VALUES('EBAC','语音百家乐');
+
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(1,'庄');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(2,'闲');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(3,'和');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(4,'庄对');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(5,'闲对');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(6,'大');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(7,'小');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(8,'庄保险');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(9,'闲保险');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(11,'庄免佣');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(12,'庄龙宝');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(13,'闲龙宝');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(14,'超级六');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(15,'任意对子');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(16,'完美对子');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(21,'龙');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(22,'虎');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(23,'和');
+
+
+
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(41,'大');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(42,'小');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(43,'单');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(44,'双');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(45,'全围');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(46,'围 1');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(47,'围 2');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(48,'围 3');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(49,'围 4');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(50,'围 5');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(51,'围 6');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(52,'单点1');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(53,'单点2');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(54,'单点3');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(55,'单点4');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(56,'单点5');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(57,'单点6');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(58,'对子1');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(59,'对子2');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(60,'对子3');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(61,'对子4');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(62,'对子5');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(63,'对子6');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(64,'组合12');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(65,'组合13');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(66,'组合14');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(67,'组合15');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(68,'组合16');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(69,'组合23');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(70,'组合24');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(71,'组合25');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(72,'组合26');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(73,'组合34');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(74,'组合35');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(75,'组合36');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(76,'组合45');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(77,'组合46');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(78,'组合56');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(79,'和值4');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(80,'和值5');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(81,'和值6');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(82,'和值7');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(83,'和值8');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(84,'和值9');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(85,'和值10');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES (86,'和值11');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(87,'和值12');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(88,'和值13');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(89,'和值14');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(90,'和值15');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(91,'和值16');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(92,'和值17');
+
+
+
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(101,'直接注');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(102,'分注');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(103,'街注');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(104,'三数');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(105,'4个号码');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(106,'角注');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(107,'列注(列 1)');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(108,'列注(列 2)');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(109,'列注(列 3)');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(110,'线注');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(111,'打一');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(112,'打二');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(113,'打三');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(114,'红');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(115,'黑');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(116,'大');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(117,'小');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(118,'单');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(119,'双');
+
+
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(130,'1番');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(131,'2番');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(132,'3番');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(133,'4番');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(134,'1念2');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(135,'1念3');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(136,'1念4');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(137,'2念1');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(138,'2念3');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(139,'2念4');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(140,'3念1');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(141,'3念2');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(142,'3念4');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(143,'4念1');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(144,'4念2');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(145,'4念3');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(146,'角(1,2)');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(147,'单');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(148,'角(1,4)');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(149,'角(2,3)');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(150,'双');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(151,'角(3,4)');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(152,'1,2四通');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(153,'1,2三通');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(154,'1,3四通');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(155,'1,3二通');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(156,'1,4三通');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(157,'1,4二通');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(158,'2,3四通');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(159,'2,3一通');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(160,'2,4三通');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(161,'2,4一通');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(162,'3,4二通');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(163,'3,4一通');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(164,'三门(3,2,1)');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(165,'三门(2,1,4)');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(166,'三门(1,4,3)');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(167,'三门(4,3,2)');
+
+
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(180,'底注+盲注');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(181,'一倍加注');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(182,'二倍加注');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(183,'三倍加注');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(184,'四倍加注');
+
+
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(211,'闲1平倍');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(212,'闲1翻倍');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(213,'闲2平倍');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(214,'闲2翻倍');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(215,'闲3平倍');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(216,'闲3翻倍');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(207,'庄1平倍');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(208,'庄1翻倍');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(209,'庄2平倍');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(210,'庄2翻倍');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(217,'庄3平倍');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(218,'庄3翻倍');
+
+
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(220,'底注');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(221,'分牌');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(222,'保险');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(223,'分牌保险');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(224,'加注');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(225,'分牌加注');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(226,'完美对子');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(227,'21+3');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(228,'旁注');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(229,'旁注分牌');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(230,'旁注保险');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(231,'旁注分牌保险');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(232,'旁注加注');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(233,'旁注分牌加注');
+
+
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(260,'龙');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(261,'凤');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(262,'对8以上');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(263,'同花');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(264,'顺子');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(265,'豹子');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(266,'同花顺');
+
+
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(270,'黑牛');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(271,'红牛');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(272,'和');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(273,'牛一');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(274,'牛二');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(275,'牛三');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(276,'牛四');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(277,'牛五');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(278,'牛六');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(279,'牛七');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(280,'牛八');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(281,'牛九');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(282,'牛牛');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(283,'双牛牛');
+INSERT into ag_pay_type (pay_type,pay_name) VALUES(284,'银牛/金牛/炸弹/五小牛');
+
+
+
+insert into ag_platform(platform_type,platform_name) VALUES('AGIN','AG 国际厅');
+insert into ag_platform(platform_type,platform_name) VALUES('AG',' AG 旗舰厅极速版');
+insert into ag_platform(platform_type,platform_name) VALUES('SABAH','沙巴体育');
+insert into ag_platform(platform_type,platform_name) VALUES('OG' ,'东方游戏');
+insert into ag_platform(platform_type,platform_name) VALUES('XTD','新天地');
+insert into ag_platform(platform_type,platform_name) VALUES('SBTA','AG 体育');
+
+
+INSERT into ag_round(round,round_name) VALUES('DSP','国际厅');
+INSERT into ag_round(round,round_name) VALUES('AGQ','旗舰厅');
+INSERT into ag_round(round,round_name) VALUES('VIP','包桌厅');
+INSERT into ag_round(round,round_name) VALUES('LED','竞咪厅');
+INSERT into ag_round(round,round_name) VALUES('AGHH','豪华厅');
+INSERT into ag_round(round,round_name) VALUES('SLOT','电子游戏');
+INSERT into ag_round(round,round_name) VALUES('EMA','欧洲厅');
+INSERT into ag_round(round,round_name) VALUES('AGNW','新世界厅');
+
+
+
+
+INSERT into ae_game(game_id,game_name) values('dating','大厅');
+INSERT into ae_game(game_id,game_name) values('zjh','炸金花');
+INSERT into ae_game(game_id,game_name) values('blackjack','21点');
+INSERT into ae_game(game_id,game_name) values('tbniuniu','通比牛牛');
+INSERT into ae_game(game_id,game_name) values('sangong','三公');
+INSERT into ae_game(game_id,game_name) values('ebgang','二八杠');
+INSERT into ae_game(game_id,game_name) values('paijiu','抢庄牌九');
+INSERT into ae_game(game_id,game_name) values('dezhou','德州');
+INSERT into ae_game(game_id,game_name) values('buyu','捕鱼');
+INSERT into ae_game(game_id,game_name) values('brniuniu','百人牛牛');
+INSERT into ae_game(game_id,game_name) values('longhu','龙虎');
+INSERT into ae_game(game_id,game_name) values('honghei','红黑大战');
+INSERT into ae_game(game_id,game_name) values('baijiale','百家乐');
+INSERT into ae_game(game_id,game_name) values('bairendezhou','百人德州');
+INSERT into ae_game(game_id,game_name) values('toubao','骰宝');
+INSERT into ae_game(game_id,game_name) values('caishendao','财神到');
+INSERT into ae_game(game_id,game_name) values('saolei','红包扫雷');
+INSERT into ae_game(game_id,game_name) values('shuiguoji','水果机');
+INSERT into ae_game(game_id,game_name) values('benchibaoma','奔驰宝马');
+INSERT into ae_game(game_id,game_name) values('zoo','飞禽走兽');
+INSERT into ae_game(game_id,game_name) values('niuniu','炸金花');
+INSERT INTO ae_game(game_id,game_name) values('wxsaoleihb', '红包');
+INSERT INTO ae_game(game_id,game_name) values('mpniuniu', '看牌牛牛');
+
+insert  into  ae_room(room_id,room_name) values('1','新手场');
+insert  into  ae_room(room_id,room_name) values('2','小资场');
+insert  into  ae_room(room_id,room_name) values('3','老板场');
+insert  into  ae_room(room_id,room_name) values('4','富豪场');
+insert  into  ae_room(room_id,room_name) values('21','新手场');
+insert  into  ae_room(room_id,room_name) values('22','小资场');
+insert  into  ae_room(room_id,room_name) values('23','老板场');
+insert  into  ae_room(room_id,room_name) values('24','富豪场');
+insert  into  ae_room(room_id,room_name) values('31','新手场');
+insert  into  ae_room(room_id,room_name) values('32','小资场');
+insert  into  ae_room(room_id,room_name) values('33','老板场');
+insert  into  ae_room(room_id,room_name) values('34','富豪场');
+insert  into  ae_room(room_id,room_name) values('41','新手场');
+insert  into  ae_room(room_id,room_name) values('42','小资场');
+insert  into  ae_room(room_id,room_name) values('43','老板场');
+insert  into  ae_room(room_id,room_name) values('44','富豪场');
+insert  into  ae_room(room_id,room_name) values('51','新手场');
+insert  into  ae_room(room_id,room_name) values('52','小资场');
+insert  into  ae_room(room_id,room_name) values('53','老板场');
+insert  into  ae_room(room_id,room_name) values('54','富豪场');
+insert  into  ae_room(room_id,room_name) values('71','新手场');
+insert  into  ae_room(room_id,room_name) values('72','小资场');
+insert  into  ae_room(room_id,room_name) values('73','老板场');
+insert  into  ae_room(room_id,room_name) values('74','富豪场');
+insert  into  ae_room(room_id,room_name) values('81','新手场');
+insert  into  ae_room(room_id,room_name) values('82','小资场');
+insert  into  ae_room(room_id,room_name) values('83','老板场');
+insert  into  ae_room(room_id,room_name) values('84','富豪场');
+insert  into  ae_room(room_id,room_name) values('91','新手场');
+insert  into  ae_room(room_id,room_name) values('92','小资场');
+insert  into  ae_room(room_id,room_name) values('93','老板场');
+insert  into  ae_room(room_id,room_name) values('94','富豪场');
+insert  into  ae_room(room_id,room_name) values('101','新手场');
+insert  into  ae_room(room_id,room_name) values('102','小资场');
+insert  into  ae_room(room_id,room_name) values('103','老板场');
+insert  into  ae_room(room_id,room_name) values('104','富豪场');
+insert  into  ae_room(room_id,room_name) values('111','新手场');
+insert  into  ae_room(room_id,room_name) values('112','小资场');
+insert  into  ae_room(room_id,room_name) values('113','老板场');
+insert  into  ae_room(room_id,room_name) values('114','富豪场');
+insert  into  ae_room(room_id,room_name) values('111','新手场');
+insert  into  ae_room(room_id,room_name) values('112','小资场');
+insert  into  ae_room(room_id,room_name) values('113','老板场');
+insert  into  ae_room(room_id,room_name) values('114','富豪场');
+insert  into  ae_room(room_id,room_name) values('121','新手场');
+insert  into  ae_room(room_id,room_name) values('122','小资场');
+insert  into  ae_room(room_id,room_name) values('123','老板场');
+insert  into  ae_room(room_id,room_name) values('124','富豪场');
+insert  into  ae_room(room_id,room_name) values('131','新手场');
+insert  into  ae_room(room_id,room_name) values('132','小资场');
+insert  into  ae_room(room_id,room_name) values('133','老板场');
+insert  into  ae_room(room_id,room_name) values('134','富豪场');
+insert  into  ae_room(room_id,room_name) values('141','新手场');
+insert  into  ae_room(room_id,room_name) values('142','小资场');
+insert  into  ae_room(room_id,room_name) values('143','老板场');
+insert  into  ae_room(room_id,room_name) values('144','富豪场');
+insert  into  ae_room(room_id,room_name) values('161','新手场');
+insert  into  ae_room(room_id,room_name) values('162','小资场');
+insert  into  ae_room(room_id,room_name) values('163','老板场');
+insert  into  ae_room(room_id,room_name) values('164','富豪场');
+insert  into  ae_room(room_id,room_name) values('171','新手场');
+insert  into  ae_room(room_id,room_name) values('172','小资场');
+insert  into  ae_room(room_id,room_name) values('173','老板场');
+insert  into  ae_room(room_id,room_name) values('174','富豪场');
+insert  into  ae_room(room_id,room_name) values('181','新手场');
+insert  into  ae_room(room_id,room_name) values('182','小资场');
+insert  into  ae_room(room_id,room_name) values('183','老板场');
+insert  into  ae_room(room_id,room_name) values('184','富豪场');
+insert  into  ae_room(room_id,room_name) values('242','新手场');
+insert  into  ae_room(room_id,room_name) values('243','小资场');
+insert  into  ae_room(room_id,room_name) values('244','老板场');
+insert  into  ae_room(room_id,room_name) values('245','富豪场');
+insert  into  ae_room(room_id,room_name) values('252','新手场');
+insert  into  ae_room(room_id,room_name) values('253','小资场');
+insert  into  ae_room(room_id,room_name) values('254','老板场');
+insert  into  ae_room(room_id,room_name) values('255','富豪场');
+
+-- 版本1.0.1 变更sql
+delete from sys_parameter where sysparamcode = 'KEFU_QQ_LINK_NUMBER';
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, sortby, status, is_delete, create_user, update_user)
+VALUES ( 'KEFU_QQ_LINK_NUMBER', 'KEFU_QQ_LINK_NUMBER', '客服1', '41713619', 1, 0, b'0', NULL,  NULL);
+
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, sortby, status, is_delete, create_user, update_user)
+VALUES ( 'KEFU_QQ_LINK_NUMBER', 'KEFU_QQ_LINK_NUMBER', '客服2', '784506241', 2, 0, b'0', NULL,  NULL);
+
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, sortby, status, is_delete, create_user, update_user)
+VALUES ( 'KEFU_QQ_LINK_NUMBER', 'KEFU_QQ_LINK_NUMBER', '客服3', '272234669', 3, 0, b'0', NULL,  NULL);
+
+INSERT INTO `sys_parameter`(sysparamcode, sysparamname, remark, sysparamvalue, status, is_delete, create_user, update_user) VALUES ('LIVE_VIDEO_ENCODE', 'LIVE_VIDEO_ENCODE', '直播视频编码', 'h264', 0, b'0', NULL,  NULL);
+INSERT INTO `sys_parameter`(sysparamcode, sysparamname, remark, sysparamvalue, status, is_delete, create_user, update_user) VALUES ('TRANSFORM_TPL_360', 'TRANSFORM_TPL_360', '360P转码模板', 'TJ360', 0, b'0', NULL,  NULL);
+INSERT INTO `sys_parameter`(sysparamcode, sysparamname, remark, sysparamvalue, status, is_delete, create_user, update_user) VALUES ('TRANSFORM_TPL_480', 'TRANSFORM_TPL_480', '480P转码模板', 'TJ540', 0, b'0', NULL,  NULL);
+INSERT INTO `sys_parameter`(sysparamcode, sysparamname, remark, sysparamvalue, status, is_delete, create_user, update_user) VALUES ('TRANSFORM_TPL_720', 'TRANSFORM_TPL_720', '720P转码模板', 'TJ720', 0, b'0', NULL,  NULL);
+INSERT INTO `sys_parameter`(sysparamcode, sysparamname, remark, sysparamvalue, status, is_delete, create_user, update_user) VALUES ('LIVE_VIDEO_PUSH_ENABLE_H265', 'LIVE_VIDEO_PUSH_ENABLE_H265', '直播推流视频编码是否启用h265方式(1:启用;其它不启用)', '0', 0, b'0', NULL,  NULL);
+
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('1', 'mgplus_mobile_smg_108heroes', '108好汉', '50001');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('2', 'mgplus_mobile_smg_108heroesmultiplierfortunes', '一零八好汉 乘数财富', '50002');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('3', 'mgplus_mobile_smg_5reeldrive', '侠盗猎车手', '50003');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('4', 'mgplus_mobile_smg_acesandeights', 'A&8 红利5PK', '50004');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('5', 'mgplus_mobile_smg_acesandfaces', '经典5PK', '50005');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('6', 'mgplus_mobile_smg_actionopssnowandsable', '秘密行动-雪诺和塞布尔', '50006');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('7', 'mgplus_mobile_smg_adventurepalace', '冒险丛林(HD)', '50007');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('8', 'mgplus_mobile_smg_ageofdiscovery', '大航海时代', '50008');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('9', 'mgplus_mobile_smg_agentjaneblonde', '城市猎人', '50009');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('10', 'mgplus_mobile_smg_agentjaneblondereturns', '特工简.布隆德归来', '50010');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('11', 'mgplus_mobile_smg_alaskanfishing', '阿拉斯加垂钓', '50011');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('12', 'mgplus_mobile_smg_americanroulettegold', '美式轮盘', '50012');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('13', 'mgplus_mobile_smg_ancientfortuneszeus', 'Zeus古代财富', '50013');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('14', 'mgplus_mobile_smg_ariana', '爱丽娜', '50014');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('15', 'mgplus_mobile_smg_asianbeauty', '亚洲风情', '50015');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('16', 'mgplus_mobile_smg_atlanticcityblackjackgold', '金牌大西洋城21点', '50016');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('17', 'mgplus_mobile_smg_aurorawilds', '极光百搭', '50017');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('18', 'mgplus_mobile_smg_avalon', '阿瓦隆', '50018');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('19', 'mgplus_mobile_smg_badmintonhero', '热血羽毛球', '50019');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('20', 'mgplus_mobile_smg_bananaodyssey', '香蕉奥德赛', '50020');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('21', 'mgplus_mobile_smg_barbarblacksheep5reel', '黑绵羊咩咩叫', '50021');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('22', 'mgplus_mobile_smg_barsandstripes', '条条纹纹 ', '50022');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('23', 'mgplus_mobile_smg_basketballstar', '篮球巨星', '50023');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('24', 'mgplus_mobile_smg_basketballstardeluxe', '篮球巨星豪华版', '50024');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('25', 'mgplus_mobile_smg_battleroyale', '大逃杀', '50025');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('26', 'mgplus_mobile_smg_beachbabes', '沙滩女孩', '50026');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('27', 'mgplus_mobile_smg_beautifulbones', '美丽骷髅', '50027');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('28', 'mgplus_mobile_smg_bigkahuna', '森林之王', '50028');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('29', 'mgplus_mobile_smg_bigtop', '马戏团', '50029');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('30', 'mgplus_mobile_smg_bikiniparty', '比基尼派对', '50030');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('31', 'mgplus_mobile_smg_bonusdeuceswild', '超级百搭二王', '50031');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('32', 'mgplus_mobile_smg_boogiemonsters', '摇滚怪兽', '50032');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('33', 'mgplus_mobile_smg_bookofoz', 'Oz之书', '50033');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('34', 'mgplus_mobile_smg_bookofozlocknspin', 'Oz之书锁定并旋转', '50034');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('35', 'mgplus_mobile_smg_bookieofodds', '好运经纪人', '50035');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('36', 'mgplus_mobile_smg_breakaway', '冰球突破', '50036');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('37', 'mgplus_mobile_smg_breakawaydeluxe', '冰球突破豪华版', '50037');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('38', 'mgplus_mobile_smg_breakdabank', '银行抢匪', '50038');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('39', 'mgplus_mobile_smg_breakdabankagain', '银行抢匪2', '50039');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('40', 'mgplus_mobile_smg_breakdabankagainrespin', '再抢银行再旋转', '50040');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('41', 'mgplus_mobile_smg_bridesmaids', '伴娘我最大', '50041');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('42', 'mgplus_mobile_smg_bullseyegameshow', '正中红心', '50042');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('43', 'mgplus_mobile_smg_burningdesire', '燃烧的欲望', '50043');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('44', 'mgplus_mobile_smg_bushtelegraph', '丛林快讯', '50044');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('45', 'mgplus_mobile_smg_bustthebank', '抢银行', '50045');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('46', 'mgplus_mobile_smg_candydreams', '梦果子乐园', '50046');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('47', 'mgplus_mobile_smg_carnaval', '狂欢节', '50047');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('48', 'mgplus_mobile_smg_cashcrazy', '疯狂现金', '50048');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('49', 'mgplus_mobile_smg_cashofkingdoms', '富贵王国', '50049');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('50', 'mgplus_mobile_smg_cashsplash5reel', '现金飞溅(5线)', '50050');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('51', 'mgplus_mobile_smg_cashapillar', '昆虫派对', '50051');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('52', 'mgplus_mobile_smg_cashoccino', '现金咖啡', '50052');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('53', 'mgplus_mobile_smg_cashville', '现金威乐', '50053');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('54', 'mgplus_mobile_smg_castlebuilder2', '城堡建筑师2', '50054');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('55', 'mgplus_mobile_smg_centrecourt', '网球冠军', '50055');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('56', 'mgplus_mobile_smg_classic243', '经典243​', '50056');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('57', 'mgplus_mobile_smg_coolbuck5reel', '运财酷儿', '50057');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('58', 'mgplus_mobile_smg_coolwolf', '酷派狼人', '50058');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('59', 'mgplus_mobile_smg_couchpotato', '慵懒土豆', '50059');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('60', 'mgplus_mobile_smg_crazychameleons', '疯狂变色龙', '50060');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('61', 'mgplus_mobile_smg_cricketstar', '板球明星', '50061');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('62', 'mgplus_mobile_smg_crystalrift', '水晶裂谷', '50062');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('63', 'mgplus_mobile_smg_deckthehalls', '圣诞大餐', '50063');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('64', 'mgplus_mobile_smg_decodiamonds', '德科钻石', '50064');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('65', 'mgplus_mobile_smg_deuceswild', '百搭二王', '50065');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('66', 'mgplus_mobile_smg_diamondempire', '钻石帝国', '50066');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('67', 'mgplus_mobile_smg_dolphincoast', '海豚海岸', '50067');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('68', 'mgplus_mobile_smg_dolphinquest', '海豚历奇', '50068');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('69', 'mgplus_mobile_smg_doubledoublebonus', '四倍红利5PK', '50069');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('70', 'mgplus_mobile_smg_doublewammy', '双倍惊喜', '50070');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('71', 'mgplus_mobile_smg_dragondance', '舞龙', '50071');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('72', 'mgplus_mobile_smg_dragonshard', '神龙碎片', '50072');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('73', 'mgplus_mobile_smg_dragonz', '幸运龙宝贝', '50073');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('74', 'mgplus_mobile_smg_dreamdate', '梦幻邂逅', '50074');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('75', 'mgplus_mobile_smg_eagleswings', '疾风老鹰', '50075');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('76', 'mgplus_mobile_smg_emoticoins', '表情金币 ', '50076');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('77', 'mgplus_mobile_smg_emperorofthesea', '青龙出海', '50077');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('78', 'mgplus_mobile_smg_europeanblackjackgold', '金牌欧洲21点', '50078');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('79', 'mgplus_mobile_smg_europeanroulette', '欧洲轮盘(Gold)', '50079');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('80', 'mgplus_mobile_smg_exoticcats', '异域狂兽', '50080');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('81', 'mgplus_mobile_smg_fishparty', '海底派对', '50081');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('82', 'mgplus_mobile_smg_footballstar', '足球之巅', '50082');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('83', 'mgplus_mobile_smg_forbiddenthrone', '禁忌的皇权', '50083');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('84', 'mgplus_mobile_smg_fortunegirl', '金库甜心', '50084');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('85', 'mgplus_mobile_smg_fortunium', '财富之都', '50085');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('86', 'mgplus_mobile_smg_frozendiamonds', ' 急冻钻石​', '50086');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('87', 'mgplus_mobile_smg_fruitblast', '水果大爆发', '50087');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('88', 'mgplus_mobile_smg_fruitvscandy', '水果vs糖果', '50088');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('89', 'mgplus_mobile_smg_gemsodyssey', '宝石奥德赛', '50089');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('90', 'mgplus_mobile_smg_giantriches', '巨人财富', '50090');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('91', 'mgplus_mobile_smg_girlswithgunsjungleheat', '美女抢手丛林激战', '50091');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('92', 'mgplus_mobile_smg_gnomewood', '矮木头', '50092');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('93', 'mgplus_mobile_smg_goldfactory', '黄金工厂', '50093');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('94', 'mgplus_mobile_smg_goldenera', '黄金时代', '50094');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('95', 'mgplus_mobile_smg_goldenprincess', '黄金公主', '50095');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('96', 'mgplus_mobile_smg_gophergold', '黄金地鼠', '50096');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('97', 'mgplus_mobile_smg_halloween', '万圣节', '50097');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('98', 'mgplus_mobile_smg_halloweenies', '万圣节派对', '50098');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('99', 'mgplus_mobile_smg_happyholidays', '快乐假日', '50099');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('100', 'mgplus_mobile_smg_happymonsterclaw', '开心娃娃机', '50100');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('101', 'mgplus_mobile_smg_harveys', '哈维斯的晚餐', '50101');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('102', 'mgplus_mobile_smg_hellboy', '地狱怪客', '50102');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('103', 'mgplus_mobile_smg_highsociety', '上流社会', '50103');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('104', 'mgplus_mobile_smg_highlander', '挑战者', '50104');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('105', 'mgplus_mobile_smg_hitman', '终极杀手', '50105');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('106', 'mgplus_mobile_smg_hollyjollypenguins', '圣诞企鹅', '50106');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('107', 'mgplus_mobile_smg_houndhotel', '酷犬酒店', '50107');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('108', 'mgplus_mobile_smg_huangditheyellowemperor', '轩辕帝传', '50108');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('109', 'mgplus_mobile_smg_immortalromance', '不朽情缘', '50109');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('110', 'mgplus_mobile_smg_isis', '伊西斯', '50110');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('111', 'mgplus_mobile_smg_jacksorbetter', '对J高手5PK', '50111');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('112', 'mgplus_mobile_smg_jewelquestriches', '宝石探秘财富加倍', '50112');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('113', 'mgplus_mobile_smg_junglejimeldorado', '丛林吉姆黄金国​', '50113');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('114', 'mgplus_mobile_smg_jurassicworld', '侏罗纪世界', '50114');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('115', 'mgplus_mobile_smg_karaokeparty', ' K歌乐韵', '50115');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('116', 'mgplus_mobile_smg_kathmandu', '加德满都', '50116');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('117', 'mgplus_mobile_smg_kingtusk', '大象之王', '50117');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('118', 'mgplus_mobile_smg_kingsofcash', '现金之王', '50118');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('119', 'mgplus_mobile_smg_kittycabana', '凯蒂卡巴拉', '50119');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('120', 'mgplus_mobile_smg_ladiesnite', '淑女派对', '50120');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('121', 'mgplus_mobile_smg_ladyinred', '红衣女郎', '50121');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('122', 'mgplus_mobile_smg_laracrofttemplesandtombs', '罗拉卡芙特之神庙古墓', '50122');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('123', 'mgplus_mobile_smg_legendkeno', '传奇keno', '50123');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('124', 'mgplus_mobile_smg_legendofthemoonlovers', '奔月传说', '50124');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('125', 'mgplus_mobile_smg_lifeofriches', '富裕人生', '50125');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('126', 'mgplus_mobile_smg_lionspride', '狮子的自尊', '50126');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('127', 'mgplus_mobile_smg_liquidgold', '液态黄金', '50127');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('128', 'mgplus_mobile_smg_loaded', '幸运嘻哈', '50128');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('129', 'mgplus_mobile_smg_lostvegas', '迷失拉斯维加斯', '50129');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('130', 'mgplus_mobile_smg_luchalegends', '摔角传奇', '50130');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('131', 'mgplus_mobile_smg_luckyfirecracker', '招财鞭炮', '50131');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('132', 'mgplus_mobile_smg_luckykoi', '幸运锦鲤', '50132');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('133', 'mgplus_mobile_smg_luckyleprechaun', '幸运妖精', '50133');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('134', 'mgplus_mobile_smg_luckylittlegods', '宝贝财神', '50134');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('135', 'mgplus_mobile_smg_luckytwins', '幸运双星', '50135');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('136', 'mgplus_mobile_smg_luckyzodiac', '幸运生肖', '50136');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('137', 'mgplus_mobile_smg_madhatters', '疯狂帽匠', '50137');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('138', 'mgplus_mobile_smg_magicofsahara', '魔力撒哈拉', '50138');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('139', 'mgplus_mobile_smg_majormillions5reel', '百万富翁5线', '50139');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('140', 'mgplus_mobile_smg_maxdamagearcade', '终结侵略者', '50140');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('141', 'mgplus_mobile_smg_mayanprincess', '玛雅公主', '50141');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('142', 'mgplus_mobile_smg_megamoneymultiplier', '巨额现金乘数', '50142');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('143', 'mgplus_mobile_smg_megamoneyrush', '巨款大冲击', '50143');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('144', 'mgplus_mobile_smg_megamoolah', '百万钞票', '50144');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('145', 'mgplus_mobile_smg_mermaidsmillions', '百万美人鱼', '50145');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('146', 'mgplus_mobile_smg_mobydickonlineslot', '大白鲸', '50146');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('147', 'mgplus_mobile_smg_monsterwheels', '怪物赛车', '50147');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('148', 'mgplus_mobile_smg_munchkins', '小小矮人', '50148');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('149', 'mgplus_mobile_smg_mysticdreams', '神秘的梦', '50149');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('150', 'mgplus_mobile_smg_oinkcountrylove', '呼噜噜爱上乡下 ', '50150');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('151', 'mgplus_mobile_smg_ourdaysa', '有你的校园', '50151');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('152', 'mgplus_mobile_smg_partyisland', '派对岛屿', '50152');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('153', 'mgplus_mobile_smg_peekaboo5reel', '躲猫猫', '50153');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('154', 'mgplus_mobile_smg_petsgowild', '狂野宠物', '50154');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('155', 'mgplus_mobile_smg_pistoleras', '持枪王者', '50155');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('156', 'mgplus_mobile_smg_playboy', '花花公子', '50156');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('157', 'mgplus_mobile_smg_playboygold', 'Playboy 黄金', '50157');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('158', 'mgplus_mobile_smg_playboygoldjackpots', 'Playboy黄金大奖', '50158');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('159', 'mgplus_mobile_smg_poketheguy', '进击的猿人', '50159');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('160', 'mgplus_mobile_smg_pollenparty', '花粉之国', '50160');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('161', 'mgplus_mobile_smg_prettykitty', '漂亮猫咪', '50161');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('162', 'mgplus_mobile_smg_pureplatinum', '白金俱乐部', '50162');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('163', 'mgplus_mobile_smg_queenofthecrystalrays', '水晶射线女王', '50163');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('164', 'mgplus_mobile_smg_rabbitinthehat', '帽中的兔子', '50164');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('165', 'mgplus_mobile_smg_reelgems', '宝石转轴', '50165');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('166', 'mgplus_mobile_smg_reelspinner', '旋转大战', '50166');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('167', 'mgplus_mobile_smg_reelstrike', '海洋争夺', '50167');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('168', 'mgplus_mobile_smg_reeltalent', '真正高手', '50168');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('169', 'mgplus_mobile_smg_reelthunder', '雷霆风暴', '50169');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('170', 'mgplus_mobile_smg_relicseekers', '探陵人', '50170');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('171', 'mgplus_mobile_smg_retroreels', '经典老虎机', '50171');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('172', 'mgplus_mobile_smg_retroreelsdiamondglitz', '钻石浮华', '50172');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('173', 'mgplus_mobile_smg_retroreelsextremeheat', '酷热经典', '50173');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('174', 'mgplus_mobile_smg_rhymingreelsgeorgieporgie', '乔治与柏志', '50174');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('175', 'mgplus_mobile_smg_rhymingreelsheartsandtarts', '女皇之心', '50175');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('176', 'mgplus_mobile_smg_rivierariches', '瑞维拉财宝', '50176');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('177', 'mgplus_mobile_smg_robinofsherwoodonlineslot', '舍伍德的罗宾', '50177');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('178', 'mgplus_mobile_smg_romanovriches', '罗曼诺夫财富', '50178');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('179', 'mgplus_mobile_smg_rugbystar', '橄榄球明星', '50179');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('180', 'mgplus_mobile_smg_santapaws', '冰雪圣诞村', '50180');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('181', 'mgplus_mobile_smg_santaswildride', '圣诞老人的百搭摩托车', '50181');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('182', 'mgplus_mobile_smg_scrooge', '小气财神', '50182');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('183', 'mgplus_mobile_smg_secretadmirer', '暗恋', '50183');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('184', 'mgplus_mobile_smg_secretromance', '秘密爱慕者', '50184');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('185', 'mgplus_mobile_smg_shanghaibeauty', '上海美女', '50185');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('186', 'mgplus_mobile_smg_sherlockoflondononlineslot', '伦敦的夏洛克', '50186');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('187', 'mgplus_mobile_smg_shogunoftime', '时界门之将军', '50187');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('188', 'mgplus_mobile_smg_shoot', '射门高手', '50188');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('189', 'mgplus_mobile_smg_showdownsaloon', '对决沙龙', '50189');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('190', 'mgplus_mobile_smg_silverfang', '银狼', '50190');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('191', 'mgplus_mobile_smg_silverlioness4x', '银色雌狮4x', '50191');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('192', 'mgplus_mobile_smg_sixacrobats', '杂技群英会', '50192');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('193', 'mgplus_mobile_smg_somanymonsters', '好多怪兽', '50193');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('194', 'mgplus_mobile_smg_somuchcandy', '好多糖果', '50194');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('195', 'mgplus_mobile_smg_somuchsushi', '好多寿司', '50195');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('196', 'mgplus_mobile_smg_springbreak', '春假时光', '50196');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('197', 'mgplus_mobile_smg_stardust', '星尘', '50197');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('198', 'mgplus_mobile_smg_starlightkiss', '星光之吻', '50198');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('199', 'mgplus_mobile_smg_stashofthetitans', '泰坦帝国', '50199');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('200', 'mgplus_mobile_smg_sterlingsilver', '纯银', '50200');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('201', 'mgplus_mobile_smg_sugarparade', '糖果游行', '50201');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('202', 'mgplus_mobile_smg_summerholiday', '暑假', '50202');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('203', 'mgplus_mobile_smg_summertime', '暑假时光', '50203');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('204', 'mgplus_mobile_smg_sunquest', '追寻太阳', '50204');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('205', 'mgplus_mobile_smg_suntide', '太阳征程​', '50205');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('206', 'mgplus_mobile_smg_supeitup', '增强马力', '50206');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('207', 'mgplus_mobile_smg_surewin', '必胜', '50207');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('208', 'mgplus_mobile_smg_tallyho', '狐狸爵士', '50208');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('209', 'mgplus_mobile_smg_tarzan', '泰山传奇', '50209');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('210', 'mgplus_mobile_smg_tastystreet', '妹妹很饿', '50210');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('211', 'mgplus_mobile_smg_thefinerreelsoflife', '至尊人生', '50211');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('212', 'mgplus_mobile_smg_thegrandjourney', '探险之旅', '50212');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('213', 'mgplus_mobile_smg_thegreatalbini', '伟大魔术师', '50213');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('214', 'mgplus_mobile_smg_theheatison', '极速抢钱', '50214');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('215', 'mgplus_mobile_smg_thephantomoftheopera', '歌剧魅影', '50215');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('216', 'mgplus_mobile_smg_theratpack', '鼠帮', '50216');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('217', 'mgplus_mobile_smg_thetwistedcircus', '奇妙马戏团', '50217');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('218', 'mgplus_mobile_smg_thunderstruck', '雷神', '50218');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('219', 'mgplus_mobile_smg_thunderstruck2', '雷霆万钧2', '50219');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('220', 'mgplus_mobile_smg_tigerseye', '虎眼', '50220');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('221', 'mgplus_mobile_smg_tikivikings', '蒂基维京', '50221');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('222', 'mgplus_mobile_smg_titansofthesunhyperion', '太阳神之许珀里翁', '50222');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('223', 'mgplus_mobile_smg_titansofthesuntheia', '太阳神之忒伊亚', '50223');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('224', 'mgplus_mobile_smg_tombraider', '古墓奇兵', '50224');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('225', 'mgplus_mobile_smg_rubytombraiderii', '古墓奇兵2', '50225');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('226', 'mgplus_mobile_smg_treasurenile', '尼罗河宝藏', '50226');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('227', 'mgplus_mobile_smg_treasurepalace', '宝藏宫殿', '50227');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('228', 'mgplus_mobile_smg_treasuresoflioncity', '海底宝城', '50228');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('229', 'mgplus_mobile_smg_untamedgiantpanda', '野生熊猫', '50229');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('230', 'mgplus_mobile_smg_vegasstripblackjackgold', '黄金拉斯维加斯大道', '50230');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('231', 'mgplus_mobile_smg_villagepeople', '型男舞步', '50231');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('232', 'mgplus_mobile_smg_vinylcountdown', '黑胶热舞', '50232');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('233', 'mgplus_mobile_smg_voila', '哈啰巴黎', '50233');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('234', 'mgplus_mobile_smg_wackypanda', '囧囧熊猫', '50234');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('235', 'mgplus_mobile_smg_whatahoot', '猫头鹰乐园', '50235');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('236', 'mgplus_mobile_smg_wickedtalesdarkred', '黑暗故事: 神秘深红', '50236');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('237', 'mgplus_mobile_smg_wildorient', '东方珍兽', '50237');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('238', 'mgplus_mobile_smg_wildscarabs', '百搭圣甲虫', '50238');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('239', 'mgplus_mobile_smg_winsumdimsum', '开心点心', '50239');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('240', 'mgplus_mobile_smg_zombiehoard', '丧尸来袭', '50240');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('241', 'mgplus_mobile_sfb_cascading_alien', '星际萌宝贝', '50241');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('242', 'mgplus_mobile_sfb_baseballduel', '王牌全垒打', '50242');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('243', 'mgplus_mobile_sfb_marmotmayhem', '菜菜放鼠假', '50243');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('244', 'mgplus_mobile_sfb_ko_robotdice', '战骰机器人', '50244');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('245', 'mgplus_mobile_sfb_cascading_zombie', '爆爆尸乐园', '50245');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('246', 'mgplus_mobile_smg_wheelofwishes', '愿望转盘', '50246');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('247', 'mgplus_mobile_smg_adarkmatter', '黑暗阴影', '50247');
+INSERT INTO mg_game (`id`, `game_code`, `game_name`, `lottery_tag`) VALUES ('248', 'mgplus_mobile_smg_9masksoffire', '烈焰面具', '50248');
+
+
+INSERT INTO db_game ( `m_type`, `game_name`) VALUES ( '7002', '龙王捕鱼2');
+INSERT INTO db_game( `m_type`, `game_name`) VALUES ( '7003', '财神捕鱼');
+INSERT INTO db_game ( `m_type`, `game_name`) VALUES ( '7004', '五龙捕鱼');
+
+-- 直播：腾讯推拉流生产配置
+-- 推流
+INSERT INTO `sys_tenliveserver`(`tliveid`, `servername`, `serverurl`, `servertype`, `primarykey`, `backupkey`, `status`)
+VALUES (1, '腾讯云推流1', 'rtmp://livepush.zk01.cc/live', 1, 'dcf0691699cd49fd9bc30714ac4ac862', 'a74d6f62d97941cea7f02576e842ebf7', 0);
+
+INSERT INTO `sys_tenliveserver`(`tliveid`, `servername`, `serverurl`, `servertype`, `primarykey`, `backupkey`, `status`)
+VALUES (2, '腾讯云推流2', 'rtmp://livepush2.zk01.cc/live', 1, '279e98966191ad88e2804fb1f072016b', '62b401925e4444a5bef1b1f40a3cbd27', 0);
+
+INSERT INTO `sys_tenliveserver`(`tliveid`, `servername`, `serverurl`, `servertype`, `primarykey`, `backupkey`, `status`)
+VALUES (3, '腾讯云推流3', 'rtmp://livepush3.zk01.cc/live', 1, 'ca0e3acc58e14ff4b93f4d0d5defa4fb', '0d8d4520e3e540d69b8f1bc3e31f3ec0', 0);
+
+INSERT INTO `sys_tenliveserver`(`tliveid`, `servername`, `serverurl`, `servertype`, `primarykey`, `backupkey`, `status`)
+VALUES (4, '腾讯云推流4', 'rtmp://livepush4.zk01.cc/live', 1, '190e5f1e87994cd397a8fb6fb70a63d3', '530e2090a8414c5cb0d9a3669a2e3519', 0);
+
+INSERT INTO `sys_tenliveserver`(`tliveid`, `servername`, `serverurl`, `servertype`, `primarykey`, `backupkey`, `status`)
+VALUES (5, '腾讯云推流5', 'rtmp://livepush5.zk01.cc/live', 1, '3bd08df491014e238ad4f65b09be4f1f', '61f79412155748e395681e5dfe60c915', 0);
+
+INSERT INTO `sys_tenliveserver`(`tliveid`, `servername`, `serverurl`, `servertype`, `primarykey`, `backupkey`, `status`)
+VALUES (6, '腾讯云推流6', 'rtmp://livepush6.zk01.cc/live', 1, '7a755816a63f4faa9f4ea5ea3202a8ea', '07a38173c3ef4e7c805abd340c9047d2', 0);
+
+
+-- 拉流
+INSERT INTO `sys_tenliveserver`(`tliveid`, `servername`, `serverurl`, `servertype`, `primarykey`, `backupkey`, `status`)
+VALUES (101, '腾讯云拉流1', 'rtmp://liveplay.zk01.cc/live', 2, 'cefb275ee1da42238907369165a81211', '93ebd026c79c454e827035dbf5d45fa5', 0);
+
+INSERT INTO `sys_tenliveserver`(`tliveid`, `servername`, `serverurl`, `servertype`, `primarykey`, `backupkey`, `status`)
+VALUES (102, '腾讯云拉流1', 'http://liveplay.zk01.cc/live@.flv', 2, 'cefb275ee1da42238907369165a81211', '93ebd026c79c454e827035dbf5d45fa5', 0);
+
+INSERT INTO `sys_tenliveserver`(`tliveid`, `servername`, `serverurl`, `servertype`, `primarykey`, `backupkey`, `status`)
+VALUES (103, '腾讯云拉流1', 'http://liveplay.zk01.cc/live@.m3u8', 2, 'cefb275ee1da42238907369165a81211', '93ebd026c79c454e827035dbf5d45fa5', 0);
+
+INSERT INTO `sys_tenliveserver`(`tliveid`, `servername`, `serverurl`, `servertype`, `primarykey`, `backupkey`, `status`)
+VALUES (104, '腾讯云拉流1', 'webrtc://liveplay.zk01.cc/live', 2, 'cefb275ee1da42238907369165a81211', '93ebd026c79c454e827035dbf5d45fa5', 9);
+
+
+INSERT INTO `sys_tenliveserver`(`tliveid`, `servername`, `serverurl`, `servertype`, `primarykey`, `backupkey`, `status`)
+VALUES (105, '腾讯云拉流2', 'rtmp://liveplay2.zk01.cc/live', 2, '03e8d255c4db46569a772312ad31971f', '9bafedd7d2fb45d287d11f51afa2b871', 0);
+
+INSERT INTO `sys_tenliveserver`(`tliveid`, `servername`, `serverurl`, `servertype`, `primarykey`, `backupkey`, `status`)
+VALUES (106, '腾讯云拉流2', 'http://liveplay2.zk01.cc/live@.flv', 2, '03e8d255c4db46569a772312ad31971f', '9bafedd7d2fb45d287d11f51afa2b871', 0);
+
+INSERT INTO `sys_tenliveserver`(`tliveid`, `servername`, `serverurl`, `servertype`, `primarykey`, `backupkey`, `status`)
+VALUES (107, '腾讯云拉流2', 'http://liveplay2.zk01.cc/live@.m3u8', 2, '03e8d255c4db46569a772312ad31971f', '9bafedd7d2fb45d287d11f51afa2b871', 0);
+
+INSERT INTO `sys_tenliveserver`(`tliveid`, `servername`, `serverurl`, `servertype`, `primarykey`, `backupkey`, `status`)
+VALUES (108, '腾讯云拉流2', 'webrtc://liveplay2.zk01.cc/live', 2, '03e8d255c4db46569a772312ad31971f', '9bafedd7d2fb45d287d11f51afa2b871', 9);
+
+
+INSERT INTO `sys_tenliveserver`(`tliveid`, `servername`, `serverurl`, `servertype`, `primarykey`, `backupkey`, `status`)
+VALUES (109, '腾讯云拉流3', 'rtmp://liveplay3.zk01.cc/live', 2, '5f3d40198f954cfaa5c55318c9e0b7e6', '21140c27055e475b89a90ce58dd939f4', 0);
+
+INSERT INTO `sys_tenliveserver`(`tliveid`, `servername`, `serverurl`, `servertype`, `primarykey`, `backupkey`, `status`)
+VALUES (110, '腾讯云拉流3', 'http://liveplay3.zk01.cc/live@.flv', 2, '5f3d40198f954cfaa5c55318c9e0b7e6', '21140c27055e475b89a90ce58dd939f4', 0);
+
+INSERT INTO `sys_tenliveserver`(`tliveid`, `servername`, `serverurl`, `servertype`, `primarykey`, `backupkey`, `status`)
+VALUES (111, '腾讯云拉流3', 'http://liveplay3.zk01.cc/live@.m3u8', 2, '5f3d40198f954cfaa5c55318c9e0b7e6', '21140c27055e475b89a90ce58dd939f4', 0);
+
+INSERT INTO `sys_tenliveserver`(`tliveid`, `servername`, `serverurl`, `servertype`, `primarykey`, `backupkey`, `status`)
+VALUES (112, '腾讯云拉流3', 'webrtc://liveplay3.zk01.cc/live', 2, '5f3d40198f954cfaa5c55318c9e0b7e6', '21140c27055e475b89a90ce58dd939f4', 9);
+
+
+INSERT INTO `sys_tenliveserver`(`tliveid`, `servername`, `serverurl`, `servertype`, `primarykey`, `backupkey`, `status`)
+VALUES (113, '腾讯云拉流4', 'rtmp://liveplay4.zk01.cc/live', 2, '2cdedd7c71174b4c881b0ce4712d8247', 'c04cbe1ee1e94e51bf03601aa3e907db', 0);
+
+INSERT INTO `sys_tenliveserver`(`tliveid`, `servername`, `serverurl`, `servertype`, `primarykey`, `backupkey`, `status`)
+VALUES (114, '腾讯云拉流4', 'http://liveplay4.zk01.cc/live@.flv', 2, '2cdedd7c71174b4c881b0ce4712d8247', 'c04cbe1ee1e94e51bf03601aa3e907db', 0);
+
+INSERT INTO `sys_tenliveserver`(`tliveid`, `servername`, `serverurl`, `servertype`, `primarykey`, `backupkey`, `status`)
+VALUES (115, '腾讯云拉流4', 'http://liveplay4.zk01.cc/live@.m3u8', 2, '2cdedd7c71174b4c881b0ce4712d8247', 'c04cbe1ee1e94e51bf03601aa3e907db', 0);
+
+INSERT INTO `sys_tenliveserver`(`tliveid`, `servername`, `serverurl`, `servertype`, `primarykey`, `backupkey`, `status`)
+VALUES (116, '腾讯云拉流4', 'webrtc://liveplay4.zk01.cc/live', 2, '2cdedd7c71174b4c881b0ce4712d8247', 'c04cbe1ee1e94e51bf03601aa3e907db', 9);
+
+
+INSERT INTO `sys_tenliveserver`(`tliveid`, `servername`, `serverurl`, `servertype`, `primarykey`, `backupkey`, `status`)
+VALUES (117, '腾讯云拉流5', 'rtmp://liveplay5.zk01.cc/live', 2, 'f8f1c52ffcb7413b87f77660a0e9d332', '8cc52147b0be4ad48d0e7f090d8da16c', 0);
+
+INSERT INTO `sys_tenliveserver`(`tliveid`, `servername`, `serverurl`, `servertype`, `primarykey`, `backupkey`, `status`)
+VALUES (118, '腾讯云拉流5', 'http://liveplay5.zk01.cc/live@.flv', 2, 'f8f1c52ffcb7413b87f77660a0e9d332', '8cc52147b0be4ad48d0e7f090d8da16c', 0);
+
+INSERT INTO `sys_tenliveserver`(`tliveid`, `servername`, `serverurl`, `servertype`, `primarykey`, `backupkey`, `status`)
+VALUES (119, '腾讯云拉流5', 'http://liveplay5.zk01.cc/live@.m3u8', 2, 'f8f1c52ffcb7413b87f77660a0e9d332', '8cc52147b0be4ad48d0e7f090d8da16c', 0);
+
+INSERT INTO `sys_tenliveserver`(`tliveid`, `servername`, `serverurl`, `servertype`, `primarykey`, `backupkey`, `status`)
+VALUES (120, '腾讯云拉流5', 'webrtc://liveplay5.zk01.cc/live', 2, 'f8f1c52ffcb7413b87f77660a0e9d332', '8cc52147b0be4ad48d0e7f090d8da16c', 9);
+
+
+INSERT INTO `sys_tenliveserver`(`tliveid`, `servername`, `serverurl`, `servertype`, `primarykey`, `backupkey`, `status`)
+VALUES (121, '腾讯云拉流6', 'rtmp://liveplay6.zk01.cc/live', 2, '34fb31c0f408449f9fd1232d2fa1e3ad', '05001c9c2e9c4f69a2458d1951676d2c', 0);
+
+INSERT INTO `sys_tenliveserver`(`tliveid`, `servername`, `serverurl`, `servertype`, `primarykey`, `backupkey`, `status`)
+VALUES (122, '腾讯云拉流6', 'http://liveplay6.zk01.cc/live@.flv', 2, '34fb31c0f408449f9fd1232d2fa1e3ad', '05001c9c2e9c4f69a2458d1951676d2c', 0);
+
+INSERT INTO `sys_tenliveserver`(`tliveid`, `servername`, `serverurl`, `servertype`, `primarykey`, `backupkey`, `status`)
+VALUES (123, '腾讯云拉流6', 'http://liveplay6.zk01.cc/live@.m3u8', 2, '34fb31c0f408449f9fd1232d2fa1e3ad', '05001c9c2e9c4f69a2458d1951676d2c', 0);
+
+INSERT INTO `sys_tenliveserver`(`tliveid`, `servername`, `serverurl`, `servertype`, `primarykey`, `backupkey`, `status`)
+VALUES (124, '腾讯云拉流6', 'webrtc://liveplay6.zk01.cc/live', 2, '34fb31c0f408449f9fd1232d2fa1e3ad', '05001c9c2e9c4f69a2458d1951676d2c', 9);
+
+
+-- 版本v1.2.0变更sql
+-- 主播环境配置 bb直播 生产环境
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, status, is_delete, create_user, update_user) VALUES ( 'LIVE_BAS_ANCHOR_PLATFORM_BBZB', 'gwurl', 'bbzb网关地址', 'https://gw.liveprod.net', 0, b'0', NULL,  NULL);
+-- INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, status, is_delete, create_user, update_user) VALUES ( 'LIVE_BAS_ANCHOR_PLATFORM_BBZB', 'wsurl', 'bbzb网关地址', 'wss://gw.liveprod.net/live/talkserver', 0, b'0', NULL,  NULL);
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, status, is_delete, create_user, update_user) VALUES ( 'LIVE_BAS_ANCHOR_PLATFORM_BBZB', 'h5url', 'bbzb网关地址', 'https://h5.liveprod.net', 9, b'0', NULL,  NULL);
+
+-- ws配置 bb直播 生产环境
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, status, is_delete, create_user, update_user) VALUES ( 'LIVE_WS_URL', 'wsurl', 'ws地址', 'wss://gw.liveprod.net/chat/talkserver', 0, b'0', NULL,  NULL);
+
+-- 版本v1.3.0变更sql
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, status, is_delete, create_user, update_user) VALUES ( 'PLATFORM_NAME', 'PLATFORM_NAME', '平台标识', 'BBZB', 0, b'0', NULL,  NULL);
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, status, is_delete, create_user, update_user) VALUES ( 'UNIQUE_CODE_GEN_SIZE', 'UNIQUE_CODE_GEN_SIZE', '生成随机码的个数', '2000000', 0, b'0', NULL,  NULL);
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, status, is_delete, create_user, update_user) VALUES ( 'UNIQUE_CODE_LOAD_SIZE', 'UNIQUE_CODE_LOAD_SIZE', '每次加载随机码的个数', '500', 0, b'0', NULL,  NULL);
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, status, is_delete, create_user, update_user) VALUES ( 'UNIQUE_CODE_BATCH_SIZE', 'UNIQUE_CODE_BATCH_SIZE', '每次批量操作随机码的个数', '5000', 0, b'0', NULL,  NULL);
+
+
+-- 版本v1.3.0 生产环境推送地址：sg推送地址
+INSERT INTO sys_parameter (sysparamcode, sysparamname, remark, sysparamvalue, status, is_delete, create_user, update_user) VALUES ( 'LIVE_SG_PUSH_ADDRESS_URL', 'sgwsurl', '赛果推送地址', 'wss://gw.liveprod.net/sgws/websocket/TOPIC_APP', 0, b'0', NULL,  NULL);
+
+-- 此处只能在新开平台执行，已有平台禁止执行
+INSERT INTO `bd_user`(`accno`, `bdusername`, `phoneno`, `wechat`, `email`, `is_delete`, `create_user`, `update_user`, `acclogin`, `password`, `passwordmd5`, `loginnum`, `accstatus`, `clintipadd`, `lastlogindate`) VALUES ('28883d4a8d584128a9443111ac0c93fe', '后台管理员', '13800000001', '15800000001', '', b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6','supermanage', '96e79218965eb72c92a549dd5a330112', '96e79218965eb72c92a549dd5a330112', 199, 1, '103.114.91.102', '2020-08-05 10:31:54');
+
+
+-- v1.3.0版本变更sql
+-- 新增系统参数表 短信发送初始化sql
+INSERT INTO `live`.`sys_parameter` (`sysparamcode`, `sysparamname`, `remark`, `sysparamvalue`, `sortby`, `status`, `is_delete`, `create_user`,`update_user`) VALUES ('SMS_REAL_SEND', '短信是否真实调用发送', '1发送', 1, 1, 9, 0, '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `live`.`sys_parameter` (`sysparamcode`, `sysparamname`, `remark`, `sysparamvalue`, `sortby`, `status`, `is_delete`, `create_user`,`update_user`) VALUES ('SMS_LINKAI', '凌凯', '新版本短信凌凯渠道', 'LINKAI', 1, 9, 1, '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `live`.`sys_parameter` (`sysparamcode`, `sysparamname`, `remark`, `sysparamvalue`, `sortby`, `status`, `is_delete`, `create_user`,`update_user`) VALUES ('SMS_MEILIAN', '美联', '新版本短信美联渠道', 'MEILIAN', 1, 9, 1, '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `live`.`sys_parameter` (`sysparamcode`, `sysparamname`, `remark`, `sysparamvalue`, `sortby`, `status`, `is_delete`, `create_user`,`update_user`) VALUES ('SMS_RONGLIANYUN', '容联云通讯', '新版本短信容联云通讯渠道', 'RONGLIANYUN', 1, 9, 1, '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `live`.`sys_parameter` (`sysparamcode`, `sysparamname`, `remark`, `sysparamvalue`, `sortby`, `status`, `is_delete`, `create_user`,`update_user`) VALUES ('SMS_ALIYUN', '阿里云', '新版本短信阿里云渠道', 'ALIYUN', 1, 9, 1, '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `live`.`sys_parameter` (`sysparamcode`, `sysparamname`, `remark`, `sysparamvalue`, `sortby`, `status`, `is_delete`, `create_user`,`update_user`) VALUES ('SMS_JUHESHUJU', '聚合数据', '新版本短信聚合数据渠道', 'JUHESHUJU', 1, 9, 1, '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `live`.`sys_parameter` (`sysparamcode`, `sysparamname`, `remark`, `sysparamvalue`, `sortby`, `status`, `is_delete`, `create_user`,`update_user`) VALUES ('SMS_YUNPIAN', '云片', '新版本短信云片渠道', 'YUNPIAN', 1, 9, 1, '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `live`.`sys_parameter` (`sysparamcode`, `sysparamname`, `remark`, `sysparamvalue`, `sortby`, `status`, `is_delete`, `create_user`,`update_user`) VALUES ('SMS_WANGJIAN', '网健', '新版本短信网健渠道', 'WANGJIAN', 1, 9, 1, '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `live`.`sys_parameter` (`sysparamcode`, `sysparamname`, `remark`, `sysparamvalue`, `sortby`, `status`, `is_delete`, `create_user`,`update_user`) VALUES ('SMS_YUNXINSHI', '云信使', '新版本短信云信使渠道', 'YUNXINSHI', 1, 9, 1, '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `live`.`sys_parameter` (`sysparamcode`, `sysparamname`, `remark`, `sysparamvalue`, `sortby`, `status`, `is_delete`, `create_user`,`update_user`) VALUES ('SMS_ALI_OLD', '阿里云（老版本）', '老版本短信阿里渠道', 'ALI', 1, 9, 1, '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `live`.`sys_parameter` (`sysparamcode`, `sysparamname`, `remark`, `sysparamvalue`, `sortby`, `status`, `is_delete`, `create_user`,`update_user`) VALUES ('SMS_JIGUANG_OLD', '极光（老版本）', '老版本短信极光渠道', 'JIGUANG', 1, 9, 1, '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `live`.`sys_parameter` (`sysparamcode`, `sysparamname`, `remark`, `sysparamvalue`, `sortby`, `status`, `is_delete`, `create_user`,`update_user`) VALUES ('SMS_YUNZHIXUN_OLD', '云之讯（老版本）', '老版本短信云之讯渠道', 'YUNZHIXUN', 1, 9, 1, '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `live`.`sys_parameter` (`sysparamcode`, `sysparamname`, `remark`, `sysparamvalue`, `sortby`, `status`, `is_delete`, `create_user`,`update_user`) VALUES ('SMS_ALIYUN_APPKEY', '阿里云 appkey', '阿里云 appkey', 'LTAII6VhYzdhi15w', 1, 9, 1, '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `live`.`sys_parameter` (`sysparamcode`, `sysparamname`, `remark`, `sysparamvalue`, `sortby`, `status`, `is_delete`, `create_user`,`update_user`) VALUES ('SMS_ALIYUN_APPSECRET', '阿里云 appsecret', '阿里云 appsecret', 'UHhfKtLv37bVeWB3nbv5BE1CZINTwV', 1, 9, 1, '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `live`.`sys_parameter` (`sysparamcode`, `sysparamname`, `remark`, `sysparamvalue`, `sortby`, `status`, `is_delete`, `create_user`,`update_user`) VALUES ('SMS_ALIYUN_SIGNNAME', '阿里云短信签名', '阿里云短信签名', '秀懂科技', 1, 9, 1, '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `live`.`sys_parameter` (`sysparamcode`, `sysparamname`, `remark`, `sysparamvalue`, `sortby`, `status`, `is_delete`, `create_user`,`update_user`) VALUES ('SMS_JUHESHUJU_APPKEY', '聚合数据', '聚合数据', 'bedf00f26fd84eaa49629d39d08ac4a1', 1, 9, 1, '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `live`.`sys_parameter` (`sysparamcode`, `sysparamname`, `remark`, `sysparamvalue`, `sortby`, `status`, `is_delete`, `create_user`,`update_user`) VALUES ('SMS_LINKAI_CORPID', '凌凯通信 corpID', '凌凯通信 corpID', 'ULJS00044', 1, 9, 1, '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `live`.`sys_parameter` (`sysparamcode`, `sysparamname`, `remark`, `sysparamvalue`, `sortby`, `status`, `is_delete`, `create_user`,`update_user`) VALUES ('SMS_LINKAI_PWD', '凌凯通信 pwd', '凌凯通信 pwd', 'zm0513@', 1, 9, 1, '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `live`.`sys_parameter` (`sysparamcode`, `sysparamname`, `remark`, `sysparamvalue`, `sortby`, `status`, `is_delete`, `create_user`,`update_user`) VALUES ('SMS_MEILIAN_USERNAME', '美联 username', '美联 username', 'zhibo_hy', 1, 9, 1, '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `live`.`sys_parameter` (`sysparamcode`, `sysparamname`, `remark`, `sysparamvalue`, `sortby`, `status`, `is_delete`, `create_user`,`update_user`) VALUES ('SMS_MEILIAN_PASSWORD', '美联 pwd', '美联 pwd', 'asdf1234', 1, 9, 1, '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `live`.`sys_parameter` (`sysparamcode`, `sysparamname`, `remark`, `sysparamvalue`, `sortby`, `status`, `is_delete`, `create_user`,`update_user`) VALUES ('SMS_MEILIAN_APPKEY', '美联 appkey', '美联 appkey', 'ddde071ba2f7c09f4454858d62ccef2e', 1, 9, 1, '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `live`.`sys_parameter` (`sysparamcode`, `sysparamname`, `remark`, `sysparamvalue`, `sortby`, `status`, `is_delete`, `create_user`,`update_user`) VALUES ('SMS_WANGJIAN_UID', '网健 uid', '网健 uid', 'bmw13900', 1, 9, 1, '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `live`.`sys_parameter` (`sysparamcode`, `sysparamname`, `remark`, `sysparamvalue`, `sortby`, `status`, `is_delete`, `create_user`,`update_user`) VALUES ('SMS_WANGJIAN_KEY', '网健 key', '网健 key', 'd41d8cd98f00b204e980', 1, 9, 1, '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `live`.`sys_parameter` (`sysparamcode`, `sysparamname`, `remark`, `sysparamvalue`, `sortby`, `status`, `is_delete`, `create_user`,`update_user`) VALUES ('SMS_YUNPIAN_APPKEY', '云片 appkey', '云片 appkey', '435bd9202d32ee07d1885ceee05b1b94', 1, 9, 1, '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `live`.`sys_parameter` (`sysparamcode`, `sysparamname`, `remark`, `sysparamvalue`, `sortby`, `status`, `is_delete`, `create_user`,`update_user`) VALUES ('SMS_RONGLIANYUN_ACCOUNTSID', '容联云通讯 sid', '容联云通讯 sid', '8a216da86c8a1a54016cb7d816441f6e', 1, 9, 1, '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `live`.`sys_parameter` (`sysparamcode`, `sysparamname`, `remark`, `sysparamvalue`, `sortby`, `status`, `is_delete`, `create_user`,`update_user`) VALUES ('SMS_RONGLIANYUN_ACCOUNTTOKEN', '容联云通讯 token', '容联云通讯 token', 'a5c287ae1d6c45eda80decdf3aece0b2', 1, 9, 1, '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `live`.`sys_parameter` (`sysparamcode`, `sysparamname`, `remark`, `sysparamvalue`, `sortby`, `status`, `is_delete`, `create_user`,`update_user`) VALUES ('SMS_RONGLIANYUN_APPID', '容联云通讯 appid', '容联云通讯 appid', '8a216da86c8a1a54016cb7d816921f75', 1, 9, 1, '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `live`.`sys_parameter` (`sysparamcode`, `sysparamname`, `remark`, `sysparamvalue`, `sortby`, `status`, `is_delete`, `create_user`,`update_user`) VALUES ('SMS_YUNXINSHI_UID', '云信使uid', '云信使uid', 'jwh0816', 1, 9, 1, '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `live`.`sys_parameter` (`sysparamcode`, `sysparamname`, `remark`, `sysparamvalue`, `sortby`, `status`, `is_delete`, `create_user`,`update_user`) VALUES ('SMS_YUNXINSHI_KEY', '云信使appkey', '云信使appkey', '4c2bf594956433a57b952196dbf433b0', 1, 9, 1, '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `live`.`sys_parameter` (`sysparamcode`, `sysparamname`, `remark`, `sysparamvalue`, `sortby`, `status`, `is_delete`, `create_user`,`update_user`) VALUES ('SMS_ALIYUN_TEMP_REGISTER', '阿里云短信模版注册用户', '阿里云短信模版注册用户', 'SMS_143705310', 1, 9, 1, '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `live`.`sys_parameter` (`sysparamcode`, `sysparamname`, `remark`, `sysparamvalue`, `sortby`, `status`, `is_delete`, `create_user`,`update_user`) VALUES ('SMS_ALIYUN_TEMP_UPDATEPASSWORD', '阿里云短信模版修改密码', '阿里云短信模版修改密码', 'SMS_143705310', 1, 9, 1, '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `live`.`sys_parameter` (`sysparamcode`, `sysparamname`, `remark`, `sysparamvalue`, `sortby`, `status`, `is_delete`, `create_user`,`update_user`) VALUES ('SMS_ALIYUN_TEMP_UPDATEPHONE', '容联云通讯', '阿里云短信模版修改手机号', 'SMS_150738374', 1, 9, 1, '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `live`.`sys_parameter` (`sysparamcode`, `sysparamname`, `remark`, `sysparamvalue`, `sortby`, `status`, `is_delete`, `create_user`,`update_user`) VALUES ('SMS_JUHESHUJU_TEMP_COMMUNAL', '聚合数据短信模板公用', '聚合数据短信模板公用', '205759', 1, 9, 1, '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `live`.`sys_parameter` (`sysparamcode`, `sysparamname`, `remark`, `sysparamvalue`, `sortby`, `status`, `is_delete`, `create_user`,`update_user`) VALUES ('SMS_YUNPIAN_TEMP_COMMUNAL', '云片公用短信模板', '云片公用短信模板', '3751546', 1, 9, 1, '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `live`.`sys_parameter` (`sysparamcode`, `sysparamname`, `remark`, `sysparamvalue`, `sortby`, `status`, `is_delete`, `create_user`,`update_user`) VALUES ('SMS_RONGLIANYUN_TEMP_COMMUNA', '容联云公用短信模板', '容联云公用短信模板', '553577', 1, 9, 1, '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `live`.`sys_parameter` (`sysparamcode`, `sysparamname`, `remark`, `sysparamvalue`, `sortby`, `status`, `is_delete`, `create_user`,`update_user`) VALUES ('SMS_YUNXINSHI_TEMP_COMMUNAL', '云信使公用短信模板', '云信使公用短信模板', '536715', 1, 9, 1, '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `live`.`sys_parameter` (`sysparamcode`, `sysparamname`, `remark`, `sysparamvalue`, `sortby`, `status`, `is_delete`, `create_user`,`update_user`) VALUES ('SMS_JIGUAN_APPKEY', '极光appkey', '极光appkey', '956cc08ee28301a398d0ae0d', 1, 9, 1, '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `live`.`sys_parameter` (`sysparamcode`, `sysparamname`, `remark`, `sysparamvalue`, `sortby`, `status`, `is_delete`, `create_user`,`update_user`) VALUES ('SMS_JIGUAN_APPSECRET', '极光APPSECRET', '极光APPSECRET', '1db01c7d09ec6f52b5658669', 1, 9, 1, '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `live`.`sys_parameter` (`sysparamcode`, `sysparamname`, `remark`, `sysparamvalue`, `sortby`, `status`, `is_delete`, `create_user`,`update_user`) VALUES ('SMS_JIGUAN_SIGN_ID', '极光SignId', '极光SignId', '13643', 1, 9, 1, '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `live`.`sys_parameter` (`sysparamcode`, `sysparamname`, `remark`, `sysparamvalue`, `sortby`, `status`, `is_delete`, `create_user`,`update_user`) VALUES ('SMS_JIGUAN_REGISTER_TEMPLATE', '极光注册模板', '极光注册模板', '159393', 1, 9, 1, '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `live`.`sys_parameter` (`sysparamcode`, `sysparamname`, `remark`, `sysparamvalue`, `sortby`, `status`, `is_delete`, `create_user`,`update_user`) VALUES ('SMS_JIGUAN_UPDATE_PASSWORD_TEMPLATE', '极光修改密码模板', '极光修改密码模板', '159394', 1, 9, 1, '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `live`.`sys_parameter` (`sysparamcode`, `sysparamname`, `remark`, `sysparamvalue`, `sortby`, `status`, `is_delete`, `create_user`,`update_user`) VALUES ('SMS_JIGUAN_UPDATEP_PHONE_TEMPLATE', '极光修改手机号模板', '极光修改手机号模板', '159395', 1, 9, 1, '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `live`.`sys_parameter` (`sysparamcode`, `sysparamname`, `remark`, `sysparamvalue`, `sortby`, `status`, `is_delete`, `create_user`,`update_user`) VALUES ('SMS_YUNZHIXUN_APPID', '云之讯appid', '云之讯appid', 'fc72fd2c831f41ed9ccb6e1a1af1863c', 1, 9, 1, '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `live`.`sys_parameter` (`sysparamcode`, `sysparamname`, `remark`, `sysparamvalue`, `sortby`, `status`, `is_delete`, `create_user`,`update_user`) VALUES ('SMS_YUNZHIXUN_SID', '云之讯sid', '云之讯sid', '2d546d6d94fbf98c129c0d98d25c6d30', 1, 9, 1, '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `live`.`sys_parameter` (`sysparamcode`, `sysparamname`, `remark`, `sysparamvalue`, `sortby`, `status`, `is_delete`, `create_user`,`update_user`) VALUES ('SMS_YUNZHIXUN_TOKEN', '云之讯token', '云之讯token', '27e541e6b474f1cc1892e7107f644018', 1, 9, 1, '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `live`.`sys_parameter` (`sysparamcode`, `sysparamname`, `remark`, `sysparamvalue`, `sortby`, `status`, `is_delete`, `create_user`,`update_user`) VALUES ('SMS_YUNZHIXUN_REGISTER_TEMPLATE', '云之讯注册模板', '云之讯注册模板', '438481', 1, 9, 1, '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `live`.`sys_parameter` (`sysparamcode`, `sysparamname`, `remark`, `sysparamvalue`, `sortby`, `status`, `is_delete`, `create_user`,`update_user`) VALUES ('SMS_YUNZHIXUN_UPDATE_PASSWORD_TEMPLATE', '云之讯修改密码模板', '云之讯修改密码模板', '438482', 1, 9, 1, '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `live`.`sys_parameter` (`sysparamcode`, `sysparamname`, `remark`, `sysparamvalue`, `sortby`, `status`, `is_delete`, `create_user`,`update_user`) VALUES ('SMS_YUNZHIXUN_UPDATEP_PHONE_TEMPLATE', '云之讯修改手机号模板', '云之讯修改手机号模板', '438483', 1, 9, 1, '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+
+INSERT INTO `sys_busparameter` (busparamcode, pbusparamcode, busparamname,remark, `status`, sortby,is_delete)VALUES ( 'HEADIMG', 'HEADIMG', 'https://cptstore.liveprod.net/avatar/2876943c46014edda5a9933afe2dc7078rv6oq.png', '默认头像', 0, 0, b'0');
+INSERT INTO `sys_busparameter` (busparamcode, pbusparamcode, busparamname,remark, `status`, sortby,is_delete)VALUES ( 'HEADIMG', 'HEADIMG', 'https://cptstore.liveprod.net/avatar/6c013a99a0e1448d894eb6beb5accaf6mzlnuv.png', '默认头像', 0, 0, b'0');
+INSERT INTO `sys_busparameter` (busparamcode, pbusparamcode, busparamname,remark, `status`, sortby,is_delete)VALUES ( 'HEADIMG', 'HEADIMG', 'https://cptstore.liveprod.net/avatar/66891d3666204b79b10843c3f86c65efde2783.png', '默认头像', 0, 0, b'0');
+INSERT INTO `sys_busparameter` (busparamcode, pbusparamcode, busparamname,remark, `status`, sortby,is_delete)VALUES ( 'HEADIMG', 'HEADIMG', 'https://cptstore.liveprod.net/avatar/766c2cffacbb4fefa6cd12ac82c78fcemmp9qd.png', '默认头像', 0, 0, b'0');
+INSERT INTO `sys_busparameter` (busparamcode, pbusparamcode, busparamname,remark, `status`, sortby,is_delete)VALUES ( 'HEADIMG', 'HEADIMG', 'https://cptstore.liveprod.net/avatar/65e394402af14333aaa4b7067f13abc05godoy.png', '默认头像', 0, 0, b'0');
+INSERT INTO `sys_busparameter` (busparamcode, pbusparamcode, busparamname,remark, `status`, sortby,is_delete)VALUES ( 'HEADIMG', 'HEADIMG', 'https://cptstore.liveprod.net/avatar/c23efe9fbbbe462db911fc78380822327bb4s8.png', '默认头像', 0, 0, b'0');
+INSERT INTO `sys_busparameter` (busparamcode, pbusparamcode, busparamname,remark, `status`, sortby,is_delete)VALUES ( 'HEADIMG', 'HEADIMG', 'https://cptstore.liveprod.net/avatar/e44c293e1fc44248a5f27720912e6758gd9o36.png', '默认头像', 0, 0, b'0');
+INSERT INTO `sys_busparameter` (busparamcode, pbusparamcode, busparamname,remark, `status`, sortby,is_delete)VALUES ( 'HEADIMG', 'HEADIMG', 'https://cptstore.liveprod.net/avatar/6ee799ae90b542f2aa623f8e753a5d41yefqhb.png', '默认头像', 0, 0, b'0');
+INSERT INTO `sys_busparameter` (busparamcode, pbusparamcode, busparamname,remark, `status`, sortby,is_delete)VALUES ( 'HEADIMG', 'HEADIMG', 'https://cptstore.liveprod.net/avatar/c120a1825eda448eb3d1dcbb8c92b806bbp1sv.png', '默认头像', 0, 0, b'0');
+
+
+-- v1.3.0版本变更sql 仅限于新平台
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '223', '\0', 'bc98ec6185a746e888ebb7db94fe10f8', 'bc98ec6185a746e888ebb7db94fe10f8');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '224', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '225', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '226', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '227', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '228', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '229', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '230', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '231', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '232', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '233', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '234', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '235', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '236', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '237', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '238', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '239', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '240', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '241', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '242', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '243', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '244', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '245', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '246', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '247', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '248', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '249', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '250', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '251', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '252', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '253', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '254', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '255', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '256', '\0', 'bc98ec6185a746e888ebb7db94fe10f8', 'bc98ec6185a746e888ebb7db94fe10f8');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '257', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '258', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '259', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '260', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '261', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '262', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '263', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '264', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '265', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '266', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '267', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '268', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '269', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '270', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '271', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '272', '\0', '065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '273', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '274', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '275', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '276', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '277', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '278', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '279', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '280', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '281', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '282', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '283', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '284', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '285', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '286', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '287', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '288', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '289', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '290', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '291', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '292', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '293', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '294', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+INSERT INTO `sys_rolefunc` (sysroleid, sfunid, is_delete, create_user,  update_user) VALUES ('1', '295', '\0','065d4aed0b4a47bc9406d39ae182g3e6', '065d4aed0b4a47bc9406d39ae182g3e6');
+
+-- 新订单提醒功能对应的系统参数
+INSERT INTO live.sys_parameter (sysparamcode,  sysparamname,  remark,  sysparamvalue,sortby,  status)VALUES  (  'AUDIO_ORDER_RECHARNGE_NOTICE',  '入款提示音',  '入款订单提示音，请使用有效的音频文件地址',  'https://cptstore.liveprod.net/dianbo/11028de69fc34d0b9334f3cd6e2a9abex2bebf.mp4',  '1',  '0');
+INSERT INTO live.sys_parameter (sysparamcode,  sysparamname,  remark,  sysparamvalue,sortby,  status)VALUES  (  'AUDIO_ORDER_WITHDRAWAL_NOTICE',  '出款提示音',  '出款订单提示音，请使用有效的音频文件地址',  'https://cptstore.liveprod.net/dianbo/eaa9b5d6e61b4f77b5cb81f15274c0fd6j0moz.mp4',  '1',  '0');
+
+INSERT INTO live.sys_parameter (sysparamcode,  sysparamname,  remark,  sysparamvalue,sortby,  status)VALUES  (  'QUARY_ORDER_frequency',  '订单自动查询时间间隔',  '单位秒，建议不小于30，频繁自动查询可能降低后台性能',  '60',  '1',  '0');
+
+
+-- v1.3.2版本机器人中奖投注玩法对应初始化sql
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 2825, 12, 1202, 120202, 310, '两面', '660998', '679284521321798459', '特码两面@单', 1, 500.000, 990.000, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-22 01:56:40', '2020-06-22 01:57:00', 'IOS', 45, 641);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 3089, 14, 1402, 140202, 30372, '冠亚和', '202006220802', '679553394453843292', '冠亚单', 1, 500.000, 895.000, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-22 13:20:29', '2020-06-22 13:21:00', 'IOS', 114, 744);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 3091, 16, 1601, 160101, 255, '两面', '20200622-0801', '679553532868204846', '总和、龙虎@总和单', 1, 500.000, 990.000, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-22 13:20:48', '2020-06-22 13:21:05', 'IOS', 114, 744);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 3112, 11, 1106, 110601, 21, '两面', '202006220804', '679554198530464033', '总和、龙虎@总和小', 1, 500.000, 990.000, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-22 13:22:29', '2020-06-22 13:23:00', 'IOS', 114, 744);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (25636, 23, 2302, 230201, 30458, '两面', '202006250001', '680937284469561615', '小', 1, 500.000, 990.000, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-24 23:59:54', '2020-06-25 00:00:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (61211, 23, 2302, 230201, 30458, '两面', '202006270707', '682347196537747215', '单', 1, 500.000, 990.000, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-27 11:45:29', '2020-06-27 11:46:00', 'ANDROID', 102, 1004);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 129474, 23, 2302, 230201, 30458, '两面', '202006301114', '684205842842105630', '大', 1, 500.000, 990.000, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-30 18:32:16', '2020-06-30 18:33:00', 'ANDROID', 193, 1276);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 189220, 23, 2302, 230202, 30459, '独胆', '202007040906', '686389061934393680', '3', 1, 500.000, 1162.500, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-04 15:04:29', '2020-07-04 15:05:00', 'ANDROID', 275, 2055);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 189275, 23, 2302, 230202, 30459, '独胆', '202007040908', '686389970715552058', '5', 1, 500.000, 1162.500, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-04 15:06:47', '2020-07-04 15:07:00', 'ANDROID', 275, 2055);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 189289, 23, 2302, 230202, 30459, '独胆', '202007040909', '686390352444147272', '1', 1, 500.000, 1162.500, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-04 15:07:46', '2020-07-04 15:08:00', 'ANDROID', 275, 2055);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 189289, 23, 2302, 230202, 30459, '独胆', '202007040909', '686390352444147272', '6', 1, 500.000, 1162.500, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-04 15:07:46', '2020-07-04 15:08:00', 'ANDROID', 275, 2055);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 189296, 23, 2302, 230202, 30459, '独胆', '202007040910', '686390667501913621', '3', 1, 500.000, 1162.500, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-04 15:08:34', '2020-07-04 15:09:00', 'ANDROID', 275, 2055);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 189312, 23, 2302, 230202, 30459, '独胆', '202007040911', '686390967314950491', '5', 1, 500.000, 1162.500, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-04 15:09:17', '2020-07-04 15:10:00', 'ANDROID', 275, 2055);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 228106, 13, 1304, 130401, 119, '两面', '1444873', '687766556572825657', '冠亚和@冠亚小', 1, 500.000, 895.000, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-07 01:27:33', '2020-07-07 01:28:00', 'ANDROID', 116, 1166);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 320095, 23, 2302, 230201, 30458, '两面', '202007241104', '697791433056288036', '单', 1, 500.000, 990.000, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-24 18:22:13', '2020-07-24 18:23:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (22019, 11, 1106, 110605, 27, '第1球', '202006240391', '680524315788089649', '两面@小', 1, 598.000, 1184.040, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-24 06:29:37', '2020-06-24 06:30:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 296941, 12, 1202, 120202, 310, '两面', '694146', '692318760260224019', '特码两面@蓝波', 1, 600.000, 1740.000, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-15 02:24:29', '2020-07-15 02:25:00', 'ANDROID', 178, 1353);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 297016, 23, 2302, 230201, 30458, '两面', '202007150192', '692336800695308851', '大', 1, 600.000, 1188.000, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-15 03:10:22', '2020-07-15 03:11:00', 'ANDROID', 116, 1166);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (61331, 23, 2302, 230201, 30458, '两面', '202006270713', '682349546304812872', '单', 1, 700.000, 1386.000, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-27 11:51:25', '2020-06-27 11:52:00', 'ANDROID', 114, 998);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (61394, 23, 2302, 230201, 30458, '两面', '202006270716', '682350770249651228', '单', 1, 800.000, 1584.000, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-27 11:54:32', '2020-06-27 11:55:00', 'ANDROID', 128, 1011);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 169537, 11, 1106, 110601, 21, '两面', '202007020835', '685228807636505626', '第五球@小', 1, 800.000, 1584.000, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-02 13:53:46', '2020-07-02 13:54:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 228077, 13, 1304, 130401, 119, '两面', '1444871', '687765681968691261', '冠亚和@冠亚小', 1, 800.000, 1432.000, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-07 01:25:24', '2020-07-07 01:26:00', 'ANDROID', 116, 1166);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 328154, 12, 1202, 120201, 309, '特码', '713339', '699865692396435285', '特码@01,02,04,05,06,07,08,09,10,11,12,13,14,16,18,19,20,21,22,23,24,26,27,28,29,30,31,34,35,37,38,39,40,41,42,44,45,46,47,48,49', 41, 820.000, 976.000, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-28 10:17:19', '2020-07-28 10:18:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 328162, 12, 1202, 120201, 309, '特码', '713340', '699866234470905698', '特码@01,02,03,05,06,07,08,10,11,13,14,15,16,18,19,20,21,22,23,24,25,26,27,29,30,31,32,33,34,35,38,39,40,41,42,43,44,45,46,47,48,49', 42, 840.000, 976.000, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-28 10:18:42', '2020-07-28 10:19:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 228050, 13, 1304, 130401, 119, '两面', '1444869', '687764904056371281', '冠亚和@冠亚小', 1, 900.000, 1611.000, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-07 01:23:21', '2020-07-07 01:24:00', 'ANDROID', 116, 1166);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 2817, 16, 1601, 160101, 255, '两面', '20200622-0113', '679282988677241682', '总和、龙虎@总和小', 1, 1000.000, 1980.000, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-22 01:52:48', '2020-06-22 01:53:05', 'IOS', 32, 737);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 2832, 23, 2302, 230201, 30458, '两面', '202006220119', '679284653842144099', '单', 1, 1000.000, 1980.000, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-22 01:57:00', '2020-06-22 01:58:00', 'IOS', 59, 206);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 3075, 23, 2302, 230201, 30458, '两面', '202006220801', '679553116725382432', '小', 1, 1000.000, 1980.000, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-22 13:19:46', '2020-06-22 13:20:00', 'IOS', 114, 744);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 3131, 14, 1402, 140202, 30372, '冠亚和', '202006220805', '679554717199699225', '冠亚单', 1, 1000.000, 1790.000, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-22 13:23:51', '2020-06-22 13:24:00', 'IOS', 114, 744);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 3196, 14, 1402, 140202, 30372, '冠亚和', '202006220959', '679615224399596898', '冠亚单', 1, 1000.000, 1790.000, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-22 15:57:41', '2020-06-22 15:58:00', 'IOS', 114, 744);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (59236, 23, 2302, 230201, 30458, '两面', '202006270594', '682302767212640054', '双', 1, 101.000, 199.980, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-27 09:52:30', '2020-06-27 09:53:00', 'ANDROID', 179, 1374);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 248630, 12, 1202, 120221, 360, '五不中', '684497', '688524451758585641', '五不中@02,05,07,08,10,15', 6, 102.000, 222.360, 0.000, 0, 'WIN', b'0', '6', 0, '2020-07-08 09:34:49', '2020-07-08 09:36:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (274934, 23, 2302, 230201, 30458, '和值单双', '202007100894', '689781791611795297', '双', 1, 102.000, 201.960, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-10 14:52:36', '2020-07-10 14:53:00', 'IOS', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 297771, 23, 2302, 230201, 30458, '两面', '202007150573', '692486722553267218', '双', 1, 105.000, 207.900, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-15 09:31:38', '2020-07-15 09:32:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 103960, 23, 2302, 230201, 30458, '两面', '202006290566', '683424281615251296', '大', 1, 106.000, 209.880, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-29 09:24:39', '2020-06-29 09:25:00', 'ANDROID', 128, 947);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 104010, 23, 2302, 230201, 30458, '两面', '202006290569', '683425296303641628', '大', 1, 106.000, 209.880, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-29 09:27:12', '2020-06-29 09:28:00', 'ANDROID', 261, 1871);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (61660, 23, 2302, 230201, 30458, '两面', '202006270756', '682366498896204898', '双', 1, 108.000, 213.840, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-27 12:34:32', '2020-06-27 12:35:00', 'ANDROID', 30, 1647);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 198902, 11, 1106, 110601, 21, '两面', '202007050189', '686673443217753616', '总和、龙虎@总和大', 1, 108.000, 213.840, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-05 03:07:40', '2020-07-05 03:08:00', 'ANDROID', 74, 2159);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 305608, 12, 1202, 120202, 310, '特码两面', '699020', '694235364991008070', '特码两面@单', 1, 108.000, 213.840, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-18 11:38:40', '2020-07-18 11:39:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 319635, 12, 1202, 120204, 312, '正码1-6', '707757', '697670723385363247', '正码一@合双', 1, 109.000, 215.820, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-24 13:15:14', '2020-07-24 13:16:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 273598, 23, 2302, 230201, 30458, '两面', '202007100685', '689699680078182445', '大', 1, 110.000, 217.800, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-10 11:23:49', '2020-07-10 11:24:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (321394, 23, 2302, 230201, 30458, '两面', '202007250265', '698027989149792029', '大', 1, 110.000, 217.800, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-25 04:23:48', '2020-07-25 04:24:02', 'ANDROID', 74, 816);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 325092, 11, 1105, 110501, 314, '两面', '20200727001', '699056211621164868', '总和、龙虎@总和双', 1, 111.000, 219.780, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-26 23:58:42', '2020-07-27 00:00:01', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 107998, 12, 1202, 120202, 310, '两面', '671946', '683589368890905693', '特码两面@大', 1, 112.000, 221.760, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-29 16:24:30', '2020-06-29 16:25:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 331115, 23, 2302, 230201, 30458, '两面', '202008161257', '710875038172697638', '大', 1, 114.000, 225.720, 0.000, 0, 'WIN', b'0', '1', 0, '2020-08-16 20:55:32', '2020-08-16 20:56:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 113612, 12, 1202, 120202, 310, '两面', '672379', '683759543081875254', '特码两面@小', 1, 118.000, 233.640, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-29 23:37:16', '2020-06-29 23:38:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 325098, 11, 1105, 110501, 314, '两面', '20200727002', '699057095918073634', '总和、龙虎@总和双', 1, 119.000, 235.620, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-27 00:00:57', '2020-07-27 00:05:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (6779, 12, 1202, 120201, 309, '特码', '662562', '679899454892448031', '特码@18,21,23,24,26,31,33,34,36,39,42,44', 12, 120.000, 488.000, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-23 04:00:33', '2020-06-23 04:01:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (55031, 23, 2302, 230202, 30459, '独胆', '202006270264', '682173106465920091', '3', 1, 120.000, 279.000, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-27 04:22:43', '2020-06-27 04:23:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 305656, 14, 1402, 140207, 30377, '第3名', '202007180744', '694252744797420829', '双', 1, 120.000, 237.600, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-18 12:22:52', '2020-07-18 12:23:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 307970, 23, 2302, 230201, 30458, '两面', '202007191102', '694959706932448061', '双', 1, 120.000, 237.600, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-19 18:20:45', '2020-07-19 18:21:00', 'ANDROID', 200, 1626);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 328425, 12, 1202, 120203, 311, '正码', '713710', '700011678648044889', '正码@09,10,12,19', 4, 120.000, 235.200, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-28 16:28:35', '2020-07-28 16:29:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 328429, 12, 1202, 120203, 311, '正码', '713713', '700012937239443261', '正码@17,19,22,24,25,28', 6, 120.000, 313.600, 0.000, 0, 'WIN', b'0', '2', 0, '2020-07-28 16:31:47', '2020-07-28 16:32:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 328434, 12, 1202, 120203, 311, '正码', '713715', '700013759271865626', '正码@25,28,30,32,33,36', 6, 120.000, 156.800, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-28 16:33:53', '2020-07-28 16:34:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 328435, 12, 1202, 120203, 311, '正码', '713716', '700014051693497644', '正码@17,20,22,25,27,28', 6, 120.000, 156.800, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-28 16:34:37', '2020-07-28 16:35:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 328441, 12, 1202, 120203, 311, '正码', '713719', '700015157566355221', '正码@22,25,27,30,32,35', 6, 120.000, 156.800, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-28 16:37:26', '2020-07-28 16:38:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 328449, 12, 1202, 120203, 311, '正码', '713726', '700018076272364859', '正码@08,11,12,14,15,16', 6, 120.000, 156.800, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-28 16:44:51', '2020-07-28 16:45:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 69696, 23, 2302, 230201, 30458, '两面', '202006280066', '682661486536800071', '小', 1, 121.000, 239.580, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-28 01:04:44', '2020-06-28 01:05:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 305658, 12, 1202, 120202, 310, '特码两面', '699065', '694252976316025628', '特码两面@单', 1, 125.000, 247.500, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-18 12:23:27', '2020-07-18 12:24:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 248761, 12, 1202, 120221, 360, '五不中', '684513', '688531031948441641', '五不中@40,43,44,47,48,49', 6, 126.000, 45.780, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-08 09:51:47', '2020-07-08 09:52:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 331117, 23, 2302, 230201, 30458, '两面', '202008161265', '710878071811097647', '单', 1, 126.000, 249.480, 0.000, 0, 'WIN', b'0', '1', 0, '2020-08-16 21:03:15', '2020-08-16 21:04:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (6696, 12, 1202, 120201, 309, '特码', '662560', '679898647443052824', '特码@07,10,22,26,30,31,32,33,35,36,38,42,44', 13, 130.000, 488.000, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-23 03:58:28', '2020-06-23 03:59:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 282466, 12, 1202, 120201, 309, '特码', '688939', '690271101564096019', '特码@06,07,10,11,15,16,18,19,21,22,24,27,29,30,31,32,34,35,36,37,38,42,43,45,46,47', 26, 130.000, 244.000, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-11 11:37:01', '2020-07-11 11:38:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 322294, 16, 1601, 160106, 269, '第2球', '20200725-0453', '698102327088057685', '两面@大', 1, 130.000, 257.400, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-25 07:32:51', '2020-07-25 07:33:05', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 237491, 23, 2302, 230201, 30458, '两面', '202007070787', '688041113299040074', '大', 1, 131.000, 259.380, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-07 13:05:51', '2020-07-07 13:06:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (15852, 23, 2302, 230201, 30458, '两面', '202006231024', '680206998130694475', '双', 1, 140.000, 277.200, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-23 17:02:39', '2020-06-23 17:03:00', 'ANDROID', 52, 648);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 112485, 12, 1202, 120202, 310, '两面', '672325', '683738365981996821', '特码两面@大', 1, 140.000, 277.200, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-29 22:43:25', '2020-06-29 22:44:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 238221, 23, 2302, 230201, 30458, '两面', '202007070824', '688055637762816063', '大', 1, 145.000, 287.100, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-07 13:42:40', '2020-07-07 13:43:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 302248, 23, 2302, 230201, 30458, '两面', '202007170307', '693514621204499233', '大', 1, 145.000, 287.100, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-17 05:05:43', '2020-07-17 05:06:00', 'ANDROID', 109, 1116);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 324117, 23, 2302, 230201, 30458, '两面', '202007260325', '698617814834067280', '小', 1, 146.000, 289.080, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-26 05:23:48', '2020-07-26 05:24:00', 'ANDROID', 114, 753);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 103427, 23, 2302, 230201, 30458, '两面', '202006290533', '683411147683116825', '大', 1, 148.000, 293.040, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-29 08:51:15', '2020-06-29 08:52:00', 'ANDROID', 38, 65);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 9300, 12, 1202, 120202, 310, '两面', '662657', '679936907724524821', '特码两面@单', 1, 150.000, 297.000, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-23 05:35:46', '2020-06-23 05:36:00', 'ANDROID', 32, 1389);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 9300, 12, 1202, 120202, 310, '两面', '662657', '679936907724524821', '特码两面@小', 1, 150.000, 297.000, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-23 05:35:46', '2020-06-23 05:36:00', 'ANDROID', 32, 1389);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 9839, 23, 2302, 230201, 30458, '两面', '202006230361', '679946198415904063', '小', 1, 150.000, 297.000, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-23 05:59:24', '2020-06-23 06:02:31', 'ANDROID', 87, 548);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 10089, 23, 2302, 230201, 30458, '两面', '202006230366', '679948203384966494', '单', 1, 150.000, 297.000, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-23 06:04:32', '2020-06-23 06:05:00', 'ANDROID', 52, 661);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 10119, 23, 2302, 230201, 30458, '两面', '202006230367', '679948502565689678', '小', 1, 150.000, 297.000, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-23 06:05:15', '2020-06-23 06:06:00', 'ANDROID', 52, 661);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 14326, 23, 2302, 230201, 30458, '两面', '202006230907', '680160916636473663', '小', 1, 150.000, 297.000, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-23 15:05:27', '2020-06-23 15:06:00', 'ANDROID', 178, 1326);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 14809, 23, 2302, 230201, 30458, '和值', '202006230922', '680166874789484897', '小', 1, 150.000, 297.000, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-23 15:20:36', '2020-06-23 15:21:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 14905, 23, 2302, 230201, 30458, '两面', '202006230926', '680168429189664046', '小', 1, 150.000, 297.000, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-23 15:24:36', '2020-06-23 15:25:00', 'ANDROID', 178, 1326);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 60449, 23, 2302, 230201, 30458, '两面', '202006270678', '682335732870272073', '单', 1, 150.000, 297.000, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-27 11:16:18', '2020-06-27 11:17:00', 'ANDROID', 114, 998);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 146120, 14, 1402, 140201, 30371, '两面', '202007010731', '684621512912000021', '冠亚和@冠亚大', 1, 51.000, 111.690, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-01 12:09:22', '2020-07-01 12:10:00', 'ANDROID', 275, 2062);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 179112, 23, 2302, 230201, 30458, '两面', '202007030682', '685734744553804861', '小', 1, 51.000, 100.980, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-03 11:20:28', '2020-07-03 11:21:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 229639, 23, 2302, 230201, 30458, '两面', '202007070251', '687830230149216065', '单', 1, 51.000, 100.980, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-07 04:09:28', '2020-07-07 04:10:00', 'ANDROID', 275, 2151);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (231801, 23, 2302, 230201, 30458, '和值', '202007070553', '687949027793811254', '12', 1, 51.000, 438.855, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-07 09:11:41', '2020-07-07 09:12:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 237520, 23, 2302, 230201, 30458, '两面', '202007070789', '688041900641990428', '大', 1, 51.000, 100.980, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-07 13:07:52', '2020-07-07 13:08:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 293162, 23, 2302, 230201, 30458, '两面', '202007130355', '691268619361593672', '小', 1, 51.000, 100.980, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-13 05:53:51', '2020-07-13 05:54:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 319591, 12, 1202, 120204, 312, '正码1-6', '707742', '697664858608467252', '正码一@合双', 1, 51.000, 100.980, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-24 13:00:19', '2020-07-24 13:01:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 319596, 12, 1202, 120204, 312, '正码1-6', '707742', '697665059980934468', '正码一@合双', 1, 51.000, 100.980, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-24 13:00:50', '2020-07-24 13:01:01', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 319597, 12, 1202, 120204, 312, '正码1-6', '707743', '697665197088377619', '正码一@合双', 1, 51.000, 100.980, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-24 13:01:11', '2020-07-24 13:02:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 319598, 12, 1202, 120204, 312, '正码1-6', '707743', '697665206446918481', '正码一@合双', 1, 51.000, 100.980, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-24 13:01:12', '2020-07-24 13:02:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 319911, 12, 1202, 120204, 312, '正码1-6', '707974', '697756184367955211', '正码一@合双', 1, 51.000, 100.980, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-24 16:52:34', '2020-07-24 16:53:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (325791, 16, 1601, 160105, 266, '第1球', '20200727-0603', '699293688048979273', '第1球@小', 1, 51.000, 100.980, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-27 10:02:39', '2020-07-27 10:03:05', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (330024, 12, 1202, 120201, 309, '特码', '718045', '701716270688352026', '特码@01,02,07,08,12,13,18,19,23,24,29,30,34,35,40,45,46', 17, 51.000, 146.400, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-31 16:43:35', '2020-07-31 16:44:00', 'IOS', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 217968, 11, 1106, 110601, 21, '两面', '202007060289', '687278964964505620', '总和、龙虎@虎', 1, 52.000, 102.960, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-06 04:47:37', '2020-07-06 04:48:00', 'ANDROID', 114, 801);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 227825, 11, 1106, 110601, 21, '两面', '202007061435', '687729601372928024', '总和、龙虎@虎', 1, 52.000, 102.960, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-06 23:53:39', '2020-07-06 23:54:00', 'ANDROID', 297, 2230);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 286304, 23, 2302, 230201, 30458, '两面', '202007120283', '690674084614252841', '大', 1, 52.000, 102.960, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-12 04:41:10', '2020-07-12 04:42:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 317403, 23, 2302, 230201, 30458, '两面', '202007230986', '697178927203552086', '小', 1, 52.000, 102.960, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-23 16:24:32', '2020-07-23 16:25:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (327621, 16, 1601, 160103, 260, '1-5球', '20200728-0001', '699623297422265686', '第一球@8', 1, 52.000, 518.960, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-28 00:00:53', '2020-07-28 00:01:07', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 216120, 11, 1106, 110601, 21, '两面', '202007060236', '687258175339673640', '总和、龙虎@龙', 1, 53.000, 104.940, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-06 03:54:45', '2020-07-06 03:55:00', 'ANDROID', 114, 801);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 311325, 14, 1402, 140201, 30371, '两面', '202007210454', '695837276026899218', '冠亚小', 1, 53.000, 94.870, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-21 07:32:32', '2020-07-21 07:33:00', 'ANDROID', 74, 2655);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (321290, 23, 2302, 230201, 30458, '两面', '202007250243', '698019277116345654', '大', 1, 53.000, 104.940, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-25 04:01:39', '2020-07-25 04:02:03', 'ANDROID', 74, 816);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (60930, 12, 1202, 120202, 310, '两面', '668775', '682342520164038477', '特码两面@家禽', 1, 54.000, 106.920, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-27 11:33:36', '2020-06-27 11:34:00', 'ANDROID', 135, 934);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (60931, 12, 1202, 120202, 310, '两面', '668775', '682342543607321683', '特码两面@家禽', 1, 54.000, 106.920, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-27 11:33:39', '2020-06-27 11:34:00', 'ANDROID', 135, 934);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 133193, 13, 1304, 130401, 119, '两面', '1436205', '684358193883232082', '冠亚和@冠亚双', 1, 54.000, 118.260, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-01 00:59:41', '2020-07-01 01:00:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 133289, 13, 1304, 130401, 119, '两面', '1436212', '684360866822476822', '冠亚和@冠亚大', 1, 54.000, 118.260, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-01 01:06:31', '2020-07-01 01:07:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 133436, 13, 1304, 130401, 119, '两面', '1436219', '684363479323366434', '冠亚和@冠亚双', 1, 54.000, 118.260, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-01 01:13:09', '2020-07-01 01:14:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 312792, 23, 2302, 230201, 30458, '两面', '202007220070', '696252464603168019', '小', 1, 54.000, 106.920, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-22 01:08:25', '2020-07-22 01:09:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 313412, 14, 1402, 140201, 30371, '两面', '202007220276', '696333568804486413', '冠亚大', 1, 54.000, 118.260, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-22 04:34:40', '2020-07-22 04:35:00', 'ANDROID', 74, 2647);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 162305, 23, 2302, 230201, 30458, '两面', '202007020200', '684978974861408039', '双', 1, 55.000, 108.900, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-02 03:18:27', '2020-07-02 03:19:00', 'ANDROID', 115, 1585);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 216155, 11, 1106, 110601, 21, '两面', '202007060239', '687259191206656024', '总和、龙虎@虎', 1, 55.000, 108.900, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-06 03:57:20', '2020-07-06 03:58:00', 'ANDROID', 115, 1585);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 291910, 23, 2302, 230201, 30458, '两面', '202007130175', '691197859712601628', '小', 1, 55.000, 108.900, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-13 02:53:53', '2020-07-13 02:54:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 304697, 23, 2302, 230201, 30458, '两面', '202007180110', '694003432464416082', '小', 1, 55.000, 108.900, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-18 01:48:50', '2020-07-18 01:49:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 309964, 11, 1106, 110608, 32, '第4球', '202007200985', '695479815380601674', '第4球@双', 1, 55.000, 108.900, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-20 16:23:28', '2020-07-20 16:24:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (315778, 13, 1304, 130401, 119, '两面', '1467804', '696783462709689630', '冠亚和@冠亚大', 1, 55.000, 120.450, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-22 23:38:49', '2020-07-22 23:39:00', 'ANDROID', 171, 2687);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 331171, 23, 2302, 230201, 30458, '两面', '202008200659', '712904731148582493', '大', 1, 55.000, 108.900, 0.000, 0, 'WIN', b'0', '1', 0, '2020-08-20 10:57:19', '2020-08-20 10:58:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 313401, 14, 1402, 140201, 30371, '两面', '202007220268', '696330458177568032', '冠亚小', 1, 57.000, 102.030, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-22 04:26:46', '2020-07-22 04:27:00', 'ANDROID', 74, 2647);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 325165, 13, 1304, 130401, 119, '两面', '1473672', '699090725573561654', '冠亚和@冠亚大', 1, 57.000, 124.830, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-27 01:26:29', '2020-07-27 01:27:00', 'ANDROID', 30, 2396);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (9440, 23, 2302, 230202, 30459, '独胆', '202006230342', '679938624073043221', '4', 1, 58.000, 134.850, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-23 05:40:08', '2020-06-23 05:41:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (9447, 23, 2302, 230202, 30459, '独胆', '202006230342', '679938640210336038', '4', 1, 58.000, 134.850, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-23 05:40:10', '2020-06-23 05:41:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (9454, 23, 2302, 230201, 30458, '两面', '202006230342', '679938747289606486', '小', 1, 58.000, 114.840, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-23 05:40:27', '2020-06-23 05:41:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 214629, 16, 1601, 160101, 255, '两面', '20200705-1327', '687121242689644877', '第五球@大', 1, 58.000, 114.840, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-05 22:06:31', '2020-07-05 22:07:05', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 215155, 16, 1601, 160101, 255, '两面', '20200705-1359', '687133882927040084', '第五球@小', 1, 58.000, 114.840, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-05 22:38:40', '2020-07-05 22:39:05', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 216274, 11, 1106, 110601, 21, '两面', '202007060245', '687261623935744031', '总和、龙虎@虎', 1, 58.000, 114.840, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-06 04:03:31', '2020-07-06 04:04:00', 'ANDROID', 109, 1116);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 310121, 11, 1106, 110607, 30, '第3球', '202007201168', '695551686300076878', '第3球@大', 1, 58.000, 114.840, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-20 19:26:14', '2020-07-20 19:27:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 317314, 11, 1106, 110601, 21, '总和、龙虎', '202007230948', '697164029232352086', '总和、龙虎@总和小', 1, 58.000, 114.840, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-23 15:46:38', '2020-07-23 15:47:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 317327, 11, 1106, 110605, 27, '第1球', '202007230954', '697166274175008096', '第1球@单', 1, 58.000, 114.840, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-23 15:52:21', '2020-07-23 15:53:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 195198, 13, 1304, 130401, 119, '两面', '1441779', '686549995335206454', '冠亚和@冠亚大', 1, 59.000, 129.210, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-04 21:53:45', '2020-07-04 21:54:00', 'ANDROID', 261, 2158);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 300535, 13, 1304, 130401, 119, '两面', '1459003', '693322738409504040', '冠亚和@冠亚大', 1, 59.000, 129.210, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-16 20:57:44', '2020-07-16 20:58:00', 'ANDROID', 261, 2144);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 309966, 11, 1106, 110605, 27, '第1球', '202007200987', '695480735348755249', '第1球@双', 1, 59.000, 116.820, 0.000, 0, 'WIN', b'0', '1', 0, '2020-07-20 16:25:48', '2020-07-20 16:26:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (7380, 12, 1202, 120203, 311, '正码', '662586', '679908927935417629', '正码@10,22,24', 3, 60.000, 156.800, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-23 04:24:39', '2020-06-23 04:25:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (7486, 12, 1202, 120203, 311, '正码', '662590', '679910520748576025', '正码@14,20,22,24,25,27', 6, 60.000, 78.400, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-23 04:28:42', '2020-06-23 04:29:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (8557, 23, 2302, 230201, 30458, '两面', '202006230303', '679923300556934475', '大', 1, 60.000, 118.800, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-23 05:01:12', '2020-06-23 05:02:00', 'ANDROID', 171, 1395);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (13478, 23, 2302, 230201, 30458, '和值', '202006230864', '680144066000492874', '双', 1, 60.000, 118.800, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-23 14:22:38', '2020-06-23 14:23:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (14919, 23, 2302, 230201, 30458, '两面', '202006230926', '680168533103545667', '小', 1, 60.000, 118.800, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-23 15:24:51', '2020-06-23 15:25:00', 'ANDROID', 178, 1326);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (14921, 23, 2302, 230201, 30458, '两面', '202006230926', '680168543755475294', '小', 1, 60.000, 118.800, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-23 15:24:51', '2020-06-23 15:25:00', 'ANDROID', 178, 1326);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (32713, 23, 2302, 230201, 30458, '两面', '202006250904', '681292189884550490', '双', 1, 60.000, 118.800, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-25 15:02:28', '2020-06-25 15:03:00', 'ANDROID', 52, 695);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (32958, 23, 2302, 230201, 30458, '两面', '202006250920', '681298397913222491', '单', 1, 60.000, 118.800, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-25 15:18:15', '2020-06-25 15:19:00', 'ANDROID', 206, 1486);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (33007, 23, 2302, 230201, 30458, '两面', '202006250923', '681299611570182441', '双', 1, 60.000, 118.800, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-25 15:21:20', '2020-06-25 15:22:00', 'ANDROID', 171, 1691);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (33252, 23, 2302, 230201, 30458, '两面', '202006250938', '681305638396038452', '单', 1, 60.000, 118.800, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-25 15:36:40', '2020-06-25 15:37:00', 'ANDROID', 191, 1178);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (54926, 23, 2302, 230202, 30459, '独胆', '202006270262', '682172098403219217', '2', 1, 60.000, 139.500, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-27 04:20:09', '2020-06-27 04:21:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 74, 11, 1101, 110101, 199, '两面', '20200612036', '673952157297478492', '第四球@大', 1, 2.000, 3.990, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-12 15:55:48', '2020-06-12 16:11:46', 'IOS', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 81, 11, 1101, 110101, 199, '两面', '20200612036', '673952178504928069', '第四球@大', 1, 2.000, 3.990, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-12 15:55:51', '2020-06-12 16:11:46', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 142, 12, 1204, 120427, 88, '平特', '2020164', '673986695211948867', '平特@鼠', 1, 2.000, 3.640, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-12 17:23:38', '2020-06-12 21:32:30', 'IOS', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 142, 12, 1204, 120427, 88, '平特', '2020164', '673986695211948867', '平特@牛', 1, 2.000, 4.240, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-12 17:23:38', '2020-06-12 21:32:30', 'IOS', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 144, 11, 1104, 110401, 293, '两面', '20200612106', '673987458780550469', '总和、龙虎@总和大', 1, 2.000, 3.990, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-12 17:25:34', '2020-06-12 17:30:01', 'IOS', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 151, 12, 1202, 120202, 310, '两面', '647528', '673987749458924867', '特码两面@31-40', 1, 2.000, 9.600, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-12 17:26:19', '2020-06-12 17:27:01', 'IOS', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 184, 12, 1202, 120204, 312, '正码1-6', '647530', '673988739961363274', '正码一@单', 1, 10.000, 19.990, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-12 17:28:50', '2020-06-12 17:29:01', 'IOS', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 184, 12, 1202, 120204, 312, '正码1-6', '647530', '673988739961363274', '正码一@小', 1, 10.000, 19.990, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-12 17:28:50', '2020-06-12 17:29:01', 'IOS', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 193, 12, 1202, 120221, 360, '五不中', '647532', '673989285812819230', '五不中@19,23,17,27,26', 1, 10.000, 21.800, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-12 17:30:13', '2020-06-12 17:31:00', 'IOS', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 207, 12, 1202, 120219, 349, '全尾', '647532', '673989390543788841', '全尾@5尾', 1, 10.000, 17.500, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-12 17:30:29', '2020-06-12 17:31:00', 'IOS', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 207, 12, 1202, 120219, 349, '全尾', '647532', '673989390543788841', '全尾@8尾', 1, 10.000, 17.500, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-12 17:30:29', '2020-06-12 17:31:00', 'IOS', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 214, 12, 1202, 120243, 141, '1-6龙虎', '647533', '673989692208108866', '1-6龙虎@虎1-3球', 1, 10.000, 19.990, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-12 17:31:15', '2020-06-12 17:32:00', 'IOS', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 214, 12, 1202, 120243, 141, '1-6龙虎', '647533', '673989692208108866', '1-6龙虎@虎1-4球', 1, 10.000, 19.990, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-12 17:31:15', '2020-06-12 17:32:00', 'IOS', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 214, 12, 1202, 120243, 141, '1-6龙虎', '647533', '673989692208108866', '1-6龙虎@虎1-5球', 1, 10.000, 19.990, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-12 17:31:15', '2020-06-12 17:32:00', 'IOS', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 221, 12, 1202, 120244, 154, '五行', '647533', '673989731009862437', '五行@火', 1, 10.000, 48.000, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-12 17:31:21', '2020-06-12 17:32:01', 'IOS', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 228, 12, 1205, 120502, 30392, '特码两面', '20200612212', '673989976116614431', '单', 1, 10.000, 19.990, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-12 17:31:58', '2020-06-12 17:35:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 228, 12, 1205, 120502, 30392, '特码两面', '20200612212', '673989976116614431', '大', 1, 10.000, 19.990, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-12 17:31:58', '2020-06-12 17:35:01', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 248, 22, 2202, 220201, 157, '两面', '20200612129', '673994112641964825', '总和、龙虎@总和大', 1, 2.000, 3.990, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-12 17:42:30', '2020-06-12 17:42:46', 'IOS', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 255, 22, 2202, 220203, 162, '1-5球', '20200612130', '673994314774649665', '第一球@0', 1, 2.000, 19.990, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-12 17:43:01', '2020-06-12 17:45:26', 'IOS', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 262, 22, 2202, 220204, 165, '前中后', '20200612130', '673994347732704065', '前三@对子', 1, 2.000, 7.200, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-12 17:43:06', '2020-06-12 17:45:26', 'IOS', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 297, 22, 2203, 220301, 187, '两面', '20200612131', '673995553804819275', '冠亚和@冠亚大', 1, 2.000, 4.380, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-12 17:46:10', '2020-06-12 17:48:06', 'IOS', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 311, 11, 1101, 110101, 199, '两面', '20200612041', '673995975397907293', '总和、龙虎@总和小', 1, 2.000, 3.990, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-12 17:47:14', '2020-06-12 17:51:48', 'IOS', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 318, 11, 1101, 110104, 207, '前中后', '20200612041', '673996014522899283', '前三@对子', 1, 2.000, 7.200, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-12 17:47:20', '2020-06-12 17:51:48', 'IOS', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 332, 11, 1101, 110102, 202, '斗牛', '20200612041', '673996217192979283', '斗牛@牛三', 1, 2.000, 26.000, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-12 17:47:51', '2020-06-12 17:56:30', 'IOS', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 339, 11, 1106, 110601, 21, '两面', '202006121073', '673997469952940882', '总和、龙虎@总和单', 1, 2.000, 3.990, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-12 17:51:02', '2020-06-12 17:52:00', 'IOS', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 353, 22, 2202, 220201, 157, '两面', '20200612134', '673998953471712092', '第一球@单', 1, 2.000, 3.990, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-12 17:54:48', '2020-06-12 17:56:06', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (387, 11, 1102, 110201, 232, '两面', '2020061225', '674005276810976038', '总和、龙虎@总和大', 1, 2.000, 3.990, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-12 18:10:53', '2020-06-12 18:22:21', 'IOS', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (394, 11, 1104, 110401, 293, '两面', '20200612111', '674005525185862474', '总和、龙虎@总和单', 1, 2.000, 3.990, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-12 18:11:31', '2020-06-12 18:20:00', 'IOS', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (401, 11, 1104, 110404, 298, '前中后', '20200612111', '674005565411859233', '前三@对子', 1, 2.000, 7.200, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-12 18:11:37', '2020-06-12 18:20:00', 'IOS', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (408, 13, 1304, 130401, 119, '两面', '1409883', '674007984607763269', '冠亚和@冠亚大', 1, 2.000, 4.380, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-12 18:17:46', '2020-06-12 18:18:00', 'IOS', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (501, 16, 1601, 160101, 255, '两面', '20200612-1144', '674025935861881679', '总和、龙虎@总和小', 1, 2.000, 3.990, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-12 19:03:25', '2020-06-12 19:04:05', 'IOS', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (543, 13, 1303, 130309, 102, '第5名', '857216', '674032218378771283', '两面@单', 1, 2.000, 3.990, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-12 19:19:24', '2020-06-12 19:20:01', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (557, 23, 2302, 230201, 30458, '两面', '202006121161', '674032366077254432', '大', 1, 2.000, 3.990, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-12 19:19:47', '2020-06-12 19:20:01', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (557, 23, 2302, 230201, 30458, '两面', '202006121161', '674032366077254432', '单', 1, 2.000, 3.990, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-12 19:19:47', '2020-06-12 19:20:01', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (647, 15, 1502, 150201, 30386, '混合', '202006121188', '674042841934764832', '大', 1, 2.000, 3.960, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-12 19:46:25', '2020-06-12 19:47:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (648, 16, 1601, 160109, 277, '第5球', '20200612-1188', '674043248185875246', '第五球@4', 1, 2.000, 19.990, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-12 19:47:27', '2020-06-12 19:50:30', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (655, 16, 1601, 160109, 277, '第5球', '20200612-1188', '674043262407187216', '第五球@4', 1, 2.000, 19.990, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-12 19:47:29', '2020-06-12 19:50:30', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (676, 11, 1106, 110601, 21, '两面', '202006121200', '674047624260524898', '总和、龙虎@总和大', 1, 2.000, 3.990, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-12 19:58:35', '2020-06-12 19:59:00', 'ANDROID', 2, 9);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (676, 11, 1106, 110601, 21, '两面', '202006121200', '674047624260524898', '总和、龙虎@总和单', 1, 2.000, 3.990, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-12 19:58:35', '2020-06-12 19:59:00', 'ANDROID', 2, 9);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (676, 11, 1106, 110601, 21, '两面', '202006121200', '674047624260524898', '总和、龙虎@龙', 1, 2.000, 3.990, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-12 19:58:35', '2020-06-12 19:59:00', 'ANDROID', 2, 9);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 1012, 11, 1106, 110601, 21, '两面', '202006130986', '674529552342227272', '总和、龙虎@总和小', 1, 1.000, 1.990, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-13 16:24:11', '2020-06-13 16:25:00', 'ANDROID', 4, 17);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (1018, 12, 1202, 120202, 310, '两面', '649041', '674582675030841677', '特码两面@双', 1, 2.000, 3.990, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-13 18:39:17', '2020-06-13 18:40:00', 'IOS', 2, 18);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (1047, 22, 2201, 220101, 155, '澳洲ACT', '20200615559', '675524896929388810', '澳洲ACT@双', 1, 2.000, 3.990, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-15 10:35:29', '2020-06-18 19:56:30', 'IOS', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (1054, 22, 2201, 220101, 155, '澳洲ACT', '20200615559', '675524925811104080', '澳洲ACT@双', 1, 2.000, 3.990, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-15 10:35:33', '2020-06-18 19:56:31', 'IOS', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (1054, 22, 2201, 220101, 155, '澳洲ACT', '20200615559', '675524925811104080', '澳洲ACT@大双', 1, 2.000, 7.600, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-15 10:35:33', '2020-06-18 19:56:31', 'IOS', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (1066, 13, 1304, 130405, 130, '冠军', '1413771', '675536842392377621', '冠军@单', 1, 5.000, 9.990, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-15 11:05:52', '2020-06-15 11:06:00', 'ANDROID', 2, 9);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (1096, 16, 1601, 160101, 255, '两面', '20200615-0668', '675537436515539220', '总和、龙虎@虎', 1, 10.000, 19.990, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-15 11:07:22', '2020-06-15 11:08:05', 'ANDROID', 2, 9);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (1103, 16, 1601, 160101, 255, '两面', '20200615-0668', '675537436515539220', '总和、龙虎@虎', 1, 10.000, 19.990, 0.000, 0, 'WIN', b'0', '1', 1, '2020-06-15 11:07:28', '2020-06-15 11:08:05', 'ANDROID', 2, 9);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (1117, 11, 1106, 110601, 21, '两面', '202006150672', '675538522152147217', '总和、龙虎@总和单', 1, 10.000, 19.990, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-15 11:10:08', '2020-06-15 11:11:00', 'ANDROID', 2, 9);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (1130, 11, 1104, 110401, 293, '两面', '20200615092', '675631395154227271', '第二球@单', 1, 3.000, 5.990, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-15 15:06:19', '2020-06-15 15:10:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 1319, 15, 1501, 150101, 233, '混合', '1003335', '676301207304313686', '混合@大双', 1, 2.000, 6.000, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-16 19:29:44', '2020-06-16 19:36:30', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 1326, 15, 1501, 150101, 233, '混合', '1003335', '676301214899936076', '混合@大双', 1, 2.000, 6.000, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-16 19:29:46', '2020-06-16 19:36:30', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 1339, 11, 1101, 110101, 199, '两面', '20200616049', '676319859164486495', '总和、龙虎@总和大', 1, 21.000, 41.970, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-16 20:17:10', '2020-06-16 20:36:30', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 1339, 11, 1101, 110101, 199, '两面', '20200616049', '676319859164486495', '总和、龙虎@总和双', 1, 21.000, 41.970, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-16 20:17:10', '2020-06-16 20:36:30', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 1339, 11, 1101, 110101, 199, '两面', '20200616049', '676319859164486495', '总和、龙虎@虎', 1, 21.000, 41.970, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-16 20:17:10', '2020-06-16 20:36:30', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 1339, 11, 1101, 110101, 199, '两面', '20200616049', '676319859164486495', '第一球@大', 1, 21.000, 41.970, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-16 20:17:10', '2020-06-16 20:36:30', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 1339, 11, 1101, 110101, 199, '两面', '20200616049', '676319859164486495', '第一球@单', 1, 21.000, 41.970, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-16 20:17:10', '2020-06-16 20:36:31', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 1339, 11, 1101, 110101, 199, '两面', '20200616049', '676319859164486495', '第二球@大', 1, 21.000, 41.970, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-16 20:17:10', '2020-06-16 20:36:31', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 1339, 11, 1101, 110101, 199, '两面', '20200616049', '676319859164486495', '第二球@单', 1, 21.000, 41.970, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-16 20:17:10', '2020-06-16 20:36:31', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 1339, 11, 1101, 110101, 199, '两面', '20200616049', '676319859164486495', '第三球@大', 1, 21.000, 41.970, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-16 20:17:10', '2020-06-16 20:36:31', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 1339, 11, 1101, 110101, 199, '两面', '20200616049', '676319859164486495', '第三球@单', 1, 21.000, 41.970, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-16 20:17:10', '2020-06-16 20:36:31', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 1339, 11, 1101, 110101, 199, '两面', '20200616049', '676319859164486495', '第四球@小', 1, 21.000, 41.970, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-16 20:17:10', '2020-06-16 20:36:31', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 1339, 11, 1101, 110101, 199, '两面', '20200616049', '676319859164486495', '第四球@双', 1, 21.000, 41.970, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-16 20:17:10', '2020-06-16 20:36:31', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 1353, 11, 1101, 110101, 199, '两面', '20200616049', '676320007682169683', '总和、龙虎@总和大', 1, 4.000, 7.990, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-16 20:17:33', '2020-06-16 20:36:31', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 1529, 11, 1101, 110101, 199, '两面', '20200617046', '676863809065491290', '第一球@大', 1, 2.000, 3.990, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-17 19:20:31', '2020-06-17 19:31:26', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 1529, 11, 1101, 110101, 199, '两面', '20200617046', '676863809065491290', '第一球@单', 1, 2.000, 3.990, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-17 19:20:31', '2020-06-17 19:31:26', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (1592, 14, 1402, 140201, 30371, '冠亚和', '202006181086', '677400010101267238', '冠亚大', 1, 1.000, 2.190, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-18 18:04:08', '2020-06-18 18:05:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (1593, 22, 2201, 220101, 155, '澳洲ACT', '20200618316', '677401702974790450', '澳洲ACT@小', 1, 1.000, 1.990, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-18 18:08:25', '2020-06-18 19:56:30', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (1605, 22, 2202, 220201, 157, '两面', '20200618317', '677402623172320026', '总和、龙虎@总和小', 1, 1.000, 1.990, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-18 18:10:47', '2020-06-18 18:12:13', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 1628, 11, 1106, 110601, 21, '两面', '202006181171', '677433725574880087', '第一球@大', 1, 2.000, 3.990, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-18 19:29:51', '2020-06-18 19:30:00', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES (1815, 22, 2201, 220101, 155, '澳洲ACT', '20200618361', '677448510136032090', '澳洲ACT@小', 1, 1.000, 1.990, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-18 20:07:29', '2020-06-18 20:09:41', 'ANDROID', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 2076, 12, 1203, 120301, 159, '特码', '140562', '677891364924332812', '特码@03,06,02,05,09,11,07,10,14', 9, 18.000, 97.600, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-19 14:53:41', '2020-06-19 14:55:01', 'IOS', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 2083, 11, 1101, 110101, 199, '两面', '20200619033', '677892164332460845', '总和、龙虎@总和单', 1, 2.000, 3.990, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-19 14:55:43', '2020-06-19 15:12:45', 'IOS', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 2083, 11, 1101, 110101, 199, '两面', '20200619033', '677892164332460845', '第一球@大', 1, 2.000, 3.990, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-19 14:55:43', '2020-06-19 15:12:46', 'IOS', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 2089, 11, 1106, 110601, 21, '两面', '202006190897', '677892225405459280', '总和、龙虎@总和大', 1, 2.000, 3.990, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-19 14:55:54', '2020-06-19 14:56:00', 'IOS', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 2089, 11, 1106, 110601, 21, '两面', '202006190897', '677892225405459280', '第一球@大', 1, 2.000, 3.990, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-19 14:55:54', '2020-06-19 14:56:00', 'IOS', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 2089, 11, 1106, 110601, 21, '两面', '202006190897', '677892225405459280', '第一球@单', 1, 2.000, 3.990, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-19 14:55:54', '2020-06-19 14:56:00', 'IOS', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 2090, 11, 1102, 110201, 232, '两面', '2020061915', '677892303576800067', '总和、龙虎@总和大', 1, 2.000, 3.990, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-19 14:56:04', '2020-06-19 15:01:41', 'IOS', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 2090, 11, 1102, 110201, 232, '两面', '2020061915', '677892303576800067', '总和、龙虎@龙', 1, 2.000, 3.990, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-19 14:56:04', '2020-06-19 15:01:41', 'IOS', NULL, NULL);
+INSERT INTO `order_robot_record`( `order_id`, `cate_id`, `lottery_id`, `play_id`, `setting_id`, `play_name`, `issue`, `order_sn`, `bet_number`, `bet_count`, `bet_amount`, `win_amount`, `back_amount`, `is_roboter`, `tb_status`, `is_delete`, `win_count`, `is_push`, `create_time`, `update_time`, `source`, `familyid`, `room_id`) VALUES ( 2090, 11, 1102, 110201, 232, '两面', '2020061915', '677892303576800067', '第一球@单', 1, 2.000, 3.990, 0.000, 0, 'WIN', b'0', '1', 0, '2020-06-19 14:56:04', '2020-06-19 15:01:41', 'IOS', NULL, NULL);
+
+
+-- 1.3.2新增
+-- v1.3.2 新增超级后台网关地址 站点调用签名接口用
+INSERT INTO live.sys_parameter (sysparamcode, sysparamname, remark, sysparamvalue, sortby, status, is_delete)VALUES  ('SUPER_GATEWAY', '超级后台网关地址', '超级后台网关地址', 'https://spapi.liveprod.net', 1, 0, b'0');
+INSERT INTO live.sys_parameter (sysparamcode, sysparamname, remark, sysparamvalue, sortby, status, is_delete) VALUES ('SIGN_ERR_COUNT', '签名接口校验失败次数最大值', '签名接口校验失败次数最大值', '10', 0, 0, b'0');
+
+-- v1.3.2 机器人配置初始化接口
+INSERT INTO `bas_robotset`(`robot_setid`, `robot_nums`, `gift_bet_frequency`, `stay_time`, `gift_status`, `bet_status`, `status`, `is_delete`, `create_user`,`update_user`) VALUES (1, 10, 2, 2, 0, 0, 0, b'0', '2d64447059e444f680ff640e4cd41fab', '3d14189a3ecc40f6bec63bc01840a6a7');
+
+-- 初始化代理地址信息
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, status, is_delete, create_user, update_user) VALUES ( 'PROXY_HOST_NAME', 'PROXY_HOST_NAME', '代理地址', '54.151.144.145', 0, b'0', NULL,  NULL);
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, status, is_delete, create_user, update_user) VALUES ( 'PROXY_HOST_PORT', 'PROXY_HOST_PORT', '代理端口', '8888', 0, b'0', NULL,  NULL);
+
+-- 1.3.3 新增
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, status, is_delete, create_user, update_user) VALUES ( 'FORUM_POST_LEVEL', 'FORUM_POST_LEVEL', '发帖等级', '0', 0, b'0', NULL,  NULL);
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, status, is_delete, create_user, update_user) VALUES ( 'FORUM_COMMENT_LEVEL', 'FORUM_COMMENT_LEVEL', '帖子评论等级', '0', 0, b'0', NULL,  NULL);
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, status, is_delete, create_user, update_user) VALUES ( 'FORUM_POST_LEVEL_WHITE_MEMBERS', 'FORUM_POST_LEVEL_WHITE_MEMBERS', '发帖等级白名单用户', '', 0, b'0', NULL,  NULL);
+
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, status, is_delete, create_user, update_user) VALUES ( 'ONLINE_ACTIVE_PEOPLE_STAT_INTERVAL', 'ONLINE_ACTIVE_PEOPLE_STAT_INTERVAL', '在线活跃人数统计周期，默认5分钟，最小1分钟', '5', 0, b'0', NULL,  NULL);
+
+INSERT INTO `live`.`sys_parameter`(`sysparamcode`, `sysparamname`, `remark`, `sysparamvalue`, `sortby`, `status`, `is_delete`, `create_user`, `create_time`, `update_user`, `update_time`) VALUES ('SMS_MEILIAN_SIGNATURE', '美联签名', '美联签名', '美联', 1, 9, b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '2020-08-24 17:13:43', '065d4aed0b4a47bc9406d39ae182g3e6', '2020-08-24 17:13:43');
+INSERT INTO `live`.`sys_parameter`(`sysparamcode`, `sysparamname`, `remark`, `sysparamvalue`, `sortby`, `status`, `is_delete`, `create_user`, `create_time`, `update_user`, `update_time`) VALUES ('SMS_LINKAI_SIGNATURE', '凌凯签名', '凌凯签名', '凌凯', 1, 9, b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '2020-08-24 17:13:43', '065d4aed0b4a47bc9406d39ae182g3e6', '2020-08-24 17:13:43');
+INSERT INTO `live`.`sys_parameter`(`sysparamcode`, `sysparamname`, `remark`, `sysparamvalue`, `sortby`, `status`, `is_delete`, `create_user`, `create_time`, `update_user`, `update_time`) VALUES ('SMS_WANGJIAN_SIGNATURE', '网健签名', '网健签名', '网健', 1, 9, b'0', '065d4aed0b4a47bc9406d39ae182g3e6', '2020-08-24 17:13:43', '065d4aed0b4a47bc9406d39ae182g3e6', '2020-08-24 17:13:43');
+
+-- 屏蔽号码段开关
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, status, is_delete, create_user, update_user) VALUES ( 'INVALID_PHONE_PREFIX', 'INVALID_PHONE_PREFIX', '无效手机号段', '165,170,171,167,162', 0, b'0', NULL,  NULL);
+
+-- 3.4.0 版本sql
+-- 1104  1203  1302 1402 1601  2302 设置直播间默认彩种
+update lottery set is_live_lottery=b'0', is_live_show=b'0';
+update lottery set is_live_lottery=b'1', is_live_show=b'1', sort=10 where lottery_id=2302;
+update lottery set is_live_lottery=b'1', is_live_show=b'1', sort=9 where lottery_id=1104;
+update lottery set is_live_lottery=b'1', is_live_show=b'1', sort=8 where lottery_id=1203;
+update lottery set is_live_lottery=b'1', is_live_show=b'1', sort=7 where lottery_id=1302;
+update lottery set is_live_lottery=b'1', is_live_show=b'1', sort=6 where lottery_id=1402;
+update lottery set is_live_lottery=b'1', is_live_show=b'1', sort=5 where lottery_id=1601;
+update lottery set is_live_lottery=b'1', is_live_show=b'0', sort=4 where lottery_id=1105;
+update lottery set is_live_lottery=b'1', is_live_show=b'0', sort=3 where lottery_id=1205;
+update lottery set is_live_lottery=b'1', is_live_show=b'0', sort=2 where lottery_id=1303;
+
+INSERT INTO `sys_parameter` (`sysparamcode`, `sysparamname`, `remark`, `sysparamvalue`, `sortby`, `status`, `is_delete`, `create_user`, `create_time`, `update_user`, `update_time`)
+VALUES ('LIVE_ROOM_DEFAULT_LOTTERY', '直播间默认彩种', '直播间默认彩种', '2302', 1, 0, b'0', '', now(), '', now());
+
+-- 直播间彩种最大个数
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, status, is_delete, create_user, update_user)
+VALUES ( 'LIVE_LOTTERY_MAX_NUMS', 'LIVE_LOTTERY_MAX_NUMS', '直播间彩种最大启用个数', '7', 0, b'0', NULL,  NULL);
+
+
+-- ----------------------------
+-- Records of sys_chess_balance
+-- ----------------------------
+INSERT INTO `sys_chess_balance` VALUES (1, 'KY', '开元棋牌', 0.000, NULL, '2020-09-21 13:18:24', NULL, '2020-09-21 13:18:24', b'0');
+INSERT INTO `sys_chess_balance` VALUES (2, 'AG', 'AG棋牌', 0.000, NULL, '2020-09-21 13:18:52', NULL, '2020-09-21 13:18:52', b'0');
+INSERT INTO `sys_chess_balance` VALUES (3, 'AE', 'AE棋牌', 0.000, NULL, '2020-09-21 13:19:06', NULL, '2020-09-21 13:19:06', b'0');
+INSERT INTO `sys_chess_balance` VALUES (4, 'MG', 'MG棋牌', 0.000, NULL, '2020-09-21 13:19:18', NULL, '2020-09-21 13:19:18', b'0');
+INSERT INTO `sys_chess_balance` VALUES (5, 'JDB', 'JDB捕鱼', 0.000, NULL, '2020-09-21 13:19:29', NULL, '2020-09-21 13:19:29', b'0');
+
+-- 3.4版本 房间机器人默认个数
+INSERT INTO `sys_parameter` (sysparamcode, sysparamname, remark, sysparamvalue, `status`, is_delete, create_user,update_user) VALUES ('LIVE_ROBOT_LEAST_NUMS', '机器人数量默认', '直播间机器人没有配置时默认最小数量', '15', 0, b'0', NULL, NULL);
+
+update lottery_category set type='BUYU' where category_id=201;
+update lottery_category set type='QIPAI' where category_id=300;
+update lottery_category set type='ZUCAI' where category_id=500;
+update lottery_category set type='MGDZ' where category_id in(501,502,503);
+
+-- 3.5版本 登录失败次数限制
+INSERT INTO `live`.`sys_parameter`(`sysparamcode`, `sysparamname`, `remark`, `sysparamvalue`, `sortby`, `status`, `is_delete`, `create_user`, `update_user`) VALUES ('LOGIN_FAIL_NUM_LIMIT', '登录失败次数限制', '登录失败次数最大限制', '20', 1, 0, b'0', NULL, NULL);

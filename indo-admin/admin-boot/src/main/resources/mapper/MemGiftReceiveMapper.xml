@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.indo.admin.modules.mem.mapper.MemGiftReceiveMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.indo.user.pojo.entity.MemGiftReceive">
+        <id column="receive_id" property="receiveId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="mem_id" property="memId"/>
+        <result column="gift_type" property="giftType"/>
+        <result column="gift_code" property="giftCode"/>
+        <result column="gift_name" property="giftName"/>
+        <result column="remark" property="remark"/>
+    </resultMap>
+
+    <resultMap id="Base2ResultMap" type="com.indo.admin.pojo.vo.mem.MemGiftReceiveVO">
+        <id column="receive_id" property="receiveId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="mem_id" property="memId"/>
+        <result column="gift_type" property="giftType"/>
+        <result column="gift_code" property="giftCode"/>
+        <result column="gift_name" property="giftName"/>
+        <result column="remark" property="remark"/>
+    </resultMap>
+
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        create_time
+        ,
+        update_time,
+        receive_id, mem_id, gift_type, gift_code, gift_name, remark
+    </sql>
+
+
+    <select id="receiveList" resultMap="Base2ResultMap">
+        SELECT
+        mb.id,
+        mb.mem_level,
+        mgr.gift_type,
+        mgr.gift_name,
+        mgr.gift_amount,
+        mgr.create_time
+        FROM
+        mem_gift_receive mgr
+        LEFT JOIN mem_baseinfo mb ON mgr.mem_id = mb.id
+        where 1=1
+        <if test="dto.memId !=null">
+            and mb.id = #{dto.memId)
+        </if>
+        <if test="dto.giftType !=null">
+            and mgr.gift_type = #{dto.giftType)
+        </if>
+        <if test="dto.startTime != null and dto.startTime != ''"><!-- 开始时间检索 -->
+            and date_format(create_time,'%y%m%d') &gt;= date_format(#{dto.startTime},'%y%m%d')
+        </if>
+        <if test="dto.endTime != null and dto.endTime != ''"><!-- 结束时间检索 -->
+            and date_format(create_time,'%y%m%d') &lt;= date_format(#{dto.endTime},'%y%m%d')
+        </if>
+        ORDER BY mgr.create_time desc
+    </select>
+
+</mapper>

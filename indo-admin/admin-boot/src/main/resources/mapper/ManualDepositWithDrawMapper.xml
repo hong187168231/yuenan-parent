@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.indo.admin.modules.mem.mapper.ManualDepositWithDrawMapper">
+
+    <select id="queryList" resultType="com.indo.user.pojo.vo.ManualDepositWithDrawVO">
+
+        SELECT
+            t.id,
+            t.mem_id,
+            t.amount,
+            t.service_fee,
+            t.operation_type as operationType,
+            t.operation_time as operationTime,
+            t.operator,
+            t.remark,
+            t.order_id as orderId,
+            bt.Identity_type as identityType,
+            bt.account,
+            lt.`level`
+        FROM
+        mem_manual_deposit_withdraw t
+        LEFT JOIN mem_baseinfo bt ON bt.id = t.mem_id
+        LEFT JOIN mem_level lt ON lt.id = bt.level_id
+        where t.is_del = 0
+        <if test="dto.orderId != null and dto.orderId != ''">and t.order_id = #{dto.orderId}</if>
+        <if test="dto.account != null  and dto.account != ''">and bt.account like concat('%', #{dto.account}, '%')</if>
+        <if test="dto.operationBeginTime != null and dto.operationBeginTime != ''">
+            and date_format(t.operation_time,'%y%m%d') &gt;= date_format(#{dto.operationBeginTime},'%y%m%d')
+        </if>
+        <if test="dto.operationEndTime != null and dto.operationEndTime != ''">
+            and date_format(t.operation_time,'%y%m%d') &lt;= date_format(#{dto.operationEndTime},'%y%m%d')
+        </if>
+        ORDER BY t.operation_time desc
+    </select>
+
+    <insert id="insertManualDepositWithDraw">
+        INSERT INTO mem_manual_deposit_withdraw ( mem_id, amount, operation_type, operator, order_id, service_fee, operation_time, remark )
+        VALUES
+            (
+             #{memId},
+             #{amount},
+             #{operationType},
+             #{operator},
+             #{orderId},
+             #{serviceFee},
+             now(),
+             #{remark}
+            )
+    </insert>
+
+</mapper>

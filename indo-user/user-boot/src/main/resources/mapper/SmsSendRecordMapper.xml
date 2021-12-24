@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.indo.user.mapper.SmsSendRecordMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.indo.admin.pojo.entity.SmsSendRecord">
+        <id column="sms_send_id" property="smsSendId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="area_code" property="areaCode"/>
+        <result column="mobile" property="mobile"/>
+        <result column="sms_type" property="smsType"/>
+        <result column="content" property="content"/>
+        <result column="sms_code" property="smsCode"/>
+        <result column="status" property="status"/>
+        <result column="ip_address" property="ipAddress"/>
+        <result column="create_user" property="createUser"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        create_time
+        ,
+        update_time,
+        sms_send_id, area_code, mobile, sms_type, content, sms_code, status, ip_address, create_user
+    </sql>
+
+
+    <select id="getLimit" parameterType="com.indo.admin.pojo.entity.SmsSendRecord"
+            resultType="java.lang.Integer">
+        SELECT count(1) FROM sms_send_record s
+        where DATE_FORMAT(s.create_time,'%Y-%m-%d') = DATE_FORMAT(NOW(),'%Y-%m-%d')
+        <if test="ipAddress != null">
+            and s.ip_address = #{ipAddress}
+        </if>
+        <if test="mobile != null">
+            and s.mobile = #{mobile}
+        </if>
+    </select>
+
+
+    <!-- 是否在时间间隔内 -->
+    <select id="getCountDown" parameterType="com.indo.user.pojo.req.VerifyCodeReq" resultType="java.lang.Integer">
+        SELECT ((UNIX_TIMESTAMP(now()) - UNIX_TIMESTAMP(create_time)) -
+        #{countDown}) as
+        stime from
+        (SELECT s.masdate from
+
+        (
+        SELECT
+        <include refid="Base_Column_List"/>
+        from sms_send_record ss
+        where ss.mobile = #{mobile}
+        and ss.sms_type = #{sendType}
+        ORDER BY ss.masdate desc
+        limit 1
+        ) as s
+
+        where
+        s.mobile = #{mobile}
+        and s.sms_type = #{sendType}
+        <!-- &lt;if test="msgcode == null"&gt;
+            and s.msgcode = #{smscode}
+        &lt;/if&gt; -->
+        ORDER BY s.masdate desc
+        limit 1) as t
+    </select>
+
+
+</mapper>

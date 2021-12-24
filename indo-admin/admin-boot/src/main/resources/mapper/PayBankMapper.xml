@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.indo.admin.modules.pay.mapper.PayBankMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.indo.pay.pojo.entity.PayBank">
+        <id column="bank_id" property="bankId" />
+        <result column="create_time" property="createTime" />
+        <result column="bank_code" property="bankCode" />
+        <result column="bank_name" property="bankName" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        create_time,
+        bank_id, bank_code, bank_name
+    </sql>
+
+</mapper>

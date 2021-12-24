@@ -1,0 +1,9 @@
+spring:
+  main:
+    allow-bean-definition -overriding: true
+  profiles:
+    active: dev
+
+  messages:
+    basename: i18n/message_zh
+    encoding: UTF-8

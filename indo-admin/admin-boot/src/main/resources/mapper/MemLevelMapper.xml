@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.indo.admin.modules.mem.mapper.MemLevelMapper">
+
+    <select id="listByMemLevel" resultType="com.indo.admin.modules.mem.vo.MemLevelVo">
+        select *
+        from mem_level
+    </select>
+
+    <select id="selectNameByIds" resultType="String">
+        select
+        name
+        from mem_level
+        <where>
+            <if test="list != null and list.size()>0">
+                id IN
+                <foreach item="item" index="index" collection="list" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </select>
+</mapper>
