@@ -1,4 +1,4 @@
-package com.indo.game.mapper;
+package com.indo.game.mapper.manage;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.indo.game.pojo.entity.manage.GameCategory;

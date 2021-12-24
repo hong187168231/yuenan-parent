@@ -11,33 +11,10 @@ public interface IFrontEndGameManageService {
 
     public Result queryAllGameCategory();
 
-    public void addGameCategory(GameCategory category);
-
-    public void deleteBatchGameCategory(List idList);
-
-    public void modifiyGameCategory(GameCategory category);
-
     public Result queryAllGamePlatform();
 
     public Result queryHotGamePlatform();
 
     public Result queryGamePlatformByCategory(Long categoryId);
 
-    public void addGamePlatform(GamePlatform platform);
-
-    public void deleteBatchGamePlatform(List idList);
-
-    public void modifiyGamePlatform(GamePlatform platform);
-
-    public Result queryAllGameDownload();
-
-    public void addGameDownload(GameDownload gameDownload);
-
-    public void deleteBatchGameDownload(List idList);
-
-    public void modifiyGameDownload(GameDownload gameDownload);
-
-    public Result queryLanguageType();
-
-    public Result queryGameCurrencyType();
 }
