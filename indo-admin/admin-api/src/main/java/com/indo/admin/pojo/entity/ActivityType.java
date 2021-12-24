@@ -1,9 +1,9 @@
 package com.indo.admin.pojo.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.indo.common.pojo.entity.BaseEntity;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -15,30 +15,30 @@ import lombok.EqualsAndHashCode;
  * </p>
  *
  * @author puff
- * @since 2021-11-02
+ * @since 2021-12-24
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
+@ApiModel(value = "ActivityType对象", description = "活动类型表")
 @TableName("act_activity_type")
-@ApiModel(value="ActivityType对象", description="活动类型表")
 public class ActivityType extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "主键")
-    @TableId(value = "activity_type_id", type = IdType.AUTO)
-    private Long activityTypeId;
+    @TableId(value = "act_type_id", type = IdType.AUTO)
+    private Long actTypeId;
 
     @ApiModelProperty(value = "活动类型名称")
-    private String activityTypeName;
+    private String actTypeName;
 
     @ApiModelProperty(value = "活动数量")
-    private Integer activityNum;
+    private Integer actNum;
 
     @ApiModelProperty(value = "创建人")
     private String createUser;
 
-    @ApiModelProperty(value = "修改人")
+    @ApiModelProperty(value = "更新人")
     private String updateUser;
 
     @ApiModelProperty(value = "备注")

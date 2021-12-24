@@ -6,12 +6,11 @@ import com.indo.admin.pojo.dto.ActivityTypeDTO;
 import com.indo.admin.pojo.vo.ActivityTypeVO;
 import com.indo.common.result.Result;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -25,7 +24,7 @@ import java.util.List;
  */
 @Api(tags = "活动类型")
 @RestController
-@RequestMapping("/act/activityType")
+@RequestMapping("/api/v1/actType")
 public class ActivityTypeController {
 
 
@@ -34,8 +33,12 @@ public class ActivityTypeController {
 
     @ApiOperation(value = "分页查询活动类型")
     @GetMapping(value = "/list")
-    public Result<List<ActivityTypeVO>> list(ActivityTypeDTO activityTypeDTO) {
-        return iActivityTypeService.queryList(activityTypeDTO);
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page", value = "当前页", required = true, paramType = "query", dataType = "int"),
+            @ApiImplicitParam(name = "limit", value = "每页条数", required = true, paramType = "query", dataType = "int")
+    })
+    public Result<List<ActivityTypeVO>> list(@RequestParam("page") Integer page, @RequestParam("limit") Integer limit) {
+        return iActivityTypeService.queryList(page, limit);
     }
 
     @ApiOperation(value = "增加活动类型")
@@ -50,5 +53,7 @@ public class ActivityTypeController {
     public Result edit(ActivityTypeDTO activityTypeDTO) {
         return Result.judge(iActivityTypeService.edit(activityTypeDTO));
     }
+
+
 
 }

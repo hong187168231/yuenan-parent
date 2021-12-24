@@ -30,4 +30,11 @@ public interface SystemConstants {
     public static final Integer ADE_SHELVES = 1;
 
 
+    /**
+     * 活动上下架 0 下架  1 上架
+     */
+    public static final Integer ACT_SOLD_OUT = 0;
+    public static final Integer ACT_SHELVES = 1;
+
+
 }

@@ -25,7 +25,8 @@ public class Advertise extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(value = "主键")
+
+    @ApiModelProperty(value = "主键id")
     @TableId(value = "ade_id", type = IdType.AUTO)
     private Long adeId;
 
@@ -41,8 +42,15 @@ public class Advertise extends BaseEntity {
     @ApiModelProperty(value = "状态 0 下架1 上架")
     private Integer status;
 
+    @ApiModelProperty(value = "创建人")
+    private String createUser;
+
+    @ApiModelProperty(value = "更新人")
+    private String updateUser;
+
     @ApiModelProperty(value = "备注")
     private String remark;
+
 
 
 }

@@ -5,26 +5,31 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.Date;
+
 @Data
 public class ActivityTypeVO {
 
     @ApiModelProperty(value = "主键")
-    @TableId(value = "id", type = IdType.AUTO)
-    private Long id;
+    private Long actTypeId;
 
-    @ApiModelProperty(value = "标题")
-    private String image;
+    @ApiModelProperty(value = "活动类型名称")
+    private String actTypeName;
 
-    @ApiModelProperty(value = "内容")
-    private String skipUrl;
+    @ApiModelProperty(value = "活动数量")
+    private Integer actNum;
 
-    @ApiModelProperty(value = "发送人id")
-    private String content;
+    @ApiModelProperty(value = "创建人")
+    private String createUser;
 
-    @ApiModelProperty(value = "状态 0 下架1 上架")
-    private Integer status;
+    @ApiModelProperty(value = "更新人")
+    private String updateUser;
 
     @ApiModelProperty(value = "备注")
     private String remark;
+
+    @ApiModelProperty(value = "创建时间")
+    private Date createTime;
+
 
 }

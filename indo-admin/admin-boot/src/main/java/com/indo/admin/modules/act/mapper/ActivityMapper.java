@@ -1,7 +1,7 @@
 package com.indo.admin.modules.act.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.indo.admin.pojo.entity.ActivityRecord;
+import com.indo.admin.pojo.entity.Activity;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
@@ -14,7 +14,6 @@ import org.springframework.stereotype.Repository;
  * @since 2021-11-02
  */
 @Mapper
-@Repository
-public interface ActivityRecordMapper extends BaseMapper<ActivityRecord> {
+public interface ActivityMapper extends BaseMapper<Activity> {
 
 }

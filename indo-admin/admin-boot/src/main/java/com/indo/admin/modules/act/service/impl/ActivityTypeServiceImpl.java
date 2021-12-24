@@ -4,13 +4,16 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
+import com.indo.admin.common.util.BusinessRedisUtils;
 import com.indo.admin.modules.act.mapper.ActivityTypeMapper;
 import com.indo.admin.modules.act.service.IActivityTypeService;
 import com.indo.admin.pojo.dto.ActivityTypeDTO;
 import com.indo.admin.pojo.entity.ActivityType;
 import com.indo.admin.pojo.vo.ActivityTypeVO;
+import com.indo.common.constant.RedisConstants;
 import com.indo.common.result.Result;
 import com.indo.common.web.util.DozerUtil;
+import com.indo.common.web.util.JwtUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -33,8 +36,8 @@ public class ActivityTypeServiceImpl extends ServiceImpl<ActivityTypeMapper, Act
 
 
     @Override
-    public Result<List<ActivityTypeVO>> queryList(ActivityTypeDTO activityTypeDTO) {
-        Page<ActivityType> agentApplyPage = new Page<>(activityTypeDTO.getPage(), activityTypeDTO.getLimit());
+    public Result<List<ActivityTypeVO>> queryList(Integer page, Integer limit) {
+        Page<ActivityType> agentApplyPage = new Page<>(page, limit);
         LambdaQueryWrapper<ActivityType> wrapper = new LambdaQueryWrapper<>();
         Page<ActivityType> pageList = this.baseMapper.selectPage(agentApplyPage, wrapper);
         List<ActivityTypeVO> result = dozerUtil.convert(pageList.getRecords(), ActivityTypeVO.class);
@@ -45,13 +48,22 @@ public class ActivityTypeServiceImpl extends ServiceImpl<ActivityTypeMapper, Act
     public boolean add(ActivityTypeDTO activityTypeDTO) {
         ActivityType activityType = new ActivityType();
         BeanUtils.copyProperties(activityTypeDTO, activityType);
-        return baseMapper.insert(activityType) > 0;
+        activityType.setCreateUser(JwtUtils.getUsername());
+        if (baseMapper.insert(activityType) > 0) {
+            BusinessRedisUtils.hset(RedisConstants.ACTIVITY_TYPE_KEY, activityType.getActTypeId() + "", activityType);
+            return true;
+        }
+        return false;
     }
 
     @Override
     public boolean edit(ActivityTypeDTO activityTypeDTO) {
         ActivityType activityType = new ActivityType();
         BeanUtils.copyProperties(activityTypeDTO, activityType);
-        return baseMapper.updateById(activityType) > 0;
+        if (baseMapper.updateById(activityType) > 0) {
+            BusinessRedisUtils.hset(RedisConstants.ACTIVITY_TYPE_KEY, activityType.getActTypeId() + "", activityType);
+            return true;
+        }
+        return false;
     }
 }

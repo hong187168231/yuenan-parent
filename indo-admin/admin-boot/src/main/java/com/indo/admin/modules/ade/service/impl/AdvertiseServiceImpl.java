@@ -11,7 +11,9 @@ import com.indo.admin.pojo.entity.Advertise;
 import com.indo.admin.pojo.vo.AdvertiseVO;
 import com.indo.common.constant.RedisConstants;
 import com.indo.common.result.Result;
+import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
+import com.indo.common.web.util.JwtUtils;
 import com.indo.user.pojo.dto.AdvertiseQueryDTO;
 import com.indo.user.pojo.dto.AdvertiseDTO;
 import org.springframework.beans.BeanUtils;
@@ -50,8 +52,11 @@ public class AdvertiseServiceImpl extends ServiceImpl<AdvertiseRecordMapper, Adv
     public boolean add(AdvertiseDTO advertiseDTO) {
         Advertise advertise = new Advertise();
         BeanUtils.copyProperties(advertiseDTO, advertise);
+        advertise.setCreateUser(JwtUtils.getUsername());
         if (baseMapper.insert(advertise) > 0) {
-            BusinessRedisUtils.hset(RedisConstants.ADMIN_ADVERTISING_KEY, advertise.getAdeId() + "", advertise);
+            if (advertiseDTO.getStatus().equals(SystemConstants.ADE_SHELVES)) {
+                BusinessRedisUtils.hset(RedisConstants.ADMIN_ADVERTISING_KEY, advertise.getAdeId() + "", advertise);
+            }
             return true;
         }
         return false;
@@ -60,8 +65,10 @@ public class AdvertiseServiceImpl extends ServiceImpl<AdvertiseRecordMapper, Adv
     @Override
     @Transactional
     public boolean edit(AdvertiseDTO advertiseDTO) {
+        checkAdeOpera(advertiseDTO.getAdeId());
         Advertise advertise = new Advertise();
         BeanUtils.copyProperties(advertiseDTO, advertise);
+        advertise.setUpdateUser(JwtUtils.getUsername());
         if (baseMapper.updateById(advertise) > 0) {
             BusinessRedisUtils.hset(RedisConstants.ADMIN_ADVERTISING_KEY, advertise.getAdeId() + "", advertise);
             return true;
@@ -72,6 +79,7 @@ public class AdvertiseServiceImpl extends ServiceImpl<AdvertiseRecordMapper, Adv
     @Override
     @Transactional
     public boolean delAde(Long adeId) {
+        checkAdeOpera(adeId);
         if (this.baseMapper.deleteById(adeId) > 0) {
             BusinessRedisUtils.hdel(RedisConstants.ADMIN_ADVERTISING_KEY, adeId + "");
             return true;
@@ -80,10 +88,12 @@ public class AdvertiseServiceImpl extends ServiceImpl<AdvertiseRecordMapper, Adv
     }
 
     @Override
+    @Transactional
     public boolean operateStatus(Long adeId, Integer status) {
         Advertise advertise = new Advertise();
         advertise.setStatus(status);
         advertise.setAdeId(adeId);
+        advertise.setUpdateUser(JwtUtils.getUsername());
         if (this.baseMapper.updateById(advertise) > 0) {
             if (status.equals(SystemConstants.ADE_SHELVES)) {
                 BusinessRedisUtils.hset(RedisConstants.ADMIN_ADVERTISING_KEY, advertise.getAdeId() + "", advertise);
@@ -94,5 +104,32 @@ public class AdvertiseServiceImpl extends ServiceImpl<AdvertiseRecordMapper, Adv
         }
         return false;
     }
+
+    /**
+     * 检查操作状态
+     *
+     * @param adeId
+     */
+    private void checkAdeOpera(Long adeId) {
+        if (selectAdeShelveFlag(adeId)) {
+            throw new BizException("广告状态为已上架，暂不能进行编辑修改操作!");
+        }
+    }
+
+
+    /**
+     * 查询广告上架状态
+     *
+     * @param adeId
+     * @return
+     */
+    private boolean selectAdeShelveFlag(Long adeId) {
+        Advertise advertise = this.baseMapper.selectById(adeId);
+        if (advertise != null && advertise.getStatus().equals(SystemConstants.ADE_SHELVES)) {
+            return true;
+        }
+        return false;
+    }
+
 
 }

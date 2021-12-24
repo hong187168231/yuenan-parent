@@ -25,7 +25,12 @@ public interface RedisConstants {
     String SMS_USER_COUPON_EXPIRED_KEY = "sms_user_coupon_expired_";
 
 
-    public static final String ADMIN_ADVERTISING_KEY = "ADMIN_ADVERTISING_KEY";
+     static final String ADMIN_ADVERTISING_KEY = "ADMIN_ADVERTISING_KEY";
+
+
+    static final String ACTIVITY_TYPE_KEY = "ACTIVITY_TYPE_KEY";
+
+    static final String ACTIVITY_KEY = "ACTIVITY_KEY";
 
 
 }

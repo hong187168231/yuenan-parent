@@ -5,6 +5,7 @@ import com.indo.admin.pojo.dto.ActivityTypeDTO;
 import com.indo.admin.pojo.entity.ActivityType;
 import com.indo.admin.pojo.vo.ActivityTypeVO;
 import com.indo.common.result.Result;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -19,16 +20,17 @@ import java.util.List;
 public interface IActivityTypeService extends IService<ActivityType> {
 
 
-
     /**
      * 分页查询
-     * @param activityTypeDTO
+     * @param page
+     * @param limit
      * @return
      */
-    Result<List<ActivityTypeVO>> queryList(ActivityTypeDTO activityTypeDTO);
+    Result<List<ActivityTypeVO>> queryList(Integer page, Integer limit);
 
     /**
      * 新增活动类型
+     *
      * @param activityTypeDTO
      * @return
      */
@@ -37,6 +39,7 @@ public interface IActivityTypeService extends IService<ActivityType> {
 
     /**
      * 编辑活动类型
+     *
      * @param activityTypeDTO
      * @return
      */

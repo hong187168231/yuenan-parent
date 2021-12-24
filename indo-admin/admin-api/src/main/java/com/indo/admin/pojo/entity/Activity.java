@@ -1,15 +1,16 @@
 package com.indo.admin.pojo.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.indo.common.pojo.entity.BaseEntity;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+
+import java.time.LocalDateTime;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
-import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -17,30 +18,31 @@ import java.time.LocalDateTime;
  * </p>
  *
  * @author puff
- * @since 2021-11-02
+ * @since 2021-12-24
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("act_activity_record")
-@ApiModel(value="ActivityRecord对象", description="活动记录表")
-public class ActivityRecord extends BaseEntity {
+@ApiModel(value = "activity对象", description = "活动记录表")
+@TableName("act_activity")
+public class Activity extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(value = "主键")
-    @TableId(value = "activity_id", type = IdType.AUTO)
-    private Long activityId;
+    @ApiModelProperty(value = "主键id")
+    @TableId(value = "act_id", type = IdType.AUTO)
+    private Long actId;
 
     @ApiModelProperty(value = "活动类型id")
-    private Long activityTypeId;
+    private Long actTypeId;
 
-    @ApiModelProperty(value = "活动图片")
-    private String activityImage;
+    @ApiModelProperty(value = "活动图片地址")
+    private String actImageUrl;
 
-    @ApiModelProperty(value = "状态 0 下架1 上架")
+    @ApiModelProperty(value = "状态 0 下架 1 上架  2 已过期")
     private Integer status;
 
-    private String activityDetail;
+    @ApiModelProperty(value = "活动详情")
+    private String content;
 
     @ApiModelProperty(value = "是否永久活动 0否 1 是")
     private Integer isPer;
