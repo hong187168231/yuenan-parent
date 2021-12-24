@@ -5,10 +5,13 @@ import com.indo.admin.modules.ade.service.IAdvertiseService;
 import com.indo.admin.pojo.vo.AdvertiseVO;
 import com.indo.common.result.Result;
 import com.indo.user.pojo.dto.AdvertiseQueryDTO;
-import com.indo.user.pojo.dto.AdvertiseRecordDTO;
+import com.indo.user.pojo.dto.AdvertiseDTO;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,15 +41,33 @@ public class AdvertiseController {
 
     @ApiOperation(value = "增加广告")
     @PostMapping(value = "/add")
-    public Result add(@RequestBody AdvertiseRecordDTO advertiseRecordDTO) {
-        return Result.judge(iAdvertiseRecordService.add(advertiseRecordDTO));
+    public Result add(AdvertiseDTO advertiseDTO) {
+        return Result.judge(iAdvertiseRecordService.add(advertiseDTO));
     }
 
 
     @ApiOperation(value = "编辑广告")
     @PostMapping(value = "/edit")
-    public Result edit(AdvertiseRecordDTO advertiseRecordDTO) {
-        return Result.judge(iAdvertiseRecordService.edit(advertiseRecordDTO));
+    public Result edit(AdvertiseDTO advertiseDTO) {
+        return Result.judge(iAdvertiseRecordService.edit(advertiseDTO));
+    }
+
+    @ApiOperation(value = "删除广告")
+    @DeleteMapping(value = "/{adeId}")
+    @ApiImplicitParam(name = "adeId", value = "广告id", required = true, paramType = "path", dataType = "long")
+    public Result delete(@PathVariable Long adeId) {
+        return Result.judge(iAdvertiseRecordService.delAde(adeId));
+    }
+
+
+    @ApiOperation(value = "广告上下架")
+    @PutMapping(value = "/operateStatus")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "adeId", value = "广告id", required = true, paramType = "query", dataType = "long"),
+            @ApiImplicitParam(name = "status", value = "状态 0 下架1 上架", required = true, paramType = "query", dataType = "int")
+    })
+    public Result operateStatus(@RequestParam("adeId") Long adeId,@RequestParam("status") Integer status) {
+        return Result.judge(iAdvertiseRecordService.operateStatus(adeId,status));
     }
 
 }

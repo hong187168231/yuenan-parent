@@ -12,13 +12,22 @@ public interface SystemConstants {
     String ROOT_ROLE_CODE = "ROOT";
 
 
-    String BTN_PERM_ROLES_KEY="system:btn_perm_roles:";
-    String URL_PERM_ROLES_KEY="system:url_perm_roles:";
+    String BTN_PERM_ROLES_KEY = "system:btn_perm_roles:";
+    String URL_PERM_ROLES_KEY = "system:url_perm_roles:";
 
 
-    /** 校验返回结果码 */
+    /**
+     * 校验返回结果码
+     */
     public final static String UNIQUE = "0";
 
     public final static String NOT_UNIQUE = "1";
+
+    /**
+     * 广告上下架 0 下架  1 上架
+     */
+    public static final Integer ADE_SOLD_OUT = 0;
+    public static final Integer ADE_SHELVES = 1;
+
 
 }

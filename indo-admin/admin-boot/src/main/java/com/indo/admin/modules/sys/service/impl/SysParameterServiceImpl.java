@@ -99,7 +99,7 @@ public class SysParameterServiceImpl extends ServiceImpl<SysParameterMapper, Sys
 
     @Override
     public List<SysParameter> selectAll() {
-        return baseMapper.selectList(new LambdaQueryWrapper<SysParameter>().eq(SysParameter::getIsDel, false));
+        return baseMapper.selectList(new LambdaQueryWrapper<SysParameter>().eq(SysParameter::getStatus, 1));
     }
 
     @Override

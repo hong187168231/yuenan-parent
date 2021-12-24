@@ -5,7 +5,7 @@ import com.indo.admin.pojo.entity.Advertise;
 import com.indo.admin.pojo.vo.AdvertiseVO;
 import com.indo.common.result.Result;
 import com.indo.user.pojo.dto.AdvertiseQueryDTO;
-import com.indo.user.pojo.dto.AdvertiseRecordDTO;
+import com.indo.user.pojo.dto.AdvertiseDTO;
 
 import java.util.List;
 
@@ -21,6 +21,7 @@ public interface IAdvertiseService extends IService<Advertise> {
 
     /**
      * 分页查询
+     *
      * @param pushRecordDTO
      * @return
      */
@@ -28,17 +29,36 @@ public interface IAdvertiseService extends IService<Advertise> {
 
     /**
      * 新增广告
-     * @param pushRecordAddDTO
+     *
+     * @param advertiseDTO
      * @return
      */
-    boolean add(AdvertiseRecordDTO pushRecordAddDTO);
+    boolean add(AdvertiseDTO advertiseDTO);
 
 
     /**
      * 编辑广告
-     * @param pushRecordAddDTO
+     *
+     * @param advertiseDTO
      * @return
      */
-    boolean edit(AdvertiseRecordDTO pushRecordAddDTO);
+    boolean edit(AdvertiseDTO advertiseDTO);
+
+    /**
+     * 删除广告
+     *
+     * @param adeId
+     * @return
+     */
+    boolean delAde(Long adeId);
+
+    /**
+     * 广告上下架
+     *
+     * @param adeId
+     * @param status
+     * @return
+     */
+    boolean operateStatus(Long adeId, Integer status);
 
 }
