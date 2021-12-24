@@ -1,6 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.indo.common.redis.RedisConfig,\
-  com.indo.common.redis.component.BusinessNoGenerator,\
-  com.indo.common.redis.utils.RedisUtils,\
-  com.indo.common.redis.redisson.RedissonConfig,\
-  com.indo.common.redis.redisson.RedissonProperties
