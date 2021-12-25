@@ -40,7 +40,7 @@ public class SwaggerConfiguration {
                 .modelRef(new ModelRef("string")).parameterType("header")
                 .required(false).defaultValue("").build();
         pars.add(ticketPar.build());
-        
+
         return new Docket(DocumentationType.SWAGGER_2)
                 .ignoredParameterTypes(LoginUser.class)
                 .apiInfo(apiInfo())
@@ -54,7 +54,7 @@ public class SwaggerConfiguration {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("系统管理")
+                .title("用户管理")
                 .description("<div style='font-size:14px;color:red;'>用户、角色、部门、菜单、权限、字典、客户端接口</div>")
                 .termsOfServiceUrl("https://www.live.tech")
                 .contact(new Contact("泡芙技术团队", "https://github.com/ui", "1490493387@qq.com"))
