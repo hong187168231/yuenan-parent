@@ -11,13 +11,22 @@ public interface GlobalConstants {
     String URL_PERM_ROLES_KEY = "system:perm_roles_rule:url:";
     String BTN_PERM_ROLES_KEY = "system:perm_roles_rule:btn:";
 
-    String APP_API_PATTERN="/*/app-api/**";
+    String APP_API_PATTERN = "/*/app-api/**";
 
 
     /**
      * 参数管理 cache key
      */
     public static final String SYS_CONFIG_KEY = "sys_config:";
+
+
+    /**
+     * 活动上下架 0 下架  1 上架 2 过期
+     */
+    public static final Integer ACT_SOLD_OUT = 0;
+    public static final Integer ACT_SHELVES = 1;
+    public static final Integer ACT_DATED = 2;
+
 
 
     /**
