@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
  * @author puff
  * @since 2021-11-17
  */
-@Api(tags = "活动接口")
+@Api(tags = "app活动接口")
 @RestController
 @RequestMapping("/api/v1/users/act")
 public class ActivityController {

@@ -23,7 +23,7 @@ public class MemBaseInfoFeignFallback implements MemBaseInfoFeignClient {
     }
 
     @Override
-    public Result<MemBaseinfo> getByAccountNo(String accountNo) {
+    public Result<MemBaseinfo> getByAccount(String account) {
         log.error("feign远程调用系统用户服务异常后的降级方法");
         return Result.failed(ResultCode.DEGRADATION);
     }

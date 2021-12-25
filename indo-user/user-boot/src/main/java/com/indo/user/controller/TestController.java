@@ -42,7 +42,7 @@ public class TestController {
     @AllowAccess
     public String detail(@LoginUser LoginInfo loginInfo) {
         MemBaseinfo memBaseInfo = new MemBaseinfo();
-        memBaseInfo.setAccountNo("dd");
+        memBaseInfo.setAccount("dd");
         memBaseInfo.setBalance(new BigDecimal(2000));
         redisUtils.set("dsd", memBaseInfo, 60 * 60 * 24 * 7);
         return "ok";

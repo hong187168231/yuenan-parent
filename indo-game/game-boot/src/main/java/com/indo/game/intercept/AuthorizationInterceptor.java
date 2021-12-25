@@ -67,7 +67,7 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
         } else {
             LoginInfo loginInfo = JSONObject.parseObject((String) userObj, LoginInfo.class);
             if (loginInfo != null) {
-                String newToken = (String) redisUtils.get(AppConstants.USER_LOGIN_INFO_KEY + loginInfo.getAccountNo());
+                String newToken = redisUtils.get(AppConstants.USER_LOGIN_INFO_KEY + loginInfo.getAccount());
                 if (StringUtils.isEmpty(newToken)) {
                     BaseUtil.writer401Response(response, ResultCode.LIVE_ERROR_401);
                     return false;

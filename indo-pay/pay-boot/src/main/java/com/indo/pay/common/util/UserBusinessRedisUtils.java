@@ -17,10 +17,10 @@ public class UserBusinessRedisUtils extends RedisUtils {
 
 
     public static String createMemAccToken(MemBaseinfo userInfo) {
-        String secrecy = userInfo.getAccountNo() + RandomUtil.uuid();
+        String secrecy = userInfo.getAccount() + RandomUtil.uuid();
         String accToken = MD5.md5(secrecy, "UTF-8");
         set(AppConstants.USER_LOGIN_ACCTOKEN + accToken, JSON.toJSONString(userInfo), 60 * 60 * 24 * 7);
-        set(AppConstants.USER_LOGIN_INFO_KEY + userInfo.getAccountNo(), accToken, 60 * 60 * 24 * 7);
+        set(AppConstants.USER_LOGIN_INFO_KEY + userInfo.getAccount(), accToken, 60 * 60 * 24 * 7);
         return accToken;
     }
 

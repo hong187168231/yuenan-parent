@@ -118,7 +118,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
     //Get Balance 取得玩家余额
     private String getBalance(JSONObject jsonObject) {
         String userId = jsonObject.getString("userId");
-        MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
+        MemBaseinfo memBaseinfo = gameCommonService.getByAccount(userId);
         if (null == memBaseinfo) {
             AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
             callBacekFail.setStatus("1002");
@@ -152,7 +152,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 }
                 String userId = placeBetTxns.getUserId();
 
-                MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
+                MemBaseinfo memBaseinfo = gameCommonService.getByAccount(userId);
                 if (null == memBaseinfo) {
                     AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                     callBacekFail.setStatus("1002");
@@ -230,7 +230,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     return JSONObject.toJSONString(callBacekFail);
                 }
                 String userId = cancelBetTxns.getUserId();
-                MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
+                MemBaseinfo memBaseinfo = gameCommonService.getByAccount(userId);
                 if (null == memBaseinfo) {
                     AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                     callBacekFail.setStatus("1002");
@@ -304,7 +304,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     return JSONObject.toJSONString(callBacekFail);
                 }
                 String userId = adjustBetTxns.getUserId();
-                MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
+                MemBaseinfo memBaseinfo = gameCommonService.getByAccount(userId);
                 if (null == memBaseinfo) {
                     AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                     callBacekFail.setStatus("1002");
@@ -383,7 +383,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     return JSONObject.toJSONString(callBacekFail);
                 }
                 String userId = voidBetTxns.getUserId();
-                MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
+                MemBaseinfo memBaseinfo = gameCommonService.getByAccount(userId);
                 if (null == memBaseinfo) {
                     AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                     callBacekFail.setStatus("1002");
@@ -455,7 +455,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     return JSONObject.toJSONString(callBacekFail);
                 }
                 String userId = unvoidBetTxns.getUserId();
-                MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
+                MemBaseinfo memBaseinfo = gameCommonService.getByAccount(userId);
                 if (null == memBaseinfo) {
                     AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                     callBacekFail.setStatus("1002");
@@ -516,7 +516,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     return JSONObject.toJSONString(callBacekFail);
                 }
                 String userId = refundTxns.getUserId();
-                MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
+                MemBaseinfo memBaseinfo = gameCommonService.getByAccount(userId);
                 if (null == memBaseinfo) {
                     AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                     callBacekFail.setStatus("1002");
@@ -566,7 +566,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     return JSONObject.toJSONString(callBacekFail);
                 }
                 String userId = settleTxns.getUserId();
-                MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
+                MemBaseinfo memBaseinfo = gameCommonService.getByAccount(userId);
                 if (null == memBaseinfo) {
                     AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                     callBacekFail.setStatus("1002");
@@ -614,7 +614,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     return JSONObject.toJSONString(callBacekFail);
                 }
                 String userId = unsettleTxns.getUserId();
-                MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
+                MemBaseinfo memBaseinfo = gameCommonService.getByAccount(userId);
                 if (null == memBaseinfo) {
                     AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                     callBacekFail.setStatus("1002");
@@ -679,7 +679,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     return JSONObject.toJSONString(callBacekFail);
                 }
                 String userId = voidSettleTxns.getUserId();
-                MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
+                MemBaseinfo memBaseinfo = gameCommonService.getByAccount(userId);
                 if (null == memBaseinfo) {
                     AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                     callBacekFail.setStatus("1002");
@@ -744,7 +744,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     return JSONObject.toJSONString(callBacekFail);
                 }
                 String userId = unvoidSettleTxns.getUserId();
-                MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
+                MemBaseinfo memBaseinfo = gameCommonService.getByAccount(userId);
                 if (null == memBaseinfo) {
                     AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                     callBacekFail.setStatus("1002");
@@ -811,7 +811,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     return JSONObject.toJSONString(callBacekFail);
                 }
                 String userId = betNSettleTxns.getUserId();
-                MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
+                MemBaseinfo memBaseinfo = gameCommonService.getByAccount(userId);
                 if (null == memBaseinfo) {
                     AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                     callBacekFail.setStatus("1002");
@@ -889,7 +889,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     return JSONObject.toJSONString(callBacekFail);
                 }
                 String userId = cancelBetNSettleTxns.getUserId();
-                MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
+                MemBaseinfo memBaseinfo = gameCommonService.getByAccount(userId);
                 if (null == memBaseinfo) {
                     AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                     callBacekFail.setStatus("1002");
@@ -956,7 +956,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     return JSONObject.toJSONString(callBacekFail);
                 }
                 String userId = freeSpinTxns.getUserId();
-                MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
+                MemBaseinfo memBaseinfo = gameCommonService.getByAccount(userId);
                 if (null == memBaseinfo) {
                     AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                     callBacekFail.setStatus("1002");
@@ -1024,7 +1024,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     return JSONObject.toJSONString(callBacekFail);
                 }
                 String userId = giveTxns.getUserId();
-                MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
+                MemBaseinfo memBaseinfo = gameCommonService.getByAccount(userId);
                 if (null == memBaseinfo) {
                     AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                     callBacekFail.setStatus("1002");
@@ -1086,7 +1086,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     return JSONObject.toJSONString(callBacekFail);
                 }
                 String userId = tipTxns.getUserId();
-                MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
+                MemBaseinfo memBaseinfo = gameCommonService.getByAccount(userId);
                 if (null == memBaseinfo) {
                     AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                     callBacekFail.setStatus("1002");
@@ -1166,7 +1166,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     return JSONObject.toJSONString(callBacekFail);
                 }
                 String userId = cancelTipTxns.getUserId();
-                MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
+                MemBaseinfo memBaseinfo = gameCommonService.getByAccount(userId);
                 if (null == memBaseinfo) {
                     AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                     callBacekFail.setStatus("1002");

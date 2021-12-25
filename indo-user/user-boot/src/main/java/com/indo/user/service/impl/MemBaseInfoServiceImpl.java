@@ -71,7 +71,7 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
         }
         req.setPassword(req.getPassword().toLowerCase());
         MemBaseinfo userInfo = memBaseInfoMapper.
-                selectOne(new LambdaQueryWrapper<MemBaseinfo>().eq(MemBaseinfo::getAccountNo, req.getAccount()));
+                selectOne(new LambdaQueryWrapper<MemBaseinfo>().eq(MemBaseinfo::getAccount, req.getAccount()));
         //判断密码是否正确
         if (!req.getPassword().equals(userInfo.getPasswordMd5())) {
             return Result.failed("密码错误！");
@@ -124,11 +124,11 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
             }
         }
         //查询是否存在当前用户
-        if (this.getByAccountNo(req.getAccount()) != null) {
+        if (this.getByAccount(req.getAccount()) != null) {
             return Result.failed("账号已存在！");
         }
         MemBaseinfo userInfo = new MemBaseinfo();
-        userInfo.setAccountNo(req.getAccount());
+        userInfo.setAccount(req.getAccount());
         //userInfo.setSource(Integer.valueOf(DeviceInfoUtil.getSource()));
         userInfo.setPassword(req.getPassword());
         userInfo.setPasswordMd5(req.getPassword());
@@ -210,7 +210,7 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
         }
         MemBaseInfoVo vo = new MemBaseInfoVo();
         BeanUtils.copyProperties(memBaseinfo, vo);
-        vo.setAccount(memBaseinfo.getAccountNo());
+        vo.setAccount(memBaseinfo.getAccount());
         return vo;
     }
 
@@ -251,8 +251,8 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
     }
 
     @Override
-    public MemBaseinfo getByAccountNo(String accountNo) {
-        return baseMapper.selectOne(new QueryWrapper<MemBaseinfo>().lambda().eq(MemBaseinfo::getAccountNo, accountNo));
+    public MemBaseinfo getByAccount(String account) {
+        return baseMapper.selectOne(new QueryWrapper<MemBaseinfo>().lambda().eq(MemBaseinfo::getAccount, account));
     }
 
     @Override

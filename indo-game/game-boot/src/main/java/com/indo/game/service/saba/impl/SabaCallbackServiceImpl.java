@@ -33,7 +33,7 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
     //取得用户的余额
     public String getBalance(SabaCallBackReq<SabaCallBackParentReq> sabaCallBackReq) {
         SabaCallBackParentReq sabaCallBackParentReq = sabaCallBackReq.getMessage();
-        MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(sabaCallBackParentReq.getUserId());
+        MemBaseinfo memBaseinfo = gameCommonService.getByAccount(sabaCallBackParentReq.getUserId());
         SabaCallBackGetBalanceResp sabaCallBackGetBalanceResp = new SabaCallBackGetBalanceResp();
 
         if (null == memBaseinfo) {
@@ -54,7 +54,7 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
     //投注
     public String placeBet(SabaCallBackReq<SabaCallBackPlaceBetReq> sabaCallBackReq) {
         SabaCallBackPlaceBetReq sabaCallBackPlaceBetReq = sabaCallBackReq.getMessage();
-        MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(sabaCallBackPlaceBetReq.getUserId());
+        MemBaseinfo memBaseinfo = gameCommonService.getByAccount(sabaCallBackPlaceBetReq.getUserId());
         SabaCallBackRespError sabaCallBackRespError = new SabaCallBackRespError();
 
         if (null == memBaseinfo) {
@@ -86,7 +86,7 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
     //确认投注查询
     public String confirmBet(SabaCallBackReq<SabaCallBackConfirmBetReq<TicketInfoReq>> sabaCallBackReq){
         SabaCallBackConfirmBetReq<TicketInfoReq> sabaCallBackConfirmBetReq = sabaCallBackReq.getMessage();
-        MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(sabaCallBackConfirmBetReq.getUserId());
+        MemBaseinfo memBaseinfo = gameCommonService.getByAccount(sabaCallBackConfirmBetReq.getUserId());
         SabaCallBackRespError sabaCallBackRespError = new SabaCallBackRespError();
 
         if (null == memBaseinfo) {
@@ -127,7 +127,7 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
     public String cancelBet(SabaCallBackReq<SabaCallBackCancelBetReq<TradingInfoReq>> sabaCallBackReq) {
 
         SabaCallBackCancelBetReq<TradingInfoReq> sabaCallBackCancelBetReq = sabaCallBackReq.getMessage();
-        MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(sabaCallBackCancelBetReq.getUserId());
+        MemBaseinfo memBaseinfo = gameCommonService.getByAccount(sabaCallBackCancelBetReq.getUserId());
         SabaCallBackRespError sabaCallBackRespError = new SabaCallBackRespError();
 
         if (null == memBaseinfo) {
@@ -271,7 +271,7 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
         SabaCallBackConfirmBet3rdReq<ConfirmBet3rdTicketInfoReq> sabaCallBackConfirmBet3rdReq = sabaCallBackReq.getMessage();
 
         SabaCallBackConfirmBet3rdResp sabaCallBackConfirmBet3rdResp = new SabaCallBackConfirmBet3rdResp();
-        MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(sabaCallBackConfirmBet3rdReq.getUserId());
+        MemBaseinfo memBaseinfo = gameCommonService.getByAccount(sabaCallBackConfirmBet3rdReq.getUserId());
 
         if (null == memBaseinfo) {
             sabaCallBackConfirmBet3rdResp.setStatus("203");

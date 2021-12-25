@@ -35,9 +35,9 @@ public class MemBaseInfoRpc {
         return Result.success(memBaseInfoService.getMemBaseInfoById(id));
     }
 
-    @GetMapping("/getByAccountNo/{accountNo}")
-    public Result<MemBaseinfo> getMemBaseInfo(@PathVariable String accountNo) {
-        return Result.success(memBaseInfoService.getByAccountNo(accountNo));
+    @GetMapping("/getByAccount/{account}")
+    public Result<MemBaseinfo> getMemBaseInfo(@PathVariable String account) {
+        return Result.success(memBaseInfoService.getByAccount(account));
     }
 
     @PostMapping("/updateMemGoldChange")

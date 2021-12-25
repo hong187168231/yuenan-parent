@@ -33,7 +33,7 @@ public class TestController {
     @GetMapping(value = "/hello")
     @AllowAccess
     public Result<?> queryGameRecord() {
-        MemBaseinfo memBaseinfo = iGameManageService.getByAccountNo("HansMark");
+        MemBaseinfo memBaseinfo = iGameManageService.getByAccount("HansMark");
         return Result.success(memBaseinfo);
     }
 
@@ -43,7 +43,7 @@ public class TestController {
     public Result<?> queryGameRecord2() {
         MemBaseinfo memBaseinfo = new MemBaseinfo();
         memBaseinfo.setId(1L);
-        memBaseinfo.setAccountNo("1");
+        memBaseinfo.setAccount("1");
         iGameManageService.updateUserBalance(memBaseinfo, new BigDecimal(22), GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
         return Result.success(memBaseinfo);
     }

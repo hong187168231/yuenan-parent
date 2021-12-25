@@ -18,8 +18,6 @@ public class LoginInfo implements Serializable {
 
     private String account;
 
-    private String accountNo;
-
     private String mobile;
 
     private LocalDate birthday;
