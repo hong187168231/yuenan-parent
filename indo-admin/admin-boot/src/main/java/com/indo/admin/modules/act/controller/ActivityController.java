@@ -60,7 +60,7 @@ public class ActivityController {
     }
 
 
-    @ApiOperation(value = "广告上下架")
+    @ApiOperation(value = "活动上下架")
     @PutMapping(value = "/operateStatus")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "actId", value = "广告id", required = true, paramType = "query", dataType = "long"),
