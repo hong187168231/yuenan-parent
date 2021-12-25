@@ -16,7 +16,7 @@
         <result column="tips" property="tips"/>
         <result column="min_amount" property="minAmount"/>
         <result column="max_amount" property="maxAmount"/>
-        <result column="is_del" property="isDel"/>
+        <result column="status" property="status"/>
         <result column="sort_by" property="sortBy"/>
         <result column="create_user" property="createUser"/>
         <result column="update_user" property="updateUser"/>
