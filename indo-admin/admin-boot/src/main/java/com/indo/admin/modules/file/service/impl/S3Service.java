@@ -22,8 +22,8 @@ public class S3Service extends AbstractIFileService {
     private S3Template s3Template;
 
     @Override
-    protected ObjectInfo uploadFile(MultipartFile file) {
-        return s3Template.upload(file);
+    protected ObjectInfo uploadFile(MultipartFile file,String folder) {
+        return s3Template.upload(file,folder);
     }
 
     @Override

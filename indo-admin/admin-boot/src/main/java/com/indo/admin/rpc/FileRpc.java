@@ -42,7 +42,7 @@ public class FileRpc {
      */
     @PostMapping("/upload")
     public Result<String> upload(@RequestParam("file") MultipartFile file) {
-        FileInfo fileInfo = fileService.upload(file);
+        FileInfo fileInfo = fileService.upload(file,"app");
         return Result.success(fileInfo.getUrl());
     }
 
