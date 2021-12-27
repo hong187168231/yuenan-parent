@@ -6,8 +6,6 @@ import com.indo.common.result.Result;
 import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.common.util.AWCUtil;
 import com.indo.game.config.OpenAPIProperties;
-import com.indo.game.mapper.GameCategoryMapper;
-import com.indo.game.mapper.GamePlatformMapper;
 import com.indo.game.mapper.GameTypeMapper;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.game.pojo.entity.manage.GamePlatform;
