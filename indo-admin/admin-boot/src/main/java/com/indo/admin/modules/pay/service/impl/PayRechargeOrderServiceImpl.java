@@ -8,6 +8,7 @@ import com.indo.admin.pojo.req.PayRechargeReq;
 import com.indo.admin.pojo.vo.pay.RechargeOrderVO;
 import com.indo.pay.pojo.entity.PayRechargeOrder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * <p>
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author puff
  * @since 2021-11-13
  */
+@Service
 public class PayRechargeOrderServiceImpl extends ServiceImpl<PayRechargeOrderMapper, PayRechargeOrder> implements IPayRechargeOrderService {
 
 

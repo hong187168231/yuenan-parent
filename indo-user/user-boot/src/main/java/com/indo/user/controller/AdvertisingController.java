@@ -11,7 +11,6 @@ import com.indo.common.constant.RedisConstants;
 import com.indo.common.result.Result;
 import com.indo.common.web.util.DozerUtil;
 import com.indo.user.common.util.UserBusinessRedisUtils;
-import com.indo.user.pojo.vo.act.ActivityTypeVo;
 import com.indo.user.pojo.vo.act.ActivityVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
