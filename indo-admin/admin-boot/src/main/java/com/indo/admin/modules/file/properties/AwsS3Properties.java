@@ -33,4 +33,10 @@ public class AwsS3Properties {
      * 区域
      */
     private String region;
+
+    /**
+     * 访问前缀
+     */
+    private String awsS3PrefixUrl;
+
 }
