@@ -6,6 +6,9 @@ import com.indo.common.result.Result;
 import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.common.util.AWCUtil;
 import com.indo.game.config.OpenAPIProperties;
+import com.indo.game.mapper.frontend.GameCategoryMapper;
+import com.indo.game.mapper.frontend.GamePlatformMapper;
+import com.indo.game.mapper.frontend.GameTypeMapper;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.game.pojo.entity.manage.GamePlatform;
 import com.indo.game.pojo.vo.callback.ug.UgApiResponseData;
@@ -38,6 +41,8 @@ public class UgServiceImpl implements UgService {
     @Autowired
     private GameCommonService gameCommonService;
 
+    @Autowired
+    GameTypeMapper gameTypeMapper;
     @Autowired
     GameCategoryMapper gameCategoryMapper;
     @Autowired
@@ -160,6 +165,28 @@ public class UgServiceImpl implements UgService {
             logger.error("uglog game error {} ", e);
             return null;
         }
+    }
+
+    /**
+     * 强迫登出玩家
+     */
+    public Result logout(LoginInfo loginUser,String ip){
+        Map<String, String> trr = new HashMap<>();
+        trr.put("MemberAccount", loginUser.getAccountNo());
+
+        UgApiResponseData ugApiResponse = null;
+        try {
+            ugApiResponse = commonRequest(trr, OpenAPIProperties.SBO_API_URL+"/web-root/restricted/player/logout.aspx", Integer.valueOf(loginUser.getId().intValue()), ip, "logout");
+            if("000000".equals(ugApiResponse.getErrorCode())){
+                return Result.success(ugApiResponse);
+            }else {
+                return Result.failed(ugApiResponse.getErrorCode(),ugApiResponse.getErrorMessage());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.failed(MessageUtils.get("tnibptal"));
+        }
+
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.indo.game.config;
 
 import com.google.common.collect.Lists;
+import com.indo.common.annotation.LoginUser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -55,6 +56,7 @@ public class SwaggerConfiguration {
         //securyContext
         List<SecurityContext> securityContexts = Lists.newArrayList(securityContext);
         return new Docket(DocumentationType.SWAGGER_2)
+                .ignoredParameterTypes(LoginUser.class)
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.indo.game.controller"))
                 .paths(PathSelectors.any())

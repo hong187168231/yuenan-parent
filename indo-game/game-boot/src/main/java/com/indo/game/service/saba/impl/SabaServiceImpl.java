@@ -1,4 +1,4 @@
-package com.indo.game.service.sbo.impl;
+package com.indo.game.service.saba.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.indo.common.pojo.bo.LoginInfo;
@@ -12,10 +12,10 @@ import com.indo.game.mapper.frontend.GamePlatformMapper;
 import com.indo.game.mapper.frontend.GameTypeMapper;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.game.pojo.entity.manage.GamePlatform;
-import com.indo.game.pojo.vo.callback.sbo.SboApiResponseData;
+import com.indo.game.pojo.vo.callback.saba.SabaApiResponseData;
 import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
-import com.indo.game.service.sbo.SboService;
+import com.indo.game.service.saba.SabaService;
 import com.indo.user.pojo.entity.MemBaseinfo;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -24,7 +24,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * awc ae真人 游戏业务类
@@ -32,7 +34,7 @@ import java.util.*;
  * @author eric
  */
 @Service
-public class SboServiceImpl implements SboService {
+public class SabaServiceImpl implements SabaService {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
@@ -52,12 +54,12 @@ public class SboServiceImpl implements SboService {
      * @return loginUser 用户信息
      */
     @Override
-    public Result sboGame(LoginInfo loginUser, String ip,String platform) {
-        logger.info("sbolog {} aeGame account:{}, aeCodeId:{}", loginUser.getId(), loginUser.getNickName());
+    public Result sabaGame(LoginInfo loginUser, String ip,String platform) {
+        logger.info("sabalog {} aeGame account:{}, aeCodeId:{}", loginUser.getId(), loginUser.getNickName());
         // 是否开售校验
         GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(platform);
         if(null==gamePlatform){
-            return Result.failed("(sbo)"+MessageUtils.get("tgdne"));
+            return Result.failed("(saba)"+MessageUtils.get("tgdne"));
         }
         if ("0".equals(gamePlatform.getIsStart())) {
             return Result.failed(MessageUtils.get("tgocinyo"));
@@ -67,7 +69,7 @@ public class SboServiceImpl implements SboService {
         BigDecimal balance = memBaseinfo.getBalance();
         //验证站点棋牌余额
         if (null==balance || BigDecimal.ZERO==balance) {
-            logger.info("站点sbo余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
+            logger.info("站点saba余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
             //站点棋牌余额不足
             return Result.failed(MessageUtils.get("tcgqifpccs"));
         }
@@ -105,26 +107,29 @@ public class SboServiceImpl implements SboService {
      * @return loginUser 用户信息
      */
     public Result restrictedPlayer(LoginInfo loginUser,GamePlatform gamePlatform, String ip,CptOpenMember cptOpenMember) {
-        logger.info("sbolog {} sboGame account:{}, sboCodeId:{}", loginUser.getId(), loginUser.getNickName());
+        logger.info("sabalog {} sabaGame account:{}, sabaCodeId:{}", loginUser.getId(), loginUser.getNickName());
         try {
             Map<String, String> trr = new HashMap<>();
+            trr.put("vendor_Member_ID", loginUser.getAccount());//厂商会员识别码（建议跟 Username 一样）, 支援 ASCII Table 33-126, 最大长度 = 30
             trr.put("username", loginUser.getAccount());
-            trr.put("agent", OpenAPIProperties.SBO_AGENT);//代理
-            trr.put("language", gamePlatform.getLanguageType());//语言
+            trr.put("oddsType", OpenAPIProperties.SBO_AGENT);//为此会员设置赔率类型。请参考附件"赔率类型表"
+            trr.put("currency", gamePlatform.getLanguageType());//为此会员设置币别。请参考附件中"币别表"
+            trr.put("maxTransfer", String.valueOf(gamePlatform.getMaxTransfer()));//于 Sportsbook 系统与厂商间的最大限制转帐金额
+            trr.put("minTransfer", String.valueOf(gamePlatform.getMinTransfer()));//于 Sportsbook 系统与厂商间的最小限制转帐金额
 
-            SboApiResponseData sboApiResponse = commonRequest(trr, OpenAPIProperties.SBO_API_URL+"/web-root/restricted/player/register-player.aspx", loginUser.getId().intValue(), ip, "restrictedPlayer");
+            SabaApiResponseData sabaApiResponse = commonRequest(trr, OpenAPIProperties.SABA_API_URL+"/api/CreateMember", loginUser.getId().intValue(), ip, "restrictedPlayer");
 
-            if (null == sboApiResponse ) {
+            if (null == sabaApiResponse ) {
                 return Result.failed(MessageUtils.get("etgptal"));
             }
-            if("0".equals(sboApiResponse.getError().getId())||"4103".equals(sboApiResponse.getError().getId())){
+            if("0".equals(sabaApiResponse.getError_code())||"4103".equals(sabaApiResponse.getError_code())){
                 externalService.saveCptOpenMember(cptOpenMember);
                 return initGame(loginUser,gamePlatform, ip);
             }else {
-                return Result.failed(sboApiResponse.getError().getId(),sboApiResponse.getError().getMsg());
+                return Result.failed(sabaApiResponse.getError_code(),sabaApiResponse.getMessage());
             }
         } catch (Exception e) {
-            logger.error("sbolog game error {} ", e);
+            logger.error("sabalog game error {} ", e);
             return null;
         }
     }
@@ -133,20 +138,20 @@ public class SboServiceImpl implements SboService {
      * 登录
      */
     private Result initGame(LoginInfo loginUser,GamePlatform gamePlatform, String ip) throws Exception {
-        logger.info("sbolog {} sboGame account:{}, sboCodeId:{}", loginUser.getId(), loginUser.getNickName());
+        logger.info("sabalog {} sabaGame account:{}, sabaCodeId:{}", loginUser.getId(), loginUser.getNickName());
         try {
             Map<String, String> trr = new HashMap<>();
             trr.put("username", loginUser.getAccount());
             trr.put("portfolio", gamePlatform.getPlatformCode());
 
-            SboApiResponseData sboApiResponse = commonRequest(trr, OpenAPIProperties.SBO_API_URL+"/web-root/restricted/player/register-player.aspx", loginUser.getId().intValue(), ip, "restrictedPlayer");
-            if("0".equals(sboApiResponse.getError().getId())){
-                return Result.success(sboApiResponse);
+            SabaApiResponseData sabaApiResponse = commonRequest(trr, OpenAPIProperties.SABA_API_URL+"/api/GetSabaUrl", loginUser.getId().intValue(), ip, "restrictedPlayer");
+            if("0".equals(sabaApiResponse.getError_code())){
+                return Result.success(sabaApiResponse);
             }else {
-                return Result.failed(sboApiResponse.getError().getId(),sboApiResponse.getError().getMsg());
+                return Result.failed(sabaApiResponse.getError_code(),sabaApiResponse.getMessage());
             }
         } catch (Exception e) {
-            logger.error("sbolog game error {} ", e);
+            logger.error("sabalog game error {} ", e);
             return null;
         }
     }
@@ -158,16 +163,16 @@ public class SboServiceImpl implements SboService {
         Map<String, String> trr = new HashMap<>();
         trr.put("Username", loginUser.getAccountNo());
 
-        SboApiResponseData sboApiResponse = null;
+        SabaApiResponseData sabaApiResponse = null;
         try {
-            sboApiResponse = commonRequest(trr, OpenAPIProperties.SBO_API_URL+"/web-root/restricted/player/logout.aspx", Integer.valueOf(loginUser.getId().intValue()), ip, "logout");
-            if (null == sboApiResponse ) {
+            sabaApiResponse = commonRequest(trr, OpenAPIProperties.SABA_API_URL+"/api/KickUser", Integer.valueOf(loginUser.getId().intValue()), ip, "logout");
+            if (null == sabaApiResponse ) {
                 return Result.failed(MessageUtils.get("etgptal"));
             }
-            if("0".equals(sboApiResponse.getError().getId())){
-                return Result.success(sboApiResponse);
+            if("0".equals(sabaApiResponse.getError_code())){
+                return Result.success(sabaApiResponse);
             }else {
-                return Result.failed(sboApiResponse.getError().getId(),sboApiResponse.getError().getMsg());
+                return Result.failed(sabaApiResponse.getError_code(),sabaApiResponse.getMessage());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -180,25 +185,25 @@ public class SboServiceImpl implements SboService {
      * 公共请求
      */
     @Override
-    public SboApiResponseData commonRequest(Map<String, String> paramsMap, String url, Integer userId, String ip, String type) throws Exception {
-        logger.info("sbolog {} commonRequest ,url:{},paramsMap:{}", userId, url, paramsMap);
+    public SabaApiResponseData commonRequest(Map<String, String> paramsMap, String url, Integer userId, String ip, String type) throws Exception {
+        logger.info("sabalog {} commonRequest ,url:{},paramsMap:{}", userId, url, paramsMap);
 
-        SboApiResponseData sboApiResponse = null;
-        paramsMap.put("companyKey", OpenAPIProperties.SBO_KEY);
-        paramsMap.put("serverId", SnowflakeIdWorker.createOrderSn());
+        SabaApiResponseData sabaApiResponse = null;
+        paramsMap.put("vendor_id", OpenAPIProperties.SABA_SITENAME);
+        paramsMap.put("operatorId", OpenAPIProperties.SABA_VENDORID);
         JSONObject sortParams = AWCUtil.sortMap(paramsMap);
         Map<String, String> trr = new HashMap<>();
         trr.put("param", sortParams.toString());
         String resultString = AWCUtil.doProxyPostJson(url, trr, type, userId);
-        logger.info("sbo_api_response:"+resultString);
+        logger.info("saba_api_response:"+resultString);
         if (StringUtils.isNotEmpty(resultString)) {
-            sboApiResponse = JSONObject.parseObject(resultString, SboApiResponseData.class);
+            sabaApiResponse = JSONObject.parseObject(resultString, SabaApiResponseData.class);
             //String operateFlag = (String) redisTemplate.opsForValue().get(Constants.AE_GAME_OPERATE_FLAG + userId);
-            logger.info("sbolog {}:commonRequest type:{}, operateFlag:{}, url:{}, hostName:{}, params:{}, result:{}, sboApiResponse:{}",
+            logger.info("sabalog {}:commonRequest type:{}, operateFlag:{}, url:{}, hostName:{}, params:{}, result:{}, sabaApiResponse:{}",
                     //userId, type, operateFlag, url,
-                    userId, type, null, url, sortParams.toString(), resultString, JSONObject.toJSONString(sboApiResponse));
+                    userId, type, null, url, sortParams.toString(), resultString, JSONObject.toJSONString(sabaApiResponse));
         }
-        return sboApiResponse;
+        return sabaApiResponse;
     }
 
 }

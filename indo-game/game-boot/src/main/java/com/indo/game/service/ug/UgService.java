@@ -14,6 +14,11 @@ public interface UgService {
      */
     public Result ugGame(LoginInfo loginUser, String ip,String platform) ;
 
+    /**
+     * UG Sports登出玩家
+     */
+    public Result logout(LoginInfo loginUser,String ip);
+
 
     UgApiResponseData commonRequest(Map<String, String> paramsMap, String url, Integer userId, String ip, String type) throws Exception;
 

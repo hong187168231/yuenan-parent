@@ -7,6 +7,7 @@ import com.indo.common.enums.TradingEnum;
 import com.indo.common.result.Result;
 import com.indo.common.web.exception.BizException;
 import com.indo.game.common.util.GameBusinessRedisUtils;
+import com.indo.game.mapper.frontend.GamePlatformMapper;
 import com.indo.game.pojo.entity.manage.GamePlatform;
 import com.indo.game.service.common.GameCommonService;
 import com.indo.user.api.MemBaseInfoFeignClient;
@@ -55,8 +56,8 @@ public class GameCommonServiceImpl implements GameCommonService {
     }
 
     @Override
-    public MemBaseinfo getByAccount(String account) {
-        Result<MemBaseinfo> result = memBaseInfoFeignClient.getByAccount(account);
+    public MemBaseinfo getByAccountNo(String accountNo) {
+        Result<MemBaseinfo> result = memBaseInfoFeignClient.getByAccountNo(accountNo);
         MemBaseinfo memBaseinfo = null;
         if (null != result && Result.success().getCode().equals(result.getCode())) {
             memBaseinfo = result.getData();
@@ -72,7 +73,7 @@ public class GameCommonServiceImpl implements GameCommonService {
         goldChangeDO.setTradingEnum(tradingEnum);
         goldChangeDO.setGoldchangeEnum(goldchangeEnum);
         goldChangeDO.setUserId(memBaseinfo.getId());
-        goldChangeDO.setUpdateUser(memBaseinfo.getAccount());
+        goldChangeDO.setUpdateUser(memBaseinfo.getAccountNo());
 //      goldChangeDO.setRefId(rechargeOrder.getRechargeOrderId());
         boolean flag = memBaseInfoFeignClient.updateMemGoldChange(goldChangeDO);
         if (!flag) {

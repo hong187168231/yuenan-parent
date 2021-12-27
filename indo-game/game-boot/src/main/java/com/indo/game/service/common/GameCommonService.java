@@ -31,10 +31,10 @@ public interface GameCommonService {
     /**
      * 查询用户信息
      *
-     * @param account
+     * @param accountNo
      * @return
      */
-    MemBaseinfo getByAccount(String account);
+    MemBaseinfo getByAccountNo(String accountNo);
 
     /**
      * 修改用户余额

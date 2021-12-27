@@ -14,6 +14,10 @@ public interface SboService {
      */
     public Result sboGame(LoginInfo loginUser, String ip,String platform) ;
 
+    /**
+     * SBO Sports登出玩家
+     */
+    public Result logout(LoginInfo loginUser,String ip);
 
     SboApiResponseData commonRequest(Map<String, String> paramsMap, String url, Integer userId, String ip, String type) throws Exception;
 

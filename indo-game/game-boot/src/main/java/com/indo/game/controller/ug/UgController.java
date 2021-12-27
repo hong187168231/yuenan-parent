@@ -10,6 +10,8 @@ import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.common.util.IpUtil;
 import com.indo.game.service.ug.UgService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,18 +23,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.concurrent.TimeUnit;
 
 @RestController
-@RequestMapping("/ug")
+@RequestMapping("/api/v1/games/ug")
 @Slf4j
-@AllArgsConstructor
 @Api(tags = "UG Sports登录并初始化用户游戏账号")
 public class UgController {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private UgService ugService;
@@ -45,9 +46,12 @@ public class UgController {
      */
     @ApiOperation(value = "UG Sports登录并初始化用户游戏账号", httpMethod = "POST")
     @PostMapping("/initGame")
-    @AllowAccess
-    public Result initGame(@LoginUser LoginInfo loginUser, String platform, HttpServletRequest request) throws InterruptedException {
-        logger.info("uglog {} initGame 进入游戏。。。loginUser:{}", loginUser.getId(), loginUser);
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "platform", value = "平台 ", paramType = "query", dataType = "string", required = true)
+    })
+    public Result initGame(@LoginUser LoginInfo loginUser, @RequestParam("gameCode") String platform,
+                           HttpServletRequest request) throws InterruptedException {
+        log.info("uglog {} initGame 进入游戏。。。loginUser:{}", loginUser.getId(), loginUser);
         String params = "";
         if (loginUser == null || StringUtils.isBlank(loginUser.getNickName())) {
             return Result.failed(MessageUtils.get("ParameterError"));
@@ -57,30 +61,59 @@ public class UgController {
         try {
             if (res) {
                 String ip = IpUtil.getIpAddr(request);
-                Result resultInfo = ugService.ugGame(loginUser,  ip, platform);
+                Result resultInfo = ugService.ugGame(loginUser, ip, platform);
                 if (resultInfo == null) {
-                    logger.info("uglog {} initGame result is null. params:{},ip:{}", loginUser.getId(), params, ip);
+                    log.info("uglog {} initGame result is null. params:{},ip:{}", loginUser.getId(), params, ip);
                     return Result.failed(MessageUtils.get("networktimeout"));
                 } else {
                     if (!resultInfo.getCode().equals(ResultCode.SUCCESS)) {
                         return resultInfo;
                     }
                 }
-                logger.info("uglog {} initGame resultInfo:{}, params:{}", loginUser.getId(), JSONObject.toJSONString(resultInfo), params);
+                log.info("uglog {} initGame resultInfo:{}, params:{}", loginUser.getId(), JSONObject.toJSONString(resultInfo), params);
                 return resultInfo;
             } else {
-                logger.info("uglog {} initGame lock  repeat request. error");
+                log.info("uglog {} initGame lock  repeat request. error");
                 String ugInitGame3 = MessageUtils.get("networktimeout");
                 return Result.failed(ugInitGame3);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            logger.error("uglog {} initGame occur error:{}. params:{}", loginUser.getId(), e.getMessage(), params);
+            log.error("uglog {} initGame occur error:{}. params:{}", loginUser.getId(), e.getMessage(), params);
             return Result.failed(MessageUtils.get("networktimeout"));
         } finally {
             lock.unlock();
         }
     }
-
+    /**
+     * ug登出玩家
+     */
+    @ApiOperation(value = "ug登出玩家", httpMethod = "POST")
+    @PostMapping("/logout")
+    public Result logout(@LoginUser LoginInfo loginUser, HttpServletRequest request) throws InterruptedException {
+        log.info("uglog {} logout 进入游戏。。。loginUser:{}", loginUser.getId(), loginUser);
+        String params = "";
+        if (loginUser == null) {
+            return Result.failed(MessageUtils.get("ParameterError"));
+        }
+        try {
+            String ip = IpUtil.getIpAddr(request);
+            Result resultInfo = ugService.logout(loginUser, ip);
+            if (resultInfo == null) {
+                log.info("uglog {} initGame result is null. params:{},ip:{}", loginUser.getId(), params, ip);
+                return Result.failed(MessageUtils.get("networktimeout"));
+            } else {
+                if (!resultInfo.getCode().equals(ResultCode.SUCCESS)) {
+                    return resultInfo;
+                }
+            }
+            log.info("uglog {} initGame resultInfo:{}, params:{}", loginUser.getId(), JSONObject.toJSONString(resultInfo), params);
+            return resultInfo;
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("uglog {} logout occur error:{}. params:{}", loginUser.getId(), e.getMessage(), params);
+            return Result.failed(MessageUtils.get("networktimeout"));
+        }
+    }
 
 }

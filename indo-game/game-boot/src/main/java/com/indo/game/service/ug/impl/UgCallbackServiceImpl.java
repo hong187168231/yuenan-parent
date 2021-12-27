@@ -32,7 +32,7 @@ public class UgCallbackServiceImpl implements UgCallbackService {
 
     //取得用户的余额
     public String getBalance(UgCallBackGetBalanceReq ugCallBackGetBalanceReq) {
-        MemBaseinfo memBaseinfo = gameCommonService.getByAccount(ugCallBackGetBalanceReq.getAccount());
+        MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(ugCallBackGetBalanceReq.getAccount());
         UgCallBackGetBalanceResp ugCallBackGetBalanceResp = new UgCallBackGetBalanceResp();
 
         if (null == memBaseinfo) {
@@ -59,7 +59,7 @@ public class UgCallbackServiceImpl implements UgCallbackService {
         String errorMessage = "";
         BigDecimal balance = BigDecimal.valueOf(0);
         for(UgCallBackTransactionItemReq ugCallBackTransactionItemReq : ugCallBackTransactionItemReqList){
-            MemBaseinfo memBaseinfo = gameCommonService.getByAccount(ugCallBackTransactionItemReq.getAccount());
+            MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(ugCallBackTransactionItemReq.getAccount());
             UgCallBackBalanceResp ugCallBackBalanceResp = new UgCallBackBalanceResp();
             ugCallBackBalanceResp.setAccount(ugCallBackTransactionItemReq.getAccount());
             ugCallBackBalanceResp.setTransactionNo(ugCallBackTransactionItemReq.getTransactionNo());
@@ -135,7 +135,7 @@ public class UgCallbackServiceImpl implements UgCallbackService {
     // 取消交易
     public String cancel(UgCallBackCancelReq ugCallBackCancelReq) {
 
-        MemBaseinfo memBaseinfo = gameCommonService.getByAccount(ugCallBackCancelReq.getAccount());
+        MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(ugCallBackCancelReq.getAccount());
         UgCallBackCancelResp ugCallBackCancelResp = new UgCallBackCancelResp();
         ugCallBackCancelResp.setAccount(ugCallBackCancelReq.getAccount());
         ugCallBackCancelResp.setTransactionNo(ugCallBackCancelReq.getTransactionNo());
@@ -195,7 +195,7 @@ public class UgCallbackServiceImpl implements UgCallbackService {
     //检查交易结果
     public String check(UgCallBackCancelReq ugCallBackCancelReq) {
 
-        MemBaseinfo memBaseinfo = gameCommonService.getByAccount(ugCallBackCancelReq.getAccount());
+        MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(ugCallBackCancelReq.getAccount());
         UgCallBackBalanceResp ugCallBackBalanceResp = new UgCallBackBalanceResp();
         ugCallBackBalanceResp.setAccount(ugCallBackCancelReq.getAccount());
         ugCallBackBalanceResp.setTransactionNo(ugCallBackCancelReq.getTransactionNo());

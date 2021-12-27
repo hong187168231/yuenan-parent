@@ -1,25 +1,21 @@
-package com.indo.game.controller.sbo;
+package com.indo.game.controller.saba;
 
 import com.alibaba.fastjson.JSONObject;
-import com.indo.common.annotation.AllowAccess;
 import com.indo.common.annotation.LoginUser;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
 import com.indo.common.result.ResultCode;
 import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.common.util.IpUtil;
-import com.indo.game.service.sbo.SboService;
+import com.indo.game.service.saba.SabaService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,89 +26,89 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.concurrent.TimeUnit;
 
 @RestController
-@RequestMapping("/api/v1/games/sbo")
+@RequestMapping("/api/v1/games/saba")
 @Slf4j
-@Api(tags = "SBO Sports游戏登录并初始化用户游戏账号")
-public class SboController {
-
+@Api(tags = "saba游戏登录并初始化用户游戏账号")
+public class SabaController {
     @Autowired
-    private SboService sboSportsService;
+    private SabaService sabaService;
 
     @Autowired
     private RedissonClient redissonClient;
 
     /**
-     * 进入游戏
+     * saba游戏登录并初始化用户游戏账号
      */
-    @ApiOperation(value = "sbo进入游戏", httpMethod = "POST")
+    @ApiOperation(value = "saba游戏登录并初始化用户游戏账号", httpMethod = "POST")
     @PostMapping("/initGame")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "platform", value = "平台 ", paramType = "query", dataType = "string", required = true)
+            @ApiImplicitParam(name = "platform", value = "第三方游戏平台 ", paramType = "query", dataType = "string", required = true)
     })
-    public Result initGame(@LoginUser LoginInfo loginUser, @RequestParam("platform") String platform,
+    public Result initGame(@LoginUser LoginInfo loginUser,@RequestParam("platform") String platform,
                            HttpServletRequest request) throws InterruptedException {
-        log.info("sbolog {} initGame 进入游戏。。。loginUser:{}", loginUser.getId(), loginUser);
+        log.info("sabalog {} initGame 进入游戏。。。loginUser:{}", loginUser.getId(), loginUser);
         String params = "";
         if (loginUser == null || StringUtils.isBlank(loginUser.getNickName())) {
             return Result.failed(MessageUtils.get("ParameterError"));
         }
-        RLock lock = redissonClient.getLock("SBO_GAME_" + loginUser.getId());
+        RLock lock = redissonClient.getLock("SABA_GAME_" + loginUser.getId());
         boolean res = lock.tryLock(5, TimeUnit.SECONDS);
         try {
             if (res) {
                 String ip = IpUtil.getIpAddr(request);
-                Result resultInfo = sboSportsService.sboGame(loginUser, ip, platform);
+                Result resultInfo = sabaService.sabaGame(loginUser, ip, platform);
                 if (resultInfo == null) {
-                    log.info("sbolog {} initGame result is null. params:{},ip:{}", loginUser.getId(), params, ip);
+                    log.info("sabalog {} initGame result is null. params:{},ip:{}", loginUser.getId(), params, ip);
                     return Result.failed(MessageUtils.get("networktimeout"));
                 } else {
                     if (!resultInfo.getCode().equals(ResultCode.SUCCESS)) {
                         return resultInfo;
                     }
                 }
-                log.info("sbolog {} initGame resultInfo:{}, params:{}", loginUser.getId(), JSONObject.toJSONString(resultInfo), params);
+                log.info("sabalog {} initGame resultInfo:{}, params:{}", loginUser.getId(), JSONObject.toJSONString(resultInfo), params);
                 return resultInfo;
             } else {
-                log.info("sbolog {} initGame lock  repeat request. error");
-                String sboInitGame3 = MessageUtils.get("networktimeout");
-                return Result.failed(sboInitGame3);
+                log.info("sabalog {} initGame lock  repeat request. error");
+                String aeInitGame3 = MessageUtils.get("networktimeout");
+                return Result.failed(aeInitGame3);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            log.error("sbolog {} initGame occur error:{}. params:{}", loginUser.getId(), e.getMessage(), params);
+            log.error("sabalog {} initGame occur error:{}. params:{}", loginUser.getId(), e.getMessage(), params);
             return Result.failed(MessageUtils.get("networktimeout"));
         } finally {
             lock.unlock();
         }
     }
 
+
     /**
-     * sbo玩家
+     * saba游戏 强迫登出玩家
      */
-    @ApiOperation(value = "sbo登出玩家", httpMethod = "POST")
+    @ApiOperation(value = "saba游戏 强迫登出玩家", httpMethod = "POST")
     @PostMapping("/logout")
     public Result logout(@LoginUser LoginInfo loginUser, HttpServletRequest request) throws InterruptedException {
-        log.info("sbolog {} logout 进入游戏。。。loginUser:{}", loginUser.getId(), loginUser);
+        log.info("sabalog {} logout 进入游戏。。。loginUser:{}", loginUser.getId(), loginUser);
         String params = "";
         if (loginUser == null) {
             return Result.failed(MessageUtils.get("ParameterError"));
         }
         try {
             String ip = IpUtil.getIpAddr(request);
-            Result resultInfo = sboSportsService.logout(loginUser, ip);
+            Result resultInfo = sabaService.logout(loginUser, ip);
             if (resultInfo == null) {
-                log.info("sbolog {} initGame result is null. params:{},ip:{}", loginUser.getId(), params, ip);
+                log.info("sabalog {} initGame result is null. params:{},ip:{}", loginUser.getId(), params, ip);
                 return Result.failed(MessageUtils.get("networktimeout"));
             } else {
                 if (!resultInfo.getCode().equals(ResultCode.SUCCESS)) {
                     return resultInfo;
                 }
             }
-            log.info("sbolog {} initGame resultInfo:{}, params:{}", loginUser.getId(), JSONObject.toJSONString(resultInfo), params);
+            log.info("sabalog {} initGame resultInfo:{}, params:{}", loginUser.getId(), JSONObject.toJSONString(resultInfo), params);
             return resultInfo;
         } catch (Exception e) {
             e.printStackTrace();
-            log.error("sbolog {} logout occur error:{}. params:{}", loginUser.getId(), e.getMessage(), params);
+            log.error("sabalog {} logout occur error:{}. params:{}", loginUser.getId(), e.getMessage(), params);
             return Result.failed(MessageUtils.get("networktimeout"));
         }
     }
