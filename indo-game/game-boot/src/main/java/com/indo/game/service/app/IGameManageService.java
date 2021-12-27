@@ -2,22 +2,19 @@ package com.indo.game.service.app;
 
 import com.indo.common.result.Result;
 import com.indo.game.pojo.entity.manage.GameCategory;
-import com.indo.game.pojo.entity.manage.GameCurrencyType;
-import com.indo.game.pojo.entity.manage.GameLanguageType;
+import com.indo.game.pojo.entity.manage.GameDownload;
 import com.indo.game.pojo.entity.manage.GamePlatform;
 
 import java.util.List;
-import java.util.Set;
 
 public interface IGameManageService {
 
-    Result<GameCategory> queryAllGameCategory();
+    public Result queryAllGameCategory();
 
-    Result<List<GamePlatform>> queryAllGamePlatform();
+    public Result queryAllGamePlatform();
 
-    Result<List<GamePlatform>> queryHotGamePlatform();
+    public Result queryHotGamePlatform();
 
-    Result<GameCurrencyType> queryGameCurrencyType();
+    public Result queryGamePlatformByCategory(Long categoryId);
 
-    Result queryGamePlatformByCategory(Long categoryId);
 }

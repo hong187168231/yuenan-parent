@@ -220,10 +220,10 @@ public class AwcServiceImpl implements AwcService {
             trr.put("userId", cptOpenMember.getUserName());
 //            true 行动设备登入
             if("1".equals(isMobileLogin)){
-                trr.put("isMobileLogin", "true");
+                trr.put("isMobileLogin", String.valueOf(true));
             }else {
 //            false 桌面设备登入
-                trr.put("isMobileLogin", "false");
+                trr.put("isMobileLogin", String.valueOf(false));
             }
 //            用于导回您指定的网站，需要设置 http:// 或 https://
 //            Example 范例：http://www.google.com
@@ -242,7 +242,7 @@ public class AwcServiceImpl implements AwcService {
 //            ※每个玩家每个最多允许 6 组下注限红 ID
             trr.put("betLimit", "");//下注限红
 
-            return commonRequest(trr, OpenAPIProperties.AWC_API_URL_LOGIN+"/wallet/doLoginAndLaunchGame", cptOpenMember.getUserId(), ip, "initGame");
+            return commonRequest(trr, OpenAPIProperties.AWC_API_URL_LOGIN+"/wallet/login", cptOpenMember.getUserId(), ip, "initGame");
         } catch (Exception e) {
             logger.error("awclog game error {} ", e);
             return null;
