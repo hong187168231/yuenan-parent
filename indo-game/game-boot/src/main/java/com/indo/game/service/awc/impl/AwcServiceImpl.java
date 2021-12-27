@@ -66,9 +66,9 @@ public class AwcServiceImpl implements AwcService {
             return Result.failed(MessageUtils.get("tgocinyo"));
         }
         //初次判断站点棋牌余额是否够该用户
-        MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(loginUser.getAccountNo());
+        MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(loginUser.getAccount());
         if (null==memBaseinfo){
-            return Result.failed(loginUser.getAccountNo()+"用户不存在");
+            return Result.failed(loginUser.getAccount()+"用户不存在");
         }
         BigDecimal balance = memBaseinfo.getBalance();
         //验证站点棋牌余额
@@ -85,8 +85,8 @@ public class AwcServiceImpl implements AwcService {
             if (cptOpenMember == null) {
                 cptOpenMember = new CptOpenMember();
                 cptOpenMember.setUserId(loginUser.getId().intValue());
-                cptOpenMember.setUserName(loginUser.getAccountNo());
-                cptOpenMember.setPassword(loginUser.getAccountNo());
+                cptOpenMember.setUserName(loginUser.getAccount());
+                cptOpenMember.setPassword(loginUser.getAccount());
                 cptOpenMember.setCreateTime(new Date());
                 cptOpenMember.setLoginTime(new Date());
                 cptOpenMember.setType("AWC");
@@ -111,7 +111,7 @@ public class AwcServiceImpl implements AwcService {
      */
     public Result logout(LoginInfo loginUser,String ip){
         Map<String, String> trr = new HashMap<>();
-        trr.put("userIds", loginUser.getAccountNo());
+        trr.put("userIds", loginUser.getAccount());
 
         AwcApiResponseData awcApiResponseData = null;
         try {

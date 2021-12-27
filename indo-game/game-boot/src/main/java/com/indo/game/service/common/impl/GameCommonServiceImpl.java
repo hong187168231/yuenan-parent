@@ -57,7 +57,7 @@ public class GameCommonServiceImpl implements GameCommonService {
 
     @Override
     public MemBaseinfo getByAccountNo(String accountNo) {
-        Result<MemBaseinfo> result = memBaseInfoFeignClient.getByAccountNo(accountNo);
+        Result<MemBaseinfo> result = memBaseInfoFeignClient.getByAccount(accountNo);
         MemBaseinfo memBaseinfo = null;
         if (null != result && Result.success().getCode().equals(result.getCode())) {
             memBaseinfo = result.getData();
@@ -73,7 +73,7 @@ public class GameCommonServiceImpl implements GameCommonService {
         goldChangeDO.setTradingEnum(tradingEnum);
         goldChangeDO.setGoldchangeEnum(goldchangeEnum);
         goldChangeDO.setUserId(memBaseinfo.getId());
-        goldChangeDO.setUpdateUser(memBaseinfo.getAccountNo());
+        goldChangeDO.setUpdateUser(memBaseinfo.getAccount());
 //      goldChangeDO.setRefId(rechargeOrder.getRechargeOrderId());
         boolean flag = memBaseInfoFeignClient.updateMemGoldChange(goldChangeDO);
         if (!flag) {

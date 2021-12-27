@@ -156,7 +156,7 @@ public class SboServiceImpl implements SboService {
      */
     public Result logout(LoginInfo loginUser,String ip){
         Map<String, String> trr = new HashMap<>();
-        trr.put("Username", loginUser.getAccountNo());
+        trr.put("Username", loginUser.getAccount());
 
         SboApiResponseData sboApiResponse = null;
         try {

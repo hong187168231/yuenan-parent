@@ -2,6 +2,10 @@ package com.indo.game.service.app.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.indo.common.result.Result;
+import com.indo.game.mapper.frontend.GameCategoryMapper;
+import com.indo.game.mapper.frontend.GameCurrencyTypeMapper;
+import com.indo.game.mapper.frontend.GameLanguageTypeMapper;
+import com.indo.game.mapper.frontend.GamePlatformMapper;
 import com.indo.game.pojo.entity.manage.GameCategory;
 import com.indo.game.pojo.entity.manage.GameCurrencyType;
 import com.indo.game.pojo.entity.manage.GameLanguageType;

@@ -161,7 +161,7 @@ public class SabaServiceImpl implements SabaService {
      */
     public Result logout(LoginInfo loginUser,String ip){
         Map<String, String> trr = new HashMap<>();
-        trr.put("Username", loginUser.getAccountNo());
+        trr.put("Username", loginUser.getAccount());
 
         SabaApiResponseData sabaApiResponse = null;
         try {

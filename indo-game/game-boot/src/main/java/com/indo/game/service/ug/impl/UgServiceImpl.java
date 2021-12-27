@@ -172,7 +172,7 @@ public class UgServiceImpl implements UgService {
      */
     public Result logout(LoginInfo loginUser,String ip){
         Map<String, String> trr = new HashMap<>();
-        trr.put("MemberAccount", loginUser.getAccountNo());
+        trr.put("MemberAccount", loginUser.getAccount());
 
         UgApiResponseData ugApiResponse = null;
         try {
