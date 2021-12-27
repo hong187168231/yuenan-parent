@@ -63,4 +63,12 @@ public class GamePlatform extends BaseEntity {
     @ApiModelProperty(value = "总平台名称")
     private String parentName;
 
+    @ApiModelProperty(value = "排序序号")
+    private int sortNumber;
+
+    @ApiModelProperty(value = "系统与厂商间的最大限制转帐金额")
+    private double maxTransfer;
+
+    @ApiModelProperty(value = "系统与厂商间的最小限制转帐金额")
+    private double minTransfer ;
 }

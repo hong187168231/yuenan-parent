@@ -27,4 +27,13 @@ public class GameCategory extends BaseEntity {
     @ApiModelProperty(value = "游戏类型名称")
     @NotNull(message = "游戏类型名称不能为空")
     private String gameName;
+
+    @ApiModelProperty(value = "图片1")
+    private String picture1;
+
+    @ApiModelProperty(value = "图片2")
+    private String picture2;
+
+    @ApiModelProperty(value = "排序序号")
+    private int sortNumber;
    }

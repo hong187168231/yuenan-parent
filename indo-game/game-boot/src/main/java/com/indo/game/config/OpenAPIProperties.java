@@ -23,17 +23,25 @@ public class OpenAPIProperties implements InitializingBean {
 
     //SBO
     public static String SBO_KEY;
-    public static String SBO_SERVERID;
     public static String SBO_AGENT;
     public static String SBO_API_URL;
     @Value("${sbo.companyKey}")
     private String companyKey;
-    @Value("${sbo.serverId}")
-    private String serverId;
     @Value("${sbo.agent}")
     private String agent;
     @Value("${sbo.sboApiUrl}")
     private String sboApiUrl;
+
+    //SABA
+    public static String SABA_SITENAME;
+    public static String SABA_VENDORID;
+    public static String SABA_API_URL;
+    @Value("${saba.SiteName}")
+    private String siteName;
+    @Value("${saba.vendor_id}")
+    private String vendorId;
+    @Value("${saba.sabaApiUrl}")
+    private String sabaApiUrl;
 
     //UG
     public static String UG_KEY;
@@ -59,9 +67,12 @@ public class OpenAPIProperties implements InitializingBean {
         AWC_API_SECRET_KEY = awcApiSecretKey;
 
         SBO_KEY = companyKey;
-        SBO_SERVERID = serverId;
         SBO_AGENT = agent;
         SBO_API_URL = sboApiUrl;
+
+        SABA_SITENAME = siteName;
+        SABA_VENDORID = vendorId;
+        SABA_API_URL = sabaApiUrl;
 
         UG_KEY = ugCompanyKey;
         UG_API_PASSWORD = ugApiPasword;
