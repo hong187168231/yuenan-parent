@@ -14,7 +14,7 @@ import java.util.Map;
  * @author 作者 owen E-mail: 624191343@qq.com
  */
 public interface IFileService extends IService<FileInfo> {
-    FileInfo upload(MultipartFile file);
+    FileInfo upload(MultipartFile file,String folder);
 
     PageResult<FileInfo> findList(Map<String, Object> params);
 

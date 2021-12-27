@@ -14,6 +14,7 @@ import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.util.IOUtils;
 import com.indo.admin.modules.file.properties.AwsS3Properties;
 import com.indo.common.pojo.bo.ObjectInfo;
+import com.indo.common.utils.CommonFunction;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.util.Calendar;
+import java.util.UUID;
 
 /**
  * aws s3配置
@@ -57,19 +59,19 @@ public class S3Template implements InitializingBean {
     }
 
     @SneakyThrows
-    public ObjectInfo upload(String fileName, InputStream is) {
-        return upload(s3.getBucketName(), fileName, is, is.available(), DEF_CONTEXT_TYPE);
+    public ObjectInfo upload(String fileName, String folder, InputStream is) {
+        return upload(s3.getBucketName(), fileName, folder, is, is.available(), DEF_CONTEXT_TYPE);
     }
 
     @SneakyThrows
-    public ObjectInfo upload(MultipartFile file) {
-        return upload(s3.getBucketName(), file.getOriginalFilename(), file.getInputStream()
+    public ObjectInfo upload(MultipartFile file, String folder) {
+        return upload(s3.getBucketName(), file.getOriginalFilename(), folder, file.getInputStream()
                 , ((Long) file.getSize()).intValue(), file.getContentType());
     }
 
     @SneakyThrows
-    public ObjectInfo upload(String bucketName, String fileName, InputStream is) {
-        return upload(bucketName, fileName, is, is.available(), DEF_CONTEXT_TYPE);
+    public ObjectInfo upload(String bucketName, String fileName, String folder, InputStream is) {
+        return upload(bucketName, fileName, folder, is, is.available(), DEF_CONTEXT_TYPE);
     }
 
     /**
@@ -81,17 +83,20 @@ public class S3Template implements InitializingBean {
      * @param size        大小
      * @param contentType 类型
      */
-    private ObjectInfo upload(String bucketName, String objectName, InputStream is, int size, String contentType) {
+    private ObjectInfo upload(String bucketName, String objectName, String folder, InputStream is, int size, String contentType) {
+
+        String filePrefix = objectName.substring(0,objectName.lastIndexOf("."));
+        String fileSuffix = objectName.substring(objectName.lastIndexOf("."));
+        String key = folder + PATH_SPLIT + getKeyCode() + fileSuffix.toLowerCase();
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentLength(size);
         objectMetadata.setContentType(contentType);
         PutObjectRequest putObjectRequest = new PutObjectRequest(
-                bucketName, objectName, is, objectMetadata);
+                bucketName, key, is, objectMetadata);
         putObjectRequest.getRequestClientOptions().setReadLimit(size + 1);
         amazonS3.putObject(putObjectRequest);
-
         ObjectInfo obj = new ObjectInfo();
-        obj.setObjectPath(PATH_SPLIT + objectName);
+        obj.setObjectPath(PATH_SPLIT + key);
         obj.setObjectUrl(s3.getAwsS3PrefixUrl() + obj.getObjectPath());
         return obj;
     }
@@ -138,5 +143,18 @@ public class S3Template implements InitializingBean {
         ) {
             IOUtils.copy(s3is, os);
         }
+    }
+
+
+    /**
+     * s3 生成对象 唯一的 key
+     *
+     * @return
+     */
+    public String getKeyCode() {
+        StringBuilder builder = new StringBuilder();
+        builder.append(UUID.randomUUID());
+        builder.append(CommonFunction.inviteCode().toLowerCase());
+        return builder.toString().replaceAll("-", "");
     }
 }

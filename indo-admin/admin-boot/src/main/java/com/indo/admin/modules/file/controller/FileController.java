@@ -32,7 +32,7 @@ public class FileController {
      */
     @PostMapping("/files-anon")
     public FileInfo upload(@RequestParam("file") MultipartFile file) throws Exception {
-        return fileService.upload(file);
+        return fileService.upload(file, "admin");
     }
 
     /**

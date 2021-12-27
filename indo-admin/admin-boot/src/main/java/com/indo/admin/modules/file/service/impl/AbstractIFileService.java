@@ -18,19 +18,18 @@ import java.util.Map;
 /**
  * AbstractIFileService 抽取类
  * file-server.type 实例化具体对象
- *
  */
 @Slf4j
 public abstract class AbstractIFileService extends ServiceImpl<FileMapper, FileInfo> implements IFileService {
     private static final String FILE_SPLIT = ".";
 
     @Override
-    public FileInfo upload(MultipartFile file) {
+    public FileInfo upload(MultipartFile file, String folder) {
         FileInfo fileInfo = FileUtil.getFileInfo(file);
         if (!fileInfo.getName().contains(FILE_SPLIT)) {
             throw new IllegalArgumentException("缺少后缀名");
         }
-        ObjectInfo objectInfo = uploadFile(file);
+        ObjectInfo objectInfo = uploadFile(file, folder);
         fileInfo.setPath(objectInfo.getObjectPath());
         fileInfo.setUrl(objectInfo.getObjectUrl());
         // 将文件信息保存到数据库
@@ -44,10 +43,11 @@ public abstract class AbstractIFileService extends ServiceImpl<FileMapper, FileI
      *
      * @param file
      */
-    protected abstract ObjectInfo uploadFile(MultipartFile file);
+    protected abstract ObjectInfo uploadFile(MultipartFile file, String folder);
 
     /**
      * 删除文件
+     *
      * @param id 文件id
      */
     @Override
@@ -72,5 +72,11 @@ public abstract class AbstractIFileService extends ServiceImpl<FileMapper, FileI
         List<FileInfo> list = baseMapper.findList(page, params);
         page.setRecords(list);
         return PageResult.getPageResult(page);
+    }
+
+    public static void main(String[] args) {
+        String fileName = "test.jpg";
+        String fileSuffix = fileName.substring(fileName.lastIndexOf("."));
+        System.out.println(fileSuffix);
     }
 }
