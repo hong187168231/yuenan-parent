@@ -21,6 +21,9 @@ public class AdvertiseVO {
     @ApiModelProperty(value = "状态 0 下架1 上架")
     private Integer status;
 
+    @ApiModelProperty(value = "创建时间")
+    private String createTime;
+
     @ApiModelProperty(value = "备注")
     private String remark;
 

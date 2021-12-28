@@ -1,5 +1,6 @@
 package com.indo.admin.modules.act.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -8,15 +9,18 @@ import com.indo.admin.common.util.BusinessRedisUtils;
 import com.indo.admin.modules.act.mapper.ActivityMapper;
 import com.indo.admin.modules.act.service.IActivityService;
 import com.indo.admin.pojo.dto.ActivityDTO;
+import com.indo.admin.pojo.dto.ActivityQueryDTO;
 import com.indo.admin.pojo.dto.ActivityRecordDTO;
 import com.indo.admin.pojo.entity.Activity;
 import com.indo.admin.pojo.entity.Advertise;
 import com.indo.admin.pojo.vo.ActivityRecordVO;
 import com.indo.common.constant.RedisConstants;
 import com.indo.common.result.Result;
+import com.indo.common.utils.StringUtils;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
 import com.indo.common.web.util.JwtUtils;
+import com.indo.user.pojo.vo.act.ActivityVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,12 +43,16 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> i
     private DozerUtil dozerUtil;
 
     @Override
-    public Result<List<ActivityRecordVO>> queryList(ActivityRecordDTO activityRecordDTO) {
-        Page<Activity> page = new Page<>(activityRecordDTO.getPage(), activityRecordDTO.getLimit());
+    public Result<List<ActivityVo>> queryList(ActivityQueryDTO queryDTO) {
+        Page<Activity> activityPage = new Page<>(queryDTO.getPage(), queryDTO.getLimit());
         LambdaQueryWrapper<Activity> wrapper = new LambdaQueryWrapper<>();
-        Page<Activity> pageList = this.baseMapper.selectPage(page, wrapper);
-        List<ActivityRecordVO> result = dozerUtil.convert(pageList.getRecords(), ActivityRecordVO.class);
-        return Result.success(result, page.getTotal());
+        if (StringUtils.isNotBlank(queryDTO.getActName())) {
+            wrapper.like(Activity::getActName, queryDTO.getActName());
+        }
+        wrapper.orderByDesc(Activity::getUpdateTime);
+        Page<Activity> pageList = this.baseMapper.selectPage(activityPage, wrapper);
+        List<ActivityVo> result = dozerUtil.convert(pageList.getRecords(), ActivityVo.class);
+        return Result.success(result, activityPage.getTotal());
     }
 
     @Override
@@ -63,7 +71,10 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> i
     @Transactional
     public boolean edit(ActivityDTO activityDTO) {
         checkAdeOpera(activityDTO.getActId());
-        Activity activity = new Activity();
+        Activity activity = findActivityById(activityDTO.getActId());
+        if (null == activity) {
+            throw new BizException("活动不存在");
+        }
         BeanUtils.copyProperties(activityDTO, activity);
         if (baseMapper.updateById(activity) > 0) {
             BusinessRedisUtils.hset(RedisConstants.ACTIVITY_KEY, activity.getActId() + "", activity);
@@ -87,7 +98,10 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> i
     @Override
     @Transactional
     public boolean operateStatus(Long actId, Integer status) {
-        Activity activity = new Activity();
+        Activity activity = findActivityById(actId);
+        if (null == activity) {
+            throw new BizException("活动不存在");
+        }
         activity.setStatus(status);
         activity.setActId(actId);
         activity.setUpdateUser(JwtUtils.getUsername());
@@ -117,15 +131,20 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> i
     /**
      * 查询活动上架状态
      *
-     * @param adeId
+     * @param actId
      * @return
      */
-    private boolean selectActShelveFlag(Long adeId) {
-        Activity activity = this.baseMapper.selectById(adeId);
+    private boolean selectActShelveFlag(Long actId) {
+        Activity activity = findActivityById(actId);
         if (activity != null && activity.getStatus().equals(SystemConstants.ACT_SHELVES)) {
             return true;
         }
         return false;
+    }
+
+
+    private Activity findActivityById(Long actId) {
+        return this.baseMapper.selectById(actId);
     }
 
 }

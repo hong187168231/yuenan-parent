@@ -3,9 +3,12 @@ package com.indo.admin.modules.act.controller;
 
 import com.indo.admin.modules.act.service.IActivityService;
 import com.indo.admin.pojo.dto.ActivityDTO;
+import com.indo.admin.pojo.dto.ActivityQueryDTO;
 import com.indo.admin.pojo.dto.ActivityRecordDTO;
+import com.indo.admin.pojo.entity.ActivityType;
 import com.indo.admin.pojo.vo.ActivityRecordVO;
 import com.indo.common.result.Result;
+import com.indo.user.pojo.vo.act.ActivityVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -34,8 +37,8 @@ public class ActivityController {
 
     @ApiOperation(value = "分页查询活动类型")
     @GetMapping(value = "/list")
-    public Result<List<ActivityRecordVO>> list(ActivityRecordDTO activityRecordDTO) {
-        return iActivityService.queryList(activityRecordDTO);
+    public Result<List<ActivityVo>> list(ActivityQueryDTO queryDTO) {
+        return iActivityService.queryList(queryDTO);
     }
 
     @ApiOperation(value = "增加活动类型")

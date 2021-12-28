@@ -1,7 +1,8 @@
 package com.indo.common.web.util;
 
-import org.dozer.DozerBeanMapperBuilder;
-import org.dozer.Mapper;
+
+import com.github.dozermapper.core.DozerBeanMapperBuilder;
+import com.github.dozermapper.core.Mapper;
 
 import java.util.ArrayList;
 import java.util.Collection;

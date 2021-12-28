@@ -1,7 +1,6 @@
 package com.indo.common.web.util;
 
-import org.dozer.Mapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.github.dozermapper.core.Mapper;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -17,7 +16,7 @@ public class DozerUtil {
 
     private static Mapper dozerMapper;
 
-    @Resource(name ="mapper")
+    @Resource(name = "mapper")
     public void setDozerMapper(Mapper dozerMapper) {
         DozerUtil.dozerMapper = dozerMapper;
     }
@@ -64,13 +63,14 @@ public class DozerUtil {
 
     /**
      * List数据源映射
+     *
      * @param s
      * @param clz
      * @param <T>
      * @param <S>
      * @return
      */
-    public static  <T, S> List<T> convert(List<S> s, Class<T> clz) {
+    public static <T, S> List<T> convert(List<S> s, Class<T> clz) {
         return s == null ? null : s.stream().map(vs -> dozerMapper.map(vs, clz)).collect(Collectors.toList());
     }
 }

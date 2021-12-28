@@ -8,10 +8,12 @@ import com.indo.admin.common.util.BusinessRedisUtils;
 import com.indo.admin.modules.act.mapper.ActivityTypeMapper;
 import com.indo.admin.modules.act.service.IActivityTypeService;
 import com.indo.admin.pojo.dto.ActivityTypeDTO;
+import com.indo.admin.pojo.entity.Activity;
 import com.indo.admin.pojo.entity.ActivityType;
 import com.indo.admin.pojo.vo.ActivityTypeVO;
 import com.indo.common.constant.RedisConstants;
 import com.indo.common.result.Result;
+import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
 import com.indo.common.web.util.JwtUtils;
 import org.springframework.beans.BeanUtils;
@@ -39,6 +41,7 @@ public class ActivityTypeServiceImpl extends ServiceImpl<ActivityTypeMapper, Act
     public Result<List<ActivityTypeVO>> queryList(Integer page, Integer limit) {
         Page<ActivityType> agentApplyPage = new Page<>(page, limit);
         LambdaQueryWrapper<ActivityType> wrapper = new LambdaQueryWrapper<>();
+        wrapper.orderByDesc(ActivityType::getUpdateTime);
         Page<ActivityType> pageList = this.baseMapper.selectPage(agentApplyPage, wrapper);
         List<ActivityTypeVO> result = dozerUtil.convert(pageList.getRecords(), ActivityTypeVO.class);
         return Result.success(result, agentApplyPage.getTotal());
@@ -58,7 +61,10 @@ public class ActivityTypeServiceImpl extends ServiceImpl<ActivityTypeMapper, Act
 
     @Override
     public boolean edit(ActivityTypeDTO activityTypeDTO) {
-        ActivityType activityType = new ActivityType();
+        ActivityType activityType = this.baseMapper.selectById(activityTypeDTO.getActTypeId());
+        if (null == activityType) {
+            throw new BizException("活动类型不存在");
+        }
         BeanUtils.copyProperties(activityTypeDTO, activityType);
         if (baseMapper.updateById(activityType) > 0) {
             BusinessRedisUtils.hset(RedisConstants.ACTIVITY_TYPE_KEY, activityType.getActTypeId() + "", activityType);
