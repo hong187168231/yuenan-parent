@@ -33,7 +33,7 @@ public class TestController {
     @GetMapping(value = "/hello")
     @AllowAccess
     public Result<?> queryGameRecord() {
-        MemBaseinfo memBaseinfo = iGameManageService.getByAccountNo("HansMark");
+        MemBaseinfo memBaseinfo = iGameManageService.getMemBaseInfo("42");
         return Result.success(memBaseinfo);
     }
 

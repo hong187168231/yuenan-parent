@@ -33,12 +33,11 @@ public class MemBaseInfoRpc {
     private IMemGoldChangeService iMemGoldChangeService;
 
     @GetMapping("/getMemBaseInfo/{userId}")
-    public Result<MemBaseinfo> getMemBaseInfo(@PathVariable Long id) {
-        return Result.success(memBaseInfoService.getMemBaseInfoById(id));
+    public Result<MemBaseinfo> getMemBaseInfo(@PathVariable Long userId) {
+        return Result.success(memBaseInfoService.getMemBaseInfoById(userId));
     }
 
     @GetMapping("/getByAccount/{account}")
-    @AllowAccess
     public Result<MemBaseinfo> getMemBaseInfo(@PathVariable String account) {
         return Result.success(memBaseInfoService.getByAccount(account));
     }
