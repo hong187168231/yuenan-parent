@@ -3,6 +3,7 @@ package com.indo.common.pojo.bo;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Data
@@ -34,7 +35,7 @@ public class LoginInfo implements Serializable {
 
     private Integer deleted;
 
-    private Long balance;
+    private BigDecimal balance;
 
     private String city;
 

@@ -54,7 +54,11 @@ public class BaseUtil {
         return sb.toString();
     }
 
-
+    public static String getRequestUri(HttpServletRequest request) {
+        String uri = request.getRequestURI();
+        uri = request.getQueryString() != null ? uri + "?" + request.getQueryString() : uri;
+        return uri;
+    }
 
     /**
      * @param request

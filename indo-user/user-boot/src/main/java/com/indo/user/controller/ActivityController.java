@@ -15,6 +15,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.models.auth.In;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -59,9 +60,10 @@ public class ActivityController {
     @GetMapping(value = "/actList")
     @AllowAccess
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "actTypeId", value = "活动类型id ", paramType = "query", dataType = "long", required = false)
+            @ApiImplicitParam(name = "actTypeId", value = "活动类型id ", paramType = "query", dataType = "long", required = false),
+            @ApiImplicitParam(name = "deviceType", value = "设备类型 ", paramType = "query", dataType = "int", defaultValue = "0", required = true)
     })
-    public Result<List<ActivityVo>> actList(@RequestParam("actTypeId") Long actTypeId) {
+    public Result<List<ActivityVo>> actList(@RequestParam("actTypeId") Long actTypeId, @RequestParam("deviceType") Integer deviceType) {
         Map<Object, Object> map = UserBusinessRedisUtils.hmget(RedisConstants.ACTIVITY_KEY);
         List<Activity> activityList = new ArrayList(map.values());
         if (actTypeId != null) {
@@ -69,10 +71,15 @@ public class ActivityController {
                     .filter(act -> !actTypeId.equals(act.getActTypeId()))
                     .collect(Collectors.toList());
         }
-        List<ActivityVo> voTypeList = dozerUtil.convert(activityList, ActivityVo.class);
-        Iterator<ActivityVo> iter = voTypeList.iterator();
+        if (!actTypeId.equals(0)) {
+            activityList = activityList.stream()
+                    .filter(act -> deviceType.equals(act.getDeviceType()))
+                    .collect(Collectors.toList());
+        }
+
+        Iterator<Activity> iter = activityList.iterator();
         while (iter.hasNext()) {
-            ActivityVo item = iter.next();
+            Activity item = iter.next();
             if (item.getStatus().equals(GlobalConstants.ACT_SOLD_OUT)) {
                 iter.remove();
                 continue;
@@ -93,6 +100,7 @@ public class ActivityController {
                 }
             }
         }
+        List<ActivityVo> voTypeList = dozerUtil.convert(activityList, ActivityVo.class);
         return Result.success(voTypeList);
     }
 

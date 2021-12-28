@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 public class AdvertiseQueryDTO extends BaseDTO {
 
 
-    @NotNull(message = "标题不能为空")
+//    @NotNull(message = "标题不能为空")
     private String title;
 
 
