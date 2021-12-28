@@ -35,7 +35,7 @@ public class ActivityController {
     @Autowired
     private IActivityService iActivityService;
 
-    @ApiOperation(value = "分页查询活动类型")
+    @ApiOperation(value = "分页查询活动列表")
     @GetMapping(value = "/list")
     public Result<List<ActivityVo>> list(ActivityQueryDTO queryDTO) {
         return iActivityService.queryList(queryDTO);
