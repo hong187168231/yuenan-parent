@@ -7,14 +7,22 @@ import com.indo.admin.common.util.BusinessRedisUtils;
 import com.indo.admin.modules.sys.mapper.SysParameterMapper;
 import com.indo.admin.modules.sys.service.ISysParameterService;
 import com.indo.admin.pojo.entity.SysParameter;
+import com.indo.admin.pojo.req.SysParameterQueryReq;
+import com.indo.admin.pojo.req.SysParameterReq;
 import com.indo.common.enums.SysParameterEnum;
-import com.indo.common.result.PageResult;
 import com.indo.common.result.ResultCode;
 import com.indo.common.utils.StringUtils;
 import com.indo.common.web.exception.BizException;
+import com.indo.common.web.util.JwtUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Set;
 
 /**
  * <p>
@@ -48,7 +56,6 @@ public class SysParameterServiceImpl extends ServiceImpl<SysParameterMapper, Sys
     }
 
 
-
     public void refreshSysParameterCache() {
         List<SysParameter> parameterList = selectAll();
         for (SysParameter sysParameter : parameterList) {
@@ -57,30 +64,37 @@ public class SysParameterServiceImpl extends ServiceImpl<SysParameterMapper, Sys
     }
 
     @Override
-    public void saveSysParameter(SysParameter parameter) {
-        int row = baseMapper.insert(parameter);
+    public void saveSysParameter(SysParameterReq parameter) {
+        SysParameter sysParameter = new SysParameter();
+        BeanUtils.copyProperties(parameter, sysParameter);
+        sysParameter.setCreateUser(JwtUtils.getUsername());
+        int row = baseMapper.insert(sysParameter);
         if (row > 0) {
-            BusinessRedisUtils.addSysParameter(parameter);
+            BusinessRedisUtils.addSysParameter(sysParameter);
         }
     }
 
     @Override
-    public void deleteById(Long[] Ids) {
-        for (Long id : Ids) {
+    public void deleteById(List<Long> ids) {
+        for (Long id : ids) {
             SysParameter config = selectById(id);
-            baseMapper.deleteById(id);
-            BusinessRedisUtils.deleteSysParameter(config.getParamCode());
+            if (baseMapper.deleteById(id) > 0) {
+                BusinessRedisUtils.deleteSysParameter(config.getParamCode());
+            }
         }
     }
 
     @Override
-    public void updateSysParameter(SysParameter parameter) {
-        SysParameter origin = selectById(parameter.getParamId());
+    public void updateSysParameter(SysParameterReq parameter) {
+        SysParameter sysParameter = new SysParameter();
+        BeanUtils.copyProperties(parameter, sysParameter);
+        sysParameter.setUpdateUser(JwtUtils.getUsername());
+        SysParameter origin = selectById(sysParameter.getParamId());
         if (origin == null) {
             return;
         }
         //更新数据库
-        baseMapper.updateById(parameter);
+        baseMapper.updateById(sysParameter);
         //删除以前的缓存
         BusinessRedisUtils.deleteSysParameter(origin.getParamCode());
     }
@@ -93,8 +107,7 @@ public class SysParameterServiceImpl extends ServiceImpl<SysParameterMapper, Sys
      */
     @Override
     public SysParameter selectById(Long configId) {
-        SysParameter config = new SysParameter();
-        return baseMapper.selectById(config);
+        return baseMapper.selectById(configId);
     }
 
     @Override
@@ -103,11 +116,27 @@ public class SysParameterServiceImpl extends ServiceImpl<SysParameterMapper, Sys
     }
 
     @Override
-    public PageResult selectAll(String paramCode, Page<SysParameter> parameterPage) {
+    public Page<SysParameter> selectAll(SysParameterQueryReq req, Page<SysParameter> parameterPage) {
         LambdaQueryWrapper<SysParameter> wrapper = new LambdaQueryWrapper<>();
-        Page<SysParameter> pageList = baseMapper.selectPage(parameterPage, wrapper.eq(SysParameter::getParamCode, paramCode));
-        return PageResult.getPageResult(pageList);
+        if (StringUtils.isNotBlank(req.getParamCode())) {
+            wrapper.like(SysParameter::getParamCode, req.getParamCode());
+        }
+        if (StringUtils.isNotBlank(req.getParamName())) {
+            wrapper.like(SysParameter::getParamName, req.getParamName());
+        }
+        Page<SysParameter> pageList = baseMapper.selectPage(parameterPage, wrapper);
+        return pageList;
     }
 
+
+    public static void main(String[] args) {
+
+
+
+        LocalDateTime localDateTime = LocalDateTime.now(ZoneId.of("Asia/Chongqing"));
+        System.out.println(localDateTime);
+
+
+    }
 
 }

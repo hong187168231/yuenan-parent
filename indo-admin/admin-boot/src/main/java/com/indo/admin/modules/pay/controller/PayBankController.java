@@ -53,8 +53,6 @@ public class PayBankController {
     @ApiOperation(value = "删除支付银行")
     @ApiImplicitParam(name = "ids", value = "主键ID集合，以,分割拼接字符串", required = true, paramType = "query", dataType = "String")
     @DeleteMapping("/{ids}")
-
-
     public Result delete(@PathVariable String ids) {
         boolean status = iPayBankService.removeByIds(Arrays.asList(ids.split(",")));
         return Result.judge(status);

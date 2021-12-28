@@ -37,7 +37,7 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
     /**
      * DateTime格式化字符串
      */
-    private static final DateTimeFormatter DATETIME_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private static final DateTimeFormatter DATETIME_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'hh:mm:ss.SSS'Z'");
     /**
      * Time格式化字符串
      */

@@ -5,6 +5,7 @@ import com.indo.common.mybatis.base.service.SuperService;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
 import com.indo.user.pojo.entity.MemBaseinfo;
+import com.indo.user.pojo.req.LogOutReq;
 import com.indo.user.pojo.req.mem.AddBankCardReq;
 import com.indo.user.pojo.req.mem.MemInfoReq;
 import com.indo.user.pojo.req.mem.UpdateBaseInfoReq;
@@ -26,6 +27,15 @@ public interface MemBaseInfoService extends SuperService<MemBaseinfo> {
      * @return
      */
     Result<AppLoginVo> appLogin(LoginReq req);
+
+    /**
+     * 退出登录
+     *
+     * @param req
+     * @return
+     */
+    boolean logout(LogOutReq req);
+
 
     /**
      * 用户注册
