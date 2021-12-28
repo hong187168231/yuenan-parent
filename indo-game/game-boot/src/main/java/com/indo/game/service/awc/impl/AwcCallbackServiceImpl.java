@@ -24,6 +24,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -34,6 +38,8 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
     private GameCommonService gameCommonService;
     @Autowired
     private TxnsMapper txnsMapper;
+    LocalDateTime localDateTime = LocalDateTime.now(ZoneId.of("+08:00"));
+    ZonedDateTime zdt = localDateTime.atZone(ZoneId.of("+08:00"));
 
     public String awcCallback(AwcApiRequestParentData awcApiRequestData,String ip) {
         if(!OpenAPIProperties.AWC_API_SECRET_KEY.equals(awcApiRequestData.getKey())){
@@ -128,7 +134,8 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
             AwcGetBalanceRespSuccess getBalanceSuccess = new AwcGetBalanceRespSuccess();
             getBalanceSuccess.setStatus("0000");
             getBalanceSuccess.setBalance(memBaseinfo.getBalance());
-            getBalanceSuccess.setBalanceTs(DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT));
+
+            getBalanceSuccess.setBalanceTs(zdt);
             getBalanceSuccess.setUserId(userId);
             return JSONObject.toJSONString(getBalanceSuccess);
         }
@@ -192,9 +199,9 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
 
                     BigDecimal balance = memBaseinfo.getBalance().subtract(betAmount);
                     gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
-                    placeBetSuccess.setBalance(balance.toString());
+                    placeBetSuccess.setBalance(balance);
                     String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
-                    placeBetSuccess.setBalanceTs(dateStr);
+                    placeBetSuccess.setBalanceTs(zdt);
                     Txns txns = new Txns();
                     BeanUtils.copyProperties(placeBetTxns,txns);
                     txns.setBalance(balance);
@@ -263,9 +270,9 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     BigDecimal betAmount = oldTxns.getBetAmount();
                     BigDecimal balance = memBaseinfo.getBalance().add(betAmount);
                     gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.PLACE_BET, TradingEnum.INCOME);
-                    placeBetSuccess.setBalance(balance.toString());
+                    placeBetSuccess.setBalance(balance);
                     String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
-                    placeBetSuccess.setBalanceTs(dateStr);
+                    placeBetSuccess.setBalanceTs(zdt);
 
                     Txns txns = new Txns();
                     BeanUtils.copyProperties(oldTxns,txns);
@@ -339,8 +346,8 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     BigDecimal balance = memBaseinfo.getBalance().add(realWinAmount);
                     gameCommonService.updateUserBalance(memBaseinfo, realWinAmount, GoldchangeEnum.ADJUST_BET, TradingEnum.INCOME);
                     String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
-                    placeBetSuccess.setBalance(balance.toString());
-                    placeBetSuccess.setBalanceTs(dateStr);
+                    placeBetSuccess.setBalance(balance);
+                    placeBetSuccess.setBalanceTs(zdt);
 
                     Txns txns = new Txns();
                     BeanUtils.copyProperties(oldTxns,txns);
@@ -783,8 +790,8 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     txnsMapper.updateById(oldTxns);
                     AwcCallBackRespSuccess placeBetSuccess = new AwcCallBackRespSuccess();
                     placeBetSuccess.setStatus("0000");
-                    placeBetSuccess.setBalance(balance.toString());
-                    placeBetSuccess.setBalanceTs(DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT));
+                    placeBetSuccess.setBalance(balance);
+                    placeBetSuccess.setBalanceTs(zdt);
                     return JSONObject.toJSONString(placeBetSuccess);
                 }
             }
@@ -861,8 +868,8 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
 
                     AwcCallBackRespSuccess placeBetSuccess = new AwcCallBackRespSuccess();
                     placeBetSuccess.setStatus("0000");
-                    placeBetSuccess.setBalance(userId);
-                    placeBetSuccess.setBalanceTs(DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT));
+                    placeBetSuccess.setBalance(balance);
+                    placeBetSuccess.setBalanceTs(zdt);
                     return JSONObject.toJSONString(placeBetSuccess);
                 }
             }
@@ -928,8 +935,8 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     txnsMapper.updateById(oldTxns);
                     AwcCallBackRespSuccess placeBetSuccess = new AwcCallBackRespSuccess();
                     placeBetSuccess.setStatus("0000");
-                    placeBetSuccess.setBalance(balance.toString());
-                    placeBetSuccess.setBalanceTs(DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT));
+                    placeBetSuccess.setBalance(balance);
+                    placeBetSuccess.setBalanceTs(zdt);
                     return JSONObject.toJSONString(placeBetSuccess);
                 }
             }
@@ -1058,8 +1065,8 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     txnsMapper.insert(txns);
                     AwcCallBackRespSuccess placeBetSuccess = new AwcCallBackRespSuccess();
                     placeBetSuccess.setStatus("0000");
-                    placeBetSuccess.setBalance(balance.toString());
-                    placeBetSuccess.setBalanceTs(DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT));
+                    placeBetSuccess.setBalance(balance);
+                    placeBetSuccess.setBalanceTs(zdt);
                     return JSONObject.toJSONString(placeBetSuccess);
                 }
             }
@@ -1127,9 +1134,9 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
 
                     BigDecimal balance = memBaseinfo.getBalance().subtract(tip);
                     gameCommonService.updateUserBalance(memBaseinfo, tip, GoldchangeEnum.TIP, TradingEnum.SPENDING);
-                    placeBetSuccess.setBalance(balance.toString());
+                    placeBetSuccess.setBalance(balance);
                     String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
-                    placeBetSuccess.setBalanceTs(dateStr);
+                    placeBetSuccess.setBalanceTs(zdt);
                     Txns txns = new Txns();
                     BeanUtils.copyProperties(tipTxns,txns);
                     txns.setBalance(balance);
@@ -1138,8 +1145,8 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     txns.setCreateTime(dateStr);
                     txnsMapper.insert(txns);
 
-                    placeBetSuccess.setBalance(balance.toString());
-                    placeBetSuccess.setBalanceTs(DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT));
+                    placeBetSuccess.setBalance(balance);
+                    placeBetSuccess.setBalanceTs(zdt);
                     return JSONObject.toJSONString(placeBetSuccess);
                 }
             }
@@ -1212,8 +1219,8 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     txnsMapper.updateById(oldTxns);
                     AwcCallBackRespSuccess placeBetSuccess = new AwcCallBackRespSuccess();
                     placeBetSuccess.setStatus("0000");
-                    placeBetSuccess.setBalance(balance.toString());
-                    placeBetSuccess.setBalanceTs(DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT));
+                    placeBetSuccess.setBalance(balance);
+                    placeBetSuccess.setBalanceTs(zdt);
                     return JSONObject.toJSONString(placeBetSuccess);
                 }
             }

@@ -52,7 +52,7 @@ public class DateUtils {
 
     public final static String UTC_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 
-    public final static String ISO8601_DATE_FORMAT = "yyyy-MM-dd'T'hh:mm:ss.SSSZ";
+    public final static String ISO8601_DATE_FORMAT = "yyyy-MM-dd'T'hh:mm:ss.SSS'Z'";
 
     public final static String ISO8601_DATE_FORMAT1 = "YYYY-MM-DD'T'hh:mm:ss.sss";
 
