@@ -64,7 +64,7 @@ public class UgServiceImpl implements UgService {
             return Result.failed(MessageUtils.get("tgocinyo"));
         }
         //初次判断站点棋牌余额是否够该用户
-        MemBaseinfo memBaseinfo = gameCommonService.getMemBaseInfo(loginUser.getId().toString());
+        MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(loginUser.getAccount());
         BigDecimal balance = memBaseinfo.getBalance();
         //验证站点棋牌余额
         if (null==balance || BigDecimal.ZERO==balance) {

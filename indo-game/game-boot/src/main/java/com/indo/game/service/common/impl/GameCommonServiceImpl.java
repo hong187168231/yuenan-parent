@@ -62,6 +62,8 @@ public class GameCommonServiceImpl implements GameCommonService {
         if (null != result && Result.success().getCode().equals(result.getCode())) {
             memBaseinfo = result.getData();
 
+        } else {
+            throw new BizException("No client with requested accountNo: " + accountNo);
         }
         return memBaseinfo;
     }

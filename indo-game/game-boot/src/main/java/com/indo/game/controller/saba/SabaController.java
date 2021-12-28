@@ -48,7 +48,7 @@ public class SabaController {
                            HttpServletRequest request) throws InterruptedException {
         log.info("sabalog {} initGame 进入游戏。。。loginUser:{}", loginUser.getId(), loginUser);
         String params = "";
-        if (loginUser == null || StringUtils.isBlank(loginUser.getNickName())) {
+        if (loginUser == null || StringUtils.isBlank(loginUser.getAccount())) {
             return Result.failed(MessageUtils.get("ParameterError"));
         }
         RLock lock = redissonClient.getLock("SABA_GAME_" + loginUser.getId());

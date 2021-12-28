@@ -53,7 +53,7 @@ public class UgController {
                            HttpServletRequest request) throws InterruptedException {
         log.info("uglog {} initGame 进入游戏。。。loginUser:{}", loginUser.getId(), loginUser);
         String params = "";
-        if (loginUser == null || StringUtils.isBlank(loginUser.getNickName())) {
+        if (loginUser == null || StringUtils.isBlank(loginUser.getAccount())) {
             return Result.failed(MessageUtils.get("ParameterError"));
         }
         RLock lock = redissonClient.getLock("UG_GAME_" + loginUser.getId());

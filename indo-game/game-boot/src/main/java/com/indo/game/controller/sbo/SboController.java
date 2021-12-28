@@ -53,7 +53,7 @@ public class SboController {
                            HttpServletRequest request) throws InterruptedException {
         log.info("sbolog {} initGame 进入游戏。。。loginUser:{}", loginUser.getId(), loginUser);
         String params = "";
-        if (loginUser == null || StringUtils.isBlank(loginUser.getNickName())) {
+        if (loginUser == null || StringUtils.isBlank(loginUser.getAccount())) {
             return Result.failed(MessageUtils.get("ParameterError"));
         }
         RLock lock = redissonClient.getLock("SBO_GAME_" + loginUser.getId());
