@@ -127,7 +127,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
         } else {
             AwcGetBalanceRespSuccess getBalanceSuccess = new AwcGetBalanceRespSuccess();
             getBalanceSuccess.setStatus("0000");
-            getBalanceSuccess.setBalance(memBaseinfo.getBalance().toString());
+            getBalanceSuccess.setBalance(memBaseinfo.getBalance());
             getBalanceSuccess.setBalanceTs(DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT));
             getBalanceSuccess.setUserId(userId);
             return JSONObject.toJSONString(getBalanceSuccess);
