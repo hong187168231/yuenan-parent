@@ -11,9 +11,11 @@ import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 @Slf4j
 public class DateUtils {
@@ -1408,6 +1410,21 @@ public class DateUtils {
         cal.set(Calendar.MINUTE, 59);
         cal.set(Calendar.MILLISECOND, 999);
         return cal.getTime();
+    }
+
+    /**
+     * 获取带时区格式的时间
+     *
+     * @return
+     */
+    public static String getTimeAndZone() {
+        Calendar ca = Calendar.getInstance();
+        TimeZone tz = ca.getTimeZone();
+        ZoneId zoneId = tz.toZoneId();
+        LocalDateTime localDateTime = LocalDateTime.now(zoneId);
+        ZonedDateTime zonedTime = localDateTime.atZone(zoneId);
+        String lzt = zonedTime.toString();
+        return lzt.substring(0, lzt.lastIndexOf("["));
     }
 
 }
