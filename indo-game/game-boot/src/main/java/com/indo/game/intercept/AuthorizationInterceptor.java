@@ -14,6 +14,7 @@ import com.indo.common.utils.IPAddressUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -21,6 +22,10 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -33,6 +38,7 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         //获取用户凭证
         String token = request.getHeader(AuthConstants.AUTHORIZATION_KEY);
+        String uri = BaseUtil.getRequestUri(request);
 
         //获取前端信息
         DeviceInfoUtil.setIp(IPAddressUtil.getIpAddress(request));
@@ -56,7 +62,7 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
             return true;
         }
         Object userObj = redisUtils.get(AppConstants.USER_LOGIN_ACCTOKEN + token);
-        if (annotation != null) {
+        if (annotation != null || isWhiteUri(uri)) {
             return super.preHandle(request, response, handler);
         } else if (StringUtils.isEmpty(token)) {
             BaseUtil.writer401Response(response, ResultCode.LIVE_ERROR_401);
@@ -84,4 +90,16 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
         }
         return false;
     }
+
+    private boolean isWhiteUri(String uri) {
+        Set<String> set = new HashSet();
+        set.add("/rpc");
+        set.add("/awc");
+        set.add("/saba");
+        set.add("/sbo");
+        set.add("/ug");
+        List<String> result = set.stream().filter(a -> uri.contains(a)).collect(Collectors.toList());
+        return !CollectionUtils.isEmpty(result);
+    }
+
 }
