@@ -24,6 +24,6 @@ public interface MemBaseInfoFeignClient {
 
 
     @PostMapping("/rpc/memBaseInfo/updateMemGoldChange")
-    Boolean updateMemGoldChange(MemGoldChangeDTO memGoldChangeDTO);
+    Result<Boolean> updateMemGoldChange(@RequestBody MemGoldChangeDTO memGoldChangeDTO);
 
 }

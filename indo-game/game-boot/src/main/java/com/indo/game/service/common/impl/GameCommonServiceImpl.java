@@ -1,5 +1,6 @@
 package com.indo.game.service.common.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.indo.common.constant.RedisKeys;
 import com.indo.common.enums.GoldchangeEnum;
@@ -30,7 +31,6 @@ public class GameCommonServiceImpl implements GameCommonService {
 
     @Resource
     private MemBaseInfoFeignClient memBaseInfoFeignClient;
-
 
 
     @Override
@@ -77,9 +77,12 @@ public class GameCommonServiceImpl implements GameCommonService {
         goldChangeDO.setUserId(memBaseinfo.getId());
         goldChangeDO.setUpdateUser(memBaseinfo.getAccount());
 //      goldChangeDO.setRefId(rechargeOrder.getRechargeOrderId());
-        boolean flag = memBaseInfoFeignClient.updateMemGoldChange(goldChangeDO);
-        if (!flag) {
-            throw new BizException("修改余额失败");
+        Boolean flag;
+        Result result = memBaseInfoFeignClient.updateMemGoldChange(goldChangeDO);
+        if (null != result && Result.success().getCode().equals(result.getCode())) {
+            flag = (Boolean) result.getData();
+        } else {
+            throw new BizException("No client with requested goldChangeDO: " + JSON.toJSONString(goldChangeDO));
         }
     }
 
