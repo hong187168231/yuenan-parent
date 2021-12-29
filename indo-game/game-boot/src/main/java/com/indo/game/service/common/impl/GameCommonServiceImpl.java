@@ -81,6 +81,9 @@ public class GameCommonServiceImpl implements GameCommonService {
         Result result = memBaseInfoFeignClient.updateMemGoldChange(goldChangeDO);
         if (null != result && Result.success().getCode().equals(result.getCode())) {
             flag = (Boolean) result.getData();
+            if (!flag) {
+                throw new BizException("修改余额失败");
+            }
         } else {
             throw new BizException("No client with requested goldChangeDO: " + JSON.toJSONString(goldChangeDO));
         }
