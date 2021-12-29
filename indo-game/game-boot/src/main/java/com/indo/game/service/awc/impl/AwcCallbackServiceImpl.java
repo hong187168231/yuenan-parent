@@ -44,72 +44,80 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
         JSONObject jsonObject = JSONObject.parseObject(String.valueOf(awcApiRequestData.getMessage()));
         String action = jsonObject.getString("action");
         //Get Balance 取得玩家余额
-        if ("getBalance".equals(action)) {
-            return getBalance(jsonObject);
-        }
-        //Place Bet 下注
-        if ("bet".equals(action)) {
-            return bet(awcApiRequestData,ip);
-        }
-        //Cancel Bet 取消注单
-        if ("cancelBet".equals(action)) {
-            return cancelBet(awcApiRequestData,ip);
-        }
-        //Adjust Bet 调整投注
-        if ("adjustBet".equals(action)) {
-            return adjustBet(awcApiRequestData,ip);
-        }
-        //Void Bet 交易作废
-        if ("voidBet".equals(action)) {
-            return voidBet(awcApiRequestData,ip);
-        }
-        //Unvoid Bet 取消交易作废
-        if ("unvoidBet".equals(action)) {
-            return unvoidBet(awcApiRequestData,ip);
-        }
-        //Refund 返还金额
-        if ("refund".equals(action)) {
-            return refund(awcApiRequestData,ip);
-        }
-        //Settle 已结帐派彩
-        if ("settle".equals(action)) {
-            return settle(awcApiRequestData,ip);
-        }
-        //Unsettle 取消结帐派彩
-        if ("unsettle".equals(action)) {
-            return unsettle(awcApiRequestData,ip);
-        }
-        //Void Settle 结帐单转为无效
-        if ("voidSettle".equals(action)) {
-            return voidSettle(awcApiRequestData,ip);
-        }
-        //Unvoid Settle 无效单结账
-        if ("unvoidSettle".equals(action)) {
-            return unvoidSettle(awcApiRequestData,ip);
-        }
-        // BetNSettle 下注并直接结算
-        if ("betNSettle".equals(action)) {
-            return betNSettle(awcApiRequestData,ip);
-        }
-        // Cancel BetNSettle 取消结算并取消注单
-        if ("cancelBetNSettle".equals(action)) {
-            return cancelBetNSettle(awcApiRequestData,ip);
-        }
-        // Free Spin 免费旋转
-        if ("freeSpin".equals(action)) {
-            return freeSpin(awcApiRequestData,ip);
-        }
-        //  Give (Promotion Bonus) 活动派彩
-        if ("give".equals(action)) {
-            return give(awcApiRequestData,ip);
-        }
-        //  Tip 打赏
-        if ("tip".equals(action)) {
-            return tip(awcApiRequestData,ip);
-        }
-        //  Cancel Tip 取消打赏
-        if ("cancelTip".equals(action)) {
-            return cancelTip(awcApiRequestData,ip);
+        try {
+            if ("getBalance".equals(action)) {
+                return getBalance(jsonObject);
+            }
+            //Place Bet 下注
+            if ("bet".equals(action)) {
+                return bet(awcApiRequestData,ip);
+            }
+            //Cancel Bet 取消注单
+            if ("cancelBet".equals(action)) {
+                return cancelBet(awcApiRequestData,ip);
+            }
+            //Adjust Bet 调整投注
+            if ("adjustBet".equals(action)) {
+                return adjustBet(awcApiRequestData,ip);
+            }
+            //Void Bet 交易作废
+            if ("voidBet".equals(action)) {
+                return voidBet(awcApiRequestData,ip);
+            }
+            //Unvoid Bet 取消交易作废
+            if ("unvoidBet".equals(action)) {
+                return unvoidBet(awcApiRequestData,ip);
+            }
+            //Refund 返还金额
+            if ("refund".equals(action)) {
+                return refund(awcApiRequestData,ip);
+            }
+            //Settle 已结帐派彩
+            if ("settle".equals(action)) {
+                return settle(awcApiRequestData,ip);
+            }
+            //Unsettle 取消结帐派彩
+            if ("unsettle".equals(action)) {
+                return unsettle(awcApiRequestData,ip);
+            }
+            //Void Settle 结帐单转为无效
+            if ("voidSettle".equals(action)) {
+                return voidSettle(awcApiRequestData,ip);
+            }
+            //Unvoid Settle 无效单结账
+            if ("unvoidSettle".equals(action)) {
+                return unvoidSettle(awcApiRequestData,ip);
+            }
+            // BetNSettle 下注并直接结算
+            if ("betNSettle".equals(action)) {
+                return betNSettle(awcApiRequestData,ip);
+            }
+            // Cancel BetNSettle 取消结算并取消注单
+            if ("cancelBetNSettle".equals(action)) {
+                return cancelBetNSettle(awcApiRequestData,ip);
+            }
+            // Free Spin 免费旋转
+            if ("freeSpin".equals(action)) {
+                return freeSpin(awcApiRequestData,ip);
+            }
+            //  Give (Promotion Bonus) 活动派彩
+            if ("give".equals(action)) {
+                return give(awcApiRequestData,ip);
+            }
+            //  Tip 打赏
+            if ("tip".equals(action)) {
+                return tip(awcApiRequestData,ip);
+            }
+            //  Cancel Tip 取消打赏
+            if ("cancelTip".equals(action)) {
+                return cancelTip(awcApiRequestData,ip);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
+            callBacekFail.setStatus("9999");
+            callBacekFail.setDesc("Fail");
+            return callBacekFail;
         }
         return "";
     }
