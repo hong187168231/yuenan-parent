@@ -22,6 +22,7 @@ import com.indo.user.mapper.MemBaseInfoMapper;
 import com.indo.user.mapper.MemInviteCodeMapper;
 import com.indo.user.mapper.MemSubordinateMapper;
 import com.indo.user.pojo.entity.*;
+import com.indo.user.pojo.req.LogOutReq;
 import com.indo.user.pojo.req.mem.AddBankCardReq;
 import com.indo.user.pojo.req.mem.MemInfoReq;
 import com.indo.user.pojo.req.mem.UpdateBaseInfoReq;
@@ -42,7 +43,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -86,6 +89,12 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
         }
         AppLoginVo appLoginVo = this.getAppLoginVo(accToken, userInfo);
         return Result.success(appLoginVo);
+    }
+
+    @Override
+    public boolean logout(LogOutReq req) {
+        UserBusinessRedisUtils.delMemAccToken(req);
+        return true;
     }
 
     @Override

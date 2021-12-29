@@ -4,6 +4,7 @@ import com.indo.common.annotation.AllowAccess;
 import com.indo.common.annotation.LoginUser;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
+import com.indo.user.pojo.req.LogOutReq;
 import com.indo.user.pojo.req.LoginReq;
 import com.indo.user.pojo.req.RegisterReq;
 import com.indo.user.pojo.req.mem.AddBankCardReq;
@@ -38,6 +39,12 @@ public class MemBaseInfoController {
     @AllowAccess
     public Result<AppLoginVo> loginDo(@RequestBody LoginReq req) {
         return memBaseInfoService.appLogin(req);
+    }
+
+    @ApiOperation(value = "退出登录", httpMethod = "POST")
+    @PostMapping(value = "/logout")
+    public Result logout(@RequestBody LogOutReq req) {
+        return Result.judge(memBaseInfoService.logout(req));
     }
 
     @ApiOperation(value = "注册接口", httpMethod = "POST")

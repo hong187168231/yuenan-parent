@@ -60,10 +60,11 @@ public class ActivityController {
     @GetMapping(value = "/actList")
     @AllowAccess
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "actTypeId", value = "活动类型id ", paramType = "query", dataType = "long", required = false),
-            @ApiImplicitParam(name = "deviceType", value = "设备类型 ", paramType = "query", dataType = "int", defaultValue = "0", required = true)
+            @ApiImplicitParam(name = "actTypeId", value = "活动类型id ", paramType = "query", dataType = "long"),
+            @ApiImplicitParam(name = "deviceType", value = "设备类型 ", paramType = "query", dataType = "int", defaultValue = "0")
     })
-    public Result<List<ActivityVo>> actList(@RequestParam("actTypeId") Long actTypeId, @RequestParam("deviceType") Integer deviceType) {
+    public Result<List<ActivityVo>> actList(@RequestParam(value = "actTypeId", required = false) Long actTypeId,
+                                            @RequestParam(value = "deviceType", defaultValue = "0", required = false) Integer deviceType) {
         Map<Object, Object> map = UserBusinessRedisUtils.hmget(RedisConstants.ACTIVITY_KEY);
         List<Activity> activityList = new ArrayList(map.values());
         if (actTypeId != null) {
@@ -71,7 +72,7 @@ public class ActivityController {
                     .filter(act -> !actTypeId.equals(act.getActTypeId()))
                     .collect(Collectors.toList());
         }
-        if (!actTypeId.equals(0)) {
+        if (!deviceType.equals(0)) {
             activityList = activityList.stream()
                     .filter(act -> deviceType.equals(act.getDeviceType()))
                     .collect(Collectors.toList());
@@ -90,11 +91,11 @@ public class ActivityController {
             }
             if (item.getIsPer() == false) {
                 LocalDateTime currentDate = LocalDateTime.now();
-                if (item.getBeginTime().isBefore(currentDate)) {
+                if (currentDate.isBefore(item.getBeginTime())) {
                     iter.remove();
                     continue;
                 }
-                if (item.getEndTime().isAfter(currentDate)) {
+                if (currentDate.isAfter(item.getEndTime())) {
                     iter.remove();
                     continue;
                 }

@@ -10,6 +10,7 @@ public enum SysParameterEnum {
     SMS_VALIDATE("SMS_VALIDATE", "短信验证码有效期"),
     SMS_ONOFF("SMS_ONOFF", "短信开关"),
     SMS_REAL_SEND("SMS_REAL_SEND", "短信是否真实调用发送"),
+    ACT_PAGE_SHUFFLING("ACT_PAGE_SHUFFLING", "活动页面轮播文案"),
     WITHDRAWAL_AMOUNT("WITHDRAWAL_AMOUNT", "提现额度设置");
 
     /**

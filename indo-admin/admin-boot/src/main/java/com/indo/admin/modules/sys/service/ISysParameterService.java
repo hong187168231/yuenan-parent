@@ -3,11 +3,14 @@ package com.indo.admin.modules.sys.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.indo.admin.pojo.entity.SysParameter;
+import com.indo.admin.pojo.req.SysParameterQueryReq;
+import com.indo.admin.pojo.req.SysParameterReq;
 import com.indo.common.enums.SysParameterEnum;
 import com.indo.common.result.PageResult;
 import com.indo.common.web.exception.BizException;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * <p>
@@ -43,23 +46,23 @@ public interface ISysParameterService extends IService<SysParameter> {
      *
      * @param parameter
      */
-    void saveSysParameter(SysParameter parameter);
+    void saveSysParameter(SysParameterReq parameter);
 
     /**
      * 查询参数配置信息
      *
-     * @param parameterId 参数配置ID
+     * @param paramId 参数配置ID
      * @return 参数配置信息
      */
-    SysParameter selectById(Long parameterId);
+    SysParameter selectById(Long paramId);
 
 
     /**
      * 删除系统参数
      *
-     * @param Ids
+     * @param ids
      */
-    void deleteById(Long[] Ids);
+    void deleteById(List<Long> ids);
 
 
     /**
@@ -67,7 +70,7 @@ public interface ISysParameterService extends IService<SysParameter> {
      *
      * @param parameter
      */
-    void updateSysParameter(SysParameter parameter);
+    void updateSysParameter(SysParameterReq parameter);
 
 
     /**
@@ -83,7 +86,7 @@ public interface ISysParameterService extends IService<SysParameter> {
      * @param parameterPage 分页实体类
      * @return
      */
-    PageResult selectAll(String paramCode, Page<SysParameter> parameterPage);
+    Page<SysParameter> selectAll(SysParameterQueryReq req, Page<SysParameter> parameterPage);
 
 
     /**

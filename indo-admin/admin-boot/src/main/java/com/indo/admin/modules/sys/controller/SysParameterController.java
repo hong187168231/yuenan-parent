@@ -3,6 +3,8 @@ package com.indo.admin.modules.sys.controller;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.modules.sys.service.ISysParameterService;
 import com.indo.admin.pojo.entity.SysParameter;
+import com.indo.admin.pojo.req.SysParameterQueryReq;
+import com.indo.admin.pojo.req.SysParameterReq;
 import com.indo.common.result.Result;
 import com.indo.common.web.util.JwtUtils;
 import io.swagger.annotations.Api;
@@ -14,6 +16,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -29,55 +35,47 @@ import javax.annotation.Resource;
 @Slf4j
 public class SysParameterController {
 
-
     @Resource
     private ISysParameterService iSysParameterService;
 
     @ApiOperation(value = "系统参数列表")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "page", value = "页码", paramType = "query", dataType = "Long", required = true),
-            @ApiImplicitParam(name = "limit", value = "每页数量", paramType = "query", dataType = "Long", required = true)
-    })
-    @GetMapping(name = "系统参数", value = "/list")
-    public Result list(SysParameter req, Integer limit,
-                       Integer page) {
-        Page<SysParameter> paramPage = new Page<>(page, limit);
-        return Result.success(iSysParameterService.selectAll(req.getParamCode(), paramPage));
+    @GetMapping(value = "/list")
+    public Result list(SysParameterQueryReq req) {
+        Page<SysParameter> paramPage = new Page<>(req.getPage(), req.getLimit());
+        iSysParameterService.selectAll(req, paramPage);
+        return Result.success(paramPage.getRecords(), paramPage.getTotal());
     }
-
 
     @ApiOperation(value = "根据id查询系统参数")
-    @GetMapping(value = "/{parameterId}")
-    public Result getInfo(@PathVariable Long parameterId) {
-        return Result.success(iSysParameterService.selectById(parameterId));
+    @GetMapping(value = "/{paramId}")
+    @ApiImplicitParam(name = "paramId", value = "系统参数id", required = true, paramType = "path", dataType = "int")
+    public Result getInfo(@PathVariable Long paramId) {
+        return Result.success(iSysParameterService.selectById(paramId));
     }
-
 
     @ApiOperation(value = "保存系统参数")
     @PostMapping
-    public Result save(SysParameter parameter) {
-        parameter.setCreateUser(JwtUtils.getUsername());
+    public Result save(SysParameterReq parameter) {
         iSysParameterService.saveSysParameter(parameter);
         return Result.success();
     }
 
-
     @ApiOperation(value = "修改系统参数")
     @PutMapping
-    public Result edit(@Validated @RequestBody SysParameter parameter) {
-        parameter.setUpdateUser(JwtUtils.getUsername());
+    public Result edit(@Validated SysParameterReq parameter) {
         iSysParameterService.updateSysParameter(parameter);
         return Result.success();
     }
 
-
     @ApiOperation(value = "删除系统参数")
-    @DeleteMapping("/{paramIds}")
-    public Result remove(@PathVariable Long[] paramIds) {
-        iSysParameterService.deleteById(paramIds);
+    @DeleteMapping("/{ids}")
+    @ApiImplicitParam(name = "ids", value = "id集合", required = true, paramType = "path", dataType = "String")
+    public Result remove(@PathVariable("ids") String ids) {
+        List<String> strIds = Arrays.asList(ids.split(","));
+        List idsLong = strIds.stream().map(Long::parseLong).collect(Collectors.toList());
+        iSysParameterService.deleteById(idsLong);
         return Result.success();
     }
-
 
     /**
      * 刷新参数缓存

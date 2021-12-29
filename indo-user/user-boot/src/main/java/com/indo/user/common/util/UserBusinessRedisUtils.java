@@ -11,6 +11,7 @@ import com.indo.common.utils.RandomUtil;
 import com.indo.common.utils.encrypt.MD5;
 import com.indo.common.web.exception.BizException;
 import com.indo.user.pojo.entity.MemBaseinfo;
+import com.indo.user.pojo.req.LogOutReq;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -28,6 +29,12 @@ public class UserBusinessRedisUtils extends RedisUtils {
         set(AppConstants.USER_LOGIN_INFO_KEY + userInfo.getAccount(), accToken, 60 * 60 * 24 * 7);
         return accToken;
     }
+
+    public static void delMemAccToken(LogOutReq logOutReq) {
+        del(AppConstants.USER_LOGIN_ACCTOKEN + logOutReq.getAccToken());
+        del(AppConstants.USER_LOGIN_INFO_KEY + logOutReq.getAccount());
+    }
+
 
     /**
      * 删除用户缓存
@@ -84,7 +91,6 @@ public class UserBusinessRedisUtils extends RedisUtils {
     public static void paramError() {
         throw new BizException(ResultCode.SYSPARAMETER_EMPTY.getCode());
     }
-
 
 
 }
