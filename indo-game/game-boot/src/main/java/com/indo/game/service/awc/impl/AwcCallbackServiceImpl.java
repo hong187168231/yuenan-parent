@@ -118,7 +118,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            logger.info("awcCallBack {} callBack 回调,IP:"+ip+" params:{}",e);
+            logger.info("awcCallBack {9999Fail} callBack 回调,IP:"+ip+" params:{}",e);
             AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
             callBacekFail.setStatus("9999");
             callBacekFail.setDesc("Fail");
