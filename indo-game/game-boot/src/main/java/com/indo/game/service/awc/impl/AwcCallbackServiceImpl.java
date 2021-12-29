@@ -18,6 +18,8 @@ import com.indo.game.pojo.vo.callback.awc.AwcGetBalanceRespSuccess;
 import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.awc.AwcCallbackService;
 import com.indo.user.pojo.entity.MemBaseinfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +30,8 @@ import java.util.List;
 
 @Service
 public class AwcCallbackServiceImpl implements AwcCallbackService {
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private GameCommonService gameCommonService;
@@ -114,6 +118,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            logger.info("awcCallBack {9999Fail} callBack 回调,IP:"+ip+" params:{}",e);
             AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
             callBacekFail.setStatus("9999");
             callBacekFail.setDesc("Fail");
