@@ -24,10 +24,10 @@ import java.util.List;
 
 /**
  * <p>
- * 用户绑定银行卡信息表 前端控制器
+ * 用户银行卡 前端控制器
  * </p>
  *
- * @author xxx
+ * @author puff
  * @since 2021-11-17
  */
 @Api(tags = "银行卡接口")
