@@ -26,6 +26,9 @@ public class Gift {
     @ApiModelProperty(value = "礼金金额")
     private Integer amount;
 
+    @ApiModelProperty(value = "礼金名称")
+    private String giftName;
+
     @ApiModelProperty(value = "礼金类型")
     private GiftEnum giftEnum;
 

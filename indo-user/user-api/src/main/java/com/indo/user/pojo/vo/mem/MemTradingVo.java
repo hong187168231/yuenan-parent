@@ -40,7 +40,4 @@ public class MemTradingVo {
     @ApiModelProperty(value = "总投注")
     private BigDecimal totalBet;
 
-    @ApiModelProperty(value = "总投注")
-    private BigDecimal deposit_num;
-
 }

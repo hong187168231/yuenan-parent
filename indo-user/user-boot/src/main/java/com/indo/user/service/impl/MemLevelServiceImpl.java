@@ -48,9 +48,12 @@ public class MemLevelServiceImpl extends ServiceImpl<MemLevelMapper, MemLevel> i
         LambdaQueryWrapper<MemLevel> wrapper = new LambdaQueryWrapper<>();
         List<MemLevel> list = this.baseMapper.selectList(wrapper);
         List<LevelInfo> levelInfoList = new ArrayList<>();
-        List<Gift> giftList = new ArrayList<>();
+
         for (MemLevel memLevel : list) {
+
+            List<Gift> giftList = new ArrayList<>();
             LevelInfo levelInfo = new LevelInfo();
+
             levelInfo.setLevel(memLevel.getLevel());
             levelInfo.setNeedDeposit(memLevel.getNeedDeposit());
             levelInfo.setNeedBet(memLevel.getNeedBet());
@@ -58,6 +61,7 @@ public class MemLevelServiceImpl extends ServiceImpl<MemLevelMapper, MemLevel> i
             if (memLevel.getReward() != null) {
                 Gift gift = new Gift();
                 gift.setGiftEnum(GiftEnum.reward);
+                gift.setGiftName(GiftEnum.reward.getName());
                 gift.setAmount(memLevel.getReward());
                 if (memTradingVo.getMemLevel() >= memLevel.getLevel()) {
                     gift.setReceiveStatus(1);
@@ -67,6 +71,7 @@ public class MemLevelServiceImpl extends ServiceImpl<MemLevelMapper, MemLevel> i
             if (memLevel.getEverydayGift() != null) {
                 Gift gift = new Gift();
                 gift.setGiftEnum(GiftEnum.everyday);
+                gift.setGiftName(GiftEnum.everyday.getName());
                 gift.setAmount(memLevel.getEverydayGift());
                 if (memTradingVo.getMemLevel() >= memLevel.getLevel()) {
                     gift.setReceiveStatus(1);
@@ -76,6 +81,7 @@ public class MemLevelServiceImpl extends ServiceImpl<MemLevelMapper, MemLevel> i
             if (memLevel.getWeekGift() != null) {
                 Gift gift = new Gift();
                 gift.setGiftEnum(GiftEnum.week);
+                gift.setGiftName(GiftEnum.week.getName());
                 gift.setAmount(memLevel.getWeekGift());
                 if (memTradingVo.getMemLevel() >= memLevel.getLevel()) {
                     gift.setReceiveStatus(1);
@@ -85,6 +91,7 @@ public class MemLevelServiceImpl extends ServiceImpl<MemLevelMapper, MemLevel> i
             if (memLevel.getMonthGift() != null) {
                 Gift gift = new Gift();
                 gift.setGiftEnum(GiftEnum.month);
+                gift.setGiftName(GiftEnum.month.getName());
                 gift.setAmount(memLevel.getMonthGift());
                 if (memTradingVo.getMemLevel() >= memLevel.getLevel()) {
                     gift.setReceiveStatus(1);
@@ -94,6 +101,7 @@ public class MemLevelServiceImpl extends ServiceImpl<MemLevelMapper, MemLevel> i
             if (memLevel.getYearGift() != null) {
                 Gift gift = new Gift();
                 gift.setGiftEnum(GiftEnum.year);
+                gift.setGiftName(GiftEnum.reward.getName());
                 gift.setAmount(memLevel.getYearGift());
                 if (memTradingVo.getMemLevel() >= memLevel.getLevel()) {
                     gift.setReceiveStatus(1);
@@ -103,6 +111,7 @@ public class MemLevelServiceImpl extends ServiceImpl<MemLevelMapper, MemLevel> i
             if (memLevel.getBirthdayGift() != null) {
                 Gift gift = new Gift();
                 gift.setGiftEnum(GiftEnum.birthday);
+                gift.setGiftName(GiftEnum.birthday.getName());
                 gift.setAmount(memLevel.getBirthdayGift());
                 if (memTradingVo.getMemLevel() >= memLevel.getLevel()) {
                     gift.setReceiveStatus(1);
@@ -110,7 +119,7 @@ public class MemLevelServiceImpl extends ServiceImpl<MemLevelMapper, MemLevel> i
                 giftList.add(gift);
             }
             levelInfo.setGiftList(giftList);
-
+            levelInfoList.add(levelInfo);
         }
         memLevelVo.setLevelList(levelInfoList);
         return memLevelVo;
