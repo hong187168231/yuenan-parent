@@ -4,29 +4,29 @@ import com.indo.game.pojo.entity.sbo.*;
 
 public interface SboCallbackService {
 
-    public String getBalance(SboCallBackParentReq sboCallBackParentReq);
+    public Object getBalance(SboCallBackParentReq sboCallBackParentReq);
     //扣除投注金额
-    public String deduct(SboCallBackDeductReq sboCallBackDeductReq);
+    public Object deduct(SboCallBackDeductReq sboCallBackDeductReq);
     //结算投注
-    public String settle(SboCallBackSettleReq sboCallBackSettleReq);
+    public Object settle(SboCallBackSettleReq sboCallBackSettleReq);
     //回滚
-    public String rollback(SboCallBackRollbackReq sboCallBackRollbackReq);
+    public Object rollback(SboCallBackRollbackReq sboCallBackRollbackReq);
     //取消投注
-    public String cancel(SboCallBackCancelReq sboCallBackCancelReq);
+    public Object cancel(SboCallBackCancelReq sboCallBackCancelReq);
     //小费
-    public String tip(SboCallBackTipReq sboCallBackTipReq);
+    public Object tip(SboCallBackTipReq sboCallBackTipReq);
     //红利
-    public String bonus(SboCallBackBonusReq sboCallBackBonusReq);
+    public Object bonus(SboCallBackBonusReq sboCallBackBonusReq);
     //归还注额
-    public String returnStake(SboCallBackReturnStakeReq sboCallBackBonusReq);
+    public Object returnStake(SboCallBackReturnStakeReq sboCallBackBonusReq);
     //取得投注状态
-    public String getBetStatus(SboCallBackGetBetStatusReq sboCallBackGetBetStatusReq);
+    public Object getBetStatus(SboCallBackGetBetStatusReq sboCallBackGetBetStatusReq);
     //转帐交易
-    public String transfer(SboCallBackTransferReq sboCallBackTransferReq);
+    public Object transfer(SboCallBackTransferReq sboCallBackTransferReq);
     //转帐交易回滚
-    public String rollbackTransfer(SboCallBackRollbackTransferReq sboCallBackRollbackTransferReq);
+    public Object rollbackTransfer(SboCallBackRollbackTransferReq sboCallBackRollbackTransferReq);
     //取得转帐交易状态
-    public String getTransferStatus(SboCallBackGetTransferStautsReq sboCallBackGetTransferStautsReq);
+    public Object getTransferStatus(SboCallBackGetTransferStautsReq sboCallBackGetTransferStautsReq);
     //LiveCoin購買
-    public String liveCoinTransaction(SboCallBackLiveCoinTransactionReq sboCallBackLiveCoinTransactionReq);
+    public Object liveCoinTransaction(SboCallBackLiveCoinTransactionReq sboCallBackLiveCoinTransactionReq);
 }

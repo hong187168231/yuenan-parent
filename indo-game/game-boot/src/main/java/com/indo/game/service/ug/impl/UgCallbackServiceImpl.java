@@ -31,7 +31,7 @@ public class UgCallbackServiceImpl implements UgCallbackService {
 
 
     //取得用户的余额
-    public String getBalance(UgCallBackGetBalanceReq ugCallBackGetBalanceReq) {
+    public Object getBalance(UgCallBackGetBalanceReq ugCallBackGetBalanceReq) {
         MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(ugCallBackGetBalanceReq.getAccount());
         UgCallBackGetBalanceResp ugCallBackGetBalanceResp = new UgCallBackGetBalanceResp();
 
@@ -44,12 +44,12 @@ public class UgCallbackServiceImpl implements UgCallbackService {
             ugCallBackGetBalanceResp.setBalance(memBaseinfo.getBalance());
         }
 
-        return JSONObject.toJSONString(ugCallBackGetBalanceResp);
+        return ugCallBackGetBalanceResp;
     }
 
 
     //加余额/扣除余额
-    public String transfer(UgCallBackTransferReq<UgCallBackTransactionItemReq> ugCallBackTransactionItemReqUgCallBackTransferReq) {
+    public Object transfer(UgCallBackTransferReq<UgCallBackTransactionItemReq> ugCallBackTransactionItemReqUgCallBackTransferReq) {
 
         List<UgCallBackTransactionItemReq> ugCallBackTransactionItemReqList = ugCallBackTransactionItemReqUgCallBackTransferReq.getData();
         UgCallBackTransferResp ugCallBackTransferResp = new UgCallBackTransferResp();
@@ -127,13 +127,13 @@ public class UgCallbackServiceImpl implements UgCallbackService {
 
         ugCallBackTransferResp.setBalance(ugCallBackBalanceRespList);
 
-        return JSONObject.toJSONString(ugCallBackTransferResp);
+        return ugCallBackTransferResp;
 
     }
 
 
     // 取消交易
-    public String cancel(UgCallBackCancelReq ugCallBackCancelReq) {
+    public Object cancel(UgCallBackCancelReq ugCallBackCancelReq) {
 
         MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(ugCallBackCancelReq.getAccount());
         UgCallBackCancelResp ugCallBackCancelResp = new UgCallBackCancelResp();
@@ -187,13 +187,13 @@ public class UgCallbackServiceImpl implements UgCallbackService {
 
         }
 
-        return JSONObject.toJSONString(ugCallBackCancelResp);
+        return ugCallBackCancelResp;
 
     }
 
 
     //检查交易结果
-    public String check(UgCallBackCancelReq ugCallBackCancelReq) {
+    public Object check(UgCallBackCancelReq ugCallBackCancelReq) {
 
         MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(ugCallBackCancelReq.getAccount());
         UgCallBackBalanceResp ugCallBackBalanceResp = new UgCallBackBalanceResp();
@@ -219,7 +219,7 @@ public class UgCallbackServiceImpl implements UgCallbackService {
             ugCallBackBalanceResp.setBalance(memBaseinfo.getBalance());
         }
 
-        return JSONObject.toJSONString(ugCallBackBalanceResp);
+        return ugCallBackBalanceResp;
 
     }
 }

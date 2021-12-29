@@ -29,7 +29,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
     private SboOperInfoMapper sboOperInfoMapper;
 
     //取得用户的余额
-    public String getBalance(SboCallBackParentReq sboCallBackParentReq) {
+    public Object getBalance(SboCallBackParentReq sboCallBackParentReq) {
 
         MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(sboCallBackParentReq.getUserName());
         SboCallBackCommResp sboCallBackCommResp = new SboCallBackCommResp();
@@ -43,12 +43,12 @@ public class SboCallbackServiceImpl implements SboCallbackService {
             sboCallBackCommResp.setErrorMessage("No Error");
         }
 
-        return JSONObject.toJSONString(sboCallBackCommResp);
+        return sboCallBackCommResp;
     }
 
 
     //扣除投注金额
-    public String deduct(SboCallBackDeductReq sboCallBackDeductReq) {
+    public Object deduct(SboCallBackDeductReq sboCallBackDeductReq) {
         MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(sboCallBackDeductReq.getUserName());
         SboCallBackCommResp sboCallBackCommResp = new SboCallBackCommResp();
         sboCallBackCommResp.setAccountName(sboCallBackDeductReq.getUserName());
@@ -84,12 +84,12 @@ public class SboCallbackServiceImpl implements SboCallbackService {
 
         }
 
-        return JSONObject.toJSONString(sboCallBackCommResp);
+        return sboCallBackCommResp;
 
     }
 
     //结算投注
-    public String settle(SboCallBackSettleReq sboCallBackSettleReq) {
+    public Object settle(SboCallBackSettleReq sboCallBackSettleReq) {
         //同一个赌注发出多次API请求,这意味着我们要求该次赌注重新结算
 
         MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(sboCallBackSettleReq.getUserName());
@@ -146,12 +146,12 @@ public class SboCallbackServiceImpl implements SboCallbackService {
             sboOperInfoMapper.updateById(oldSboOperInfo);
         }
 
-        return JSONObject.toJSONString(sboCallBackCommResp);
+        return sboCallBackCommResp;
 
     }
 
     //回滚
-    public String rollback(SboCallBackRollbackReq sboCallBackRollbackReq) {
+    public Object rollback(SboCallBackRollbackReq sboCallBackRollbackReq) {
 
         MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(sboCallBackRollbackReq.getUserName());
         SboCallBackCommResp sboCallBackCommResp = new SboCallBackCommResp();
@@ -206,12 +206,12 @@ public class SboCallbackServiceImpl implements SboCallbackService {
             sboOperInfoMapper.updateById(oldSboOperInfo);
         }
 
-        return JSONObject.toJSONString(sboCallBackCommResp);
+        return sboCallBackCommResp;
 
     }
 
     //取消投注
-    public String cancel(SboCallBackCancelReq sboCallBackCancelReq) {
+    public Object cancel(SboCallBackCancelReq sboCallBackCancelReq) {
 
         MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(sboCallBackCancelReq.getUserName());
         SboCallBackCommResp sboCallBackCommResp = new SboCallBackCommResp();
@@ -262,12 +262,12 @@ public class SboCallbackServiceImpl implements SboCallbackService {
             sboOperInfoMapper.updateById(oldSboOperInfo);
         }
 
-        return JSONObject.toJSONString(sboCallBackCommResp);
+        return sboCallBackCommResp;
 
     }
 
     //小费
-    public String tip(SboCallBackTipReq sboCallBackTipReq){
+    public Object tip(SboCallBackTipReq sboCallBackTipReq){
         MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(sboCallBackTipReq.getUserName());
         SboCallBackCommResp sboCallBackCommResp = new SboCallBackCommResp();
         sboCallBackCommResp.setAccountName(sboCallBackTipReq.getUserName());
@@ -302,11 +302,11 @@ public class SboCallbackServiceImpl implements SboCallbackService {
 
         }
 
-        return JSONObject.toJSONString(sboCallBackCommResp);
+        return sboCallBackCommResp;
     }
 
     //红利
-    public String bonus(SboCallBackBonusReq sboCallBackBonusReq){
+    public Object bonus(SboCallBackBonusReq sboCallBackBonusReq){
         MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(sboCallBackBonusReq.getUserName());
         SboCallBackCommResp sboCallBackCommResp = new SboCallBackCommResp();
         sboCallBackCommResp.setAccountName(sboCallBackBonusReq.getUserName());
@@ -341,11 +341,11 @@ public class SboCallbackServiceImpl implements SboCallbackService {
 
         }
 
-        return JSONObject.toJSONString(sboCallBackCommResp);
+        return sboCallBackCommResp;
     }
 
     //归还注额
-    public String returnStake(SboCallBackReturnStakeReq sboCallBackBonusReq){
+    public Object returnStake(SboCallBackReturnStakeReq sboCallBackBonusReq){
         MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(sboCallBackBonusReq.getUserName());
         SboCallBackCommResp sboCallBackCommResp = new SboCallBackCommResp();
         sboCallBackCommResp.setAccountName(sboCallBackBonusReq.getUserName());
@@ -390,11 +390,11 @@ public class SboCallbackServiceImpl implements SboCallbackService {
             sboOperInfoMapper.updateById(oldSboOperInfo);
         }
 
-        return JSONObject.toJSONString(sboCallBackCommResp);
+        return sboCallBackCommResp;
     }
 
     //取得投注状态
-    public String getBetStatus(SboCallBackGetBetStatusReq sboCallBackGetBetStatusReq){
+    public Object getBetStatus(SboCallBackGetBetStatusReq sboCallBackGetBetStatusReq){
         MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(sboCallBackGetBetStatusReq.getUserName());
         SboCallBackGetBetStatusResp sboCallBackGetBetStatusResp = new SboCallBackGetBetStatusResp();
         sboCallBackGetBetStatusResp.setTransactionId(sboCallBackGetBetStatusReq.getTransactionId());
@@ -424,11 +424,11 @@ public class SboCallbackServiceImpl implements SboCallbackService {
             }
         }
 
-        return JSONObject.toJSONString(sboCallBackGetBetStatusResp);
+        return sboCallBackGetBetStatusResp;
     }
 
     //转帐交易
-    public String transfer(SboCallBackTransferReq sboCallBackTransferReq){
+    public Object transfer(SboCallBackTransferReq sboCallBackTransferReq){
         MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(sboCallBackTransferReq.getUserName());
         SboCallBackCommResp sboCallBackCommResp = new SboCallBackCommResp();
         sboCallBackCommResp.setAccountName(sboCallBackTransferReq.getUserName());
@@ -455,7 +455,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
                         sboCallBackCommResp.setBalance(null==memBaseinfo.getBalance()?"":memBaseinfo.getBalance().toString());
                         sboCallBackCommResp.setErrorCode("5");
                         sboCallBackCommResp.setErrorMessage("Not enough balance");
-                        return JSONObject.toJSONString(sboCallBackCommResp);
+                        return sboCallBackCommResp;
                     }else {
                         balance = memBaseinfo.getBalance().subtract(amount);
                         gameCommonService.updateUserBalance(memBaseinfo, amount, GoldchangeEnum.DSFYXZZ, TradingEnum.SPENDING);
@@ -487,11 +487,11 @@ public class SboCallbackServiceImpl implements SboCallbackService {
             }
         }
 
-        return JSONObject.toJSONString(sboCallBackCommResp);
+        return sboCallBackCommResp;
     }
 
     //转帐交易回滚
-    public String rollbackTransfer(SboCallBackRollbackTransferReq sboCallBackRollbackTransferReq){
+    public Object rollbackTransfer(SboCallBackRollbackTransferReq sboCallBackRollbackTransferReq){
         MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(sboCallBackRollbackTransferReq.getUserName());
         SboCallBackCommResp sboCallBackCommResp = new SboCallBackCommResp();
         sboCallBackCommResp.setAccountName(sboCallBackRollbackTransferReq.getUserName());
@@ -546,11 +546,11 @@ public class SboCallbackServiceImpl implements SboCallbackService {
             }
         }
 
-        return JSONObject.toJSONString(sboCallBackCommResp);
+        return sboCallBackCommResp;
     }
 
     //取得转帐交易状态
-    public String getTransferStatus(SboCallBackGetTransferStautsReq sboCallBackGetTransferStautsReq){
+    public Object getTransferStatus(SboCallBackGetTransferStautsReq sboCallBackGetTransferStautsReq){
         MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(sboCallBackGetTransferStautsReq.getUserName());
         SboCallBackGetTransferStatusResp sboCallBackGetTransferStatusResp = new SboCallBackGetTransferStatusResp();
         sboCallBackGetTransferStatusResp.setAccountName(sboCallBackGetTransferStautsReq.getUserName());
@@ -579,11 +579,11 @@ public class SboCallbackServiceImpl implements SboCallbackService {
             }
         }
 
-        return JSONObject.toJSONString(sboCallBackGetTransferStatusResp);
+        return sboCallBackGetTransferStatusResp;
     }
 
     //LiveCoin購買
-    public String liveCoinTransaction(SboCallBackLiveCoinTransactionReq sboCallBackLiveCoinTransactionReq){
+    public Object liveCoinTransaction(SboCallBackLiveCoinTransactionReq sboCallBackLiveCoinTransactionReq){
         MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(sboCallBackLiveCoinTransactionReq.getUserName());
         SboCallBackCommResp sboCallBackCommResp = new SboCallBackCommResp();
         sboCallBackCommResp.setAccountName(sboCallBackLiveCoinTransactionReq.getUserName());
@@ -619,6 +619,6 @@ public class SboCallbackServiceImpl implements SboCallbackService {
 
         }
 
-        return JSONObject.toJSONString(sboCallBackCommResp);
+        return sboCallBackCommResp;
     }
 }

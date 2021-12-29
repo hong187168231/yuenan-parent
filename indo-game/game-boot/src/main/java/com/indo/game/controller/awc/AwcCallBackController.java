@@ -28,12 +28,13 @@ public class AwcCallBackController {
      * 回调
      */
     @RequestMapping(value="/callBack",method=RequestMethod.POST)
-    public String initGame(AwcApiRequestParentData awcApiRequestData, HttpServletRequest request) {
+    @ResponseBody
+    public Object initGame(AwcApiRequestParentData awcApiRequestData, HttpServletRequest request) {
         String ip = IpUtil.getIpAddr(request);
         logger.info("awcCallBack {} callBack 回调,IP:"+ip+" params:{}",JSONObject.toJSONString(awcApiRequestData));
 
-        String callBack = awcAeSexybcrtCallbackService.awcCallback(awcApiRequestData,ip);
-        logger.info("awcCallBack {} callBack 回调返回数据, params:{}",callBack);
-        return callBack;
+        Object object = awcAeSexybcrtCallbackService.awcCallback(awcApiRequestData,ip);
+        logger.info("awcCallBack {} callBack 回调返回数据, params:{}",object);
+        return object;
     }
 }

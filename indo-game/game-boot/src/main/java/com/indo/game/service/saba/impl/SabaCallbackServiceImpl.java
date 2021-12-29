@@ -31,7 +31,7 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
     private SabaOperInfoMapper sabaOperInfoMapper;
 
     //取得用户的余额
-    public String getBalance(SabaCallBackReq<SabaCallBackParentReq> sabaCallBackReq) {
+    public Object getBalance(SabaCallBackReq<SabaCallBackParentReq> sabaCallBackReq) {
         SabaCallBackParentReq sabaCallBackParentReq = sabaCallBackReq.getMessage();
         MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(sabaCallBackParentReq.getUserId());
         SabaCallBackGetBalanceResp sabaCallBackGetBalanceResp = new SabaCallBackGetBalanceResp();
@@ -47,12 +47,12 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
             sabaCallBackGetBalanceResp.setUserId(sabaCallBackParentReq.getUserId());
         }
 
-        return JSONObject.toJSONString(sabaCallBackGetBalanceResp);
+        return sabaCallBackGetBalanceResp;
     }
 
 
     //投注
-    public String placeBet(SabaCallBackReq<SabaCallBackPlaceBetReq> sabaCallBackReq) {
+    public Object placeBet(SabaCallBackReq<SabaCallBackPlaceBetReq> sabaCallBackReq) {
         SabaCallBackPlaceBetReq sabaCallBackPlaceBetReq = sabaCallBackReq.getMessage();
         MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(sabaCallBackPlaceBetReq.getUserId());
         SabaCallBackRespError sabaCallBackRespError = new SabaCallBackRespError();
@@ -60,13 +60,13 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
         if (null == memBaseinfo) {
             sabaCallBackRespError.setStatus("203");
             sabaCallBackRespError.setMsg("Account Existed");
-            return JSONObject.toJSONString(sabaCallBackRespError);
+            return sabaCallBackRespError;
         }else {
             BigDecimal betAmount = sabaCallBackPlaceBetReq.getActualAmount();
             if(memBaseinfo.getBalance().compareTo(betAmount) == -1){
                 sabaCallBackRespError.setStatus("502");
                 sabaCallBackRespError.setMsg("Player Has Insufficient Funds");
-                return JSONObject.toJSONString(sabaCallBackRespError);
+                return sabaCallBackRespError;
             }else {
                 SabaCallBackPlaceBetResp sabaCallBackPlaceBetResp = new SabaCallBackPlaceBetResp();
                 gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
@@ -79,12 +79,12 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
                 sabaOperInfo.setCreateTime(new Date());
                 sabaOperInfo.setOperStatus("PlaceBet");
                 sabaOperInfoMapper.insert(sabaOperInfo);
-                return JSONObject.toJSONString(sabaCallBackPlaceBetResp);
+                return sabaCallBackPlaceBetResp;
             }
         }
     }
     //确认投注查询
-    public String confirmBet(SabaCallBackReq<SabaCallBackConfirmBetReq<TicketInfoReq>> sabaCallBackReq){
+    public Object confirmBet(SabaCallBackReq<SabaCallBackConfirmBetReq<TicketInfoReq>> sabaCallBackReq){
         SabaCallBackConfirmBetReq<TicketInfoReq> sabaCallBackConfirmBetReq = sabaCallBackReq.getMessage();
         MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(sabaCallBackConfirmBetReq.getUserId());
         SabaCallBackRespError sabaCallBackRespError = new SabaCallBackRespError();
@@ -92,7 +92,7 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
         if (null == memBaseinfo) {
             sabaCallBackRespError.setStatus("203");
             sabaCallBackRespError.setMsg("Account Existed");
-            return JSONObject.toJSONString(sabaCallBackRespError);
+            return sabaCallBackRespError;
         }else {
             List<TicketInfoReq> list = sabaCallBackConfirmBetReq.getTxns();
             BigDecimal balance = memBaseinfo.getBalance();
@@ -119,12 +119,12 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
             SabaCallBackConfirmBetResp sabaCallBackConfirmBetResp = new SabaCallBackConfirmBetResp();
             sabaCallBackConfirmBetResp.setStatus("0");
             sabaCallBackConfirmBetResp.setBalance(balance);
-            return JSONObject.toJSONString(sabaCallBackConfirmBetResp);
+            return sabaCallBackConfirmBetResp;
         }
     }
 
     //取消投注
-    public String cancelBet(SabaCallBackReq<SabaCallBackCancelBetReq<TradingInfoReq>> sabaCallBackReq) {
+    public Object cancelBet(SabaCallBackReq<SabaCallBackCancelBetReq<TradingInfoReq>> sabaCallBackReq) {
 
         SabaCallBackCancelBetReq<TradingInfoReq> sabaCallBackCancelBetReq = sabaCallBackReq.getMessage();
         MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(sabaCallBackCancelBetReq.getUserId());
@@ -133,7 +133,7 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
         if (null == memBaseinfo) {
             sabaCallBackRespError.setStatus("203");
             sabaCallBackRespError.setMsg("Account Existed");
-            return JSONObject.toJSONString(sabaCallBackRespError);
+            return sabaCallBackRespError;
         }else {
             List<TradingInfoReq> list = sabaCallBackCancelBetReq.getTxns();
             BigDecimal balance = memBaseinfo.getBalance();
@@ -156,13 +156,13 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
             SabaCallBackConfirmBetResp sabaCallBackConfirmBetResp = new SabaCallBackConfirmBetResp();
             sabaCallBackConfirmBetResp.setStatus("0");
             sabaCallBackConfirmBetResp.setBalance(balance);
-            return JSONObject.toJSONString(sabaCallBackConfirmBetResp);
+            return sabaCallBackConfirmBetResp;
         }
 
     }
 
     //结算投注
-    public String settle(SabaCallBackReq<SabaCallBackSettleReq<SettleTradingInfoReq<ParlayDetailReq<SystemParlayDetailReq>>>> sabaCallBackReq) {
+    public Object settle(SabaCallBackReq<SabaCallBackSettleReq<SettleTradingInfoReq<ParlayDetailReq<SystemParlayDetailReq>>>> sabaCallBackReq) {
         SabaCallBackSettleReq<SettleTradingInfoReq<ParlayDetailReq<SystemParlayDetailReq>>> sabaCallBackSettleReq = sabaCallBackReq.getMessage();
 
         List<SettleTradingInfoReq<ParlayDetailReq<SystemParlayDetailReq>>> settleTradingInfoReqList = sabaCallBackSettleReq.getTxns();
@@ -178,11 +178,11 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
 
         SabaCallBackParentResp sabaCallBackParentResp = new SabaCallBackParentResp();
         sabaCallBackParentResp.setStatus("0");
-        return JSONObject.toJSONString(sabaCallBackParentResp);
+        return sabaCallBackParentResp;
     }
 
     //重新结算投注
-    public String resettle(SabaCallBackReq<SabaCallBackSettleReq<SettleTradingInfoReq<ParlayDetailReq<SystemParlayDetailReq>>>> sabaCallBackReq) {
+    public Object resettle(SabaCallBackReq<SabaCallBackSettleReq<SettleTradingInfoReq<ParlayDetailReq<SystemParlayDetailReq>>>> sabaCallBackReq) {
         SabaCallBackSettleReq<SettleTradingInfoReq<ParlayDetailReq<SystemParlayDetailReq>>> sabaCallBackSettleReq = sabaCallBackReq.getMessage();
 
         List<SettleTradingInfoReq<ParlayDetailReq<SystemParlayDetailReq>>> settleTradingInfoReqList = sabaCallBackSettleReq.getTxns();
@@ -198,11 +198,11 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
 
         SabaCallBackParentResp sabaCallBackParentResp = new SabaCallBackParentResp();
         sabaCallBackParentResp.setStatus("0");
-        return JSONObject.toJSONString(sabaCallBackParentResp);
+        return sabaCallBackParentResp;
     }
 
     //撤销结算投注
-    public String unsettle(SabaCallBackReq<SabaCallBackSettleReq<SettleTradingInfoReq<ParlayDetailReq<SystemParlayDetailReq>>>> sabaCallBackReq) {
+    public Object unsettle(SabaCallBackReq<SabaCallBackSettleReq<SettleTradingInfoReq<ParlayDetailReq<SystemParlayDetailReq>>>> sabaCallBackReq) {
         SabaCallBackSettleReq<SettleTradingInfoReq<ParlayDetailReq<SystemParlayDetailReq>>> sabaCallBackSettleReq = sabaCallBackReq.getMessage();
 
         List<SettleTradingInfoReq<ParlayDetailReq<SystemParlayDetailReq>>> settleTradingInfoReqList = sabaCallBackSettleReq.getTxns();
@@ -218,11 +218,11 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
 
         SabaCallBackParentResp sabaCallBackParentResp = new SabaCallBackParentResp();
         sabaCallBackParentResp.setStatus("0");
-        return JSONObject.toJSONString(sabaCallBackParentResp);
+        return sabaCallBackParentResp;
     }
 
     //投注-仅支援欧洲盘
-    public String placeBetParlay(SabaCallBackReq<SabaCallBackPlaceBetParlayReq> sabaCallBackReq){
+    public Object placeBetParlay(SabaCallBackReq<SabaCallBackPlaceBetParlayReq> sabaCallBackReq){
 
         SabaCallBackPlaceBetParlayReq sabaCallBackPlaceBetParlayReq = sabaCallBackReq.getMessage();
         List<ComboInfo> comboInfoList = sabaCallBackPlaceBetParlayReq.getTxns();
@@ -236,11 +236,11 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
         SabaCallBackPlaceBetParlayResp sabaCallBackPlaceBetParlayResp = new SabaCallBackPlaceBetParlayResp();
         sabaCallBackPlaceBetParlayResp.setStatus("0");
         sabaCallBackPlaceBetParlayResp.setTxns(ticketInfoMappingList);
-        return JSONObject.toJSONString(sabaCallBackPlaceBetParlayResp);
+        return sabaCallBackPlaceBetParlayResp;
     }
 
     //当沙巴体育通过 PlaceBetParlay 方法收到成功结果，沙巴体育将会呼叫 ConfirmBetParlay
-    public String confirmBetParlay(SabaCallBackReq<SabaCallBackConfirmBetParlayReq> sabaCallBackReq){
+    public Object confirmBetParlay(SabaCallBackReq<SabaCallBackConfirmBetParlayReq> sabaCallBackReq){
 
         SabaCallBackConfirmBetParlayReq sabaCallBackConfirmBetParlayReq = sabaCallBackReq.getMessage();
         List<ConfirmBetParlayTicketInfoReq> txns = sabaCallBackConfirmBetParlayReq.getTxns();
@@ -249,11 +249,11 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
         }
         SabaCallBackConfirmBetResp sabaCallBackConfirmBetResp = new SabaCallBackConfirmBetResp();
         sabaCallBackConfirmBetResp.setStatus("0");
-        return JSONObject.toJSONString(sabaCallBackConfirmBetResp);
+        return sabaCallBackConfirmBetResp;
     }
 
     //厂商提供此方法，沙巴体育通过呼叫此方法提供下注细节给厂商。本方法支持快乐彩、彩票、桌面游戏产品
-    public String placeBet3rd(SabaCallBackReq<SabaCallBackPlaceBet3rdReq<PlaceBet3rdTicketInfoReq>> sabaCallBackReq){
+    public Object placeBet3rd(SabaCallBackReq<SabaCallBackPlaceBet3rdReq<PlaceBet3rdTicketInfoReq>> sabaCallBackReq){
 
         SabaCallBackPlaceBet3rdReq<PlaceBet3rdTicketInfoReq> sabaCallBackPlaceBet3rdReq = sabaCallBackReq.getMessage();
 
@@ -264,9 +264,9 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
 
         SabaCallBackPlaceBet3rdResp<TicketInfoMapping> sabaCallBackPlaceBet3rdResp = new SabaCallBackPlaceBet3rdResp<>();
         sabaCallBackPlaceBet3rdResp.setStatus("0");
-        return JSONObject.toJSONString(sabaCallBackPlaceBet3rdResp);
+        return sabaCallBackPlaceBet3rdResp;
     }
-    public String confirmBet3rd(SabaCallBackReq<SabaCallBackConfirmBet3rdReq<ConfirmBet3rdTicketInfoReq>> sabaCallBackReq){
+    public Object confirmBet3rd(SabaCallBackReq<SabaCallBackConfirmBet3rdReq<ConfirmBet3rdTicketInfoReq>> sabaCallBackReq){
 
         SabaCallBackConfirmBet3rdReq<ConfirmBet3rdTicketInfoReq> sabaCallBackConfirmBet3rdReq = sabaCallBackReq.getMessage();
 
@@ -280,10 +280,10 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
             sabaCallBackConfirmBet3rdResp.setStatus("0");
             sabaCallBackConfirmBet3rdResp.setBalance(memBaseinfo.getBalance());
         }
-        return JSONObject.toJSONString(sabaCallBackConfirmBet3rdResp);
+        return sabaCallBackConfirmBet3rdResp;
     }
     //当 Cash Out 交易被接受后，沙巴体育将会通过此方法传输交易
-    public String cashOut(SabaCallBackReq<SabaCallBackCashOutReq<CashOutTicketInfoReq>> sabaCallBackReq){
+    public Object cashOut(SabaCallBackReq<SabaCallBackCashOutReq<CashOutTicketInfoReq>> sabaCallBackReq){
 
         SabaCallBackCashOutReq<CashOutTicketInfoReq> sabaCallBackCashOutReq = sabaCallBackReq.getMessage();
         List<CashOutTicketInfoReq> cashOutTicketInfoReqList = sabaCallBackCashOutReq.getTxns();
@@ -292,11 +292,11 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
         }
         SabaCallBackParentResp sabaCallBackParentResp = new SabaCallBackParentResp();
         sabaCallBackParentResp.setStatus("0");
-        return JSONObject.toJSONString(sabaCallBackParentResp);
+        return sabaCallBackParentResp;
     }
 
     //因 Cashout 票的异动造成原 Cashout 的主票发生变化，沙巴体育将会透过这支 API 传送原 Cashout 主票的信息。
-    public String updateBet(SabaCallBackReq<SabaCallBackCashOutReq<UpdateBetTicketInfoReq>> sabaCallBackReq){
+    public Object updateBet(SabaCallBackReq<SabaCallBackCashOutReq<UpdateBetTicketInfoReq>> sabaCallBackReq){
 
         SabaCallBackCashOutReq<UpdateBetTicketInfoReq> sabaCallBackCashOutReq = sabaCallBackReq.getMessage();
         List<UpdateBetTicketInfoReq> updateBetTicketInfoReqList = sabaCallBackCashOutReq.getTxns();
@@ -307,13 +307,13 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
 
         SabaCallBackParentResp sabaCallBackParentResp = new SabaCallBackParentResp();
         sabaCallBackParentResp.setStatus("0");
-        return JSONObject.toJSONString(sabaCallBackParentResp);
+        return sabaCallBackParentResp;
     }
 
     //检查沙巴体育与厂商之间的连结是否有效。
-    public String healthcheck(SabaCallBackReq<HealthCheckReq> sabaCallBackReq){
+    public Object healthcheck(SabaCallBackReq<HealthCheckReq> sabaCallBackReq){
         SabaCallBackParentResp sabaCallBackParentResp = new SabaCallBackParentResp();
         sabaCallBackParentResp.setStatus("0");
-        return JSONObject.toJSONString(sabaCallBackParentResp);
+        return sabaCallBackParentResp;
     }
 }
