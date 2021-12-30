@@ -54,7 +54,7 @@ public class AwcController {
 
         String params = "";
         if (loginUser == null || StringUtils.isBlank(loginUser.getAccount())) {
-            return Result.failed(MessageUtils.get("ParameterError"));
+            return Result.failed(MessageUtils.get("youarenotloggedin"));
         }
         log.info("AE真人、SV388斗鸡log {} initGame 进入游戏。。。loginUser:{}", isMobileLogin,platform, loginUser);
         RLock lock = redissonClient.getLock("AWC_GAME_" + loginUser.getId());
@@ -97,7 +97,7 @@ public class AwcController {
 
         String params = "";
         if (loginUser == null) {
-            return Result.failed(MessageUtils.get("ParameterError"));
+            return Result.failed(MessageUtils.get("youarenotloggedin"));
         }
         log.info("AE真人、SV388斗鸡log {} logout 进入游戏。。。loginUser:{}", loginUser.getId(), loginUser);
         try {

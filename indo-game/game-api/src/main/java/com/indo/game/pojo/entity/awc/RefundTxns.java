@@ -3,6 +3,8 @@ package com.indo.game.pojo.entity.awc;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @Data
 public class RefundTxns {
     @ApiModelProperty(value = "游戏商注单号")
@@ -27,10 +29,10 @@ public class RefundTxns {
     private String betType;
 
     @ApiModelProperty(value = "下注金额")
-    private String betAmount;
+    private BigDecimal betAmount;
 
     @ApiModelProperty(value = "返还金额 (包含下注金额)")
-    private String winAmount;
+    private BigDecimal winAmount;
 
     @ApiModelProperty(value = "游戏平台有效投注")
     private String turnover;

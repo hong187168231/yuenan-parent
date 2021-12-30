@@ -172,7 +172,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     callBacekFail.setDesc("Account is not exists");
                     return callBacekFail;
                 } else {
-                    BigDecimal betAmount = BigDecimal.valueOf(Double.valueOf(placeBetTxns.getBetAmount()));
+                    BigDecimal betAmount = placeBetTxns.getBetAmount();
                     if(memBaseinfo.getBalance().compareTo(betAmount) == -1){
                         AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                         callBacekFail.setStatus("1018");
@@ -538,8 +538,8 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     callBacekFail.setDesc("Account is not exists");
                     return callBacekFail;
                 } else {
-                    BigDecimal betAmount = BigDecimal.valueOf(Double.valueOf(refundTxns.getBetAmount()));
-                    BigDecimal winAmount = BigDecimal.valueOf(Double.valueOf(refundTxns.getBetAmount())).subtract(betAmount);
+                    BigDecimal betAmount = refundTxns.getBetAmount();
+                    BigDecimal winAmount = refundTxns.getWinAmount().subtract(betAmount);
                     BigDecimal balance = memBaseinfo.getBalance().add(winAmount);
                     gameCommonService.updateUserBalance(memBaseinfo, winAmount, GoldchangeEnum.REFUND, TradingEnum.INCOME);
                     String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
@@ -588,7 +588,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     callBacekFail.setDesc("Account is not exists");
                     return callBacekFail;
                 } else {
-                    BigDecimal winAmount = BigDecimal.valueOf(Double.valueOf(settleTxns.getWinAmount()));
+                    BigDecimal winAmount = settleTxns.getWinAmount();
                     BigDecimal balance = memBaseinfo.getBalance().add(winAmount);
                     gameCommonService.updateUserBalance(memBaseinfo, winAmount, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
                     String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
@@ -833,7 +833,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     callBacekFail.setDesc("Account is not exists");
                     return callBacekFail;
                 } else {
-                    BigDecimal winAmount = BigDecimal.valueOf(Double.valueOf(betNSettleTxns.getWinAmount()));
+                    BigDecimal winAmount = betNSettleTxns.getWinAmount();
                     if(memBaseinfo.getBalance().compareTo(winAmount) == -1){
                         AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                         callBacekFail.setStatus("1018");
@@ -978,7 +978,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     callBacekFail.setDesc("Account is not exists");
                     return callBacekFail;
                 } else {
-                    BigDecimal winAmount = BigDecimal.valueOf(Double.valueOf(freeSpinTxns.getWinAmount()));
+                    BigDecimal winAmount = freeSpinTxns.getWinAmount();
                     if(memBaseinfo.getBalance().compareTo(winAmount) == -1){
                         AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                         callBacekFail.setStatus("1018");
@@ -1109,7 +1109,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     return callBacekFail;
                 } else {
                     //打赏给直播主的金额
-                    BigDecimal tip = BigDecimal.valueOf(Double.valueOf(tipTxns.getTip()));
+                    BigDecimal tip = tipTxns.getTip();
                     if(memBaseinfo.getBalance().compareTo(tip) == -1){
                         AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                         callBacekFail.setStatus("1018");

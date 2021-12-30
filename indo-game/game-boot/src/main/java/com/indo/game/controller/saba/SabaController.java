@@ -49,7 +49,7 @@ public class SabaController {
 
         String params = "";
         if (loginUser == null || StringUtils.isBlank(loginUser.getAccount())) {
-            return Result.failed(MessageUtils.get("ParameterError"));
+            return Result.failed(MessageUtils.get("youarenotloggedin"));
         }
         log.info("sabalog {} initGame 进入游戏。。。loginUser:{}", platform, loginUser);
         RLock lock = redissonClient.getLock("SABA_GAME_" + loginUser.getId());
@@ -92,7 +92,7 @@ public class SabaController {
 
         String params = "";
         if (loginUser == null) {
-            return Result.failed(MessageUtils.get("ParameterError"));
+            return Result.failed(MessageUtils.get("youarenotloggedin"));
         }
         log.info("sabalog {} logout 进入游戏。。。loginUser:{}", loginUser.getId(), loginUser);
         try {

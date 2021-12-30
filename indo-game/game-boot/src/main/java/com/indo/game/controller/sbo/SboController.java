@@ -54,7 +54,7 @@ public class SboController {
 
         String params = "";
         if (loginUser == null || StringUtils.isBlank(loginUser.getAccount())) {
-            return Result.failed(MessageUtils.get("ParameterError"));
+            return Result.failed(MessageUtils.get("youarenotloggedin"));
         }
         log.info("sbolog {} initGame 进入游戏。。。loginUser:{}", platform, loginUser);
         RLock lock = redissonClient.getLock("SBO_GAME_" + loginUser.getId());
@@ -96,7 +96,7 @@ public class SboController {
 
         String params = "";
         if (loginUser == null) {
-            return Result.failed(MessageUtils.get("ParameterError"));
+            return Result.failed(MessageUtils.get("youarenotloggedin"));
         }
         log.info("sbolog {} logout 进入游戏。。。loginUser:{}", loginUser.getId(), loginUser);
         try {

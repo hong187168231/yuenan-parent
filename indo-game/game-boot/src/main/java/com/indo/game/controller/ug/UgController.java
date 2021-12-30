@@ -54,7 +54,7 @@ public class UgController {
 
         String params = "";
         if (loginUser == null || StringUtils.isBlank(loginUser.getAccount())) {
-            return Result.failed(MessageUtils.get("ParameterError"));
+            return Result.failed(MessageUtils.get("youarenotloggedin"));
         }
         log.info("uglog {} initGame 进入游戏。。。loginUser:{}", platform, loginUser);
         RLock lock = redissonClient.getLock("UG_GAME_" + loginUser.getId());
@@ -95,7 +95,7 @@ public class UgController {
 
         String params = "";
         if (loginUser == null) {
-            return Result.failed(MessageUtils.get("ParameterError"));
+            return Result.failed(MessageUtils.get("youarenotloggedin"));
         }
         log.info("uglog {} logout 进入游戏。。。loginUser:{}", loginUser.getId(), loginUser);
         try {

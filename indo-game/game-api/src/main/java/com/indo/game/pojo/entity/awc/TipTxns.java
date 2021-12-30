@@ -3,6 +3,8 @@ package com.indo.game.pojo.entity.awc;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @Data
 public class TipTxns {
     @ApiModelProperty(value = "游戏商注单号")
@@ -24,7 +26,7 @@ public class TipTxns {
     private String gameName;
 
     @ApiModelProperty(value = "打赏给直播主的金额")
-    private String tip;
+    private BigDecimal tip;
 
     @ApiModelProperty(value = "玩家货币代码")
     private String currency;

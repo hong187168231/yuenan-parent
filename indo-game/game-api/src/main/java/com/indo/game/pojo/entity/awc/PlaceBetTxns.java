@@ -3,6 +3,8 @@ package com.indo.game.pojo.entity.awc;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @Data
 public class PlaceBetTxns {
     @ApiModelProperty(value = "游戏商注单号")
@@ -30,7 +32,7 @@ public class PlaceBetTxns {
     private String betType;
 
     @ApiModelProperty(value = "下注金额")
-    private String betAmount;
+    private BigDecimal betAmount;
 
     @ApiModelProperty(value = "玩家下注时间")
     private String betTime;
