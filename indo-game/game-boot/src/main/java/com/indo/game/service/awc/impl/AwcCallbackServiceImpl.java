@@ -601,10 +601,10 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                         callBacekFail.setDesc("TxCode is not exist");
                         return callBacekFail;
                     }else {
+
                         BigDecimal winAmount = settleTxns.getWinAmount();
-                        BigDecimal realWinAmount = winAmount.subtract(settleTxns.getBetAmount());
-                        BigDecimal balance = memBaseinfo.getBalance().add(realWinAmount);
-                        gameCommonService.updateUserBalance(memBaseinfo, realWinAmount, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
+                        BigDecimal balance = memBaseinfo.getBalance().add(winAmount);
+                        gameCommonService.updateUserBalance(memBaseinfo, winAmount, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
                         String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
 
                         Txns txns = new Txns();
@@ -613,7 +613,6 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                         txns.setBalance(balance);
                         txns.setMethod("Settle");
                         txns.setStatus("Running");
-                        txns.setRealWinAmount(realWinAmount);
                         txns.setCreateTime(dateStr);
                         txnsMapper.insert(txns);
                         oldTxns.setStatus("Settle");
