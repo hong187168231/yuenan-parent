@@ -204,9 +204,8 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     placeBetSuccess.setStatus("0000");
 
                     BigDecimal balance = memBaseinfo.getBalance().subtract(betAmount);
-//                    gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
+                    gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
 
-                    gameCommonService.updateUserBalance(memBaseinfo, new BigDecimal("20.0"), GoldchangeEnum.REFUND, TradingEnum.INCOME);
                     placeBetSuccess.setBalance(balance);
                     String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
                     placeBetSuccess.setBalanceTs(DateUtils.getTimeAndZone());
@@ -588,22 +587,41 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     callBacekFail.setDesc("Account is not exists");
                     return callBacekFail;
                 } else {
-                    BigDecimal winAmount = settleTxns.getWinAmount();
-                    BigDecimal balance = memBaseinfo.getBalance().add(winAmount);
-                    gameCommonService.updateUserBalance(memBaseinfo, winAmount, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
-                    String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
+                    LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+                    wrapper.and(c -> c.eq(Txns::getMethod,"Place Bet").or().eq(Txns::getMethod,"Unsettle").or().eq(Txns::getMethod,"Adjust Bet"));
+                    wrapper.eq(Txns::getStatus,"Running");
+                    wrapper.eq(Txns::getPlatformTxId,settleTxns.getPlatformTxId());
+                    wrapper.eq(Txns::getPlatform,settleTxns.getPlatform());
+                    wrapper.eq(Txns::getGameType,settleTxns.getGameType());
+                    wrapper.eq(Txns::getUserId,settleTxns.getUserId());
+                    Txns oldTxns = txnsMapper.selectOne(wrapper);
+                    if(null==oldTxns){
+                        AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
+                        callBacekFail.setStatus("1017");
+                        callBacekFail.setDesc("TxCode is not exist");
+                        return callBacekFail;
+                    }else {
+                        BigDecimal winAmount = settleTxns.getWinAmount();
+                        BigDecimal realWinAmount = winAmount.subtract(settleTxns.getBetAmount());
+                        BigDecimal balance = memBaseinfo.getBalance().add(realWinAmount);
+                        gameCommonService.updateUserBalance(memBaseinfo, realWinAmount, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
+                        String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
 
-                    Txns txns = new Txns();
-                    BeanUtils.copyProperties(settleTxns,txns);
-                    txns.setId(null);
-                    txns.setBalance(balance);
-                    txns.setMethod("Settle");
-                    txns.setStatus("Running");
-                    txns.setCreateTime(dateStr);
-                    txnsMapper.insert(txns);
-                    AwcCallBackParentRespSuccess callBackSuccess = new AwcCallBackParentRespSuccess();
-                    callBackSuccess.setStatus("0000");
-                    return callBackSuccess;
+                        Txns txns = new Txns();
+                        BeanUtils.copyProperties(settleTxns, txns);
+                        txns.setId(null);
+                        txns.setBalance(balance);
+                        txns.setMethod("Settle");
+                        txns.setStatus("Running");
+                        txns.setRealWinAmount(realWinAmount);
+                        txns.setCreateTime(dateStr);
+                        txnsMapper.insert(txns);
+                        oldTxns.setStatus("Settle");
+                        txnsMapper.updateById(oldTxns);
+                        AwcCallBackParentRespSuccess callBackSuccess = new AwcCallBackParentRespSuccess();
+                        callBackSuccess.setStatus("0000");
+                        return callBackSuccess;
+                    }
                 }
             }
         } else {
