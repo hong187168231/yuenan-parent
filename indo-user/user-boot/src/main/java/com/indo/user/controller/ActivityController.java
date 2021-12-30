@@ -45,6 +45,7 @@ public class ActivityController {
     @Resource
     private DozerUtil dozerUtil;
 
+
     @ApiOperation(value = "查询活动类型列表", httpMethod = "GET")
     @GetMapping(value = "/typeList")
     @AllowAccess

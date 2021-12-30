@@ -35,6 +35,9 @@ public class MemGiftReceive extends BaseEntity {
     @ApiModelProperty(value = "礼金名称")
     private String giftName;
 
+    @ApiModelProperty(value = "晋升等级")
+    private Integer upLevel;
+
     @ApiModelProperty(value = "备注")
     private String remark;
 

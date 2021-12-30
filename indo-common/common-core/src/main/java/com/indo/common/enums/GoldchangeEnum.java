@@ -27,6 +27,16 @@ public enum GoldchangeEnum {
     REFUND(216, "返还金额"),
     DSFYXZZ(217, "第三方游戏平台转账"),
 
+    reward(301, "促销奖励"),
+    everyday(302, "每日礼金"),
+    week(303, "每周礼金"),
+    month(304, "每月礼金"),
+    birthday(305, "生日礼金"),
+    year(306, "每年礼金"),
+    register(307, "注册送好礼"),
+    SUPERLOTTO(309, "国年大乐透"),
+
+
     JJTC(407, "奖金提出");
 
     private Integer code;
@@ -70,6 +80,11 @@ public enum GoldchangeEnum {
             }
         }
         return null;
+    }
+
+
+    public static void main(String[] args) {
+        System.out.println(GoldchangeEnum.valueOf("CZ"));
     }
 
 

@@ -1,15 +1,12 @@
 package com.indo.admin.modules.mem.service;
 
-import com.indo.admin.modules.mem.entity.MemLevel;
 import com.indo.admin.modules.mem.req.MemLevelAddReq;
 import com.indo.admin.modules.mem.req.MemLevelPageReq;
 import com.indo.admin.modules.mem.req.MemLevelUpdateReq;
 import com.indo.admin.modules.mem.vo.MemLevelVo;
-import com.indo.admin.pojo.criteria.MemLevelQueryCriteria;
 import com.indo.common.mybatis.base.service.SuperService;
 import com.indo.common.result.PageResult;
-
-import java.util.List;
+import com.indo.user.pojo.entity.MemLevel;
 
 /**
  * <p>
@@ -21,7 +18,6 @@ import java.util.List;
  */
 public interface IMemLevelService extends SuperService<MemLevel> {
 
-
     /**
      * 查询数据分页
      *
@@ -29,16 +25,10 @@ public interface IMemLevelService extends SuperService<MemLevel> {
      */
     PageResult<MemLevelVo> selectByPage(MemLevelPageReq page);
 
-    /**
-     * 查询所有数据不分页
-     *
-     * @param criteria 条件参数
-     * @return List<YxSystemUserLevelDto>
-     */
-    List<MemLevel> queryAll(MemLevelQueryCriteria criteria);
-
     boolean saveOne(MemLevelAddReq req);
 
-    void updateOne(MemLevelUpdateReq req);
+    boolean updateOne(MemLevelUpdateReq req);
+
+    boolean delMemLevel(Long id);
 
 }

@@ -29,6 +29,16 @@ public class RedisKeys {
      */
     public static final String SYS_PARAMETER_CODE = "SYS:PARAMETER_CODE:";
 
+    /**
+     * 返点配置
+     */
+    public static final String SYS_REBATE_KEY = "SYS:REBATE_KEY";
+
+    /**
+     * 等级配置
+     */
+    public static final String SYS_LEVEL_KEY = "SYS:LEVEL_KEY";
+
 
     public static final String GAME_PLATFORM_KEY = "GAME_PLATFORM_KEY_";
     /**

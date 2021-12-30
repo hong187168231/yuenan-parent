@@ -11,17 +11,17 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-    public enum GiftNameEnum {
+public enum GiftNameEnum {
 
-    jslj(1, "晋升礼金"),
-    mrlj(2, "每日礼金 "),
-    mjlj(3, "每周礼金"),
-    mylj(4, "每月礼金"),
-    srlj(5, "生日礼金"),
-    mnlj(6, "每年礼金"),
+    reward(1, "晋升礼金"),
+    everyday(2, "每日礼金 "),
+    week(3, "每周礼金"),
+    month(4, "每月礼金"),
+    birthday(5, "生日礼金"),
+    year(6, "每年礼金"),
 
 
-    zcshl(7, "注册送好礼"),
+    register(7, "注册送好礼"),
     hdlj(8, "国年大乐透"),
     ckdhl(9, "国年大乐透");
 

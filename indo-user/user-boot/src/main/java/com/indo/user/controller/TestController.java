@@ -1,5 +1,7 @@
 package com.indo.user.controller;
 
+import com.alibaba.csp.sentinel.annotation.SentinelResource;
+import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.alibaba.fastjson.JSON;
 import com.indo.admin.api.SysParameterClient;
 import com.indo.admin.api.UserFeignClient;
@@ -12,10 +14,12 @@ import com.indo.common.redis.utils.RedisUtils;
 import com.indo.common.result.Result;
 import com.indo.user.pojo.dto.TestDTO;
 import com.indo.user.pojo.entity.MemBaseinfo;
+import com.indo.user.service.TestService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,8 +38,22 @@ public class TestController {
 
     @Resource
     private SysParameterClient sysParameterClient;
-//    @Resource
-//    private UserFeignClient uerFeignClient;
+
+    @Autowired
+    private TestService testService;
+
+
+    @GetMapping("/t1")
+    @AllowAccess
+    public String hello(@RequestParam("name") String name) {
+        return testService.sayHello(name);
+    }
+
+    @GetMapping("/t2")
+    @AllowAccess
+    public String circuitBreaker(@RequestParam("name") String name) {
+        return testService.circuitBreaker(name);
+    }
 
     @ApiOperation(value = "hello")
     @GetMapping("/hello")
@@ -63,15 +81,6 @@ public class TestController {
     public Result Validated(@Validated @RequestBody TestDTO testDTO) {
         return Result.success(testDTO);
     }
-
-
-//    @AllowAccess
-//    @ApiOperation(value = "hello3")
-//    @GetMapping("/hello3")
-//    public Object helloTwoT() {
-//        Result<SysUser> parameter = uerFeignClient.getUserByUsername("admin");
-//        return JSON.toJSONString(parameter);
-//    }
 
 
 }

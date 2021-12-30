@@ -41,7 +41,7 @@ public class DateUtils {
     public final static String monthFormat = "yyyyMM";
 
     public final static String yearFormat = "yyyy";
-    
+
     public final static String chineseDtFormat = "yyyy年MM月dd日";
 
     public final static String newFormat = "yyyy-MM-dd HH:mm:ss";
@@ -212,6 +212,68 @@ public class DateUtils {
     }
 
 
+    // 获得本月第一天0点时间
+    public static Date getMonthBegin() {
+        Calendar cal = Calendar.getInstance();
+        cal.set(cal.get(Calendar.YEAR),
+                cal.get(Calendar.MONDAY),
+                cal.get(Calendar.DAY_OF_MONTH),
+                0, 0, 0);
+        cal.set(Calendar.DAY_OF_MONTH, cal.getActualMinimum(Calendar.DAY_OF_MONTH));
+        return cal.getTime();
+
+    }
+
+
+    // 获得本月最后一天24点时间
+    public static Date getMonthEnd() {
+        Calendar cal = Calendar.getInstance();
+
+        cal.set(cal.get(Calendar.YEAR),
+                cal.get(Calendar.MONDAY),
+                cal.get(Calendar.DAY_OF_MONTH),
+                0, 0, 0);
+        cal.set(Calendar.DAY_OF_MONTH,
+                cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+        cal.set(Calendar.HOUR_OF_DAY, 24);
+        return cal.getTime();
+
+    }
+
+    /**
+     * 获取当年的开始时间戳
+     */
+    public static Date getYearStartTime() {
+        Calendar calendar = Calendar.getInstance();// 获取当前日期
+        calendar.add(Calendar.YEAR, 0);
+        calendar.add(Calendar.DATE, 0);
+        calendar.add(Calendar.MONTH, 0);
+        calendar.set(Calendar.DAY_OF_YEAR, 1);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        return calendar.getTime();
+    }
+
+    /**
+     * 获取当年的最后时间戳
+     */
+    public static Date getYearEndTime() {
+        Calendar calendar = Calendar.getInstance();// 获取当前日期
+        int year = calendar.get(Calendar.YEAR);
+        calendar.clear();
+        calendar.set(Calendar.YEAR, year);
+        calendar.set(Calendar.HOUR_OF_DAY, 23);
+        calendar.set(Calendar.MINUTE, 59);
+        calendar.set(Calendar.SECOND, 59);
+        calendar.set(Calendar.MILLISECOND, 999);
+        calendar.roll(Calendar.DAY_OF_YEAR, -1);
+        return calendar.getTime();
+
+    }
+
+
     /**
      * 获取上月的开始时间
      *
@@ -249,7 +311,7 @@ public class DateUtils {
         gc.setTime(date);
         return Integer.valueOf(gc.get(1));
     }
-    
+
 
     /**
      * 获取本月是哪一月
@@ -265,6 +327,7 @@ public class DateUtils {
 
     /**
      * 获取今天是哪天
+     *
      * @return
      */
     public static int getNowDay() {
@@ -273,7 +336,36 @@ public class DateUtils {
         gc.setTime(date);
         return gc.get(GregorianCalendar.DAY_OF_YEAR);
     }
-    
+
+
+    /**
+     * 获取当天的开始时间
+     *
+     * @return
+     */
+    public static Date getDayBegin() {
+        Calendar cal = new GregorianCalendar();
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        return cal.getTime();
+    }
+
+    /**
+     * 获取当天的结束时间
+     *
+     * @return
+     */
+    public static Date getDayEnd() {
+        Calendar cal = new GregorianCalendar();
+        cal.set(Calendar.HOUR_OF_DAY, 23);
+        cal.set(Calendar.MINUTE, 59);
+        cal.set(Calendar.SECOND, 59);
+        return cal.getTime();
+    }
+
+
     public static Date getDateMaxTime(Long millsecord) {
         return getDateMaxTime(getDate(millsecord));
     }
@@ -311,14 +403,6 @@ public class DateUtils {
         return df;
     }
 
-    public static void main(String[] args) {
-//        Date n = new Date();
-//        	n.setTime(1598202000*1000L);
-//        	System.out.println(format(n, newFormat));
-//        System.out.println(n);
-//        Date n1 = addHours(n, -12);
-//        System.out.println(n1);
-    }
 
     //日期格式转换，返回日期类型
     public static Date formatDate(Date date, String format) {
@@ -1271,7 +1355,7 @@ public class DateUtils {
         return format.parse(date);
     }
 
-    public static Duration differentDate(Date date1, Date date2){
+    public static Duration differentDate(Date date1, Date date2) {
         LocalDateTime ldt1 = date1.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
         LocalDateTime ldt2 = date2.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
         return Duration.between(ldt1, ldt2);

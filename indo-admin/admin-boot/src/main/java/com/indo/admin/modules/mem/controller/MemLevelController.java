@@ -23,7 +23,7 @@ import javax.annotation.Resource;
  * @author puff
  * @since 2021-08-26
  */
-@Api(tags = {"用户等级接口"})
+@Api(tags = {"用户等级接口" })
 @RestController
 @RequestMapping("/api/v1/memLevel")
 public class MemLevelController {
@@ -48,15 +48,13 @@ public class MemLevelController {
     @ApiOperation(value = "修改")
     @PutMapping(value = "/update")
     public Result update(@Validated @RequestBody MemLevelUpdateReq req) {
-        memLevelService.updateOne(req);
-        return Result.success(HttpStatus.OK);
+        return Result.judge(memLevelService.updateOne(req));
     }
 
     @ApiOperation(value = "删除")
     @DeleteMapping(value = "/delete/{id}")
-    public Result delete(@PathVariable Integer id) {
-        memLevelService.removeById(id);
-        return Result.success(HttpStatus.OK);
+    public Result delete(@PathVariable Long id) {
+        return Result.judge(memLevelService.delMemLevel(id));
     }
 
 }
