@@ -51,11 +51,12 @@ public class UgController {
     })
     public Result initGame(@LoginUser LoginInfo loginUser, @RequestParam("gameCode") String platform,
                            HttpServletRequest request) throws InterruptedException {
-        log.info("uglog {} initGame 进入游戏。。。loginUser:{}", loginUser.getId(), loginUser);
+
         String params = "";
         if (loginUser == null || StringUtils.isBlank(loginUser.getAccount())) {
             return Result.failed(MessageUtils.get("ParameterError"));
         }
+        log.info("uglog {} initGame 进入游戏。。。loginUser:{}", platform, loginUser);
         RLock lock = redissonClient.getLock("UG_GAME_" + loginUser.getId());
         boolean res = lock.tryLock(5, TimeUnit.SECONDS);
         try {
@@ -91,11 +92,12 @@ public class UgController {
     @ApiOperation(value = "ug登出玩家", httpMethod = "POST")
     @PostMapping("/logout")
     public Result logout(@LoginUser LoginInfo loginUser, HttpServletRequest request) throws InterruptedException {
-        log.info("uglog {} logout 进入游戏。。。loginUser:{}", loginUser.getId(), loginUser);
+
         String params = "";
         if (loginUser == null) {
             return Result.failed(MessageUtils.get("ParameterError"));
         }
+        log.info("uglog {} logout 进入游戏。。。loginUser:{}", loginUser.getId(), loginUser);
         try {
             String ip = IpUtil.getIpAddr(request);
             Result resultInfo = ugService.logout(loginUser, ip);
