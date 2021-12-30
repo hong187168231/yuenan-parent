@@ -24,18 +24,17 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/mem/rebate")
 public class MemRebateController {
-
     @Autowired
     private IMemRebateService memRebateService;
 
-    @ApiOperation(value = "分页查询")
-    @PostMapping(value = "query")
+    @ApiOperation(value = "返点配置查询")
+    @GetMapping(value = "query")
     public Result<MemRebateVo> list() {
         MemRebateVo result = memRebateService.queryMemRabate();
         return Result.success(result);
     }
 
-    @ApiOperation(value = "新增")
+    @ApiOperation(value = "修改")
     @PostMapping(value = "/add")
     public Result add(@RequestBody MemRebateAddReq req) {
         memRebateService.saveOne(req);

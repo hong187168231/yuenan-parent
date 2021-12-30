@@ -43,7 +43,7 @@ public class MemBaseInfoRpc {
         return Result.success(memBaseInfoService.getByAccount(account));
     }
 
-    @PostMapping("/updateMemGoldChange")
+    @PutMapping("/updateMemGoldChange")
     public Result<Boolean> updateMemGoldChange(@RequestBody MemGoldChangeDTO goldChangeDTO) {
         return Result.success(iMemGoldChangeService.updateMemGoldChange(goldChangeDTO));
     }

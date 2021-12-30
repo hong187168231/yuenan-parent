@@ -12,6 +12,7 @@ import com.indo.game.mapper.frontend.GamePlatformMapper;
 import com.indo.game.pojo.entity.manage.GamePlatform;
 import com.indo.game.service.common.GameCommonService;
 import com.indo.user.api.MemBaseInfoFeignClient;
+import com.indo.user.api.MemGoldFeignClient;
 import com.indo.user.pojo.dto.MemGoldChangeDTO;
 import com.indo.user.pojo.entity.MemBaseinfo;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +23,7 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 
 @Slf4j
-@Service
+@Service(value = "gameCommonService")
 public class GameCommonServiceImpl implements GameCommonService {
 
 
@@ -31,6 +32,8 @@ public class GameCommonServiceImpl implements GameCommonService {
 
     @Resource
     private MemBaseInfoFeignClient memBaseInfoFeignClient;
+    @Resource
+    private MemGoldFeignClient memGoldFeignClient;
 
 
     @Override
@@ -73,19 +76,20 @@ public class GameCommonServiceImpl implements GameCommonService {
         MemGoldChangeDTO goldChangeDO = new MemGoldChangeDTO();
         goldChangeDO.setChangeAmount(changeAmount);
         goldChangeDO.setTradingEnum(tradingEnum);
+
         goldChangeDO.setGoldchangeEnum(goldchangeEnum);
         goldChangeDO.setUserId(memBaseinfo.getId());
         goldChangeDO.setUpdateUser(memBaseinfo.getAccount());
 //      goldChangeDO.setRefId(rechargeOrder.getRechargeOrderId());
         Boolean flag;
-        Result result = memBaseInfoFeignClient.updateMemGoldChange(goldChangeDO);
+        Result result = memGoldFeignClient.updateMemGoldChange(goldChangeDO);
         if (null != result && Result.success().getCode().equals(result.getCode())) {
             flag = (Boolean) result.getData();
             if (!flag) {
                 throw new BizException("修改余额失败");
             }
         } else {
-            throw new BizException("No client with requested goldChangeDO: " + JSON.toJSONString(goldChangeDO));
+            throw new BizException("No client with 8requested goldChangeDO: " + JSON.toJSONString(goldChangeDO));
         }
     }
 

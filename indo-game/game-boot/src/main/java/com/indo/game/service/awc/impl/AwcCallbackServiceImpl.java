@@ -24,6 +24,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -33,7 +34,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Autowired
+    @Resource
     private GameCommonService gameCommonService;
     @Autowired
     private TxnsMapper txnsMapper;
@@ -164,7 +165,6 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     return callBacekFail;
                 }
                 String userId = placeBetTxns.getUserId();
-
                 MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
                 if (null == memBaseinfo) {
                     AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
@@ -204,7 +204,9 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     placeBetSuccess.setStatus("0000");
 
                     BigDecimal balance = memBaseinfo.getBalance().subtract(betAmount);
-                    gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
+//                    gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
+
+                    gameCommonService.updateUserBalance(memBaseinfo, new BigDecimal("20.0"), GoldchangeEnum.REFUND, TradingEnum.INCOME);
                     placeBetSuccess.setBalance(balance);
                     String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
                     placeBetSuccess.setBalanceTs(DateUtils.getTimeAndZone());

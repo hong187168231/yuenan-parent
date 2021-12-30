@@ -27,33 +27,22 @@ import java.util.List;
 @Service
 public class MemRebateServiceImpl extends ServiceImpl<MemRebateMapper, MemRebate> implements IMemRebateService {
 
-//    @Override
-//    public List<MemRebateVo> queryAll() {
-//        QueryWrapper<MemRebate> wrapper = new QueryWrapper<>();
-//        List<MemRebate> memRebates = baseMapper.selectList(wrapper);
-//        ArrayList<MemRebateVo> vos = new ArrayList<>();
-//        for (MemRebate memRebate : memRebates) {
-//            MemRebateVo memRebateVo = new MemRebateVo();
-//            BeanUtils.copyProperties(memRebate, memRebateVo);
-//            vos.add(memRebateVo);
-//        }
-//        return vos;
-//    }
 
     @Override
     public MemRebateVo queryMemRabate() {
+        MemRebateVo memRebateVo = new MemRebateVo();
         MemRebate memRebate = baseMapper.selectById(1);
-
         List<MemBetVo> list = JSONArray.parseArray(memRebate.getRebateValue(), MemBetVo.class);
-
-        return null;
+        memRebateVo.setBetList(list);
+        return memRebateVo;
     }
 
     @Override
     public boolean saveOne(MemRebateAddReq req) {
         MemRebate memRebate = new MemRebate();
         memRebate.setRebateValue(JSON.toJSONString(req.getBetList()));
-        return baseMapper.insert(memRebate) > 0;
+        memRebate.setId(1);
+        return baseMapper.updateById(memRebate) > 0;
     }
 
 }

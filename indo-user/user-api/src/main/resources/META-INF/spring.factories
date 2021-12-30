@@ -1,2 +1,3 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-   com.indo.user.api.fallback.MemBaseInfoFeignFallback
+   com.indo.user.api.fallback.MemBaseInfoFeignFallback,\
+   com.indo.user.api.fallback.MemGoldFeignFallback

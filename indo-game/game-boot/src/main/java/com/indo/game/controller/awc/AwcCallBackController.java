@@ -30,6 +30,8 @@ public class AwcCallBackController {
     @RequestMapping(value="/callBack",method=RequestMethod.POST)
     @ResponseBody
     public Object initGame(AwcApiRequestParentData awcApiRequestData, HttpServletRequest request) {
+
+
         String ip = IpUtil.getIpAddr(request);
         logger.info("awcCallBack {} callBack 回调,IP:"+ip+" params:{}",JSONObject.toJSONString(awcApiRequestData));
 

@@ -28,6 +28,9 @@ public class LevelInfo {
     @ApiModelProperty(value = "所需投注")
     private Integer needBet;
 
+    @ApiModelProperty(value = "促销奖金")
+    private Integer promotionGift;
+
     @ApiModelProperty(value = "专享福利")
     List<Gift> giftList;
 

@@ -2,24 +2,23 @@ package com.indo.admin.modules.mem.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.indo.common.pojo.entity.BaseEntity;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
-import java.math.BigDecimal;
 
 /**
  * <p>
  * 返点配置表
  * </p>
  *
- * @author kevin
- * @since 2021-11-04
+ * @author xxx
+ * @since 2021-12-29
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("mem_rebate")
+@ApiModel(value="MemRebate对象", description="返点配置表")
 public class MemRebate extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
@@ -27,14 +26,7 @@ public class MemRebate extends BaseEntity {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
-    /**
-     * 下级所需投注
-     */
-    private BigDecimal subTotalBet;
-
-    /**
-     * 返点值
-     */
+    @ApiModelProperty(value = "返点值")
     private String rebateValue;
 
 
