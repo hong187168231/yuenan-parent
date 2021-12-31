@@ -115,6 +115,13 @@
             <version>${indo.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.indo</groupId>
+            <artifactId>common-rabbitmq</artifactId>
+            <version>${indo.version}</version>
+        </dependency>
+
+
         <!-- Java图形验证码 -->
         <dependency>
             <groupId>com.github.whvcse</groupId>

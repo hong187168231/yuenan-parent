@@ -24,7 +24,7 @@ import java.util.List;
 public interface MemGiftReceiveMapper extends BaseMapper<MemGiftReceive> {
 
 
-    @Select("SELECT COUNT(1) from mem_gift_receive m WHERE m.mem_id = #{memId} and m.gift_code = #{giftCode} AND m.up_level = #{}")
+    @Select("SELECT COUNT(1) from mem_gift_receive m WHERE m.mem_id = #{memId} and m.gift_code = #{giftCode} AND m.up_level = #{upLevel}")
     int countVipUpLevelGift(@Param("memId") Long memId, @Param("giftCode") String giftCode, @Param("upLevel") Integer upLevel);
 
 
