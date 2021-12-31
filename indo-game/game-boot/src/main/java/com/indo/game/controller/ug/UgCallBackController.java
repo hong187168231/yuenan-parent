@@ -9,10 +9,7 @@ import com.indo.game.service.ug.UgCallbackService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/ug")
@@ -27,7 +24,7 @@ public class UgCallBackController {
      */
     @RequestMapping(value="/GetBalance",method=RequestMethod.POST)
     @ResponseBody
-    public Object getBalance(UgCallBackGetBalanceReq ugCallBackGetBalanceReq) {
+    public Object getBalance(@RequestParam UgCallBackGetBalanceReq ugCallBackGetBalanceReq) {
         logger.info("ugCallBack {} callBack 回调,getBalance获取余额 params:{}",JSONObject.toJSONString(ugCallBackGetBalanceReq));
         Object getBalance = ugCallbackService.getBalance(ugCallBackGetBalanceReq);
         logger.info("ugCallBack {} callBack 回调返回数据,getBalance获取余额 params:{}",ugCallBackGetBalanceReq);

@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("game_sbo_oper_info")
+@TableName("game_ug_oper_info")
 public class UgOperInfo extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
@@ -37,8 +37,8 @@ public class UgOperInfo extends BaseEntity {
     @NotNull(message = "金额")
     private BigDecimal amount;
 
-    @ApiModelProperty(value = "金额")
-    @NotNull(message = "金额")
+    @ApiModelProperty(value = "余额")
+    @NotNull(message = "余额")
     private BigDecimal balance;
 
 

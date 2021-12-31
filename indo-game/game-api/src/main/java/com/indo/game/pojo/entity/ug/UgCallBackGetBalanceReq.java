@@ -1,8 +1,18 @@
 package com.indo.game.pojo.entity.ug;
 
-import lombok.Data;
+import com.alibaba.fastjson.annotation.JSONField;
 
-@Data
-public class UgCallBackGetBalanceReq {
+public class UgCallBackGetBalanceReq extends UgCallBackParentReq {
+
     private String Account;
+
+    @JSONField(name="Account")
+    public String getAccount() {
+        return Account;
+    }
+
+    @JSONField(name="Account")
+    public void setAccount(String account) {
+        Account = account;
+    }
 }

@@ -65,12 +65,12 @@ public class AwcServiceImpl implements AwcService {
         if ("0".equals(gamePlatform.getIsStart())) {
             return Result.failed(MessageUtils.get("tgocinyo"));
         }
-        //初次判断站点棋牌余额是否够该用户
-        MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(loginUser.getAccount());
-        if (null==memBaseinfo){
-            return Result.failed(loginUser.getAccount()+"用户不存在");
-        }
-        BigDecimal balance = memBaseinfo.getBalance();
+//        //初次判断站点棋牌余额是否够该用户
+//        MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(loginUser.getAccount());
+//        if (null==memBaseinfo){
+//            return Result.failed(loginUser.getAccount()+"用户不存在");
+//        }
+        BigDecimal balance = loginUser.getBalance();
         //验证站点棋牌余额
         if (null==balance || BigDecimal.ZERO==balance) {
             logger.info("站点awc余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);

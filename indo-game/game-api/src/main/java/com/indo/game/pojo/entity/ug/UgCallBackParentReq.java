@@ -1,8 +1,18 @@
 package com.indo.game.pojo.entity.ug;
 
-import lombok.Data;
+import com.alibaba.fastjson.annotation.JSONField;
 
-@Data
 public class UgCallBackParentReq {
+
     private String APIPassword;
+
+    @JSONField(name="APIPassword")
+    public String getAPIPassword() {
+        return APIPassword;
+    }
+
+    @JSONField(name="APIPassword")
+    public void setAPIPassword(String APIPassword) {
+        this.APIPassword = APIPassword;
+    }
 }

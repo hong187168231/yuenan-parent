@@ -65,8 +65,8 @@ public class SabaServiceImpl implements SabaService {
             return Result.failed(MessageUtils.get("tgocinyo"));
         }
         //初次判断站点棋牌余额是否够该用户
-        MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(loginUser.getAccount());
-        BigDecimal balance = memBaseinfo.getBalance();
+//        MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(loginUser.getAccount());
+        BigDecimal balance = loginUser.getBalance();
         //验证站点棋牌余额
         if (null==balance || BigDecimal.ZERO==balance) {
             logger.info("站点saba余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
