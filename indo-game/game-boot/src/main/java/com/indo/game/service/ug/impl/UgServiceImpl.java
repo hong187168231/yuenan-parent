@@ -110,14 +110,15 @@ public class UgServiceImpl implements UgService {
         try {
             Map<String, String> trr = new HashMap<>();
             trr.put("MemberAccount", loginUser.getAccount());//账户名,长度需要小于 20,大小写不敏感
-            trr.put("NickName", loginUser.getNickName());//昵称,长度需要小于 50
+            trr.put("NickName", null==loginUser.getNickName()?"":loginUser.getNickName());//昵称,长度需要小于 50
             trr.put("Currency", gamePlatform.getCurrencyType());//货币代码
             String url = "";
             if(null!=OpenAPIProperties.UG_AGENT&&!"".equals(OpenAPIProperties.UG_AGENT)){
-                trr.put("AgentID", gamePlatform.getPlatformCode());//代理编号
-                url = OpenAPIProperties.UG_API_URL+"/SportApi/Register";
-            }else {
+                trr.put("AgentID", OpenAPIProperties.UG_AGENT);//代理编号
                 url = OpenAPIProperties.UG_API_URL+"/SportApi/RegisterByAgent";
+
+            }else {
+                url = OpenAPIProperties.UG_API_URL+"/SportApi/Register";
             }
 
             UgApiResponseData ugApiResponse = commonRequest(trr, url, loginUser.getId().intValue(), ip, "restrictedPlayer");
@@ -194,12 +195,13 @@ public class UgServiceImpl implements UgService {
      */
     @Override
     public UgApiResponseData commonRequest(Map<String, String> paramsMap, String url, Integer userId, String ip, String type) throws Exception {
-        logger.info("uglog {} commonRequest ,url:{},paramsMap:{}", userId, url, paramsMap);
 
         UgApiResponseData ugApiResponse = null;
         paramsMap.put("CompanyKey", OpenAPIProperties.UG_KEY);
         paramsMap.put("APIPassword", OpenAPIProperties.UG_API_PASSWORD);
+        logger.info("uglog {} commonRequest ,url:{},paramsMap:{}", userId, url, paramsMap);
         JSONObject sortParams = AWCUtil.sortMap(paramsMap);
+        logger.info("ug_api_request:"+sortParams);
         String resultString = AWCUtil.doProxyPostJson(url, paramsMap, type, userId);
         logger.info("ug_api_response:"+resultString);
         if (StringUtils.isNotEmpty(resultString)) {

@@ -49,7 +49,7 @@ public class UgController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "platform", value = "平台 ", paramType = "query", dataType = "string", required = true)
     })
-    public Result initGame(@LoginUser LoginInfo loginUser, @RequestParam("gameCode") String platform,
+    public Result initGame(@LoginUser LoginInfo loginUser, @RequestParam("platform") String platform,
                            HttpServletRequest request) throws InterruptedException {
 
         String params = "";

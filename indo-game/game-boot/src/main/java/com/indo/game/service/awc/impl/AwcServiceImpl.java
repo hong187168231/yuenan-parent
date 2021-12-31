@@ -339,6 +339,7 @@ public class AwcServiceImpl implements AwcService {
         paramsMap.put("cert", OpenAPIProperties.AWC_CERT);
         paramsMap.put("agentId", OpenAPIProperties.AWC_AGENTID);
         JSONObject sortParams = AWCUtil.sortMap(paramsMap);
+        logger.info("ug_api_request:"+sortParams);
         String resultString = AWCUtil.doProxyPostJson(url, paramsMap, type, userId);
         logger.info("acw_api_response:"+resultString);
         if (StringUtils.isNotEmpty(resultString)) {

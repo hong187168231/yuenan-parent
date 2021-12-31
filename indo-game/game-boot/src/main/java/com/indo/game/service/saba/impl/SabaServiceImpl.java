@@ -194,6 +194,7 @@ public class SabaServiceImpl implements SabaService {
         JSONObject sortParams = AWCUtil.sortMap(paramsMap);
         Map<String, String> trr = new HashMap<>();
         trr.put("param", sortParams.toString());
+        logger.info("ug_api_request:"+sortParams);
         String resultString = AWCUtil.doProxyPostJson(url, trr, type, userId);
         logger.info("saba_api_response:"+resultString);
         if (StringUtils.isNotEmpty(resultString)) {
