@@ -1,6 +1,7 @@
 package com.indo.common.rabbitmq;
 
 import com.google.common.base.Preconditions;
+import com.indo.common.rabbitmq.ser.Serializer;
 import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.messaging.converter.MessageConversionException;

@@ -1,7 +1,7 @@
 package com.indo.common.rabbitmq;
 
 import com.google.common.base.Preconditions;
-import com.indo.common.rabbitmq.api.Message;
+import com.indo.common.rabbitmq.bo.Message;
 import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.messaging.converter.MessageConversionException;
@@ -11,7 +11,7 @@ public class RabbitMessageConverter implements MessageConverter {
 
     private GenericMessageConverter delegate;
 
-//  private final String delaultExprie = String.valueOf(24 * 60 * 60 * 1000);
+    //  private final String delaultExprie = String.valueOf(24 * 60 * 60 * 1000);
     public RabbitMessageConverter(GenericMessageConverter genericMessageConverter) {
         Preconditions.checkNotNull(genericMessageConverter);
         this.delegate = genericMessageConverter;
