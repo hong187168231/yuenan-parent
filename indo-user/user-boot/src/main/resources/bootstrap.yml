@@ -8,3 +8,27 @@ spring:
     basename: i18n/message_zh
     encoding: UTF-8
 
+  rabbitmq:
+    host: 154.204.57.207
+    port: 5672
+    username: admin
+    password: admin
+    virtual-host: /
+    # 消息失败重回队列
+    publisher-returns: true
+    template:
+      mandatory: true
+    # 开启消息确认
+    publisher-confirm-type: correlated
+    listener:
+      simple:
+        retry:
+          enabled: true   #开启重试
+          max-attempts: 5   # 最大重试次数
+          initial-interval: 3000 #重试时间间隔
+        # 手动签收模式
+        acknowledge-mode: manual
+        # 每次签收一条消息
+        prefetch: 1
+        default-requeue-rejected: true
+

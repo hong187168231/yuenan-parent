@@ -28,7 +28,6 @@ public interface GlobalConstants {
     public static final Integer ACT_DATED = 2;
 
 
-
     /**
      * 常用接口
      */
@@ -39,4 +38,6 @@ public interface GlobalConstants {
         // IP归属地查询
         public static final String IP_URL = "http://whois.pconline.com.cn/ipJson.jsp?ip=%s&json=true";
     }
+
+    public static final Integer MSG_TIME_OUT = 1;
 }
