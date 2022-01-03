@@ -34,11 +34,11 @@ public class MemLevelServiceImpl extends SuperServiceImpl<MemLevelMapper, MemLev
     private MemLevelMapper memLevelMapper;
 
     @Override
-    public PageResult<MemLevelVo> selectByPage(MemLevelPageReq req) {
+    public Page<MemLevelVo> selectByPage(MemLevelPageReq req) {
         Page<MemLevelVo> page = new Page<>(req.getPage(), req.getLimit());
         List<MemLevelVo> list = memLevelMapper.listByMemLevel(page);
         page.setRecords(list);
-        return PageResult.getPageResult(page);
+        return page;
     }
 
     @Override

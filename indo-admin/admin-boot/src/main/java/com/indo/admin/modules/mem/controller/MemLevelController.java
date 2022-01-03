@@ -1,5 +1,6 @@
 package com.indo.admin.modules.mem.controller;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.modules.mem.req.MemLevelAddReq;
 import com.indo.admin.modules.mem.req.MemLevelPageReq;
 import com.indo.admin.modules.mem.req.MemLevelUpdateReq;
@@ -14,6 +15,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * <p>
@@ -23,7 +25,7 @@ import javax.annotation.Resource;
  * @author puff
  * @since 2021-08-26
  */
-@Api(tags = {"用户等级接口" })
+@Api(tags = {"用户等级接口"})
 @RestController
 @RequestMapping("/api/v1/memLevel")
 public class MemLevelController {
@@ -35,8 +37,9 @@ public class MemLevelController {
 
     @ApiOperation(value = "分页查询")
     @PostMapping(value = "/page")
-    public Result<PageResult<MemLevelVo>> page(@RequestBody MemLevelPageReq req) {
-        return Result.success(memLevelService.selectByPage(req));
+    public Result<List<MemLevelVo>> page(@RequestBody MemLevelPageReq req) {
+        Page<MemLevelVo> result = memLevelService.selectByPage(req);
+        return Result.success(result.getRecords(), result.getTotal());
     }
 
     @ApiOperation(value = "新增")

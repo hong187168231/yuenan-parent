@@ -1,5 +1,6 @@
 package com.indo.admin.modules.mem.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.modules.mem.req.MemLevelAddReq;
 import com.indo.admin.modules.mem.req.MemLevelPageReq;
 import com.indo.admin.modules.mem.req.MemLevelUpdateReq;
@@ -23,7 +24,7 @@ public interface IMemLevelService extends SuperService<MemLevel> {
      *
      * @return PageResult
      */
-    PageResult<MemLevelVo> selectByPage(MemLevelPageReq page);
+    Page<MemLevelVo> selectByPage(MemLevelPageReq page);
 
     boolean saveOne(MemLevelAddReq req);
 
