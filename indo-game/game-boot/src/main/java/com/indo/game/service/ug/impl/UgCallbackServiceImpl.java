@@ -1,10 +1,11 @@
 package com.indo.game.service.ug.impl;
 
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
-import com.indo.game.mapper.ug.UgOperInfoMapper;
+import com.indo.common.utils.DateUtils;
+import com.indo.game.mapper.TxnsMapper;
+import com.indo.game.pojo.entity.manage.Txns;
 import com.indo.game.pojo.entity.ug.*;
 import com.indo.game.pojo.vo.callback.ug.UgCallBackBalanceResp;
 import com.indo.game.pojo.vo.callback.ug.UgCallBackCancelResp;
@@ -26,9 +27,9 @@ public class UgCallbackServiceImpl implements UgCallbackService {
 
     @Autowired
     private GameCommonService gameCommonService;
-    @Autowired
-    private UgOperInfoMapper ugOperInfoMapper;
 
+    @Autowired
+    private TxnsMapper txnsMapper;
 
     //取得用户的余额
     public Object getBalance(UgCallBackGetBalanceReq ugCallBackGetBalanceReq) {
@@ -103,16 +104,17 @@ public class UgCallbackServiceImpl implements UgCallbackService {
                     b = true;
                     balance  = balance.add(betAmount);
 
-                    UgOperInfo ugOperInfo = new UgOperInfo();
-                    ugOperInfo.setMethod(ugCallBackTransactionItemReqUgCallBackTransferReq.getMethod());
-                    ugOperInfo.setBet(ugCallBackTransactionItemReq.isBet());
-                    ugOperInfo.setAccount(ugCallBackTransactionItemReq.getAccount());
-                    ugOperInfo.setTransactionNo(ugCallBackTransactionItemReq.getTransactionNo());
-                    ugOperInfo.setCreateTime(new Date());
-                    ugOperInfo.setBetID(ugCallBackTransactionItemReq.getBetID());
-                    ugOperInfo.setBalance(balance);
-                    ugOperInfo.setStatus("Running");
-                    ugOperInfoMapper.insert(ugOperInfo);
+                    Txns txns = new Txns();
+                    txns.setMethod(ugCallBackTransactionItemReqUgCallBackTransferReq.getMethod());
+//                    ugOperInfo.setBet(ugCallBackTransactionItemReq.isBet());
+                    txns.setUserId(ugCallBackTransactionItemReq.getAccount());
+                    txns.setPlatformTxId(ugCallBackTransactionItemReq.getTransactionNo());
+                    String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
+                    txns.setCreateTime(dateStr);
+                    txns.setRoundId(ugCallBackTransactionItemReq.getBetID());
+                    txns.setBalance(balance);
+                    txns.setStatus("Running");
+                    txnsMapper.insert(txns);
                 }
             }
             ugCallBackBalanceRespList.add(ugCallBackBalanceResp);
@@ -144,15 +146,15 @@ public class UgCallbackServiceImpl implements UgCallbackService {
             ugCallBackCancelResp.setErrorCode("010001");
             ugCallBackCancelResp.setErrorMessage("会员帐号不存在");
         }else {
-            LambdaQueryWrapper<UgOperInfo> wrapper = new LambdaQueryWrapper<>();
-            wrapper.eq(UgOperInfo::getStatus,"Running");
-            wrapper.eq(UgOperInfo::getAccount,ugCallBackCancelReq.getAccount());
-            wrapper.eq(UgOperInfo::getTransactionNo,ugCallBackCancelReq.getTransactionNo());
-            UgOperInfo oldOperInfo = ugOperInfoMapper.selectOne(wrapper);
+            LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+            wrapper.eq(Txns::getStatus,"Running");
+            wrapper.eq(Txns::getUserId,ugCallBackCancelReq.getAccount());
+            wrapper.eq(Txns::getPlatformTxId,ugCallBackCancelReq.getTransactionNo());
+            Txns oldOperInfo = txnsMapper.selectOne(wrapper);
             BigDecimal balance = memBaseinfo.getBalance();
             if(null!=oldOperInfo && oldOperInfo.getMethod().equals("Transfer")){
                 BigDecimal betAmount = oldOperInfo.getAmount().abs();
-                if(oldOperInfo.isBet()){//此交易是否是投注
+                if(oldOperInfo.getBet()){//此交易是否是投注
                     if(BigDecimal.valueOf(0).compareTo(oldOperInfo.getAmount()) == -1){
                         gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
                         balance = balance.subtract(betAmount);
@@ -169,18 +171,19 @@ public class UgCallbackServiceImpl implements UgCallbackService {
                         balance = balance.add(betAmount);
                     }
                 }
-                UgOperInfo ugOperInfo = new UgOperInfo();
-                ugOperInfo.setMethod(ugCallBackCancelReq.getMethod());
-                ugOperInfo.setBet(oldOperInfo.isBet());
-                ugOperInfo.setAccount(oldOperInfo.getAccount());
-                ugOperInfo.setTransactionNo(ugCallBackCancelReq.getTransactionNo());
-                ugOperInfo.setCreateTime(new Date());
-                ugOperInfo.setBetID(oldOperInfo.getBetID());
-                ugOperInfo.setBalance(balance);
-                ugOperInfo.setStatus("Running");
-                ugOperInfoMapper.insert(ugOperInfo);
+                Txns txns = new Txns();
+                txns.setMethod(ugCallBackCancelReq.getMethod());
+                txns.setBet(oldOperInfo.getBet());
+                txns.setUserId(oldOperInfo.getUserId());
+                txns.setPlatformTxId(ugCallBackCancelReq.getTransactionNo());
+                String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
+                txns.setCreateTime(dateStr);
+                txns.setRoundId(oldOperInfo.getRoundId());
+                txns.setBalance(balance);
+                txns.setStatus("Running");
+                txnsMapper.insert(txns);
                 oldOperInfo.setStatus("Cancel");
-                ugOperInfoMapper.updateById(oldOperInfo);
+                txnsMapper.updateById(oldOperInfo);
             }
             ugCallBackCancelResp.setErrorCode("000000");
             ugCallBackCancelResp.setErrorMessage("操作成功");
@@ -204,11 +207,11 @@ public class UgCallbackServiceImpl implements UgCallbackService {
             ugCallBackBalanceResp.setErrorCode("010001");
             ugCallBackBalanceResp.setErrorMessage("会员帐号不存在");
         }else {
-            LambdaQueryWrapper<UgOperInfo> wrapper = new LambdaQueryWrapper<>();
-            wrapper.eq(UgOperInfo::getStatus,"Running");
-            wrapper.eq(UgOperInfo::getAccount,ugCallBackCancelReq.getAccount());
-            wrapper.eq(UgOperInfo::getTransactionNo,ugCallBackCancelReq.getTransactionNo());
-            UgOperInfo oldOperInfo = ugOperInfoMapper.selectOne(wrapper);
+            LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+            wrapper.eq(Txns::getStatus,"Running");
+            wrapper.eq(Txns::getUserId,ugCallBackCancelReq.getAccount());
+            wrapper.eq(Txns::getPlatformTxId,ugCallBackCancelReq.getTransactionNo());
+            Txns oldOperInfo = txnsMapper.selectOne(wrapper);
             if(null==oldOperInfo){
                 ugCallBackBalanceResp.setErrorCode("300002");
                 ugCallBackBalanceResp.setErrorMessage("存取款失败");

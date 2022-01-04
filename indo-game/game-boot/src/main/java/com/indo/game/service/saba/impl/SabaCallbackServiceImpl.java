@@ -6,7 +6,8 @@ import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.common.utils.DateUtils;
 import com.indo.common.utils.SnowflakeIdWorker;
-import com.indo.game.mapper.saba.SabaOperInfoMapper;
+import com.indo.game.mapper.TxnsMapper;
+import com.indo.game.pojo.entity.manage.Txns;
 import com.indo.game.pojo.entity.saba.*;
 import com.indo.game.pojo.vo.callback.saba.*;
 import com.indo.game.service.common.GameCommonService;
@@ -28,7 +29,7 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
     private GameCommonService gameCommonService;
 
     @Autowired
-    private SabaOperInfoMapper sabaOperInfoMapper;
+    private TxnsMapper txnsMapper;
 
     //取得用户的余额
     public Object getBalance(SabaCallBackReq<SabaCallBackParentReq> sabaCallBackReq) {
@@ -74,11 +75,12 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
                 sabaCallBackPlaceBetResp.setRefId(sabaCallBackPlaceBetReq.getRefId());
                 sabaCallBackPlaceBetResp.setLicenseeTxId(SnowflakeIdWorker.createOrderSn());
 
-                SabaOperInfo sabaOperInfo = new SabaOperInfo();
-                BeanUtils.copyProperties(sabaCallBackPlaceBetReq,sabaOperInfo);
-                sabaOperInfo.setCreateTime(new Date());
-                sabaOperInfo.setOperStatus("PlaceBet");
-                sabaOperInfoMapper.insert(sabaOperInfo);
+                Txns txns = new Txns();
+                BeanUtils.copyProperties(sabaCallBackPlaceBetReq,txns);
+                String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
+                txns.setCreateTime(dateStr);
+                txns.setMethod("PlaceBet");
+                txnsMapper.insert(txns);
                 return sabaCallBackPlaceBetResp;
             }
         }
@@ -97,18 +99,18 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
             List<TicketInfoReq> list = sabaCallBackConfirmBetReq.getTxns();
             BigDecimal balance = memBaseinfo.getBalance();
             for (TicketInfoReq t : list){
-                LambdaQueryWrapper<SabaOperInfo> wrapper = new LambdaQueryWrapper<>();
-                wrapper.eq(SabaOperInfo::getOperationId,sabaCallBackConfirmBetReq.getOperationId());
-                wrapper.eq(SabaOperInfo::getUserId,sabaCallBackConfirmBetReq.getUserId());
-                wrapper.eq(SabaOperInfo::getRefId,t.getRefId());
-                wrapper.eq(SabaOperInfo::getOperStatus,"PlaceBet");
-                SabaOperInfo sabaOperInfo = sabaOperInfoMapper.selectOne(wrapper);
-                if(sabaOperInfo.getActualAmount().compareTo(t.getActualAmount()) != 0){
-                    sabaOperInfo.setOdds(t.getOdds());
-                    sabaOperInfo.setActualAmount(t.getActualAmount());
-                    sabaOperInfoMapper.updateById(sabaOperInfo);
-                    BigDecimal dAmount = sabaOperInfo.getActualAmount().subtract(t.getActualAmount());
-                    if(sabaOperInfo.getActualAmount().compareTo(t.getActualAmount()) == -1){
+                LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+                wrapper.eq(Txns::getPlatformTxId,sabaCallBackConfirmBetReq.getOperationId());
+                wrapper.eq(Txns::getUserId,sabaCallBackConfirmBetReq.getUserId());
+                wrapper.eq(Txns::getRePlatformTxId,t.getRefId());
+                wrapper.eq(Txns::getStatus,"PlaceBet");
+                Txns txns = txnsMapper.selectOne(wrapper);
+                if(txns.getRealBetAmount().compareTo(t.getActualAmount()) != 0){
+                    txns.setOdds(t.getOdds());
+                    txns.setRealBetAmount(t.getActualAmount());
+                    txnsMapper.updateById(txns);
+                    BigDecimal dAmount = txns.getRealBetAmount().subtract(t.getActualAmount());
+                    if(txns.getRealBetAmount().compareTo(t.getActualAmount()) == -1){
                         gameCommonService.updateUserBalance(memBaseinfo, dAmount, GoldchangeEnum.ADJUST_BET, TradingEnum.SPENDING);
                     }else {
                         gameCommonService.updateUserBalance(memBaseinfo, dAmount, GoldchangeEnum.ADJUST_BET, TradingEnum.INCOME);
@@ -138,20 +140,20 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
             List<TradingInfoReq> list = sabaCallBackCancelBetReq.getTxns();
             BigDecimal balance = memBaseinfo.getBalance();
             for (TradingInfoReq t : list){
-                LambdaQueryWrapper<SabaOperInfo> wrapper = new LambdaQueryWrapper<>();
-                wrapper.eq(SabaOperInfo::getOperationId,sabaCallBackCancelBetReq.getOperationId());
-                wrapper.eq(SabaOperInfo::getUserId,sabaCallBackCancelBetReq.getUserId());
-                wrapper.eq(SabaOperInfo::getRefId,t.getRefId());
-                wrapper.eq(SabaOperInfo::getOperStatus,"PlaceBet");
-                SabaOperInfo oldSabaOperInfo = sabaOperInfoMapper.selectOne(wrapper);
-                oldSabaOperInfo.setOperStatus("CancelBet");
-                sabaOperInfoMapper.updateById(oldSabaOperInfo);
-                gameCommonService.updateUserBalance(memBaseinfo, oldSabaOperInfo.getActualAmount(), GoldchangeEnum.CANCEL_BET, TradingEnum.INCOME);
-                balance = balance.add(oldSabaOperInfo.getActualAmount());
-                SabaOperInfo sabaOperInfo = new SabaOperInfo();
-                BeanUtils.copyProperties(oldSabaOperInfo,sabaOperInfo);
-                sabaOperInfo.setCreditAmount(t.getCreditAmount());
-                sabaOperInfo.setDebitAmount(t.getDebitAmount());
+                LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+                wrapper.eq(Txns::getPlatformTxId,sabaCallBackCancelBetReq.getOperationId());
+                wrapper.eq(Txns::getUserId,sabaCallBackCancelBetReq.getUserId());
+                wrapper.eq(Txns::getRePlatformTxId,t.getRefId());
+                wrapper.eq(Txns::getStatus,"PlaceBet");
+                Txns oldTxns = txnsMapper.selectOne(wrapper);
+                oldTxns.setMethod("CancelBet");
+                txnsMapper.updateById(oldTxns);
+                gameCommonService.updateUserBalance(memBaseinfo, oldTxns.getRealBetAmount(), GoldchangeEnum.CANCEL_BET, TradingEnum.INCOME);
+                balance = balance.add(oldTxns.getRealBetAmount());
+                Txns txns = new Txns();
+                BeanUtils.copyProperties(oldTxns,txns);
+                txns.setRealBetAmount(t.getCreditAmount());//需增加在玩家的金额。
+                txns.setRealWinAmount(t.getDebitAmount());//需从玩家扣除的金额
             }
             SabaCallBackConfirmBetResp sabaCallBackConfirmBetResp = new SabaCallBackConfirmBetResp();
             sabaCallBackConfirmBetResp.setStatus("0");

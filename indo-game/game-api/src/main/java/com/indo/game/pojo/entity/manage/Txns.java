@@ -1,4 +1,4 @@
-package com.indo.game.pojo.entity.awc;
+package com.indo.game.pojo.entity.manage;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
-@TableName("game_awc_txns")
+@TableName("game_txns")
 public class Txns {
     @ApiModelProperty(value = "id")
     @TableId(value = "id", type = IdType.AUTO)
@@ -22,14 +22,23 @@ public class Txns {
     @ApiModelProperty(value = "游戏商注单号")
     private String platformTxId;
 
+    @ApiModelProperty(value = "此交易是否是投注")
+    private Boolean bet;
+
     @ApiModelProperty(value = "玩家 ID")
     private String userId;
 
     @ApiModelProperty(value = "玩家货币代码")
     private String currency;
 
-    @ApiModelProperty(value = "游戏平台名称")
+    @ApiModelProperty(value = "游戏平台代码")
     private String platform;
+
+    @ApiModelProperty(value = "游戏平台英文名称")
+    private String platformEnName;
+
+    @ApiModelProperty(value = "游戏平台中文名称")
+    private String platformCnName;
 
     @ApiModelProperty(value = "平台游戏类型")
     private String gameType;
@@ -58,20 +67,26 @@ public class Txns {
     @ApiModelProperty(value = "更新时间 (遵循 ISO8601 格式)")
     private String updateTime;
 
-    @ApiModelProperty(value = "真实下注金额")
+    @ApiModelProperty(value = "真实下注金额,需增加在玩家的金额")
     private BigDecimal realBetAmount;
 
-    @ApiModelProperty(value = "真实返还金额")
+    @ApiModelProperty(value = "真实返还金额,需从玩家扣除的金额")
     private BigDecimal realWinAmount;
 
     @ApiModelProperty(value = "返还金额 (包含下注金额)")
     private BigDecimal winAmount;
 
+    @ApiModelProperty(value = "赌注的结果 : {赢:0,输:1,平手:2}.")
+    private int resultType;
+
     @ApiModelProperty(value = "游戏平台有效投注")
-    private String turnover;
+    private BigDecimal turnover;
 
     @ApiModelProperty(value = "辨认交易时间依据")
     private String txTime;
+
+    @ApiModelProperty(value = "返回单号")
+    private String rePlatformTxId;
 
     @ApiModelProperty(value = "返还金额当局的游戏商注单号")
     private String refundPlatformTxId;
@@ -102,6 +117,12 @@ public class Txns {
     @ApiModelProperty(value = "打赏给直播主的金额")
     private BigDecimal tip;
 
+    @ApiModelProperty(value = "赔率")
+    private BigDecimal odds;
+
+    @ApiModelProperty(value = "赔率类型")
+    private short oddsType;
+
     @ApiModelProperty(value = "打赏资讯，此参数仅游戏商有提供资讯时才会出现")
     private String tipinfo;
 
@@ -118,5 +139,11 @@ public class Txns {
 
     @ApiModelProperty(value = "创建时间")
     private String createTime;
+
+    @ApiModelProperty(value = "游戏分类ID")
+    private Long categoryId;
+
+    @ApiModelProperty(value = "游戏分类名称")
+    private String categoryName;
 
 }

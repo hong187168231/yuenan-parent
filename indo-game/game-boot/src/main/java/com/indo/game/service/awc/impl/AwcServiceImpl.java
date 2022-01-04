@@ -9,7 +9,6 @@ import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.config.OpenAPIProperties;
 import com.indo.game.mapper.frontend.GameCategoryMapper;
 import com.indo.game.mapper.frontend.GamePlatformMapper;
-import com.indo.game.mapper.awc.AwcTransactionMapper;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.game.pojo.entity.awc.AwcTransaction;
 import com.indo.game.pojo.entity.awc.AwcApiResponseData;
@@ -18,7 +17,6 @@ import com.indo.game.service.awc.AwcService;
 import com.indo.game.common.util.AWCUtil;
 import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
-import com.indo.user.pojo.entity.MemBaseinfo;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,8 +41,6 @@ public class AwcServiceImpl implements AwcService {
     @Autowired
     private GameCommonService gameCommonService;
 
-    @Autowired
-    AwcTransactionMapper awcTransactionMapper;
     @Autowired
     GameCategoryMapper gameCategoryMapper;
     @Autowired
@@ -307,7 +303,7 @@ public class AwcServiceImpl implements AwcService {
                 List<AwcTransaction> list = (List<AwcTransaction>)result.getTransactions();
 
                 if (null!=list && list.size() > 0) {
-                    awcTransactionMapper.insertBatch(list);
+//                    awcTransactionMapper.insertBatch(list);
                 }
             }
         } catch (Exception e) {

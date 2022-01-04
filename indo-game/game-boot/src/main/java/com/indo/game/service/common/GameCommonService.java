@@ -2,6 +2,7 @@ package com.indo.game.service.common;
 
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
+import com.indo.game.pojo.entity.manage.GameCategory;
 import com.indo.game.pojo.entity.manage.GamePlatform;
 import com.indo.user.pojo.dto.MemGoldChangeDTO;
 import com.indo.user.pojo.entity.MemBaseinfo;
@@ -45,6 +46,13 @@ public interface GameCommonService {
      * @return
      */
     void updateUserBalance(MemBaseinfo memBaseinfo, BigDecimal changeAmount, GoldchangeEnum goldchangeEnum, TradingEnum tradingEnum);
+
+    /**
+     * 查询分类信息
+     * @param id
+     * @return
+     */
+    public GameCategory getGameCategoryById(Long id);
 
 
 }

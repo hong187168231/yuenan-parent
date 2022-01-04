@@ -1,7 +1,12 @@
 package com.indo.game.controller.app;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.common.annotation.AllowAccess;
+import com.indo.common.annotation.LoginUser;
+import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
+import com.indo.game.pojo.entity.manage.Txns;
 import com.indo.game.pojo.entity.manage.*;
 import com.indo.game.service.app.IGameManageService;
 import io.swagger.annotations.Api;
@@ -55,5 +60,13 @@ public class GameManageController {
     })
     public Result<List<GamePlatform>> queryGamePlatformByCategory(@RequestParam("categoryId") Long categoryId){
         return iFrontEndGameManageService.queryGamePlatformByCategory(categoryId);
+    }
+
+    @ApiOperation(value = "查询所有游戏记录", httpMethod = "POST")
+    @PostMapping(value = "/allGameInfo")
+    @AllowAccess
+    public Result<List<Txns>> queryAllGameInfo(@LoginUser LoginInfo loginUser, @RequestParam GameInfoPageReq req){
+        IPage<Txns> result = iFrontEndGameManageService.queryAllGameInfo(req);
+        return Result.success(result.getRecords(), result.getTotal());
     }
 }

@@ -8,9 +8,11 @@ import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.common.utils.DateUtils;
 import com.indo.game.config.OpenAPIProperties;
-import com.indo.game.mapper.awc.TxnsMapper;
+import com.indo.game.mapper.TxnsMapper;
 import com.indo.game.pojo.entity.awc.*;
+import com.indo.game.pojo.entity.manage.GameCategory;
 import com.indo.game.pojo.entity.manage.GamePlatform;
+import com.indo.game.pojo.entity.manage.Txns;
 import com.indo.game.pojo.vo.callback.awc.AwcCallBackParentRespSuccess;
 import com.indo.game.pojo.vo.callback.awc.AwcCallBackRespFail;
 import com.indo.game.pojo.vo.callback.awc.AwcCallBackRespSuccess;
@@ -159,6 +161,8 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
         if (null != placeBetTxnsList && placeBetTxnsList.size() > 0) {
             BigDecimal balance = BigDecimal.ZERO;
             MemBaseinfo memBaseinfo = new MemBaseinfo();
+            GameCategory gameCategory = new GameCategory();
+            GamePlatform gamePlatform = new GamePlatform();
             for (int i=0;i<placeBetTxnsList.size();i++) {
                 PlaceBetTxns placeBetTxns = placeBetTxnsList.get(i);
                 if(!checkIp(ip,placeBetTxns.getPlatform())){
@@ -169,6 +173,8 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 }
                 if(i==0){
                     String userId = placeBetTxns.getUserId();
+                    gamePlatform = gameCommonService.getGamePlatformByplatformCode(placeBetTxns.getPlatform());
+                    gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
                     memBaseinfo = gameCommonService.getByAccountNo(userId);
                     balance = memBaseinfo.getBalance();
                     if (null == memBaseinfo) {
@@ -211,15 +217,17 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 balance = balance.subtract(betAmount);
                 gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
 
-
-                String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
-
                 Txns txns = new Txns();
                 BeanUtils.copyProperties(placeBetTxns,txns);
                 txns.setBalance(balance);
                 txns.setMethod("Place Bet");
                 txns.setStatus("Running");
+                String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
                 txns.setCreateTime(dateStr);
+                txns.setPlatformCnName(gamePlatform.getPlatformCnName());
+                txns.setPlatformEnName(gamePlatform.getPlatformEnName());
+                txns.setCategoryId(gameCategory.getId());
+                txns.setCategoryName(gameCategory.getGameName());
                 txnsMapper.insert(txns);
 
             }
@@ -546,6 +554,8 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
         });
         List<RefundTxns> refundTxnsList = apiRequestData.getTxns();
         if (null != refundTxnsList && refundTxnsList.size() > 0) {
+            GameCategory gameCategory = new GameCategory();
+            GamePlatform gamePlatform = new GamePlatform();
             for (RefundTxns refundTxns : refundTxnsList) {
                 if(!checkIp(ip,refundTxns.getPlatform())){
                     AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
@@ -553,6 +563,8 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     callBacekFail.setDesc("invalid IP address.");
                     return callBacekFail;
                 }
+                gamePlatform = gameCommonService.getGamePlatformByplatformCode(refundTxns.getPlatform());
+                gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
                 String userId = refundTxns.getUserId();
                 MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
                 if (null == memBaseinfo) {
@@ -574,6 +586,10 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     txns.setMethod("Refund");
                     txns.setStatus("Running");
                     txns.setCreateTime(dateStr);
+                    txns.setPlatformCnName(gamePlatform.getPlatformCnName());
+                    txns.setPlatformEnName(gamePlatform.getPlatformEnName());
+                    txns.setCategoryId(gameCategory.getId());
+                    txns.setCategoryName(gameCategory.getGameName());
                     txnsMapper.insert(txns);
                 }
             }
@@ -594,6 +610,8 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
         });
         List<SettleTxns> settleTxnsList = apiRequestData.getTxns();
         if (null != settleTxnsList && settleTxnsList.size() > 0) {
+            GameCategory gameCategory = new GameCategory();
+            GamePlatform gamePlatform = new GamePlatform();
             for (SettleTxns settleTxns : settleTxnsList) {
                 if(!checkIp(ip,settleTxns.getPlatform())){
                     AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
@@ -601,6 +619,8 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     callBacekFail.setDesc("invalid IP address.");
                     return callBacekFail;
                 }
+                gamePlatform = gameCommonService.getGamePlatformByplatformCode(settleTxns.getPlatform());
+                gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
                 String userId = settleTxns.getUserId();
                 MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(userId);
                 if (null == memBaseinfo) {
@@ -636,6 +656,10 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                         txns.setMethod("Settle");
                         txns.setStatus("Running");
                         txns.setCreateTime(dateStr);
+                        txns.setPlatformCnName(gamePlatform.getPlatformCnName());
+                        txns.setPlatformEnName(gamePlatform.getPlatformEnName());
+                        txns.setCategoryId(gameCategory.getId());
+                        txns.setCategoryName(gameCategory.getGameName());
                         txnsMapper.insert(txns);
                         oldTxns.setStatus("Settle");
                         txnsMapper.updateById(oldTxns);
@@ -866,6 +890,8 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
         if (null != betNSettleTxnsList && betNSettleTxnsList.size() > 0) {
             BigDecimal balance = BigDecimal.ZERO;
             MemBaseinfo memBaseinfo = new MemBaseinfo();
+            GameCategory gameCategory = new GameCategory();
+            GamePlatform gamePlatform = new GamePlatform();
             for (int i=0;i<betNSettleTxnsList.size();i++) {
                 BetNSettleTxns betNSettleTxns = betNSettleTxnsList.get(i);
                 if(!checkIp(ip,betNSettleTxns.getPlatform())){
@@ -875,6 +901,8 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     return callBacekFail;
                 }
                 if(i==0){
+                    gamePlatform = gameCommonService.getGamePlatformByplatformCode(betNSettleTxns.getPlatform());
+                    gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
                     String userId = betNSettleTxns.getUserId();
                     memBaseinfo = gameCommonService.getByAccountNo(userId);
                     balance = memBaseinfo.getBalance();
@@ -924,6 +952,10 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 txns.setMethod("BetNSettle");
                 txns.setStatus("Running");
                 txns.setCreateTime(dateStr);
+                txns.setPlatformCnName(gamePlatform.getPlatformCnName());
+                txns.setPlatformEnName(gamePlatform.getPlatformEnName());
+                txns.setCategoryId(gameCategory.getId());
+                txns.setCategoryName(gameCategory.getGameName());
                 txnsMapper.insert(txns);
             }
             AwcCallBackRespSuccess placeBetSuccess = new AwcCallBackRespSuccess();
@@ -1087,6 +1119,8 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
         if (null != giveTxnsList && giveTxnsList.size() > 0) {
             BigDecimal balance = BigDecimal.ZERO;
             MemBaseinfo memBaseinfo = new MemBaseinfo();
+            GameCategory gameCategory = new GameCategory();
+            GamePlatform gamePlatform = new GamePlatform();
             for (int i=0;i<giveTxnsList.size();i++) {
                 GiveTxns giveTxns = giveTxnsList.get(i);
                 if(!checkIp(ip,giveTxns.getPlatform())){
@@ -1096,6 +1130,8 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     return callBacekFail;
                 }
                 if(i==0){
+                    gamePlatform = gameCommonService.getGamePlatformByplatformCode(giveTxns.getPlatform());
+                    gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
                     String userId = giveTxns.getUserId();
                     memBaseinfo = gameCommonService.getByAccountNo(userId);
                     balance = memBaseinfo.getBalance();
@@ -1130,6 +1166,10 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 txns.setMethod("Give");
                 txns.setStatus("Running");
                 txns.setCreateTime(dateStr);
+                txns.setPlatformCnName(gamePlatform.getPlatformCnName());
+                txns.setPlatformEnName(gamePlatform.getPlatformEnName());
+                txns.setCategoryId(gameCategory.getId());
+                txns.setCategoryName(gameCategory.getGameName());
                 txnsMapper.insert(txns);
 
             }
