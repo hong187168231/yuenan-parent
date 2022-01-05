@@ -14,6 +14,7 @@ import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
 import com.indo.common.utils.GameUtil;
 import com.indo.common.utils.i18n.MessageUtils;
+import com.indo.common.web.util.JwtUtils;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.game.pojo.entity.manage.GamePlatform;
 import org.apache.commons.lang3.StringUtils;
@@ -45,7 +46,7 @@ public class SboServiceImpl implements SboService {
      * 注册代理
      * @return loginUser 用户信息
      */
-    public Result registerAgent(SboAgentDTO sboAgentDTO,LoginInfo loginUser,String ip) {
+    public Result registerAgent(SboAgentDTO sboAgentDTO,String ip) {
         try {
             LambdaQueryWrapper<GameAgent> wrapper = new LambdaQueryWrapper<>();
             wrapper.eq(GameAgent::getUsername,sboAgentDTO.getUsername());
@@ -64,7 +65,7 @@ public class SboServiceImpl implements SboService {
             trr.put("MaxPerMatch", sboAgentDTO.getMaxPerMatch().toString());//*	Integer	该代理底下玩家的预设单场比赛最高限额。
             trr.put("CasinoTableLimit", sboAgentDTO.getCasinoTableLimit().toString());//*	Integer	该代理底下玩家的预设真人赌场限额设定。 1： 低 2：中 3：高 4：VIP
 
-            SboApiResponseData sboApiResponse = commonRequest(trr, OpenAPIProperties.SBO_API_URL+"/web-root/restricted/agent/register-agent.aspx", loginUser.getId().intValue(), ip, "registerAgent");
+            SboApiResponseData sboApiResponse = commonRequest(trr, OpenAPIProperties.SBO_API_URL+"/web-root/restricted/agent/register-agent.aspx", JwtUtils.getUserId().intValue(), ip, "registerAgent");
 
             if (null == sboApiResponse ) {
                 return Result.failed(MessageUtils.get("etgptal"));
@@ -89,7 +90,7 @@ public class SboServiceImpl implements SboService {
      * 更新代理状态
      * @return loginUser 用户信息
      */
-    public Result updateAgentStatus(SboUpdateAgentStatusDTO sboUpdateAgentStatusDTO, LoginInfo loginUser, String ip) {
+    public Result updateAgentStatus(SboUpdateAgentStatusDTO sboUpdateAgentStatusDTO,  String ip) {
         try {
             LambdaQueryWrapper<GameAgent> wrapper = new LambdaQueryWrapper<>();
             wrapper.eq(GameAgent::getUsername,sboUpdateAgentStatusDTO.getUsername());
@@ -104,7 +105,7 @@ public class SboServiceImpl implements SboService {
             trr.put("Username", sboUpdateAgentStatusDTO.getUsername());
             trr.put("Status", sboUpdateAgentStatusDTO.getStatus());
 
-            SboApiResponseData sboApiResponse = commonRequest(trr, OpenAPIProperties.SBO_API_URL+"/web-root/restricted/agent/update-agent-status.aspx", loginUser.getId().intValue(), ip, "updateAgentStatus");
+            SboApiResponseData sboApiResponse = commonRequest(trr, OpenAPIProperties.SBO_API_URL+"/web-root/restricted/agent/update-agent-status.aspx", JwtUtils.getUserId().intValue(), ip, "updateAgentStatus");
 
             if (null == sboApiResponse ) {
                 return Result.failed(MessageUtils.get("etgptal"));
@@ -126,7 +127,7 @@ public class SboServiceImpl implements SboService {
      * 修改代理预设下注设定
      * @return loginUser 用户信息
      */
-    public Result updateAgentPresetBet(SboUpdateAgentPresetBetDTO sboUpdateAgentPresetBetDTO, LoginInfo loginUser, String ip) {
+    public Result updateAgentPresetBet(SboUpdateAgentPresetBetDTO sboUpdateAgentPresetBetDTO,  String ip) {
         try {
             Map<String, String> trr = new HashMap<>();
             trr.put("Username", sboUpdateAgentPresetBetDTO.getUsername());
@@ -139,7 +140,7 @@ public class SboServiceImpl implements SboService {
             wrapper.eq(GameAgent::getUsername,sboUpdateAgentPresetBetDTO.getUsername());
             wrapper.eq(GameAgent::getParentName,"SBO");
             GameAgent gameAgent = gameAgentMapper.selectOne(wrapper);
-            SboApiResponseData sboApiResponse = commonRequest(trr, OpenAPIProperties.SBO_API_URL+"/web-root/restricted/agent/update-agent-preset-bet-settings.aspx", loginUser.getId().intValue(), ip, "updateAgentPresetBet");
+            SboApiResponseData sboApiResponse = commonRequest(trr, OpenAPIProperties.SBO_API_URL+"/web-root/restricted/agent/update-agent-preset-bet-settings.aspx", JwtUtils.getUserId().intValue(), ip, "updateAgentPresetBet");
 
             if (null == sboApiResponse ) {
                 return Result.failed(MessageUtils.get("etgptal"));

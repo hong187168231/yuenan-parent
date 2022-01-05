@@ -10,6 +10,7 @@ import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
 import com.indo.common.utils.IPAddressUtil;
 import com.indo.common.utils.i18n.MessageUtils;
+import com.indo.common.web.util.JwtUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -34,34 +35,25 @@ public class GameSboManageController {
 
     @ApiOperation(value = "注册代理", httpMethod = "POST")
     @PostMapping(value = "/registerAgent")
-    public Result registerAgent(@LoginUser LoginInfo loginUser, SboAgentDTO sboAgentDTO, HttpServletRequest request) {
-        if (loginUser == null || StringUtils.isBlank(loginUser.getAccount())) {
-            return Result.failed(MessageUtils.get("youarenotloggedin"));
-        }
+    public Result registerAgent( SboAgentDTO sboAgentDTO, HttpServletRequest request) {
         String ip = IPAddressUtil.getIpAddress(request);
-        log.info("SBO体育log {} registerAgent 注册代理。。。registerAgent:{}",ip,sboAgentDTO,loginUser);
-        return sboService.registerAgent(sboAgentDTO,loginUser,ip);
+        log.info("SBO体育log {} registerAgent 注册代理。。。registerAgent:{}",ip,sboAgentDTO,JwtUtils.getUsername());
+        return sboService.registerAgent(sboAgentDTO,ip);
     }
 
     @ApiOperation(value = "更新代理状态", httpMethod = "POST")
     @PostMapping(value = "/updateAgentStatus")
-    public Result updateAgentStatus(@LoginUser LoginInfo loginUser, SboUpdateAgentStatusDTO sboUpdateAgentStatusDTO, HttpServletRequest request) {
-        if (loginUser == null || StringUtils.isBlank(loginUser.getAccount())) {
-            return Result.failed(MessageUtils.get("youarenotloggedin"));
-        }
+    public Result updateAgentStatus(SboUpdateAgentStatusDTO sboUpdateAgentStatusDTO, HttpServletRequest request) {
         String ip = IPAddressUtil.getIpAddress(request);
-        log.info("SBO体育log {} registerAgent 注册代理。。。registerAgent:{}",ip,sboUpdateAgentStatusDTO,loginUser);
-        return sboService.updateAgentStatus(sboUpdateAgentStatusDTO,loginUser,ip);
+        log.info("SBO体育log {} registerAgent 注册代理。。。registerAgent:{}",ip,sboUpdateAgentStatusDTO,JwtUtils.getUsername());
+        return sboService.updateAgentStatus(sboUpdateAgentStatusDTO,ip);
     }
 
     @ApiOperation(value = "修改代理预设下注设定", httpMethod = "POST")
     @PostMapping(value = "/updateAgentPresetBet")
-    public Result updateAgentPresetBet(@LoginUser LoginInfo loginUser, SboUpdateAgentPresetBetDTO sboUpdateAgentPresetBetDTO, HttpServletRequest request) {
-        if (loginUser == null || StringUtils.isBlank(loginUser.getAccount())) {
-            return Result.failed(MessageUtils.get("youarenotloggedin"));
-        }
+    public Result updateAgentPresetBet(SboUpdateAgentPresetBetDTO sboUpdateAgentPresetBetDTO, HttpServletRequest request) {
         String ip = IPAddressUtil.getIpAddress(request);
-        log.info("SBO体育log {} registerAgent 注册代理。。。registerAgent:{}",ip,sboUpdateAgentPresetBetDTO,loginUser);
-        return sboService.updateAgentPresetBet(sboUpdateAgentPresetBetDTO,loginUser,ip);
+        log.info("SBO体育log {} registerAgent 注册代理。。。registerAgent:{}",ip,sboUpdateAgentPresetBetDTO,JwtUtils.getUsername());
+        return sboService.updateAgentPresetBet(sboUpdateAgentPresetBetDTO,ip);
     }
 }

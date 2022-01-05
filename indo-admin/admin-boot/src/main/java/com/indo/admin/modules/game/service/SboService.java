@@ -11,11 +11,11 @@ import java.util.Map;
 
 public interface SboService {
 
-    public Result registerAgent(SboAgentDTO sboAgentDTO, LoginInfo loginUser, String ip);
+    public Result registerAgent(SboAgentDTO sboAgentDTO, String ip);
 
-    public Result updateAgentStatus(SboUpdateAgentStatusDTO sboUpdateAgentStatusDTO, LoginInfo loginUser, String ip);
+    public Result updateAgentStatus(SboUpdateAgentStatusDTO sboUpdateAgentStatusDTO, String ip);
 
-    public Result updateAgentPresetBet(SboUpdateAgentPresetBetDTO sboUpdateAgentPresetBetDTO, LoginInfo loginUser, String ip);
+    public Result updateAgentPresetBet(SboUpdateAgentPresetBetDTO sboUpdateAgentPresetBetDTO, String ip);
 
     SboApiResponseData commonRequest(Map<String, String> paramsMap, String url, Integer userId, String ip, String type) throws Exception;
 
