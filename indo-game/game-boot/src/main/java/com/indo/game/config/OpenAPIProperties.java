@@ -24,6 +24,7 @@ public class OpenAPIProperties implements InitializingBean {
     //SBO
     public static String SBO_KEY;
     public static String SBO_AGENT;
+    public static String SBO_SERVERID;
     public static String SBO_API_URL;
     @Value("${sbo.companyKey}")
     private String companyKey;
@@ -31,6 +32,8 @@ public class OpenAPIProperties implements InitializingBean {
     private String agent;
     @Value("${sbo.sboApiUrl}")
     private String sboApiUrl;
+    @Value("${sbo.sboServerId}")
+    private String sboServerId;
 
     //SABA
     public static String SABA_SITENAME;
@@ -69,6 +72,7 @@ public class OpenAPIProperties implements InitializingBean {
         SBO_KEY = companyKey;
         SBO_AGENT = agent;
         SBO_API_URL = sboApiUrl;
+        SBO_SERVERID = sboServerId;
 
         SABA_SITENAME = siteName;
         SABA_VENDORID = vendorId;

@@ -108,9 +108,10 @@ public class SboServiceImpl implements SboService {
         logger.info("sbolog {} sboGame account:{}, sboCodeId:{}", loginUser.getId(), loginUser.getNickName());
         try {
             Map<String, String> trr = new HashMap<>();
-            trr.put("username", loginUser.getAccount());
-            trr.put("agent", OpenAPIProperties.SBO_AGENT);//代理
-            trr.put("language", gamePlatform.getLanguageType());//语言
+            trr.put("Username", loginUser.getAccount());
+            trr.put("Agent", OpenAPIProperties.SBO_AGENT);//代理
+            trr.put("UserGroup", "a");
+//            trr.put("language", gamePlatform.getLanguageType());//语言
 
             SboApiResponseData sboApiResponse = commonRequest(trr, OpenAPIProperties.SBO_API_URL+"/web-root/restricted/player/register-player.aspx", loginUser.getId().intValue(), ip, "restrictedPlayer");
 
@@ -136,8 +137,9 @@ public class SboServiceImpl implements SboService {
         logger.info("sbolog {} sboGame account:{}, sboCodeId:{}", loginUser.getId(), loginUser.getNickName());
         try {
             Map<String, String> trr = new HashMap<>();
-            trr.put("username", loginUser.getAccount());
-            trr.put("portfolio", gamePlatform.getPlatformCode());
+            trr.put("Username", loginUser.getAccount());
+            trr.put("Portfolio", gamePlatform.getPlatformCode());
+            trr.put("IsWapSports", "false");
 
             SboApiResponseData sboApiResponse = commonRequest(trr, OpenAPIProperties.SBO_API_URL+"/web-root/restricted/player/register-player.aspx", loginUser.getId().intValue(), ip, "restrictedPlayer");
             if("0".equals(sboApiResponse.getError().getId())){
@@ -184,8 +186,8 @@ public class SboServiceImpl implements SboService {
         logger.info("sbolog {} commonRequest ,url:{},paramsMap:{}", userId, url, paramsMap);
 
         SboApiResponseData sboApiResponse = null;
-        paramsMap.put("companyKey", OpenAPIProperties.SBO_KEY);
-        paramsMap.put("serverId", SnowflakeIdWorker.createOrderSn());
+        paramsMap.put("CompanyKey", OpenAPIProperties.SBO_KEY);
+        paramsMap.put("ServerId", OpenAPIProperties.SBO_SERVERID);
         JSONObject sortParams = AWCUtil.sortMap(paramsMap);
         Map<String, String> trr = new HashMap<>();
         trr.put("param", sortParams.toString());

@@ -58,14 +58,15 @@ public class GameManageController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "categoryId", value = "游戏类别ID ", paramType = "query", dataType = "int", required = true)
     })
+    @AllowAccess
     public Result<List<GamePlatform>> queryGamePlatformByCategory(@RequestParam("categoryId") Long categoryId){
         return iFrontEndGameManageService.queryGamePlatformByCategory(categoryId);
     }
 
     @ApiOperation(value = "查询所有游戏记录", httpMethod = "POST")
     @PostMapping(value = "/allGameInfo")
-    @AllowAccess
-    public Result<List<Txns>> queryAllGameInfo(@LoginUser LoginInfo loginUser, @RequestParam GameInfoPageReq req){
+    public Result<List<Txns>> queryAllGameInfo(@LoginUser LoginInfo loginUser, GameInfoPageReq req){
+        req.setUserAcct(loginUser.getAccount());
         IPage<Txns> result = iFrontEndGameManageService.queryAllGameInfo(req);
         return Result.success(result.getRecords(), result.getTotal());
     }
