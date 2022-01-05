@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.common.utils.DateUtils;
-import com.indo.game.config.OpenAPIProperties;
+import com.indo.common.config.OpenAPIProperties;
 import com.indo.game.mapper.TxnsMapper;
 import com.indo.game.pojo.entity.awc.*;
 import com.indo.game.pojo.entity.manage.GameCategory;

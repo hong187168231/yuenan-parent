@@ -1,4 +1,4 @@
-package com.indo.game.common.util;
+package com.indo.common.utils;
 
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -21,8 +21,8 @@ import javax.crypto.spec.SecretKeySpec;
 import java.net.URLEncoder;
 import java.util.*;
 
-public class AWCUtil  extends HttpCommonUtils {
-    private static final Logger logger = LoggerFactory.getLogger(AWCUtil.class);
+public class GameUtil extends HttpCommonUtils {
+    private static final Logger logger = LoggerFactory.getLogger(GameUtil.class);
     /**
      * 设置连接超时时间,单位毫秒
      */
@@ -179,7 +179,7 @@ public class AWCUtil  extends HttpCommonUtils {
                     userId, type, e.getMessage(), url, paramsString, e);
             return resultString;
         } finally {
-            closeHttpClientAndResponse(response, closeableHttpClient, url, paramsString);
+            HttpCommonUtils.closeHttpClientAndResponse(response, closeableHttpClient, url, paramsString);
         }
         return resultString;
     }

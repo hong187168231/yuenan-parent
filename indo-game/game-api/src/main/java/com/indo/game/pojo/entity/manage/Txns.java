@@ -55,6 +55,9 @@ public class Txns {
     @ApiModelProperty(value = "下注金额")
     private BigDecimal betAmount;
 
+    @ApiModelProperty(value = "中奖金额（赢为正数，亏为负数，和为0）")
+    private BigDecimal winningAmount;
+
     @ApiModelProperty(value = "玩家下注时间")
     private String betTime;
 

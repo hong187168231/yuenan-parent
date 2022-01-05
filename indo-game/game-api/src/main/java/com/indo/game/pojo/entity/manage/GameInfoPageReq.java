@@ -26,7 +26,6 @@ public class GameInfoPageReq extends BaseDTO {
     @ApiModelProperty(value = "排序方式，Asc：true，Desc：false")
     private Boolean orderBy;
 
-    @ApiModelProperty(value = "玩家账号")
     private String userAcct;
 
 }

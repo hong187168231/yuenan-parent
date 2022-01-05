@@ -4,8 +4,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
 import com.indo.common.utils.i18n.MessageUtils;
-import com.indo.game.common.util.AWCUtil;
-import com.indo.game.config.OpenAPIProperties;
+import com.indo.common.utils.GameUtil;
+import com.indo.common.config.OpenAPIProperties;
 import com.indo.game.mapper.frontend.GameCategoryMapper;
 import com.indo.game.mapper.frontend.GamePlatformMapper;
 import com.indo.game.mapper.frontend.GameTypeMapper;
@@ -15,7 +15,6 @@ import com.indo.game.pojo.vo.callback.ug.UgApiResponseData;
 import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
 import com.indo.game.service.ug.UgService;
-import com.indo.user.pojo.entity.MemBaseinfo;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,7 +75,7 @@ public class UgServiceImpl implements UgService {
         try {
 
             // 验证且绑定（KY-CPT第三方会员关系）
-            CptOpenMember cptOpenMember = externalService.getCptOpenMember(loginUser.getId().intValue(), platform);
+            CptOpenMember cptOpenMember = externalService.getCptOpenMember(loginUser.getId().intValue(), gamePlatform.getParentName());
             if (cptOpenMember == null) {
                 cptOpenMember = new CptOpenMember();
                 cptOpenMember.setUserId(loginUser.getId().intValue());
@@ -84,7 +83,7 @@ public class UgServiceImpl implements UgService {
                 cptOpenMember.setPassword(loginUser.getAccount());
                 cptOpenMember.setCreateTime(new Date());
                 cptOpenMember.setLoginTime(new Date());
-                cptOpenMember.setType(platform);
+                cptOpenMember.setType(gamePlatform.getParentName());
                 //创建玩家
                 return restrictedPlayer(loginUser,gamePlatform, ip, cptOpenMember);
             } else {
@@ -200,9 +199,9 @@ public class UgServiceImpl implements UgService {
         paramsMap.put("CompanyKey", OpenAPIProperties.UG_KEY);
         paramsMap.put("APIPassword", OpenAPIProperties.UG_API_PASSWORD);
         logger.info("uglog {} commonRequest ,url:{},paramsMap:{}", userId, url, paramsMap);
-        JSONObject sortParams = AWCUtil.sortMap(paramsMap);
+        JSONObject sortParams = GameUtil.sortMap(paramsMap);
         logger.info("ug_api_request:"+sortParams);
-        String resultString = AWCUtil.doProxyPostJson(url, paramsMap, type, userId);
+        String resultString = GameUtil.doProxyPostJson(url, paramsMap, type, userId);
         logger.info("ug_api_response:"+resultString);
         if (StringUtils.isNotEmpty(resultString)) {
             ugApiResponse = JSONObject.parseObject(resultString, UgApiResponseData.class);

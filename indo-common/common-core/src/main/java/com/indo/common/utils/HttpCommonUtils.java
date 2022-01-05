@@ -1,4 +1,4 @@
-package com.indo.game.common.util;
+package com.indo.common.utils;
 
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.impl.client.CloseableHttpClient;

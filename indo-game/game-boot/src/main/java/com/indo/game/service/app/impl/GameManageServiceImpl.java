@@ -7,8 +7,8 @@ import com.indo.common.result.Result;
 import com.indo.game.mapper.TxnsMapper;
 import com.indo.game.mapper.frontend.GameCategoryMapper;
 import com.indo.game.mapper.frontend.GamePlatformMapper;
-import com.indo.game.pojo.entity.manage.Txns;
 import com.indo.game.pojo.entity.manage.*;
+import com.indo.game.pojo.vo.app.GameStatiRecord;
 import com.indo.game.service.app.IGameManageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -55,28 +55,9 @@ public class GameManageServiceImpl implements IGameManageService {
     }
 
     @Override
-    public IPage<Txns> queryAllGameInfo(GameInfoPageReq req) {
-        IPage<Txns> page = new Page<>(req.getPage(), req.getLimit());
-        LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Txns::getUserId,req.getUserAcct());
-        if(null!=req.getPlatform()&&req.getPlatform().size()>0){//in
-            wrapper.in(Txns::getPlatform,req.getPlatform());
-        }
-        if(null!=req.getCategoryId()&&req.getCategoryId().size()>0){//in
-            wrapper.in(Txns::getCategoryId,req.getCategoryId());
-        }
-        if(null!=req.getStartTime()&&!"".equals(req.getStartTime())){//>=
-            wrapper.ge(Txns::getCreateTime,req.getStartTime());
-        }
-        if(null!=req.getEndTime()&&!"".equals(req.getEndTime())){//<=
-            wrapper.le(Txns::getCreateTime,req.getEndTime());
-        }
-        if(req.getOrderBy()){
-            wrapper.orderByAsc(Txns::getCreateTime);
-        }else {
-            wrapper.orderByDesc(Txns::getCreateTime);
-        }
-        page = txnsMapper.selectPage(page,wrapper);
+    public IPage<GameStatiRecord> queryAllGameInfo(GameInfoPageReq req) {
+        IPage<GameStatiRecord> page = new Page<>(req.getPage(), req.getLimit());
+        page = (IPage<GameStatiRecord>) txnsMapper.queryAllGameInfo(page,req);
         return page;
     }
 }

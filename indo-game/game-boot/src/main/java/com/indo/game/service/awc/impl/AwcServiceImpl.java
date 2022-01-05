@@ -6,7 +6,7 @@ import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
 import com.indo.common.utils.DateUtils;
 import com.indo.common.utils.i18n.MessageUtils;
-import com.indo.game.config.OpenAPIProperties;
+import com.indo.common.config.OpenAPIProperties;
 import com.indo.game.mapper.frontend.GameCategoryMapper;
 import com.indo.game.mapper.frontend.GamePlatformMapper;
 import com.indo.game.pojo.entity.CptOpenMember;
@@ -14,7 +14,7 @@ import com.indo.game.pojo.entity.awc.AwcTransaction;
 import com.indo.game.pojo.entity.awc.AwcApiResponseData;
 import com.indo.game.pojo.entity.manage.GamePlatform;
 import com.indo.game.service.awc.AwcService;
-import com.indo.game.common.util.AWCUtil;
+import com.indo.common.utils.GameUtil;
 import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
 import org.apache.commons.lang3.StringUtils;
@@ -77,7 +77,7 @@ public class AwcServiceImpl implements AwcService {
         try {
 
             // 验证且绑定（KY-CPT第三方会员关系）
-            CptOpenMember cptOpenMember = externalService.getCptOpenMember(loginUser.getId().intValue(), "AWC");
+            CptOpenMember cptOpenMember = externalService.getCptOpenMember(loginUser.getId().intValue(), gamePlatform.getParentName());
             if (cptOpenMember == null) {
                 cptOpenMember = new CptOpenMember();
                 cptOpenMember.setUserId(loginUser.getId().intValue());
@@ -85,7 +85,7 @@ public class AwcServiceImpl implements AwcService {
                 cptOpenMember.setPassword(loginUser.getAccount());
                 cptOpenMember.setCreateTime(new Date());
                 cptOpenMember.setLoginTime(new Date());
-                cptOpenMember.setType("AWC");
+                cptOpenMember.setType(gamePlatform.getParentName());
                 //创建玩家
                 return createMemberGame(gamePlatform, ip, cptOpenMember,isMobileLogin);
             } else {
@@ -334,9 +334,9 @@ public class AwcServiceImpl implements AwcService {
         AwcApiResponseData awcApiResponse = null;
         paramsMap.put("cert", OpenAPIProperties.AWC_CERT);
         paramsMap.put("agentId", OpenAPIProperties.AWC_AGENTID);
-        JSONObject sortParams = AWCUtil.sortMap(paramsMap);
+        JSONObject sortParams = GameUtil.sortMap(paramsMap);
         logger.info("ug_api_request:"+sortParams);
-        String resultString = AWCUtil.doProxyPostJson(url, paramsMap, type, userId);
+        String resultString = GameUtil.doProxyPostJson(url, paramsMap, type, userId);
         logger.info("acw_api_response:"+resultString);
         if (StringUtils.isNotEmpty(resultString)) {
             awcApiResponse = JSONObject.parseObject(resultString, AwcApiResponseData.class);

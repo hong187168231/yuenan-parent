@@ -3,10 +3,9 @@ package com.indo.game.service.saba.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
-import com.indo.common.utils.SnowflakeIdWorker;
 import com.indo.common.utils.i18n.MessageUtils;
-import com.indo.game.common.util.AWCUtil;
-import com.indo.game.config.OpenAPIProperties;
+import com.indo.common.utils.GameUtil;
+import com.indo.common.config.OpenAPIProperties;
 import com.indo.game.mapper.frontend.GameCategoryMapper;
 import com.indo.game.mapper.frontend.GamePlatformMapper;
 import com.indo.game.mapper.frontend.GameTypeMapper;
@@ -16,7 +15,6 @@ import com.indo.game.pojo.vo.callback.saba.SabaApiResponseData;
 import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
 import com.indo.game.service.saba.SabaService;
-import com.indo.user.pojo.entity.MemBaseinfo;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,7 +75,7 @@ public class SabaServiceImpl implements SabaService {
         try {
 
             // 验证且绑定（KY-CPT第三方会员关系）
-            CptOpenMember cptOpenMember = externalService.getCptOpenMember(loginUser.getId().intValue(), platform);
+            CptOpenMember cptOpenMember = externalService.getCptOpenMember(loginUser.getId().intValue(), gamePlatform.getParentName());
             if (cptOpenMember == null) {
                 cptOpenMember = new CptOpenMember();
                 cptOpenMember.setUserId(loginUser.getId().intValue());
@@ -85,7 +83,7 @@ public class SabaServiceImpl implements SabaService {
                 cptOpenMember.setPassword(loginUser.getAccount());
                 cptOpenMember.setCreateTime(new Date());
                 cptOpenMember.setLoginTime(new Date());
-                cptOpenMember.setType(platform);
+                cptOpenMember.setType(gamePlatform.getParentName());
                 //创建玩家
                 return restrictedPlayer(loginUser,gamePlatform, ip, cptOpenMember);
             } else {
@@ -112,7 +110,7 @@ public class SabaServiceImpl implements SabaService {
             Map<String, String> trr = new HashMap<>();
             trr.put("vendor_Member_ID", loginUser.getAccount());//厂商会员识别码（建议跟 Username 一样）, 支援 ASCII Table 33-126, 最大长度 = 30
             trr.put("username", loginUser.getAccount());
-            trr.put("oddsType", OpenAPIProperties.SBO_AGENT);//为此会员设置赔率类型。请参考附件"赔率类型表"
+            trr.put("oddsType", "");//为此会员设置赔率类型。请参考附件"赔率类型表"
             trr.put("currency", gamePlatform.getLanguageType());//为此会员设置币别。请参考附件中"币别表"
             trr.put("maxTransfer", String.valueOf(gamePlatform.getMaxTransfer()));//于 Sportsbook 系统与厂商间的最大限制转帐金额
             trr.put("minTransfer", String.valueOf(gamePlatform.getMinTransfer()));//于 Sportsbook 系统与厂商间的最小限制转帐金额
@@ -191,11 +189,11 @@ public class SabaServiceImpl implements SabaService {
         SabaApiResponseData sabaApiResponse = null;
         paramsMap.put("vendor_id", OpenAPIProperties.SABA_SITENAME);
         paramsMap.put("operatorId", OpenAPIProperties.SABA_VENDORID);
-        JSONObject sortParams = AWCUtil.sortMap(paramsMap);
+        JSONObject sortParams = GameUtil.sortMap(paramsMap);
         Map<String, String> trr = new HashMap<>();
         trr.put("param", sortParams.toString());
         logger.info("ug_api_request:"+sortParams);
-        String resultString = AWCUtil.doProxyPostJson(url, trr, type, userId);
+        String resultString = GameUtil.doProxyPostJson(url, trr, type, userId);
         logger.info("saba_api_response:"+resultString);
         if (StringUtils.isNotEmpty(resultString)) {
             sabaApiResponse = JSONObject.parseObject(resultString, SabaApiResponseData.class);

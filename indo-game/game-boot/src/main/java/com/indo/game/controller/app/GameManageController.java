@@ -8,6 +8,7 @@ import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
 import com.indo.game.pojo.entity.manage.Txns;
 import com.indo.game.pojo.entity.manage.*;
+import com.indo.game.pojo.vo.app.GameStatiRecord;
 import com.indo.game.service.app.IGameManageService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -65,9 +66,9 @@ public class GameManageController {
 
     @ApiOperation(value = "查询所有游戏记录", httpMethod = "POST")
     @PostMapping(value = "/allGameInfo")
-    public Result<List<Txns>> queryAllGameInfo(@LoginUser LoginInfo loginUser, GameInfoPageReq req){
+    public Result<List<GameStatiRecord>> queryAllGameInfo(@LoginUser LoginInfo loginUser, GameInfoPageReq req){
         req.setUserAcct(loginUser.getAccount());
-        IPage<Txns> result = iFrontEndGameManageService.queryAllGameInfo(req);
+        IPage<GameStatiRecord> result = iFrontEndGameManageService.queryAllGameInfo(req);
         return Result.success(result.getRecords(), result.getTotal());
     }
 }

@@ -1,4 +1,4 @@
-package com.indo.game.config;
+package com.indo.common.config;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,13 +23,10 @@ public class OpenAPIProperties implements InitializingBean {
 
     //SBO
     public static String SBO_KEY;
-    public static String SBO_AGENT;
     public static String SBO_SERVERID;
     public static String SBO_API_URL;
     @Value("${sbo.companyKey}")
     private String companyKey;
-    @Value("${sbo.agent}")
-    private String agent;
     @Value("${sbo.sboApiUrl}")
     private String sboApiUrl;
     @Value("${sbo.sboServerId}")
@@ -70,7 +67,6 @@ public class OpenAPIProperties implements InitializingBean {
         AWC_API_SECRET_KEY = awcApiSecretKey;
 
         SBO_KEY = companyKey;
-        SBO_AGENT = agent;
         SBO_API_URL = sboApiUrl;
         SBO_SERVERID = sboServerId;
 

@@ -1,25 +1,21 @@
 package com.indo.game.controller.awc;
 
 import com.alibaba.fastjson.JSONObject;
-import com.indo.common.annotation.AllowAccess;
 import com.indo.common.annotation.LoginUser;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
 import com.indo.common.result.ResultCode;
+import com.indo.common.utils.IPAddressUtil;
 import com.indo.common.utils.i18n.MessageUtils;
-import com.indo.game.common.util.IpUtil;
 import com.indo.game.service.awc.AwcService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -61,7 +57,7 @@ public class AwcController {
         boolean res = lock.tryLock(5, TimeUnit.SECONDS);
         try {
             if (res) {
-                String ip = IpUtil.getIpAddr(request);
+                String ip = IPAddressUtil.getIpAddress(request);
                 Result resultInfo = awcService.awcGame(loginUser, isMobileLogin, ip, platform);
                 if (resultInfo == null) {
                     log.info("AE真人、SV388斗鸡log {} initGame result is null. params:{},ip:{}", loginUser.getId(), params, ip);
@@ -101,7 +97,7 @@ public class AwcController {
         }
         log.info("AE真人、SV388斗鸡log {} logout 进入游戏。。。loginUser:{}", loginUser.getId(), loginUser);
         try {
-            String ip = IpUtil.getIpAddr(request);
+            String ip = IPAddressUtil.getIpAddress(request);
             Result resultInfo = awcService.logout(loginUser, ip);
             if (resultInfo == null) {
                 log.info("AE真人、SV388斗鸡log {} initGame result is null. params:{},ip:{}", loginUser.getId(), params, ip);

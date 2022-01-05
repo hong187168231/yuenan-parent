@@ -5,8 +5,8 @@ import com.indo.common.annotation.LoginUser;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
 import com.indo.common.result.ResultCode;
+import com.indo.common.utils.IPAddressUtil;
 import com.indo.common.utils.i18n.MessageUtils;
-import com.indo.game.common.util.IpUtil;
 import com.indo.game.service.saba.SabaService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -56,7 +56,7 @@ public class SabaController {
         boolean res = lock.tryLock(5, TimeUnit.SECONDS);
         try {
             if (res) {
-                String ip = IpUtil.getIpAddr(request);
+                String ip = IPAddressUtil.getIpAddress(request);
                 Result resultInfo = sabaService.sabaGame(loginUser, ip, platform);
                 if (resultInfo == null) {
                     log.info("sabalog {} initGame result is null. params:{},ip:{}", loginUser.getId(), params, ip);
@@ -96,7 +96,7 @@ public class SabaController {
         }
         log.info("sabalog {} logout 进入游戏。。。loginUser:{}", loginUser.getId(), loginUser);
         try {
-            String ip = IpUtil.getIpAddr(request);
+            String ip = IPAddressUtil.getIpAddress(request);
             Result resultInfo = sabaService.logout(loginUser, ip);
             if (resultInfo == null) {
                 log.info("sabalog {} initGame result is null. params:{},ip:{}", loginUser.getId(), params, ip);

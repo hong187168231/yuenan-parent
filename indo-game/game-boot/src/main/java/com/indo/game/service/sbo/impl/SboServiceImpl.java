@@ -1,22 +1,23 @@
 package com.indo.game.service.sbo.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
-import com.indo.common.utils.SnowflakeIdWorker;
 import com.indo.common.utils.i18n.MessageUtils;
-import com.indo.game.common.util.AWCUtil;
-import com.indo.game.config.OpenAPIProperties;
+import com.indo.common.utils.GameUtil;
+import com.indo.common.config.OpenAPIProperties;
 import com.indo.game.mapper.frontend.GameCategoryMapper;
 import com.indo.game.mapper.frontend.GamePlatformMapper;
 import com.indo.game.mapper.frontend.GameTypeMapper;
+import com.indo.game.mapper.sbo.GameAgentMapper;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.game.pojo.entity.manage.GamePlatform;
+import com.indo.game.pojo.entity.sbo.GameAgent;
 import com.indo.game.pojo.vo.callback.sbo.SboApiResponseData;
 import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
 import com.indo.game.service.sbo.SboService;
-import com.indo.user.pojo.entity.MemBaseinfo;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +47,8 @@ public class SboServiceImpl implements SboService {
     GameCategoryMapper gameCategoryMapper;
     @Autowired
     private GamePlatformMapper gamePlatformMapper;
+    @Autowired
+    private GameAgentMapper gameAgentMapper;
 
     /**
      * 登录游戏
@@ -75,7 +78,7 @@ public class SboServiceImpl implements SboService {
         try {
 
             // 验证且绑定（KY-CPT第三方会员关系）
-            CptOpenMember cptOpenMember = externalService.getCptOpenMember(loginUser.getId().intValue(), platform);
+            CptOpenMember cptOpenMember = externalService.getCptOpenMember(loginUser.getId().intValue(), gamePlatform.getParentName());
             if (cptOpenMember == null) {
                 cptOpenMember = new CptOpenMember();
                 cptOpenMember.setUserId(loginUser.getId().intValue());
@@ -83,7 +86,7 @@ public class SboServiceImpl implements SboService {
                 cptOpenMember.setPassword(loginUser.getAccount());
                 cptOpenMember.setCreateTime(new Date());
                 cptOpenMember.setLoginTime(new Date());
-                cptOpenMember.setType(platform);
+                cptOpenMember.setType(gamePlatform.getParentName());
                 //创建玩家
                 return restrictedPlayer(loginUser,gamePlatform, ip, cptOpenMember);
             } else {
@@ -109,7 +112,10 @@ public class SboServiceImpl implements SboService {
         try {
             Map<String, String> trr = new HashMap<>();
             trr.put("Username", loginUser.getAccount());
-            trr.put("Agent", OpenAPIProperties.SBO_AGENT);//代理
+            LambdaQueryWrapper<GameAgent> wrapper = new LambdaQueryWrapper<>();
+            wrapper.eq(GameAgent::getParentName,gamePlatform.getParentName());
+            GameAgent gameAgent = gameAgentMapper.selectOne(wrapper);
+            trr.put("Agent", gameAgent.getUsername());//代理
             trr.put("UserGroup", "a");
 //            trr.put("language", gamePlatform.getLanguageType());//语言
 
@@ -188,10 +194,10 @@ public class SboServiceImpl implements SboService {
         SboApiResponseData sboApiResponse = null;
         paramsMap.put("CompanyKey", OpenAPIProperties.SBO_KEY);
         paramsMap.put("ServerId", OpenAPIProperties.SBO_SERVERID);
-        JSONObject sortParams = AWCUtil.sortMap(paramsMap);
+        JSONObject sortParams = GameUtil.sortMap(paramsMap);
         Map<String, String> trr = new HashMap<>();
         trr.put("param", sortParams.toString());
-        String resultString = AWCUtil.doProxyPostJson(url, trr, type, userId);
+        String resultString = GameUtil.doProxyPostJson(url, trr, type, userId);
         logger.info("sbo_api_response:"+resultString);
         if (StringUtils.isNotEmpty(resultString)) {
             sboApiResponse = JSONObject.parseObject(resultString, SboApiResponseData.class);
