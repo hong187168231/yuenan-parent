@@ -11,6 +11,9 @@ import com.indo.game.mapper.frontend.GameCategoryMapper;
 import com.indo.game.mapper.frontend.GamePlatformMapper;
 import com.indo.game.mapper.frontend.GameTypeMapper;
 import com.indo.game.mapper.sbo.GameAgentMapper;
+import com.indo.game.pojo.dto.sbo.SboPlayerLoginJsonDTO;
+import com.indo.game.pojo.dto.sbo.SboPlayerLogoutJsonDTO;
+import com.indo.game.pojo.dto.sbo.SboRegisterPlayerJsonDTO;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.game.pojo.entity.manage.GamePlatform;
 import com.indo.game.pojo.entity.sbo.GameAgent;
@@ -110,16 +113,15 @@ public class SboServiceImpl implements SboService {
     public Result restrictedPlayer(LoginInfo loginUser,GamePlatform gamePlatform, String ip,CptOpenMember cptOpenMember) {
         logger.info("sbolog {} sboGame account:{}, sboCodeId:{}", loginUser.getId(), loginUser.getNickName());
         try {
-            Map<String, String> trr = new HashMap<>();
-            trr.put("Username", loginUser.getAccount());
             LambdaQueryWrapper<GameAgent> wrapper = new LambdaQueryWrapper<>();
             wrapper.eq(GameAgent::getParentName,gamePlatform.getParentName());
             GameAgent gameAgent = gameAgentMapper.selectOne(wrapper);
-            trr.put("Agent", gameAgent.getUsername());//代理
-            trr.put("UserGroup", "a");
-//            trr.put("language", gamePlatform.getLanguageType());//语言
 
-            SboApiResponseData sboApiResponse = commonRequest(trr, OpenAPIProperties.SBO_API_URL+"/web-root/restricted/player/register-player.aspx", loginUser.getId().intValue(), ip, "restrictedPlayer");
+            SboRegisterPlayerJsonDTO sboRegisterPlayerJsonDTO = new SboRegisterPlayerJsonDTO();
+            sboRegisterPlayerJsonDTO.setUsername(loginUser.getAccount());
+            sboRegisterPlayerJsonDTO.setAgent(gameAgent.getUsername());//代理
+
+            SboApiResponseData sboApiResponse = commonRequest(sboRegisterPlayerJsonDTO, OpenAPIProperties.SBO_API_URL+"/web-root/restricted/player/register-player.aspx", loginUser.getId().intValue(), ip, "restrictedPlayer");
 
             if (null == sboApiResponse ) {
                 return Result.failed(MessageUtils.get("etgptal"));
@@ -142,12 +144,12 @@ public class SboServiceImpl implements SboService {
     private Result initGame(LoginInfo loginUser,GamePlatform gamePlatform, String ip) throws Exception {
         logger.info("sbolog {} sboGame account:{}, sboCodeId:{}", loginUser.getId(), loginUser.getNickName());
         try {
-            Map<String, String> trr = new HashMap<>();
-            trr.put("Username", loginUser.getAccount());
-            trr.put("Portfolio", gamePlatform.getPlatformCode());
-            trr.put("IsWapSports", "false");
+            SboPlayerLoginJsonDTO sboPlayerLoginJsonDTO = new SboPlayerLoginJsonDTO();
+            sboPlayerLoginJsonDTO.setUsername(loginUser.getAccount());
+            sboPlayerLoginJsonDTO.setPortfolio(gamePlatform.getPlatformCode());
+            sboPlayerLoginJsonDTO.setIsWapSports(false);
 
-            SboApiResponseData sboApiResponse = commonRequest(trr, OpenAPIProperties.SBO_API_URL+"/web-root/restricted/player/register-player.aspx", loginUser.getId().intValue(), ip, "restrictedPlayer");
+            SboApiResponseData sboApiResponse = commonRequest(sboPlayerLoginJsonDTO, OpenAPIProperties.SBO_API_URL+"/web-root/restricted/player/login.aspx", loginUser.getId().intValue(), ip, "PlayerLogin");
             if("0".equals(sboApiResponse.getError().getId())){
                 return Result.success(sboApiResponse);
             }else {
@@ -163,12 +165,12 @@ public class SboServiceImpl implements SboService {
      * 强迫登出玩家
      */
     public Result logout(LoginInfo loginUser,String ip){
-        Map<String, String> trr = new HashMap<>();
-        trr.put("Username", loginUser.getAccount());
+        SboPlayerLogoutJsonDTO sboPlayerLogoutJsonDTO = new SboPlayerLogoutJsonDTO();
+        sboPlayerLogoutJsonDTO.setUsername(loginUser.getAccount());
 
         SboApiResponseData sboApiResponse = null;
         try {
-            sboApiResponse = commonRequest(trr, OpenAPIProperties.SBO_API_URL+"/web-root/restricted/player/logout.aspx", Integer.valueOf(loginUser.getId().intValue()), ip, "logout");
+            sboApiResponse = commonRequest(sboPlayerLogoutJsonDTO, OpenAPIProperties.SBO_API_URL+"/web-root/restricted/player/logout.aspx", Integer.valueOf(loginUser.getId().intValue()), ip, "logout");
             if (null == sboApiResponse ) {
                 return Result.failed(MessageUtils.get("etgptal"));
             }
@@ -187,24 +189,18 @@ public class SboServiceImpl implements SboService {
     /**
      * 公共请求
      */
-    @Override
-    public SboApiResponseData commonRequest(Map<String, String> paramsMap, String url, Integer userId, String ip, String type) throws Exception {
-        logger.info("sbolog {} commonRequest ,url:{},paramsMap:{}", userId, url, paramsMap);
+    public SboApiResponseData commonRequest(Object obj,String url, Integer userId, String ip, String type) throws Exception {
+        logger.info("sbolog {} commonRequest ,url:{},paramsMap:{}", userId, url, JSONObject.toJSONString(obj));
 
         SboApiResponseData sboApiResponse = null;
-        paramsMap.put("CompanyKey", OpenAPIProperties.SBO_KEY);
-        paramsMap.put("ServerId", OpenAPIProperties.SBO_SERVERID);
-        JSONObject sortParams = GameUtil.sortMap(paramsMap);
-        Map<String, String> trr = new HashMap<>();
-        trr.put("param", sortParams.toString());
-        String resultString = GameUtil.doProxyPostJson(url, trr, type, userId);
+        String resultString = GameUtil.doProxyPostJson(url, JSONObject.toJSONString(obj), type, userId);
         logger.info("sbo_api_response:"+resultString);
         if (StringUtils.isNotEmpty(resultString)) {
             sboApiResponse = JSONObject.parseObject(resultString, SboApiResponseData.class);
             //String operateFlag = (String) redisTemplate.opsForValue().get(Constants.AE_GAME_OPERATE_FLAG + userId);
             logger.info("sbolog {}:commonRequest type:{}, operateFlag:{}, url:{}, hostName:{}, params:{}, result:{}, sboApiResponse:{}",
                     //userId, type, operateFlag, url,
-                    userId, type, null, url, sortParams.toString(), resultString, JSONObject.toJSONString(sboApiResponse));
+                    userId, type, null, url, JSONObject.toJSONString(obj), resultString, JSONObject.toJSONString(sboApiResponse));
         }
         return sboApiResponse;
     }

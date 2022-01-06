@@ -1,7 +1,7 @@
 package com.indo.game.controller.saba;
 
 import com.alibaba.fastjson.JSONObject;
-import com.indo.game.pojo.entity.saba.*;
+import com.indo.game.pojo.dto.saba.*;
 import com.indo.game.service.saba.SabaCallbackService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

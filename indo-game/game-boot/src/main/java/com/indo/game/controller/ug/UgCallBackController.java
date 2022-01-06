@@ -1,10 +1,10 @@
 package com.indo.game.controller.ug;
 
 import com.alibaba.fastjson.JSONObject;
-import com.indo.game.pojo.entity.ug.UgCallBackCancelReq;
-import com.indo.game.pojo.entity.ug.UgCallBackGetBalanceReq;
-import com.indo.game.pojo.entity.ug.UgCallBackTransactionItemReq;
-import com.indo.game.pojo.entity.ug.UgCallBackTransferReq;
+import com.indo.game.pojo.dto.ug.UgCallBackCancelReq;
+import com.indo.game.pojo.dto.ug.UgCallBackGetBalanceReq;
+import com.indo.game.pojo.dto.ug.UgCallBackTransactionItemReq;
+import com.indo.game.pojo.dto.ug.UgCallBackTransferReq;
 import com.indo.game.service.ug.UgCallbackService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

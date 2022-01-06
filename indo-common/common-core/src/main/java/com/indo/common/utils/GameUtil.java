@@ -1,6 +1,7 @@
 package com.indo.common.utils;
 
 import com.alibaba.fastjson.JSONObject;
+import com.indo.common.config.OpenAPIProperties;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
@@ -9,8 +10,11 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
@@ -131,7 +135,7 @@ public class GameUtil extends HttpCommonUtils {
         // 创建HttpClientBuilder
         HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
         // 依次是代理地址，代理端口号，协议类型
-//        HttpHost proxy = new HttpHost(proxyIp, port, tcp);
+        HttpHost proxy = new HttpHost(OpenAPIProperties.PROXY_HOST_NAME, OpenAPIProperties.PROXY_PORT, OpenAPIProperties.PROXY_TCP);
 
         CloseableHttpClient closeableHttpClient = null;
         CloseableHttpResponse response = null;
@@ -149,7 +153,7 @@ public class GameUtil extends HttpCommonUtils {
                     // 请求获取数据的超时时间,单位毫秒;
                     .setSocketTimeout(SOCKET_TIMEOUT)
                     //设置代理
-//                    .setProxy(proxy)
+                    .setProxy(proxy)
                     .build();
             //如果访问一个接口,多少时间内无法返回数据,就直接放弃此次调用。
             httpPost.setConfig(requestConfig);
@@ -175,12 +179,57 @@ public class GameUtil extends HttpCommonUtils {
             // 此句关闭了流
             EntityUtils.consume(entity);
         } catch (Exception e) {
-            logger.error("aelog {}:{} doProxyPostJson occur error:{}, url:{}, proxyHost:{}, proxyPort:{}, originParams:{}",
+            logger.error("httplog {}:{} doProxyPostJson occur error:{}, url:{}, proxyHost:{}, proxyPort:{}, originParams:{}",
                     userId, type, e.getMessage(), url, paramsString, e);
             return resultString;
         } finally {
             HttpCommonUtils.closeHttpClientAndResponse(response, closeableHttpClient, url, paramsString);
         }
         return resultString;
+    }
+
+    public static String doProxyPostJson(String url, String json, String type, Integer userId) {
+        // 依次是代理地址，代理端口号，协议类型
+        HttpHost proxy = new HttpHost(OpenAPIProperties.PROXY_HOST_NAME, OpenAPIProperties.PROXY_PORT, OpenAPIProperties.PROXY_TCP);
+        String result = "";
+        HttpPost httpPost = new HttpPost(url);
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        try {
+            // 设置请求超时 20+10+25=55s 配合业务设置
+            RequestConfig requestConfig = RequestConfig.custom()
+                    // 设置连接超时时间,单位毫秒。
+                    .setConnectTimeout(CONNECT_TIMEOUT)
+                    // 从连接池获取到连接的超时,单位毫秒。
+                    .setConnectionRequestTimeout(CONNECTION_REQUEST_TIMEOUT)
+                    // 请求获取数据的超时时间,单位毫秒;
+                    .setSocketTimeout(SOCKET_TIMEOUT)
+                    //设置代理
+                    .setProxy(proxy)
+                    .build();
+            //如果访问一个接口,多少时间内无法返回数据,就直接放弃此次调用。
+            httpPost.setConfig(requestConfig);
+            //不复用TCP SOCKET
+            httpPost.setHeader("connection", "close");
+
+            BasicResponseHandler handler = new BasicResponseHandler();
+            StringEntity entity = new StringEntity(json, "utf-8");//解决中文乱码问题
+            entity.setContentEncoding("UTF-8");
+            entity.setContentType("application/json");
+            httpPost.setEntity(entity);
+            result = httpClient.execute(httpPost, handler);
+            return result;
+        } catch (Exception e) {
+            logger.error("httplog {}:{} doProxyPostJson occur error:{}, url:{}, proxyHost:{}, proxyPort:{}, originParams:{}",
+                    userId, type, e.getMessage(), url, json, e);
+            e.printStackTrace();
+
+        } finally {
+            try {
+                httpClient.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
     }
 }

@@ -7,6 +7,20 @@ import org.springframework.stereotype.Component;
 @Component
 public class OpenAPIProperties implements InitializingBean {
 
+    /**
+     * 代理地址
+     */
+    public static String PROXY_HOST_NAME;
+    public static int PROXY_PORT;
+    public static String PROXY_TCP;
+    @Value("${http.proxy.hostName}")
+    private String proxyHostName;
+    @Value("${http.proxy.port}")
+    private int proxyPort;
+    @Value("${http.proxy.tcp}")
+    private String proxyTcp;
+
+
     //AWC
     public static String AWC_CERT;
     public static String AWC_AGENTID;
@@ -60,6 +74,10 @@ public class OpenAPIProperties implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
+
+        PROXY_HOST_NAME = proxyHostName;
+        PROXY_PORT = proxyPort;
+        PROXY_TCP = proxyTcp;
 
         AWC_CERT = awcCert;
         AWC_AGENTID = awcAgentId;

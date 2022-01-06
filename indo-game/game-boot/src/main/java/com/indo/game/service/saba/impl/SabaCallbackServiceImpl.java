@@ -1,6 +1,5 @@
 package com.indo.game.service.saba.impl;
 
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
@@ -8,7 +7,7 @@ import com.indo.common.utils.DateUtils;
 import com.indo.common.utils.SnowflakeIdWorker;
 import com.indo.game.mapper.TxnsMapper;
 import com.indo.game.pojo.entity.manage.Txns;
-import com.indo.game.pojo.entity.saba.*;
+import com.indo.game.pojo.dto.saba.*;
 import com.indo.game.pojo.vo.callback.saba.*;
 import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.saba.SabaCallbackService;

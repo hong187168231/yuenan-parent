@@ -1,7 +1,7 @@
 package com.indo.game.controller.sbo;
 
 import com.alibaba.fastjson.JSONObject;
-import com.indo.game.pojo.entity.sbo.*;
+import com.indo.game.pojo.dto.sbo.*;
 import com.indo.game.service.sbo.SboCallbackService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

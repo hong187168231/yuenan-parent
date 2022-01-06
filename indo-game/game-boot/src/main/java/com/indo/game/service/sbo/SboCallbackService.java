@@ -1,6 +1,6 @@
 package com.indo.game.service.sbo;
 
-import com.indo.game.pojo.entity.sbo.*;
+import com.indo.game.pojo.dto.sbo.*;
 
 public interface SboCallbackService {
 

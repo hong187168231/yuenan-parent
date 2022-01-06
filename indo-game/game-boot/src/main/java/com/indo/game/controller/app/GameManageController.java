@@ -1,12 +1,11 @@
 package com.indo.game.controller.app;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.common.annotation.AllowAccess;
 import com.indo.common.annotation.LoginUser;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
-import com.indo.game.pojo.entity.manage.Txns;
+import com.indo.game.pojo.dto.manage.GameInfoPageReq;
 import com.indo.game.pojo.entity.manage.*;
 import com.indo.game.pojo.vo.app.GameStatiRecord;
 import com.indo.game.service.app.IGameManageService;

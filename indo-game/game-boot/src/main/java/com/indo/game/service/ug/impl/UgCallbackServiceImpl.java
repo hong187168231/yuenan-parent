@@ -6,7 +6,7 @@ import com.indo.common.enums.TradingEnum;
 import com.indo.common.utils.DateUtils;
 import com.indo.game.mapper.TxnsMapper;
 import com.indo.game.pojo.entity.manage.Txns;
-import com.indo.game.pojo.entity.ug.*;
+import com.indo.game.pojo.dto.ug.*;
 import com.indo.game.pojo.vo.callback.ug.UgCallBackBalanceResp;
 import com.indo.game.pojo.vo.callback.ug.UgCallBackCancelResp;
 import com.indo.game.pojo.vo.callback.ug.UgCallBackGetBalanceResp;

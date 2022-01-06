@@ -1,6 +1,6 @@
 package com.indo.game.service.saba;
 
-import com.indo.game.pojo.entity.saba.*;
+import com.indo.game.pojo.dto.saba.*;
 
 public interface SabaCallbackService {
 

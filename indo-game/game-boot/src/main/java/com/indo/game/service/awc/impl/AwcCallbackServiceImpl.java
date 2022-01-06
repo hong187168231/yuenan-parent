@@ -9,7 +9,7 @@ import com.indo.common.enums.TradingEnum;
 import com.indo.common.utils.DateUtils;
 import com.indo.common.config.OpenAPIProperties;
 import com.indo.game.mapper.TxnsMapper;
-import com.indo.game.pojo.entity.awc.*;
+import com.indo.game.pojo.dto.awc.*;
 import com.indo.game.pojo.entity.manage.GameCategory;
 import com.indo.game.pojo.entity.manage.GamePlatform;
 import com.indo.game.pojo.entity.manage.Txns;

@@ -7,6 +7,7 @@ import com.indo.common.result.Result;
 import com.indo.game.mapper.TxnsMapper;
 import com.indo.game.mapper.frontend.GameCategoryMapper;
 import com.indo.game.mapper.frontend.GamePlatformMapper;
+import com.indo.game.pojo.dto.manage.GameInfoPageReq;
 import com.indo.game.pojo.entity.manage.*;
 import com.indo.game.pojo.vo.app.GameStatiRecord;
 import com.indo.game.service.app.IGameManageService;

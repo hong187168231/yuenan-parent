@@ -2,7 +2,7 @@ package com.indo.game.service.awc;
 
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
-import com.indo.game.pojo.entity.awc.AwcApiResponseData;
+import com.indo.game.pojo.dto.awc.AwcApiResponseData;
 
 import java.util.Map;
 
