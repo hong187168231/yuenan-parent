@@ -18,10 +18,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -67,6 +64,14 @@ public class MemBaseInfoController {
         boolean flag = memBaseInfoService.updatePassword(req, loginUser);
         return Result.judge(flag);
     }
+
+    @ApiOperation(value = "修改头像", httpMethod = "POST")
+    @PostMapping(value = "/updateHeadImage")
+    public Result updateHeadImage(@RequestParam("headImage") String headImage, @LoginUser LoginInfo loginUser) {
+        boolean flag = memBaseInfoService.updateHeadImage(headImage, loginUser);
+        return Result.judge(flag);
+    }
+
 
     @ApiOperation(value = "更新个人信息", httpMethod = "POST")
     @PostMapping(value = "/updateBaseInfo")

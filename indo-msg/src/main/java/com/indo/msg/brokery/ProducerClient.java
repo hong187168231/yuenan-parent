@@ -5,6 +5,8 @@ import com.indo.common.rabbitmq.bo.Message;
 import com.indo.common.rabbitmq.bo.MessageType;
 import com.indo.common.rabbitmq.exc.MessageRunTimeException;
 import com.indo.msg.api.MessageProducer;
+import com.indo.msg.mapper.BrokerMessageMapper;
+import com.indo.msg.pojo.entity.BrokerMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +17,9 @@ public class ProducerClient implements MessageProducer {
 
     @Autowired
     RabbitBroker rabbitBroker;
+
+    @Autowired
+    private BrokerMessageMapper brokerMessageMapper;
 
     @Override
     public void send(Message message) throws MessageRunTimeException {

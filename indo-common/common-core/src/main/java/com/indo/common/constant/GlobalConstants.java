@@ -40,4 +40,7 @@ public interface GlobalConstants {
     }
 
     public static final Integer MSG_TIME_OUT = 1;
+
+
+
 }

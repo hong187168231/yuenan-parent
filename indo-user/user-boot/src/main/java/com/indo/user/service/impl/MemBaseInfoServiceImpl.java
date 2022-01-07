@@ -2,12 +2,14 @@ package com.indo.user.service.impl;
 
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.indo.common.constant.RedisConstants;
 import com.indo.common.mybatis.base.service.impl.SuperServiceImpl;
 import com.indo.common.pojo.bo.LoginInfo;
+import com.indo.common.rabbitmq.bo.Message;
 import com.indo.common.redis.utils.RedisUtils;
 import com.indo.common.result.Result;
 import com.indo.common.utils.BaseUtil;
@@ -32,6 +34,7 @@ import com.indo.user.pojo.req.LoginReq;
 import com.indo.user.pojo.req.RegisterReq;
 import com.indo.user.pojo.vo.mem.MemBaseInfoVo;
 import com.indo.user.pojo.vo.mem.MemTradingVo;
+import com.indo.user.service.IMemLevelService;
 import com.indo.user.service.MemBaseInfoService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -61,8 +64,10 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
     @Autowired
     private MemInviteCodeMapper memInviteCodeMapper;
 
+
     @Autowired
-    private RedisUtils redisUtil;
+    private IMemLevelService iMemLevelService;
+
 
     @Override
     public Result<AppLoginVo> appLogin(LoginReq req) {
@@ -243,6 +248,14 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
     }
 
     @Override
+    public boolean updateHeadImage(String headImage, LoginInfo loginUser) {
+        MemBaseinfo memBaseinfo = new MemBaseinfo();
+        memBaseinfo.setHeadImage(headImage);
+        memBaseinfo.setId(loginUser.getId());
+        return baseMapper.updateById(memBaseinfo) > 0;
+    }
+
+    @Override
     public void updateBaseInfo(UpdateBaseInfoReq req, LoginInfo loginUser) {
         MemBaseinfo memBaseinfo = new MemBaseinfo();
         memBaseinfo.setPhone(req.getPhone());
@@ -310,6 +323,21 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
         MemTradingVo memTradingVo = new MemTradingVo();
         BeanUtils.copyProperties(memBaseinfo, memTradingVo);
         return memTradingVo;
+    }
+
+    @Override
+    public void upLevel(String payLoad) {
+        Message message = JSONObject.parseObject(payLoad, Message.class);
+        Long memId = (Long) message.getAttributes().get("memId");
+        MemBaseinfo memBaseinfo = baseMapper.selectById(memId);
+        if (memBaseinfo.getTotalDeposit().intValue() > 10000
+                && memBaseinfo.getTotalBet().intValue() > 10000) {
+            Integer level = iMemLevelService.getLevelByCondition(memBaseinfo.getTotalDeposit(), memBaseinfo.getTotalBet());
+            if (level > memBaseinfo.getMemLevel()) {
+                memBaseinfo.setMemLevel(level);
+                baseMapper.updateById(memBaseinfo);
+            }
+        }
     }
 
 }

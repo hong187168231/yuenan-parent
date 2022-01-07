@@ -25,15 +25,15 @@
     <select id="queryBrokeryMessageStatus4Timeout" resultType="com.indo.msg.pojo.entity.BrokerMessage">
         <![CDATA[
         select message_id, message, try_count, status, next_retry, create_time, update_time
-        from brokery_message bm
-        where bm.status = #{stauts}
-          and bm.next_retry = < sysdate()
+        from broker_message bm
+        where bm.`status` = #{status}
+          and bm.next_retry <= sysdate()
         ]]>
     </select>
 
 
     <update id="updateForTryCount">
-        update brokery_message bm
+        update broker_message bm
         set bm.try_count   = bm.try_count + 1,
             bm.update_time =#{updateTime}
         where bm.message_id = #{messageId}

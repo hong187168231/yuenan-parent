@@ -35,6 +35,9 @@ public class MemBaseinfo extends BaseEntity {
     @ApiModelProperty(value = "昵称")
     private String nickName;
 
+    @ApiModelProperty(value = "昵称")
+    private String headImage;
+
     @ApiModelProperty(value = "用户唯一标识")
     private String account;
 
@@ -77,6 +80,8 @@ public class MemBaseinfo extends BaseEntity {
     private BigDecimal totalDeposit;
 
     private BigDecimal totalEnchashment;
+
+    private BigDecimal totalBet;
 
     @ApiModelProperty(value = "余额")
     private BigDecimal balance;

@@ -39,7 +39,7 @@ public class MemBankRelationServiceImpl extends ServiceImpl<MemBankRelationMappe
     @Override
     public void switchStatus(MemBankRelationSwitchStatusReq req) {
         MemBankRelation memBankRelation = new MemBankRelation();
-        memBankRelation.setId(req.getId());
+        memBankRelation.setMemBankId(req.getId());
         memBankRelation.setStatus(req.getStatus());
         baseMapper.updateById(memBankRelation);
     }

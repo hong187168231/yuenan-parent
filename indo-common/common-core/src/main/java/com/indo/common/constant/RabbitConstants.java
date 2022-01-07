@@ -3,17 +3,23 @@ package com.indo.common.constant;
 public class RabbitConstants {
 
 
+    /**
+     * 用户升级Exchange
+     */
+    public static final String USER_LEVEL_TOPIC = "user_level_topic";
 
-    /**
-     * 用户Exchange
-     */
-    public static final String USER_EXCHANGE_TOPIC = "user_exchange_topic";
-    /**
-     * 用户Exchange
-     */
-    public static final String USER_EXCHANGE_TOPIC2 = "user_exchange_topic2";
-    /**
-     * 用户Exchange
-     */
-    public static final String USER_EXCHANGE_TOPIC3 = "user_exchange_topic3";
+
+    public interface Queue {
+
+        public static final String UP_LEVEL = "up_level";
+
+    }
+
+
+    public  interface Key {
+
+        public static final String UP_LEVEL = "up_level";
+
+    }
+
 }

@@ -1,9 +1,11 @@
 package com.indo.msg.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.indo.common.pojo.entity.BaseEntity;
 import com.indo.msg.pojo.entity.BrokerMessage;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.Date;
 import java.util.List;
@@ -23,4 +25,6 @@ public interface BrokerMessageMapper extends BaseMapper<BrokerMessage> {
 
     int updateForTryCount(@Param("messageId") String messageId, @Param("updateTime") Date updateTime);
 
+    @Select("select * from broker_message")
+    BrokerMessage selectById2();
 }

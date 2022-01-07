@@ -1,10 +1,13 @@
 package com.indo.msg.service.impl;
 
+import cn.hutool.core.util.IdUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.indo.common.enums.BrokerMessageStatus;
+import com.indo.common.pojo.entity.BaseEntity;
 import com.indo.msg.mapper.BrokerMessageMapper;
 import com.indo.msg.pojo.entity.BrokerMessage;
 import com.indo.msg.service.IBrokerMessageService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -21,12 +24,16 @@ import java.util.List;
 @Service
 public class BrokerMessageServiceImpl extends ServiceImpl<BrokerMessageMapper, BrokerMessage> implements IBrokerMessageService {
 
-
-    private  BrokerMessageMapper brokerMessageMapper;
+    @Autowired
+    private BrokerMessageMapper brokerMessageMapper;
 
     @Override
     public boolean saveMessage(BrokerMessage message) {
-        return this.baseMapper.insert(message) > 0;
+        int row = this.baseMapper.insert(message);
+        if (row > 0) {
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -34,6 +41,7 @@ public class BrokerMessageServiceImpl extends ServiceImpl<BrokerMessageMapper, B
         BrokerMessage brokeryMessage = new BrokerMessage();
         brokeryMessage.setMessageId(messageId);
         brokeryMessage.setStatus(BrokerMessageStatus.SEND_OK.getCode());
+        this.baseMapper.updateById(brokeryMessage);
     }
 
     @Override
@@ -41,6 +49,7 @@ public class BrokerMessageServiceImpl extends ServiceImpl<BrokerMessageMapper, B
         BrokerMessage brokeryMessage = new BrokerMessage();
         brokeryMessage.setMessageId(messageId);
         brokeryMessage.setStatus(BrokerMessageStatus.SEND_FAIL.getCode());
+        this.baseMapper.updateById(brokeryMessage);
     }
 
     public List<BrokerMessage> queryTimeoutMessage4Retry(BrokerMessageStatus brokerMessageStatus) {

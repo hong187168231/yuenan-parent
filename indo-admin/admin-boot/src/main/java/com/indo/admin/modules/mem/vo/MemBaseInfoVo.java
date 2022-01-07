@@ -66,13 +66,13 @@ public class MemBaseInfoVo {
 
     /*********************金额*****************************/
     @ApiModelProperty(value = "首冲时间")
-    private Date firstRechargeTime;
+    private String firstRechargeTime;
     @ApiModelProperty(value = "最后登录时间")
-    private Date lastLoginTime;
+    private String lastLoginTime;
     @ApiModelProperty(value = "离开天数")
     private int leaveDays;
     @ApiModelProperty(value = "注册时间 ")
-    private Date createTime;
+    private String createTime;
 
 
     /*********************冻结状态*****************************/
