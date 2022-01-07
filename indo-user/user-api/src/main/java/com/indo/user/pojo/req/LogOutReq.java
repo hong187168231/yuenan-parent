@@ -14,3 +14,5 @@ public class LogOutReq {
     @ApiModelProperty(value = "登录token", required = true)
     private String accToken;
 }
+
+

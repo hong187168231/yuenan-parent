@@ -29,7 +29,7 @@
         create_time
         ,
         update_time,
-        pay_way_id, pay_channel_id, way_name, bank_name, bank_account, group_id, audit_status, tips, min_amount, max_amount, is_del, sort_by, create_user, update_user, remark
+        pay_way_id, pay_channel_id, way_name, bank_name, bank_account, group_id, audit_status, tips, min_amount, max_amount, status, sort_by, create_user, update_user, remark
     </sql>
 
 
@@ -38,7 +38,7 @@
         <include refid="Base_Column_List"></include>
         from pay_way_config
         where 1=1
-        and is_del = 1
+        and `status` = 0
         order by sort_by asc
     </select>
 
