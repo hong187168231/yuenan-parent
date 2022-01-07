@@ -135,7 +135,8 @@ public class GameUtil extends HttpCommonUtils {
         // 创建HttpClientBuilder
         HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
         // 依次是代理地址，代理端口号，协议类型
-        HttpHost proxy = new HttpHost(OpenAPIProperties.PROXY_HOST_NAME, OpenAPIProperties.PROXY_PORT, OpenAPIProperties.PROXY_TCP);
+        OpenAPIProperties openAPIProperties = new OpenAPIProperties();
+        HttpHost proxy = new HttpHost(openAPIProperties.getProxyHostName(), openAPIProperties.getProxyPort(), openAPIProperties.getProxyTcp());
 
         CloseableHttpClient closeableHttpClient = null;
         CloseableHttpResponse response = null;
@@ -190,7 +191,8 @@ public class GameUtil extends HttpCommonUtils {
 
     public static String doProxyPostJson(String url, String json, String type, Integer userId) {
         // 依次是代理地址，代理端口号，协议类型
-        HttpHost proxy = new HttpHost(OpenAPIProperties.PROXY_HOST_NAME, OpenAPIProperties.PROXY_PORT, OpenAPIProperties.PROXY_TCP);
+        OpenAPIProperties openAPIProperties = new OpenAPIProperties();
+        HttpHost proxy = new HttpHost(openAPIProperties.getProxyHostName(), openAPIProperties.getProxyPort(), openAPIProperties.getProxyTcp());
         String result = "";
         HttpPost httpPost = new HttpPost(url);
         CloseableHttpClient httpClient = HttpClients.createDefault();

@@ -42,7 +42,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
     private TxnsMapper txnsMapper;
 
     public Object awcCallback(AwcApiRequestParentData awcApiRequestData,String ip) {
-        if(!OpenAPIProperties.AWC_API_SECRET_KEY.equals(awcApiRequestData.getKey())){
+        if(!new OpenAPIProperties().getAwcApiSecretKey().equals(awcApiRequestData.getKey())){
             AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
             callBacekFail.setStatus("1008");
             callBacekFail.setDesc("Invalid token!");

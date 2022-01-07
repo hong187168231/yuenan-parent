@@ -1,5 +1,6 @@
 package com.indo.game.controller.app;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.indo.common.annotation.AllowAccess;
 import com.indo.common.annotation.LoginUser;
@@ -69,6 +70,7 @@ public class GameManageController {
     @ResponseBody
     public Result<List<GameStatiRecord>> queryAllGameInfoCount(@LoginUser LoginInfo loginUser, GameInfoPageReq req){
         req.setUserAcct(loginUser.getAccount());
+        logger.info("查询所有平台记录allGameInfoCount {} req:{}", JSONObject.toJSONString(req));
         IPage<GameStatiRecord> result = iFrontEndGameManageService.queryAllGameInfoCount(req);
         return Result.success(result.getRecords(), result.getTotal());
     }
@@ -78,6 +80,7 @@ public class GameManageController {
     @ResponseBody
     public Result<List<GameInfoRecord>> queryAllGameInfo(@LoginUser LoginInfo loginUser, GameInfoPageReq req){
         req.setUserAcct(loginUser.getAccount());
+        logger.info("查询所有平台记录allGameInfoCount {} req:{}", JSONObject.toJSONString(req));
         IPage<GameInfoRecord> result = iFrontEndGameManageService.queryAllGameInfo(req);
         return Result.success(result.getRecords(), result.getTotal());
     }

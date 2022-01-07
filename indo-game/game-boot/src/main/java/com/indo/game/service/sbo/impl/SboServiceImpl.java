@@ -121,7 +121,7 @@ public class SboServiceImpl implements SboService {
             sboRegisterPlayerJsonDTO.setUsername(loginUser.getAccount());
             sboRegisterPlayerJsonDTO.setAgent(gameAgent.getUsername());//代理
 
-            SboApiResponseData sboApiResponse = commonRequest(sboRegisterPlayerJsonDTO, OpenAPIProperties.SBO_API_URL+"/web-root/restricted/player/register-player.aspx", loginUser.getId().intValue(), ip, "restrictedPlayer");
+            SboApiResponseData sboApiResponse = commonRequest(sboRegisterPlayerJsonDTO, new OpenAPIProperties().getSboApiUrl()+"/web-root/restricted/player/register-player.aspx", loginUser.getId().intValue(), ip, "restrictedPlayer");
 
             if (null == sboApiResponse ) {
                 return Result.failed(MessageUtils.get("etgptal"));
@@ -149,7 +149,7 @@ public class SboServiceImpl implements SboService {
             sboPlayerLoginJsonDTO.setPortfolio(gamePlatform.getPlatformCode());
             sboPlayerLoginJsonDTO.setIsWapSports(false);
 
-            SboApiResponseData sboApiResponse = commonRequest(sboPlayerLoginJsonDTO, OpenAPIProperties.SBO_API_URL+"/web-root/restricted/player/login.aspx", loginUser.getId().intValue(), ip, "PlayerLogin");
+            SboApiResponseData sboApiResponse = commonRequest(sboPlayerLoginJsonDTO, new OpenAPIProperties().getSboApiUrl()+"/web-root/restricted/player/login.aspx", loginUser.getId().intValue(), ip, "PlayerLogin");
             if("0".equals(sboApiResponse.getError().getId())){
                 return Result.success(sboApiResponse);
             }else {
@@ -170,7 +170,7 @@ public class SboServiceImpl implements SboService {
 
         SboApiResponseData sboApiResponse = null;
         try {
-            sboApiResponse = commonRequest(sboPlayerLogoutJsonDTO, OpenAPIProperties.SBO_API_URL+"/web-root/restricted/player/logout.aspx", Integer.valueOf(loginUser.getId().intValue()), ip, "logout");
+            sboApiResponse = commonRequest(sboPlayerLogoutJsonDTO, new OpenAPIProperties().getSboApiUrl()+"/web-root/restricted/player/logout.aspx", Integer.valueOf(loginUser.getId().intValue()), ip, "logout");
             if (null == sboApiResponse ) {
                 return Result.failed(MessageUtils.get("etgptal"));
             }

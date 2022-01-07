@@ -11,7 +11,7 @@ import java.util.List;
 @ApiModel
 public class GameInfoPageReq extends BaseDTO {
 
-    @ApiModelProperty(value = "游戏平台名称")
+    @ApiModelProperty(value = "游戏平台代码")
     private List platform;
 
     @ApiModelProperty(value = "游戏分类ID")

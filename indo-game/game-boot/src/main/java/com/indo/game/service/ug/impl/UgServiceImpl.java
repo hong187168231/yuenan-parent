@@ -112,12 +112,12 @@ public class UgServiceImpl implements UgService {
             trr.put("NickName", null==loginUser.getNickName()?"":loginUser.getNickName());//昵称,长度需要小于 50
             trr.put("Currency", gamePlatform.getCurrencyType());//货币代码
             String url = "";
-            if(null!=OpenAPIProperties.UG_AGENT&&!"".equals(OpenAPIProperties.UG_AGENT)){
-                trr.put("AgentID", OpenAPIProperties.UG_AGENT);//代理编号
-                url = OpenAPIProperties.UG_API_URL+"/SportApi/RegisterByAgent";
+            if(null!=new OpenAPIProperties().getUgAgentID()&&!"".equals(new OpenAPIProperties().getUgAgentID())){
+                trr.put("AgentID", new OpenAPIProperties().getUgAgentID());//代理编号
+                url = new OpenAPIProperties().getUgApiUrl()+"/SportApi/RegisterByAgent";
 
             }else {
-                url = OpenAPIProperties.UG_API_URL+"/SportApi/Register";
+                url = new OpenAPIProperties().getUgApiUrl()+"/SportApi/Register";
             }
 
             UgApiResponseData ugApiResponse = commonRequest(trr, url, loginUser.getId().intValue(), ip, "restrictedPlayer");
@@ -155,7 +155,7 @@ public class UgServiceImpl implements UgService {
             trr.put("Balance", "");// decimal 否 用于登录后的余额展示，仅 H5 版有效
             trr.put("CashBalance", "");// decimal 否 用于登录后的现金余额展示，仅 H5 版有效
 
-            UgApiResponseData ugApiResponse = commonRequest(trr, OpenAPIProperties.UG_API_URL+"/SportApi/Login", loginUser.getId().intValue(), ip, "Login");
+            UgApiResponseData ugApiResponse = commonRequest(trr, new OpenAPIProperties().getUgApiUrl()+"/SportApi/Login", loginUser.getId().intValue(), ip, "Login");
             if("000000".equals(ugApiResponse.getErrorCode())){
                 return Result.success(ugApiResponse);
             }else {
@@ -176,7 +176,7 @@ public class UgServiceImpl implements UgService {
 
         UgApiResponseData ugApiResponse = null;
         try {
-            ugApiResponse = commonRequest(trr, OpenAPIProperties.UG_API_URL+"/SportApi/Logout", Integer.valueOf(loginUser.getId().intValue()), ip, "logout");
+            ugApiResponse = commonRequest(trr, new OpenAPIProperties().getUgApiUrl()+"/SportApi/Logout", Integer.valueOf(loginUser.getId().intValue()), ip, "logout");
             if("000000".equals(ugApiResponse.getErrorCode())){
                 return Result.success(ugApiResponse);
             }else {
@@ -196,8 +196,8 @@ public class UgServiceImpl implements UgService {
     public UgApiResponseData commonRequest(Map<String, String> paramsMap, String url, Integer userId, String ip, String type) throws Exception {
 
         UgApiResponseData ugApiResponse = null;
-        paramsMap.put("CompanyKey", OpenAPIProperties.UG_KEY);
-        paramsMap.put("APIPassword", OpenAPIProperties.UG_API_PASSWORD);
+        paramsMap.put("CompanyKey", new OpenAPIProperties().getUgCompanyKey());
+        paramsMap.put("APIPassword", new OpenAPIProperties().getUgApiPasword());
         logger.info("uglog {} commonRequest ,url:{},paramsMap:{}", userId, url, paramsMap);
         JSONObject sortParams = GameUtil.sortMap(paramsMap);
         logger.info("ug_api_request:"+sortParams);

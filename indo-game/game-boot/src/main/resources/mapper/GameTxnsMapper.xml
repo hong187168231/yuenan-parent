@@ -21,10 +21,10 @@
             </foreach>
         </if>
         <if test='req.endTime != null and req.endTime.trim() neq ""'>
-             and t.create_time &gt;= #{req.endTime}
+             and t.create_time &lt;= #{req.endTime}
         </if>
         <if test='req.startTime != null and req.startTime.trim() neq ""'>
-             and t.create_time &lt;= #{req.startTime}
+             and t.create_time &gt;= #{req.startTime}
         </if>
          GROUP BY t.platform
     </select>
@@ -48,10 +48,10 @@
             </foreach>
         </if>
         <if test='req.endTime != null and req.endTime.trim() neq ""'>
-            and t.create_time &gt;= #{req.endTime}
+            and t.create_time &lt;= #{req.endTime}
         </if>
         <if test='req.startTime != null and req.startTime.trim() neq ""'>
-            and t.create_time &lt;= #{req.startTime}
+            and t.create_time &gt;= #{req.startTime}
         </if>
         <choose>
             <when test="req.orderBy">

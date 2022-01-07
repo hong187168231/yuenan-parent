@@ -6,9 +6,10 @@ import com.indo.common.config.OpenAPIProperties;
 
 public class SboParentRequJsonDTO {
 
-    private String CompanyKey = OpenAPIProperties.SBO_KEY;
+    OpenAPIProperties openAPIProperties = new OpenAPIProperties();
+    private String CompanyKey = openAPIProperties.getCompanyKey();
 
-    private String ServerId = OpenAPIProperties.SBO_SERVERID;
+    private String ServerId = openAPIProperties.getSboServerId();
 
     @JSONField(name="CompanyKey")
     public String getCompanyKey() {

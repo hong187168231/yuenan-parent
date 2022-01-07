@@ -115,7 +115,7 @@ public class SabaServiceImpl implements SabaService {
             trr.put("maxTransfer", String.valueOf(gamePlatform.getMaxTransfer()));//于 Sportsbook 系统与厂商间的最大限制转帐金额
             trr.put("minTransfer", String.valueOf(gamePlatform.getMinTransfer()));//于 Sportsbook 系统与厂商间的最小限制转帐金额
 
-            SabaApiResponseData sabaApiResponse = commonRequest(trr, OpenAPIProperties.SABA_API_URL+"/api/CreateMember", loginUser.getId().intValue(), ip, "restrictedPlayer");
+            SabaApiResponseData sabaApiResponse = commonRequest(trr, new OpenAPIProperties().getSabaApiUrl()+"/api/CreateMember", loginUser.getId().intValue(), ip, "restrictedPlayer");
 
             if (null == sabaApiResponse ) {
                 return Result.failed(MessageUtils.get("etgptal"));
@@ -142,7 +142,7 @@ public class SabaServiceImpl implements SabaService {
             trr.put("username", loginUser.getAccount());
             trr.put("portfolio", gamePlatform.getPlatformCode());
 
-            SabaApiResponseData sabaApiResponse = commonRequest(trr, OpenAPIProperties.SABA_API_URL+"/api/GetSabaUrl", loginUser.getId().intValue(), ip, "restrictedPlayer");
+            SabaApiResponseData sabaApiResponse = commonRequest(trr, new OpenAPIProperties().getSabaApiUrl()+"/api/GetSabaUrl", loginUser.getId().intValue(), ip, "restrictedPlayer");
             if("0".equals(sabaApiResponse.getError_code())){
                 return Result.success(sabaApiResponse);
             }else {
@@ -163,7 +163,7 @@ public class SabaServiceImpl implements SabaService {
 
         SabaApiResponseData sabaApiResponse = null;
         try {
-            sabaApiResponse = commonRequest(trr, OpenAPIProperties.SABA_API_URL+"/api/KickUser", Integer.valueOf(loginUser.getId().intValue()), ip, "logout");
+            sabaApiResponse = commonRequest(trr, new OpenAPIProperties().getSabaApiUrl()+"/api/KickUser", Integer.valueOf(loginUser.getId().intValue()), ip, "logout");
             if (null == sabaApiResponse ) {
                 return Result.failed(MessageUtils.get("etgptal"));
             }
@@ -187,8 +187,8 @@ public class SabaServiceImpl implements SabaService {
         logger.info("sabalog {} commonRequest ,url:{},paramsMap:{}", userId, url, paramsMap);
 
         SabaApiResponseData sabaApiResponse = null;
-        paramsMap.put("vendor_id", OpenAPIProperties.SABA_SITENAME);
-        paramsMap.put("operatorId", OpenAPIProperties.SABA_VENDORID);
+        paramsMap.put("vendor_id", new OpenAPIProperties().getSiteName());
+        paramsMap.put("operatorId", new OpenAPIProperties().getVendorId());
         JSONObject sortParams = GameUtil.sortMap(paramsMap);
         Map<String, String> trr = new HashMap<>();
         trr.put("param", sortParams.toString());

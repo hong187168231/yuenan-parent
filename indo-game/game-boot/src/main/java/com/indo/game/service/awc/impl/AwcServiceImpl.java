@@ -111,7 +111,7 @@ public class AwcServiceImpl implements AwcService {
 
         AwcApiResponseData awcApiResponseData = null;
         try {
-            awcApiResponseData = commonRequest(trr, OpenAPIProperties.AWC_API_URL_LOGIN+"/wallet/logout", Integer.valueOf(loginUser.getId().intValue()), ip, "logout");
+            awcApiResponseData = commonRequest(trr, new OpenAPIProperties().getAwcApiId()+"/wallet/logout", Integer.valueOf(loginUser.getId().intValue()), ip, "logout");
             if (null == awcApiResponseData ) {
                 return Result.failed(MessageUtils.get("etgptal"));
             }
@@ -196,7 +196,7 @@ public class AwcServiceImpl implements AwcService {
             trr.put("betLimit", "{"+betLimit+"}");//下注限红
 
 
-            return commonRequest(trr, OpenAPIProperties.AWC_API_URL_LOGIN+"/wallet/createMember", cptOpenMember.getUserId(), ip, "createMember");
+            return commonRequest(trr, new OpenAPIProperties().getAwcApiId()+"/wallet/createMember", cptOpenMember.getUserId(), ip, "createMember");
         } catch (Exception e) {
             logger.error("awclog game error {} ", e);
             return null;
@@ -238,7 +238,7 @@ public class AwcServiceImpl implements AwcService {
 //            ※每个玩家每个最多允许 6 组下注限红 ID
             trr.put("betLimit", "");//下注限红
 
-            return commonRequest(trr, OpenAPIProperties.AWC_API_URL_LOGIN+"/wallet/login", cptOpenMember.getUserId(), ip, "initGame");
+            return commonRequest(trr, new OpenAPIProperties().getAwcApiId()+"/wallet/login", cptOpenMember.getUserId(), ip, "initGame");
         } catch (Exception e) {
             logger.error("awclog game error {} ", e);
             return null;
@@ -298,7 +298,7 @@ public class AwcServiceImpl implements AwcService {
             trr.put("gameCode", "");//平台游戏代码 Example 范例：MX-LIVE-001
 
             // 获取游戏注单
-            AwcApiResponseData result = commonRequest(trr, OpenAPIProperties.AWC_API_URL_LOGIN, 0, "127.0.0.1", "commonAePullOrder");
+            AwcApiResponseData result = commonRequest(trr, new OpenAPIProperties().getAwcApiId(), 0, "127.0.0.1", "commonAePullOrder");
             if (null != result && "0000".equals(result.getStatus())) {
                 List<AwcTransaction> list = (List<AwcTransaction>)result.getTransactions();
 
@@ -332,8 +332,8 @@ public class AwcServiceImpl implements AwcService {
         logger.info("awclog {} commonRequest AE_AES_KEY:{},url:{},paramsMap:{}", userId, url, paramsMap);
 
         AwcApiResponseData awcApiResponse = null;
-        paramsMap.put("cert", OpenAPIProperties.AWC_CERT);
-        paramsMap.put("agentId", OpenAPIProperties.AWC_AGENTID);
+        paramsMap.put("cert", new OpenAPIProperties().getAwcCert());
+        paramsMap.put("agentId", new OpenAPIProperties().getAwcAgentId());
         JSONObject sortParams = GameUtil.sortMap(paramsMap);
         logger.info("ug_api_request:"+sortParams);
         String resultString = GameUtil.doProxyPostJson(url, paramsMap, type, userId);
