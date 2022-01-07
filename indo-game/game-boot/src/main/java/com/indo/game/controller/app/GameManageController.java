@@ -7,6 +7,7 @@ import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
 import com.indo.game.pojo.dto.manage.GameInfoPageReq;
 import com.indo.game.pojo.entity.manage.*;
+import com.indo.game.pojo.vo.app.GameInfoRecord;
 import com.indo.game.pojo.vo.app.GameStatiRecord;
 import com.indo.game.service.app.IGameManageService;
 import io.swagger.annotations.Api;
@@ -63,11 +64,21 @@ public class GameManageController {
         return iFrontEndGameManageService.queryGamePlatformByCategory(categoryId);
     }
 
+    @ApiOperation(value = "查询所有平台记录", httpMethod = "POST")
+    @PostMapping(value = "/allGameInfoCount")
+    @ResponseBody
+    public Result<List<GameStatiRecord>> queryAllGameInfoCount(@LoginUser LoginInfo loginUser, GameInfoPageReq req){
+        req.setUserAcct(loginUser.getAccount());
+        IPage<GameStatiRecord> result = iFrontEndGameManageService.queryAllGameInfoCount(req);
+        return Result.success(result.getRecords(), result.getTotal());
+    }
+
     @ApiOperation(value = "查询所有游戏记录", httpMethod = "POST")
     @PostMapping(value = "/allGameInfo")
-    public Result<List<GameStatiRecord>> queryAllGameInfo(@LoginUser LoginInfo loginUser, GameInfoPageReq req){
+    @ResponseBody
+    public Result<List<GameInfoRecord>> queryAllGameInfo(@LoginUser LoginInfo loginUser, GameInfoPageReq req){
         req.setUserAcct(loginUser.getAccount());
-        IPage<GameStatiRecord> result = iFrontEndGameManageService.queryAllGameInfo(req);
+        IPage<GameInfoRecord> result = iFrontEndGameManageService.queryAllGameInfo(req);
         return Result.success(result.getRecords(), result.getTotal());
     }
 }

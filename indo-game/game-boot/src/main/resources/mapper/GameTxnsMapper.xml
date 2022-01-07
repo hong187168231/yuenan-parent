@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.indo.game.mapper.TxnsMapper">
-    <select id="queryAllGameInfo" resultType="com.indo.game.pojo.vo.app.GameStatiRecord">
+    <select id="queryAllGameInfoCount" resultType="com.indo.game.pojo.vo.app.GameStatiRecord">
         SELECT count(t.id) AS betCount,
-               SUM(t.betAmount) AS betAmount,
-               SUM(t.winningAmount) AS winningAmount,t.platform
+               SUM(t.bet_amount) AS betAmount,
+               SUM(t.winning_amount) AS winningAmount,t.platform
         FROM game_txns t
         WHERE
          t.user_id = #{req.userAcct} and t.method = 'Settle' and t.status = 'Running'
@@ -21,18 +21,44 @@
             </foreach>
         </if>
         <if test='req.endTime != null and req.endTime.trim() neq ""'>
-             and t.create_date &gt;= #{req.endTime}
+             and t.create_time &gt;= #{req.endTime}
         </if>
         <if test='req.startTime != null and req.startTime.trim() neq ""'>
-             and t.create_date &lt;= #{req.startTime}
+             and t.create_time &lt;= #{req.startTime}
         </if>
          GROUP BY t.platform
+    </select>
+    <select id="queryAllGameInfo" resultType="com.indo.game.pojo.vo.app.GameInfoRecord">
+        SELECT t.platform_en_name,
+        t.game_name,
+        t.bet_amount,t.winning_amount
+        FROM game_txns t
+        WHERE
+        t.user_id = #{req.userAcct} and t.method = 'Settle' and t.status = 'Running'
+        <if test='req.platform != null and req.platform.size()>0'>
+            and t.platform IN
+            <foreach collection='req.platform' item='role' open='(' separator=',' close=')'>
+                #{role}
+            </foreach>
+        </if>
+        <if test='req.categoryId != null and req.categoryId.size()>0'>
+            and t.category_id IN
+            <foreach collection='req.categoryId' item='role' open='(' separator=',' close=')'>
+                #{role}
+            </foreach>
+        </if>
+        <if test='req.endTime != null and req.endTime.trim() neq ""'>
+            and t.create_time &gt;= #{req.endTime}
+        </if>
+        <if test='req.startTime != null and req.startTime.trim() neq ""'>
+            and t.create_time &lt;= #{req.startTime}
+        </if>
         <choose>
             <when test="req.orderBy">
-                 order by t.create_date asc;
+                order by t.create_time asc;
             </when>
             <otherwise>
-                 order by t.create_date desc;
+                order by t.create_time desc;
             </otherwise>
         </choose>
     </select>
