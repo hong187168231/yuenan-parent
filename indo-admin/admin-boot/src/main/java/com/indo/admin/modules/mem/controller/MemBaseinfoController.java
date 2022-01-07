@@ -11,6 +11,7 @@ import com.indo.admin.modules.mem.req.MemBaseInfoPageReq;
 import com.indo.admin.modules.mem.req.MemEditStatusReq;
 import com.indo.admin.modules.mem.req.MemEditReq;
 import com.indo.admin.modules.mem.vo.MemBaseInfoVo;
+import com.indo.common.web.util.JwtUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -29,13 +30,15 @@ import java.util.List;
  * @author kevin
  * @since 2021-10-23
  */
-@Api(value="用户controller",tags={"会员基本信息接口"})
+@Api(value = "用户controller", tags = {"会员基本信息接口"})
 @RestController
 @RequestMapping("/api/v1/memBaseinfo")
 public class MemBaseinfoController {
 
     @Resource
     private IMemBaseinfoService memBaseinfoService;
+
+
 
     @ApiOperation(value = "分页查询")
     @PostMapping(value = "/listByPage")
@@ -75,6 +78,19 @@ public class MemBaseinfoController {
     public Result resetPassword(@PathVariable Long memId) {
         boolean flag = memBaseinfoService.resetPassword(memId);
         return Result.judge(flag);
+    }
+
+
+    @ApiOperation(value = "修改会员等级")
+    @PutMapping(value = "/updateMemLevel")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "memId", value = "用户ID", required = true, paramType = "query", dataType = "Long"),
+            @ApiImplicitParam(name = "memLevel", value = "用户等级", required = true, paramType = "query", dataType = "int")
+    })
+    public Result updateMemLevel(@RequestParam("memId") Long memId, @RequestParam("memLevel") Integer memLevel) {
+        boolean flag = memBaseinfoService.updateMemLevel(memId, memLevel);
+        return Result.judge(flag);
+
     }
 
 

@@ -57,6 +57,8 @@ public interface MemBaseInfoService extends SuperService<MemBaseinfo> {
 
     boolean updatePassword(UpdatePasswordReq req, LoginInfo loginUser);
 
+    boolean updateHeadImage(String headImage, LoginInfo loginUser);
+
     void updateBaseInfo(UpdateBaseInfoReq req, LoginInfo loginUser);
 
     MemBaseinfo getMemBaseInfoById(Long id);
@@ -68,6 +70,9 @@ public interface MemBaseInfoService extends SuperService<MemBaseinfo> {
     int updateMemberAmount(BigDecimal amount, BigDecimal canAmount, Long userId);
 
     MemTradingVo tradingInfo(Long memId);
+
+
+    void upLevel(String payLoad);
 
 
 }

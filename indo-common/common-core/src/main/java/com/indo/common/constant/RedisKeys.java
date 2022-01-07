@@ -39,6 +39,11 @@ public class RedisKeys {
      */
     public static final String SYS_LEVEL_KEY = "SYS:LEVEL_KEY";
 
+    /**
+     * 等级配置
+     */
+    public static final String SYS_RABBITMQ_MSG_ID_KEY = "SYS:RABBITMQ_MSG_ID_KEY:";
+
 
     public static final String GAME_PLATFORM_KEY = "GAME_PLATFORM_KEY_";
     /**

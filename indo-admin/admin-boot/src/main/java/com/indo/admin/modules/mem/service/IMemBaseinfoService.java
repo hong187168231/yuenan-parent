@@ -10,6 +10,7 @@ import com.indo.admin.modules.mem.req.MemEditReq;
 import com.indo.admin.modules.mem.vo.MemBaseInfoVo;
 import com.indo.admin.modules.mem.vo.MemBaseDetailVO;
 import com.indo.common.result.PageResult;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Date;
 import java.util.List;
@@ -47,6 +48,8 @@ public interface IMemBaseinfoService extends IService<MemBaseinfo> {
      * @return
      */
     boolean editMemBaseInfo(MemEditReq memEditReq);
+
+    boolean updateMemLevel(Long memId, Integer memLevel);
 
     /**
      * 根据会员UID 查会员编辑详情

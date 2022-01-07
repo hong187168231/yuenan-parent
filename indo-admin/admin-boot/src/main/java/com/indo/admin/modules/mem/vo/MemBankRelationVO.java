@@ -54,7 +54,7 @@ public class MemBankRelationVO {
     private Integer status;
 
     @ApiModelProperty(value = "添加时间")
-    private Date createTime;
+    private String createTime;
 
     @ApiModelProperty(value = "备注")
     private String remark;

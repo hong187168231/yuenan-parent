@@ -1,5 +1,7 @@
 package com.indo.msg.pojo.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.indo.common.pojo.entity.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
@@ -18,19 +20,21 @@ import java.util.Date;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@ApiModel(value = "BrokerMessage对象", description = "消息记录表")
+@ApiModel(value="BrokerMessage对象", description="消息记录表")
 public class BrokerMessage extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
+    @TableId
     private String messageId;
 
     private String message;
 
-    private String tryCount;
+    private Integer tryCount;
 
     private Integer status;
 
     private Date nextRetry;
+
 
 }

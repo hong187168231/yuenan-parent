@@ -80,6 +80,15 @@ public class MemBaseinfoServiceImpl extends ServiceImpl<MemBaseinfoMapper, MemBa
     }
 
     @Override
+    public boolean updateMemLevel(Long memId, Integer memLevel) {
+        MemBaseinfo memBaseinfo = new MemBaseinfo();
+        memBaseinfo.setMemLevel(memLevel);
+        memBaseinfo.setId(
+                memId);
+        return baseMapper.updateById(memBaseinfo) > 0;
+    }
+
+    @Override
     public MemBaseDetailVO getMemBaseInfo(Long uid) {
         MemBaseinfo memBaseinfo = baseMapper.selectById(uid);
         MemBaseDetailVO memBaseDetailVO = new MemBaseDetailVO();

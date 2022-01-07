@@ -1,6 +1,7 @@
 package com.indo.msg.api;
 
 
+import cn.hutool.core.util.IdUtil;
 import com.indo.common.rabbitmq.bo.Message;
 import com.indo.common.rabbitmq.bo.MessageType;
 import com.indo.common.rabbitmq.exc.MessageRunTimeException;
@@ -87,7 +88,7 @@ public class MessageBuilder {
 
     public Message build() {
         if (messageId == null) {
-            messageId = UUID.randomUUID().toString();
+            messageId = IdUtil.simpleUUID();
         }
         if (topic == null) {
             throw new MessageRunTimeException("this topic is null");

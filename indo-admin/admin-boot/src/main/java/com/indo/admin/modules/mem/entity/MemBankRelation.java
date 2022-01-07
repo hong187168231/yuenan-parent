@@ -24,8 +24,8 @@ public class MemBankRelation extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "主键")
-    @TableId(value = "id", type = IdType.AUTO)
-    private Long id;
+    @TableId(value = "mem_bank_id", type = IdType.AUTO)
+    private Long memBankId;
 
     @ApiModelProperty(value = "用户id")
     private Long memId;

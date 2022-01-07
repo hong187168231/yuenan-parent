@@ -32,7 +32,7 @@ public class SysParameterController {
     @Resource
     private ISysParameterService iSysParameterService;
 
-    @ApiOperation(value = "礼金领取")
+    @ApiOperation(value = "根据参数编码获取参数值")
     @GetMapping(value = "/{paramCode}")
     @ApiImplicitParam(name = "paramCode", value = "参数code", required = true, paramType = "path", dataType = "String")
     @AllowAccess

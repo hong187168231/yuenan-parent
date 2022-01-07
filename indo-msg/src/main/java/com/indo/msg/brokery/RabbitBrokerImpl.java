@@ -66,7 +66,7 @@ public class RabbitBrokerImpl implements RabbitBroker {
     @Override
     public void reliantSend(Message message) {
         message.setMessageType(MessageType.RELIANT);
-        BrokerMessage bm = null;
+        BrokerMessage bm = iMessageStoreService.selectByMessageId(message.getMessageId());
         if (bm == null) {
             //1. 把数据库的消息发送日志先记录好
             Date now = new Date();
@@ -78,7 +78,7 @@ public class RabbitBrokerImpl implements RabbitBroker {
             brokerMessage.setCreateTime(now);
             brokerMessage.setUpdateTime(now);
             brokerMessage.setMessage(JSON.toJSONString(message));
-//            iMessageStoreService.saveMessage(brokerMessage);
+            iMessageStoreService.saveMessage(brokerMessage);
         }
         //2. 执行真正的发送消息逻辑
         sendKernel(message);
