@@ -73,7 +73,7 @@ public class OpenAPIProperties implements InitializingBean {
 
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
 
         PROXY_HOST_NAME = proxyHostName;
         PROXY_PORT = proxyPort;

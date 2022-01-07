@@ -20,4 +20,8 @@ spring:
         shared-configs[0]:
           data-id: indo-common.yaml
           refresh: true
+        shared-configs[1]:
+          data-id: indo-third-common.yaml
+          refresh: true
+
 
