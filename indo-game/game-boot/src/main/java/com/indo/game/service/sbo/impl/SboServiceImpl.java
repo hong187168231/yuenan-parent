@@ -2,11 +2,11 @@ package com.indo.game.service.sbo.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.indo.common.config.OpenAPIProperties;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
 import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.common.utils.GameUtil;
-import com.indo.common.config.OpenAPIProperties;
 import com.indo.game.mapper.frontend.GameCategoryMapper;
 import com.indo.game.mapper.frontend.GamePlatformMapper;
 import com.indo.game.mapper.frontend.GameTypeMapper;
@@ -121,7 +121,7 @@ public class SboServiceImpl implements SboService {
             sboRegisterPlayerJsonDTO.setUsername(loginUser.getAccount());
             sboRegisterPlayerJsonDTO.setAgent(gameAgent.getUsername());//代理
 
-            SboApiResponseData sboApiResponse = commonRequest(sboRegisterPlayerJsonDTO, new OpenAPIProperties().getSboApiUrl()+"/web-root/restricted/player/register-player.aspx", loginUser.getId().intValue(), ip, "restrictedPlayer");
+            SboApiResponseData sboApiResponse = commonRequest(sboRegisterPlayerJsonDTO, OpenAPIProperties.SBO_API_URL+"/web-root/restricted/player/register-player.aspx", loginUser.getId().intValue(), ip, "restrictedPlayer");
 
             if (null == sboApiResponse ) {
                 return Result.failed(MessageUtils.get("etgptal"));
@@ -149,7 +149,7 @@ public class SboServiceImpl implements SboService {
             sboPlayerLoginJsonDTO.setPortfolio(gamePlatform.getPlatformCode());
             sboPlayerLoginJsonDTO.setIsWapSports(false);
 
-            SboApiResponseData sboApiResponse = commonRequest(sboPlayerLoginJsonDTO, new OpenAPIProperties().getSboApiUrl()+"/web-root/restricted/player/login.aspx", loginUser.getId().intValue(), ip, "PlayerLogin");
+            SboApiResponseData sboApiResponse = commonRequest(sboPlayerLoginJsonDTO, OpenAPIProperties.SBO_API_URL+"/web-root/restricted/player/login.aspx", loginUser.getId().intValue(), ip, "PlayerLogin");
             if("0".equals(sboApiResponse.getError().getId())){
                 return Result.success(sboApiResponse);
             }else {
@@ -170,7 +170,7 @@ public class SboServiceImpl implements SboService {
 
         SboApiResponseData sboApiResponse = null;
         try {
-            sboApiResponse = commonRequest(sboPlayerLogoutJsonDTO, new OpenAPIProperties().getSboApiUrl()+"/web-root/restricted/player/logout.aspx", Integer.valueOf(loginUser.getId().intValue()), ip, "logout");
+            sboApiResponse = commonRequest(sboPlayerLogoutJsonDTO, OpenAPIProperties.SBO_API_URL+"/web-root/restricted/player/logout.aspx", Integer.valueOf(loginUser.getId().intValue()), ip, "logout");
             if (null == sboApiResponse ) {
                 return Result.failed(MessageUtils.get("etgptal"));
             }
@@ -193,7 +193,7 @@ public class SboServiceImpl implements SboService {
         logger.info("sbolog {} commonRequest ,url:{},paramsMap:{}", userId, url, JSONObject.toJSONString(obj));
 
         SboApiResponseData sboApiResponse = null;
-        String resultString = GameUtil.doProxyPostJson(url, JSONObject.toJSONString(obj), type, userId);
+        String resultString = GameUtil.doProxyPostJson(OpenAPIProperties.PROXY_HOST_NAME, OpenAPIProperties.PROXY_PORT, OpenAPIProperties.PROXY_TCP,url, JSONObject.toJSONString(obj), type, userId);
         logger.info("sbo_api_response:"+resultString);
         if (StringUtils.isNotEmpty(resultString)) {
             sboApiResponse = JSONObject.parseObject(resultString, SboApiResponseData.class);

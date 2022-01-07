@@ -1,11 +1,11 @@
 package com.indo.game.service.saba.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.indo.common.config.OpenAPIProperties;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
 import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.common.utils.GameUtil;
-import com.indo.common.config.OpenAPIProperties;
 import com.indo.game.mapper.frontend.GameCategoryMapper;
 import com.indo.game.mapper.frontend.GamePlatformMapper;
 import com.indo.game.mapper.frontend.GameTypeMapper;
@@ -115,7 +115,7 @@ public class SabaServiceImpl implements SabaService {
             trr.put("maxTransfer", String.valueOf(gamePlatform.getMaxTransfer()));//于 Sportsbook 系统与厂商间的最大限制转帐金额
             trr.put("minTransfer", String.valueOf(gamePlatform.getMinTransfer()));//于 Sportsbook 系统与厂商间的最小限制转帐金额
 
-            SabaApiResponseData sabaApiResponse = commonRequest(trr, new OpenAPIProperties().getSabaApiUrl()+"/api/CreateMember", loginUser.getId().intValue(), ip, "restrictedPlayer");
+            SabaApiResponseData sabaApiResponse = commonRequest(trr, OpenAPIProperties.SABA_API_URL+"/api/CreateMember", loginUser.getId().intValue(), ip, "restrictedPlayer");
 
             if (null == sabaApiResponse ) {
                 return Result.failed(MessageUtils.get("etgptal"));
@@ -142,7 +142,7 @@ public class SabaServiceImpl implements SabaService {
             trr.put("username", loginUser.getAccount());
             trr.put("portfolio", gamePlatform.getPlatformCode());
 
-            SabaApiResponseData sabaApiResponse = commonRequest(trr, new OpenAPIProperties().getSabaApiUrl()+"/api/GetSabaUrl", loginUser.getId().intValue(), ip, "restrictedPlayer");
+            SabaApiResponseData sabaApiResponse = commonRequest(trr, OpenAPIProperties.SABA_API_URL+"/api/GetSabaUrl", loginUser.getId().intValue(), ip, "restrictedPlayer");
             if("0".equals(sabaApiResponse.getError_code())){
                 return Result.success(sabaApiResponse);
             }else {
@@ -163,7 +163,7 @@ public class SabaServiceImpl implements SabaService {
 
         SabaApiResponseData sabaApiResponse = null;
         try {
-            sabaApiResponse = commonRequest(trr, new OpenAPIProperties().getSabaApiUrl()+"/api/KickUser", Integer.valueOf(loginUser.getId().intValue()), ip, "logout");
+            sabaApiResponse = commonRequest(trr, OpenAPIProperties.SABA_API_URL+"/api/KickUser", Integer.valueOf(loginUser.getId().intValue()), ip, "logout");
             if (null == sabaApiResponse ) {
                 return Result.failed(MessageUtils.get("etgptal"));
             }
@@ -187,13 +187,13 @@ public class SabaServiceImpl implements SabaService {
         logger.info("sabalog {} commonRequest ,url:{},paramsMap:{}", userId, url, paramsMap);
 
         SabaApiResponseData sabaApiResponse = null;
-        paramsMap.put("vendor_id", new OpenAPIProperties().getSiteName());
-        paramsMap.put("operatorId", new OpenAPIProperties().getVendorId());
+        paramsMap.put("vendor_id", OpenAPIProperties.SABA_SITENAME);
+        paramsMap.put("operatorId", OpenAPIProperties.SABA_VENDORID);
         JSONObject sortParams = GameUtil.sortMap(paramsMap);
         Map<String, String> trr = new HashMap<>();
         trr.put("param", sortParams.toString());
         logger.info("ug_api_request:"+sortParams);
-        String resultString = GameUtil.doProxyPostJson(url, trr, type, userId);
+        String resultString = GameUtil.doProxyPostJson(OpenAPIProperties.PROXY_HOST_NAME, OpenAPIProperties.PROXY_PORT, OpenAPIProperties.PROXY_TCP,url, trr, type, userId);
         logger.info("saba_api_response:"+resultString);
         if (StringUtils.isNotEmpty(resultString)) {
             sabaApiResponse = JSONObject.parseObject(resultString, SabaApiResponseData.class);

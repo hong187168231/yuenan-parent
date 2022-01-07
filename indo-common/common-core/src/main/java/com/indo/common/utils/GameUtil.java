@@ -1,7 +1,6 @@
 package com.indo.common.utils;
 
 import com.alibaba.fastjson.JSONObject;
-import com.indo.common.config.OpenAPIProperties;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
@@ -130,13 +129,12 @@ public class GameUtil extends HttpCommonUtils {
      * @param userId
      * @return
      */
-    public static String doProxyPostJson(String url, Map<String, String> paramsMap, String type, Integer userId) {
+    public static String doProxyPostJson(String proxyHostName,int proxyPort,String proxyTcp,String url, Map<String, String> paramsMap, String type, Integer userId) {
         // 设置代理IP、端口、协议
         // 创建HttpClientBuilder
         HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
         // 依次是代理地址，代理端口号，协议类型
-        OpenAPIProperties openAPIProperties = new OpenAPIProperties();
-        HttpHost proxy = new HttpHost(openAPIProperties.getProxyHostName(), openAPIProperties.getProxyPort(), openAPIProperties.getProxyTcp());
+        HttpHost proxy = new HttpHost(proxyHostName, proxyPort, proxyTcp);
 
         CloseableHttpClient closeableHttpClient = null;
         CloseableHttpResponse response = null;
@@ -189,10 +187,9 @@ public class GameUtil extends HttpCommonUtils {
         return resultString;
     }
 
-    public static String doProxyPostJson(String url, String json, String type, Integer userId) {
+    public static String doProxyPostJson(String proxyHostName,int proxyPort,String proxyTcp,String url, String json, String type, Integer userId) {
         // 依次是代理地址，代理端口号，协议类型
-        OpenAPIProperties openAPIProperties = new OpenAPIProperties();
-        HttpHost proxy = new HttpHost(openAPIProperties.getProxyHostName(), openAPIProperties.getProxyPort(), openAPIProperties.getProxyTcp());
+        HttpHost proxy = new HttpHost(proxyHostName, proxyPort, proxyTcp);
         String result = "";
         HttpPost httpPost = new HttpPost(url);
         CloseableHttpClient httpClient = HttpClients.createDefault();

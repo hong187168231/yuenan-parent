@@ -2,12 +2,12 @@ package com.indo.admin.modules.game.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.indo.common.config.OpenAPIProperties;
 import com.indo.admin.modules.game.mapper.GameAgentMapper;
 import com.indo.admin.modules.game.service.SboService;
 import com.indo.admin.pojo.dto.game.sbo.*;
 import com.indo.admin.pojo.entity.GameAgent;
 import com.indo.admin.pojo.vo.game.sbo.SboApiResponseData;
-import com.indo.common.config.OpenAPIProperties;
 import com.indo.common.result.Result;
 import com.indo.common.utils.GameUtil;
 import com.indo.common.utils.i18n.MessageUtils;
@@ -18,11 +18,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * awc ae真人 游戏业务类
@@ -62,6 +57,8 @@ public class SboServiceImpl implements SboService {
 
             SboAgentJsonDTO sboAgentJsonDTO = new SboAgentJsonDTO();
             BeanUtils.copyProperties(sboAgentJsonDTO,sboAgentDTO);
+//            sboAgentJsonDTO.setCompanyKey(OpenAPIProperties.SBO_KEY);
+//            sboAgentJsonDTO.setServerId(OpenAPIProperties.SBO_SERVERID);
             SboApiResponseData sboApiResponse = commonRequest(sboAgentJsonDTO, OpenAPIProperties.SBO_API_URL+"/web-root/restricted/agent/register-agent.aspx", JwtUtils.getUserId().intValue(), ip, "registerAgent");
 
             if (null == sboApiResponse ) {
@@ -166,7 +163,7 @@ public class SboServiceImpl implements SboService {
         logger.info("sbolog {} commonRequest ,url:{},paramsMap:{}", userId, url, obj);
 
         SboApiResponseData sboApiResponse = null;
-        String resultString = GameUtil.doProxyPostJson(url, JSONObject.toJSONString(obj), type, userId);
+        String resultString = GameUtil.doProxyPostJson(OpenAPIProperties.PROXY_HOST_NAME, OpenAPIProperties.PROXY_PORT, OpenAPIProperties.PROXY_TCP,url, JSONObject.toJSONString(obj), type, userId);
         logger.info("sbo_api_response:"+resultString);
         if (StringUtils.isNotEmpty(resultString)) {
             sboApiResponse = JSONObject.parseObject(resultString, SboApiResponseData.class);

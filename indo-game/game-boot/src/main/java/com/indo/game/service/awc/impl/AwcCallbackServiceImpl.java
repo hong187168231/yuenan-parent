@@ -4,10 +4,10 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.indo.common.config.OpenAPIProperties;
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.common.utils.DateUtils;
-import com.indo.common.config.OpenAPIProperties;
 import com.indo.game.mapper.TxnsMapper;
 import com.indo.game.pojo.dto.awc.*;
 import com.indo.game.pojo.entity.manage.GameCategory;
@@ -42,7 +42,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
     private TxnsMapper txnsMapper;
 
     public Object awcCallback(AwcApiRequestParentData awcApiRequestData,String ip) {
-        if(!new OpenAPIProperties().getAwcApiSecretKey().equals(awcApiRequestData.getKey())){
+        if(!OpenAPIProperties.AWC_API_SECRET_KEY.equals(awcApiRequestData.getKey())){
             AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
             callBacekFail.setStatus("1008");
             callBacekFail.setDesc("Invalid token!");
