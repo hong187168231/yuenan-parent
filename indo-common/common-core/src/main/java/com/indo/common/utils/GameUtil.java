@@ -188,12 +188,18 @@ public class GameUtil extends HttpCommonUtils {
     }
 
     public static String doProxyPostJson(String proxyHostName,int proxyPort,String proxyTcp,String url, String json, String type, Integer userId) {
+        // 设置代理IP、端口、协议
+        // 创建HttpClientBuilder
+        HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
         // 依次是代理地址，代理端口号，协议类型
         HttpHost proxy = new HttpHost(proxyHostName, proxyPort, proxyTcp);
-        String result = "";
-        HttpPost httpPost = new HttpPost(url);
-        CloseableHttpClient httpClient = HttpClients.createDefault();
+
+        CloseableHttpClient closeableHttpClient = null;
+        CloseableHttpResponse response = null;
+        String resultString = "";
         try {
+            // 创建Http Post请求
+            HttpPost httpPost = new HttpPost(url);
             // 设置请求超时 20+10+25=55s 配合业务设置
             RequestConfig requestConfig = RequestConfig.custom()
                     // 设置连接超时时间,单位毫秒。
@@ -209,26 +215,27 @@ public class GameUtil extends HttpCommonUtils {
             httpPost.setConfig(requestConfig);
             //不复用TCP SOCKET
             httpPost.setHeader("connection", "close");
+            httpPost.setHeader("Content-Type", "application/json");
 
-            BasicResponseHandler handler = new BasicResponseHandler();
+            // 创建请求内容
             StringEntity entity = new StringEntity(json, "utf-8");//解决中文乱码问题
             entity.setContentEncoding("UTF-8");
-            entity.setContentType("application/json");
             httpPost.setEntity(entity);
-            result = httpClient.execute(httpPost, handler);
-            return result;
+
+            closeableHttpClient = httpClientBuilder.build();
+            // 执行http请求
+            response = closeableHttpClient.execute(httpPost);
+            HttpEntity responseEntity = response.getEntity();
+            resultString = EntityUtils.toString(responseEntity, "utf-8");
+            // 此句关闭了流
+            EntityUtils.consume(responseEntity);
         } catch (Exception e) {
             logger.error("httplog {}:{} doProxyPostJson occur error:{}, url:{}, proxyHost:{}, proxyPort:{}, originParams:{}",
                     userId, type, e.getMessage(), url, json, e);
-            e.printStackTrace();
-
+            return resultString;
         } finally {
-            try {
-                httpClient.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            HttpCommonUtils.closeHttpClientAndResponse(response, closeableHttpClient, url, json);
         }
-        return result;
+        return resultString;
     }
 }
