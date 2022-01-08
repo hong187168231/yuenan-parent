@@ -6,6 +6,8 @@ import com.indo.common.enums.*;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.utils.DateUtils;
 import com.indo.common.web.exception.BizException;
+import com.indo.core.pojo.dto.MemGoldChangeDto;
+import com.indo.core.service.IMemGoldChangeService;
 import com.indo.user.mapper.MemGiftReceiveMapper;
 import com.indo.user.pojo.entity.MemGiftReceive;
 import com.indo.user.pojo.req.gift.GiftReceiveReq;
@@ -160,7 +162,7 @@ public class MemGiftReceiveServiceImpl extends ServiceImpl<MemGiftReceiveMapper,
      * @param loginInfo
      */
     public void updateGiftGold(GiftReceiveReq giftReceiveReq, LoginInfo loginInfo) {
-        MemGoldChangeDTO goldChangeDO = new MemGoldChangeDTO();
+        MemGoldChangeDto goldChangeDO = new MemGoldChangeDto();
         goldChangeDO.setChangeAmount(new BigDecimal(giftReceiveReq.getGiftAmount()));
         goldChangeDO.setTradingEnum(TradingEnum.INCOME);
         goldChangeDO.setGoldchangeEnum(GoldchangeEnum.valueOf(giftReceiveReq.getGiftNameEnum().getName()));

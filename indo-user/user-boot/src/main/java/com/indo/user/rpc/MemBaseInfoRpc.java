@@ -1,6 +1,5 @@
 package com.indo.user.rpc;
 
-
 import com.indo.common.result.Result;
 import com.indo.user.pojo.entity.MemBaseinfo;
 import com.indo.user.service.MemBaseInfoService;
@@ -24,8 +23,6 @@ public class MemBaseInfoRpc {
     @Resource
     private MemBaseInfoService memBaseInfoService;
 
-    @Resource
-    private IMemGoldChangeService iMemGoldChangeService;
 
     @GetMapping("/getMemBaseInfo/{userId}")
     public Result<MemBaseinfo> getMemBaseInfo(@PathVariable Long userId) {
@@ -37,10 +34,6 @@ public class MemBaseInfoRpc {
         return Result.success(memBaseInfoService.getByAccount(account));
     }
 
-    @PutMapping("/updateMemGoldChange")
-    public Result<Boolean> updateMemGoldChange(@RequestBody MemGoldChangeDTO goldChangeDTO) {
-        return Result.success(iMemGoldChangeService.updateMemGoldChange(goldChangeDTO));
-    }
 
 }    
     
