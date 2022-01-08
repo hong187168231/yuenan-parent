@@ -1,4 +1,4 @@
-package com.indo.job.executor.util;
+package com.indo.job.common.util;
 
 
 import com.indo.common.redis.utils.RedisUtils;

@@ -5,6 +5,8 @@ import com.indo.core.pojo.bo.MemBaseinfoBo;
 import com.indo.core.pojo.dto.MemGoldChangeDto;
 import com.indo.core.pojo.entity.MemGoldChange;
 
+import java.math.BigDecimal;
+
 /**
  * <p>
  * 会员账变记录表 服务类
@@ -25,6 +27,9 @@ public interface IMemGoldChangeService extends IService<MemGoldChange> {
      * @return
      */
     boolean updateMemGoldChange(MemGoldChangeDto change) throws RuntimeException;
+
+
+    int updateMemberAmount(BigDecimal amount, BigDecimal canAmount, Long userId);
 
 
 }

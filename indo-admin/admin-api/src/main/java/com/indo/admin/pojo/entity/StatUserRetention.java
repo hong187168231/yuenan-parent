@@ -1,9 +1,9 @@
-package com.indo.admin.modules.stat.entity;
+package com.indo.admin.pojo.entity;
 
-import com.indo.common.pojo.entity.BaseEntity;
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.indo.common.pojo.entity.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

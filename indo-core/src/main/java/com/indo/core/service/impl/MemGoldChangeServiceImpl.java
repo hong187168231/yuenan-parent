@@ -3,8 +3,10 @@ package com.indo.core.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.indo.common.constant.GlobalConstants;
+import com.indo.common.constant.RedisKeys;
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
+import com.indo.common.redis.utils.RedisUtils;
 import com.indo.common.utils.SnowflakeIdWorker;
 import com.indo.common.web.exception.BizException;
 import com.indo.core.mapper.MemGoldChangeMapper;
@@ -133,7 +135,7 @@ public class MemGoldChangeServiceImpl extends ServiceImpl<MemGoldChangeMapper, M
                         throw new BizException("操作失败");
                     }
                 }
-                int row = memGoldChangeMapper.updateMemberAmount(changeAmount, changeCanAmount, memBaseinfo.getId());
+                int row = this.updateMemberAmount(changeAmount, changeCanAmount, memBaseinfo.getId());
                 if (row != 1) {
                     log.error("{} updateUserBalance updateMemberAmount 更新余额失败. return:{}", userId, row);
                     throw new BizException("操作失败");
@@ -171,5 +173,13 @@ public class MemGoldChangeServiceImpl extends ServiceImpl<MemGoldChangeMapper, M
         } else {
             return getTradeOffAmount(null);
         }
+    }
+
+
+    @Override
+    public int updateMemberAmount(BigDecimal amount, BigDecimal canAmount, Long userId) {
+        int row = baseMapper.updateMemberAmount(amount, canAmount, userId);
+        RedisUtils.del(RedisKeys.APP_MEMBER + userId);
+        return row;
     }
 }
