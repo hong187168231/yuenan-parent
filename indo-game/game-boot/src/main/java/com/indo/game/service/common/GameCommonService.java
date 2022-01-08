@@ -4,7 +4,6 @@ import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.game.pojo.entity.manage.GameCategory;
 import com.indo.game.pojo.entity.manage.GamePlatform;
-import com.indo.user.pojo.dto.MemGoldChangeDTO;
 import com.indo.user.pojo.entity.MemBaseinfo;
 
 import java.math.BigDecimal;

@@ -124,7 +124,7 @@
 
         <dependency>
             <groupId>com.indo</groupId>
-            <artifactId>indo-msg</artifactId>
+            <artifactId>common-core</artifactId>
             <version>${indo.version}</version>
         </dependency>
 

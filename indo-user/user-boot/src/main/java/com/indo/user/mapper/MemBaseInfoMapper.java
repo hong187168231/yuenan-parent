@@ -12,9 +12,5 @@ import java.math.BigDecimal;
 @Mapper
 public interface MemBaseInfoMapper extends SuperMapper<MemBaseinfo> {
 
-    //更新会员金额变动
-    int updateMemberAmount(@Param("balance") BigDecimal amount, @Param("canAmount") BigDecimal canAmount, @Param("userId") Long userId);
-
-
 
 }

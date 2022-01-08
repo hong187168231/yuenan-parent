@@ -13,6 +13,8 @@ public interface GlobalConstants {
 
     String APP_API_PATTERN = "/*/app-api/**";
 
+    //账变余额修改前缀
+    public static final String UPDATE_USER_BALANCE_ = "MEM:UPDATE_USER_BALANCE_";
 
     /**
      * 参数管理 cache key

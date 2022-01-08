@@ -5,7 +5,6 @@ import com.indo.common.constant.ServiceIdConstant;
 import com.indo.common.result.Result;
 import com.indo.common.web.exception.KeepErrMsgConfiguration;
 import com.indo.user.api.fallback.MemBaseInfoFeignFallback;
-import com.indo.user.pojo.dto.MemGoldChangeDTO;
 import com.indo.user.pojo.entity.MemBaseinfo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
@@ -21,9 +20,5 @@ public interface MemBaseInfoFeignClient {
 
     @GetMapping("/rpc/memBaseInfo/getByAccount/{account}")
     Result<MemBaseinfo> getByAccount(@PathVariable String account);
-
-
-    @PutMapping(value = "/rpc/memBaseInfo/updateMemGoldChange", produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    Result<Boolean> updateMemGoldChange(MemGoldChangeDTO memGoldChangeDTO);
 
 }

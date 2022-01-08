@@ -5,24 +5,25 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.indo.pay.pojo.entity.PayChannelConfig">
-        <id column="pay_channel_id" property="payChannelId" />
-        <result column="create_time" property="createTime" />
-        <result column="update_time" property="updateTime" />
-        <result column="channel_name" property="channelName" />
-        <result column="channel_desc" property="channelDesc" />
-        <result column="channel_type" property="channelType" />
-        <result column="sort_by" property="sortBy" />
-        <result column="create_user" property="createUser" />
-        <result column="update_user" property="updateUser" />
-        <result column="remark" property="remark" />
-        <result column="is_del" property="isDel" />
+        <id column="pay_channel_id" property="payChannelId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="channel_name" property="channelName"/>
+        <result column="channel_desc" property="channelDesc"/>
+        <result column="channel_type" property="channelType"/>
+        <result column="sort_by" property="sortBy"/>
+        <result column="create_user" property="createUser"/>
+        <result column="update_user" property="updateUser"/>
+        <result column="remark" property="remark"/>
+        <result column="status" property="status"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        create_time,
+        create_time
+        ,
         update_time,
-        pay_channel_id, channel_name, channel_desc, channel_type, sort_by, create_user, update_user, remark, is_del
+        pay_channel_id, channel_name, channel_desc, channel_type, sort_by, create_user, update_user, remark, `status`
     </sql>
 
 
@@ -31,7 +32,7 @@
         <include refid="Base_Column_List"></include>
         from pay_channel_config
         where 1=1
-        and is_del = 1
+        and `status` = 0
         order by sort_by asc
     </select>
 

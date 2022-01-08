@@ -12,10 +12,11 @@ import lombok.EqualsAndHashCode;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author puff
@@ -24,7 +25,7 @@ import java.time.LocalDateTime;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @TableName("pay_recharge_order")
-@ApiModel(value="RechargeOrder对象", description="")
+@ApiModel(value = "RechargeOrder对象", description = "")
 public class PayRechargeOrder extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
@@ -44,7 +45,7 @@ public class PayRechargeOrder extends BaseEntity {
     private String transactionNo;
 
     @ApiModelProperty(value = "会员ID")
-    private Long userId;
+    private Long memId;
 
     @ApiModelProperty(value = "支付开户名")
     private String bankAccount;
@@ -80,7 +81,7 @@ public class PayRechargeOrder extends BaseEntity {
     private String cancelReason;
 
     @ApiModelProperty(value = "支付时间")
-    private LocalDateTime payDate;
+    private Date payTime;
 
     @ApiModelProperty(value = "支付附言")
     private String payPostscript;

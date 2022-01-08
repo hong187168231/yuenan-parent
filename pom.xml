@@ -14,7 +14,7 @@
         <module>indo-admin</module>
         <module>indo-auth</module>
         <module>indo-user</module>
-        <module>indo-msg</module>
+        <module>indo-core</module>
         <module>indo-pay</module>
         <module>indo-game</module>
         <module>indo-task</module>
