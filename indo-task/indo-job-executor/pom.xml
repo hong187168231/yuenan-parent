@@ -73,10 +73,34 @@
             <artifactId>common-redis</artifactId>
         </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>com.indo</groupId>-->
-<!--            <artifactId>common-log</artifactId>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>com.indo</groupId>
+            <artifactId>user-api</artifactId>
+            <version>${indo.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.indo</groupId>
+            <artifactId>admin-api</artifactId>
+            <version>${indo.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.indo</groupId>
+            <artifactId>common-rabbitmq</artifactId>
+            <version>${indo.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.indo</groupId>
+            <artifactId>common-mybatis</artifactId>
+            <version>${indo.version}</version>
+        </dependency>
+
+        <!--        <dependency>-->
+        <!--            <groupId>com.indo</groupId>-->
+        <!--            <artifactId>common-log</artifactId>-->
+        <!--        </dependency>-->
 
     </dependencies>
 
