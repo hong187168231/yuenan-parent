@@ -15,6 +15,7 @@
         <module>indo-auth</module>
         <module>indo-user</module>
         <module>indo-core</module>
+        <module>indo-job</module>
         <module>indo-pay</module>
         <module>indo-game</module>
         <module>indo-task</module>
@@ -260,6 +261,13 @@
                 <artifactId>common-redis</artifactId>
                 <version>${indo.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>com.indo</groupId>
+                <artifactId>common-log</artifactId>
+                <version>${indo.version}</version>
+            </dependency>
+
 
             <dependency>
                 <groupId>com.indo</groupId>

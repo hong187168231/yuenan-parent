@@ -10,13 +10,11 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.indo</groupId>
 	<artifactId>indo-task</artifactId>
-	<version>2.3.0</version>
 	<packaging>pom</packaging>
 
 	<modules>
 		<module>xxl-job-core</module>
 		<module>xxl-job-admin</module>
-		<module>indo-job-executor</module>
     </modules>
 
 	<properties>
