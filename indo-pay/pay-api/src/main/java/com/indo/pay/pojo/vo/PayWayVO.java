@@ -15,7 +15,6 @@ public class PayWayVO extends BaseEntity {
 
 
     @ApiModelProperty(value = "支付方式id")
-    @TableId(value = "pay_way_id", type = IdType.AUTO)
     private Long payWayId;
 
     @ApiModelProperty(value = "支付通道id")
@@ -44,9 +43,6 @@ public class PayWayVO extends BaseEntity {
 
     @ApiModelProperty(value = "最大金额")
     private Integer maxAmount;
-
-    @ApiModelProperty(value = "状态 0 正常 1停用")
-    private String isDel;
 
     @ApiModelProperty(value = "排序")
     private Integer sortBy;

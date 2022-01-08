@@ -125,6 +125,12 @@
             <scope>compile</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.indo</groupId>
+            <artifactId>indo-core</artifactId>
+            <version>${indo.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>

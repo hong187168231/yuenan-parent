@@ -5,9 +5,6 @@ package com.indo.user.common.constant;
  */
 public interface UserConstants {
 
-    //账变余额修改前缀
-    public static final String UPDATE_USER_BALANCE_ = "MEM:UPDATE_USER_BALANCE_";
-
 
     // 账号状态 0正常
     public static final Integer ACCOUNT_NORMAL = 0;

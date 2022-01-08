@@ -1,6 +1,5 @@
 package com.indo.pay.service.impl;
 
-import cn.hutool.core.util.IdUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -11,16 +10,13 @@ import com.indo.pay.common.constant.PayConstants;
 import com.indo.pay.factory.AbstractOnlinePaymentService;
 import com.indo.pay.mapper.PayChannelConfigMapper;
 import com.indo.pay.mapper.PayRechargeOrderMapper;
-import com.indo.pay.mapper.PayWayConfigMapper;
-import com.indo.pay.pojo.dto.PaymentVastDto;
-import com.indo.pay.pojo.dto.RechargeRequestDTO;
+import com.indo.pay.pojo.dto.RechargeCallBackDto;
+import com.indo.pay.pojo.dto.RechargeDto;
 import com.indo.pay.pojo.entity.PayChannelConfig;
 import com.indo.pay.pojo.entity.PayRechargeOrder;
-import com.indo.pay.pojo.entity.PayWayConfig;
 import com.indo.pay.pojo.req.BaseCallBackReq;
 import com.indo.pay.pojo.req.BasePayReq;
 import com.indo.pay.pojo.req.HuaRenPayReq;
-import com.indo.pay.pojo.resp.DiLeiCallbackReq;
 import com.indo.pay.pojo.resp.HuaRenCallbackReq;
 import com.indo.pay.pojo.resp.HuaRenPayResp;
 import com.indo.pay.service.PaymentCallBackService;
@@ -67,19 +63,20 @@ public class HuarenOnlinePaymentServiceImpl extends AbstractOnlinePaymentService
         // 生成验签
         Map<String, String> reqMap = new TreeMap<>();
         reqMap.put("version", "1.0");
-        reqMap.put("mch_id", "101103004");
-        reqMap.put("notify_url", "www.baidu.com");
-        reqMap.put("page_url", "www.baidu.com");
-        reqMap.put("mch_order_no", IdUtil.simpleUUID());
-        reqMap.put("pay_type", "102");
-        reqMap.put("trade_amount", "100");
+        reqMap.put("mch_id", huaRenPayReq.getMerchantNo());
+        reqMap.put("notify_url", huaRenPayReq.getNotifyUrl());
+        reqMap.put("page_url", huaRenPayReq.getPageUrl());
+        reqMap.put("mch_order_no", req.getMerchantOrderNo());
+        reqMap.put("pay_type", huaRenPayReq.getPayType());
+        reqMap.put("trade_amount", huaRenPayReq.getTradeAmount().toString());
         reqMap.put("order_date", DateUtils.getNewFormatDateString(new Date()));
         reqMap.put("bank_code", "IDPT0001");
-        reqMap.put("goods_name", "indotest");
+        reqMap.put("goods_name", "indo_pay");
         reqMap.put("payer_phone", "855973559275");
         String sign = SignMd5Utils.createSmallSign(reqMap, "47f57ddf74bb4e00b61b0ef96130fb8b");
         reqMap.put("sign_type", "MD5");
         reqMap.put("sign", sign);
+
         // http请求
         String httpRet = "";
         Map<String, Object> responseMap = new HashMap<>();
@@ -123,26 +120,26 @@ public class HuarenOnlinePaymentServiceImpl extends AbstractOnlinePaymentService
             return false;
         }
         // 请求参数
-        RechargeRequestDTO payRequestVo = new RechargeRequestDTO();
-        payRequestVo.setAmount(huaRenPayReq.getTradeAmount().toString());
-        payRequestVo.setOrderNo(req.getMerchantOrderNo());
-        payRequestVo.setUserId(req.getUserId());
-        return paymentService.insertPayment(payRequestVo);
+        RechargeDto rechargeDto = new RechargeDto();
+        rechargeDto.setAmount(huaRenPayReq.getTradeAmount().toString());
+        rechargeDto.setOrderNo(req.getMerchantOrderNo());
+        rechargeDto.setMemId(req.getMemId());
+        return paymentService.insertPayment(rechargeDto);
     }
 
     @Override
     protected <R extends BaseCallBackReq> boolean accountRecharge(R req) {
         // 平台订单号、交易金额、商户订单号
-        PaymentVastDto paymentVastVo = new PaymentVastDto();
-        paymentVastVo.setTransactionNo(req.getTransactionNo());
-        paymentVastVo.setPrice(new BigDecimal(req.getAmount()));
-        paymentVastVo.setOrderNo(req.getMchOrderNo());
+        RechargeCallBackDto callBackDto = new RechargeCallBackDto();
+        callBackDto.setTransactionNo(req.getTransactionNo());
+        callBackDto.setAmount(new BigDecimal(req.getAmount()));
+        callBackDto.setOrderNo(req.getMchOrderNo());
         // 根据商户订单号，查询订单信息
         QueryWrapper<PayRechargeOrder> query = new QueryWrapper<>();
         query.lambda().eq(PayRechargeOrder::getOrderNo, req.getMchOrderNo());
         PayRechargeOrder rechargeOrder = payRechargeOrderMapper.selectOne(query);
         // 完结订单，更新订单信息
-        boolean SuccessFlag = paymentCallBackService.paymentSuccess(paymentVastVo, rechargeOrder);
+        boolean SuccessFlag = paymentCallBackService.paymentSuccess(callBackDto, rechargeOrder);
         return SuccessFlag;
     }
 

@@ -1,15 +1,9 @@
 package com.indo.user.rpc;
 
 
-import com.alibaba.fastjson.JSON;
-import com.indo.admin.pojo.entity.SysParameter;
-import com.indo.common.annotation.AllowAccess;
 import com.indo.common.result.Result;
-import com.indo.user.pojo.dto.MemGoldChangeDTO;
 import com.indo.user.pojo.entity.MemBaseinfo;
-import com.indo.user.service.IMemGoldChangeService;
 import com.indo.user.service.MemBaseInfoService;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;

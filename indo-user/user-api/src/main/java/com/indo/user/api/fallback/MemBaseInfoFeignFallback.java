@@ -4,7 +4,6 @@ import com.indo.common.result.Result;
 import com.indo.common.result.ResultCode;
 import com.indo.common.utils.StringUtils;
 import com.indo.user.api.MemBaseInfoFeignClient;
-import com.indo.user.pojo.dto.MemGoldChangeDTO;
 import com.indo.user.pojo.entity.MemBaseinfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.openfeign.FallbackFactory;
@@ -32,11 +31,6 @@ public class MemBaseInfoFeignFallback implements FallbackFactory<MemBaseInfoFeig
             public Result<MemBaseinfo> getByAccount(String account) {
                 System.out.println(ERR_MSG + msg);
                 return Result.failed(ResultCode.DEGRADATION);
-            }
-
-            @Override
-            public Result<Boolean> updateMemGoldChange(MemGoldChangeDTO memGoldChangeDTO) {
-                return null;
             }
         };
     }

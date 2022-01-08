@@ -18,7 +18,7 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@ApiModel(value="PayChannelConfig对象", description="支付渠道配置")
+@ApiModel(value = "PayChannelConfig对象", description = "支付渠道配置")
 public class PayChannelConfig extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
@@ -59,7 +59,7 @@ public class PayChannelConfig extends BaseEntity {
     @ApiModelProperty(value = "备注")
     private String remark;
 
-    private Integer isDel;
+    private Integer status;
 
 
 }

@@ -30,7 +30,9 @@ import java.util.List;
 @AllArgsConstructor
 @Api(tags = "前端查询游戏相关接口")
 public class GameManageController {
+
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @Autowired
     private IGameManageService iFrontEndGameManageService;
 

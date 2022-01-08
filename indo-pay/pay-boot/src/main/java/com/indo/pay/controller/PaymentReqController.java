@@ -29,8 +29,7 @@ public class PaymentReqController {
     @ApiOperation(value = "发起支付")
     @PostMapping("/v1/onlineRecharge")
     public Result onlineRecharge(@RequestBody RechargeReq rechargeReq, @LoginUser LoginInfo loginInfo) {
-        paymentService.paymentRequestByUser(loginInfo, rechargeReq);
-        return Result.success();
+        return paymentService.paymentRequestByUser(loginInfo, rechargeReq);
     }
 
 
