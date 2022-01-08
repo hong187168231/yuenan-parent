@@ -1,7 +1,10 @@
 package com.indo.pay.service;
 
+import com.alibaba.fastjson.JSON;
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
+import com.indo.core.pojo.dto.MemGoldChangeDto;
+import com.indo.core.service.IMemGoldChangeService;
 import com.indo.pay.factory.OnlinePaymentService;
 import com.indo.pay.mapper.PayOrderFirstMapper;
 import com.indo.pay.mapper.PayRechargeOrderMapper;
@@ -35,6 +38,9 @@ public class PaymentCallBackService {
 
     @Resource
     private PayOrderFirstMapper payOrderFirstMapper;
+
+    @Resource
+    private IMemGoldChangeService iMemGoldChangeService;
 
 
     @Resource(name = "huaRenOnlinePaymentService")
@@ -86,17 +92,17 @@ public class PaymentCallBackService {
                 }
                 //更新会员等级 替换 updateMemLevel
                 // TODO
-                MemGoldChangeDTO goldChangeDO = new MemGoldChangeDTO();
+                MemGoldChangeDto goldChangeDO = new MemGoldChangeDto();
                 goldChangeDO.setChangeAmount(rechargeOrder.getRealAmount());
                 goldChangeDO.setTradingEnum(TradingEnum.INCOME);
                 goldChangeDO.setGoldchangeEnum(GoldchangeEnum.CZ);
                 goldChangeDO.setUserId(rechargeOrder.getMemId());
 //                goldChangeDO.setRefId(rechargeOrder.getRechargeOrderId());
-//                boolean changeFlag = memGoldChangeBusiness.updateMemChangeInfo(goldChangeDO);
-//                if (!changeFlag) {
-//                    log.info("payDataOrder error parm{}", JSONObject.toJSONString(goldChangeDO));
-//                    throw new RuntimeException("订单处理失败！");
-//                }
+                boolean changeFlag = iMemGoldChangeService.updateMemGoldChange(goldChangeDO);
+                if (!changeFlag) {
+                    log.info("payDataOrder error parm{}", JSON.toJSONString(goldChangeDO));
+                    throw new RuntimeException("订单处理失败！");
+                }
             }
             log.info("进入回调数据成功处理结束========================================={}==", rechargeOrder.getOrderNo());
         } catch (TransactionSystemException e) {

@@ -2,11 +2,11 @@ package com.indo.admin.modules.stat.service.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.indo.admin.modules.stat.entity.StatUserRetention;
 import com.indo.admin.modules.stat.mapper.StatUserRetentionMapper;
 import com.indo.admin.modules.stat.req.UserRetentionPageReq;
 import com.indo.admin.modules.stat.service.IUserRetentionService;
 import com.indo.admin.modules.stat.vo.UserRetentionVo;
+import com.indo.admin.pojo.entity.StatUserRetention;
 import com.indo.common.result.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,4 +34,6 @@ public class UserRetentionServiceImpl extends ServiceImpl<StatUserRetentionMappe
         page.setRecords(list);
         return page;
     }
+
+
 }

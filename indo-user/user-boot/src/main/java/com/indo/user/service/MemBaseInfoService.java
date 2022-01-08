@@ -67,12 +67,9 @@ public interface MemBaseInfoService extends SuperService<MemBaseinfo> {
 
     MemBaseinfo findByMobile(String mobule);
 
-    int updateMemberAmount(BigDecimal amount, BigDecimal canAmount, Long userId);
-
     MemTradingVo tradingInfo(Long memId);
 
 
-    void upLevel(String payLoad);
 
 
 }

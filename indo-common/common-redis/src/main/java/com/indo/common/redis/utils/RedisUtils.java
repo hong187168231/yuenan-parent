@@ -353,7 +353,7 @@ public class RedisUtils {
      * @param key 键
      * @return
      */
-    public Set<Object> sGet(String key) {
+    public static Set<Object> sGet(String key) {
         try {
             return redisTemplate.opsForSet().members(key);
         } catch (Exception e) {

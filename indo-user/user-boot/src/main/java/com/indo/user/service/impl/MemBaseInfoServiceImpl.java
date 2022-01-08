@@ -1,43 +1,33 @@
 package com.indo.user.service.impl;
 
-import cn.hutool.core.util.RandomUtil;
-import cn.hutool.core.util.StrUtil;
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.indo.common.constant.RedisConstants;
 import com.indo.common.mybatis.base.service.impl.SuperServiceImpl;
 import com.indo.common.pojo.bo.LoginInfo;
-import com.indo.common.rabbitmq.bo.Message;
-import com.indo.common.redis.utils.RedisUtils;
 import com.indo.common.result.Result;
 import com.indo.common.utils.BaseUtil;
 import com.indo.common.utils.CopyUtils;
-import com.indo.common.utils.DeviceInfoUtil;
 import com.indo.common.utils.NameGeneratorUtil;
-import com.indo.common.utils.encrypt.MD5;
 import com.indo.common.web.exception.BizException;
 import com.indo.user.common.util.UserBusinessRedisUtils;
 import com.indo.user.mapper.MemAgentMapper;
 import com.indo.user.mapper.MemBaseInfoMapper;
 import com.indo.user.mapper.MemInviteCodeMapper;
-import com.indo.user.mapper.MemSubordinateMapper;
-import com.indo.user.pojo.entity.*;
+import com.indo.user.pojo.entity.MemAgent;
+import com.indo.user.pojo.entity.MemBaseinfo;
+import com.indo.user.pojo.entity.MemInviteCode;
 import com.indo.user.pojo.req.LogOutReq;
-import com.indo.user.pojo.req.mem.AddBankCardReq;
+import com.indo.user.pojo.req.LoginReq;
+import com.indo.user.pojo.req.RegisterReq;
 import com.indo.user.pojo.req.mem.MemInfoReq;
 import com.indo.user.pojo.req.mem.UpdateBaseInfoReq;
 import com.indo.user.pojo.req.mem.UpdatePasswordReq;
 import com.indo.user.pojo.vo.AppLoginVo;
-import com.indo.user.pojo.req.LoginReq;
-import com.indo.user.pojo.req.RegisterReq;
 import com.indo.user.pojo.vo.mem.MemBaseInfoVo;
 import com.indo.user.pojo.vo.mem.MemTradingVo;
 import com.indo.user.service.IMemLevelService;
 import com.indo.user.service.MemBaseInfoService;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,10 +35,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -311,13 +298,6 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
 
 
     @Override
-    public int updateMemberAmount(BigDecimal amount, BigDecimal canAmount, Long userId) {
-        int row = baseMapper.updateMemberAmount(amount, canAmount, userId);
-        UserBusinessRedisUtils.deleteAppMember(userId);
-        return row;
-    }
-
-    @Override
     public MemTradingVo tradingInfo(Long memId) {
         MemBaseinfo memBaseinfo = baseMapper.selectById(memId);
         MemTradingVo memTradingVo = new MemTradingVo();
@@ -325,19 +305,5 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
         return memTradingVo;
     }
 
-    @Override
-    public void upLevel(String payLoad) {
-        Message message = JSONObject.parseObject(payLoad, Message.class);
-        Long memId = (Long) message.getAttributes().get("memId");
-        MemBaseinfo memBaseinfo = baseMapper.selectById(memId);
-        if (memBaseinfo.getTotalDeposit().intValue() > 10000
-                && memBaseinfo.getTotalBet().intValue() > 10000) {
-            Integer level = iMemLevelService.getLevelByCondition(memBaseinfo.getTotalDeposit(), memBaseinfo.getTotalBet());
-            if (level > memBaseinfo.getMemLevel()) {
-                memBaseinfo.setMemLevel(level);
-                baseMapper.updateById(memBaseinfo);
-            }
-        }
-    }
 
 }
