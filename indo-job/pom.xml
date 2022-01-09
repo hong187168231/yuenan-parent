@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>indo-synthesis</artifactId>
+        <groupId>com.indo</groupId>
+        <version>2.0.0</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>indo-job</artifactId>
+
+    <dependencies>
+
+
+        <!-- Spring Cloud & Alibaba -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-bootstrap</artifactId>
+        </dependency>
+
+        <!-- 注册中心 -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-loadbalancer</artifactId>
+        </dependency>
+
+        <!-- 配置中心 -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+        </dependency>
+
+        <!-- Sentinel流量控制、熔断降级 -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
+        </dependency>
+        <!-- Sentinel规则持久化至Nacos配置 -->
+        <dependency>
+            <groupId>com.alibaba.csp</groupId>
+            <artifactId>sentinel-datasource-nacos</artifactId>
+        </dependency>
+
+
+        <!-- spring-boot-starter-web (spring-webmvc + tomcat) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- xxl-job-core -->
+        <dependency>
+            <groupId>com.xuxueli</groupId>
+            <artifactId>xxl-job-core</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.indo</groupId>
+            <artifactId>common-redis</artifactId>
+            <version>${indo.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.indo</groupId>
+            <artifactId>common-log</artifactId>
+            <version>${indo.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.indo</groupId>
+            <artifactId>common-rabbitmq</artifactId>
+            <version>${indo.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.indo</groupId>
+            <artifactId>indo-core</artifactId>
+            <version>${indo.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.indo</groupId>
+            <artifactId>user-api</artifactId>
+            <version>${indo.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.indo</groupId>
+            <artifactId>admin-api</artifactId>
+            <version>${indo.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.indo</groupId>
+            <artifactId>xxl-job-core</artifactId>
+            <version>${xxl-job.version}</version>
+        </dependency>
+
+
+    </dependencies>
+
+</project>
