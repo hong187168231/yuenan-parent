@@ -60,6 +60,7 @@
         <ip2region.version>1.7.2</ip2region.version>
         <dozer.version>6.5.2</dozer.version>
         <swagger.version>1.6.2</swagger.version>
+        <xxl-job.version>2.3.0</xxl-job.version>
     </properties>
 
     <dependencies>
