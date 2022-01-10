@@ -39,6 +39,7 @@ public class SwaggerConfiguration {
     public Docket restApi() {
         //schema
         List<GrantType> grantTypes = new ArrayList<>();
+        log.info("SwaggerConfiguration  is by  " + profiles);
         //密码模式
         String passwordTokenUrl = "http://localhost:9999/indo-auth/oauth/token";
         if (profiles.equals("test")) {
