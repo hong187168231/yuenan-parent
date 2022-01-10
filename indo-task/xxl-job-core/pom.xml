@@ -9,7 +9,6 @@
     <artifactId>xxl-job-core</artifactId>
     <packaging>jar</packaging>
     <name>xxl-job-core</name>
-    <version>2.3.0</version>
 
     <dependencies>
 

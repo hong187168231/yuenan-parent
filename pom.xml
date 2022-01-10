@@ -269,6 +269,11 @@
                 <version>${indo.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>com.indo</groupId>
+                <artifactId>xxl-job-core</artifactId>
+                <version>${xxl-job.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>com.indo</groupId>
