@@ -38,14 +38,14 @@ public class MemAgentController {
 
     @ApiOperation(value = "代理列表", httpMethod = "GET")
     @GetMapping(value = "/list")
-    public Result<List<AgentVo>> list(@RequestBody MemAgentPageReq req) {
+    public Result<List<AgentVo>> list(MemAgentPageReq req) {
         Page<AgentVo> result = memAgentService.getPage(req);
         return Result.success(result.getRecords(), result.getTotal());
     }
 
     @ApiOperation(value = "下级列表", httpMethod = "GET")
     @GetMapping(value = "/subList")
-    public Result<List<MemBaseInfoVo>> subList(@RequestBody SubordinateReq req) {
+    public Result<List<MemBaseInfoVo>> subList(SubordinateReq req) {
         Page<MemBaseInfoVo> result = memAgentService.subordinatePage(req);
         return Result.success(result.getRecords(), result.getTotal());
     }
