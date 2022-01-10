@@ -2,15 +2,13 @@ package com.indo.admin.modules.mem.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.indo.admin.modules.mem.entity.MemBaseinfo;
 import com.indo.admin.modules.mem.req.MemAddReq;
 import com.indo.admin.modules.mem.req.MemBaseInfoPageReq;
 import com.indo.admin.modules.mem.req.MemEditStatusReq;
 import com.indo.admin.modules.mem.req.MemEditReq;
 import com.indo.admin.modules.mem.vo.MemBaseInfoVo;
 import com.indo.admin.modules.mem.vo.MemBaseDetailVO;
-import com.indo.common.result.PageResult;
-import org.springframework.web.bind.annotation.RequestParam;
+import com.indo.user.pojo.entity.MemBaseinfo;
 
 import java.util.Date;
 import java.util.List;

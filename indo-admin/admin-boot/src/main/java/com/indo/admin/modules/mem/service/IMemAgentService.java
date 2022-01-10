@@ -23,4 +23,6 @@ public interface IMemAgentService extends IService<MemAgent> {
 
     Page<MemBaseInfoVo> subordinatePage(SubordinateReq req);
 
+    boolean upgradeAgent(Long  memId);
+
 }

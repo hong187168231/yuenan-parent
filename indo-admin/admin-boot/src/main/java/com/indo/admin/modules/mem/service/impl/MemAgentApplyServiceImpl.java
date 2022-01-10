@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.indo.admin.modules.mem.entity.MemAgent;
 import com.indo.admin.modules.mem.entity.MemAgentApply;
-import com.indo.admin.modules.mem.entity.MemBaseinfo;
 import com.indo.admin.modules.mem.entity.MemInviteCode;
 import com.indo.admin.modules.mem.mapper.MemAgentApplyMapper;
 import com.indo.admin.modules.mem.mapper.MemAgentMapper;
@@ -15,6 +14,7 @@ import com.indo.admin.modules.mem.req.MemAgentApplyPageReq;
 import com.indo.admin.modules.mem.req.MemApplyAuditReq;
 import com.indo.admin.modules.mem.service.IMemAgentApplyService;
 import com.indo.common.result.PageResult;
+import com.indo.user.pojo.entity.MemBaseinfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

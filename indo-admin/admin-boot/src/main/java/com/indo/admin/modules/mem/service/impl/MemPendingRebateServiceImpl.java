@@ -2,7 +2,6 @@ package com.indo.admin.modules.mem.service.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.indo.admin.modules.mem.entity.MemBaseinfo;
 import com.indo.admin.modules.mem.entity.MemPendingRebate;
 import com.indo.admin.modules.mem.entity.MemRebateRecord;
 import com.indo.admin.modules.mem.mapper.MemPendingRebateMapper;
@@ -10,8 +9,6 @@ import com.indo.admin.modules.mem.mapper.MemRebateRecordMapper;
 import com.indo.admin.modules.mem.req.MemGrantRebateReq;
 import com.indo.admin.modules.mem.req.MemPendingRebatePageReq;
 import com.indo.admin.modules.mem.service.IMemPendingRebateService;
-import com.indo.admin.modules.mem.vo.MemBaseInfoVo;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

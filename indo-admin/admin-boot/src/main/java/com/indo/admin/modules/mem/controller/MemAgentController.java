@@ -13,11 +13,16 @@ import com.indo.common.annotation.AllowAccess;
 import com.indo.common.result.PageResult;
 import com.indo.common.result.Result;
 import com.indo.admin.modules.mem.req.SubordinateReq;
+import com.indo.user.pojo.entity.MemBank;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -49,4 +54,17 @@ public class MemAgentController {
         Page<MemBaseInfoVo> result = memAgentService.subordinatePage(req);
         return Result.success(result.getRecords(), result.getTotal());
     }
+
+    @ApiOperation(value = "修改会员为代理")
+    @PutMapping(value = "/upgradeAgent")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "memId", value = "会员id", paramType = "query", dataType = "Long", required = true)
+    })
+    public Result upgradeAgent(@RequestParam("memId") Long memId) {
+        boolean flag = memAgentService.upgradeAgent(memId);
+        return Result.judge(flag);
+
+    }
+
+
 }
