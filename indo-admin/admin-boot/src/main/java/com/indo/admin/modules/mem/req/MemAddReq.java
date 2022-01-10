@@ -17,7 +17,7 @@ public class MemAddReq {
 
     @NotNull(message = "age必须大于等于10")
     @ApiModelProperty("会员账号，4-15位只能包含数字和字母")
-    private String accountNo;
+    private String account;
 
     @ApiModelProperty("上级账号")
     private String superAccno;

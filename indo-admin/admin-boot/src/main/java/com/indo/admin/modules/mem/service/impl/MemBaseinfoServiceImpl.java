@@ -57,7 +57,7 @@ public class MemBaseinfoServiceImpl extends ServiceImpl<MemBaseinfoMapper, MemBa
         BeanUtils.copyProperties(req, memBaseinfo);
         memBaseinfo.setPasswordMd5(MD5.md5(req.getPassword()));
         if (StringUtils.isNotBlank(req.getSuperAccno())) {
-            MemBaseinfo memBaseinfo1 = baseMapper.selectOne(new QueryWrapper<MemBaseinfo>().lambda().eq(MemBaseinfo::getAccountNo, req.getSuperAccno()));
+            MemBaseinfo memBaseinfo1 = baseMapper.selectOne(new QueryWrapper<MemBaseinfo>().lambda().eq(MemBaseinfo::getAccount, req.getSuperAccno()));
             MemInviteCode memInviteCode = memInviteCodeMapper.selectOne(new QueryWrapper<MemInviteCode>().lambda().eq(MemInviteCode::getMemId, memBaseinfo1.getId()));
             memBaseinfo.setRInviteCode(memInviteCode.getInviteCode());
         }
@@ -98,7 +98,7 @@ public class MemBaseinfoServiceImpl extends ServiceImpl<MemBaseinfoMapper, MemBa
 
     @Override
     public MemBaseDetailVO getMemBaseInfoByAccount(String account) {
-        MemBaseinfo memBaseinfo = baseMapper.selectOne(new QueryWrapper<MemBaseinfo>().lambda().eq(MemBaseinfo::getAccountNo, account));
+        MemBaseinfo memBaseinfo = baseMapper.selectOne(new QueryWrapper<MemBaseinfo>().lambda().eq(MemBaseinfo::getAccount, account));
         MemBaseDetailVO memBaseDetailVO = new MemBaseDetailVO();
         BeanUtils.copyProperties(memBaseinfo, memBaseDetailVO);
         return memBaseDetailVO;
