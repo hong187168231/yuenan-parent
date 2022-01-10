@@ -1,8 +1,7 @@
-package com.indo.admin.modules.mem.entity;
+package com.indo.admin.pojo.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.indo.common.pojo.entity.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -17,13 +16,12 @@ import java.math.BigDecimal;
  * </p>
  *
  * @author xxx
- * @since 2021-12-26
+ * @since 2022-01-10
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("mem_rebate_record")
-@ApiModel(value="RebateRecord对象", description="")
-public class MemRebateRecord extends BaseEntity {
+@ApiModel(value="AgentRebateRecord对象", description="")
+public class AgentRebateRecord extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -37,29 +35,20 @@ public class MemRebateRecord extends BaseEntity {
     @ApiModelProperty(value = "会员等级")
     private Integer memLevel;
 
-    @ApiModelProperty(value = "支付层级")
-    private Long memGroupId;
-
     @ApiModelProperty(value = "真实姓名")
-    private String memRealName;
+    private String realName;
 
     @ApiModelProperty(value = "上级代理")
-    private Long parantAgentId;
-
-    @ApiModelProperty(value = "团队人数")
-    private Integer teamMembers;
-
-    @ApiModelProperty(value = "团队投注")
-    private BigDecimal teamBets;
+    private String superior;
 
     @ApiModelProperty(value = "昨日结余")
-    private BigDecimal yesterdayBalance;
+    private BigDecimal yesterdayRemain;
 
     @ApiModelProperty(value = "返点金额")
     private BigDecimal rebateAmout;
 
     @ApiModelProperty(value = "发放人")
-    private String operator;
+    private String createUser;
 
 
 }
