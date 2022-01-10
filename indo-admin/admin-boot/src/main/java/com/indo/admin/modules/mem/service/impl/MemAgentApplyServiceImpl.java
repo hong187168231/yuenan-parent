@@ -57,8 +57,8 @@ public class MemAgentApplyServiceImpl extends ServiceImpl<MemAgentApplyMapper, M
         baseMapper.updateById(memAgentApply);
 
         MemBaseinfo memBaseinfo = memBaseinfoMapper.selectById(req.getMemId());
-        memBaseinfo.getRInviteCode();
-        MemInviteCode memInviteCode = memInviteCodeMapper.selectOne(new QueryWrapper<MemInviteCode>().lambda().eq(MemInviteCode::getInviteCode, memBaseinfo.getRInviteCode()));
+        memBaseinfo.getInviteCode();
+        MemInviteCode memInviteCode = memInviteCodeMapper.selectOne(new QueryWrapper<MemInviteCode>().lambda().eq(MemInviteCode::getInviteCode, memBaseinfo.getInviteCode()));
         MemAgent memAgent = new MemAgent();
         memAgent.setMemId(req.getMemId());
         memAgent.setIsDel(false);

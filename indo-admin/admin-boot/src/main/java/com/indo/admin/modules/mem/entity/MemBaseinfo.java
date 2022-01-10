@@ -59,7 +59,7 @@ public class MemBaseinfo extends BaseEntity {
     private String whatsApp;
 
     @ApiModelProperty(value = "注册时使用的邀请码（上级的）")
-    private String rInviteCode;
+    private String inviteCode;
 
     @ApiModelProperty(value = "支付层级id")
     private Long groupId;

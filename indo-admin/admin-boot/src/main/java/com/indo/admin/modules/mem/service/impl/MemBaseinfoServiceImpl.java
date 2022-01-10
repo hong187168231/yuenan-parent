@@ -59,7 +59,7 @@ public class MemBaseinfoServiceImpl extends ServiceImpl<MemBaseinfoMapper, MemBa
         if (StringUtils.isNotBlank(req.getSuperAccno())) {
             MemBaseinfo memBaseinfo1 = baseMapper.selectOne(new QueryWrapper<MemBaseinfo>().lambda().eq(MemBaseinfo::getAccount, req.getSuperAccno()));
             MemInviteCode memInviteCode = memInviteCodeMapper.selectOne(new QueryWrapper<MemInviteCode>().lambda().eq(MemInviteCode::getMemId, memBaseinfo1.getId()));
-            memBaseinfo.setRInviteCode(memInviteCode.getInviteCode());
+            memBaseinfo.setInviteCode(memInviteCode.getInviteCode());
         }
         if (baseMapper.insert(memBaseinfo) > 0) {
             String code = ShareCodeUtils.idToCode(memBaseinfo.getId());
