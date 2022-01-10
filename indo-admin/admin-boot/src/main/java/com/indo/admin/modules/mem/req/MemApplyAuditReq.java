@@ -1,5 +1,6 @@
 package com.indo.admin.modules.mem.req;
 
+import com.indo.common.enums.AudiTypeEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -8,11 +9,15 @@ import lombok.Data;
 @ApiModel
 public class MemApplyAuditReq {
 
+
+    @ApiModelProperty("代理申请id")
+    private Long agentApplyId;
+
     @ApiModelProperty("用户id")
     private Long memId;
 
-    @ApiModelProperty(value = "状态0 待审核 1 已通过，2 拒绝")
-    private Integer status;
+    @ApiModelProperty(value = "审核类型")
+    private AudiTypeEnum audiType;
 
     @ApiModelProperty("拒绝理由")
     private String rejectReason;

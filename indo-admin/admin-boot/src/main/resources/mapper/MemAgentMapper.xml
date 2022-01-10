@@ -3,7 +3,7 @@
 <mapper namespace="com.indo.admin.modules.mem.mapper.MemAgentMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.indo.admin.modules.mem.entity.MemAgent">
+    <resultMap id="BaseResultMap" type="com.indo.admin.pojo.entity.MemAgent">
         <id column="agent_id" property="agentId"/>
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
@@ -27,7 +27,7 @@
         SELECT * FROM mem_agent ma
         left join mem_baseinfo mb
         on ma.mem_id = mb.id
-        where ma.is_del = 0
+        where ma.is_del = 1
         <if test="req.memId !=null">
             and ma.mem_id = #{req.memId}
         </if>

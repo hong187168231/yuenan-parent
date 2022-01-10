@@ -36,7 +36,7 @@ public interface IMemBaseinfoService extends IService<MemBaseinfo> {
      * @param memAddReq
      * @return
      */
-    boolean addMemBaseInfo(MemAddReq memAddReq);
+    void addMemBaseInfo(MemAddReq memAddReq);
 
 
     /**

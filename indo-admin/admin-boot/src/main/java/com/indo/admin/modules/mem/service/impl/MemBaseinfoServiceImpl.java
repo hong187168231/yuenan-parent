@@ -5,9 +5,11 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import com.indo.admin.modules.mem.entity.MemInviteCode;
+import com.indo.admin.modules.mem.mapper.MemAgentMapper;
 import com.indo.admin.modules.mem.mapper.MemBaseinfoMapper;
 import com.indo.admin.modules.mem.mapper.MemInviteCodeMapper;
 import com.indo.admin.modules.mem.service.IMemBaseinfoService;
+import com.indo.admin.pojo.entity.MemAgent;
 import com.indo.common.utils.DateUtils;
 import com.indo.common.utils.ShareCodeUtils;
 import com.indo.common.utils.StringUtils;
@@ -18,10 +20,12 @@ import com.indo.admin.modules.mem.req.MemEditStatusReq;
 import com.indo.admin.modules.mem.req.MemEditReq;
 import com.indo.admin.modules.mem.vo.MemBaseInfoVo;
 import com.indo.admin.modules.mem.vo.MemBaseDetailVO;
+import com.indo.common.web.exception.BizException;
 import com.indo.user.pojo.entity.MemBaseinfo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -41,6 +45,8 @@ public class MemBaseinfoServiceImpl extends ServiceImpl<MemBaseinfoMapper, MemBa
     private MemBaseinfoMapper memBaseInfoMapper;
     @Autowired
     private MemInviteCodeMapper memInviteCodeMapper;
+    @Autowired
+    private MemAgentMapper memAgentMapper;
 
     @Override
     public Page<MemBaseInfoVo> queryList(MemBaseInfoPageReq req) {
@@ -51,23 +57,46 @@ public class MemBaseinfoServiceImpl extends ServiceImpl<MemBaseinfoMapper, MemBa
     }
 
     @Override
-    public boolean addMemBaseInfo(MemAddReq req) {
+    @Transactional
+    public void addMemBaseInfo(MemAddReq req) {
+        MemBaseDetailVO detailVO = getMemBaseInfoByAccount(req.getAccount());
+        if (detailVO != null) {
+            throw new BizException("该账号已存在!");
+        }
+
         MemBaseinfo memBaseinfo = new MemBaseinfo();
+        MemAgent memAgent = new MemAgent();
+        boolean addFlag = false;
         BeanUtils.copyProperties(req, memBaseinfo);
         memBaseinfo.setPasswordMd5(MD5.md5(req.getPassword()));
         if (StringUtils.isNotBlank(req.getSuperAccno())) {
-            MemBaseinfo memBaseinfo1 = baseMapper.selectOne(new QueryWrapper<MemBaseinfo>().lambda().eq(MemBaseinfo::getAccount, req.getSuperAccno()));
-            MemInviteCode memInviteCode = memInviteCodeMapper.selectOne(new QueryWrapper<MemInviteCode>().lambda().eq(MemInviteCode::getMemId, memBaseinfo1.getId()));
-            memBaseinfo.setInviteCode(memInviteCode.getInviteCode());
+            MemBaseinfo supperMem = baseMapper.selectOne(new QueryWrapper<MemBaseinfo>().lambda().eq(MemBaseinfo::getAccount, req.getSuperAccno()));
+            if (supperMem == null || !supperMem.getAccType().equals(2)) {
+                throw new BizException("请填入正确的代理账号");
+            }
+            memAgent.setParentId(supperMem.getId());
+            memAgent.setSuperior(supperMem.getAccount());
         }
         if (baseMapper.insert(memBaseinfo) > 0) {
-            String code = ShareCodeUtils.idToCode(memBaseinfo.getId());
-            MemInviteCode memInviteCode = new MemInviteCode();
-            memInviteCode.setMemId(memBaseinfo.getId());
-            memInviteCode.setInviteCode(code);
-            return memInviteCodeMapper.insert(memInviteCode) > 0;
+            memAgent.setMemId(memBaseinfo.getId());
+            memAgent.setIsDel(false);
+            if (memBaseinfo.getAccType().equals(2)) {
+                memAgent.setIsDel(true);
+            }
+            int row = memAgentMapper.insert(memAgent);
+            if (row > 0) {
+                String code = ShareCodeUtils.idToCode(memBaseinfo.getId());
+                MemInviteCode memInviteCode = new MemInviteCode();
+                memInviteCode.setMemId(memBaseinfo.getId());
+                memInviteCode.setInviteCode(code.toLowerCase());
+                if (memInviteCodeMapper.insert(memInviteCode) > 0) {
+                    addFlag = true;
+                }
+            }
         }
-        return false;
+        if (!addFlag) {
+            throw new BizException("新增会员失败!");
+        }
     }
 
     @Override

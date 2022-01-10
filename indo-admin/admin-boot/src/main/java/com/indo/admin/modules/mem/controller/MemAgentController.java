@@ -58,12 +58,11 @@ public class MemAgentController {
     @ApiOperation(value = "修改会员为代理")
     @PutMapping(value = "/upgradeAgent")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "memId", value = "会员id", paramType = "query", dataType = "Long", required = true)
+            @ApiImplicitParam(name = "account", value = "会员账号", paramType = "query", dataType = "string", required = true)
     })
-    public Result upgradeAgent(@RequestParam("memId") Long memId) {
-        boolean flag = memAgentService.upgradeAgent(memId);
+    public Result upgradeAgent(@RequestParam("account") String account) {
+        boolean flag = memAgentService.upgradeAgent(account);
         return Result.judge(flag);
-
     }
 
 

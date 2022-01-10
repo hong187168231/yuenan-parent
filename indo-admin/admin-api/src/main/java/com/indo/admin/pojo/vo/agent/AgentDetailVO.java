@@ -1,4 +1,4 @@
-package com.indo.admin.pojo.vo;
+package com.indo.admin.pojo.vo.agent;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

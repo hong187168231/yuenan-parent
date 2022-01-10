@@ -3,7 +3,6 @@ package com.indo.admin.modules.mem.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.indo.admin.modules.mem.entity.MemAgent;
 import com.indo.admin.modules.mem.mapper.MemAgentMapper;
 import com.indo.admin.modules.mem.mapper.MemBaseinfoMapper;
 import com.indo.admin.modules.mem.req.MemAgentPageReq;
@@ -11,6 +10,8 @@ import com.indo.admin.modules.mem.service.IMemAgentService;
 import com.indo.admin.modules.mem.vo.AgentVo;
 import com.indo.admin.modules.mem.vo.MemBaseInfoVo;
 import com.indo.admin.modules.mem.req.SubordinateReq;
+import com.indo.admin.pojo.entity.MemAgent;
+import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
 import com.indo.user.pojo.entity.MemBaseinfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,8 +71,13 @@ public class MemAgent1ServiceImpl extends ServiceImpl<MemAgentMapper, MemAgent> 
     }
 
     @Override
-    public boolean upgradeAgent(Long memId) {
-        MemBaseinfo memBaseinfo = new MemBaseinfo();
+    public boolean upgradeAgent(String account) {
+        LambdaQueryWrapper<MemBaseinfo> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(MemBaseinfo::getAccount, account);
+        MemBaseinfo memBaseinfo = memBaseinfoMapper.selectOne(wrapper);
+        if (null == memBaseinfo) {
+            throw new BizException("该账号用户不存在");
+        }
         memBaseinfo.setAccType(2);
         return memBaseinfoMapper.updateById(memBaseinfo) > 0;
     }
