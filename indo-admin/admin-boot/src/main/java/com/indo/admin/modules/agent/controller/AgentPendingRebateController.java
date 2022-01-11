@@ -9,6 +9,7 @@ import com.indo.admin.modules.mem.req.MemPendingRebatePageReq;
 import com.indo.admin.pojo.req.agnet.AgentPendingRebateReq;
 import com.indo.admin.pojo.vo.agent.AgentPendingRebateVO;
 import com.indo.common.result.Result;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -26,6 +27,7 @@ import java.util.List;
  * @author xxx
  * @since 2021-12-26
  */
+@Api(tags = "发放返点金额")
 @RestController
 @RequestMapping("/agent/pendingRebate")
 public class AgentPendingRebateController {

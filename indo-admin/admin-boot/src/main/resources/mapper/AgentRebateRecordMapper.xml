@@ -16,16 +16,16 @@
 
 
     <select id="queryList" resultMap="BaseResultMap">
-        SELECT * FROM mem_rebate_record m
+        SELECT * FROM agent_rebate_record m
         <where>
-            <if test="dto.memId !=null">
-                and m.mem_id = #{dto.memId}
+            <if test="req.memId !=null">
+                and m.mem_id = #{req.memId}
             </if>
-            <if test="dto.startTime != null and dto.startTime != ''">
-                and m.create_time &gt;= #{dto.startTime}
+            <if test="req.startTime != null and req.startTime != ''">
+                and m.create_time &gt;= #{req.startTime}
             </if>
-            <if test="dto.endTime != null and dto.endTime != ''">
-                and m.create_time &lt; #{dto.endTime}
+            <if test="req.endTime != null and req.endTime != ''">
+                and m.create_time &lt; #{req.endTime}
             </if>
         </where>
         ORDER BY m.create_time desc

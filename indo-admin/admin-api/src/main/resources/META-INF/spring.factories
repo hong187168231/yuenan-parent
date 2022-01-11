@@ -1,5 +1,4 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   com.indo.admin.api.fallback.UserFeignFallback,\
-  com.indo.admin.api.fallback.SysParameterFeignFallback,\
   com.indo.admin.api.fallback.MsgFeignFallback,\
   com.indo.admin.api.fallback.FileFeignFallback

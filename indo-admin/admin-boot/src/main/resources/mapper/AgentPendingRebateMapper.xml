@@ -28,19 +28,17 @@
 
 
     <select id="queryList" resultMap="BaseResultMap">
-        SELECT * FROM mem_pending_rebate m
+        SELECT * FROM agent_pending_rebate m
         where m.status = 0
-        <where>
-            <if test="dto.memId !=null">
-                and m.mem_id = #{dto.memId}
-            </if>
-            <if test="dto.startTime != null and dto.startTime != ''">
-                and m.create_time &gt;= #{dto.startTime}
-            </if>
-            <if test="dto.endTime != null and dto.endTime != ''">
-                and m.create_time &lt; #{dto.endTime}
-            </if>
-        </where>
+        <if test="req.memId !=null">
+            and m.mem_id = #{req.memId}
+        </if>
+        <if test="req.startTime != null and req.startTime != ''">
+            and m.create_time &gt;= #{req.startTime}
+        </if>
+        <if test="req.endTime != null and req.endTime != ''">
+            and m.create_time &lt; #{req.endTime}
+        </if>
         ORDER BY m.create_time desc
     </select>
 </mapper>

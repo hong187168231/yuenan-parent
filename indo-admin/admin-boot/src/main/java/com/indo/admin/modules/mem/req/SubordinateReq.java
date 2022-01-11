@@ -11,7 +11,7 @@ import java.util.Date;
 @ApiModel(value = "代理申请参数类")
 public class SubordinateReq extends QueryParam {
 
-    @ApiModelProperty(value = "代理ID")
-    private Long agentId;
+    @ApiModelProperty(value = "代理上级ID")
+    private Long parentId;
 
 }

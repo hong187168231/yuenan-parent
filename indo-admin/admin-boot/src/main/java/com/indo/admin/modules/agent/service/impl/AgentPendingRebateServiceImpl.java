@@ -57,7 +57,7 @@ public class AgentPendingRebateServiceImpl extends ServiceImpl<AgentPendingRebat
             agentRebateRecord.setCreateUser(JwtUtils.getUsername());
             int row = agentRebateRecordMapper.insert(agentRebateRecord);
             if (row > 0) {
-                iMemGoldChangeService.updateMemGoldChange(null);
+//                iMemGoldChangeService.updateMemGoldChange(null);
                 return true;
             }
         }

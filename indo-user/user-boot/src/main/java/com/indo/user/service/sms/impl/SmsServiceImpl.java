@@ -1,7 +1,6 @@
 package com.indo.user.service.sms.impl;
 
 import com.indo.admin.pojo.entity.SmsSendRecord;
-import com.indo.admin.pojo.entity.SysParameter;
 import com.indo.common.enums.SysParameterEnum;
 import com.indo.common.enums.VerifCodeTypeEnum;
 import com.indo.common.utils.CommonFunction;
@@ -13,7 +12,6 @@ import com.indo.user.common.constant.UserConstants;
 import com.indo.user.pojo.entity.MemBaseinfo;
 import com.indo.user.pojo.req.VerifyCodeReq;
 import com.indo.user.pojo.vo.sms.SmsCodeVo;
-import com.indo.user.service.ISysParameterService;
 import com.indo.user.service.MemBaseInfoService;
 import com.indo.user.service.sms.ISmsSendRecordService;
 import com.indo.user.service.sms.ISmsService;
@@ -37,8 +35,8 @@ import java.util.List;
 @Slf4j
 public class SmsServiceImpl implements ISmsService {
 
-    @Autowired
-    private ISysParameterService iSysParameterService;
+//    @Autowired
+//    private ISysParameterService iSysParameterService;
 
     @Autowired
     private ISmsSendRecordService iSmsSendRecordService;
@@ -69,8 +67,8 @@ public class SmsServiceImpl implements ISmsService {
     public Integer sendSmsCode(VerifyCodeReq req, HttpServletRequest request) {
         String ipAddress = IPUtils.getIpAddr(request);
         log.info("ip: {} ", ipAddress);
-        SysParameter ipMsgLimit = iSysParameterService.getByCode(SysParameterEnum.IP_MSG_LIMIT.name());
-        int iplimit = Integer.parseInt(ipMsgLimit.getParamValue());
+//        SysParameter ipMsgLimit = iSysParameterService.getByCode(SysParameterEnum.IP_MSG_LIMIT.name());
+        int iplimit = 0;  // Integer.parseInt(ipMsgLimit.getParamValue());
         SmsSendRecord smsSendRecord = new SmsSendRecord();
         smsSendRecord.setIpAddress(ipAddress);
         Integer ipCount = iSmsSendRecordService.getLimit(smsSendRecord);
@@ -103,9 +101,9 @@ public class SmsServiceImpl implements ISmsService {
         }
 
         // 验证这个手机号 在 倒计时 smsCountdownYanzheng 秒 内
-        SysParameter bs = this.iSysParameterService.getByCode(SysParameterEnum.SMS_SENDWAIT.name());
-        int sendWait = Integer.parseInt(bs.getParamValue());
-        req.setCountDown(sendWait);
+//        SysParameter bs = this.iSysParameterService.getByCode(SysParameterEnum.SMS_SENDWAIT.name());
+//        int sendWait = Integer.parseInt(bs.getParamValue());
+        req.setCountDown(null);
         Integer countInteger = iSmsSendRecordService.getCountDown(req);
         log.info("countInteger: {}", countInteger);
         if (countInteger == null || countInteger > 0) {
@@ -122,18 +120,18 @@ public class SmsServiceImpl implements ISmsService {
             sms_message.append("验证码：");
             sms_message.append(smsCode);
 
-            SysParameter smsValidity = this.iSysParameterService.getByCode(SysParameterEnum.SMS_VALIDATE.name());
-            Integer validityMin = Integer.parseInt(smsValidity.getParamValue());
-            sms_message.append("，验证码有效期为" + validityMin + "分钟，请勿向他人泄漏。");
+//            SysParameter smsValidity = this.iSysParameterService.getByCode(SysParameterEnum.SMS_VALIDATE.name());
+//            Integer validityMin = Integer.parseInt(smsValidity.getParamValue());
+//            sms_message.append("，验证码有效期为" + validityMin + "分钟，请勿向他人泄漏。");
             sysShortmsg.setContent(sms_message.toString());
             int inputLine = 1;
             // 根据地区 调短信发送接口 默认 中国大陆
             if (StringUtils.isEmpty(req.getAreaCode()) || UserConstants.AREACODE_CHINA_MAINLAND_86.equals(req.getAreaCode())
                     || UserConstants.AREACODE_CHINA_MAINLAND_086.equals(req.getAreaCode())) {
-                SysParameter smsSwitch = this.iSysParameterService.getByCode(SysParameterEnum.SMS_ONOFF.name());
-                if (smsSwitch == null || StringUtils.isEmpty(smsSwitch.getParamValue()) || Integer.parseInt(smsSwitch.getParamValue()) != 1) {
-                    throw new BizException("系统参数(SMS_ONOFF)异常");
-                }
+//                SysParameter smsSwitch = this.iSysParameterService.getByCode(SysParameterEnum.SMS_ONOFF.name());
+//                if (smsSwitch == null || StringUtils.isEmpty(smsSwitch.getParamValue()) || Integer.parseInt(smsSwitch.getParamValue()) != 1) {
+//                    throw new BizException("系统参数(SMS_ONOFF)异常");
+//                }
                 //发送短信验证码组件
                 SmsSendResult smsSendResult = smsSendTemplate.sendSms(req.getPhone(), smsCode, sysShortmsg.getSmsType());
                 if (smsSendResult.isSuccess()) {

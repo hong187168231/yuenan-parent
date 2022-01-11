@@ -1,7 +1,6 @@
 package com.indo.admin.common.util;
 
 import com.indo.admin.modules.mem.req.MemRebateAddReq;
-import com.indo.admin.pojo.entity.SysParameter;
 import com.indo.common.constant.RedisKeys;
 import com.indo.common.redis.utils.RedisUtils;
 import com.indo.common.result.ResultCode;
@@ -34,31 +33,7 @@ public class BusinessRedisUtils extends RedisUtils {
     }
 
 
-    /**
-     * 获取系统参数
-     *
-     * @param key
-     * @return
-     */
-    public static SysParameter getSysParameter(String key) {
-        if (StringUtils.isEmpty(key)) {
-            paramError();
-        }
-        SysParameter cacheParameter = get(RedisKeys.SYS_PARAMETER_CODE + key.toUpperCase());
-        return cacheParameter;
-    }
 
-    /**
-     * 增加系统参数
-     *
-     * @param info
-     */
-    public static void addSysParameter(SysParameter info) {
-        if (null == info || StringUtils.isEmpty(info.getParamCode())) {
-            paramError();
-        }
-        set(RedisKeys.SYS_PARAMETER_CODE + info.getParamCode().toUpperCase(), info);
-    }
 
     /**
      * 添加返点配置
