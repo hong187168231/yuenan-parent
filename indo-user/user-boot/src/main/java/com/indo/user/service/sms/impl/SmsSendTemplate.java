@@ -1,13 +1,12 @@
 package com.indo.user.service.sms.impl;
 
-import com.indo.admin.pojo.entity.SysParameter;
 import com.indo.common.enums.SmsChannelEnum;
 import com.indo.common.enums.SysParameterEnum;
 import com.indo.common.utils.StringUtils;
 import com.indo.common.utils.sms.SmsSendResult;
 import com.indo.common.web.exception.BizException;
+import com.indo.core.pojo.entity.SysParameter;
 import com.indo.user.common.constant.UserConstants;
-import com.indo.user.service.ISysParameterService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -29,8 +28,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public class SmsSendTemplate {
 
-    @Resource
-    private ISysParameterService sysParamService;
+//    @Resource
+//    private ISysParameterService sysParamService;
 
     @Resource
     private RonglianyunSmsServiceImpl sendYtxService;
@@ -84,10 +83,10 @@ public class SmsSendTemplate {
     private List<SysParameter> getSmsParamList(List<String> list) {
         List<SysParameter> smsParamList = new LinkedList<>();
         for (String s : list) {
-            SysParameter shortmsg = this.sysParamService.getByCode(s);
-            if (null != shortmsg || !StringUtils.isEmpty(shortmsg.getParamValue())) {
-                smsParamList.add(shortmsg);
-            }
+//            SysParameter shortmsg = this.sysParamService.getByCode(s);
+//            if (null != shortmsg || !StringUtils.isEmpty(shortmsg.getParamValue())) {
+//                smsParamList.add(shortmsg);
+//            }
         }
         List<SysParameter> filterList = smsParamList.stream().filter(s -> UserConstants.OPEN.equals(s.getStatus())).collect(Collectors.toList());
         if (CollectionUtils.isEmpty(filterList)) {
@@ -103,10 +102,10 @@ public class SmsSendTemplate {
      * @return
      */
     public boolean realFlag() {
-        SysParameter bsReal = sysParamService.getByCode(SysParameterEnum.SMS_REAL_SEND.name());
-        if (UserConstants.OPEN.equals(bsReal.getStatus()) && UserConstants.SMS_REAL_OFF.equals(bsReal.getParamValue())) {
-            return true;
-        }
+//        SysParameter bsReal = sysParamService.getByCode(SysParameterEnum.SMS_REAL_SEND.name());
+//        if (UserConstants.OPEN.equals(bsReal.getStatus()) && UserConstants.SMS_REAL_OFF.equals(bsReal.getParamValue())) {
+//            return true;
+//        }
         return false;
     }
 

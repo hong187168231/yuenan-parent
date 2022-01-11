@@ -1,9 +1,8 @@
-package com.indo.admin.modules.sys.mapper;
+package com.indo.core.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.indo.admin.pojo.entity.SysParameter;
+import com.indo.core.pojo.entity.SysParameter;
 import org.apache.ibatis.annotations.Mapper;
-import org.springframework.stereotype.Repository;
 
 /**
  * <p>
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Repository;
  * @author puff
  * @since 2021-09-02
  */
-@Repository
 @Mapper
 public interface SysParameterMapper extends BaseMapper<SysParameter> {
 

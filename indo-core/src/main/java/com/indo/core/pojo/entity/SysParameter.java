@@ -1,9 +1,9 @@
-package com.indo.admin.pojo.req;
+package com.indo.core.pojo.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.indo.common.base.BaseDTO;
 import com.indo.common.pojo.entity.BaseEntity;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,14 +13,18 @@ import lombok.EqualsAndHashCode;
  * 系统参数
  * </p>
  *
- * @author puff
- * @since 2021-09-02
+ * @author xxx
+ * @since 2021-12-28
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class SysParameterReq extends BaseDTO {
+@ApiModel(value = "SysParameter对象", description = "系统参数")
+public class SysParameter extends BaseEntity {
+
+    private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "系统参数id")
+    @TableId(value = "param_id", type = IdType.AUTO)
     private Long paramId;
 
     @ApiModelProperty(value = "系统参数代码")
@@ -35,9 +39,16 @@ public class SysParameterReq extends BaseDTO {
     @ApiModelProperty(value = "是否删除 0 未删除 1 删除")
     private Integer status;
 
+    private Integer sortBy;
+
+    @ApiModelProperty(value = "创建人")
+    private String createUser;
+
+    @ApiModelProperty(value = "最后修改人")
+    private String updateUser;
+
     @ApiModelProperty(value = "参数说明")
     private String remark;
-
 
 
 }

@@ -1,11 +1,10 @@
-package com.indo.admin.common.util;
+package com.indo.core.util;
 
-import com.indo.admin.modules.mem.req.MemRebateAddReq;
 import com.indo.common.constant.RedisKeys;
 import com.indo.common.redis.utils.RedisUtils;
 import com.indo.common.result.ResultCode;
 import com.indo.common.web.exception.BizException;
-import com.indo.user.pojo.entity.MemLevel;
+import com.indo.core.pojo.entity.SysParameter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -32,25 +31,30 @@ public class BusinessRedisUtils extends RedisUtils {
         }
     }
 
-
-
-
     /**
-     * 添加返点配置
+     * 获取系统参数
      *
-     * @param req
+     * @param key
+     * @return
      */
-    public static void addMemRebate(MemRebateAddReq req) {
-        lSet(RedisKeys.SYS_REBATE_KEY, req.getBetList());
+    public static SysParameter getSysParameter(String key) {
+        if (StringUtils.isEmpty(key)) {
+            paramError();
+        }
+        SysParameter cacheParameter = get(RedisKeys.SYS_PARAMETER_CODE + key.toUpperCase());
+        return cacheParameter;
     }
 
     /**
-     * 刷新等级缓存
+     * 增加系统参数
      *
-     * @param list
+     * @param info
      */
-    public static void refreshMemLevel(List<MemLevel> list) {
-        lSet(RedisKeys.SYS_LEVEL_KEY, list);
+    public static void addSysParameter(SysParameter info) {
+        if (null == info || StringUtils.isEmpty(info.getParamCode())) {
+            paramError();
+        }
+        set(RedisKeys.SYS_PARAMETER_CODE + info.getParamCode().toUpperCase(), info);
     }
 
 
@@ -59,5 +63,5 @@ public class BusinessRedisUtils extends RedisUtils {
     }
 
 
-}    
+}
     

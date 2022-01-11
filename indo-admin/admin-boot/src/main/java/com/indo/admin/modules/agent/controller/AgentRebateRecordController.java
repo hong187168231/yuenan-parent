@@ -7,6 +7,7 @@ import com.indo.admin.modules.mem.req.MemRebateRecordPageReq;
 import com.indo.admin.pojo.req.agnet.AgentRebateRecordReq;
 import com.indo.admin.pojo.vo.agent.AgentRebateRecordVO;
 import com.indo.common.result.Result;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,6 +25,7 @@ import java.util.List;
  * @author xxx
  * @since 2021-12-26
  */
+@Api(tags = "用户返点记录")
 @RestController
 @RequestMapping("/agent/rebateRecord")
 public class AgentRebateRecordController {

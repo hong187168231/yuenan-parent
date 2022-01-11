@@ -22,5 +22,5 @@ import java.util.List;
 @Mapper
 public interface AgentRebateRecordMapper extends BaseMapper<AgentRebateRecord> {
 
-    List<AgentRebateRecordVO> queryList(@Param("page") Page<AgentRebateRecordVO> page, @Param("dto") AgentRebateRecordReq req);
+    List<AgentRebateRecordVO> queryList(@Param("page") Page<AgentRebateRecordVO> page, @Param("req") AgentRebateRecordReq req);
 }

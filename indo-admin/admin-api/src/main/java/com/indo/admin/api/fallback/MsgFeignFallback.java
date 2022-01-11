@@ -1,14 +1,9 @@
 package com.indo.admin.api.fallback;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.api.MsgFeignClient;
-import com.indo.admin.api.SysParameterClient;
 import com.indo.admin.pojo.dto.MsgDTO;
 import com.indo.admin.pojo.entity.MsgPushRecord;
 import com.indo.admin.pojo.entity.MsgStationLetter;
-import com.indo.admin.pojo.entity.SysParameter;
-import com.indo.admin.pojo.entity.SysUser;
-import com.indo.common.result.PageResult;
 import com.indo.common.result.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

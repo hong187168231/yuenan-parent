@@ -2,7 +2,6 @@ package com.indo.user.common.util;
 
 
 import com.alibaba.fastjson.JSON;
-import com.indo.admin.pojo.entity.SysParameter;
 import com.indo.common.constant.AppConstants;
 import com.indo.common.constant.RedisKeys;
 import com.indo.common.redis.utils.RedisUtils;
@@ -60,32 +59,32 @@ public class UserBusinessRedisUtils extends RedisUtils {
         }
     }
 
-
-    /**
-     * 获取系统参数
-     *
-     * @param key
-     * @return
-     */
-    public static SysParameter getSysParameter(String key) {
-        if (StringUtils.isEmpty(key)) {
-            paramError();
-        }
-        SysParameter cacheParameter = get(RedisKeys.SYS_PARAMETER_CODE + key.toUpperCase());
-        return cacheParameter;
-    }
-
-    /**
-     * 增加系统参数
-     *
-     * @param info
-     */
-    public static void addSysParameter(SysParameter info) {
-        if (null == info || StringUtils.isEmpty(info.getParamCode())) {
-            paramError();
-        }
-        set(RedisKeys.SYS_PARAMETER_CODE + info.getParamCode().toUpperCase(), info);
-    }
+//
+//    /**
+//     * 获取系统参数
+//     *
+//     * @param key
+//     * @return
+//     */
+//    public static SysParameter getSysParameter(String key) {
+//        if (StringUtils.isEmpty(key)) {
+//            paramError();
+//        }
+//        SysParameter cacheParameter = get(RedisKeys.SYS_PARAMETER_CODE + key.toUpperCase());
+//        return cacheParameter;
+//    }
+//
+//    /**
+//     * 增加系统参数
+//     *
+//     * @param info
+//     */
+//    public static void addSysParameter(SysParameter info) {
+//        if (null == info || StringUtils.isEmpty(info.getParamCode())) {
+//            paramError();
+//        }
+//        set(RedisKeys.SYS_PARAMETER_CODE + info.getParamCode().toUpperCase(), info);
+//    }
 
 
     public static void paramError() {
