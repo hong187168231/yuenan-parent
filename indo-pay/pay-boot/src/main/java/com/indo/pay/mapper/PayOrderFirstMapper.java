@@ -2,6 +2,7 @@ package com.indo.pay.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.indo.pay.pojo.entity.PayOrderFirst;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * <p>
@@ -11,6 +12,7 @@ import com.indo.pay.pojo.entity.PayOrderFirst;
  * @author xxx
  * @since 2022-01-08
  */
+@Mapper
 public interface PayOrderFirstMapper extends BaseMapper<PayOrderFirst> {
 
 }

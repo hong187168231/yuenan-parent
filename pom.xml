@@ -15,6 +15,7 @@
         <module>indo-auth</module>
         <module>indo-user</module>
         <module>indo-core</module>
+        <module>indo-job</module>
         <module>indo-pay</module>
         <module>indo-game</module>
         <module>indo-task</module>
@@ -59,6 +60,7 @@
         <ip2region.version>1.7.2</ip2region.version>
         <dozer.version>6.5.2</dozer.version>
         <swagger.version>1.6.2</swagger.version>
+        <xxl-job.version>2.3.0</xxl-job.version>
     </properties>
 
     <dependencies>
@@ -259,6 +261,18 @@
                 <groupId>com.indo</groupId>
                 <artifactId>common-redis</artifactId>
                 <version>${indo.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.indo</groupId>
+                <artifactId>common-log</artifactId>
+                <version>${indo.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.indo</groupId>
+                <artifactId>xxl-job-core</artifactId>
+                <version>${xxl-job.version}</version>
             </dependency>
 
             <dependency>

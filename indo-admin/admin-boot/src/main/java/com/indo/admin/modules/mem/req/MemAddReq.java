@@ -15,15 +15,14 @@ import java.math.BigDecimal;
 @ApiModel
 public class MemAddReq {
 
-    @NotNull(message = "age必须大于等于10")
     @ApiModelProperty("会员账号，4-15位只能包含数字和字母")
-    private String accountNo;
+    private String account;
 
     @ApiModelProperty("上级账号")
     private String superAccno;
 
     @ApiModelProperty("账户类型，1-玩家 2-代理")
-    private Integer accType;
+    private Integer accType = 1;
 
     @ApiModelProperty("密码")
     private String password;

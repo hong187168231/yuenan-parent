@@ -2,9 +2,11 @@ package com.indo.admin.config;
 
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Profile;
 import springfox.bean.validators.configuration.BeanValidatorPluginsConfiguration;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.OAuthBuilder;
@@ -30,12 +32,21 @@ import java.util.List;
 @Slf4j
 public class SwaggerConfiguration {
 
+    @Value("${spring.profiles.active}")
+    private String profiles;
+
     @Bean
     public Docket restApi() {
         //schema
         List<GrantType> grantTypes = new ArrayList<>();
+        log.error("SwaggerConfiguration  is by  " + profiles);
         //密码模式
         String passwordTokenUrl = "http://localhost:9999/indo-auth/oauth/token";
+        if (profiles.equals("test")) {
+            log.info("SwaggerConfiguration  is by  " + profiles);
+            passwordTokenUrl = "http://154.204.57.207:9999/indo-auth/oauth/token";
+        }
+
         ResourceOwnerPasswordCredentialsGrant resourceOwnerPasswordCredentialsGrant = new ResourceOwnerPasswordCredentialsGrant(passwordTokenUrl);
         grantTypes.add(resourceOwnerPasswordCredentialsGrant);
         OAuth oAuth = new OAuthBuilder().name("oauth2")

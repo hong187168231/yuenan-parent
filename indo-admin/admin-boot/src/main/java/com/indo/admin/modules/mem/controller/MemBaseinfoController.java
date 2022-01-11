@@ -39,7 +39,6 @@ public class MemBaseinfoController {
     private IMemBaseinfoService memBaseinfoService;
 
 
-
     @ApiOperation(value = "分页查询")
     @PostMapping(value = "/listByPage")
     public Result<List<MemBaseInfoVo>> getMemBaseInfo(@RequestBody MemBaseInfoPageReq baseInfoPageReq) {
@@ -50,8 +49,8 @@ public class MemBaseinfoController {
     @ApiOperation(value = "新增会员信息")
     @PostMapping(value = "/add")
     public Result addMemBaseInfo(@RequestBody @Validated MemAddReq memAddReq) {
-        boolean flag = memBaseinfoService.addMemBaseInfo(memAddReq);
-        return Result.judge(flag);
+        memBaseinfoService.addMemBaseInfo(memAddReq);
+        return Result.success();
     }
 
 

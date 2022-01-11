@@ -20,7 +20,7 @@ public class MemBaseInfoVo {
     @ApiModelProperty(value = "用户ID")
     private Long id;
     @ApiModelProperty(value = "用户账号")
-    private String accountNo;
+    private String account;
     @ApiModelProperty(value = "用户名")
     private String realName;
     @ApiModelProperty(value = "上级代理名称")

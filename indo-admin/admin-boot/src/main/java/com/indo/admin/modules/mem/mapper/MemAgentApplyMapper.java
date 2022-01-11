@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.modules.mem.entity.MemAgentApply;
 import com.indo.admin.modules.mem.req.MemAgentApplyPageReq;
+import com.indo.admin.pojo.vo.agent.AgentApplyVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -20,5 +21,5 @@ import java.util.List;
 @Mapper
 public interface MemAgentApplyMapper extends BaseMapper<MemAgentApply> {
 
-    List<MemAgentApply> queryList(@Param("page") Page<MemAgentApply> page,@Param("req")  MemAgentApplyPageReq req);
+    List<AgentApplyVO> queryList(@Param("page") Page<AgentApplyVO> page, @Param("req")  MemAgentApplyPageReq req);
 }

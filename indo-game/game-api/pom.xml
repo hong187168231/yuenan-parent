@@ -11,9 +11,6 @@
 
     <artifactId>game-api</artifactId>
 
-    <properties>
-        <indo.version>2.0.0</indo.version>
-    </properties>
 
     <dependencies>
 

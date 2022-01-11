@@ -1,9 +1,11 @@
 package com.indo.admin.modules.mem.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.indo.admin.modules.mem.entity.MemAgentApply;
 import com.indo.admin.modules.mem.req.MemAgentApplyPageReq;
 import com.indo.admin.modules.mem.req.MemApplyAuditReq;
+import com.indo.admin.pojo.vo.agent.AgentApplyVO;
 import com.indo.common.result.PageResult;
 
 /**
@@ -16,7 +18,7 @@ import com.indo.common.result.PageResult;
  */
 public interface IMemAgentApplyService extends IService<MemAgentApply> {
 
-    PageResult<MemAgentApply> getPage(MemAgentApplyPageReq req);
+    Page<AgentApplyVO> getPage(MemAgentApplyPageReq req);
 
-    void applyAudit(MemApplyAuditReq req);
+    boolean applyAudit(MemApplyAuditReq req);
 }

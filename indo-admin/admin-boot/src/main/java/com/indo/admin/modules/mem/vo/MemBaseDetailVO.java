@@ -17,23 +17,29 @@ import java.math.BigInteger;
 public class MemBaseDetailVO {
 
     @ApiModelProperty("会员ID")
-    private BigInteger uid;
+    private Long id;
+
+    @ApiModelProperty("账户类型")
+    private String account;
+
     @ApiModelProperty("账户类型")
     private Integer accType;
-    @ApiModelProperty("会员密码")
-    private String password;
+
     @ApiModelProperty("会员姓名")
     private String realName;
+
     @ApiModelProperty("会员等级")
-    private String level;
-    @ApiModelProperty("会员等级")
-    private BigInteger groupId;
+    private String memLevel;
+
     @ApiModelProperty("邮箱")
     private String email;
+
     @ApiModelProperty("facebook")
     private String facebook;
+
     @ApiModelProperty("whatsapp")
     private String whatsapp;
+
     @ApiModelProperty("备注")
     private String remark;
 }

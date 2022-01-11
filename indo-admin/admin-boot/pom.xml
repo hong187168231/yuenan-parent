@@ -11,9 +11,6 @@
 
     <artifactId>admin-boot</artifactId>
 
-    <properties>
-        <indo.version>2.0.0</indo.version>
-    </properties>
 
     <dependencies>
 
@@ -140,6 +137,12 @@
             <version>${indo.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.indo</groupId>
+            <artifactId>indo-core</artifactId>
+            <version>${indo.version}</version>
+        </dependency>
+
         <!-- easyexcel -->
         <dependency>
             <groupId>com.alibaba</groupId>
@@ -156,6 +159,7 @@
             <groupId>io.minio</groupId>
             <artifactId>minio</artifactId>
         </dependency>
+
     </dependencies>
 
 
