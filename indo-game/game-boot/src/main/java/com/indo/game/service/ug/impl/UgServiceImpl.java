@@ -152,7 +152,7 @@ public class UgServiceImpl implements UgService {
         try {
             UgLoginJsonDTO ugLoginJsonDTO = new UgLoginJsonDTO();
             ugLoginJsonDTO.setMemberAccount(loginUser.getAccount());//账户名,长度需要小于 20,大小写不敏感
-            ugLoginJsonDTO.setWebType(WebType);//登录类型: PC \Smart \Wap；默认值：PC
+            ugLoginJsonDTO.setWebType(null==WebType||"".equals(WebType)?"PC":WebType);//登录类型: PC \Smart \Wap；默认值：PC
             ugLoginJsonDTO.setLoginIP(OpenAPIProperties.PROXY_HOST_NAME);//登录 IP
             ugLoginJsonDTO.setLanguage(gamePlatform.getLanguageType());// string 否 语言文字代码；默认值：EN
 //            ugLoginJsonDTO.setPageStyle("");// string 否 网站版面 SP1, SP2, SP3, SP4, SP5,SP6,SP7；默认值：SP1
@@ -203,8 +203,12 @@ public class UgServiceImpl implements UgService {
 
         UgApiResponseData ugApiResponse = null;
         logger.info("uglog {} commonRequest ,url:{},paramsMap:{}", userId, url, object);
-
-        logger.info("ug_api_request:"+JSONObject.toJSONString(object));
+//        Map<String, String> trr = new HashMap<>();
+//        trr.put("MemberAccount", "swuserid");
+//        trr.put("CompanyKey", "y6RbXQyRr4");
+//        trr.put("APIPassword", "RTJdTw36imErhpDm7p2ePb3Da3h6WT3S");
+//        logger.info("ug_api_request:"+JSONObject.toJSONString(object));
+//        String resultString1 = GameUtil.doProxyPostJson(OpenAPIProperties.PROXY_HOST_NAME, OpenAPIProperties.PROXY_PORT, OpenAPIProperties.PROXY_TCP,url, trr, type, userId);
         String resultString = GameUtil.doProxyPostJson(OpenAPIProperties.PROXY_HOST_NAME, OpenAPIProperties.PROXY_PORT, OpenAPIProperties.PROXY_TCP,url, JSONObject.toJSONString(object), type, userId);
         logger.info("ug_api_response:"+resultString);
         if (StringUtils.isNotEmpty(resultString)) {
