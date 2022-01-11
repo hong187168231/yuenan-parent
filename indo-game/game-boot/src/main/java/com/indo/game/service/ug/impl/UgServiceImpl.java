@@ -148,12 +148,13 @@ public class UgServiceImpl implements UgService {
      * 登录
      */
     private Result initGame(LoginInfo loginUser,GamePlatform gamePlatform, String ip,String WebType) throws Exception {
-        logger.info("uglog {} ugGame account:{}, ugCodeId:{}", loginUser.getId(), loginUser.getNickName());
+        logger.info("uglog {} ugGame account:{}, ugCodeId:{},ip:{}", loginUser.getId(), loginUser.getNickName(),ip);
         try {
             UgLoginJsonDTO ugLoginJsonDTO = new UgLoginJsonDTO();
             ugLoginJsonDTO.setMemberAccount(loginUser.getAccount());//账户名,长度需要小于 20,大小写不敏感
             ugLoginJsonDTO.setWebType(null==WebType||"".equals(WebType)?"PC":WebType);//登录类型: PC \Smart \Wap；默认值：PC
-            ugLoginJsonDTO.setLoginIP(OpenAPIProperties.PROXY_HOST_NAME);//登录 IP
+            System.out.println("请求ip:"+ip);
+            ugLoginJsonDTO.setLoginIP(ip);//登录 IP
             ugLoginJsonDTO.setLanguage(gamePlatform.getLanguageType());// string 否 语言文字代码；默认值：EN
 //            ugLoginJsonDTO.setPageStyle("");// string 否 网站版面 SP1, SP2, SP3, SP4, SP5,SP6,SP7；默认值：SP1
 //            ugLoginJsonDTO.setOddsStyle("");// string 否 赔率样式代码(OddsStyle) ；默认值：MY

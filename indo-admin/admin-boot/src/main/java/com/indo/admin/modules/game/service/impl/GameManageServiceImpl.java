@@ -1,8 +1,14 @@
 package com.indo.admin.modules.game.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.modules.game.mapper.*;
 import com.indo.admin.modules.game.service.IGameManageService;
+import com.indo.admin.pojo.dto.game.manage.GameInfoPageReq;
+import com.indo.admin.pojo.dto.game.manage.GamePlatformPageReq;
+import com.indo.admin.pojo.vo.game.manage.GameInfoRecord;
+import com.indo.admin.pojo.vo.game.manage.GameStatiRecord;
 import com.indo.common.result.Result;
 import com.indo.game.pojo.entity.manage.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +27,8 @@ public class GameManageServiceImpl implements IGameManageService {
     private GameLanguageTypeMapper gameLanguageTypeMapper;
     @Autowired
     private GameCurrencyTypeMapper gameCurrencyTypeMapper;
+    @Autowired
+    private TxnsMapper txnsMapper;
 
     public Result<GameCategory> queryAllGameCategory() {
         Result<GameCategory> result = new Result<>();
@@ -42,12 +50,11 @@ public class GameManageServiceImpl implements IGameManageService {
         return gameCategoryMapper.updateById(category) > 0;
     }
 
-    public Result<List<GamePlatform>> queryAllGamePlatform() {
-        Result<List<GamePlatform>> result = new Result<List<GamePlatform>>();
-        LambdaQueryWrapper<GamePlatform> wrapper = new LambdaQueryWrapper<>();
-        List<GamePlatform> categoryList = gamePlatformMapper.selectList(wrapper);
-        result.success(categoryList);
-        return result;
+    public IPage<GamePlatform> queryAllGamePlatform(GamePlatformPageReq req) {
+        IPage<GamePlatform> page = new Page<>(null==req.getPage()?1: req.getPage(), null==req.getLimit()?10:req.getLimit());
+        page.setRecords(gamePlatformMapper.queryAllGamePlatform(page,req));
+        return page;
+
     }
 
     public Result<List<GamePlatform>> queryHotGamePlatform() {
@@ -85,5 +92,19 @@ public class GameManageServiceImpl implements IGameManageService {
         List<GameCurrencyType> categoryList = gameCurrencyTypeMapper.selectList(wrapper);
         result.success(categoryList);
         return result;
+    }
+
+    @Override
+    public IPage<GameStatiRecord> queryAllGameInfoCount(GameInfoPageReq req) {
+        IPage<GameStatiRecord> page = new Page<>(null==req.getPage()?1: req.getPage(), null==req.getLimit()?10:req.getLimit());
+        page.setRecords(txnsMapper.queryAllGameInfoCount(page,req));
+        return page;
+    }
+
+    @Override
+    public IPage<GameInfoRecord> queryAllGameInfo(GameInfoPageReq req) {
+        IPage<GameInfoRecord> page = new Page<>(null==req.getPage()?1: req.getPage(), null==req.getLimit()?10:req.getLimit());
+        page.setRecords(txnsMapper.queryAllGameInfo(page,req));
+        return page;
     }
 }

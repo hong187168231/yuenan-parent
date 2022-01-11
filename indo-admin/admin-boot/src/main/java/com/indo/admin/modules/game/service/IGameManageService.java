@@ -1,7 +1,15 @@
 package com.indo.admin.modules.game.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.indo.admin.pojo.dto.game.manage.GameInfoPageReq;
+import com.indo.admin.pojo.dto.game.manage.GamePlatformPageReq;
+import com.indo.admin.pojo.vo.game.manage.GameInfoRecord;
+import com.indo.admin.pojo.vo.game.manage.GameStatiRecord;
 import com.indo.common.result.Result;
-import com.indo.game.pojo.entity.manage.*;
+import com.indo.game.pojo.entity.manage.GameCategory;
+import com.indo.game.pojo.entity.manage.GameCurrencyType;
+import com.indo.game.pojo.entity.manage.GameLanguageType;
+import com.indo.game.pojo.entity.manage.GamePlatform;
 
 import java.util.List;
 import java.util.Set;
@@ -16,7 +24,7 @@ public interface IGameManageService {
 
     boolean modifiyGameCategory(GameCategory category);
 
-    Result<List<GamePlatform>> queryAllGamePlatform();
+    public IPage<GamePlatform> queryAllGamePlatform(GamePlatformPageReq req);
 
     Result<List<GamePlatform>> queryHotGamePlatform();
 
@@ -29,4 +37,8 @@ public interface IGameManageService {
     Result<GameLanguageType> queryLanguageType();
 
     Result<GameCurrencyType> queryGameCurrencyType();
+
+    public IPage<GameStatiRecord> queryAllGameInfoCount(GameInfoPageReq req);
+
+    public IPage<GameInfoRecord> queryAllGameInfo(GameInfoPageReq req);
 }
