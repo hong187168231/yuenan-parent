@@ -1,8 +1,12 @@
 package com.indo.admin.pojo.req;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.indo.common.base.BaseDTO;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.util.Date;
 
 
 @Data
@@ -27,9 +31,11 @@ public class PayRechargeReq extends BaseDTO {
     private Long memId;
 
     @ApiModelProperty(value = "开始时间")
-    private String startTime;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date beginTime;
 
     @ApiModelProperty(value = "结束时间")
-    private String endTime;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date endTime;
 
 }

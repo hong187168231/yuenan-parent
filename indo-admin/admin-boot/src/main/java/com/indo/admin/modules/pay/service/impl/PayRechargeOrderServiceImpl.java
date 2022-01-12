@@ -10,6 +10,8 @@ import com.indo.pay.pojo.entity.PayRechargeOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * <p>
  * 服务类
@@ -21,14 +23,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class PayRechargeOrderServiceImpl extends ServiceImpl<PayRechargeOrderMapper, PayRechargeOrder> implements IPayRechargeOrderService {
 
-
     @Autowired
     private PayRechargeOrderMapper payRechargeOrderMapper;
 
     @Override
-    public Page<RechargeOrderVO> rechargeList(PayRechargeReq rechargeReq) {
-
-
-        return null;
+    public Page<RechargeOrderVO> rechargeList(PayRechargeReq req) {
+        Page<RechargeOrderVO> page = new Page<>(req.getPage(), req.getLimit());
+        List<RechargeOrderVO> result = payRechargeOrderMapper.rechargeList(page, req);
+        page.setRecords(result);
+        return page;
     }
 }

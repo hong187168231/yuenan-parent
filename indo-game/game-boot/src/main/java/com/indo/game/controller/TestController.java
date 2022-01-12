@@ -29,7 +29,7 @@ public class TestController {
     @Autowired
     private GameCommonService iGameManageService;
 
-    @ApiOperation(value = "游戏记录", httpMethod = "POST")
+    @ApiOperation(value = "游戏记录", httpMethod = "GET")
     @GetMapping(value = "/hello")
     @AllowAccess
     public Result<?> queryGameRecord() {
