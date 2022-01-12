@@ -29,6 +29,14 @@ public interface GlobalConstants {
     public static final Integer ACT_SHELVES = 1;
     public static final Integer ACT_DATED = 2;
 
+    /**
+     * 充值订单类型   0 处理中 1 已存入 2 已失败 3 已取消
+     */
+    public static final Integer PAY_RECHARGE_STATUS_PROCESS = 0;
+    public static final Integer PAY_RECHARGE_STATUS_COMPLETE = 1;
+    public static final Integer PAY_RECHARGE_STATUS_FAILURE = 2;
+    public static final Integer PAY_RECHARGE_STATUS_CANCEL = 3;
+
 
     /**
      * 常用接口

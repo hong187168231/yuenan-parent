@@ -15,6 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
 public interface FileFeignClient {
 
     @PostMapping(value = "/rpc/file/upload", produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    String upload(@RequestPart(value = "file") MultipartFile file);
+    Result<String> upload(@RequestPart(value = "file") MultipartFile file);
 
 }

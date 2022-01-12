@@ -20,8 +20,8 @@ public class FileFeignFallback implements FileFeignClient {
 
 
     @Override
-    public String upload(MultipartFile file) {
+    public Result<String> upload(MultipartFile file) {
         log.error("feign远程调用系统用户服务异常后的降级方法");
-        return null;
+        return Result.failed("调用失败");
     }
 }

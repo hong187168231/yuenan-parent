@@ -8,6 +8,7 @@ public enum GoldchangeEnum {
     GPAY(103, "GoPay"),
     YHZZ(104, "银行转账"),
     YLZF(105, "银联支付"),
+    RGCZ(106, "人工充值"),
 
     PLACE_BET(201, "下注"),
     CANCEL_BET(202, "取消注单"),

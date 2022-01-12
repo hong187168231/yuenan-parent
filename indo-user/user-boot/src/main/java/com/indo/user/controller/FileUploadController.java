@@ -5,6 +5,7 @@ import com.indo.admin.pojo.entity.FileInfo;
 import com.indo.admin.pojo.entity.MsgStationLetter;
 import com.indo.common.result.Result;
 import com.indo.common.web.exception.BizException;
+import com.indo.user.pojo.entity.MemBaseinfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -43,8 +44,12 @@ public class FileUploadController {
     @ApiOperation(value = "文件上传接口", httpMethod = "POST")
     @PostMapping("/upload")
     public Result<String> upload(@RequestParam("file") MultipartFile file) {
-        String result = fileFeignClient.upload(file);
-        return Result.success(result);
+        Result<String> result = fileFeignClient.upload(file);
+        if (Result.success().getCode().equals(result.getCode())) {
+            return Result.success(result.getData());
+        } else {
+            throw new BizException("No client with requested ");
+        }
     }
 
 }
