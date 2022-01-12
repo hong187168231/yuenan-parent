@@ -2,7 +2,7 @@ package com.indo.user.mapper;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.pojo.entity.FileInfo;
-import com.indo.common.mybatis.base.mapper.SuperMapper;
+import com.indo.core.base.mapper.SuperMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

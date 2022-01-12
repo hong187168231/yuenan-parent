@@ -4,6 +4,7 @@ import com.indo.common.constant.RedisKeys;
 import com.indo.common.redis.utils.RedisUtils;
 import com.indo.common.result.ResultCode;
 import com.indo.common.web.exception.BizException;
+import com.indo.core.pojo.bo.MemBaseinfoBo;
 import com.indo.core.pojo.entity.SysParameter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -18,6 +19,17 @@ import java.util.List;
  */
 @Slf4j
 public class BusinessRedisUtils extends RedisUtils {
+
+
+    public static void saveMemBaseInfo(MemBaseinfoBo userInfo) {
+        set(RedisKeys.MEM_BASE_INFO_KEY + userInfo.getId(), userInfo, 60 * 60 * 24 * 7);
+    }
+
+
+    public static MemBaseinfoBo getMemBaseInfoByAccount(String account) {
+        MemBaseinfoBo memBaseinfoBo = get(RedisKeys.MEM_BASE_INFO_KEY + account);
+        return memBaseinfoBo;
+    }
 
     /**
      * 删除系统参数
@@ -44,6 +56,7 @@ public class BusinessRedisUtils extends RedisUtils {
         SysParameter cacheParameter = get(RedisKeys.SYS_PARAMETER_CODE + key.toUpperCase());
         return cacheParameter;
     }
+
 
     /**
      * 增加系统参数

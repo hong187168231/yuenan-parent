@@ -8,6 +8,8 @@ package com.indo.common.constant;
 public class RedisKeys {
 
 
+    public static final String MEM_BASE_INFO_KEY = "mem_base_info_key:";
+
     /**
      * 系统是否处于维护状态
      */

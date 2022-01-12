@@ -8,7 +8,7 @@ import com.indo.admin.modules.mem.excel.MemBanRebateVoExcel;
 import com.indo.admin.modules.mem.mapper.MemBanRebateMapper;
 import com.indo.admin.modules.mem.mapper.MemBaseinfoMapper;
 import com.indo.admin.modules.mem.service.IMemBanRebateService;
-import com.indo.common.mybatis.base.service.impl.SuperServiceImpl;
+import com.indo.core.base.service.impl.SuperServiceImpl;
 import com.indo.user.pojo.dto.MemBanRebateDto;
 import com.indo.user.pojo.entity.MemBanRebate;
 import com.indo.user.pojo.vo.MemBanRebateVo;

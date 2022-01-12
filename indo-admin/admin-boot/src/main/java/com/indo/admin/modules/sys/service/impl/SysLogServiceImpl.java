@@ -17,11 +17,11 @@ import com.indo.admin.pojo.dto.LogErrorDTO;
 import com.indo.admin.pojo.dto.LogSmallDTO;
 import com.indo.admin.pojo.entity.SysLog;
 import com.indo.common.annotation.Log;
-import com.indo.common.mybatis.base.service.impl.SuperServiceImpl;
 import com.indo.common.utils.IPAddressUtil;
 import com.indo.common.utils.QueryHelpPlus;
 import com.indo.common.utils.ValidationUtil;
 import com.indo.common.web.util.DozerUtil;
+import com.indo.core.base.service.impl.SuperServiceImpl;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.data.domain.Pageable;
@@ -51,7 +51,7 @@ public class SysLogServiceImpl extends SuperServiceImpl<SysLogMapper, SysLog> im
 
     @Override
     public Object findAllByPageable(String nickname, Pageable pageable) {
-        getPage(pageable);
+//        getPage(pageable);
         PageInfo<SysLog> page = new PageInfo(logMapper.findAllByPageable(nickname));
         Map<String, Object> map = new LinkedHashMap<>(2);
         map.put("content", page.getList());
@@ -63,7 +63,7 @@ public class SysLogServiceImpl extends SuperServiceImpl<SysLogMapper, SysLog> im
     @Override
     public Object queryAll(SysLogQueryCriteria criteria, Pageable pageable) {
 
-        getPage(pageable);
+//        getPage(pageable);
         PageInfo<SysLog> page = new PageInfo<>(queryAll(criteria));
         Map<String, Object> map = new LinkedHashMap<>(2);
         String status = "ERROR";
@@ -83,7 +83,7 @@ public class SysLogServiceImpl extends SuperServiceImpl<SysLogMapper, SysLog> im
 
     @Override
     public Object queryAllByUser(SysLogQueryCriteria criteria, Pageable pageable) {
-        getPage(pageable);
+//        getPage(pageable);
         PageInfo<SysLog> page = new PageInfo<>(queryAll(criteria));
         Map<String, Object> map = new LinkedHashMap<>(2);
         map.put("content", dozerUtil.convert(page.getList(), LogSmallDTO.class));

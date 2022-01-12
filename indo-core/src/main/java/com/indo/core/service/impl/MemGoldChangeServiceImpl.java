@@ -9,6 +9,7 @@ import com.indo.common.enums.TradingEnum;
 import com.indo.common.redis.utils.RedisUtils;
 import com.indo.common.utils.SnowflakeIdWorker;
 import com.indo.common.web.exception.BizException;
+import com.indo.core.base.service.impl.SuperServiceImpl;
 import com.indo.core.mapper.MemGoldChangeMapper;
 import com.indo.core.pojo.bo.MemBaseinfoBo;
 import com.indo.core.pojo.dto.MemGoldChangeDto;
@@ -39,7 +40,7 @@ import static com.indo.common.utils.ViewUtil.getTradeOffAmount;
  */
 @Service
 @Slf4j
-public class MemGoldChangeServiceImpl extends ServiceImpl<MemGoldChangeMapper, MemGoldChange> implements IMemGoldChangeService {
+public class MemGoldChangeServiceImpl extends SuperServiceImpl<MemGoldChangeMapper, MemGoldChange> implements IMemGoldChangeService {
 
 
     @Autowired
@@ -56,12 +57,6 @@ public class MemGoldChangeServiceImpl extends ServiceImpl<MemGoldChangeMapper, M
     static {
         enumList.add(GoldchangeEnum.CANCEL_BET);
 
-    }
-
-
-    @Override
-    public MemBaseinfoBo findMemBaseInfoById(Long memId) {
-        return null;
     }
 
     /**

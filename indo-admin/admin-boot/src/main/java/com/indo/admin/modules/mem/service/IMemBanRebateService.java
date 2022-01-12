@@ -1,7 +1,7 @@
 package com.indo.admin.modules.mem.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.indo.common.mybatis.base.service.SuperService;
+import com.indo.core.base.service.SuperService;
 import com.indo.user.pojo.dto.MemBanRebateDto;
 import com.indo.user.pojo.entity.MemBanRebate;
 import com.indo.user.pojo.vo.MemBanRebateVo;

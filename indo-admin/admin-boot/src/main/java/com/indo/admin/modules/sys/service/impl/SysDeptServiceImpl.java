@@ -3,12 +3,12 @@ package com.indo.admin.modules.sys.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.indo.admin.common.constant.SystemConstants;
+import com.indo.admin.modules.sys.mapper.SysDeptMapper;
+import com.indo.admin.modules.sys.service.ISysDeptService;
 import com.indo.admin.pojo.entity.SysDept;
 import com.indo.admin.pojo.vo.DeptVO;
-import com.indo.admin.modules.sys.mapper.SysDeptMapper;
 import com.indo.admin.pojo.vo.TreeVO;
-import com.indo.admin.modules.sys.service.ISysDeptService;
-import com.indo.common.mybatis.base.service.impl.SuperServiceImpl;
+import com.indo.core.base.service.impl.SuperServiceImpl;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -34,6 +34,7 @@ public class SysDeptServiceImpl extends SuperServiceImpl<SysDeptMapper, SysDept>
 
     /**
      * 递归生成部门表格数据
+     *
      * @param parentId
      * @param deptList
      * @return
@@ -56,6 +57,7 @@ public class SysDeptServiceImpl extends SuperServiceImpl<SysDeptMapper, SysDept>
 
     /**
      * 递归生成部门树形下拉数据
+     *
      * @param parentId
      * @param deptList
      * @return

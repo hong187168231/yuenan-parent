@@ -55,7 +55,7 @@ public class MemBaseInfoController {
     @PostMapping(value = "/info")
     @AllowAccess
     public Result<MemBaseInfoVo> info(@LoginUser LoginInfo loginUser) {
-        return Result.success(memBaseInfoService.getMemBaseInfo(loginUser.getId()));
+        return Result.success(memBaseInfoService.getMemBaseInfo(loginUser.getAccount()));
     }
 
     @ApiOperation(value = "更改密码", httpMethod = "POST")

@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.modules.mem.excel.MemSubordinateVoExcel;
 import com.indo.admin.modules.mem.mapper.MemSubordinateMapper;
 import com.indo.admin.modules.mem.service.IMemSubordinateService;
-import com.indo.common.mybatis.base.service.impl.SuperServiceImpl;
+import com.indo.core.base.service.impl.SuperServiceImpl;
 import com.indo.user.pojo.dto.MemSubordinateDto;
 import com.indo.user.pojo.entity.MemSubordinate;
 import com.indo.user.pojo.vo.MemSubordinateVo;

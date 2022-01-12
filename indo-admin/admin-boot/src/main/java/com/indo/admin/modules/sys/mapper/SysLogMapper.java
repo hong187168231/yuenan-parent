@@ -7,7 +7,7 @@
 package com.indo.admin.modules.sys.mapper;
 
 import com.indo.admin.pojo.entity.SysLog;
-import com.indo.common.mybatis.base.mapper.SuperMapper;
+import com.indo.core.base.mapper.SuperMapper;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;

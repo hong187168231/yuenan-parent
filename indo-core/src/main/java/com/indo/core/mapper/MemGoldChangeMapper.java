@@ -22,6 +22,8 @@ public interface MemGoldChangeMapper extends BaseMapper<MemGoldChange> {
 
     MemBaseinfoBo findMemBaseInfoById(@Param("memId") Long memId);
 
+    MemBaseinfoBo findMemBaseInfoByAccount(@Param("account") String account);
+
     //更新会员金额变动
     int updateMemberAmount(@Param("balance") BigDecimal amount,
                            @Param("canAmount") BigDecimal canAmount, @Param("userId") Long userId);

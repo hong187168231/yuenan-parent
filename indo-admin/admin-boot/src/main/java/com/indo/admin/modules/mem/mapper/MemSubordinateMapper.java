@@ -1,7 +1,7 @@
 package com.indo.admin.modules.mem.mapper;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.indo.common.mybatis.base.mapper.SuperMapper;
+import com.indo.core.base.mapper.SuperMapper;
 import com.indo.user.pojo.dto.MemSubordinateDto;
 import com.indo.user.pojo.entity.MemSubordinate;
 import com.indo.user.pojo.vo.MemSubordinateVo;

@@ -2,7 +2,7 @@ package com.indo.admin.modules.sys.service;
 
 import com.indo.admin.pojo.criteria.SysLogQueryCriteria;
 import com.indo.admin.pojo.entity.SysLog;
-import com.indo.common.mybatis.base.service.SuperService;
+import com.indo.core.base.service.SuperService;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;

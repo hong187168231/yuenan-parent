@@ -83,6 +83,13 @@
         where mb.id =#{memId}
     </select>
 
+    <select id="findMemBaseInfoByAccount" resultMap="memResultMap">
+        select
+        <include refid="mem_Column_List"/>
+        from mem_baseinfo mb
+        where mb.account =#{account}
+    </select>
+
 
     <update id="updateMemberAmount">
         <![CDATA[

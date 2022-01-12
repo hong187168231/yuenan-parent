@@ -1,6 +1,7 @@
 package com.indo.core.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.indo.core.base.service.SuperService;
 import com.indo.core.pojo.bo.MemBaseinfoBo;
 import com.indo.core.pojo.dto.MemGoldChangeDto;
 import com.indo.core.pojo.entity.MemGoldChange;
@@ -15,10 +16,8 @@ import java.math.BigDecimal;
  * @author puff
  * @since 2021-12-07
  */
-public interface IMemGoldChangeService extends IService<MemGoldChange> {
+public interface IMemGoldChangeService extends SuperService<MemGoldChange> {
 
-
-    MemBaseinfoBo findMemBaseInfoById(Long memId);
 
     /**
      * 修改用户账变信息

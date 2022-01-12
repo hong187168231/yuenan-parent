@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.modules.mem.excel.WithdrawalVoExcel;
 import com.indo.admin.modules.mem.mapper.WithdrawMapper;
 import com.indo.admin.modules.mem.service.IWithdrawService;
-import com.indo.common.mybatis.base.service.impl.SuperServiceImpl;
+import com.indo.core.base.service.impl.SuperServiceImpl;
 import com.indo.user.pojo.dto.WithdrawDto;
 import com.indo.user.pojo.entity.Withdraw;
 import com.indo.user.pojo.vo.WithdrawVo;

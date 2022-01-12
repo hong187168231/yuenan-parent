@@ -2,13 +2,14 @@ package com.indo.user.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.indo.common.mybatis.base.service.impl.SuperServiceImpl;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
 import com.indo.common.utils.BaseUtil;
-import com.indo.common.utils.CopyUtils;
 import com.indo.common.utils.NameGeneratorUtil;
 import com.indo.common.web.exception.BizException;
+import com.indo.common.web.util.DozerUtil;
+import com.indo.core.base.service.impl.SuperServiceImpl;
+import com.indo.core.pojo.bo.MemBaseinfoBo;
 import com.indo.user.common.util.UserBusinessRedisUtils;
 import com.indo.user.mapper.MemAgentMapper;
 import com.indo.user.mapper.MemBaseInfoMapper;
@@ -71,15 +72,10 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
         if (!req.getPassword().equals(userInfo.getPasswordMd5())) {
             return Result.failed("密码错误！");
         }
-        String accToken = UserBusinessRedisUtils.createMemAccToken(userInfo);
+        MemBaseinfoBo memBaseinfoBo = DozerUtil.map(userInfo, MemBaseinfoBo.class);
+        String accToken = UserBusinessRedisUtils.createMemAccToken(memBaseinfoBo);
         //返回登录信息
-        LoginInfo loginInfo = new LoginInfo();
-        try {
-            CopyUtils.conver(userInfo, loginInfo);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        AppLoginVo appLoginVo = this.getAppLoginVo(accToken, userInfo);
+        AppLoginVo appLoginVo = this.getAppLoginVo(accToken);
         return Result.success(appLoginVo);
     }
 
@@ -140,10 +136,10 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
         userInfo.setInviteCode(req.getInviteCode());
         //保存注册信息
         initRegister(userInfo);
-        String accToken = UserBusinessRedisUtils.createMemAccToken(userInfo);
+        MemBaseinfoBo memBaseinfoBo = DozerUtil.map(userInfo, MemBaseinfoBo.class);
+        String accToken = UserBusinessRedisUtils.createMemAccToken(memBaseinfoBo);
         //返回登录信息
-        AppLoginVo appLoginVo = this.getAppLoginVo(accToken, userInfo);
-        //清空图片验证码
+        AppLoginVo appLoginVo = this.getAppLoginVo(accToken);
         return Result.success(appLoginVo);
 
     }
@@ -204,22 +200,12 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
     }
 
     @Override
-    public MemBaseInfoVo getMemBaseInfo(Long id) {
-        MemBaseinfo memBaseinfo = this.baseMapper.selectOne(new QueryWrapper<MemBaseinfo>().lambda().eq(MemBaseinfo::getId, id));
-        if (null == memBaseinfo) {
-            return null;
-        }
-        MemBaseInfoVo vo = new MemBaseInfoVo();
-        BeanUtils.copyProperties(memBaseinfo, vo);
-        vo.setAccount(memBaseinfo.getAccount());
+    public MemBaseInfoVo getMemBaseInfo(String account) {
+        MemBaseinfoBo cacheMemBaseInfo = this.getMemCacheBaseInfo(account);
+        MemBaseInfoVo vo = DozerUtil.map(cacheMemBaseInfo, MemBaseInfoVo.class);
         return vo;
     }
 
-    @Override
-    public Result<MemBaseInfoVo> getMemInfo(MemInfoReq req) {
-
-        return null;
-    }
 
     @Override
     public boolean updatePassword(UpdatePasswordReq req, LoginInfo loginUser) {
@@ -278,21 +264,9 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
      * @return: com.cp.common.vo.AppLoginVo
      * @date: 2020/8/5 14:59
      */
-    private AppLoginVo getAppLoginVo(String token, MemBaseinfo memBaseInfo) {
+    private AppLoginVo getAppLoginVo(String token) {
         AppLoginVo appLoginVo = new AppLoginVo();
         appLoginVo.setToken(token);
-//        appLoginVo.setNickName(userInfo.getNickname());
-//        appLoginVo.setAccount(userInfo.getAccount());
-//        appLoginVo.setMobilePhone(userInfo.getMobilePhone());
-//        appLoginVo.setUid(userInfo.getId().toString());
-//        appLoginVo.setSex(userInfo.getSex() == null ? 1 : userInfo.getSex());
-//        appLoginVo.setHeadImage(minioConfig.getBaseUrl(userInfo.getHeadImage()));
-//        Optional<Anchor> anchor = Optional.ofNullable(anchorRepositoryImpl.findAnchorByUid(userInfo.getId()));
-//        if (anchor.isPresent()) {
-//            appLoginVo.setRoomId(anchor.get().room_id);
-//        }
-//        Long days = DateUtils.getPastDaysWithNow(userInfo.getCreateTime().getTime());
-//        appLoginVo.setRegisterDay(days.intValue());
         return appLoginVo;
     }
 
@@ -300,8 +274,7 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
     @Override
     public MemTradingVo tradingInfo(Long memId) {
         MemBaseinfo memBaseinfo = baseMapper.selectById(memId);
-        MemTradingVo memTradingVo = new MemTradingVo();
-        BeanUtils.copyProperties(memBaseinfo, memTradingVo);
+        MemTradingVo memTradingVo = DozerUtil.map(memBaseinfo, MemTradingVo.class);
         return memTradingVo;
     }
 

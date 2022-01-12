@@ -9,7 +9,7 @@ import com.indo.admin.modules.mem.req.MemLevelPageReq;
 import com.indo.admin.modules.mem.req.MemLevelUpdateReq;
 import com.indo.admin.modules.mem.service.IMemLevelService;
 import com.indo.admin.modules.mem.vo.MemLevelVo;
-import com.indo.common.mybatis.base.service.impl.SuperServiceImpl;
+import com.indo.core.base.service.impl.SuperServiceImpl;
 import com.indo.user.pojo.entity.MemLevel;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;

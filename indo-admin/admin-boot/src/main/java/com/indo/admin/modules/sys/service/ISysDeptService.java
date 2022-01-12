@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.indo.admin.pojo.entity.SysDept;
 import com.indo.admin.pojo.vo.DeptVO;
 import com.indo.admin.pojo.vo.TreeVO;
-import com.indo.common.mybatis.base.service.SuperService;
+import com.indo.core.base.service.SuperService;
 
 import java.util.List;
 
