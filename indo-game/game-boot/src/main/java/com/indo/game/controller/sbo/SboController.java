@@ -47,12 +47,12 @@ public class SboController {
     })
     public Result initGame(@LoginUser LoginInfo loginUser, @RequestParam("platform") String platform,
                            HttpServletRequest request) throws InterruptedException {
-
+        log.info("sbolog {} initGame 进入游戏。。。loginUser:{}", platform, loginUser);
         String params = "";
         if (loginUser == null || StringUtils.isBlank(loginUser.getAccount())) {
             return Result.failed(MessageUtils.get("youarenotloggedin"));
         }
-        log.info("sbolog {} initGame 进入游戏。。。loginUser:{}", platform, loginUser);
+
         RLock lock = redissonClient.getLock("SBO_GAME_" + loginUser.getId());
         boolean res = lock.tryLock(5, TimeUnit.SECONDS);
         try {
@@ -89,12 +89,12 @@ public class SboController {
     @ApiOperation(value = "sbo登出玩家", httpMethod = "POST")
     @PostMapping("/logout")
     public Result logout(@LoginUser LoginInfo loginUser, HttpServletRequest request) throws InterruptedException {
-
+        log.info("sbolog {} logout 进入游戏。。。loginUser:{}", loginUser.getId(), loginUser);
         String params = "";
         if (loginUser == null) {
             return Result.failed(MessageUtils.get("youarenotloggedin"));
         }
-        log.info("sbolog {} logout 进入游戏。。。loginUser:{}", loginUser.getId(), loginUser);
+
         try {
             String ip = IPAddressUtil.getIpAddress(request);
             Result resultInfo = sboSportsService.logout(loginUser, ip);

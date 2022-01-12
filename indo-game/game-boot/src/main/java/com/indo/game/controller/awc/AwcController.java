@@ -47,12 +47,12 @@ public class AwcController {
     })
     public Result initGame(@LoginUser LoginInfo loginUser, @RequestParam("isMobileLogin") String isMobileLogin, @RequestParam("platform") String platform,
                            HttpServletRequest request) throws InterruptedException {
-
+        log.info("AE真人、SV388斗鸡log {} initGame 进入游戏。。。loginUser:{}", isMobileLogin,platform, loginUser);
         String params = "";
         if (loginUser == null || StringUtils.isBlank(loginUser.getAccount())) {
             return Result.failed(MessageUtils.get("youarenotloggedin"));
         }
-        log.info("AE真人、SV388斗鸡log {} initGame 进入游戏。。。loginUser:{}", isMobileLogin,platform, loginUser);
+
         RLock lock = redissonClient.getLock("AWC_GAME_" + loginUser.getId());
         boolean res = lock.tryLock(5, TimeUnit.SECONDS);
         try {
@@ -90,12 +90,12 @@ public class AwcController {
     @ApiOperation(value = "AE真人、SV388斗鸡游戏 强迫登出玩家", httpMethod = "POST")
     @PostMapping("/logout")
     public Result logout(@LoginUser LoginInfo loginUser, HttpServletRequest request) throws InterruptedException {
-
+        log.info("AE真人、SV388斗鸡log {} logout 进入游戏。。。loginUser:{}", loginUser.getId(), loginUser);
         String params = "";
         if (loginUser == null) {
             return Result.failed(MessageUtils.get("youarenotloggedin"));
         }
-        log.info("AE真人、SV388斗鸡log {} logout 进入游戏。。。loginUser:{}", loginUser.getId(), loginUser);
+
         try {
             String ip = IPAddressUtil.getIpAddress(request);
             Result resultInfo = awcService.logout(loginUser, ip);

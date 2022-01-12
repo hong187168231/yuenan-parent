@@ -52,9 +52,7 @@ public class GameCommonServiceImpl implements GameCommonService {
     public GameCategory getGameCategoryById(Long id) {
         GameCategory gameCategory = GameBusinessRedisUtils.get(RedisKeys.GAME_PLATFORM_KEY + id);
         if (null == gameCategory) {
-            LambdaQueryWrapper<GameCategory> wrapper = new LambdaQueryWrapper<>();
-            wrapper.eq(GameCategory::getId, id);
-            gameCategory = gameCategoryMapper.selectById(wrapper);
+            gameCategory = gameCategoryMapper.selectById(id);
         }
         return gameCategory;
     }
