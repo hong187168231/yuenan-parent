@@ -69,16 +69,19 @@
     <!-- 通用查询结果列 -->
     <sql id="mem_Column_List">
         id
-        , real_name, nick_name, account salt, password, password_md5, phone, email, face_book, whats_app, invite_code, group_id, mem_level, acc_type, total_deposit, total_enchashment, balance, register_source, register_ip, client_ip, status, prohibit_login, prohibit_invite, prohibit_investment, prohibit_disbursement, prohibit_recharge, remark, create_user, last_login_time, update_user
+        , real_name, nick_name, account salt, password, password_md5, phone, email, face_book, whats_app,
+        invite_code, group_id, mem_level, acc_type, total_deposit, total_enchashment,
+        balance, register_source, register_ip, client_ip, status, prohibit_login, prohibit_invite,
+        prohibit_investment, prohibit_disbursement, prohibit_recharge, remark, create_user, last_login_time, update_user
     </sql>
 
 
     <select id="findMemBaseInfoById" resultMap="memResultMap">
         select
         <include refid="mem_Column_List"/>
-        from mem_baseinfo
+        from mem_baseinfo mb
+        where mb.id =#{memId}
     </select>
-
 
 
     <update id="updateMemberAmount">
