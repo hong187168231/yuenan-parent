@@ -21,6 +21,9 @@ public class RechargeOrderVO implements Serializable {
     @ApiModelProperty(value = "充值订单号")
     private String orderNo;
 
+    @ApiModelProperty(value = "用户id")
+    private Long memId;
+
     @ApiModelProperty(value = "用户等级")
     private Integer memLevel;
 
@@ -31,7 +34,7 @@ public class RechargeOrderVO implements Serializable {
     private String channelName;
 
     @ApiModelProperty(value = "支付方式")
-    private Boolean wayName;
+    private String wayName;
 
     @ApiModelProperty(value = "付款实际")
     private String payTime;

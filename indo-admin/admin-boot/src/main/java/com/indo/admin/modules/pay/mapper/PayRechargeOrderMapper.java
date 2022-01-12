@@ -1,7 +1,9 @@
 package com.indo.admin.modules.pay.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.pojo.req.PayRechargeReq;
+import com.indo.admin.pojo.vo.agent.AgentVo;
 import com.indo.admin.pojo.vo.pay.RechargeOrderVO;
 import com.indo.pay.pojo.entity.PayRechargeOrder;
 import org.apache.ibatis.annotations.Mapper;
@@ -21,7 +23,7 @@ import java.util.List;
 public interface PayRechargeOrderMapper extends BaseMapper<PayRechargeOrder> {
 
 
-    List<RechargeOrderVO> rechargeList(@Param("page") RechargeOrderVO page, @Param("req") PayRechargeReq req);
+    List<RechargeOrderVO> rechargeList(@Param("page") Page<RechargeOrderVO> page, @Param("req") PayRechargeReq req);
 
 
 }

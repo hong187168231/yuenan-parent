@@ -11,7 +11,7 @@
         <result column="pay_way_id" property="payWayId"/>
         <result column="order_no" property="orderNo"/>
         <result column="transaction_no" property="transactionNo"/>
-        <result column="user_id" property="userId"/>
+        <result column="user_id" property="memId"/>
         <result column="bank_account" property="bankAccount"/>
         <result column="bank_name" property="bankName"/>
         <result column="bank_card_no" property="bankCardNo"/>
@@ -23,7 +23,7 @@
         <result column="real_amount" property="realAmount"/>
         <result column="order_status" property="orderStatus"/>
         <result column="cancel_reason" property="cancelReason"/>
-        <result column="pay_date" property="payDate"/>
+        <result column="pay_time" property="payTime"/>
         <result column="pay_postscript" property="payPostscript"/>
         <result column="order_note" property="orderNote"/>
         <result column="operator_user" property="operatorUser"/>
@@ -41,39 +41,40 @@
     </sql>
 
     <select id="rechargeList" resultType="com.indo.admin.pojo.vo.pay.RechargeOrderVO">
-            SELECT
-                a.*, (
-                SELECT
-                pcc.channel_name
-                FROM
-                pay_channel_config pcc
-                WHERE
-                pcc.pay_channel_id = a.payChannelId
-                LIMIT 1
-            ) AS channelName,
-                (
-                    SELECT
-                    pwc.way_name
-                    FROM
-                    pay_way_config pwc
-                    WHERE
-                    pwc.pay_way_id = a.payWayId
-                    LIMIT 1
-                ) AS wayName
-            FROM
-            (
-                SELECT
-                pro.recharge_order_id AS rechargeOrderId,
-                pro.order_no AS orderNo,
-                mb.mem_level AS memLevel,
-                pro.real_amount AS realAmount,
-                pro.pay_channel_id AS payChannelId,
-                pro.pay_way_id AS payWayId,
-                pro.pay_time AS payTime
-                FROM
-                pay_recharge_order pro
-                INNER JOIN mem_baseinfo mb ON pro.mem_id = mb.id
-            ) a
+        SELECT
+        a.*, (
+        SELECT
+        pcc.channel_name
+        FROM
+        pay_channel_config pcc
+        WHERE
+        pcc.pay_channel_id = a.payChannelId
+        LIMIT 1
+        ) AS channelName,
+        (
+        SELECT
+        pwc.way_name
+        FROM
+        pay_way_config pwc
+        WHERE
+        pwc.pay_way_id = a.payWayId
+        LIMIT 1
+        ) AS wayName
+        FROM
+        (
+        SELECT
+        pro.recharge_order_id AS rechargeOrderId,
+        pro.order_no AS orderNo,
+        mb.id AS memId,
+        mb.mem_level AS memLevel,
+        pro.real_amount AS realAmount,
+        pro.pay_channel_id AS payChannelId,
+        pro.pay_way_id AS payWayId,
+        pro.pay_time AS payTime
+        FROM
+        pay_recharge_order pro
+        INNER JOIN mem_baseinfo mb ON pro.mem_id = mb.id
+        ) a
         where 1=1
         <if test="req.payChannelId != null ">
             and a.pay_channel_id = #{req.payChannelId}
@@ -87,17 +88,17 @@
         <if test="req.memId != null ">
             and a.mem_id = #{req.memId}
         </if>
-        <if test="dto.beginAmount != null ">
-            and a.actual_amount &gt;= #{dto.beginAmount}
+        <if test="req.beginAmount != null ">
+            and a.actual_amount &gt;= #{req.beginAmount}
         </if>
-        <if test="dto.endAmount ">
-            and a.actual_amount &lt;= #{dto.endAmount}
+        <if test="req.endAmount ">
+            and a.actual_amount &lt;= #{req.endAmount}
         </if>
-        <if test="dto.beginTime != null">
-            and a.create_time &gt;= #{dto.beginTime}
+        <if test="req.beginTime != null">
+            and a.create_time &gt;= #{req.beginTime}
         </if>
-        <if test="dto.endTime != null ">
-            and a.create_time &lt;= #{dto.endTime}
+        <if test="req.endTime != null ">
+            and a.create_time &lt;= #{req.endTime}
         </if>
 
     </select>
