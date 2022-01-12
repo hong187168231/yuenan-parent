@@ -4,11 +4,10 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.indo.admin.common.constant.SystemConstants;
-import com.indo.admin.common.util.BusinessRedisUtils;
+import com.indo.admin.common.util.AdminBusinessRedisUtils;
 import com.indo.admin.modules.ade.mapper.AdvertiseRecordMapper;
 import com.indo.admin.modules.ade.service.IAdvertiseService;
 import com.indo.admin.pojo.entity.Advertise;
-import com.indo.admin.pojo.entity.SysDept;
 import com.indo.admin.pojo.vo.AdvertiseVO;
 import com.indo.common.constant.RedisConstants;
 import com.indo.common.result.Result;
@@ -57,7 +56,7 @@ public class AdvertiseServiceImpl extends ServiceImpl<AdvertiseRecordMapper, Adv
         advertise.setCreateUser(JwtUtils.getUsername());
         if (baseMapper.insert(advertise) > 0) {
             if (advertiseDTO.getStatus().equals(SystemConstants.ADE_SHELVES)) {
-                BusinessRedisUtils.hset(RedisConstants.ADMIN_ADVERTISING_KEY, advertise.getAdeId() + "", advertise);
+                AdminBusinessRedisUtils.hset(RedisConstants.ADMIN_ADVERTISING_KEY, advertise.getAdeId() + "", advertise);
             }
             return true;
         }
@@ -75,7 +74,7 @@ public class AdvertiseServiceImpl extends ServiceImpl<AdvertiseRecordMapper, Adv
         BeanUtils.copyProperties(advertiseDTO, advertise);
         advertise.setUpdateUser(JwtUtils.getUsername());
         if (baseMapper.updateById(advertise) > 0) {
-            BusinessRedisUtils.hset(RedisConstants.ADMIN_ADVERTISING_KEY, advertise.getAdeId() + "", advertise);
+            AdminBusinessRedisUtils.hset(RedisConstants.ADMIN_ADVERTISING_KEY, advertise.getAdeId() + "", advertise);
             return true;
         }
         return false;
@@ -86,7 +85,7 @@ public class AdvertiseServiceImpl extends ServiceImpl<AdvertiseRecordMapper, Adv
     public boolean delAde(Long adeId) {
         checkAdeOpera(adeId);
         if (this.baseMapper.deleteById(adeId) > 0) {
-            BusinessRedisUtils.hdel(RedisConstants.ADMIN_ADVERTISING_KEY, adeId + "");
+            AdminBusinessRedisUtils.hdel(RedisConstants.ADMIN_ADVERTISING_KEY, adeId + "");
             return true;
         }
         return false;
@@ -105,9 +104,9 @@ public class AdvertiseServiceImpl extends ServiceImpl<AdvertiseRecordMapper, Adv
         if (this.baseMapper.updateById(advertise) > 0) {
             if (status.equals(SystemConstants.ADE_SHELVES)) {
                 findAdvertiseById(adeId);
-                BusinessRedisUtils.hset(RedisConstants.ADMIN_ADVERTISING_KEY, advertise.getAdeId() + "", advertise);
+                AdminBusinessRedisUtils.hset(RedisConstants.ADMIN_ADVERTISING_KEY, advertise.getAdeId() + "", advertise);
             } else if (status.equals(SystemConstants.ADE_SOLD_OUT)) {
-                BusinessRedisUtils.hdel(RedisConstants.ADMIN_ADVERTISING_KEY, adeId + "");
+                AdminBusinessRedisUtils.hdel(RedisConstants.ADMIN_ADVERTISING_KEY, adeId + "");
             }
             return true;
         }

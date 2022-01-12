@@ -4,7 +4,7 @@ import cn.hutool.json.JSONObject;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.modules.mem.mapper.ManualDepositWithDrawMapper;
 import com.indo.admin.modules.mem.service.IManualDepositWithDrawService;
-import com.indo.admin.utils.OrderIdUtils;
+import com.indo.admin.common.util.OrderIdUtils;
 import com.indo.common.mybatis.base.service.impl.SuperServiceImpl;
 import com.indo.common.result.Result;
 import com.indo.user.pojo.dto.ManualDepositWithDrawDto;

@@ -2,8 +2,8 @@ package com.indo.admin.modules.sys.controller;
 
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.util.StrUtil;
-import com.indo.admin.pojo.domain.LoginRecord;
 import com.indo.admin.modules.sys.service.ITokenService;
+import com.indo.admin.security.domain.LoginRecord;
 import com.indo.common.base.BaseDocument;
 import com.indo.common.elasticsearch.service.ElasticSearchService;
 import com.indo.common.result.Result;

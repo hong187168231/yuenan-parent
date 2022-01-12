@@ -30,10 +30,10 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 
 
     @Override
-    public PageResult list(Page<SysUser> page, SysUser user) {
+    public Page<SysUser> list(Page<SysUser> page, SysUser user) {
         List<SysUser> list = this.baseMapper.list(page, user);
         page.setRecords(list);
-        return PageResult.getPageResult(page);
+        return page;
     }
 
 

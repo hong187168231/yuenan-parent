@@ -2,7 +2,7 @@ package com.indo.admin.modules.mem.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.indo.admin.common.util.BusinessRedisUtils;
+import com.indo.admin.common.util.AdminBusinessRedisUtils;
 import com.indo.admin.modules.mem.mapper.MemLevelMapper;
 import com.indo.admin.modules.mem.req.MemLevelAddReq;
 import com.indo.admin.modules.mem.req.MemLevelPageReq;
@@ -10,7 +10,6 @@ import com.indo.admin.modules.mem.req.MemLevelUpdateReq;
 import com.indo.admin.modules.mem.service.IMemLevelService;
 import com.indo.admin.modules.mem.vo.MemLevelVo;
 import com.indo.common.mybatis.base.service.impl.SuperServiceImpl;
-import com.indo.common.result.PageResult;
 import com.indo.user.pojo.entity.MemLevel;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,7 +76,7 @@ public class MemLevelServiceImpl extends SuperServiceImpl<MemLevelMapper, MemLev
     void refreshMemLevel() {
         LambdaQueryWrapper<MemLevel> wrapper = new LambdaQueryWrapper();
         List<MemLevel> levelList = this.baseMapper.selectList(wrapper);
-        BusinessRedisUtils.refreshMemLevel(levelList);
+        AdminBusinessRedisUtils.refreshMemLevel(levelList);
     }
 
 }

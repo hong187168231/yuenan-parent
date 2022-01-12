@@ -12,7 +12,6 @@
     <modules>
         <module>indo-common</module>
         <module>indo-admin</module>
-        <module>indo-auth</module>
         <module>indo-user</module>
         <module>indo-core</module>
         <module>indo-job</module>

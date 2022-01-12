@@ -8,7 +8,7 @@ import com.indo.common.result.PageResult;
 
 public interface ISysUserService extends IService<SysUser> {
 
-    PageResult list(Page<SysUser> page, SysUser sysUser);
+    Page list(Page<SysUser> page, SysUser sysUser);
 
     boolean saveUser(SysUser user);
 

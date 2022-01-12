@@ -1,19 +1,15 @@
 package com.indo.admin.modules.act.service.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.indo.admin.common.constant.SystemConstants;
-import com.indo.admin.common.util.BusinessRedisUtils;
+import com.indo.admin.common.util.AdminBusinessRedisUtils;
 import com.indo.admin.modules.act.mapper.ActivityMapper;
 import com.indo.admin.modules.act.service.IActivityService;
 import com.indo.admin.pojo.dto.ActivityDTO;
 import com.indo.admin.pojo.dto.ActivityQueryDTO;
-import com.indo.admin.pojo.dto.ActivityRecordDTO;
 import com.indo.admin.pojo.entity.Activity;
-import com.indo.admin.pojo.entity.Advertise;
-import com.indo.admin.pojo.vo.ActivityRecordVO;
 import com.indo.common.constant.RedisConstants;
 import com.indo.common.result.Result;
 import com.indo.common.utils.StringUtils;
@@ -61,7 +57,7 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> i
         Activity activity = new Activity();
         BeanUtils.copyProperties(activityDTO, activity);
         if (baseMapper.insert(activity) > 0) {
-            BusinessRedisUtils.hset(RedisConstants.ACTIVITY_KEY, activity.getActId() + "", activity);
+            AdminBusinessRedisUtils.hset(RedisConstants.ACTIVITY_KEY, activity.getActId() + "", activity);
             return true;
         }
         return false;
@@ -77,7 +73,7 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> i
         }
         BeanUtils.copyProperties(activityDTO, activity);
         if (baseMapper.updateById(activity) > 0) {
-            BusinessRedisUtils.hset(RedisConstants.ACTIVITY_KEY, activity.getActId() + "", activity);
+            AdminBusinessRedisUtils.hset(RedisConstants.ACTIVITY_KEY, activity.getActId() + "", activity);
             return true;
         }
 
@@ -89,7 +85,7 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> i
     public boolean delAct(Long actId) {
         checkAdeOpera(actId);
         if (this.baseMapper.deleteById(actId) > 0) {
-            BusinessRedisUtils.hdel(RedisConstants.ACTIVITY_KEY, actId + "");
+            AdminBusinessRedisUtils.hdel(RedisConstants.ACTIVITY_KEY, actId + "");
             return true;
         }
         return false;
@@ -107,9 +103,9 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> i
         activity.setUpdateUser(JwtUtils.getUsername());
         if (this.baseMapper.updateById(activity) > 0) {
             if (status.equals(SystemConstants.ACT_SHELVES)) {
-                BusinessRedisUtils.hset(RedisConstants.ACTIVITY_KEY, activity.getActId() + "", activity);
+                AdminBusinessRedisUtils.hset(RedisConstants.ACTIVITY_KEY, activity.getActId() + "", activity);
             } else if (status.equals(SystemConstants.ADE_SOLD_OUT)) {
-                BusinessRedisUtils.hdel(RedisConstants.ACTIVITY_KEY, actId + "");
+                AdminBusinessRedisUtils.hdel(RedisConstants.ACTIVITY_KEY, actId + "");
             }
             return true;
         }

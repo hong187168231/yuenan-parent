@@ -63,9 +63,9 @@ public class UserController {
         user.setStatus(status);
         user.setDeptId(deptId);
 
-        Page<SysUser> sysUserPage =   new Page<>(1, 10);
-        PageResult result = iSysUserService.list(sysUserPage, user);
-        return Result.success(result);
+        Page<SysUser> sysUserPage = new Page<>(page, limit);
+        iSysUserService.list(sysUserPage, user);
+        return Result.success(sysUserPage.getRecords(), sysUserPage.getTotal());
     }
 
     @ApiOperation(value = "用户详情")

@@ -2,7 +2,7 @@ package com.indo.admin.modules.mem.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.indo.admin.modules.mem.service.IMemBankService;
-import com.indo.admin.utils.MinioUtil;
+import com.indo.admin.common.util.MinioUtil;
 import com.indo.common.enums.FileBusinessType;
 import com.indo.common.result.Result;
 import com.indo.user.pojo.entity.MemBank;

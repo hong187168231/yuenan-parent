@@ -1,6 +1,6 @@
 package com.indo.admin;
 
-import com.indo.admin.utils.SpringUtil;
+import com.indo.admin.common.util.SpringUtil;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;

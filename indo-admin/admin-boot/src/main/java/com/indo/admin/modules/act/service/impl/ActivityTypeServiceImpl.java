@@ -4,11 +4,10 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
-import com.indo.admin.common.util.BusinessRedisUtils;
+import com.indo.admin.common.util.AdminBusinessRedisUtils;
 import com.indo.admin.modules.act.mapper.ActivityTypeMapper;
 import com.indo.admin.modules.act.service.IActivityTypeService;
 import com.indo.admin.pojo.dto.ActivityTypeDTO;
-import com.indo.admin.pojo.entity.Activity;
 import com.indo.admin.pojo.entity.ActivityType;
 import com.indo.admin.pojo.vo.ActivityTypeVO;
 import com.indo.common.constant.RedisConstants;
@@ -53,7 +52,7 @@ public class ActivityTypeServiceImpl extends ServiceImpl<ActivityTypeMapper, Act
         BeanUtils.copyProperties(activityTypeDTO, activityType);
         activityType.setCreateUser(JwtUtils.getUsername());
         if (baseMapper.insert(activityType) > 0) {
-            BusinessRedisUtils.hset(RedisConstants.ACTIVITY_TYPE_KEY, activityType.getActTypeId() + "", activityType);
+            AdminBusinessRedisUtils.hset(RedisConstants.ACTIVITY_TYPE_KEY, activityType.getActTypeId() + "", activityType);
             return true;
         }
         return false;
@@ -67,7 +66,7 @@ public class ActivityTypeServiceImpl extends ServiceImpl<ActivityTypeMapper, Act
         }
         BeanUtils.copyProperties(activityTypeDTO, activityType);
         if (baseMapper.updateById(activityType) > 0) {
-            BusinessRedisUtils.hset(RedisConstants.ACTIVITY_TYPE_KEY, activityType.getActTypeId() + "", activityType);
+            AdminBusinessRedisUtils.hset(RedisConstants.ACTIVITY_TYPE_KEY, activityType.getActTypeId() + "", activityType);
             return true;
         }
         return false;
