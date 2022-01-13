@@ -7,13 +7,11 @@ import com.indo.admin.modules.mem.mapper.MemAgentMapper;
 import com.indo.admin.modules.mem.mapper.MemBaseinfoMapper;
 import com.indo.admin.modules.mem.req.MemAgentPageReq;
 import com.indo.admin.modules.mem.service.IMemAgentService;
-import com.indo.admin.modules.mem.vo.MemBaseInfoVo;
 import com.indo.admin.modules.mem.req.SubordinateReq;
-import com.indo.admin.pojo.entity.MemAgent;
 import com.indo.admin.pojo.vo.agent.AgentSubVO;
 import com.indo.admin.pojo.vo.agent.AgentVo;
 import com.indo.common.web.exception.BizException;
-import com.indo.common.web.util.DozerUtil;
+import com.indo.user.pojo.entity.MemAgent;
 import com.indo.user.pojo.entity.MemBaseinfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,14 +30,12 @@ import java.util.stream.Collectors;
  * @since 2021-12-11
  */
 @Service
-public class MemAgent1ServiceImpl extends ServiceImpl<MemAgentMapper, MemAgent> implements IMemAgentService {
+public class MemAgentServiceImpl extends ServiceImpl<MemAgentMapper, MemAgent> implements IMemAgentService {
 
     @Autowired
     private MemAgentMapper memAgentMapper;
     @Autowired
     private MemBaseinfoMapper memBaseinfoMapper;
-    @Autowired
-    private DozerUtil dozerUtil;
 
     @Override
     public Page<AgentVo> getPage(MemAgentPageReq req) {

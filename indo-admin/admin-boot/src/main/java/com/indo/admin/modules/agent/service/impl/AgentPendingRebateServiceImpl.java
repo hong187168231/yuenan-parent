@@ -1,7 +1,9 @@
 package com.indo.admin.modules.agent.service.impl;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.indo.admin.modules.agent.mapper.AgentRebateMapper;
 import com.indo.admin.modules.agent.service.IAgentPendingRebateService;
 import com.indo.admin.modules.mem.mapper.AgentPendingRebateMapper;
 import com.indo.admin.modules.mem.mapper.AgentRebateRecordMapper;
@@ -11,6 +13,7 @@ import com.indo.admin.pojo.req.agnet.AgentPendingRebateReq;
 import com.indo.admin.pojo.vo.agent.AgentPendingRebateVO;
 import com.indo.common.web.util.JwtUtils;
 import com.indo.core.service.IMemGoldChangeService;
+import com.indo.user.pojo.entity.AgentRebate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,9 +35,8 @@ public class AgentPendingRebateServiceImpl extends ServiceImpl<AgentPendingRebat
     private AgentPendingRebateMapper memPendingRebateMapper;
     @Autowired
     private AgentRebateRecordMapper agentRebateRecordMapper;
-
     @Autowired
-    private IMemGoldChangeService iMemGoldChangeService;
+    private AgentRebateMapper agentRebateMapper;
 
     @Override
     public Page<AgentPendingRebateVO> queryList(AgentPendingRebateReq req) {
@@ -57,7 +59,15 @@ public class AgentPendingRebateServiceImpl extends ServiceImpl<AgentPendingRebat
             agentRebateRecord.setCreateUser(JwtUtils.getUsername());
             int row = agentRebateRecordMapper.insert(agentRebateRecord);
             if (row > 0) {
-//                iMemGoldChangeService.updateMemGoldChange(null);
+                AgentRebate agentRebate = agentRebateMapper.selectAgentRebateByMemId(agentRebateRecord.getMemId());
+                if (ObjectUtil.isNull(agentRebate)) {
+                    agentRebate = new AgentRebate();
+                    agentRebate.setMemId(agentRebateRecord.getMemId());
+                    agentRebate.setRebateAmount(agentRebateRecord.getRebateAmout());
+                    agentRebate.setCreateUser(JwtUtils.getUsername());
+                } else {
+                    agentRebateMapper.modifyRebateAmount(agentRebateRecord.getMemId(), agentRebateRecord.getRebateAmout());
+                }
                 return true;
             }
         }

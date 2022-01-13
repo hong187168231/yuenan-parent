@@ -39,10 +39,10 @@ public class MemInviteCodeController {
         return Result.success(result.getRecords(), result.getTotal());
     }
 
-    @ApiOperation(value = "启用、禁用")
-    @PostMapping(value = "/switchStatus")
-    public Result switchStatus(@RequestBody InviteCodeSwitchReq req) {
-        memInviteCodeService.switchStatus(req);
-        return Result.success();
-    }
+//    @ApiOperation(value = "启用、禁用")
+//    @PostMapping(value = "/switchStatus")
+//    public Result switchStatus(@RequestBody InviteCodeSwitchReq req) {
+//        memInviteCodeService.switchStatus(req);
+//        return Result.success();
+//    }
 }

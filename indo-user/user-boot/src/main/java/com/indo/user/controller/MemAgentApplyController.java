@@ -35,7 +35,6 @@ public class MemAgentApplyController {
 
     @ApiOperation(value = "申请", httpMethod = "POST")
     @PostMapping(value = "/add")
-    @AllowAccess
     public Result add(@RequestBody MemAgentApplyReq req, @LoginUser LoginInfo loginInfo) {
         memAgentApplyService.add(req,loginInfo);
         return Result.success();
