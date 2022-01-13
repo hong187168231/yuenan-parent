@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.indo.admin.modules.agent.mapper.AgentCashRecordMapper">
+
+
+    <select id="recordList" resultType="com.indo.admin.pojo.vo.agent.AgentCashRecordVO">
+        SELECT
+        mb.mem_level AS memLevel,
+        acr.mem_id AS memId,
+        acr.remit_amount AS remitAmount,
+        acr.bank_name AS bankName,
+        acr.branch_bank AS branchBank,
+        acr.bank_card_no AS bankCardNo,
+        acr.city AS city,
+        acr.ifsc AS ifsc,
+        acr.order_no AS orderNo,
+        acr.cash_status AS cashStatus,
+        acr.apply_time AS applyTime,
+        acr.remit_time AS remitTime
+        FROM
+        agent_cash_record acr
+        INNER JOIN mem_baseinfo mb ON acr.mem_id = mb.id
+        where 1=1
+        <if test="req.memId != null ">
+            and acr.mem_id = #{req.memId}
+        </if>
+        <if test="req.cashStatus != null ">
+            and acr.cash_status = #{cashStatus}
+        </if>
+        <if test="req.orderNo != null and req.orderNo !=''">
+            and acr.order_no = #{req.orderNo}
+        </if>
+        <if test="req.beginAmount != null ">
+            and acr.remit_amount &gt;= #{req.beginAmount}
+        </if>
+        <if test="req.endAmount ">
+            and acr.remit_amount &lt;= #{req.endAmount}
+        </if>
+        <if test="req.beginTime != null and req.beginTime !='' ">
+            and acr.remit_time &gt;= #{req.beginTime}
+        </if>
+        <if test="req.endTime != null  and req.endTime !='' ">
+            and acr.remit_time &lt;= #{req.endTime}
+        </if>
+
+    </select>
+
+</mapper>

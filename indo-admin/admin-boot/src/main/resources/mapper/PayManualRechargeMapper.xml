@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.indo.admin.modules.pay.mapper.PayManualRechargeMapper">
+
+    <select id="memList" resultType="com.indo.pay.pojo.vo.ManualRechargeMemVO">
+        SELECT mb.id,
+               mb.account,
+               mb.mem_level AS memMevel,
+               ma.superior
+        FROM mem_baseinfo mb
+                 LEFT JOIN mem_agent ma ON mb.id = ma.mem_id
+            AND mb.`status` = 0
+    </select>
+
+
+    <select id="queryList" resultType="com.indo.pay.pojo.vo.ManualRechargeRecordVO">
+        SELECT
+        pmr.mem_id AS memId,
+        pmr.amount AS amount,
+        pmr.before_amount AS beforeAmount,
+        pmr.after_amount AS afterAmount,
+        pmr.operate_type AS operateType,
+        pmr.create_user AS createUser,
+        pmr.create_time ascreateTime
+        FROM
+        pay_manual_recharge pmr
+        <where>
+            <if test="operateType != null">
+                and pmr.operate_type = #{operateType}
+            </if>
+            <if test="account != null and account != '' ">
+                and pmr.account = #{account}
+            </if>
+        </where>
+    </select>
+
+
+</mapper>
