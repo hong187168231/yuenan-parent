@@ -3,26 +3,32 @@
 <mapper namespace="com.indo.admin.modules.mem.mapper.MemInviteCodeMapper">
 
     <select id="queryList" resultType="com.indo.admin.modules.mem.vo.MemInviteCodeVo">
-        SELECT * FROM mem_invite_code mb  left  join  mem_agent ma
-         on mb.mem_id = ma.mem_id
-        <where>
-            <if test="req.memId !=null">
-                and mb.mem_id = #{req.memId}
-            </if>
-            <if test="req.inviteCode !=null and req.inviteCode != '' ">
-                and mb.inviteCode = #{req.inviteCode}
-            </if>
-            <if test="req.startTime != null">
-                and mb.create_time &gt;= #{req.startTime}
-            </if>
-            <if test="req.endTime != null">
-                and mb.create_time &lt;= #{req.endTime}
-            </if>
-        </where>
-        ORDER BY mb.create_time desc
+        SELECT
+        mic.id AS id,
+        mic.mem_id AS memId,
+        mic.account AS account,
+        ma.superior AS superior,
+        ma.team_num AS teamNum,
+        mic.invite_code AS inviteCode,
+        mic.`status` AS `status`,
+        mic.create_time AS createTime
+        FROM
+        mem_invite_code mic
+        LEFT JOIN mem_agent ma ON mic.mem_id = ma.mem_id
+        <if test="req.memId !=null">
+            and mic.mem_id = #{req.memId}
+        </if>
+        <if test="req.inviteCode !=null and req.inviteCode != '' ">
+            and mic.invite_code = #{req.inviteCode}
+        </if>
+        <if test="req.startTime != null">
+            and mic.create_time &gt;= #{req.startTime}
+        </if>
+        <if test="req.endTime != null">
+            and mic.create_time &lt;= #{req.endTime}
+        </if>
+        ORDER BY mic.create_time desc
     </select>
-
-
 
 
 </mapper>

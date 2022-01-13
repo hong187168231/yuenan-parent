@@ -1,11 +1,10 @@
 package com.indo.admin.modules.mem.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.indo.admin.modules.mem.req.MemInviteCodeSwitchStatusReq;
 import com.indo.admin.modules.mem.req.MeminviteCodePageReq;
 import com.indo.admin.modules.mem.service.IMemInviteCodeService;
 import com.indo.admin.modules.mem.vo.MemInviteCodeVo;
-import com.indo.common.result.PageResult;
+import com.indo.admin.pojo.req.mem.InviteCodeSwitchReq;
 import com.indo.common.result.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -42,7 +41,7 @@ public class MemInviteCodeController {
 
     @ApiOperation(value = "启用、禁用")
     @PostMapping(value = "/switchStatus")
-    public Result switchStatus(@RequestBody MemInviteCodeSwitchStatusReq req) {
+    public Result switchStatus(@RequestBody InviteCodeSwitchReq req) {
         memInviteCodeService.switchStatus(req);
         return Result.success();
     }

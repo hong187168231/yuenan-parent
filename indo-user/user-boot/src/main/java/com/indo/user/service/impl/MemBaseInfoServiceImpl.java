@@ -1,11 +1,16 @@
 package com.indo.user.service.impl;
 
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.RandomUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.indo.common.constant.RedisConstants;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
 import com.indo.common.utils.BaseUtil;
 import com.indo.common.utils.NameGeneratorUtil;
+import com.indo.common.utils.ShareCodeUtil;
+import com.indo.common.utils.ShareCodeUtils;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
 import com.indo.core.base.service.impl.SuperServiceImpl;
@@ -52,11 +57,6 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
     @Autowired
     private MemInviteCodeMapper memInviteCodeMapper;
 
-
-    @Autowired
-    private IMemLevelService iMemLevelService;
-
-
     @Override
     public Result<AppLoginVo> appLogin(LoginReq req) {
         if (StringUtils.isBlank(req.getAccount())) {
@@ -66,8 +66,7 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
             return Result.failed("请填写密码！");
         }
         req.setPassword(req.getPassword().toLowerCase());
-        MemBaseinfo userInfo = memBaseInfoMapper.
-                selectOne(new LambdaQueryWrapper<MemBaseinfo>().eq(MemBaseinfo::getAccount, req.getAccount()));
+        MemBaseinfo userInfo = getByAccount(req.getAccount());
         //判断密码是否正确
         if (!req.getPassword().equals(userInfo.getPasswordMd5())) {
             return Result.failed("密码错误！");
@@ -103,20 +102,17 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
         if (!req.getPassword().equals(req.getConfirmPassword())) {
             return Result.failed("两次密码填写不一样！");
         }
-        String uuidKey = UserBusinessRedisUtils.get(req.getUuid());
-        if (StringUtils.isEmpty(uuidKey) || !req.getImgCode().equalsIgnoreCase(uuidKey)) {
-            return Result.failed("图像验证码错误！");
-        }
-        if (req.getMobile().contains("-")) {
-            req.getMobile().split("-");
-        }
-
-
-        req.setPassword(req.getPassword().toLowerCase());
+//        String uuidKey = UserBusinessRedisUtils.get(req.getUuid());
+//        if (StringUtils.isEmpty(uuidKey) || !req.getImgCode().equalsIgnoreCase(uuidKey)) {
+//            return Result.failed("图像验证码错误！");
+//        }
         // 验证邀请码
+        MemInviteCode memInviteCode = null;
         if (StringUtils.isNotBlank(req.getInviteCode())) {
-            MemInviteCode memInviteCode = memInviteCodeMapper.selectOne(new QueryWrapper<MemInviteCode>().lambda().eq(MemInviteCode::getInviteCode, req.getInviteCode()));
-            if (Objects.isNull(memInviteCode)) {
+            LambdaQueryWrapper<MemInviteCode> wrapper = new LambdaQueryWrapper<>();
+            wrapper.eq(MemInviteCode::getInviteCode, req.getInviteCode());
+            memInviteCode = memInviteCodeMapper.selectOne(wrapper);
+            if (ObjectUtil.isNull(memInviteCode)) {
                 return Result.failed("邀请码无效！");
             }
         }
@@ -130,12 +126,11 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
         userInfo.setPassword(req.getPassword());
         userInfo.setPasswordMd5(req.getPassword());
         if (StringUtils.isNotBlank(req.getDeviceCode())) {
-//            userInfo.setDeviceCode(req.getDeviceCode());
+            // userInfo.setDeviceCode(req.getDeviceCode());
         }
-        userInfo.setPhone(req.getMobile());
         userInfo.setInviteCode(req.getInviteCode());
         //保存注册信息
-        initRegister(userInfo);
+        initRegister(userInfo, memInviteCode);
         MemBaseinfoBo memBaseinfoBo = DozerUtil.map(userInfo, MemBaseinfoBo.class);
         String accToken = UserBusinessRedisUtils.createMemAccToken(memBaseinfoBo);
         //返回登录信息
@@ -148,54 +143,46 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
     /**
      * 始化用户信息
      *
-     * @param userInfo
+     * @param memBaseinfo
      * @return
      */
-    private MemBaseinfo initRegister(MemBaseinfo userInfo) {
-        String inviteCode = userInfo.getInviteCode();
-        //初始化
+    public MemBaseinfo initRegister(MemBaseinfo memBaseinfo, MemInviteCode parentInviteCode) {
         Date nowDate = new Date();
-
-        if (StringUtils.isBlank(userInfo.getNickName())) {
-            userInfo.setNickName(NameGeneratorUtil.generate());
+        memBaseinfo.setAccType(1);
+        memBaseinfo.setLastLoginTime(nowDate);
+        //userInfo.setDeviceCode(DeviceInfoUtil.getDeviceId());
+        this.baseMapper.insert(memBaseinfo);
+        if (ObjectUtil.isNotNull(parentInviteCode)) {
+            initMemAgent(memBaseinfo, parentInviteCode);
+            initMemParentAgent(memBaseinfo, parentInviteCode);
         }
-//        userInfo.setInviteCode(productInviteCode());
-//        userInfo.setLastLoginTime(nowDate);
-        userInfo.setAccType(1);
-//        userInfo.setLastLoginTime(nowDate);
-//        userInfo.setHeadUrl("");
-//        userInfo.setDeviceCode(DeviceInfoUtil.getDeviceId());
-        this.baseMapper.insert(userInfo);
-        //初始化钱包
-        Long uid = userInfo.getId();
-//        this.initData(uid, nowDate);
-
-        if (StringUtils.isNotBlank(inviteCode)) {
-            initMemAgent(userInfo, inviteCode);
-            initMemParentAgent(userInfo, inviteCode);
-        }
-        return userInfo;
+        return memBaseinfo;
     }
 
 
-    public void initMemAgent(MemBaseinfo memBaseinfo, String inviteCode) {
-        MemInviteCode memInviteCode = this.memInviteCodeMapper.selectOne(new QueryWrapper<MemInviteCode>().lambda().eq(MemInviteCode::getInviteCode, inviteCode));
+    public void initMemAgent(MemBaseinfo memBaseinfo, MemInviteCode parentInviteCode) {
         MemAgent memAgent = new MemAgent();
-        memAgent = new MemAgent();
         memAgent.setMemId(memBaseinfo.getId());
         memAgent.setIsDel(false);
-        memAgent.setParentId(memInviteCode.getMemId());
-        memAgent.setSuperior(memInviteCode.getAccount());
+        memAgent.setParentId(parentInviteCode.getMemId());
+        memAgent.setSuperior(parentInviteCode.getAccount());
         memAgentMapper.insert(memAgent);
     }
 
-    public void initMemParentAgent(MemBaseinfo memBaseinfo, String inviteCode) {
-        MemInviteCode memInviteCode = this.memInviteCodeMapper.selectOne(new QueryWrapper<MemInviteCode>().lambda().eq(MemInviteCode::getInviteCode, inviteCode));
-        MemAgent memAgent = memAgentMapper.selectOne(new QueryWrapper<MemAgent>().lambda().eq(MemAgent::getMemId, memInviteCode.getMemId()));
-        memAgent.setSubNum(memAgent.getSubNum() + 1);
-        memAgent.setLevelUserIds(StringUtils.isBlank(memAgent.getLevelUserIds()) ? memBaseinfo.getId().toString() : memAgent.getLevelUserIds() + "," + memBaseinfo.getId());
-        memAgent.setTeamNum(memAgent.getTeamNum() + 1);
-        memAgentMapper.updateById(memAgent);
+
+    public void initMemParentAgent(MemBaseinfo memBaseinfo, MemInviteCode parentInviteCode) {
+        LambdaQueryWrapper<MemAgent> wrapper = new LambdaQueryWrapper();
+        wrapper.eq(MemAgent::getMemId, parentInviteCode.getMemId())
+                .eq(MemAgent::getIsDel, false);
+        MemAgent parentAgent = memAgentMapper.selectOne(wrapper);
+        if (ObjectUtil.isNull(wrapper)) {
+            throw new BizException("该邀请人未成为代理");
+        }
+        String subUserIds = StringUtils.isBlank(parentAgent.getSubUserIds()) ?
+                memBaseinfo.getId() + "" : parentAgent.getSubUserIds() + "," + memBaseinfo.getId();
+        parentAgent.setSubUserIds(subUserIds);
+        parentAgent.setTeamNum(parentAgent.getTeamNum() + 1);
+        memAgentMapper.updateById(parentAgent);
 
     }
 

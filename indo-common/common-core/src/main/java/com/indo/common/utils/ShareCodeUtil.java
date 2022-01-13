@@ -85,8 +85,9 @@ public class ShareCodeUtil {
      *
      * @return //
      */
-    public static String inviteCode(String mobile) {
-        Long id = Long.parseLong(mobile.substring(mobile.length() - 6));
+    public static String inviteCode(Long id) {
+        Long randomId = id + RandomUtil.getRandomOne(4);
+        System.out.println(randomId);
         return toSerialCode(id);
     }
 

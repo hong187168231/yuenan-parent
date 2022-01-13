@@ -18,7 +18,7 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@ApiModel(value="MemInviteCode对象", description="会员邀请码")
+@ApiModel(value = "MemInviteCode对象", description = "会员邀请码")
 public class MemInviteCode extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
@@ -30,13 +30,14 @@ public class MemInviteCode extends BaseEntity {
     @ApiModelProperty(value = "会员id")
     private Long memId;
 
+    @ApiModelProperty(value = "会员账号")
     private String account;
 
     @ApiModelProperty(value = "会员邀请码")
     private String inviteCode;
 
-    @ApiModelProperty(value = "状态：1启用 2-禁用")
-    private Boolean status;
+    @ApiModelProperty(value = "状态：0-禁用 1-启用")
+    private Integer status;
 
 
 }

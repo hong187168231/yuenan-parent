@@ -40,8 +40,7 @@ public class MemAgent extends BaseEntity {
     private Integer subNum;
 
     @ApiModelProperty(value = "下级用户ID")
-    private String levelUserIds;
-
+    private String subUserIds;
 
     @ApiModelProperty(value = "上级代理")
     private String superior;

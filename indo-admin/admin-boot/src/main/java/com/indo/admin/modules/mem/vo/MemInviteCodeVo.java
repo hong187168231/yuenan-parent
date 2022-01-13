@@ -17,7 +17,7 @@ public class MemInviteCodeVo {
     private Long memId;
 
     @ApiModelProperty(value = "会员账号")
-    private Long account;
+    private String account;
 
     @ApiModelProperty(value = "会员邀请码")
     private String inviteCode;
@@ -25,7 +25,7 @@ public class MemInviteCodeVo {
     @ApiModelProperty(value = "团队人数")
     private Integer teamNum;
 
-    @ApiModelProperty(value = "状态：0-启用 1-禁用")
+    @ApiModelProperty(value = "状态：0-禁用1-启用 ")
     private Integer status;
 
     @ApiModelProperty(value = "添加时间")

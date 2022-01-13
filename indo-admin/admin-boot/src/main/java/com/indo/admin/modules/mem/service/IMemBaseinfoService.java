@@ -8,6 +8,7 @@ import com.indo.admin.modules.mem.req.MemEditStatusReq;
 import com.indo.admin.modules.mem.req.MemEditReq;
 import com.indo.admin.modules.mem.vo.MemBaseInfoVo;
 import com.indo.admin.modules.mem.vo.MemBaseDetailVO;
+import com.indo.core.base.service.SuperService;
 import com.indo.user.pojo.entity.MemBaseinfo;
 
 import java.util.Date;
@@ -21,7 +22,7 @@ import java.util.List;
  * @author kevin
  * @since 2021-10-23
  */
-public interface IMemBaseinfoService extends IService<MemBaseinfo> {
+public interface IMemBaseinfoService extends SuperService<MemBaseinfo> {
     /**
      * 分页查询
      *

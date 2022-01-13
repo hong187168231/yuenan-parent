@@ -4,11 +4,10 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.indo.admin.modules.mem.entity.MemInviteCode;
 import com.indo.admin.modules.mem.mapper.MemInviteCodeMapper;
-import com.indo.admin.modules.mem.req.MemInviteCodeSwitchStatusReq;
 import com.indo.admin.modules.mem.req.MeminviteCodePageReq;
 import com.indo.admin.modules.mem.service.IMemInviteCodeService;
 import com.indo.admin.modules.mem.vo.MemInviteCodeVo;
-import com.indo.common.result.PageResult;
+import com.indo.admin.pojo.req.mem.InviteCodeSwitchReq;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,7 +36,7 @@ public class MemInviteCodeServiceImpl extends ServiceImpl<MemInviteCodeMapper, M
     }
 
     @Override
-    public void switchStatus(MemInviteCodeSwitchStatusReq req) {
+    public void switchStatus(InviteCodeSwitchReq req) {
         MemInviteCode memInviteCode = new MemInviteCode();
         memInviteCode.setId(req.getId());
         memInviteCode.setStatus(req.getStatus());

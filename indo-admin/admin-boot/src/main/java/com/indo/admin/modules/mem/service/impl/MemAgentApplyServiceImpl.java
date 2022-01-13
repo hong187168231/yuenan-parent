@@ -1,29 +1,27 @@
 package com.indo.admin.modules.mem.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.indo.admin.modules.mem.entity.MemAgentApply;
-import com.indo.admin.modules.mem.entity.MemInviteCode;
 import com.indo.admin.modules.mem.mapper.MemAgentApplyMapper;
 import com.indo.admin.modules.mem.mapper.MemAgentMapper;
-import com.indo.admin.modules.mem.mapper.MemBaseinfoMapper;
 import com.indo.admin.modules.mem.mapper.MemInviteCodeMapper;
 import com.indo.admin.modules.mem.req.MemAgentApplyPageReq;
 import com.indo.admin.modules.mem.req.MemApplyAuditReq;
 import com.indo.admin.modules.mem.service.IMemAgentApplyService;
-import com.indo.admin.pojo.entity.MemAgent;
 import com.indo.admin.pojo.vo.agent.AgentApplyVO;
 import com.indo.common.enums.AudiTypeEnum;
-import com.indo.common.result.PageResult;
+import com.indo.common.utils.ShareCodeUtil;
 import com.indo.common.utils.StringUtils;
 import com.indo.common.web.exception.BizException;
-import com.indo.user.pojo.entity.MemBaseinfo;
+import com.indo.user.pojo.entity.MemAgent;
+import com.indo.user.pojo.entity.MemInviteCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -41,6 +39,8 @@ public class MemAgentApplyServiceImpl extends ServiceImpl<MemAgentApplyMapper, M
     private MemAgentApplyMapper memAgentApplyMapper;
     @Autowired
     private MemAgentMapper memAgent1Mapper;
+    @Autowired
+    private MemInviteCodeMapper memInviteCodeMapper;
 
 
     @Override
@@ -68,14 +68,24 @@ public class MemAgentApplyServiceImpl extends ServiceImpl<MemAgentApplyMapper, M
             if (req.getAudiType().name().equals(AudiTypeEnum.agree)) {
                 LambdaQueryWrapper<MemAgent> wa = new LambdaQueryWrapper<>();
                 wa.eq(MemAgent::getMemId, req.getMemId())
-                        .eq(MemAgent::getIsDel, false);
+                        .eq(MemAgent::getIsDel, true);
                 MemAgent memAgent = memAgent1Mapper.selectOne(wa);
+                boolean agentflag;
                 if (memAgent == null) {
-                    throw new BizException("系统逻辑异常!");
+                    memAgent = new MemAgent();
+                    memAgent.setMemId(memAgentApply.getMemId());
+                    memAgent.setIsDel(false);
+                    agentflag = memAgent1Mapper.insert(memAgent) > 0;
+                } else {
+                    memAgent.setIsDel(false);
+                    agentflag = memAgent1Mapper.updateById(memAgent) > 0;
                 }
-                memAgent.setIsDel(true);
-                boolean flag = memAgent1Mapper.updateById(memAgent) > 0;
-                if (!flag) {
+                MemInviteCode memInviteCode = new MemInviteCode();
+                String code = ShareCodeUtil.inviteCode(memAgent.getMemId());
+                memInviteCode.setMemId(memAgent.getMemId());
+                memInviteCode.setInviteCode(code.toLowerCase());
+                boolean inviteFlag = memInviteCodeMapper.insert(memInviteCode) > 0;
+                if (!agentflag || !inviteFlag) {
                     throw new BizException("代理审核出错!");
                 }
                 return true;
