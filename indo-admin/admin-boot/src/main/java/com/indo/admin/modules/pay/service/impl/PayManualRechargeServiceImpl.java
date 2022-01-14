@@ -12,7 +12,7 @@ import com.indo.common.utils.SnowflakeIdWorker;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.JwtUtils;
 import com.indo.core.base.service.impl.SuperServiceImpl;
-import com.indo.core.pojo.dto.MemGoldChangeDto;
+import com.indo.core.pojo.dto.MemGoldChangeDTO;
 import com.indo.core.pojo.entity.MemBaseinfo;
 import com.indo.core.pojo.entity.PayManualRecharge;
 import com.indo.core.service.IMemGoldChangeService;
@@ -83,7 +83,7 @@ public class PayManualRechargeServiceImpl extends SuperServiceImpl<PayManualRech
             payManualRecharge.setBeforAmount(memBaseinfo.getBalance());
             payManualRecharge.setCreateUser(JwtUtils.getUsername());
             if (baseMapper.insert(payManualRecharge) > 0) {
-                MemGoldChangeDto goldChangeDO = new MemGoldChangeDto();
+                MemGoldChangeDTO goldChangeDO = new MemGoldChangeDTO();
                 goldChangeDO.setChangeAmount(rechargeOrder.getRealAmount());
                 if (operateType.equals(1)) {
                     goldChangeDO.setTradingEnum(TradingEnum.INCOME);

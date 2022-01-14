@@ -1,24 +1,19 @@
 package com.indo.core.service.impl;
 
-import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.indo.common.constant.GlobalConstants;
 import com.indo.common.constant.RedisKeys;
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.common.redis.utils.RedisUtils;
-import com.indo.common.result.Result;
-import com.indo.common.result.ResultCode;
 import com.indo.common.utils.SnowflakeIdWorker;
 import com.indo.common.web.exception.BizException;
 import com.indo.core.base.service.impl.SuperServiceImpl;
 import com.indo.core.mapper.MemGoldChangeMapper;
 import com.indo.core.mapper.MemTradingMapper;
 import com.indo.core.pojo.bo.MemBaseinfoBo;
-import com.indo.core.pojo.dto.MemGoldChangeDto;
+import com.indo.core.pojo.dto.MemGoldChangeDTO;
 import com.indo.core.pojo.entity.MemGoldChange;
-import com.indo.core.pojo.vo.MemTradingVO;
 import com.indo.core.service.IMemGoldChangeService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -27,7 +22,6 @@ import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -92,7 +86,7 @@ public class MemGoldChangeServiceImpl extends SuperServiceImpl<MemGoldChangeMapp
      * @return
      */
     @Override
-    public boolean updateMemGoldChange(MemGoldChangeDto change) throws RuntimeException {
+    public boolean updateMemGoldChange(MemGoldChangeDTO change) throws RuntimeException {
         if (null == change || null == change.getChangeAmount() ||
                 null == change.getUserId() || null == change.getGoldchangeEnum()) {
             log.error("{}.updateUserBalance 参数不正确：{}", getClass().getName(), JSON.toJSONString(change));
@@ -209,7 +203,7 @@ public class MemGoldChangeServiceImpl extends SuperServiceImpl<MemGoldChangeMapp
      * @param change
      * @return
      */
-    private BigDecimal calculateChangeCanAmount(MemGoldChangeDto change) {
+    private BigDecimal calculateChangeCanAmount(MemGoldChangeDTO change) {
         BigDecimal changeAmount = change.getChangeAmount();
         //  如果是收益且设置不需要打码
         if (change.getIncomeCodeFlag() == false || enumList.contains(change.getGoldchangeEnum())) {

@@ -1,13 +1,8 @@
 package com.indo.core.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.indo.core.base.service.SuperService;
-import com.indo.core.pojo.bo.MemBaseinfoBo;
-import com.indo.core.pojo.dto.MemGoldChangeDto;
+import com.indo.core.pojo.dto.MemGoldChangeDTO;
 import com.indo.core.pojo.entity.MemGoldChange;
-import com.indo.core.pojo.vo.MemTradingVO;
-
-import java.math.BigDecimal;
 
 /**
  * <p>
@@ -26,7 +21,7 @@ public interface IMemGoldChangeService extends SuperService<MemGoldChange> {
      * @param change 账变信息
      * @return
      */
-    boolean updateMemGoldChange(MemGoldChangeDto change) throws RuntimeException;
+    boolean updateMemGoldChange(MemGoldChangeDTO change) throws RuntimeException;
 
 
 

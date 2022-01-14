@@ -3,7 +3,7 @@ package com.indo.pay.service;
 import com.alibaba.fastjson.JSON;
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
-import com.indo.core.pojo.dto.MemGoldChangeDto;
+import com.indo.core.pojo.dto.MemGoldChangeDTO;
 import com.indo.core.pojo.entity.MemBaseinfo;
 import com.indo.core.pojo.entity.PayFirstRecharge;
 import com.indo.core.pojo.entity.PayRecharge;
@@ -92,7 +92,7 @@ public class PaymentCallBackService {
                 }
                 //更新会员等级 替换 updateMemLevel
                 // TODO
-                MemGoldChangeDto goldChangeDO = new MemGoldChangeDto();
+                MemGoldChangeDTO goldChangeDO = new MemGoldChangeDTO();
                 goldChangeDO.setChangeAmount(payRecharge.getRealAmount());
                 goldChangeDO.setTradingEnum(TradingEnum.INCOME);
                 goldChangeDO.setGoldchangeEnum(GoldchangeEnum.CZ);

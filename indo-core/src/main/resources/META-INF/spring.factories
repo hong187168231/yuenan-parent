@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.indo.core.autoconfigure.MsgProdcuerAutoConfigure
+  com.indo.core.autoconfigure.IndoAutoConfigure

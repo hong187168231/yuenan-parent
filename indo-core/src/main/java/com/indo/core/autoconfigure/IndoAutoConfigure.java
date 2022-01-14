@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ComponentScan({"com.indo.core.*"})
 @MapperScan("com.indo.core.mapper")
-public class MsgProdcuerAutoConfigure {
+public class IndoAutoConfigure {
 
 
 }

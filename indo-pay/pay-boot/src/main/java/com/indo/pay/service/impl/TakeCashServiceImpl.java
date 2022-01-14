@@ -11,7 +11,7 @@ import com.indo.common.result.Result;
 import com.indo.common.utils.SnowflakeIdWorker;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
-import com.indo.core.pojo.dto.MemGoldChangeDto;
+import com.indo.core.pojo.dto.MemGoldChangeDTO;
 import com.indo.core.pojo.entity.MemBankRelation;
 import com.indo.core.pojo.entity.PayTakeCash;
 import com.indo.core.service.IMemGoldChangeService;
@@ -214,7 +214,7 @@ public class TakeCashServiceImpl extends ServiceImpl<TakeCashMapper, PayTakeCash
      * @param applyId
      */
     public void updateCashGoldChange(LoginInfo loginUser, TakeCashApplyReq cashApplyReq, Long applyId) {
-        MemGoldChangeDto goldChangeDO = new MemGoldChangeDto();
+        MemGoldChangeDTO goldChangeDO = new MemGoldChangeDTO();
         goldChangeDO.setChangeAmount(cashApplyReq.getTakeCashAmount());
         goldChangeDO.setTradingEnum(TradingEnum.SPENDING);
         goldChangeDO.setGoldchangeEnum(GoldchangeEnum.TXKK);

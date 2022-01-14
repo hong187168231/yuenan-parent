@@ -6,8 +6,7 @@ import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.common.result.Result;
 import com.indo.common.web.exception.BizException;
-import com.indo.core.pojo.bo.MemBaseinfoBo;
-import com.indo.core.pojo.dto.MemGoldChangeDto;
+import com.indo.core.pojo.dto.MemGoldChangeDTO;
 import com.indo.core.service.IMemGoldChangeService;
 import com.indo.game.common.util.GameBusinessRedisUtils;
 import com.indo.game.mapper.frontend.GameCategoryMapper;
@@ -74,7 +73,7 @@ public class GameCommonServiceImpl implements GameCommonService {
 
     @Override
     public void updateUserBalance(MemTradingBO memTradingBO, BigDecimal changeAmount, GoldchangeEnum goldchangeEnum, TradingEnum tradingEnum) {
-        MemGoldChangeDto goldChangeDO = new MemGoldChangeDto();
+        MemGoldChangeDTO goldChangeDO = new MemGoldChangeDTO();
         goldChangeDO.setChangeAmount(changeAmount);
         goldChangeDO.setTradingEnum(tradingEnum);
         goldChangeDO.setGoldchangeEnum(goldchangeEnum);

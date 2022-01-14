@@ -14,7 +14,7 @@ import java.math.BigDecimal;
  * @date 2021/5/22
  */
 @Data
-public class MemGoldChangeDto {
+public class MemGoldChangeDTO {
 
     /**
      * 会员 id
