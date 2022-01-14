@@ -1,9 +1,6 @@
 package com.indo.admin.api;
 
 import com.indo.admin.api.fallback.FileFeignFallback;
-import com.indo.admin.api.fallback.UserFeignFallback;
-import com.indo.admin.pojo.entity.FileInfo;
-import com.indo.admin.pojo.entity.SysUser;
 import com.indo.common.constant.ServiceIdConstant;
 import com.indo.common.result.Result;
 import org.springframework.cloud.openfeign.FeignClient;

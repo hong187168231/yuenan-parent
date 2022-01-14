@@ -5,21 +5,18 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.indo.admin.modules.mem.mapper.MemAgentMapper;
 import com.indo.admin.modules.mem.mapper.MemBaseinfoMapper;
-import com.indo.admin.modules.mem.req.MemAgentPageReq;
+import com.indo.admin.pojo.req.MemAgentPageReq;
 import com.indo.admin.modules.mem.service.IMemAgentService;
-import com.indo.admin.modules.mem.req.SubordinateReq;
+import com.indo.admin.pojo.req.SubordinateReq;
 import com.indo.admin.pojo.vo.agent.AgentSubVO;
 import com.indo.admin.pojo.vo.agent.AgentVo;
 import com.indo.common.web.exception.BizException;
-import com.indo.user.pojo.entity.MemAgent;
-import com.indo.user.pojo.entity.MemBaseinfo;
+import com.indo.core.pojo.entity.MemAgent;
+import com.indo.core.pojo.entity.MemBaseinfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * <p>

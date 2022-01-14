@@ -2,11 +2,9 @@ package com.indo.admin.modules.stat.controller;
 
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.indo.admin.modules.stat.entity.StatAgentReport;
+import com.indo.admin.pojo.entity.StatAgentReport;
 import com.indo.admin.modules.stat.req.AgentReportReq;
-import com.indo.admin.modules.stat.req.UserReportReq;
 import com.indo.admin.modules.stat.service.IStatAgentReportService;
-import com.indo.admin.modules.stat.vo.UserReportVo;
 import com.indo.common.result.Result;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;

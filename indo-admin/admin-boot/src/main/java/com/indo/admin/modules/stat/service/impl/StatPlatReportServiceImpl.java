@@ -2,11 +2,10 @@ package com.indo.admin.modules.stat.service.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.indo.admin.modules.stat.entity.StatPlatReport;
+import com.indo.admin.pojo.entity.StatPlatReport;
 import com.indo.admin.modules.stat.mapper.StatPlatReportMapper;
 import com.indo.admin.modules.stat.req.PlatReportReq;
 import com.indo.admin.modules.stat.service.IStatPlatReportService;
-import com.indo.admin.modules.stat.vo.UserReportVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

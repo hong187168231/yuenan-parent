@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.web.util.DozerUtil;
 import com.indo.pay.mapper.PayWayConfigMapper;
-import com.indo.pay.pojo.entity.PayWayConfig;
 import com.indo.pay.pojo.vo.PayWayVO;
 import com.indo.pay.service.IPayWayConfigService;
 import org.springframework.stereotype.Service;

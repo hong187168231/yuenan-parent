@@ -3,11 +3,11 @@ package com.indo.admin.modules.mem.service.impl;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.indo.admin.modules.mem.mapper.MemInviteCodeMapper;
-import com.indo.admin.modules.mem.req.MeminviteCodePageReq;
+import com.indo.admin.pojo.req.MeminviteCodePageReq;
 import com.indo.admin.modules.mem.service.IMemInviteCodeService;
-import com.indo.admin.modules.mem.vo.MemInviteCodeVo;
+import com.indo.admin.pojo.vo.MemInviteCodeVo;
 import com.indo.admin.pojo.req.mem.InviteCodeSwitchReq;
-import com.indo.user.pojo.entity.MemInviteCode;
+import com.indo.core.pojo.entity.MemInviteCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

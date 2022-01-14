@@ -2,13 +2,11 @@ package com.indo.user.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.indo.core.pojo.entity.MemInviteCode;
 import com.indo.user.mapper.MemInviteCodeMapper;
-import com.indo.user.pojo.entity.MemInviteCode;
 import com.indo.user.pojo.vo.Invite.InviteCodeVo;
 import com.indo.user.service.IMemInviteCodeService;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * <p>

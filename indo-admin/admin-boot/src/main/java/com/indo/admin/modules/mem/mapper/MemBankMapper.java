@@ -1,7 +1,7 @@
 package com.indo.admin.modules.mem.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.indo.user.pojo.entity.MemBank;
+import com.indo.core.pojo.entity.MemBank;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

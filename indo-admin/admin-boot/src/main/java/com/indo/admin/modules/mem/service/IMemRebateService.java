@@ -1,11 +1,9 @@
 package com.indo.admin.modules.mem.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.indo.admin.modules.mem.entity.MemRebate;
-import com.indo.admin.modules.mem.req.MemRebateAddReq;
-import com.indo.admin.modules.mem.vo.MemRebateVo;
-
-import java.util.List;
+import com.indo.admin.pojo.req.MemRebateAddReq;
+import com.indo.admin.pojo.vo.MemRebateVo;
+import com.indo.core.pojo.entity.MemRebate;
 
 /**
  * <p>

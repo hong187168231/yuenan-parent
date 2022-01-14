@@ -20,7 +20,7 @@
 		</where>
 	</sql>
 
-	<select id="findList" resultType="com.indo.admin.pojo.entity.FileInfo">
+	<select id="findList" resultType="com.indo.core.pojo.entity.FileInfo">
 		select * from file_info t
 		<include refid="where" />
 		order by t.create_time desc

@@ -8,20 +8,16 @@ import com.indo.admin.modules.mem.mapper.MemLevelMapper;
 import com.indo.admin.modules.msg.mapper.MsgStationLetterMapper;
 import com.indo.admin.modules.msg.service.IMsgStationLetterService;
 import com.indo.admin.pojo.dto.MsgDTO;
-import com.indo.admin.pojo.entity.MsgStationLetter;
 import com.indo.admin.pojo.vo.MsgStationLetterVO;
-import com.indo.common.result.PageResult;
 import com.indo.common.web.util.DozerUtil;
-import com.indo.user.pojo.dto.MsgStationLetterDTO;
+import com.indo.core.pojo.entity.MsgStationLetter;
 import com.indo.user.pojo.dto.StationLetterAddDTO;
 import com.indo.user.pojo.dto.StationLetterQueryDTO;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.Date;
 import java.util.List;
 
 /**

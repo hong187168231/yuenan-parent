@@ -5,12 +5,10 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.indo.admin.modules.mem.mapper.MemGiftReceiveMapper;
 import com.indo.admin.modules.mem.service.IMemGiftReceiveService;
 import com.indo.admin.pojo.dto.GiftReceiveDTO;
-import com.indo.admin.pojo.vo.MsgStationLetterVO;
 import com.indo.admin.pojo.vo.mem.MemGiftReceiveVO;
-import com.indo.user.pojo.entity.MemGiftReceive;
+import com.indo.core.pojo.entity.MemGiftReceive;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.w3c.dom.stylesheets.LinkStyle;
 
 import java.util.List;
 

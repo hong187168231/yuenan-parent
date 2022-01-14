@@ -42,8 +42,6 @@ public class MemTradingServiceImpl implements IMemTradingService {
     @Autowired
     private MemTradingMapper memTradingMapper;
 
-    @Autowired
-    private MemGoldChangeMapper memGoldChangeMapper;
 
     @Override
     public MemTradingVO tradingInfo(String account) {

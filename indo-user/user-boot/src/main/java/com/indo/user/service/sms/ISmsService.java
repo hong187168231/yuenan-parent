@@ -1,7 +1,5 @@
 package com.indo.user.service.sms;
 
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.indo.user.pojo.entity.MemLevel;
 import com.indo.user.pojo.req.VerifyCodeReq;
 import com.indo.user.pojo.vo.sms.SmsCodeVo;
 

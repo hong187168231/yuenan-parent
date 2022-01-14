@@ -2,9 +2,7 @@ package com.indo.admin.modules.stat.controller;
 
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.indo.admin.modules.mem.req.MemBaseInfoPageReq;
-import com.indo.admin.modules.mem.vo.MemBaseInfoVo;
-import com.indo.admin.modules.stat.entity.StatDailyBase;
+import com.indo.admin.pojo.entity.StatDailyBase;
 import com.indo.admin.modules.stat.req.TotalStatReq;
 import com.indo.admin.modules.stat.req.UserReportReq;
 import com.indo.admin.modules.stat.service.IStatDailyBaseService;
@@ -13,8 +11,6 @@ import com.indo.common.result.Result;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * <p>

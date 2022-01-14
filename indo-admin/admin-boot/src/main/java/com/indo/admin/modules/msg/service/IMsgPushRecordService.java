@@ -3,10 +3,8 @@ package com.indo.admin.modules.msg.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.indo.admin.pojo.dto.MsgDTO;
-import com.indo.admin.pojo.entity.MsgPushRecord;
 import com.indo.admin.pojo.vo.MsgPushRecordVO;
-import com.indo.common.result.PageResult;
-import com.indo.user.pojo.dto.MsgPushRecordDTO;
+import com.indo.core.pojo.entity.MsgPushRecord;
 import com.indo.user.pojo.dto.PushRecordAddDTO;
 import com.indo.user.pojo.dto.PushRecordQueryDTO;
 
@@ -23,7 +21,7 @@ import java.util.List;
 public interface IMsgPushRecordService extends IService<MsgPushRecord> {
     /**
      * 分页查询
-     * @param pushRecordDTO
+     * @param queryDTO
      * @return
      */
     Page<MsgPushRecordVO> queryList(PushRecordQueryDTO queryDTO);

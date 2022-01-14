@@ -1,9 +1,8 @@
 package com.indo.admin.modules.ade.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.indo.admin.pojo.entity.Advertise;
+import com.indo.core.pojo.entity.Advertise;
 import org.apache.ibatis.annotations.Mapper;
-import org.springframework.stereotype.Repository;
 
 /**
  * <p>

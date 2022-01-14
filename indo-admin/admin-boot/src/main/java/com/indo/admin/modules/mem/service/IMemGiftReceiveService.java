@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.indo.admin.pojo.dto.GiftReceiveDTO;
 import com.indo.admin.pojo.vo.mem.MemGiftReceiveVO;
-import com.indo.user.pojo.entity.MemGiftReceive;
+import com.indo.core.pojo.entity.MemGiftReceive;
 
 /**
  * <p>

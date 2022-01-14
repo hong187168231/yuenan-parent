@@ -1,15 +1,14 @@
 package com.indo.user.service.sms.impl;
 
-import com.indo.admin.pojo.entity.SmsSendRecord;
-import com.indo.common.enums.SysParameterEnum;
 import com.indo.common.enums.VerifCodeTypeEnum;
 import com.indo.common.utils.CommonFunction;
 import com.indo.common.utils.StringUtils;
 import com.indo.common.utils.sms.SmsSendResult;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.IPUtils;
+import com.indo.core.pojo.entity.MemBaseinfo;
+import com.indo.core.pojo.entity.SmsSendRecord;
 import com.indo.user.common.constant.UserConstants;
-import com.indo.user.pojo.entity.MemBaseinfo;
 import com.indo.user.pojo.req.VerifyCodeReq;
 import com.indo.user.pojo.vo.sms.SmsCodeVo;
 import com.indo.user.service.MemBaseInfoService;

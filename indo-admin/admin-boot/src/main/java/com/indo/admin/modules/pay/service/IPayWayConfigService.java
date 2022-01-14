@@ -2,13 +2,10 @@ package com.indo.admin.modules.pay.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.indo.admin.pojo.dto.PayChannelDTO;
 import com.indo.admin.pojo.dto.PayWayDTO;
 import com.indo.admin.pojo.dto.PayWayQueryDTO;
-import com.indo.admin.pojo.vo.PayChannelConfigVO;
 import com.indo.admin.pojo.vo.PayWayConfigVO;
-import com.indo.pay.pojo.dto.PayWayConfigDto;
-import com.indo.pay.pojo.entity.PayWayConfig;
+import com.indo.core.pojo.entity.PayWayConfig;
 
 /**
  * <p>

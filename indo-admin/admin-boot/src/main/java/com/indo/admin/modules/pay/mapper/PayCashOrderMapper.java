@@ -2,9 +2,8 @@ package com.indo.admin.modules.pay.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.indo.admin.pojo.entity.SysUser;
+import com.indo.core.pojo.entity.PayCashOrder;
 import com.indo.pay.pojo.dto.PayCashOrderDTO;
-import com.indo.pay.pojo.entity.PayCashOrder;
 import com.indo.pay.pojo.vo.PayCashOrderVO;
 import org.apache.ibatis.annotations.Mapper;
 

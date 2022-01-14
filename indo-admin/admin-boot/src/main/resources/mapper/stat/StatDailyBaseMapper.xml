@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.indo.admin.modules.stat.mapper.StatDailyBaseMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.indo.admin.pojo.entity.StatDailyBase">
+        <id column="id" property="id"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="date" property="date"/>
+        <result column="new_users" property="newUsers"/>
+        <result column="login_users" property="loginUsers"/>
+        <result column="first_recharge_users" property="firstRechargeUsers"/>
+        <result column="register_recharge_usrs" property="registerRechargeUsrs"/>
+        <result column="deposit_users" property="depositUsers"/>
+        <result column="deposit_amount" property="depositAmount"/>
+        <result column="withdraw_users" property="withdrawUsers"/>
+        <result column="withdraw_amount" property="withdrawAmount"/>
+        <result column="bet_users" property="betUsers"/>
+        <result column="bet_amount" property="betAmount"/>
+        <result column="winning_amount" property="winningAmount"/>
+        <result column="event_gift" property="eventGift"/>
+        <result column="company_profit" property="companyProfit"/>
+        <result column="rebate_amount" property="rebateAmount"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        create_time
+        ,
+        update_time,
+        id, date, new_users, login_users, first_recharge_users, register_recharge_usrs, deposit_users, deposit_amount,
+        withdraw_users, withdraw_amount, bet_users, bet_amount, winning_amount, event_gift, company_profit,
+        rebate_amount
+    </sql>
+
+    <select id="queryList" resultType="com.indo.admin.modules.stat.vo.UserReportVo">
+        SELECT * FROM stat_daily_base sdb
+        <where>
+            <if test="req.startTime != null and req.startTime != ''">
+                and sdb.date &gt;= #{req.startTime}
+            </if>
+            <if test="req.endTime != null and req.endTime != ''">
+                and sdb.date &lt;= #{req.endTime}
+            </if>
+        </where>
+        ORDER BY sdb.create_time desc
+    </select>
+
+    <select id="queryTotal" resultMap="BaseResultMap">
+        SELECT sum(new_users) new_users,sum(login_users) login_users, sum(register_recharge_usrs)
+        register_recharge_usrs,
+        sum(first_recharge_users) first_recharge_users, sum(deposit_amount) deposit_amount,
+        sum(deposit_users) deposit_users, sum(withdraw_amount) withdraw_amount, sum(bet_users) bet_users,
+        sum(bet_amount) bet_amount, sum(rebate_amount) rebate_amount, sum(company_profit) company_profit,
+        sum(event_gift) event_gift
+        FROM stat_daily_base sdb
+        <where>
+            <if test="req.startTime != null and req.startTime != ''">
+                and sdb.date &gt;= #{req.startTime}
+            </if>
+            <if test="req.endTime != null and req.endTime != ''">
+                and sdb.date &lt;= #{req.endTime}
+            </if>
+        </where>
+        ORDER BY sdb.create_time desc
+    </select>
+</mapper>

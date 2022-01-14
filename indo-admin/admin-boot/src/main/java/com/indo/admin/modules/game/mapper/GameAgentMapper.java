@@ -1,7 +1,7 @@
 package com.indo.admin.modules.game.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.indo.admin.pojo.entity.GameAgent;
+import com.indo.game.pojo.entity.sbo.GameAgent;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

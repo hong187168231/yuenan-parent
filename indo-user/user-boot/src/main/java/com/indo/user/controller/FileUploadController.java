@@ -1,11 +1,8 @@
 package com.indo.user.controller;
 
 import com.indo.admin.api.FileFeignClient;
-import com.indo.admin.pojo.entity.FileInfo;
-import com.indo.admin.pojo.entity.MsgStationLetter;
 import com.indo.common.result.Result;
 import com.indo.common.web.exception.BizException;
-import com.indo.user.pojo.entity.MemBaseinfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -14,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 /**
  * <p>

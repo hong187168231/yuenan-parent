@@ -3,9 +3,8 @@ package com.indo.admin.modules.agent.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.indo.admin.pojo.req.agnet.AgentCashReq;
-import com.indo.admin.pojo.vo.agent.AgentApplyVO;
 import com.indo.admin.pojo.vo.agent.AgentCashRecordVO;
-import com.indo.user.pojo.entity.AgentCashRecord;
+import com.indo.core.pojo.entity.AgentCashRecord;
 
 /**
  * <p>

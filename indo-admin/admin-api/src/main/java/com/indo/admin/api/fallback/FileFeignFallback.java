@@ -1,11 +1,7 @@
 package com.indo.admin.api.fallback;
 
 import com.indo.admin.api.FileFeignClient;
-import com.indo.admin.api.UserFeignClient;
-import com.indo.admin.pojo.entity.FileInfo;
-import com.indo.admin.pojo.entity.SysUser;
 import com.indo.common.result.Result;
-import com.indo.common.result.ResultCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;

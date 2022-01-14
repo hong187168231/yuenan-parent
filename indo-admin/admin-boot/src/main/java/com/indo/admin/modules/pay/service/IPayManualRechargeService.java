@@ -1,9 +1,8 @@
 package com.indo.admin.modules.pay.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.indo.core.base.service.SuperService;
-import com.indo.pay.pojo.entity.PayManualRecharge;
+import com.indo.core.pojo.entity.PayManualRecharge;
 import com.indo.pay.pojo.vo.ManualRechargeMemVO;
 import com.indo.pay.pojo.vo.ManualRechargeRecordVO;
 

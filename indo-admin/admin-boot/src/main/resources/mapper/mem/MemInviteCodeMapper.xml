@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.indo.admin.modules.mem.mapper.MemInviteCodeMapper">
+
+    <select id="queryList" resultType="com.indo.admin.pojo.vo.MemInviteCodeVo">
+        SELECT
+        mic.id AS id,
+        mic.mem_id AS memId,
+        mic.account AS account,
+        ma.superior AS superior,
+        ma.team_num AS teamNum,
+        mic.invite_code AS inviteCode,
+        mic.`status` AS `status`,
+        mic.create_time AS createTime
+        FROM
+        mem_invite_code mic
+        LEFT JOIN mem_agent ma ON mic.mem_id = ma.mem_id
+        <if test="req.memId !=null">
+            and mic.mem_id = #{req.memId}
+        </if>
+        <if test="req.inviteCode !=null and req.inviteCode != '' ">
+            and mic.invite_code = #{req.inviteCode}
+        </if>
+        <if test="req.startTime != null">
+            and mic.create_time &gt;= #{req.startTime}
+        </if>
+        <if test="req.endTime != null">
+            and mic.create_time &lt;= #{req.endTime}
+        </if>
+        ORDER BY mic.create_time desc
+    </select>
+
+
+</mapper>

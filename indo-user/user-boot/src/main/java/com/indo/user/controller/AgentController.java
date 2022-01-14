@@ -1,22 +1,16 @@
 package com.indo.user.controller;
 
-import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.pojo.req.agnet.AgentRebateRecordReq;
 import com.indo.admin.pojo.vo.agent.AgentRebateInfoVO;
 import com.indo.admin.pojo.vo.agent.AgentRebateRecordVO;
 import com.indo.admin.pojo.vo.agent.AgentSubVO;
-import com.indo.common.annotation.AllowAccess;
 import com.indo.common.annotation.LoginUser;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
 import com.indo.user.pojo.req.mem.MemAgentApplyReq;
-import com.indo.user.pojo.req.mem.MemInfoReq;
 import com.indo.user.pojo.req.mem.SubordinateAppReq;
-import com.indo.user.pojo.req.mem.SubordinateReq;
-import com.indo.user.pojo.vo.mem.MemBaseInfoVo;
 import com.indo.user.service.IAgentRebateRecordService;
-import com.indo.user.service.IMemAgentApplyService;
 import com.indo.user.service.IMemAgentService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

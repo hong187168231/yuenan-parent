@@ -4,9 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.pojo.dto.GiftReceiveDTO;
 import com.indo.admin.pojo.vo.mem.MemGiftReceiveVO;
-import com.indo.user.pojo.dto.MemBanRebateDto;
-import com.indo.user.pojo.entity.MemGiftReceive;
-import com.indo.user.pojo.vo.MemBanRebateVo;
+import com.indo.core.pojo.entity.MemGiftReceive;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

@@ -5,10 +5,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.indo.admin.modules.agent.mapper.AgentCashApplyMapper;
 import com.indo.admin.modules.agent.service.IAgentCashApplyService;
 import com.indo.admin.pojo.req.agnet.AgentCashReq;
-import com.indo.admin.pojo.vo.agent.AgentApplyVO;
 import com.indo.admin.pojo.vo.agent.AgentCashApplyVO;
-import com.indo.admin.pojo.vo.agent.AgentCashRecordVO;
-import com.indo.user.pojo.entity.AgentCashApply;
+import com.indo.core.pojo.entity.AgentCashApply;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

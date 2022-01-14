@@ -2,7 +2,7 @@ package com.indo.user.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 
-import com.indo.user.pojo.entity.MemInviteCode;
+import com.indo.core.pojo.entity.MemInviteCode;
 import com.indo.user.pojo.vo.Invite.InviteCodeVo;
 
 /**

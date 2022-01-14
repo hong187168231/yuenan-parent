@@ -3,17 +3,11 @@ package com.indo.user.common.util;
 
 import com.alibaba.fastjson.JSON;
 import com.indo.common.constant.AppConstants;
-import com.indo.common.constant.RedisKeys;
-import com.indo.common.redis.utils.RedisUtils;
-import com.indo.common.result.ResultCode;
 import com.indo.common.utils.RandomUtil;
 import com.indo.common.utils.encrypt.MD5;
-import com.indo.common.web.exception.BizException;
 import com.indo.core.pojo.bo.MemBaseinfoBo;
 import com.indo.core.util.BusinessRedisUtils;
-import com.indo.user.pojo.entity.MemBaseinfo;
 import com.indo.user.pojo.req.LogOutReq;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * @ClassName UserBusinessRedisUtils

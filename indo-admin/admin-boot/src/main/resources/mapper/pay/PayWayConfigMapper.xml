@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.indo.admin.modules.pay.mapper.PayWayConfigMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.indo.core.pojo.entity.PayWayConfig">
+        <id column="pay_way_id" property="payWayId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="pay_channel_id" property="payChannelId"/>
+        <result column="way_name" property="wayName"/>
+        <result column="bank_name" property="bankName"/>
+        <result column="bank_account" property="bankAccount"/>
+        <result column="group_id" property="groupId"/>
+        <result column="audit_status" property="auditStatus"/>
+        <result column="tips" property="tips"/>
+        <result column="min_amount" property="minAmount"/>
+        <result column="max_amount" property="maxAmount"/>
+        <result column="status" property="status"/>
+        <result column="sort_by" property="sortBy"/>
+        <result column="create_user" property="createUser"/>
+        <result column="update_user" property="updateUser"/>
+        <result column="remark" property="remark"/>
+    </resultMap>
+
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="Base2ResultMap" type="com.indo.admin.pojo.vo.PayWayConfigVO">
+        <id column="pay_way_id" property="payWayId"/>
+        <result column="pay_channel_id" property="payChannelId"/>
+        <result column="channel_name" property="channelName"/>
+        <result column="way_name" property="wayName"/>
+        <result column="min_amount" property="minAmount"/>
+        <result column="max_amount" property="maxAmount"/>
+        <result column="today_amount" property="todayAmount"/>
+        <result column="status" property="status"/>
+    </resultMap>
+
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        pay_way_id
+        , pay_channel_id,  channel_name, way_name ,  min_amount, max_amount, today_amount
+    </sql>
+
+
+    <!-- 通用查询结果列 -->
+    <select id="queryAll" resultMap="Base2ResultMap">
+        SELECT
+        pwc.pay_way_id,
+        pwc.pay_channel_id,
+        pcc.channel_name,
+        pwc.way_name,
+        pwc.min_amount,
+        pwc.max_amount,
+        pwc.today_amount,
+        pwc.status
+        FROM
+        pay_way_config pwc
+        left join pay_channel_config pcc
+        on pwc.pay_channel_id = pcc.pay_channel_id
+
+        <if test="dto.wayName != null  and dto.wayName !='' ">
+            and pwc.way_name like concat('%', #{wayName}, '%')
+        </if>
+
+    </select>
+
+
+</mapper>

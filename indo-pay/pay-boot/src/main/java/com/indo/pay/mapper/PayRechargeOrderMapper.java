@@ -1,7 +1,7 @@
 package com.indo.pay.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.indo.pay.pojo.entity.PayRechargeOrder;
+import com.indo.core.pojo.entity.PayRechargeOrder;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;

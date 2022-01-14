@@ -6,7 +6,6 @@ import com.indo.common.constant.AppConstants;
 import com.indo.common.redis.utils.RedisUtils;
 import com.indo.common.utils.RandomUtil;
 import com.indo.common.utils.encrypt.MD5;
-import com.indo.user.pojo.entity.MemBaseinfo;
 
 /**
  * @ClassName UserBusinessRedisUtils

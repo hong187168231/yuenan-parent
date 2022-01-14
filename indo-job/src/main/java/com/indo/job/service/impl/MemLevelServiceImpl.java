@@ -7,7 +7,6 @@ import com.indo.common.redis.utils.RedisUtils;
 import com.indo.common.utils.CollectionUtil;
 import com.indo.job.mapper.MemLevelMapper;
 import com.indo.job.service.IMemLevelService;
-import com.indo.user.pojo.entity.MemLevel;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;

@@ -3,9 +3,8 @@ package com.indo.admin.modules.pay.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.pojo.req.PayRechargeReq;
-import com.indo.admin.pojo.vo.agent.AgentVo;
 import com.indo.admin.pojo.vo.pay.RechargeOrderVO;
-import com.indo.pay.pojo.entity.PayRechargeOrder;
+import com.indo.core.pojo.entity.PayRechargeOrder;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

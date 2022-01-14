@@ -1,7 +1,7 @@
 package com.indo.admin.modules.mem.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.indo.admin.modules.mem.entity.MemRebate;
+import com.indo.core.pojo.entity.MemRebate;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 

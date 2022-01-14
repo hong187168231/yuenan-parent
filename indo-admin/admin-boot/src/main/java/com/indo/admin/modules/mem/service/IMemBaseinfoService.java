@@ -1,15 +1,14 @@
 package com.indo.admin.modules.mem.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.indo.admin.modules.mem.req.MemAddReq;
-import com.indo.admin.modules.mem.req.MemBaseInfoPageReq;
-import com.indo.admin.modules.mem.req.MemEditStatusReq;
-import com.indo.admin.modules.mem.req.MemEditReq;
-import com.indo.admin.modules.mem.vo.MemBaseInfoVo;
-import com.indo.admin.modules.mem.vo.MemBaseDetailVO;
+import com.indo.admin.pojo.req.MemAddReq;
+import com.indo.admin.pojo.req.MemBaseInfoPageReq;
+import com.indo.admin.pojo.req.MemEditStatusReq;
+import com.indo.admin.pojo.req.MemEditReq;
+import com.indo.admin.pojo.vo.MemBaseInfoVo;
+import com.indo.admin.pojo.vo.MemBaseDetailVO;
 import com.indo.core.base.service.SuperService;
-import com.indo.user.pojo.entity.MemBaseinfo;
+import com.indo.core.pojo.entity.MemBaseinfo;
 
 import java.util.Date;
 import java.util.List;

@@ -3,10 +3,8 @@ package com.indo.admin.modules.act.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.indo.admin.pojo.dto.ActivityDTO;
 import com.indo.admin.pojo.dto.ActivityQueryDTO;
-import com.indo.admin.pojo.dto.ActivityRecordDTO;
-import com.indo.admin.pojo.entity.Activity;
-import com.indo.admin.pojo.vo.ActivityRecordVO;
 import com.indo.common.result.Result;
+import com.indo.core.pojo.entity.Activity;
 import com.indo.user.pojo.vo.act.ActivityVo;
 
 import java.util.List;

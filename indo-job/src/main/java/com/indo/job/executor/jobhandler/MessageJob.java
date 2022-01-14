@@ -1,23 +1,16 @@
 package com.indo.job.executor.jobhandler;
 
 import com.alibaba.fastjson.JSONObject;
-import com.indo.admin.pojo.entity.StatUserRetention;
-import com.indo.common.constant.AppConstants;
 import com.indo.common.enums.BrokerMessageStatus;
 import com.indo.common.rabbitmq.bo.Message;
-import com.indo.common.redis.utils.RedisUtils;
-import com.indo.common.utils.DateUtils;
 import com.indo.core.brokery.RabbitBroker;
 import com.indo.core.pojo.entity.BrokerMessage;
 import com.indo.core.service.IBrokerMessageService;
-import com.indo.job.service.IMemBaseinfoService;
-import com.indo.job.service.IUserRetentionService;
 import com.xxl.job.core.handler.annotation.XxlJob;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Component

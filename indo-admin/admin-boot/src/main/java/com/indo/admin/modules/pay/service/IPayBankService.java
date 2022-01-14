@@ -1,10 +1,9 @@
 package com.indo.admin.modules.pay.service;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.indo.common.result.Result;
+import com.indo.core.pojo.entity.PayBank;
 import com.indo.pay.pojo.dto.PayBankDTO;
-import com.indo.pay.pojo.entity.PayBank;
 import com.indo.pay.pojo.vo.PayBankVO;
 
 import java.util.List;

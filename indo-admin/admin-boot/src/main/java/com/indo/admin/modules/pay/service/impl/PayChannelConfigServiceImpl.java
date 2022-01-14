@@ -2,15 +2,12 @@ package com.indo.admin.modules.pay.service.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.indo.admin.modules.mem.entity.MemAgentApply;
-import com.indo.admin.modules.mem.mapper.MemAgentMapper;
 import com.indo.admin.modules.pay.mapper.PayChannelConfigMapper;
 import com.indo.admin.modules.pay.service.IPayChannelConfigService;
 import com.indo.admin.pojo.dto.PayChannelDTO;
 import com.indo.admin.pojo.dto.PayChannelQueryDTO;
 import com.indo.admin.pojo.vo.PayChannelConfigVO;
-import com.indo.pay.pojo.dto.PayChannelConfigDto;
-import com.indo.pay.pojo.entity.PayChannelConfig;
+import com.indo.core.pojo.entity.PayChannelConfig;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

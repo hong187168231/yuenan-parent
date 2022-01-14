@@ -6,10 +6,10 @@ import com.indo.admin.pojo.vo.agent.AgentSubVO;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.web.exception.BizException;
 import com.indo.core.base.service.impl.SuperServiceImpl;
+import com.indo.core.pojo.entity.MemAgent;
+import com.indo.core.pojo.entity.MemAgentApply;
 import com.indo.user.mapper.MemAgentApplyMapper;
 import com.indo.user.mapper.MemAgentMapper;
-import com.indo.user.pojo.entity.MemAgent;
-import com.indo.user.pojo.entity.MemAgentApply;
 import com.indo.user.pojo.req.mem.MemAgentApplyReq;
 import com.indo.user.pojo.req.mem.SubordinateAppReq;
 import com.indo.user.service.IMemAgentService;
@@ -27,7 +27,7 @@ import java.util.List;
  * @since 2021-12-11
  */
 @Service
-public class MemAgentServiceImpl extends SuperServiceImpl implements IMemAgentService {
+public class MemAgentServiceImpl extends SuperServiceImpl<MemAgentMapper,MemAgent> implements IMemAgentService {
 
 
     @Autowired

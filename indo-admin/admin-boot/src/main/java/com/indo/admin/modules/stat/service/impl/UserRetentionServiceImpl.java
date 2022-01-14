@@ -6,8 +6,7 @@ import com.indo.admin.modules.stat.mapper.StatUserRetentionMapper;
 import com.indo.admin.modules.stat.req.UserRetentionPageReq;
 import com.indo.admin.modules.stat.service.IUserRetentionService;
 import com.indo.admin.modules.stat.vo.UserRetentionVo;
-import com.indo.admin.pojo.entity.StatUserRetention;
-import com.indo.common.result.PageResult;
+import com.indo.core.pojo.entity.StatUserRetention;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

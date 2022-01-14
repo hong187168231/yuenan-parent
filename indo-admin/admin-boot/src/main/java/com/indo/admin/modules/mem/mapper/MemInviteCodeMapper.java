@@ -2,12 +2,11 @@ package com.indo.admin.modules.mem.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.indo.admin.modules.mem.req.MeminviteCodePageReq;
-import com.indo.admin.modules.mem.vo.MemInviteCodeVo;
-import com.indo.user.pojo.entity.MemInviteCode;
+import com.indo.admin.pojo.req.MeminviteCodePageReq;
+import com.indo.admin.pojo.vo.MemInviteCodeVo;
+import com.indo.core.pojo.entity.MemInviteCode;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 

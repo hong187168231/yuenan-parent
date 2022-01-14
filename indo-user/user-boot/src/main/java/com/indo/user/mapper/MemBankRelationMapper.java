@@ -2,7 +2,7 @@ package com.indo.user.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.indo.user.pojo.entity.MemBankRelation;
+import com.indo.core.pojo.entity.MemBankRelation;
 import com.indo.user.pojo.req.mem.BankCardPageReq;
 import org.apache.ibatis.annotations.Mapper;
 

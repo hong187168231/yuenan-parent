@@ -3,10 +3,8 @@ package com.indo.pay.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
-import com.indo.pay.pojo.dto.PayCashOrderDTO;
-import com.indo.pay.pojo.entity.PayCashOrder;
+import com.indo.core.pojo.entity.PayCashOrder;
 import com.indo.pay.pojo.req.CashApplyReq;
-import com.indo.pay.pojo.vo.PayCashOrderApplyVO;
 import com.indo.pay.pojo.vo.PayCashOrderVO;
 
 import java.util.List;

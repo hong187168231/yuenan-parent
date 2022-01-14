@@ -1,21 +1,20 @@
 package com.indo.user.controller;
 
 
-import com.indo.admin.pojo.entity.Activity;
-import com.indo.admin.pojo.entity.ActivityType;
 import com.indo.admin.pojo.vo.ActivityTypeVO;
 import com.indo.common.annotation.AllowAccess;
 import com.indo.common.constant.GlobalConstants;
 import com.indo.common.constant.RedisConstants;
 import com.indo.common.result.Result;
 import com.indo.common.web.util.DozerUtil;
+import com.indo.core.pojo.entity.Activity;
+import com.indo.core.pojo.entity.ActivityType;
 import com.indo.user.common.util.UserBusinessRedisUtils;
 import com.indo.user.pojo.vo.act.ActivityVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.models.auth.In;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;

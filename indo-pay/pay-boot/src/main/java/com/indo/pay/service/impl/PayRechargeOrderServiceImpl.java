@@ -2,7 +2,6 @@ package com.indo.pay.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.indo.pay.mapper.PayRechargeOrderMapper;
-import com.indo.pay.pojo.entity.PayRechargeOrder;
 import com.indo.pay.service.IPayRechargeOrderService;
 import org.springframework.stereotype.Service;
 

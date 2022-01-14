@@ -4,10 +4,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.indo.admin.modules.agent.service.IAgentRebateRecordService;
 import com.indo.admin.modules.mem.mapper.AgentRebateRecordMapper;
-import com.indo.admin.modules.mem.req.MemRebateRecordPageReq;
-import com.indo.admin.pojo.entity.AgentRebateRecord;
 import com.indo.admin.pojo.req.agnet.AgentRebateRecordReq;
 import com.indo.admin.pojo.vo.agent.AgentRebateRecordVO;
+import com.indo.core.pojo.entity.AgentRebateRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

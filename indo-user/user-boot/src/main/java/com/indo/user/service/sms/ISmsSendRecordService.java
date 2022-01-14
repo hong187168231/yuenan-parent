@@ -1,7 +1,7 @@
 package com.indo.user.service.sms;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.indo.admin.pojo.entity.SmsSendRecord;
+import com.indo.core.pojo.entity.SmsSendRecord;
 import com.indo.user.pojo.req.VerifyCodeReq;
 
 /**

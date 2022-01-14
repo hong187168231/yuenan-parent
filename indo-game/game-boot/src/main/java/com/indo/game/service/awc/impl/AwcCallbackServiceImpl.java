@@ -19,7 +19,6 @@ import com.indo.game.pojo.vo.callback.awc.AwcCallBackRespSuccess;
 import com.indo.game.pojo.vo.callback.awc.AwcGetBalanceRespSuccess;
 import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.awc.AwcCallbackService;
-import com.indo.user.pojo.entity.MemBaseinfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;

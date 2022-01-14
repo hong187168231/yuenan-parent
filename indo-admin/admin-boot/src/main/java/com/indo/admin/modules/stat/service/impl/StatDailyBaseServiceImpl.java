@@ -2,8 +2,7 @@ package com.indo.admin.modules.stat.service.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.indo.admin.modules.mem.vo.MemBaseInfoVo;
-import com.indo.admin.modules.stat.entity.StatDailyBase;
+import com.indo.admin.pojo.entity.StatDailyBase;
 import com.indo.admin.modules.stat.mapper.StatDailyBaseMapper;
 import com.indo.admin.modules.stat.req.TotalStatReq;
 import com.indo.admin.modules.stat.req.UserReportReq;

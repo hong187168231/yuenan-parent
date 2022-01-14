@@ -1,48 +1,39 @@
 package com.indo.user.service.impl;
 
 import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.core.util.RandomUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.indo.common.constant.RedisConstants;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
 import com.indo.common.utils.BaseUtil;
-import com.indo.common.utils.NameGeneratorUtil;
-import com.indo.common.utils.ShareCodeUtil;
-import com.indo.common.utils.ShareCodeUtils;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
 import com.indo.core.base.service.impl.SuperServiceImpl;
 import com.indo.core.pojo.bo.MemBaseinfoBo;
+import com.indo.core.pojo.entity.MemAgent;
+import com.indo.core.pojo.entity.MemBaseinfo;
+import com.indo.core.pojo.entity.MemInviteCode;
 import com.indo.user.common.util.UserBusinessRedisUtils;
 import com.indo.user.mapper.MemAgentMapper;
 import com.indo.user.mapper.MemBaseInfoMapper;
 import com.indo.user.mapper.MemInviteCodeMapper;
-import com.indo.user.pojo.entity.MemAgent;
-import com.indo.user.pojo.entity.MemBaseinfo;
-import com.indo.user.pojo.entity.MemInviteCode;
 import com.indo.user.pojo.req.LogOutReq;
 import com.indo.user.pojo.req.LoginReq;
 import com.indo.user.pojo.req.RegisterReq;
-import com.indo.user.pojo.req.mem.MemInfoReq;
 import com.indo.user.pojo.req.mem.UpdateBaseInfoReq;
 import com.indo.user.pojo.req.mem.UpdatePasswordReq;
 import com.indo.user.pojo.vo.AppLoginVo;
 import com.indo.user.pojo.vo.mem.MemBaseInfoVo;
 import com.indo.user.pojo.vo.mem.MemTradingVo;
-import com.indo.user.service.IMemLevelService;
 import com.indo.user.service.MemBaseInfoService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Date;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor

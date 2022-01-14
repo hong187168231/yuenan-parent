@@ -4,14 +4,12 @@ package com.indo.admin.rpc;
 import com.indo.admin.modules.msg.service.IMsgPushRecordService;
 import com.indo.admin.modules.msg.service.IMsgStationLetterService;
 import com.indo.admin.pojo.dto.MsgDTO;
-import com.indo.admin.pojo.entity.MsgPushRecord;
-import com.indo.admin.pojo.entity.MsgStationLetter;
-import com.indo.common.result.PageResult;
+import com.indo.admin.pojo.vo.MsgPushRecordVO;
+import com.indo.admin.pojo.vo.MsgStationLetterVO;
 import com.indo.common.result.Result;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -41,9 +39,9 @@ public class MsgRpc {
      * @return
      */
     @PostMapping("/personal")
-    public Result<List<MsgStationLetter>> getPersonalMsg(@RequestBody MsgDTO msgDTO) {
-        List<MsgStationLetter> pageResult = iMsgStationLetterService.getPersonalMsg(msgDTO);
-        return Result.success(pageResult);
+    public Result<List<MsgStationLetterVO>> getPersonalMsg(@RequestBody MsgDTO msgDTO) {
+//        List<MsgStationLetterVO> pageResult = iMsgStationLetterService.getPersonalMsg(msgDTO);
+        return Result.success(null);
     }
 
 
@@ -53,8 +51,9 @@ public class MsgRpc {
      * @return
      */
     @PostMapping("/sys")
-    public Result<List<MsgPushRecord>> getSysMsg(@RequestBody MsgDTO msgDTO) {
-        return Result.success(iMsgPushRecordService.getSysMsg(msgDTO));
+    public Result<List<MsgPushRecordVO>> getSysMsg(@RequestBody MsgDTO msgDTO) {
+//        return Result.success(iMsgPushRecordService.getSysMsg(msgDTO));
+        return null;
     }
 
 }    

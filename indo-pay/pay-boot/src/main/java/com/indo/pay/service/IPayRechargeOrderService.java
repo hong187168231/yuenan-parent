@@ -1,7 +1,6 @@
 package com.indo.pay.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.indo.pay.pojo.entity.PayRechargeOrder;
 
 /**
  * <p>

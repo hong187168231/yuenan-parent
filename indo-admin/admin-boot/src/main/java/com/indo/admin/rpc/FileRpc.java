@@ -2,18 +2,12 @@ package com.indo.admin.rpc;
 
 
 import com.indo.admin.modules.file.service.IFileService;
-import com.indo.admin.modules.msg.service.IMsgPushRecordService;
-import com.indo.admin.modules.msg.service.IMsgStationLetterService;
-import com.indo.admin.pojo.dto.MsgDTO;
-import com.indo.admin.pojo.entity.FileInfo;
-import com.indo.admin.pojo.entity.MsgPushRecord;
-import com.indo.admin.pojo.entity.MsgStationLetter;
 import com.indo.common.result.Result;
+import com.indo.core.pojo.entity.FileInfo;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 
 /**

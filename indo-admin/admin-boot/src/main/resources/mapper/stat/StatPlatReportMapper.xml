@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.indo.admin.modules.stat.mapper.StatPlatReportMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.indo.admin.pojo.entity.StatPlatReport">
+        <id column="id" property="id"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="plat_id" property="platId"/>
+        <result column="plat_name" property="platName"/>
+        <result column="date" property="date"/>
+        <result column="join_users" property="joinUsers"/>
+        <result column="bet_amount" property="betAmount"/>
+        <result column="winning_amount" property="winningAmount"/>
+        <result column="profit" property="profit"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        create_time,
+        update_time,
+        id, plat_id, plat_name, date, join_users, bet_amount, winning_amount, profit
+    </sql>
+
+    <select id="queryList" resultMap="BaseResultMap">
+        SELECT * FROM stat_plat_report sdb
+        <where>
+            <if test="req.startTime != null and req.startTime != ''">
+                and sdb.date &gt;= #{req.startTime}
+            </if>
+            <if test="req.endTime != null and req.endTime != ''">
+                and sdb.date &lt;= #{req.endTime}
+            </if>
+        </where>
+        ORDER BY sdb.create_time desc
+    </select>
+</mapper>

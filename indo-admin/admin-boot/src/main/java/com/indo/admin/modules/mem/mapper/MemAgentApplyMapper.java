@@ -2,9 +2,9 @@ package com.indo.admin.modules.mem.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.indo.admin.modules.mem.entity.MemAgentApply;
-import com.indo.admin.modules.mem.req.MemAgentApplyPageReq;
+import com.indo.admin.pojo.req.MemAgentApplyPageReq;
 import com.indo.admin.pojo.vo.agent.AgentApplyVO;
+import com.indo.core.pojo.entity.MemAgentApply;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

@@ -1,7 +1,7 @@
 package com.indo.user.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.indo.admin.pojo.entity.SmsSendRecord;
+import com.indo.core.pojo.entity.SmsSendRecord;
 import com.indo.user.pojo.req.VerifyCodeReq;
 import org.apache.ibatis.annotations.Mapper;
 

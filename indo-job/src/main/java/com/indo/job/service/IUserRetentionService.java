@@ -1,7 +1,6 @@
 package com.indo.job.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.indo.admin.pojo.entity.StatUserRetention;
 
 /**
  * <p>

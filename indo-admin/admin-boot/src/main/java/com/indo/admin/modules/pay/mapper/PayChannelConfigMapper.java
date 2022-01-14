@@ -4,11 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.pojo.dto.PayChannelQueryDTO;
 import com.indo.admin.pojo.vo.PayChannelConfigVO;
-import com.indo.pay.pojo.dto.PayCashOrderDTO;
-import com.indo.pay.pojo.dto.PayChannelConfigDto;
-import com.indo.pay.pojo.entity.PayCashOrder;
-import com.indo.pay.pojo.entity.PayChannelConfig;
-import com.indo.pay.pojo.vo.PayCashOrderVO;
+import com.indo.core.pojo.entity.PayChannelConfig;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

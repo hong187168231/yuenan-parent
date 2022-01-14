@@ -2,11 +2,11 @@ package com.indo.admin.modules.mem.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.indo.admin.modules.mem.req.MemAgentPageReq;
-import com.indo.admin.modules.mem.req.SubordinateReq;
+import com.indo.admin.pojo.req.MemAgentPageReq;
+import com.indo.admin.pojo.req.SubordinateReq;
 import com.indo.admin.pojo.vo.agent.AgentSubVO;
 import com.indo.admin.pojo.vo.agent.AgentVo;
-import com.indo.user.pojo.entity.MemAgent;
+import com.indo.core.pojo.entity.MemAgent;
 
 /**
  * <p>

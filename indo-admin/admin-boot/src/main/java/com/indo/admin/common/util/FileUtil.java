@@ -1,7 +1,7 @@
 package com.indo.admin.common.util;
 
 import cn.hutool.core.util.IdUtil;
-import com.indo.admin.pojo.entity.FileInfo;
+import com.indo.core.pojo.entity.FileInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.web.multipart.MultipartFile;

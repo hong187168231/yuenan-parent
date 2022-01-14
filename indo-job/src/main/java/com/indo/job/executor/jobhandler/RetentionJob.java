@@ -1,7 +1,5 @@
 package com.indo.job.executor.jobhandler;
 
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.indo.admin.pojo.entity.StatUserRetention;
 import com.indo.common.constant.AppConstants;
 import com.indo.common.redis.utils.RedisUtils;
 import com.indo.common.utils.DateUtils;
@@ -13,7 +11,6 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 @Component
 public class RetentionJob {

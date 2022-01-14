@@ -6,7 +6,7 @@ import com.indo.admin.modules.pay.mapper.PayRechargeOrderMapper;
 import com.indo.admin.modules.pay.service.IPayRechargeOrderService;
 import com.indo.admin.pojo.req.PayRechargeReq;
 import com.indo.admin.pojo.vo.pay.RechargeOrderVO;
-import com.indo.pay.pojo.entity.PayRechargeOrder;
+import com.indo.core.pojo.entity.PayRechargeOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

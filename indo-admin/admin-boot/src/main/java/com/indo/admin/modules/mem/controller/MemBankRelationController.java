@@ -2,11 +2,10 @@ package com.indo.admin.modules.mem.controller;
 
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.indo.admin.modules.mem.req.MemBankRelationPageReq;
-import com.indo.admin.modules.mem.req.MemBankRelationSwitchStatusReq;
+import com.indo.admin.pojo.req.MemBankRelationPageReq;
+import com.indo.admin.pojo.req.MemBankRelationSwitchStatusReq;
 import com.indo.admin.modules.mem.service.IMemBankRelationService;
-import com.indo.admin.modules.mem.vo.MemBankRelationVO;
-import com.indo.common.result.PageResult;
+import com.indo.admin.pojo.vo.MemBankRelationVO;
 import com.indo.common.result.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

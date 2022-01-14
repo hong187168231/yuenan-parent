@@ -2,13 +2,12 @@ package com.indo.admin.modules.mem.service.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.indo.admin.modules.mem.entity.MemBankRelation;
 import com.indo.admin.modules.mem.mapper.MemBankRelationMapper;
-import com.indo.admin.modules.mem.req.MemBankRelationPageReq;
-import com.indo.admin.modules.mem.req.MemBankRelationSwitchStatusReq;
+import com.indo.admin.pojo.req.MemBankRelationPageReq;
+import com.indo.admin.pojo.req.MemBankRelationSwitchStatusReq;
 import com.indo.admin.modules.mem.service.IMemBankRelationService;
-import com.indo.admin.modules.mem.vo.MemBankRelationVO;
-import com.indo.common.result.PageResult;
+import com.indo.admin.pojo.vo.MemBankRelationVO;
+import com.indo.core.pojo.entity.MemBankRelation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

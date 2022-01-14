@@ -2,10 +2,9 @@ package com.indo.admin.modules.mem.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.indo.admin.modules.mem.req.MemRebateRecordPageReq;
-import com.indo.admin.pojo.entity.AgentRebateRecord;
 import com.indo.admin.pojo.req.agnet.AgentRebateRecordReq;
 import com.indo.admin.pojo.vo.agent.AgentRebateRecordVO;
+import com.indo.core.pojo.entity.AgentRebateRecord;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

@@ -2,7 +2,7 @@ package com.indo.admin.modules.stat.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.indo.admin.modules.stat.entity.StatAgentReport;
+import com.indo.admin.pojo.entity.StatAgentReport;
 import com.indo.admin.modules.stat.req.AgentReportReq;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;

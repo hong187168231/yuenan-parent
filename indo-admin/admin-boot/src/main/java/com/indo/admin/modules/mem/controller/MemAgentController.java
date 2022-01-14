@@ -2,13 +2,12 @@ package com.indo.admin.modules.mem.controller;
 
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.indo.admin.modules.mem.req.MemAgentPageReq;
+import com.indo.admin.pojo.req.MemAgentPageReq;
 import com.indo.admin.modules.mem.service.IMemAgentService;
-import com.indo.admin.modules.mem.vo.MemBaseInfoVo;
 import com.indo.admin.pojo.vo.agent.AgentSubVO;
 import com.indo.admin.pojo.vo.agent.AgentVo;
 import com.indo.common.result.Result;
-import com.indo.admin.modules.mem.req.SubordinateReq;
+import com.indo.admin.pojo.req.SubordinateReq;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;

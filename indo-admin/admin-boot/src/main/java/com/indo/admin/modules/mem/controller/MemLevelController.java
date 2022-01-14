@@ -1,16 +1,14 @@
 package com.indo.admin.modules.mem.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.indo.admin.modules.mem.req.MemLevelAddReq;
-import com.indo.admin.modules.mem.req.MemLevelPageReq;
-import com.indo.admin.modules.mem.req.MemLevelUpdateReq;
+import com.indo.admin.pojo.req.MemLevelAddReq;
+import com.indo.admin.pojo.req.MemLevelPageReq;
+import com.indo.admin.pojo.req.MemLevelUpdateReq;
 import com.indo.admin.modules.mem.service.IMemLevelService;
-import com.indo.admin.modules.mem.vo.MemLevelVo;
-import com.indo.common.result.PageResult;
+import com.indo.admin.pojo.vo.MemLevelVo;
 import com.indo.common.result.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 

@@ -4,9 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.web.util.DozerUtil;
-import com.indo.user.mapper.MemBankMapper;
+import com.indo.core.pojo.entity.MemBankRelation;
 import com.indo.user.mapper.MemBankRelationMapper;
-import com.indo.user.pojo.entity.MemBankRelation;
 import com.indo.user.pojo.req.mem.AddBankCardReq;
 import com.indo.user.pojo.vo.MemBankVo;
 import com.indo.user.service.IMemBankRelationService;
@@ -29,11 +28,7 @@ public class MemBankRelationServiceImpl extends ServiceImpl<MemBankRelationMappe
 
     @Autowired
     private MemBankRelationMapper memBankRelationMapper;
-    @Autowired
-    private MemBankMapper memBankMapper;
 
-    @Autowired
-    private DozerUtil dozerUtil;
 
     @Override
     public boolean addBankCard(AddBankCardReq req, LoginInfo loginUser) {
@@ -48,7 +43,7 @@ public class MemBankRelationServiceImpl extends ServiceImpl<MemBankRelationMappe
         LambdaQueryWrapper<MemBankRelation> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(MemBankRelation::getMemId, loginUser.getId());
         List<MemBankRelation> list = memBankRelationMapper.selectList(wrapper);
-        List<MemBankVo> result = dozerUtil.convert(list, MemBankVo.class);
+        List<MemBankVo> result = DozerUtil.convert(list, MemBankVo.class);
         return result;
     }
 

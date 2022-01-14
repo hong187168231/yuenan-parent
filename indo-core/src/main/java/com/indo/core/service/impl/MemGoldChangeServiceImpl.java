@@ -144,9 +144,9 @@ public class MemGoldChangeServiceImpl extends SuperServiceImpl<MemGoldChangeMapp
                 if (tzList.contains(goldchangeEnum)) {
                     betAmount = betAmount.add(changeAmount);
                 } else if (rechargeList.contains(goldchangeEnum)) {
-                    rechargeAmount =  rechargeAmount.add(changeAmount);
+                    rechargeAmount = rechargeAmount.add(changeAmount);
                 } else if (takeCashList.contains(goldchangeEnum)) {
-                    cashAmount =  cashAmount.add(changeAmount);
+                    cashAmount = cashAmount.add(changeAmount);
                 }
 
                 // 添加账变记录

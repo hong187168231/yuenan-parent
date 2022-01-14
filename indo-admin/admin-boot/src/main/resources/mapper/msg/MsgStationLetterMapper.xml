@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.indo.admin.modules.msg.mapper.MsgStationLetterMapper">
+
+    <resultMap id="SysStationLetter" type="com.indo.core.pojo.entity.MsgStationLetter">
+        <id column="id" property="id"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="title" property="title"/>
+        <result column="content" property="content"/>
+        <result column="mem_id" property="memId"/>
+        <result column="receiver" property="receiver"/>
+        <result column="receiver_level" property="receiverLevel"/>
+        <result column="receive_pay_group" property="receivePayGroup"/>
+        <result column="send_type" property="sendType"/>
+        <result column="is_del" property="isDel"/>
+        <result column="remark" property="remark"/>
+    </resultMap>
+
+    <resultMap id="SysStationLetterVo" extends="SysStationLetter" type="com.indo.admin.pojo.vo.MsgStationLetterVO">
+    </resultMap>
+
+    <select id="queryList" resultMap="SysStationLetterVo">
+        SELECT *
+        FROM msg_station_letter
+        <where>
+            <if test="dto.receiver !=null and dto.receiver != ''">
+                and receiver like concat('%', #{dto.receiver,jdbcType=VARCHAR}, '%')
+            </if>
+            <if test="dto.startTime != null and dto.startTime != ''"><!-- 开始时间检索 -->
+                and date_format(create_time,'%y%m%d') &gt;= date_format(#{dto.startTime},'%y%m%d')
+            </if>
+            <if test="dto.endTime != null and dto.endTime != ''"><!-- 结束时间检索 -->
+                and date_format(create_time,'%y%m%d') &lt;= date_format(#{dto.endTime},'%y%m%d')
+            </if>
+        </where>
+        ORDER BY create_time desc
+    </select>
+</mapper>

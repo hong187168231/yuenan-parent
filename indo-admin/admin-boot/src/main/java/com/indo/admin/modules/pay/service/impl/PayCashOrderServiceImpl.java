@@ -8,10 +8,8 @@ import com.indo.admin.modules.pay.service.IPayCashOrderService;
 import com.indo.common.result.Result;
 import com.indo.common.utils.StringUtils;
 import com.indo.common.web.util.DozerUtil;
+import com.indo.core.pojo.entity.PayCashOrder;
 import com.indo.pay.pojo.dto.PayCashOrderDTO;
-import com.indo.pay.pojo.entity.PayBank;
-import com.indo.pay.pojo.entity.PayCashOrder;
-import com.indo.pay.pojo.vo.PayBankVO;
 import com.indo.pay.pojo.vo.PayCashOrderApplyVO;
 import com.indo.pay.pojo.vo.PayCashOrderVO;
 import org.springframework.stereotype.Service;
@@ -46,10 +44,10 @@ public class PayCashOrderServiceImpl extends ServiceImpl<PayCashOrderMapper, Pay
             wrapper.eq(PayCashOrder::getOrderNo, cashOrderDTO.getOrderNo());
         }
         if (cashOrderDTO.getOrderStatus() != null) {
-            wrapper.eq(PayCashOrder::getOrderStatus, cashOrderDTO.getOrderStatus());
+            wrapper.eq(PayCashOrder::getCashStatus, cashOrderDTO.getOrderStatus());
         }
         if (cashOrderDTO.getUserId() != null) {
-            wrapper.eq(PayCashOrder::getUserId, cashOrderDTO.getUserId());
+            wrapper.eq(PayCashOrder::getMemId, cashOrderDTO.getUserId());
         }
         if (cashOrderDTO.getBeginAmount() != null) {
             wrapper.ge(PayCashOrder::getActualAmount, cashOrderDTO.getBeginAmount());
@@ -58,10 +56,10 @@ public class PayCashOrderServiceImpl extends ServiceImpl<PayCashOrderMapper, Pay
             wrapper.le(PayCashOrder::getActualAmount, cashOrderDTO.getEndAmount());
         }
         if (cashOrderDTO.getBeginTime() != null) {
-            wrapper.ge(PayCashOrder::getOrderStatus, cashOrderDTO.getBeginTime());
+            wrapper.ge(PayCashOrder::getCreateTime, cashOrderDTO.getBeginTime());
         }
         if (cashOrderDTO.getEndTime() != null) {
-            wrapper.le(PayCashOrder::getOrderStatus, cashOrderDTO.getEndTime());
+            wrapper.le(PayCashOrder::getCreateTime, cashOrderDTO.getEndTime());
         }
         Page<PayCashOrder> pageList = baseMapper.selectPage(page, wrapper);
         List<PayCashOrderVO> result = dozerUtil.convert(pageList.getRecords(), PayCashOrderVO.class);

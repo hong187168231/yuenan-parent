@@ -1,11 +1,11 @@
 package com.indo.admin.common.util;
 
-import com.indo.admin.modules.mem.req.MemRebateAddReq;
+import com.indo.admin.pojo.req.MemRebateAddReq;
 import com.indo.common.constant.RedisKeys;
 import com.indo.common.redis.utils.RedisUtils;
 import com.indo.common.result.ResultCode;
 import com.indo.common.web.exception.BizException;
-import com.indo.user.pojo.entity.MemLevel;
+import com.indo.core.pojo.entity.MemLevel;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 

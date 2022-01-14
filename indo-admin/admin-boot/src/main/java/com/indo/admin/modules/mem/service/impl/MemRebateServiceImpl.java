@@ -4,12 +4,12 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.indo.admin.common.util.AdminBusinessRedisUtils;
-import com.indo.admin.modules.mem.entity.MemRebate;
 import com.indo.admin.modules.mem.mapper.MemRebateMapper;
-import com.indo.admin.modules.mem.req.MemRebateAddReq;
+import com.indo.admin.pojo.req.MemRebateAddReq;
 import com.indo.admin.modules.mem.service.IMemRebateService;
-import com.indo.admin.modules.mem.vo.MemBetVo;
-import com.indo.admin.modules.mem.vo.MemRebateVo;
+import com.indo.admin.pojo.vo.MemBetVo;
+import com.indo.admin.pojo.vo.MemRebateVo;
+import com.indo.core.pojo.entity.MemRebate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

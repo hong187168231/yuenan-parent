@@ -7,7 +7,6 @@ import com.indo.common.web.exception.KeepErrMsgConfiguration;
 import com.indo.user.api.fallback.MemBaseInfoFeignFallback;
 import com.indo.user.pojo.entity.MemBaseinfo;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 @FeignClient(value = ServiceIdConstant.USER_SERVICE_ID, contextId = "oauth-client",

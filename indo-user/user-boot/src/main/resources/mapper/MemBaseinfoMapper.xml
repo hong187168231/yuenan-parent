@@ -3,7 +3,7 @@
 <mapper namespace="com.indo.user.mapper.MemBaseInfoMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.indo.user.pojo.entity.MemBaseinfo">
+    <resultMap id="BaseResultMap" type="com.indo.core.pojo.entity.MemBaseinfo">
         <id column="id" property="id" />
         <result column="create_time" property="createTime" />
         <result column="update_time" property="updateTime" />

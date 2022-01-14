@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.pojo.req.agnet.AgentCashReq;
 import com.indo.admin.pojo.vo.agent.AgentCashApplyVO;
-import com.indo.user.pojo.entity.AgentCashApply;
+import com.indo.core.pojo.entity.AgentCashApply;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

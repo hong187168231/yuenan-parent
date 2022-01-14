@@ -3,7 +3,6 @@ package com.indo.admin.modules.agent.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.modules.agent.service.IAgentRebateRecordService;
-import com.indo.admin.modules.mem.req.MemRebateRecordPageReq;
 import com.indo.admin.pojo.req.agnet.AgentRebateRecordReq;
 import com.indo.admin.pojo.vo.agent.AgentRebateRecordVO;
 import com.indo.common.result.Result;
@@ -11,7 +10,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 

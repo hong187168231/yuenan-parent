@@ -1,13 +1,9 @@
 package com.indo.user.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.indo.common.annotation.LoginUser;
 import com.indo.common.pojo.bo.LoginInfo;
-import com.indo.common.result.PageResult;
-import com.indo.user.pojo.entity.MemBank;
-import com.indo.user.pojo.entity.MemBankRelation;
+import com.indo.core.pojo.entity.MemBankRelation;
 import com.indo.user.pojo.req.mem.AddBankCardReq;
-import com.indo.user.pojo.req.mem.BankCardPageReq;
 import com.indo.user.pojo.vo.MemBankVo;
 
 import java.util.List;

@@ -1,7 +1,7 @@
 package com.indo.user.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.indo.user.pojo.entity.PayBank;
+import com.indo.core.pojo.entity.PayBank;
 import com.indo.user.pojo.vo.PayBankVO;
 
 import java.util.List;

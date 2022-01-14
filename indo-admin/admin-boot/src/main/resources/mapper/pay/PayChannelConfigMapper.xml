@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.indo.admin.modules.pay.mapper.PayChannelConfigMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.indo.core.pojo.entity.PayChannelConfig">
+        <id column="pay_channel_id" property="payChannelId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="channel_name" property="channelName"/>
+        <result column="channel_code" property="channelCode"/>
+        <result column="channel_desc" property="channelDesc"/>
+        <result column="merchant_no" property="merchantNo"/>
+        <result column="pay_url" property="payUrl"/>
+        <result column="notify_url" property="notifyUrl"/>
+        <result column="page_url" property="pageUrl"/>
+        <result column="secret_key" property="secretKey"/>
+        <result column="channel_type" property="channelType"/>
+        <result column="sort_by" property="sortBy"/>
+        <result column="create_user" property="createUser"/>
+        <result column="update_user" property="updateUser"/>
+        <result column="remark" property="remark"/>
+        <result column="is_del" property="isDel"/>
+    </resultMap>
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="Base2ResultMap" type="com.indo.admin.pojo.vo.PayChannelConfigVO">
+        <id column="pay_channel_id" property="payChannelId"/>
+        <result column="channel_name" property="channelName"/>
+        <result column="channel_code" property="channelCode"/>
+        <result column="channel_desc" property="channelDesc"/>
+        <result column="merchant_no" property="merchantNo"/>
+        <result column="pay_url" property="payUrl"/>
+        <result column="notify_url" property="notifyUrl"/>
+        <result column="page_url" property="pageUrl"/>
+        <result column="secret_key" property="secretKey"/>
+    </resultMap>
+
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        create_time
+        ,
+        update_time,
+        pay_channel_id, channel_name, channel_code, channel_desc, merchant_no, pay_url, notify_url, page_url, secret_key, channel_type, sort_by, create_user, update_user, remark, is_del
+    </sql>
+
+
+    <!-- 通用查询结果列 -->
+    <select id="queryAll" resultMap="Base2ResultMap">
+        SELECT
+        *
+        FROM
+        pay_channel_config pcc
+
+        <if test="dto.channelName != null  and dto.channelName !='' ">
+            and pcc.channel_name like concat('%', #{dto.channelName}, '%')
+        </if>
+
+    </select>
+
+
+</mapper>

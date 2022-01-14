@@ -2,12 +2,10 @@ package com.indo.admin.modules.stat.service.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.indo.admin.modules.stat.entity.StatAgentReport;
+import com.indo.admin.pojo.entity.StatAgentReport;
 import com.indo.admin.modules.stat.mapper.StatAgentReportMapper;
 import com.indo.admin.modules.stat.req.AgentReportReq;
 import com.indo.admin.modules.stat.service.IStatAgentReportService;
-import com.indo.admin.modules.stat.vo.UserReportVo;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

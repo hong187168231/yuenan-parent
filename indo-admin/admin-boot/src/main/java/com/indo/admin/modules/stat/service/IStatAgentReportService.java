@@ -2,7 +2,7 @@ package com.indo.admin.modules.stat.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.indo.admin.modules.stat.entity.StatAgentReport;
+import com.indo.admin.pojo.entity.StatAgentReport;
 import com.indo.admin.modules.stat.req.AgentReportReq;
 
 /**

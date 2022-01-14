@@ -1,7 +1,7 @@
 package com.indo.admin.modules.pay.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.indo.pay.pojo.entity.PayBank;
+import com.indo.core.pojo.entity.PayBank;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.modules.stat.req.UserRetentionPageReq;
 import com.indo.admin.modules.stat.vo.UserRetentionVo;
-import com.indo.admin.pojo.entity.StatUserRetention;
+import com.indo.core.pojo.entity.StatUserRetention;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

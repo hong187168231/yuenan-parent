@@ -2,21 +2,18 @@ package com.indo.user.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.indo.admin.pojo.entity.AgentRebateRecord;
 import com.indo.admin.pojo.req.agnet.AgentRebateRecordReq;
 import com.indo.admin.pojo.vo.agent.AgentRebateInfoVO;
 import com.indo.admin.pojo.vo.agent.AgentRebateRecordVO;
-import com.indo.admin.pojo.vo.agent.AgentSubVO;
 import com.indo.common.pojo.bo.LoginInfo;
-import com.indo.common.utils.StringUtils;
 import com.indo.common.web.exception.BizException;
 import com.indo.core.base.service.impl.SuperServiceImpl;
+import com.indo.core.pojo.entity.AgentRebate;
+import com.indo.core.pojo.entity.AgentRebateRecord;
+import com.indo.core.pojo.entity.MemAgent;
 import com.indo.user.mapper.AgentRebateMapper;
 import com.indo.user.mapper.AgentRebateRecordMapper;
 import com.indo.user.mapper.MemAgentMapper;
-import com.indo.user.pojo.entity.AgentRebate;
-import com.indo.user.pojo.entity.MemAgent;
 import com.indo.user.service.IAgentRebateRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,7 +40,7 @@ public class AgentRebateRecordServiceImpl extends SuperServiceImpl<AgentRebateRe
     private MemAgentMapper memAgentMapper;
 
     @Override
-    public AgentRebateInfoVO rebateInof(LoginInfo loginInfo) {
+    public AgentRebateInfoVO rebateInfo(LoginInfo loginInfo) {
         AgentRebateInfoVO infoVO = new AgentRebateInfoVO();
         BigDecimal rebateAmount = new BigDecimal("0.00");
         LambdaQueryWrapper<AgentRebate> wrapper = new LambdaQueryWrapper<>();

@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.indo.admin.pojo.req.PayRechargeReq;
 import com.indo.admin.pojo.vo.pay.RechargeOrderVO;
-import com.indo.pay.pojo.entity.PayRechargeOrder;
+import com.indo.core.pojo.entity.PayRechargeOrder;
 
 /**
  * <p>

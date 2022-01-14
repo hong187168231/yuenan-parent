@@ -1,9 +1,6 @@
 package com.indo.job.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.indo.common.pojo.bo.LoginInfo;
-import com.indo.user.pojo.entity.MemLevel;
-import com.indo.user.pojo.vo.level.MemLevelVo;
 
 import java.math.BigDecimal;
 

@@ -1,7 +1,6 @@
 package com.indo.user.pojo.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.indo.user.pojo.entity.MemBanRebate;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -12,8 +11,7 @@ import java.util.Date;
  * @author 
  */
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class MemBanRebateVo extends MemBanRebate {
+public class MemBanRebateVo  {
 
     @ApiModelProperty(value = "用户名")
     private String account;

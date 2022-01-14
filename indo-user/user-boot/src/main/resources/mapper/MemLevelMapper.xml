@@ -3,7 +3,7 @@
 <mapper namespace="com.indo.user.mapper.MemLevelMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.indo.user.pojo.entity.MemLevel">
+    <resultMap id="BaseResultMap" type="com.indo.core.pojo.entity.MemLevel">
         <id column="id" property="id"/>
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
@@ -17,7 +17,6 @@
         <result column="year_gift" property="yearGift"/>
         <result column="birthday_gift" property="birthdayGift"/>
         <result column="mem_num" property="memNum"/>
-        <result column="icon" property="icon"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
