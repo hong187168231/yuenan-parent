@@ -19,7 +19,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ApiModel(value="MemRebate对象", description="返点配置表")
-public class MemRebate extends BaseEntity {
+public class AgentRebateConfig extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
