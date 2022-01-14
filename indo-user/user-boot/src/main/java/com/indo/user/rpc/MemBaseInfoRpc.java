@@ -2,7 +2,6 @@ package com.indo.user.rpc;
 
 import com.indo.common.result.Result;
 import com.indo.user.pojo.bo.MemTradingBO;
-import com.indo.user.pojo.entity.MemBaseinfo;
 import com.indo.user.service.MemBaseInfoService;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,17 +22,6 @@ public class MemBaseInfoRpc {
 
     @Resource
     private MemBaseInfoService memBaseInfoService;
-
-
-    @GetMapping("/getMemBaseInfo/{userId}")
-    public Result<MemBaseinfo> getMemBaseInfo(@PathVariable Long userId) {
-        return null;  /// Result.success(memBaseInfoService.getMemBaseInfoById(userId));
-    }
-
-    @GetMapping("/getByAccount/{account}")
-    public Result<MemBaseinfo> getMemBaseInfo(@PathVariable String account) {
-        return null;  ///  Result.success(memBaseInfoService.getByAccount(account));
-    }
 
     @GetMapping("/getMemTradingInfo/{account}")
     public Result<MemTradingBO> getMemTradingInfo(@PathVariable String account) {

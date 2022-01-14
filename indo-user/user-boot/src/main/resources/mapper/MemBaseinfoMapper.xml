@@ -4,44 +4,45 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.indo.core.pojo.entity.MemBaseinfo">
-        <id column="id" property="id" />
-        <result column="create_time" property="createTime" />
-        <result column="update_time" property="updateTime" />
-        <result column="real_name" property="realName" />
-        <result column="nick_name" property="nickName" />
-        <result column="accountNo" property="account" />
-        <result column="salt" property="salt" />
-        <result column="password" property="password" />
-        <result column="password_md5" property="passwordMd5" />
-        <result column="phone" property="phone" />
-        <result column="email" property="email" />
-        <result column="face_book" property="faceBook" />
-        <result column="whats_app" property="whatsApp" />
-        <result column="invite_code" property="inviteCode" />
-        <result column="group_id" property="groupId" />
-        <result column="mem_level" property="memLevel" />
-        <result column="acc_type" property="accType" />
-        <result column="total_deposit" property="totalDeposit" />
-        <result column="total_enchashment" property="totalEnchashment" />
-        <result column="balance" property="balance" />
-        <result column="register_source" property="registerSource" />
-        <result column="register_ip" property="registerIp" />
-        <result column="client_ip" property="clientIp" />
-        <result column="status" property="status" />
-        <result column="prohibit_login" property="prohibitLogin" />
-        <result column="prohibit_invite" property="prohibitInvite" />
-        <result column="prohibit_investment" property="prohibitInvestment" />
-        <result column="prohibit_disbursement" property="prohibitDisbursement" />
-        <result column="prohibit_recharge" property="prohibitRecharge" />
-        <result column="remark" property="remark" />
-        <result column="create_user" property="createUser" />
-        <result column="last_login_time" property="lastLoginTime" />
-        <result column="update_user" property="updateUser" />
+        <id column="id" property="id"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="real_name" property="realName"/>
+        <result column="nick_name" property="nickName"/>
+        <result column="accountNo" property="account"/>
+        <result column="salt" property="salt"/>
+        <result column="password" property="password"/>
+        <result column="password_md5" property="passwordMd5"/>
+        <result column="phone" property="phone"/>
+        <result column="email" property="email"/>
+        <result column="face_book" property="faceBook"/>
+        <result column="whats_app" property="whatsApp"/>
+        <result column="invite_code" property="inviteCode"/>
+        <result column="group_id" property="groupId"/>
+        <result column="mem_level" property="memLevel"/>
+        <result column="acc_type" property="accType"/>
+        <result column="total_deposit" property="totalDeposit"/>
+        <result column="total_enchashment" property="totalEnchashment"/>
+        <result column="balance" property="balance"/>
+        <result column="register_source" property="registerSource"/>
+        <result column="register_ip" property="registerIp"/>
+        <result column="client_ip" property="clientIp"/>
+        <result column="status" property="status"/>
+        <result column="prohibit_login" property="prohibitLogin"/>
+        <result column="prohibit_invite" property="prohibitInvite"/>
+        <result column="prohibit_investment" property="prohibitInvestment"/>
+        <result column="prohibit_disbursement" property="prohibitDisbursement"/>
+        <result column="prohibit_recharge" property="prohibitRecharge"/>
+        <result column="remark" property="remark"/>
+        <result column="create_user" property="createUser"/>
+        <result column="last_login_time" property="lastLoginTime"/>
+        <result column="update_user" property="updateUser"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        create_time,
+        create_time
+        ,
         update_time,
         id, real_name, nick_name, accountNo, salt, password, password_md5, phone, email, face_book, whats_app, invite_code, group_id, mem_level, acc_type, total_deposit, total_enchashment, balance, register_source, register_ip, client_ip, status, prohibit_login, prohibit_invite, prohibit_investment, prohibit_disbursement, prohibit_recharge, remark, create_user, last_login_time, update_user
     </sql>
@@ -50,6 +51,7 @@
     <select id="tradingInfo" resultType="com.indo.user.pojo.bo.MemTradingBO">
         select mb.id                as id,
                mb.account           as account,
+               mb.nick_name         as nickName,
                mb.mem_level         as memLevel,
                mb.balance           as balance,
                mb.can_amount        as canAmount,
