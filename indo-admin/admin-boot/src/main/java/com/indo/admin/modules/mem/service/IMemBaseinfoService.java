@@ -1,12 +1,12 @@
 package com.indo.admin.modules.mem.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.indo.admin.pojo.req.MemAddReq;
-import com.indo.admin.pojo.req.MemBaseInfoPageReq;
-import com.indo.admin.pojo.req.MemEditStatusReq;
-import com.indo.admin.pojo.req.MemEditReq;
-import com.indo.admin.pojo.vo.MemBaseInfoVo;
-import com.indo.admin.pojo.vo.MemBaseDetailVO;
+import com.indo.admin.pojo.req.mem.MemAddReq;
+import com.indo.admin.pojo.req.mem.MemBaseInfoReq;
+import com.indo.admin.pojo.req.mem.MemEditStatusReq;
+import com.indo.admin.pojo.req.mem.MemEditReq;
+import com.indo.admin.pojo.vo.mem.MemBaseInfoVo;
+import com.indo.admin.pojo.vo.mem.MemBaseDetailVO;
 import com.indo.core.base.service.SuperService;
 import com.indo.core.pojo.entity.MemBaseinfo;
 
@@ -28,7 +28,7 @@ public interface IMemBaseinfoService extends SuperService<MemBaseinfo> {
      * @param memBaseInfoPageReq
      * @return
      */
-    Page<MemBaseInfoVo> queryList(MemBaseInfoPageReq memBaseInfoPageReq);
+    Page<MemBaseInfoVo> queryList(MemBaseInfoReq memBaseInfoPageReq);
 
     /**
      * 后台新增会员

@@ -2,8 +2,8 @@ package com.indo.admin.modules.mem.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.indo.admin.pojo.req.MeminviteCodePageReq;
-import com.indo.admin.pojo.vo.MemInviteCodeVo;
+import com.indo.admin.pojo.req.mem.InviteCodeReq;
+import com.indo.admin.pojo.vo.mem.MemInviteCodeVo;
 import com.indo.core.pojo.entity.MemInviteCode;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -21,5 +21,5 @@ import java.util.List;
 @Mapper
 public interface MemInviteCodeMapper extends BaseMapper<MemInviteCode> {
 
-    List<MemInviteCodeVo> queryList(@Param("page") Page<MemInviteCodeVo> page, @Param("req") MeminviteCodePageReq req);
+    List<MemInviteCodeVo> queryList(@Param("page") Page<MemInviteCodeVo> page, @Param("req") InviteCodeReq req);
 }

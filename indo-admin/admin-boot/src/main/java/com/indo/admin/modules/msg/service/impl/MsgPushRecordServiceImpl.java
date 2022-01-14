@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.indo.admin.modules.msg.mapper.MsgPushRecordMapper;
 import com.indo.admin.modules.msg.service.IMsgPushRecordService;
 import com.indo.admin.pojo.dto.MsgDTO;
-import com.indo.admin.pojo.vo.MsgPushRecordVO;
+import com.indo.admin.pojo.vo.msg.MsgPushRecordVO;
 import com.indo.common.web.util.DozerUtil;
 import com.indo.common.web.util.JwtUtils;
 import com.indo.core.pojo.entity.MsgPushRecord;

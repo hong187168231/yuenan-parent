@@ -8,7 +8,7 @@ import com.indo.admin.modules.mem.mapper.MemLevelMapper;
 import com.indo.admin.modules.msg.mapper.MsgStationLetterMapper;
 import com.indo.admin.modules.msg.service.IMsgStationLetterService;
 import com.indo.admin.pojo.dto.MsgDTO;
-import com.indo.admin.pojo.vo.MsgStationLetterVO;
+import com.indo.admin.pojo.vo.msg.MsgStationLetterVO;
 import com.indo.common.web.util.DozerUtil;
 import com.indo.core.pojo.entity.MsgStationLetter;
 import com.indo.user.pojo.req.msg.StationLetterAddReq;

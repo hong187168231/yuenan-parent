@@ -1,9 +1,9 @@
 package com.indo.admin.modules.mem.controller;
 
 
-import com.indo.admin.pojo.req.MemRebateAddReq;
+import com.indo.admin.pojo.req.mem.MemRebateAddReq;
 import com.indo.admin.modules.mem.service.IMemRebateService;
-import com.indo.admin.pojo.vo.MemRebateVo;
+import com.indo.admin.pojo.vo.mem.MemRebateVo;
 import com.indo.common.result.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

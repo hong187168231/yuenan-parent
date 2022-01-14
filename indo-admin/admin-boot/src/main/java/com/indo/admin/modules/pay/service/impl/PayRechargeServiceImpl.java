@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.indo.admin.modules.pay.mapper.PayRechargeMapper;
 import com.indo.admin.modules.pay.service.IPayRechargeService;
-import com.indo.admin.pojo.req.PayRechargeReq;
+import com.indo.admin.pojo.req.pay.PayRechargeReq;
 import com.indo.admin.pojo.vo.pay.RechargeOrderVO;
 import com.indo.core.pojo.entity.PayRecharge;
 import org.springframework.beans.factory.annotation.Autowired;

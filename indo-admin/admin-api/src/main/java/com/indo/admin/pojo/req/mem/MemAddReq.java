@@ -1,4 +1,4 @@
-package com.indo.admin.pojo.req;
+package com.indo.admin.pojo.req.mem;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

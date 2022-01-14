@@ -3,7 +3,7 @@ package com.indo.admin.modules.msg.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.indo.admin.pojo.dto.MsgDTO;
-import com.indo.admin.pojo.vo.MsgStationLetterVO;
+import com.indo.admin.pojo.vo.msg.MsgStationLetterVO;
 import com.indo.core.pojo.entity.MsgStationLetter;
 import com.indo.user.pojo.req.msg.StationLetterAddReq;
 import com.indo.user.pojo.req.msg.StationLetterQueryReq;

@@ -2,7 +2,7 @@ package com.indo.admin.modules.act.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.indo.admin.pojo.dto.ActivityTypeDTO;
-import com.indo.admin.pojo.vo.ActivityTypeVO;
+import com.indo.admin.pojo.vo.act.ActivityTypeVO;
 import com.indo.common.result.Result;
 import com.indo.core.pojo.entity.ActivityType;
 

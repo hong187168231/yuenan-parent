@@ -2,8 +2,8 @@ package com.indo.admin.api.fallback;
 
 import com.indo.admin.api.MsgFeignClient;
 import com.indo.admin.pojo.dto.MsgDTO;
-import com.indo.admin.pojo.vo.MsgPushRecordVO;
-import com.indo.admin.pojo.vo.MsgStationLetterVO;
+import com.indo.admin.pojo.vo.msg.MsgPushRecordVO;
+import com.indo.admin.pojo.vo.msg.MsgStationLetterVO;
 import com.indo.common.result.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

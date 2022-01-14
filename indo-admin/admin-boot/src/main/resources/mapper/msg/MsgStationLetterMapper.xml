@@ -3,7 +3,7 @@
 <mapper namespace="com.indo.admin.modules.msg.mapper.MsgStationLetterMapper">
 
 
-    <resultMap id="SysStationLetterVo"  type="com.indo.admin.pojo.vo.MsgStationLetterVO">
+    <resultMap id="SysStationLetterVo"  type="com.indo.admin.pojo.vo.msg.MsgStationLetterVO">
         <id column="id" property="id"/>
         <result column="create_time" property="createTime"/>
         <result column="title" property="title"/>

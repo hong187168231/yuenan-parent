@@ -2,7 +2,7 @@ package com.indo.admin.modules.agent.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.indo.admin.pojo.req.MemAgentApplyPageReq;
+import com.indo.admin.pojo.req.agnet.MemAgentApplyPageReq;
 import com.indo.admin.pojo.vo.agent.AgentApplyVO;
 import com.indo.core.pojo.entity.AgentApply;
 import org.apache.ibatis.annotations.Mapper;

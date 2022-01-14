@@ -1,7 +1,7 @@
 package com.indo.admin.modules.ade.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.indo.admin.pojo.vo.AdvertiseVO;
+import com.indo.admin.pojo.vo.act.AdvertiseVO;
 import com.indo.common.result.Result;
 import com.indo.core.pojo.entity.Advertise;
 import com.indo.user.pojo.req.AdvertiseQueryReq;

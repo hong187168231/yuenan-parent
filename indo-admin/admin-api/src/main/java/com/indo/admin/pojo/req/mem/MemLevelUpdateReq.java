@@ -1,4 +1,4 @@
-package com.indo.admin.pojo.req;
+package com.indo.admin.pojo.req.mem;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -13,7 +13,10 @@ import java.math.BigDecimal;
 
 @Data
 @ApiModel
-public class MemLevelAddReq {
+public class MemLevelUpdateReq {
+
+    @ApiModelProperty(value = "id")
+    private Integer id;
 
     @ApiModelProperty(value = "会员等级")
     private String level;

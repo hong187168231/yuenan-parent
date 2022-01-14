@@ -2,10 +2,10 @@ package com.indo.admin.modules.mem.controller;
 
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.indo.admin.pojo.req.MemBankRelationPageReq;
-import com.indo.admin.pojo.req.MemBankRelationSwitchStatusReq;
+import com.indo.admin.pojo.req.mem.MemBankPageReq;
+import com.indo.admin.pojo.req.mem.MemBankSwitchReq;
 import com.indo.admin.modules.mem.service.IMemBankService;
-import com.indo.admin.pojo.vo.MemBankVO;
+import com.indo.admin.pojo.vo.mem.MemBankVO;
 import com.indo.common.result.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -35,14 +35,14 @@ public class MemBankController {
 
     @ApiOperation(value = "分页查询")
     @PostMapping(value = "/page")
-    public Result<List<MemBankVO>> page(@RequestBody MemBankRelationPageReq req) {
+    public Result<List<MemBankVO>> page(@RequestBody MemBankPageReq req) {
         Page<MemBankVO> result = memBankRelationService.queryList(req);
         return Result.success(result.getRecords(), result.getTotal());
     }
 
     @ApiOperation(value = "启用、禁用")
     @PostMapping(value = "/switchStatus")
-    public Result switchStatus(@RequestBody MemBankRelationSwitchStatusReq req) {
+    public Result switchStatus(@RequestBody MemBankSwitchReq req) {
         memBankRelationService.switchStatus(req);
         return Result.success();
     }

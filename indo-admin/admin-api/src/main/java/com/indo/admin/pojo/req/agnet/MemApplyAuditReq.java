@@ -1,4 +1,4 @@
-package com.indo.admin.pojo.req;
+package com.indo.admin.pojo.req.agnet;
 
 import com.indo.common.enums.AudiTypeEnum;
 import io.swagger.annotations.ApiModel;

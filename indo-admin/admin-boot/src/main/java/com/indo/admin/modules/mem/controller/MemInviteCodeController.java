@@ -1,9 +1,9 @@
 package com.indo.admin.modules.mem.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.indo.admin.pojo.req.MeminviteCodePageReq;
+import com.indo.admin.pojo.req.mem.InviteCodeReq;
 import com.indo.admin.modules.mem.service.IMemInviteCodeService;
-import com.indo.admin.pojo.vo.MemInviteCodeVo;
+import com.indo.admin.pojo.vo.mem.MemInviteCodeVo;
 import com.indo.common.result.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -33,7 +33,7 @@ public class MemInviteCodeController {
 
     @ApiOperation(value = "分页查询")
     @PostMapping(value = "/page")
-    public Result<List<MemInviteCodeVo>> page(@RequestBody MeminviteCodePageReq req) {
+    public Result<List<MemInviteCodeVo>> page(@RequestBody InviteCodeReq req) {
         Page<MemInviteCodeVo> result = memInviteCodeService.queryList(req);
         return Result.success(result.getRecords(), result.getTotal());
     }

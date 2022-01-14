@@ -1,7 +1,7 @@
 package com.indo.user.controller;
 
 
-import com.indo.admin.pojo.vo.AdvertiseVO;
+import com.indo.admin.pojo.vo.act.AdvertiseVO;
 import com.indo.common.annotation.AllowAccess;
 import com.indo.common.constant.RedisConstants;
 import com.indo.common.result.Result;

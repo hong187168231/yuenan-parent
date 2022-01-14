@@ -2,8 +2,8 @@ package com.indo.admin.api;
 
 import com.indo.admin.api.fallback.MsgFeignFallback;
 import com.indo.admin.pojo.dto.MsgDTO;
-import com.indo.admin.pojo.vo.MsgPushRecordVO;
-import com.indo.admin.pojo.vo.MsgStationLetterVO;
+import com.indo.admin.pojo.vo.msg.MsgPushRecordVO;
+import com.indo.admin.pojo.vo.msg.MsgStationLetterVO;
 import com.indo.common.constant.ServiceIdConstant;
 import com.indo.common.result.Result;
 import org.springframework.cloud.openfeign.FeignClient;

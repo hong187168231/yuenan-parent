@@ -8,7 +8,7 @@ import com.indo.admin.common.util.AdminBusinessRedisUtils;
 import com.indo.admin.modules.act.mapper.ActivityTypeMapper;
 import com.indo.admin.modules.act.service.IActivityTypeService;
 import com.indo.admin.pojo.dto.ActivityTypeDTO;
-import com.indo.admin.pojo.vo.ActivityTypeVO;
+import com.indo.admin.pojo.vo.act.ActivityTypeVO;
 import com.indo.common.constant.RedisConstants;
 import com.indo.common.result.Result;
 import com.indo.common.web.exception.BizException;

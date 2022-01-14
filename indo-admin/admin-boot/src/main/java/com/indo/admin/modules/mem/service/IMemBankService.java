@@ -2,9 +2,9 @@ package com.indo.admin.modules.mem.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.indo.admin.pojo.req.MemBankRelationPageReq;
-import com.indo.admin.pojo.req.MemBankRelationSwitchStatusReq;
-import com.indo.admin.pojo.vo.MemBankVO;
+import com.indo.admin.pojo.req.mem.MemBankPageReq;
+import com.indo.admin.pojo.req.mem.MemBankSwitchReq;
+import com.indo.admin.pojo.vo.mem.MemBankVO;
 import com.indo.core.pojo.entity.MemBank;
 
 /**
@@ -17,8 +17,8 @@ import com.indo.core.pojo.entity.MemBank;
  */
 public interface IMemBankService extends IService<MemBank> {
 
-    Page<MemBankVO> queryList(MemBankRelationPageReq req);
+    Page<MemBankVO> queryList(MemBankPageReq req);
 
-    void switchStatus(MemBankRelationSwitchStatusReq req);
+    void switchStatus(MemBankSwitchReq req);
 
 }

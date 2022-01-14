@@ -1,6 +1,6 @@
-package com.indo.admin.pojo.req;
+package com.indo.admin.pojo.req.mem;
 
-import com.indo.admin.pojo.vo.MemBetVo;
+import com.indo.admin.pojo.vo.mem.MemBetVo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

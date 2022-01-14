@@ -7,7 +7,7 @@ import com.indo.admin.common.constant.SystemConstants;
 import com.indo.admin.common.util.AdminBusinessRedisUtils;
 import com.indo.admin.modules.ade.mapper.AdvertiseRecordMapper;
 import com.indo.admin.modules.ade.service.IAdvertiseService;
-import com.indo.admin.pojo.vo.AdvertiseVO;
+import com.indo.admin.pojo.vo.act.AdvertiseVO;
 import com.indo.common.constant.RedisConstants;
 import com.indo.common.result.Result;
 import com.indo.common.web.exception.BizException;

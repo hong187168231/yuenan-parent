@@ -4,8 +4,8 @@ package com.indo.admin.rpc;
 import com.indo.admin.modules.msg.service.IMsgPushRecordService;
 import com.indo.admin.modules.msg.service.IMsgStationLetterService;
 import com.indo.admin.pojo.dto.MsgDTO;
-import com.indo.admin.pojo.vo.MsgPushRecordVO;
-import com.indo.admin.pojo.vo.MsgStationLetterVO;
+import com.indo.admin.pojo.vo.msg.MsgPushRecordVO;
+import com.indo.admin.pojo.vo.msg.MsgStationLetterVO;
 import com.indo.common.result.Result;
 import org.springframework.web.bind.annotation.*;
 

@@ -2,8 +2,8 @@ package com.indo.user.controller;
 
 import com.indo.admin.api.MsgFeignClient;
 import com.indo.admin.pojo.dto.MsgDTO;
-import com.indo.admin.pojo.vo.MsgPushRecordVO;
-import com.indo.admin.pojo.vo.MsgStationLetterVO;
+import com.indo.admin.pojo.vo.msg.MsgPushRecordVO;
+import com.indo.admin.pojo.vo.msg.MsgStationLetterVO;
 import com.indo.common.annotation.LoginUser;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;

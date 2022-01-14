@@ -2,7 +2,7 @@ package com.indo.admin.modules.ade.controller;
 
 
 import com.indo.admin.modules.ade.service.IAdvertiseService;
-import com.indo.admin.pojo.vo.AdvertiseVO;
+import com.indo.admin.pojo.vo.act.AdvertiseVO;
 import com.indo.common.result.Result;
 import com.indo.user.pojo.req.AdvertiseQueryReq;
 import com.indo.user.pojo.req.agent.AdvertiseReq;

@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.indo.admin.pojo.dto.PayChannelDTO;
 import com.indo.admin.pojo.dto.PayChannelQueryDTO;
-import com.indo.admin.pojo.vo.PayChannelConfigVO;
+import com.indo.admin.pojo.vo.pay.PayChannelConfigVO;
 import com.indo.core.pojo.entity.PayChannelConfig;
 
 /**

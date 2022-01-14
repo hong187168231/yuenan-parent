@@ -11,12 +11,12 @@ import com.indo.admin.modules.mem.service.IMemBaseinfoService;
 import com.indo.common.utils.DateUtils;
 import com.indo.common.utils.StringUtils;
 import com.indo.common.utils.encrypt.MD5;
-import com.indo.admin.pojo.req.MemAddReq;
-import com.indo.admin.pojo.req.MemBaseInfoPageReq;
-import com.indo.admin.pojo.req.MemEditStatusReq;
-import com.indo.admin.pojo.req.MemEditReq;
-import com.indo.admin.pojo.vo.MemBaseInfoVo;
-import com.indo.admin.pojo.vo.MemBaseDetailVO;
+import com.indo.admin.pojo.req.mem.MemAddReq;
+import com.indo.admin.pojo.req.mem.MemBaseInfoReq;
+import com.indo.admin.pojo.req.mem.MemEditStatusReq;
+import com.indo.admin.pojo.req.mem.MemEditReq;
+import com.indo.admin.pojo.vo.mem.MemBaseInfoVo;
+import com.indo.admin.pojo.vo.mem.MemBaseDetailVO;
 import com.indo.common.web.exception.BizException;
 import com.indo.core.base.service.impl.SuperServiceImpl;
 import com.indo.core.pojo.bo.MemBaseinfoBo;
@@ -47,7 +47,7 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
     private AgentRelationMapper agentRelationMapper;
 
     @Override
-    public Page<MemBaseInfoVo> queryList(MemBaseInfoPageReq req) {
+    public Page<MemBaseInfoVo> queryList(MemBaseInfoReq req) {
         Page<MemBaseInfoVo> page = new Page<>(req.getPage(), req.getLimit());
         List<MemBaseInfoVo> list = memBaseInfoMapper.queryList(page, req);
         page.setRecords(list);

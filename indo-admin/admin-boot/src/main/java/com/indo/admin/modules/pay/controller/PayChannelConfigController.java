@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.modules.pay.service.IPayChannelConfigService;
 import com.indo.admin.pojo.dto.PayChannelDTO;
 import com.indo.admin.pojo.dto.PayChannelQueryDTO;
-import com.indo.admin.pojo.vo.PayChannelConfigVO;
+import com.indo.admin.pojo.vo.pay.PayChannelConfigVO;
 import com.indo.common.result.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

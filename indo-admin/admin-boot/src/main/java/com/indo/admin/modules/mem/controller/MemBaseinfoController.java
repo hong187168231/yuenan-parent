@@ -3,13 +3,13 @@ package com.indo.admin.modules.mem.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.modules.mem.service.IMemBaseinfoService;
-import com.indo.admin.pojo.vo.MemBaseDetailVO;
+import com.indo.admin.pojo.vo.mem.MemBaseDetailVO;
 import com.indo.common.result.Result;
-import com.indo.admin.pojo.req.MemAddReq;
-import com.indo.admin.pojo.req.MemBaseInfoPageReq;
-import com.indo.admin.pojo.req.MemEditStatusReq;
-import com.indo.admin.pojo.req.MemEditReq;
-import com.indo.admin.pojo.vo.MemBaseInfoVo;
+import com.indo.admin.pojo.req.mem.MemAddReq;
+import com.indo.admin.pojo.req.mem.MemBaseInfoReq;
+import com.indo.admin.pojo.req.mem.MemEditStatusReq;
+import com.indo.admin.pojo.req.mem.MemEditReq;
+import com.indo.admin.pojo.vo.mem.MemBaseInfoVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -39,7 +39,7 @@ public class MemBaseinfoController {
 
     @ApiOperation(value = "分页查询")
     @PostMapping(value = "/listByPage")
-    public Result<List<MemBaseInfoVo>> getMemBaseInfo(@RequestBody MemBaseInfoPageReq baseInfoPageReq) {
+    public Result<List<MemBaseInfoVo>> getMemBaseInfo(@RequestBody MemBaseInfoReq baseInfoPageReq) {
         Page<MemBaseInfoVo> result = memBaseinfoService.queryList(baseInfoPageReq);
         return Result.success(result.getRecords(), result.getTotal());
     }

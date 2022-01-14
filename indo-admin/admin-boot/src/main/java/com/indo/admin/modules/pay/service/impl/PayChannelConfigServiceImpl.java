@@ -6,7 +6,7 @@ import com.indo.admin.modules.pay.mapper.PayChannelConfigMapper;
 import com.indo.admin.modules.pay.service.IPayChannelConfigService;
 import com.indo.admin.pojo.dto.PayChannelDTO;
 import com.indo.admin.pojo.dto.PayChannelQueryDTO;
-import com.indo.admin.pojo.vo.PayChannelConfigVO;
+import com.indo.admin.pojo.vo.pay.PayChannelConfigVO;
 import com.indo.core.pojo.entity.PayChannelConfig;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;

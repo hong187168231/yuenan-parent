@@ -1,6 +1,6 @@
 package com.indo.admin.common.util;
 
-import com.indo.admin.pojo.req.MemRebateAddReq;
+import com.indo.admin.pojo.req.mem.MemRebateAddReq;
 import com.indo.common.constant.RedisKeys;
 import com.indo.common.redis.utils.RedisUtils;
 import com.indo.common.result.ResultCode;

@@ -3,10 +3,10 @@ package com.indo.admin.modules.mem.service.impl;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.indo.admin.modules.mem.mapper.MemBankMapper;
-import com.indo.admin.pojo.req.MemBankRelationPageReq;
-import com.indo.admin.pojo.req.MemBankRelationSwitchStatusReq;
+import com.indo.admin.pojo.req.mem.MemBankPageReq;
+import com.indo.admin.pojo.req.mem.MemBankSwitchReq;
 import com.indo.admin.modules.mem.service.IMemBankService;
-import com.indo.admin.pojo.vo.MemBankVO;
+import com.indo.admin.pojo.vo.mem.MemBankVO;
 import com.indo.core.pojo.entity.MemBank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,7 +28,7 @@ public class MemBankServiceImpl extends ServiceImpl<MemBankMapper, MemBank> impl
     private MemBankMapper memBankMapper;
 
     @Override
-    public Page<MemBankVO> queryList(MemBankRelationPageReq req) {
+    public Page<MemBankVO> queryList(MemBankPageReq req) {
         Page<MemBankVO> page = new Page<>(req.getPage(), req.getLimit());
         List<MemBankVO> list = memBankMapper.queryList(page, req);
         page.setRecords(list);
@@ -36,7 +36,7 @@ public class MemBankServiceImpl extends ServiceImpl<MemBankMapper, MemBank> impl
     }
 
     @Override
-    public void switchStatus(MemBankRelationSwitchStatusReq req) {
+    public void switchStatus(MemBankSwitchReq req) {
         MemBank memBankRelation = new MemBank();
         memBankRelation.setMemBankId(req.getId());
         memBankRelation.setStatus(req.getStatus());

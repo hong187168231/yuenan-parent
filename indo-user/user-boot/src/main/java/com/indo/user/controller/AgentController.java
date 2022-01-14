@@ -2,7 +2,7 @@ package com.indo.user.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.pojo.req.agnet.AgentRebateRecordReq;
-import com.indo.admin.pojo.vo.MemBetVo;
+import com.indo.admin.pojo.vo.mem.MemBetVo;
 import com.indo.admin.pojo.vo.agent.AgentRebateInfoVO;
 import com.indo.admin.pojo.vo.agent.AgentRebateRecordVO;
 import com.indo.admin.pojo.vo.agent.AgentSubVO;

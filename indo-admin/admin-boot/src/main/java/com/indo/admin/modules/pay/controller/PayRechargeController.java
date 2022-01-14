@@ -3,7 +3,7 @@ package com.indo.admin.modules.pay.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.modules.pay.service.IPayRechargeService;
-import com.indo.admin.pojo.req.PayRechargeReq;
+import com.indo.admin.pojo.req.pay.PayRechargeReq;
 import com.indo.admin.pojo.vo.pay.RechargeOrderVO;
 import com.indo.common.result.Result;
 import io.swagger.annotations.Api;

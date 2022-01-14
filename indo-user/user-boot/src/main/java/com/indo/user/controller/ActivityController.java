@@ -1,7 +1,7 @@
 package com.indo.user.controller;
 
 
-import com.indo.admin.pojo.vo.ActivityTypeVO;
+import com.indo.admin.pojo.vo.act.ActivityTypeVO;
 import com.indo.common.annotation.AllowAccess;
 import com.indo.common.constant.GlobalConstants;
 import com.indo.common.constant.RedisConstants;

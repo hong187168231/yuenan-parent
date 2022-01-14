@@ -3,7 +3,7 @@ package com.indo.admin.modules.act.controller;
 
 import com.indo.admin.modules.act.service.IActivityTypeService;
 import com.indo.admin.pojo.dto.ActivityTypeDTO;
-import com.indo.admin.pojo.vo.ActivityTypeVO;
+import com.indo.admin.pojo.vo.act.ActivityTypeVO;
 import com.indo.common.result.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;

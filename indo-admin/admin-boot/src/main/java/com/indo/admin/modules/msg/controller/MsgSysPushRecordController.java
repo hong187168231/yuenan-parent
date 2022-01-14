@@ -3,7 +3,7 @@ package com.indo.admin.modules.msg.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.modules.msg.service.IMsgPushRecordService;
-import com.indo.admin.pojo.vo.MsgPushRecordVO;
+import com.indo.admin.pojo.vo.msg.MsgPushRecordVO;
 import com.indo.common.result.Result;
 import com.indo.user.pojo.req.msg.PushRecordAddReq;
 import com.indo.user.pojo.req.msg.PushRecordQueryReq;

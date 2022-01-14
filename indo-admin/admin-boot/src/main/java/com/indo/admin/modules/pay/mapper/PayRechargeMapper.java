@@ -2,7 +2,7 @@ package com.indo.admin.modules.pay.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.indo.admin.pojo.req.PayRechargeReq;
+import com.indo.admin.pojo.req.pay.PayRechargeReq;
 import com.indo.admin.pojo.vo.pay.RechargeOrderVO;
 import com.indo.core.pojo.entity.PayRecharge;
 import org.apache.ibatis.annotations.Mapper;

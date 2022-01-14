@@ -25,7 +25,7 @@
 
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="Base2ResultMap" type="com.indo.admin.pojo.vo.PayWayConfigVO">
+    <resultMap id="Base2ResultMap" type="com.indo.admin.pojo.vo.pay.PayWayConfigVO">
         <id column="pay_way_id" property="payWayId"/>
         <result column="pay_channel_id" property="payChannelId"/>
         <result column="channel_name" property="channelName"/>

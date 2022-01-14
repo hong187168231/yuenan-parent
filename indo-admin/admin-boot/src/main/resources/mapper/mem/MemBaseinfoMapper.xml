@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.indo.admin.modules.mem.mapper.MemBaseinfoMapper">
 
-    <select id="queryList" resultType="com.indo.admin.pojo.vo.MemBaseInfoVo">
+    <select id="queryList" resultType="com.indo.admin.pojo.vo.mem.MemBaseInfoVo">
         SELECT * FROM mem_baseinfo mb
         left join mem_invite_code mic
         on mb.id = mic.mem_id

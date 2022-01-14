@@ -1,12 +1,17 @@
-package com.indo.admin.pojo.vo;
+package com.indo.user.pojo.req.agent;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.indo.common.base.BaseDTO;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-@Data
-public class AdvertiseVO {
+import javax.validation.constraints.NotNull;
 
-    @ApiModelProperty(value = "主键id")
+@Data
+public class AdvertiseReq {
+
+    @ApiModelProperty(value = "主键")
     private Long adeId;
 
     @ApiModelProperty(value = "图片地址")
@@ -20,9 +25,6 @@ public class AdvertiseVO {
 
     @ApiModelProperty(value = "状态 0 下架1 上架")
     private Integer status;
-
-    @ApiModelProperty(value = "创建时间")
-    private String createTime;
 
     @ApiModelProperty(value = "备注")
     private String remark;

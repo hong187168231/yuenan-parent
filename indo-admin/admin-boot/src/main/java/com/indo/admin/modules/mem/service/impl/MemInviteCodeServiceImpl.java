@@ -3,9 +3,9 @@ package com.indo.admin.modules.mem.service.impl;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.indo.admin.modules.mem.mapper.MemInviteCodeMapper;
-import com.indo.admin.pojo.req.MeminviteCodePageReq;
+import com.indo.admin.pojo.req.mem.InviteCodeReq;
 import com.indo.admin.modules.mem.service.IMemInviteCodeService;
-import com.indo.admin.pojo.vo.MemInviteCodeVo;
+import com.indo.admin.pojo.vo.mem.MemInviteCodeVo;
 import com.indo.admin.pojo.req.mem.InviteCodeSwitchReq;
 import com.indo.core.pojo.entity.MemInviteCode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ public class MemInviteCodeServiceImpl extends ServiceImpl<MemInviteCodeMapper, M
     private MemInviteCodeMapper memInviteCodeMapper;
 
     @Override
-    public Page<MemInviteCodeVo> queryList(MeminviteCodePageReq req) {
+    public Page<MemInviteCodeVo> queryList(InviteCodeReq req) {
         Page<MemInviteCodeVo> page = new Page<>(req.getPage(), req.getLimit());
         List<MemInviteCodeVo> list = memInviteCodeMapper.queryList(page, req);
         page.setRecords(list);

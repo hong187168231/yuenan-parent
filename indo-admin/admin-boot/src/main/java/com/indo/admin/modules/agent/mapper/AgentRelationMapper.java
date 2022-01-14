@@ -2,8 +2,8 @@ package com.indo.admin.modules.agent.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.indo.admin.pojo.req.MemAgentPageReq;
-import com.indo.admin.pojo.req.SubordinateReq;
+import com.indo.admin.pojo.req.agnet.MemAgentPageReq;
+import com.indo.admin.pojo.req.agnet.SubordinateReq;
 import com.indo.admin.pojo.vo.agent.AgentSubVO;
 import com.indo.admin.pojo.vo.agent.AgentVo;
 import com.indo.core.pojo.entity.AgentRelation;

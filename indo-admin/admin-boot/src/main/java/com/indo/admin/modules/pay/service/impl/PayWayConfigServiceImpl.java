@@ -6,7 +6,7 @@ import com.indo.admin.modules.pay.mapper.PayWayConfigMapper;
 import com.indo.admin.modules.pay.service.IPayWayConfigService;
 import com.indo.admin.pojo.dto.PayWayDTO;
 import com.indo.admin.pojo.dto.PayWayQueryDTO;
-import com.indo.admin.pojo.vo.PayWayConfigVO;
+import com.indo.admin.pojo.vo.pay.PayWayConfigVO;
 import com.indo.core.pojo.entity.PayWayConfig;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
