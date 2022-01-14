@@ -5,8 +5,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.indo.admin.pojo.dto.MsgDTO;
 import com.indo.admin.pojo.vo.MsgPushRecordVO;
 import com.indo.core.pojo.entity.MsgPushRecord;
-import com.indo.user.pojo.dto.PushRecordAddDTO;
-import com.indo.user.pojo.dto.PushRecordQueryDTO;
+import com.indo.user.pojo.req.msg.PushRecordAddReq;
+import com.indo.user.pojo.req.msg.PushRecordQueryReq;
 
 import java.util.List;
 
@@ -24,14 +24,14 @@ public interface IMsgPushRecordService extends IService<MsgPushRecord> {
      * @param queryDTO
      * @return
      */
-    Page<MsgPushRecordVO> queryList(PushRecordQueryDTO queryDTO);
+    Page<MsgPushRecordVO> queryList(PushRecordQueryReq queryDTO);
 
     /**
      * 新增推送
      * @param pushRecordAddDTO
      * @return
      */
-    void add(PushRecordAddDTO pushRecordAddDTO);
+    void add(PushRecordAddReq pushRecordAddDTO);
 
 
     List<MsgPushRecordVO> getSysMsg(MsgDTO msgDTO);

@@ -14,8 +14,8 @@ import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
 import com.indo.common.web.util.JwtUtils;
 import com.indo.core.pojo.entity.Advertise;
-import com.indo.user.pojo.dto.AdvertiseQueryDTO;
-import com.indo.user.pojo.dto.AdvertiseDTO;
+import com.indo.user.pojo.req.AdvertiseQueryReq;
+import com.indo.user.pojo.req.agent.AdvertiseReq;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,7 +39,7 @@ public class AdvertiseServiceImpl extends ServiceImpl<AdvertiseRecordMapper, Adv
     private DozerUtil dozerUtil;
 
     @Override
-    public Result<List<AdvertiseVO>> queryList(AdvertiseQueryDTO queryDTO) {
+    public Result<List<AdvertiseVO>> queryList(AdvertiseQueryReq queryDTO) {
         Page<Advertise> agentApplyPage = new Page<>(queryDTO.getPage(), queryDTO.getLimit());
         LambdaQueryWrapper<Advertise> wrapper = new LambdaQueryWrapper<>();
         wrapper.orderByDesc(Advertise::getUpdateTime);
@@ -50,7 +50,7 @@ public class AdvertiseServiceImpl extends ServiceImpl<AdvertiseRecordMapper, Adv
 
     @Override
     @Transactional
-    public boolean add(AdvertiseDTO advertiseDTO) {
+    public boolean add(AdvertiseReq advertiseDTO) {
         Advertise advertise = new Advertise();
         BeanUtils.copyProperties(advertiseDTO, advertise);
         advertise.setCreateUser(JwtUtils.getUsername());
@@ -65,7 +65,7 @@ public class AdvertiseServiceImpl extends ServiceImpl<AdvertiseRecordMapper, Adv
 
     @Override
     @Transactional
-    public boolean edit(AdvertiseDTO advertiseDTO) {
+    public boolean edit(AdvertiseReq advertiseDTO) {
         checkAdeOpera(advertiseDTO.getAdeId());
         Advertise advertise = findAdvertiseById(advertiseDTO.getAdeId());
         if (null == advertise) {

@@ -43,7 +43,6 @@ public class SwaggerConfiguration {
         //密码模式
         String passwordTokenUrl = "http://localhost:9999/indo-admin/oauth/token";
         if (profiles.equals("test")) {
-            log.info("SwaggerConfiguration  is by  " + profiles);
             passwordTokenUrl = "http://154.204.57.207:9999/indo-auth/oauth/token";
         }
 

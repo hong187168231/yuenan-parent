@@ -4,8 +4,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.modules.mem.service.IMemBaseinfoService;
 import com.indo.common.result.PageResult;
 import com.indo.common.result.Result;
-import com.indo.user.pojo.dto.AgentReportDto;
-import com.indo.user.pojo.dto.MemReportDto;
+import com.indo.user.pojo.req.agent.AgentReportReq;
+import com.indo.user.pojo.req.mem.MemReportReq;
 import com.indo.user.pojo.vo.AgentReportVo;
 import com.indo.user.pojo.vo.MemReportVo;
 import io.swagger.annotations.Api;
@@ -33,7 +33,7 @@ public class DataReportController {
 
     @ApiOperation(value = "查询会员报表")
     @GetMapping(value = "/memReportList")
-    public Result<PageResult<MemReportVo>> memReportList(MemReportDto dto) {
+    public Result<PageResult<MemReportVo>> memReportList(MemReportReq dto) {
         Integer pageNum = 1;
         Integer pageSize = 10;
         if (null != dto.getPage() && null != dto.getLimit()) {
@@ -55,7 +55,7 @@ public class DataReportController {
 
     @ApiOperation(value = "查询代理报表")
     @GetMapping(value = "/agentReportList")
-    public Result<PageResult<AgentReportVo>> agentReportList(AgentReportDto dto) {
+    public Result<PageResult<AgentReportVo>> agentReportList(AgentReportReq dto) {
         Integer pageNum = 1;
         Integer pageSize = 10;
         if (null != dto.getPage() && null != dto.getLimit()) {

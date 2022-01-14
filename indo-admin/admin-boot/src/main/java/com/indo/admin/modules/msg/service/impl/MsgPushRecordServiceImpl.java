@@ -7,12 +7,11 @@ import com.indo.admin.modules.msg.mapper.MsgPushRecordMapper;
 import com.indo.admin.modules.msg.service.IMsgPushRecordService;
 import com.indo.admin.pojo.dto.MsgDTO;
 import com.indo.admin.pojo.vo.MsgPushRecordVO;
-import com.indo.admin.pojo.vo.MsgStationLetterVO;
 import com.indo.common.web.util.DozerUtil;
 import com.indo.common.web.util.JwtUtils;
 import com.indo.core.pojo.entity.MsgPushRecord;
-import com.indo.user.pojo.dto.PushRecordAddDTO;
-import com.indo.user.pojo.dto.PushRecordQueryDTO;
+import com.indo.user.pojo.req.msg.PushRecordAddReq;
+import com.indo.user.pojo.req.msg.PushRecordQueryReq;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,7 +33,7 @@ public class MsgPushRecordServiceImpl extends ServiceImpl<MsgPushRecordMapper, M
     private MsgPushRecordMapper pushRecordMapper;
 
     @Override
-    public Page<MsgPushRecordVO> queryList(PushRecordQueryDTO queryDTO) {
+    public Page<MsgPushRecordVO> queryList(PushRecordQueryReq queryDTO) {
         Page<MsgPushRecordVO> page = new Page<>(queryDTO.getPage(), queryDTO.getLimit());
         List<MsgPushRecordVO> list = pushRecordMapper.queryList(page, queryDTO);
         page.setRecords(list);
@@ -42,7 +41,7 @@ public class MsgPushRecordServiceImpl extends ServiceImpl<MsgPushRecordMapper, M
     }
 
     @Override
-    public void add(PushRecordAddDTO pushRecordAddDTO) {
+    public void add(PushRecordAddReq pushRecordAddDTO) {
         // 向客户端推送 todo
         MsgPushRecord pushRecord = new MsgPushRecord();
         pushRecord.setCreateUser(JwtUtils.getUsername());

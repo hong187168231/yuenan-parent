@@ -3,12 +3,9 @@ package com.indo.admin.modules.mem.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.modules.mem.service.IMemGiftReceiveService;
-import com.indo.admin.modules.msg.service.IMsgStationLetterService;
 import com.indo.admin.pojo.dto.GiftReceiveDTO;
-import com.indo.admin.pojo.vo.MsgStationLetterVO;
 import com.indo.admin.pojo.vo.mem.MemGiftReceiveVO;
 import com.indo.common.result.Result;
-import com.indo.user.pojo.dto.StationLetterQueryDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;

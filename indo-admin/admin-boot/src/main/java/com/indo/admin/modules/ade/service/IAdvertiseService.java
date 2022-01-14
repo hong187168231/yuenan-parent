@@ -4,8 +4,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.indo.admin.pojo.vo.AdvertiseVO;
 import com.indo.common.result.Result;
 import com.indo.core.pojo.entity.Advertise;
-import com.indo.user.pojo.dto.AdvertiseQueryDTO;
-import com.indo.user.pojo.dto.AdvertiseDTO;
+import com.indo.user.pojo.req.AdvertiseQueryReq;
+import com.indo.user.pojo.req.agent.AdvertiseReq;
 
 import java.util.List;
 
@@ -25,7 +25,7 @@ public interface IAdvertiseService extends IService<Advertise> {
      * @param pushRecordDTO
      * @return
      */
-    Result<List<AdvertiseVO>> queryList(AdvertiseQueryDTO pushRecordDTO);
+    Result<List<AdvertiseVO>> queryList(AdvertiseQueryReq pushRecordDTO);
 
     /**
      * 新增广告
@@ -33,7 +33,7 @@ public interface IAdvertiseService extends IService<Advertise> {
      * @param advertiseDTO
      * @return
      */
-    boolean add(AdvertiseDTO advertiseDTO);
+    boolean add(AdvertiseReq advertiseDTO);
 
 
     /**
@@ -42,7 +42,7 @@ public interface IAdvertiseService extends IService<Advertise> {
      * @param advertiseDTO
      * @return
      */
-    boolean edit(AdvertiseDTO advertiseDTO);
+    boolean edit(AdvertiseReq advertiseDTO);
 
     /**
      * 删除广告

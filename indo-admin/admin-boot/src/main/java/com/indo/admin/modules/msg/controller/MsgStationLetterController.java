@@ -4,12 +4,10 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.modules.msg.service.IMsgStationLetterService;
 import com.indo.admin.pojo.vo.MsgStationLetterVO;
 import com.indo.common.result.Result;
-import com.indo.user.pojo.dto.MsgStationLetterDTO;
-import com.indo.user.pojo.dto.StationLetterAddDTO;
-import com.indo.user.pojo.dto.StationLetterQueryDTO;
+import com.indo.user.pojo.req.msg.StationLetterAddReq;
+import com.indo.user.pojo.req.msg.StationLetterQueryReq;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -35,20 +33,16 @@ public class MsgStationLetterController {
 
     @ApiOperation(value = "分页查询站内信")
     @GetMapping(value = "/list")
-    public Result<List<MsgStationLetterVO>> list(StationLetterQueryDTO queryDto) {
-        Page relust = stationLetterService.queryList(queryDto);
-        return Result.success(relust.getRecords(), relust.getTotal());
+    public Result<List<MsgStationLetterVO>> list(StationLetterQueryReq queryDto) {
+        Page result = stationLetterService.queryList(queryDto);
+        return Result.success(result.getRecords(), result.getTotal());
     }
 
     @ApiOperation(value = "增加站内信")
     @PostMapping(value = "/add")
-    public Result add(@RequestBody StationLetterAddDTO letterDTO) {
+    public Result add(@RequestBody StationLetterAddReq letterDTO) {
         int count = stationLetterService.add(letterDTO);
-        if (count > 0) {
-            return Result.success();
-        } else {
-            return Result.failed();
-        }
+        return Result.judge(count > 0);
     }
 
     @ApiOperation(value = "批量删除站内信")

@@ -3,7 +3,7 @@ package com.indo.admin.modules.mem.mapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.core.base.mapper.SuperMapper;
 import com.indo.core.pojo.entity.MemBanRebate;
-import com.indo.user.pojo.dto.MemBanRebateDto;
+import com.indo.user.pojo.req.mem.MemBanRebateReq;
 import com.indo.user.pojo.vo.MemBanRebateVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -24,6 +24,6 @@ import java.util.List;
 @Repository
 public interface MemBanRebateMapper extends SuperMapper<MemBanRebate> {
 
-    List<MemBanRebateVo> selectMemBanRebate(@Param("page") Page<MemBanRebateVo> page, @Param("dto") MemBanRebateDto dto);
+    List<MemBanRebateVo> selectMemBanRebate(@Param("page") Page<MemBanRebateVo> page, @Param("dto") MemBanRebateReq dto);
 
 }

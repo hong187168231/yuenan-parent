@@ -5,8 +5,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.indo.admin.pojo.dto.MsgDTO;
 import com.indo.admin.pojo.vo.MsgStationLetterVO;
 import com.indo.core.pojo.entity.MsgStationLetter;
-import com.indo.user.pojo.dto.StationLetterAddDTO;
-import com.indo.user.pojo.dto.StationLetterQueryDTO;
+import com.indo.user.pojo.req.msg.StationLetterAddReq;
+import com.indo.user.pojo.req.msg.StationLetterQueryReq;
 
 import java.util.List;
 
@@ -25,7 +25,7 @@ public interface IMsgStationLetterService extends IService<MsgStationLetter> {
      * @param queryDTO
      * @return
      */
-    Page<MsgStationLetterVO> queryList(StationLetterQueryDTO queryDTO);
+    Page<MsgStationLetterVO> queryList(StationLetterQueryReq queryDTO);
 
     /**
      * 新增站内信
@@ -33,7 +33,7 @@ public interface IMsgStationLetterService extends IService<MsgStationLetter> {
      * @param
      * @return
      */
-    int add(StationLetterAddDTO letterDTO);
+    int add(StationLetterAddReq letterDTO);
 
 
     List<MsgStationLetterVO> getPersonalMsg(MsgDTO msgDTO);

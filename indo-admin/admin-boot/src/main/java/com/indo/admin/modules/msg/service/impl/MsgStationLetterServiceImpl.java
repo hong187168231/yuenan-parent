@@ -11,8 +11,8 @@ import com.indo.admin.pojo.dto.MsgDTO;
 import com.indo.admin.pojo.vo.MsgStationLetterVO;
 import com.indo.common.web.util.DozerUtil;
 import com.indo.core.pojo.entity.MsgStationLetter;
-import com.indo.user.pojo.dto.StationLetterAddDTO;
-import com.indo.user.pojo.dto.StationLetterQueryDTO;
+import com.indo.user.pojo.req.msg.StationLetterAddReq;
+import com.indo.user.pojo.req.msg.StationLetterQueryReq;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,7 +41,7 @@ public class MsgStationLetterServiceImpl extends ServiceImpl<MsgStationLetterMap
     private DozerUtil dozerUtil;
 
     @Override
-    public Page<MsgStationLetterVO> queryList(StationLetterQueryDTO queryDTO) {
+    public Page<MsgStationLetterVO> queryList(StationLetterQueryReq queryDTO) {
         Page<MsgStationLetterVO> page = new Page<>(queryDTO.getPage(), queryDTO.getLimit());
         List<MsgStationLetterVO> list = letterMapper.queryList(page, queryDTO);
         page.setRecords(list);
@@ -49,7 +49,7 @@ public class MsgStationLetterServiceImpl extends ServiceImpl<MsgStationLetterMap
     }
 
     @Override
-    public int add(StationLetterAddDTO letterDTO) {
+    public int add(StationLetterAddReq letterDTO) {
         MsgStationLetter letter = new MsgStationLetter();
         BeanUtils.copyProperties(letterDTO, letter);
 //        letter.setCreateTime(new Date());
