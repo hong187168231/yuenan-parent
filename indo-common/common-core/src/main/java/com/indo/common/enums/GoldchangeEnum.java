@@ -38,6 +38,7 @@ public enum GoldchangeEnum {
     SUPERLOTTO(309, "国年大乐透"),
 
 
+    TXKK(401, "提现扣款"),
     JJTC(407, "奖金提出");
 
     private Integer code;

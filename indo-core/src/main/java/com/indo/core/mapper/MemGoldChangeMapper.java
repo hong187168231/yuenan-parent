@@ -3,6 +3,7 @@ package com.indo.core.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.indo.core.pojo.bo.MemBaseinfoBo;
 import com.indo.core.pojo.entity.MemGoldChange;
+import com.indo.core.pojo.vo.MemTradingVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -20,13 +21,13 @@ import java.math.BigDecimal;
 public interface MemGoldChangeMapper extends BaseMapper<MemGoldChange> {
 
 
-    MemBaseinfoBo findMemBaseInfoById(@Param("memId") Long memId);
-
-    MemBaseinfoBo findMemBaseInfoByAccount(@Param("account") String account);
-
     //更新会员金额变动
     int updateMemberAmount(@Param("balance") BigDecimal amount,
-                           @Param("canAmount") BigDecimal canAmount, @Param("userId") Long userId);
+                           @Param("canAmount") BigDecimal canAmount,
+                           @Param("betAmount") BigDecimal betAmount,
+                           @Param("rechargeAmount") BigDecimal rechargeAmount,
+                           @Param("canAmount") BigDecimal cashAmount,
+                           @Param("userId") Long userId);
 
 
 }

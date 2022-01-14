@@ -12,9 +12,4 @@ public class MemAgentApplyReq {
     @ApiModelProperty(value = "真实姓名", required = true)
     private String realName;
 
-    @ApiModelProperty(value = "手机号", required = true)
-    private String mobile;
-
-    @ApiModelProperty(value = "验证码", required = true)
-    private String smsCode;
 }

@@ -1,5 +1,6 @@
 package com.indo.core.service.impl;
 
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.indo.common.constant.GlobalConstants;
@@ -7,13 +8,17 @@ import com.indo.common.constant.RedisKeys;
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.common.redis.utils.RedisUtils;
+import com.indo.common.result.Result;
+import com.indo.common.result.ResultCode;
 import com.indo.common.utils.SnowflakeIdWorker;
 import com.indo.common.web.exception.BizException;
 import com.indo.core.base.service.impl.SuperServiceImpl;
 import com.indo.core.mapper.MemGoldChangeMapper;
+import com.indo.core.mapper.MemTradingMapper;
 import com.indo.core.pojo.bo.MemBaseinfoBo;
 import com.indo.core.pojo.dto.MemGoldChangeDto;
 import com.indo.core.pojo.entity.MemGoldChange;
+import com.indo.core.pojo.vo.MemTradingVO;
 import com.indo.core.service.IMemGoldChangeService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -25,6 +30,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -47,7 +53,7 @@ public class MemGoldChangeServiceImpl extends SuperServiceImpl<MemGoldChangeMapp
     private RedissonClient redissonClient;
 
     @Autowired
-    private MemGoldChangeMapper memGoldChangeMapper;
+    private MemTradingMapper memTradingMapper;
 
     /**
      * 需要修改可提现金额的账变类型
@@ -58,6 +64,26 @@ public class MemGoldChangeServiceImpl extends SuperServiceImpl<MemGoldChangeMapp
         enumList.add(GoldchangeEnum.CANCEL_BET);
 
     }
+
+
+    private static final List<GoldchangeEnum> profitAndLossList = new LinkedList<>();
+
+    private static final List<GoldchangeEnum> tzList = new LinkedList<>();
+    private static final List<GoldchangeEnum> rechargeList = new LinkedList<>();
+    private static final List<GoldchangeEnum> takeCashList = new LinkedList<>();
+
+
+    static {
+        // 投注
+        tzList.add(GoldchangeEnum.CANCEL_BET);
+        // 充值
+        rechargeList.add(GoldchangeEnum.CZ);
+        rechargeList.add(GoldchangeEnum.DSFZF);
+        // 提现
+        takeCashList.add(GoldchangeEnum.TXKK);
+
+    }
+
 
     /**
      * 修改用户账变信息
@@ -82,7 +108,7 @@ public class MemGoldChangeServiceImpl extends SuperServiceImpl<MemGoldChangeMapp
             if (bool) {
                 begin = System.currentTimeMillis();
                 log.info("用户修改余额拿到锁{}", change.getUserId());
-                MemBaseinfoBo memBaseinfo = memGoldChangeMapper.findMemBaseInfoById(Long.valueOf(userId));
+                MemBaseinfoBo memBaseinfo = memTradingMapper.findMemBaseInfoById(Long.valueOf(userId));
                 if (memBaseinfo == null) {
                     log.info("{} updateUserBalance member is null,memBaseinfo: {}", change.getUserId(), memBaseinfo);
                     throw new BizException("用户不存在");
@@ -104,6 +130,25 @@ public class MemGoldChangeServiceImpl extends SuperServiceImpl<MemGoldChangeMapp
                 // 获取会员变动后可提金额
                 BigDecimal changeCanAmount = calculateChangeCanAmount(change);
                 BigDecimal afterCodeAmount = canAmount.add(changeCanAmount);
+
+                //默认金额
+                BigDecimal defaultAmount = getTradeOffAmount(null);
+                // 投注变动
+                BigDecimal betAmount = defaultAmount;
+                // 充值变动
+                BigDecimal rechargeAmount = defaultAmount;
+                // 提现变动
+                BigDecimal cashAmount = defaultAmount;
+
+                GoldchangeEnum goldchangeEnum = change.getGoldchangeEnum();
+                if (tzList.contains(goldchangeEnum)) {
+                    betAmount = betAmount.add(changeAmount);
+                } else if (rechargeList.contains(goldchangeEnum)) {
+                    rechargeAmount =  rechargeAmount.add(changeAmount);
+                } else if (takeCashList.contains(goldchangeEnum)) {
+                    cashAmount =  cashAmount.add(changeAmount);
+                }
+
                 // 添加账变记录
                 if (changeAmount.compareTo(BigDecimal.ZERO) != 0) {
                     MemGoldChange memGoldChange = new MemGoldChange();
@@ -130,7 +175,12 @@ public class MemGoldChangeServiceImpl extends SuperServiceImpl<MemGoldChangeMapp
                         throw new BizException("操作失败");
                     }
                 }
-                int row = this.updateMemberAmount(changeAmount, changeCanAmount, memBaseinfo.getId());
+                int row = updateMemberAmount(changeAmount,
+                        changeCanAmount,
+                        betAmount,
+                        rechargeAmount,
+                        cashAmount,
+                        memBaseinfo.getId());
                 if (row != 1) {
                     log.error("{} updateUserBalance updateMemberAmount 更新余额失败. return:{}", userId, row);
                     throw new BizException("操作失败");
@@ -149,7 +199,6 @@ public class MemGoldChangeServiceImpl extends SuperServiceImpl<MemGoldChangeMapp
             lock.writeLock().unlock();
             log.info("{} updateUserBalance 用户修改余额释放锁", userId);
         }
-
 
     }
 
@@ -171,10 +220,15 @@ public class MemGoldChangeServiceImpl extends SuperServiceImpl<MemGoldChangeMapp
     }
 
 
-    @Override
-    public int updateMemberAmount(BigDecimal amount, BigDecimal canAmount, Long userId) {
-        int row = baseMapper.updateMemberAmount(amount, canAmount, userId);
+    public int updateMemberAmount(BigDecimal amount,
+                                  BigDecimal canAmount,
+                                  BigDecimal betAmount,
+                                  BigDecimal rechargeAmount,
+                                  BigDecimal cashAmount,
+                                  Long userId) {
+        int row = baseMapper.updateMemberAmount(amount, canAmount, betAmount, rechargeAmount, cashAmount, userId);
         RedisUtils.del(RedisKeys.APP_MEMBER + userId);
         return row;
     }
+
 }

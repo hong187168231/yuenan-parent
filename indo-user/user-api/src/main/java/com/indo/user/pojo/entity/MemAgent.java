@@ -33,6 +33,9 @@ public class MemAgent extends BaseEntity {
     @ApiModelProperty(value = "用户ID")
     private Long memId;
 
+    @ApiModelProperty(value = "用户账号")
+    private String account;
+
     @ApiModelProperty(value = "团队数")
     private Integer teamNum;
 

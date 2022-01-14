@@ -12,6 +12,7 @@ import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
 import com.indo.core.base.service.SuperService;
 import com.indo.core.mapper.MemGoldChangeMapper;
+import com.indo.core.mapper.MemTradingMapper;
 import com.indo.core.pojo.bo.MemBaseinfoBo;
 import com.indo.core.util.BusinessRedisUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -29,10 +30,10 @@ import java.util.List;
 public abstract class SuperServiceImpl<M extends BaseMapper<T>, T> extends ServiceImpl<M, T> implements SuperService<T> {
 
     @Autowired
-    private MemGoldChangeMapper memGoldChangeMapper;
+    private MemTradingMapper memTradingMapper;
 
-    protected String getMemIdByAccount(String account) {
-        return getMemCacheBaseInfo(account).getAccount();
+    protected Long getMemIdByAccount(String account) {
+        return getMemCacheBaseInfo(account).getId();
     }
 
     protected MemBaseinfoBo getMemCacheBaseInfo(String account) {
@@ -45,7 +46,7 @@ public abstract class SuperServiceImpl<M extends BaseMapper<T>, T> extends Servi
     }
 
     private MemBaseinfoBo findMemBaseInfoByAccount(String account) {
-        MemBaseinfoBo memBaseinfoBo = memGoldChangeMapper.findMemBaseInfoByAccount(account);
+        MemBaseinfoBo memBaseinfoBo = memTradingMapper.findMemBaseInfoByAccount(account);
         if (null == memBaseinfoBo) {
             throw new BizException("用户不存在");
         }

@@ -47,6 +47,10 @@ public class RedisKeys {
     public static final String SYS_RABBITMQ_MSG_ID_KEY = "SYS:RABBITMQ_MSG_ID_KEY:";
 
 
+    // 提现频率
+    public static final String CASH_FREQUENCY = "CASH:CASH_FREQUENCY:";
+
+
     public static final String GAME_PLATFORM_KEY = "GAME_PLATFORM_KEY_";
     /**
      * 用户对象key: key后拼接id

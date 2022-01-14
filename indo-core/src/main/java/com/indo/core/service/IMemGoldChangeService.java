@@ -5,6 +5,7 @@ import com.indo.core.base.service.SuperService;
 import com.indo.core.pojo.bo.MemBaseinfoBo;
 import com.indo.core.pojo.dto.MemGoldChangeDto;
 import com.indo.core.pojo.entity.MemGoldChange;
+import com.indo.core.pojo.vo.MemTradingVO;
 
 import java.math.BigDecimal;
 
@@ -27,8 +28,6 @@ public interface IMemGoldChangeService extends SuperService<MemGoldChange> {
      */
     boolean updateMemGoldChange(MemGoldChangeDto change) throws RuntimeException;
 
-
-    int updateMemberAmount(BigDecimal amount, BigDecimal canAmount, Long userId);
 
 
 }
