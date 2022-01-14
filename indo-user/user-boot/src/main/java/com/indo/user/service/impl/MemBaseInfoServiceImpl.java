@@ -10,12 +10,11 @@ import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
 import com.indo.core.base.service.impl.SuperServiceImpl;
 import com.indo.core.pojo.bo.MemBaseinfoBo;
-import com.indo.core.pojo.entity.MemAgent;
+import com.indo.core.pojo.entity.AgentRelation;
 import com.indo.core.pojo.entity.MemBaseinfo;
 import com.indo.core.pojo.entity.MemInviteCode;
-import com.indo.core.pojo.vo.MemTradingVO;
 import com.indo.user.common.util.UserBusinessRedisUtils;
-import com.indo.user.mapper.MemAgentMapper;
+import com.indo.user.mapper.AgentRelationMapper;
 import com.indo.user.mapper.MemBaseInfoMapper;
 import com.indo.user.mapper.MemInviteCodeMapper;
 import com.indo.user.pojo.bo.MemTradingBO;
@@ -26,7 +25,6 @@ import com.indo.user.pojo.req.mem.UpdateBaseInfoReq;
 import com.indo.user.pojo.req.mem.UpdatePasswordReq;
 import com.indo.user.pojo.vo.AppLoginVo;
 import com.indo.user.pojo.vo.mem.MemBaseInfoVo;
-import com.indo.user.pojo.vo.mem.MemTradingVo;
 import com.indo.user.service.MemBaseInfoService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -34,7 +32,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.Date;
 
 @Service
@@ -43,7 +40,7 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
 
 
     @Autowired
-    private MemAgentMapper memAgentMapper;
+    private AgentRelationMapper memAgentMapper;
 
     @Autowired
     private MemInviteCodeMapper memInviteCodeMapper;
@@ -152,20 +149,20 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
 
 
     public void initMemAgent(MemBaseinfo memBaseinfo, MemInviteCode parentInviteCode) {
-        MemAgent memAgent = new MemAgent();
-        memAgent.setMemId(memBaseinfo.getId());
-        memAgent.setIsDel(false);
-        memAgent.setParentId(parentInviteCode.getMemId());
-        memAgent.setSuperior(parentInviteCode.getAccount());
-        memAgentMapper.insert(memAgent);
+        AgentRelation agentRelation = new AgentRelation();
+        agentRelation.setMemId(memBaseinfo.getId());
+        agentRelation.setIsDel(false);
+        agentRelation.setParentId(parentInviteCode.getMemId());
+        agentRelation.setSuperior(parentInviteCode.getAccount());
+        memAgentMapper.insert(agentRelation);
     }
 
 
     public void initMemParentAgent(MemBaseinfo memBaseinfo, MemInviteCode parentInviteCode) {
-        LambdaQueryWrapper<MemAgent> wrapper = new LambdaQueryWrapper();
-        wrapper.eq(MemAgent::getMemId, parentInviteCode.getMemId())
-                .eq(MemAgent::getIsDel, false);
-        MemAgent parentAgent = memAgentMapper.selectOne(wrapper);
+        LambdaQueryWrapper<AgentRelation> wrapper = new LambdaQueryWrapper();
+        wrapper.eq(AgentRelation::getMemId, parentInviteCode.getMemId())
+                .eq(AgentRelation::getIsDel, false);
+        AgentRelation parentAgent = memAgentMapper.selectOne(wrapper);
         if (ObjectUtil.isNull(wrapper)) {
             throw new BizException("该邀请人未成为代理");
         }

@@ -10,10 +10,10 @@ import com.indo.common.web.exception.BizException;
 import com.indo.core.base.service.impl.SuperServiceImpl;
 import com.indo.core.pojo.entity.AgentRebate;
 import com.indo.core.pojo.entity.AgentRebateRecord;
-import com.indo.core.pojo.entity.MemAgent;
+import com.indo.core.pojo.entity.AgentRelation;
 import com.indo.user.mapper.AgentRebateMapper;
 import com.indo.user.mapper.AgentRebateRecordMapper;
-import com.indo.user.mapper.MemAgentMapper;
+import com.indo.user.mapper.AgentRelationMapper;
 import com.indo.user.service.IAgentRebateRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,7 +37,7 @@ public class AgentRebateRecordServiceImpl extends SuperServiceImpl<AgentRebateRe
     @Autowired
     private AgentRebateMapper agentRebateMapper;
     @Autowired
-    private MemAgentMapper memAgentMapper;
+    private AgentRelationMapper memAgentMapper;
 
     @Override
     public AgentRebateInfoVO rebateInfo(LoginInfo loginInfo) {
@@ -65,13 +65,13 @@ public class AgentRebateRecordServiceImpl extends SuperServiceImpl<AgentRebateRe
 
     @Override
     public Page<AgentRebateRecordVO> subRebateList(AgentRebateRecordReq req, LoginInfo loginInfo) {
-        LambdaQueryWrapper<MemAgent> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(MemAgent::getSuperior, loginInfo.getAccount());
+        LambdaQueryWrapper<AgentRelation> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(AgentRelation::getSuperior, loginInfo.getAccount());
         Integer agentCount = memAgentMapper.selectCount(wrapper);
         if (agentCount < 1) {
             throw new BizException("你还没有下级");
         }
-        wrapper.eq(MemAgent::getAccount, req.getAccount());
+        wrapper.eq(AgentRelation::getAccount, req.getAccount());
         agentCount = memAgentMapper.selectCount(wrapper);
         if (agentCount < 1) {
             throw new BizException("请输入正确的下级账号");

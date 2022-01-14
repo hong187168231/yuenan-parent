@@ -4,8 +4,8 @@ package com.indo.admin.modules.mem.controller;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.pojo.req.MemBankRelationPageReq;
 import com.indo.admin.pojo.req.MemBankRelationSwitchStatusReq;
-import com.indo.admin.modules.mem.service.IMemBankRelationService;
-import com.indo.admin.pojo.vo.MemBankRelationVO;
+import com.indo.admin.modules.mem.service.IMemBankService;
+import com.indo.admin.pojo.vo.MemBankVO;
 import com.indo.common.result.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -28,15 +28,15 @@ import java.util.List;
 @Api(tags = "会员银行卡")
 @RestController
 @RequestMapping("/api/v1/mem/bank-relation")
-public class MemBankRelationController {
+public class MemBankController {
 
     @Autowired
-    private IMemBankRelationService memBankRelationService;
+    private IMemBankService memBankRelationService;
 
     @ApiOperation(value = "分页查询")
     @PostMapping(value = "/page")
-    public Result<List<MemBankRelationVO>> page(@RequestBody MemBankRelationPageReq req) {
-        Page<MemBankRelationVO> result = memBankRelationService.queryList(req);
+    public Result<List<MemBankVO>> page(@RequestBody MemBankRelationPageReq req) {
+        Page<MemBankVO> result = memBankRelationService.queryList(req);
         return Result.success(result.getRecords(), result.getTotal());
     }
 

@@ -4,12 +4,9 @@ package com.indo.admin.modules.agent.controller;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.modules.agent.service.IAgentCashApplyService;
 import com.indo.admin.modules.agent.service.IAgentCashRecordService;
-import com.indo.admin.modules.agent.service.IAgentRebateRecordService;
 import com.indo.admin.pojo.req.agnet.AgentCashReq;
-import com.indo.admin.pojo.req.agnet.AgentRebateRecordReq;
 import com.indo.admin.pojo.vo.agent.AgentCashApplyVO;
 import com.indo.admin.pojo.vo.agent.AgentCashRecordVO;
-import com.indo.admin.pojo.vo.agent.AgentRebateRecordVO;
 import com.indo.common.result.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -31,7 +28,7 @@ import java.util.List;
 @Api(tags = "代理提现接口")
 @RestController
 @RequestMapping("/agent/cash")
-public class AgentCashController {
+public class AgentTakeCashController {
 
 
     @Autowired

@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.pojo.vo.agent.AgentSubVO;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.core.base.service.SuperService;
-import com.indo.core.pojo.entity.MemAgent;
+import com.indo.core.pojo.entity.AgentRelation;
 import com.indo.user.pojo.req.mem.MemAgentApplyReq;
 import com.indo.user.pojo.req.mem.SubordinateAppReq;
 
@@ -16,7 +16,7 @@ import com.indo.user.pojo.req.mem.SubordinateAppReq;
  * @author xxx
  * @since 2021-12-11
  */
-public interface IMemAgentService extends SuperService<MemAgent> {
+public interface IMemAgentService extends SuperService<AgentRelation> {
 
     boolean apply(MemAgentApplyReq req, LoginInfo loginInfo);
 

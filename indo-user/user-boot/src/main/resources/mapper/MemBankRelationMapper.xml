@@ -3,7 +3,7 @@
 <mapper namespace="com.indo.user.mapper.MemBankRelationMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.indo.core.pojo.entity.MemBankRelation">
+    <resultMap id="BaseResultMap" type="com.indo.core.pojo.entity.MemBank">
         <id column="mem_bank_id" property="memBankId"/>
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>

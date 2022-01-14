@@ -5,8 +5,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.indo.admin.modules.agent.mapper.AgentRebateMapper;
 import com.indo.admin.modules.agent.service.IAgentPendingRebateService;
-import com.indo.admin.modules.mem.mapper.AgentPendingRebateMapper;
-import com.indo.admin.modules.mem.mapper.AgentRebateRecordMapper;
 import com.indo.admin.pojo.req.agnet.AgentPendingRebateReq;
 import com.indo.admin.pojo.vo.agent.AgentPendingRebateVO;
 import com.indo.common.web.util.JwtUtils;

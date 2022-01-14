@@ -1,7 +1,7 @@
 package com.indo.user.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.indo.core.pojo.entity.MemAgentApply;
+import com.indo.core.pojo.entity.AgentApply;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -13,6 +13,6 @@ import org.apache.ibatis.annotations.Mapper;
  * @since 2021-11-19
  */
 @Mapper
-public interface MemAgentApplyMapper extends BaseMapper<MemAgentApply> {
+public interface AgentApplyMapper extends BaseMapper<AgentApply> {
 
 }

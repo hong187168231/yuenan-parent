@@ -21,9 +21,9 @@ import java.math.BigDecimal;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("mem_agent")
+@TableName("agent_relation")
 @ApiModel(value = "Agent对象", description = "会员下级表")
-public class MemAgent extends BaseEntity {
+public class AgentRelation extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 

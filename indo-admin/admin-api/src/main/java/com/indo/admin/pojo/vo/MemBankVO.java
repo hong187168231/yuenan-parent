@@ -14,7 +14,7 @@ import java.util.Date;
  * @Desc: 用户银行卡信息返回类
  */
 @Data
-public class MemBankRelationVO {
+public class MemBankVO {
 
     @ApiModelProperty(value = "主键")
     @TableId(value = "id", type = IdType.AUTO)

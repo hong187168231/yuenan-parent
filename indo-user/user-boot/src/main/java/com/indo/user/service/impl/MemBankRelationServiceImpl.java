@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.web.util.DozerUtil;
-import com.indo.core.pojo.entity.MemBankRelation;
+import com.indo.core.pojo.entity.MemBank;
 import com.indo.user.mapper.MemBankRelationMapper;
 import com.indo.user.pojo.req.mem.AddBankCardReq;
 import com.indo.user.pojo.vo.MemBankVo;
@@ -24,7 +24,7 @@ import java.util.List;
  * @since 2021-11-17
  */
 @Service
-public class MemBankRelationServiceImpl extends ServiceImpl<MemBankRelationMapper, MemBankRelation> implements IMemBankRelationService {
+public class MemBankRelationServiceImpl extends ServiceImpl<MemBankRelationMapper, MemBank> implements IMemBankRelationService {
 
     @Autowired
     private MemBankRelationMapper memBankRelationMapper;
@@ -32,7 +32,7 @@ public class MemBankRelationServiceImpl extends ServiceImpl<MemBankRelationMappe
 
     @Override
     public boolean addBankCard(AddBankCardReq req, LoginInfo loginUser) {
-        MemBankRelation memBankRelation = new MemBankRelation();
+        MemBank memBankRelation = new MemBank();
         BeanUtils.copyProperties(req, memBankRelation);
         memBankRelation.setMemId(loginUser.getId());
         return baseMapper.insert(memBankRelation) > 0;
@@ -40,9 +40,9 @@ public class MemBankRelationServiceImpl extends ServiceImpl<MemBankRelationMappe
 
     @Override
     public List<MemBankVo> findPage(LoginInfo loginUser) {
-        LambdaQueryWrapper<MemBankRelation> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(MemBankRelation::getMemId, loginUser.getId());
-        List<MemBankRelation> list = memBankRelationMapper.selectList(wrapper);
+        LambdaQueryWrapper<MemBank> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(MemBank::getMemId, loginUser.getId());
+        List<MemBank> list = memBankRelationMapper.selectList(wrapper);
         List<MemBankVo> result = DozerUtil.convert(list, MemBankVo.class);
         return result;
     }

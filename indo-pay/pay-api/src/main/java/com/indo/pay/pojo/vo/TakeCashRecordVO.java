@@ -32,5 +32,8 @@ public class TakeCashRecordVO implements Serializable {
     @ApiModelProperty(value = "提现申请时间")
     private String applyTime;
 
+    @ApiModelProperty(value = "打款时间")
+    private String remitTime;
+
 
 }

@@ -2,4 +2,31 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.indo.admin.modules.mem.mapper.MemBankMapper">
 
+    <select id="queryList" resultType="com.indo.admin.pojo.vo.MemBankVO">
+        SELECT * FROM mem_bank_relation mbr
+        where 1=1
+        <if test="req.keyword !=null and req.keyword !=''">
+            <if test="req.bankCategoryEnum == @com.indo.common.enums.BankCategoryEnum@MEM_ID">
+                and mbr.mem_id = #{req.keyword}
+            </if>
+            <if test="req.bankCategoryEnum == @com.indo.common.enums.BankCategoryEnum@BANK_CAED_NO">
+                and mbr.bank_card_no like concat('%', #{req.keyword,jdbcType=VARCHAR}, '%')
+            </if>
+            <if test="req.bankCategoryEnum == @com.indo.common.enums.BankCategoryEnum@CITY">
+                and mbr.city like concat('%', #{req.keyword,jdbcType=VARCHAR}, '%')
+            </if>
+            <if test="req.bankCategoryEnum == @com.indo.common.enums.BankCategoryEnum@BANK_NAME">
+                and mbr.bank_name like concat('%', #{req.keyword,jdbcType=VARCHAR}, '%')
+            </if>
+        </if>
+
+        <if test="req.startTime != null ">
+            and mbr.create_time &gt;= #{req.startTime}
+        </if>
+        <if test="req.endTime != null ">
+            and mbr.create_time &lt;= #{req.endTime}
+        </if>
+
+        ORDER BY mbr.create_time desc
+    </select>
 </mapper>

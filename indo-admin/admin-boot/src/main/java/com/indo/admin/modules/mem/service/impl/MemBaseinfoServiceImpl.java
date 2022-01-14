@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
-import com.indo.admin.modules.mem.mapper.MemAgentMapper;
+import com.indo.admin.modules.agent.mapper.AgentRelationMapper;
 import com.indo.admin.modules.mem.mapper.MemBaseinfoMapper;
 import com.indo.admin.modules.mem.service.IMemBaseinfoService;
 import com.indo.common.utils.DateUtils;
@@ -20,7 +20,7 @@ import com.indo.admin.pojo.vo.MemBaseDetailVO;
 import com.indo.common.web.exception.BizException;
 import com.indo.core.base.service.impl.SuperServiceImpl;
 import com.indo.core.pojo.bo.MemBaseinfoBo;
-import com.indo.core.pojo.entity.MemAgent;
+import com.indo.core.pojo.entity.AgentRelation;
 import com.indo.core.pojo.entity.MemBaseinfo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +44,7 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
     @Autowired
     private MemBaseinfoMapper memBaseInfoMapper;
     @Autowired
-    private MemAgentMapper memAgentMapper;
+    private AgentRelationMapper agentRelationMapper;
 
     @Override
     public Page<MemBaseInfoVo> queryList(MemBaseInfoPageReq req) {
@@ -69,7 +69,7 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
             }
         }
         MemBaseinfo memBaseinfo = new MemBaseinfo();
-        MemAgent memAgent = new MemAgent();
+        AgentRelation memAgent = new AgentRelation();
         BeanUtils.copyProperties(req, memBaseinfo);
         memBaseinfo.setPasswordMd5(MD5.md5(req.getPassword()));
         if (baseMapper.insert(memBaseinfo) > 0) {
@@ -80,7 +80,7 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
             if (memBaseinfo.getAccType().equals(2)) {
                 memAgent.setIsDel(true);
             }
-            int row = memAgentMapper.insert(memAgent);
+            int row = agentRelationMapper.insert(memAgent);
             if (row > 0) {
                 initMemParentAgent(memBaseinfo, supperMem.getId());
             }
@@ -89,10 +89,10 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
 
 
     public void initMemParentAgent(MemBaseinfo memBaseinfo, Long parentId) {
-        LambdaQueryWrapper<MemAgent> wrapper = new LambdaQueryWrapper();
-        wrapper.eq(MemAgent::getMemId, parentId)
-                .eq(MemAgent::getIsDel, false);
-        MemAgent parentAgent = memAgentMapper.selectOne(wrapper);
+        LambdaQueryWrapper<AgentRelation> wrapper = new LambdaQueryWrapper();
+        wrapper.eq(AgentRelation::getMemId, parentId)
+                .eq(AgentRelation::getIsDel, false);
+        AgentRelation parentAgent = agentRelationMapper.selectOne(wrapper);
         if (ObjectUtil.isNull(wrapper)) {
             throw new BizException("该邀请人未成为代理");
         }
@@ -100,7 +100,7 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
                 memBaseinfo.getId() + "" : parentAgent.getSubUserIds() + "," + memBaseinfo.getId();
         parentAgent.setSubUserIds(subUserIds);
         parentAgent.setTeamNum(parentAgent.getTeamNum() + 1);
-        memAgentMapper.updateById(parentAgent);
+        agentRelationMapper.updateById(parentAgent);
     }
 
     @Override

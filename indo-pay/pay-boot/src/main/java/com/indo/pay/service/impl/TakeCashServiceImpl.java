@@ -12,7 +12,7 @@ import com.indo.common.utils.SnowflakeIdWorker;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
 import com.indo.core.pojo.dto.MemGoldChangeDTO;
-import com.indo.core.pojo.entity.MemBankRelation;
+import com.indo.core.pojo.entity.MemBank;
 import com.indo.core.pojo.entity.PayTakeCash;
 import com.indo.core.service.IMemGoldChangeService;
 import com.indo.pay.mapper.MemBankRelationMapper;
@@ -51,7 +51,7 @@ public class TakeCashServiceImpl extends ServiceImpl<TakeCashMapper, PayTakeCash
 
     @Override
     public boolean takeCashApply(TakeCashApplyReq cashApplyReq, LoginInfo loginUser) {
-        MemBankRelation bridgeMemBank = new MemBankRelation();
+        MemBank bridgeMemBank = new MemBank();
         //  请求参数检查
         requestConditionCheck(loginUser, cashApplyReq);
         // 业务逻辑参数校验
@@ -102,7 +102,7 @@ public class TakeCashServiceImpl extends ServiceImpl<TakeCashMapper, PayTakeCash
      * @param loginUser
      * @param cashApplyReq
      */
-    public void logicConditionCheck(LoginInfo loginUser, TakeCashApplyReq cashApplyReq, MemBankRelation bridgeMemBank) {
+    public void logicConditionCheck(LoginInfo loginUser, TakeCashApplyReq cashApplyReq, MemBank bridgeMemBank) {
         MemTradingBO memTradingBO = this.getMemTradingInfo(loginUser.getAccount());
         // 账户余额不足
         if (cashApplyReq.getTakeCashAmount().compareTo(memTradingBO.getBalance()) == 1) {
@@ -118,7 +118,7 @@ public class TakeCashServiceImpl extends ServiceImpl<TakeCashMapper, PayTakeCash
 //            throw new BizException(StatusCode.EXIST_CASH_ORDER);
         }
         // 获取会员提现银行卡信息
-        MemBankRelation memBank = this.selectMemBankById(cashApplyReq.getMemBankId());
+        MemBank memBank = this.selectMemBankById(cashApplyReq.getMemBankId());
         // 银行卡信息无效
         if (memBank == null || memBank.getStatus().equals(0)
                 || !memBank.getAccount().equals(loginUser.getAccount())) {
@@ -158,9 +158,9 @@ public class TakeCashServiceImpl extends ServiceImpl<TakeCashMapper, PayTakeCash
     }
 
 
-    public MemBankRelation selectMemBankById(Long memBankId) {
-        LambdaQueryWrapper<MemBankRelation> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(MemBankRelation::getMemBankId, memBankId);
+    public MemBank selectMemBankById(Long memBankId) {
+        LambdaQueryWrapper<MemBank> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(MemBank::getMemBankId, memBankId);
         return memBankRelationMapper.selectOne(wrapper);
     }
 
@@ -185,7 +185,7 @@ public class TakeCashServiceImpl extends ServiceImpl<TakeCashMapper, PayTakeCash
      * @param memBank
      * @return
      */
-    public Long saveCashOrder(LoginInfo loginUser, TakeCashApplyReq cashApplyReq, MemBankRelation memBank) {
+    public Long saveCashOrder(LoginInfo loginUser, TakeCashApplyReq cashApplyReq, MemBank memBank) {
         PayTakeCash orderCash = new PayTakeCash();
         orderCash.setMemId(loginUser.getId());
         orderCash.setMemBankId(memBank.getMemBankId());

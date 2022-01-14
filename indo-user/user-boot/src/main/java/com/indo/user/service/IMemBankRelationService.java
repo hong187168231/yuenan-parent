@@ -2,7 +2,7 @@ package com.indo.user.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.indo.common.pojo.bo.LoginInfo;
-import com.indo.core.pojo.entity.MemBankRelation;
+import com.indo.core.pojo.entity.MemBank;
 import com.indo.user.pojo.req.mem.AddBankCardReq;
 import com.indo.user.pojo.vo.MemBankVo;
 
@@ -16,7 +16,7 @@ import java.util.List;
  * @author xxx
  * @since 2021-11-17
  */
-public interface IMemBankRelationService extends IService<MemBankRelation> {
+public interface IMemBankRelationService extends IService<MemBank> {
 
     boolean addBankCard(AddBankCardReq req,LoginInfo loginUser);
 

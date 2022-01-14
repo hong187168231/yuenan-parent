@@ -1,7 +1,7 @@
 package com.indo.pay.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.indo.core.pojo.entity.MemBankRelation;
+import com.indo.core.pojo.entity.MemBank;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -13,6 +13,6 @@ import org.apache.ibatis.annotations.Mapper;
  * @since 2021-11-17
  */
 @Mapper
-public interface MemBankRelationMapper extends BaseMapper<MemBankRelation> {
+public interface MemBankRelationMapper extends BaseMapper<MemBank> {
 
 }
