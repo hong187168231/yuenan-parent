@@ -12,6 +12,7 @@ import com.indo.user.mapper.MemLevelMapper;
 import com.indo.user.pojo.bo.MemTradingBO;
 import com.indo.user.pojo.vo.level.Gift;
 import com.indo.user.pojo.vo.level.LevelInfo;
+import com.indo.user.pojo.vo.level.LevelUpRuleVO;
 import com.indo.user.pojo.vo.level.MemLevelVo;
 import com.indo.user.pojo.vo.mem.MemTradingVo;
 import com.indo.user.service.IMemGiftReceiveService;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -135,51 +137,16 @@ public class MemLevelServiceImpl extends ServiceImpl<MemLevelMapper, MemLevel> i
     }
 
     @Override
-    public Integer getLevelByCondition(BigDecimal totalDeposit, BigDecimal totalBet) {
-        Integer totalD = totalDeposit.intValue() / 10000;
-        Integer totalB = totalBet.intValue() / 10000;
-        Integer level = 0;
-        if (totalD >= 5 && totalB >= 5) {
-            level = 1;
-
+    public List<LevelUpRuleVO> upRule(LoginInfo loginInfo) {
+        List<LevelUpRuleVO> upRuleVOS = new LinkedList<>();
+        List<MemLevel> levelList = getLevelList();
+        for (MemLevel memLevel : levelList) {
+            LevelUpRuleVO levelUpRuleVO = new LevelUpRuleVO();
+            levelUpRuleVO.setNeedBet(memLevel.getNeedBet());
+            levelUpRuleVO.setNeedDeposit(memLevel.getNeedDeposit());
+            upRuleVOS.add(levelUpRuleVO);
         }
-        if (totalD >= 3000 && totalB >= 300) {
-            level = 2;
-
-        }
-        if (totalD >= 15000 && totalB >= 1500) {
-            level = 3;
-
-        }
-        if (totalD >= 300000 && totalB >= 30000) {
-            level = 4;
-
-        }
-        if (totalD >= 1500000 && totalB >= 150000) {
-            level = 5;
-
-        }
-        if (totalD >= 3000000 && totalB >= 300000) {
-            level = 6;
-
-        }
-        if (totalD >= 9000000 && totalB >= 900000) {
-            level = 7;
-
-        }
-        if (totalD >= 15000000 && totalB >= 1500000) {
-            level = 8;
-
-        }
-        if (totalD >= 30000000 && totalB >= 2400000) {
-            level = 9;
-
-        }
-        if (totalD >= 150000000 || totalB >= 4500000) {
-            level = 10;
-
-        }
-        return level;
+        return upRuleVOS;
     }
 
 

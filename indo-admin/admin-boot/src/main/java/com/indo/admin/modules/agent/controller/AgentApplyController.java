@@ -32,7 +32,7 @@ public class AgentApplyController {
 
     @ApiOperation(value = "申请列表", httpMethod = "GET")
     @GetMapping(value = "/page")
-    public Result<List<AgentApplyVO>> page(@RequestBody MemAgentApplyPageReq req) {
+    public Result<List<AgentApplyVO>> page(MemAgentApplyPageReq req) {
         Page<AgentApplyVO> result = agentApplyService.getPage(req);
         return Result.success(result.getRecords(), result.getTotal());
     }

@@ -1,7 +1,7 @@
 package com.indo.admin.modules.mem.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.indo.core.pojo.entity.MemRebate;
+import com.indo.core.pojo.entity.AgentRebateConfig;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
@@ -15,6 +15,6 @@ import org.springframework.stereotype.Repository;
  */
 @Mapper
 @Repository
-public interface MemRebateMapper extends BaseMapper<MemRebate> {
+public interface MemRebateMapper extends BaseMapper<AgentRebateConfig> {
 
 }

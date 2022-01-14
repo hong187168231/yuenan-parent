@@ -3,7 +3,7 @@ package com.indo.admin.modules.mem.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.indo.admin.pojo.req.MemRebateAddReq;
 import com.indo.admin.pojo.vo.MemRebateVo;
-import com.indo.core.pojo.entity.MemRebate;
+import com.indo.core.pojo.entity.AgentRebateConfig;
 
 /**
  * <p>
@@ -13,7 +13,7 @@ import com.indo.core.pojo.entity.MemRebate;
  * @author kevin
  * @since 2021-11-04
  */
-public interface IMemRebateService extends IService<MemRebate> {
+public interface IMemRebateService extends IService<AgentRebateConfig> {
 
     MemRebateVo queryMemRabate();
 

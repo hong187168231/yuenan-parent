@@ -6,8 +6,8 @@
         SELECT * FROM mem_baseinfo mb
         left join mem_invite_code mic
         on mb.id = mic.mem_id
-        LEFT JOIN mem_agent ma
-        on mb.id = ma.mem_id
+        LEFT JOIN agent_relation ar
+        on mb.id = ar.mem_id
         <where>
             <if test="dto.id !=null">
                 and mb.id = #{dto.id}
@@ -37,13 +37,6 @@
         ORDER BY mb.create_time desc
     </select>
 
-
-    <select id="selectIdsByAccounts" resultType="java.lang.Long">
-
-    </select>
-    <select id="selectNickNameByAccounts" resultType="java.lang.String">
-
-    </select>
 
     <select id="findIdListByCreateTime" resultType="java.lang.Long">
         SELECT id FROM mem_baseinfo where

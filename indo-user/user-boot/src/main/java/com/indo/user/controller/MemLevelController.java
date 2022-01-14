@@ -34,4 +34,11 @@ public class MemLevelController {
     public Result<MemLevelVo> findAllVips(@LoginUser LoginInfo loginInfo) {
         return Result.success(memLevelService.findInfo(loginInfo));
     }
+
+
+    @ApiOperation(value = "等级升级规则", httpMethod = "GET")
+    @GetMapping(value = "/upRule")
+    public Result<MemLevelVo> upRule(@LoginUser LoginInfo loginInfo) {
+        return Result.success(memLevelService.findInfo(loginInfo));
+    }
 }

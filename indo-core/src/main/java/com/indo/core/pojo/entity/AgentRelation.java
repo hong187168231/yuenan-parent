@@ -48,12 +48,6 @@ public class AgentRelation extends BaseEntity {
     @ApiModelProperty(value = "上级代理")
     private String superior;
 
-    @ApiModelProperty(value = "总存款")
-    private BigDecimal totalDeposit;
-
-    @ApiModelProperty(value = "总取款")
-    private BigDecimal totalWithdraw;
-
     @ApiModelProperty(value = "是否删除.1=删除,0=未删除")
     private Boolean isDel;
 

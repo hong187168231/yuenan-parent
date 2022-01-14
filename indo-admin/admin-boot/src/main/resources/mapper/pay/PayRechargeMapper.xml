@@ -41,7 +41,7 @@
         FROM
         pay_channel_config pcc
         WHERE
-        pcc.pay_channel_id = a.payChannelId
+        pcc.pay_channel_id = a.channelId
         LIMIT 1
         ) AS channelName,
         (
@@ -50,30 +50,30 @@
         FROM
         pay_way_config pwc
         WHERE
-        pwc.pay_way_id = a.payWayId
+        pwc.pay_way_id = a.wayId
         LIMIT 1
         ) AS wayName
         FROM
         (
         SELECT
-        pro.recharge_order_id AS rechargeOrderId,
+        pro.recharge_id AS rechargeId,
         pro.order_no AS orderNo,
         mb.id AS memId,
         mb.mem_level AS memLevel,
         pro.real_amount AS realAmount,
-        pro.pay_channel_id AS payChannelId,
-        pro.pay_way_id AS payWayId,
+        pro.channel_id AS channelId,
+        pro.way_id AS wayId,
         pro.pay_time AS payTime
         FROM
-        pay_recharge_order pro
+        pay_recharge pro
         INNER JOIN mem_baseinfo mb ON pro.mem_id = mb.id
         ) a
         where 1=1
         <if test="req.payChannelId != null ">
-            and a.pay_channel_id = #{req.payChannelId}
+            and a.channel_id = #{req.payChannelId}
         </if>
         <if test="req.payWayId != null ">
-            and a.pay_way_id = #{req.payWayId}
+            and a.way_id = #{req.payWayId}
         </if>
         <if test="req.orderNo != null ">
             and a.order_no = #{req.orderNo}

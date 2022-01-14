@@ -2,40 +2,36 @@ package com.indo.admin.pojo.vo;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.util.Date;
 
 @Data
 public class MsgPushRecordVO {
 
-    /**
-     * 主键
-     */
+
+    @ApiModelProperty(value = "主键id")
     private Long id;
 
-    /**
-     * 标题
-     */
+    @ApiModelProperty(value = "标题")
     private String title;
 
-    /**
-     * 内容
-     */
+    @ApiModelProperty(value = "内容")
     private String content;
 
-    /**
-     * 推送终端: 0 全部 1 ios  2 android
-     */
+    @ApiModelProperty(value = "推送终端: 0 全部 1 ios  2 android")
     private Integer deviceType;
 
-    /**
-     * 是否删除 0 未删除 1 删除
-     */
+    @ApiModelProperty(value = "是否删除 0 未删除 1 删除")
     private Boolean isDel;
 
+    @ApiModelProperty(value = "创建人")
     private String createUser;
 
-    /**
-     * 备注
-     */
+    @ApiModelProperty(value = "创建时间")
+    private String createTime;
+
+    @ApiModelProperty(value = "备注")
     private String remark;
 }

@@ -21,10 +21,6 @@ import java.util.List;
 @Mapper
 public interface MemBaseinfoMapper extends BaseMapper<MemBaseinfo> {
 
-    List<Long> selectIdsByAccounts(List<String> accounts);
-
-    List<String> selectNickNameByAccounts(List<String> receiver);
-
     List<MemBaseInfoVo> queryList(@Param("page") Page<MemBaseInfoVo> page,@Param("dto") MemBaseInfoPageReq dto);
 
     List<Long> findIdListByCreateTime(@Param("date") String date);

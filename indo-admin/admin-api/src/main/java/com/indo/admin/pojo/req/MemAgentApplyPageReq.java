@@ -13,6 +13,4 @@ public class MemAgentApplyPageReq extends BaseDTO {
     @ApiModelProperty("用户id")
     private Long memId;
 
-    @ApiModelProperty("电话")
-    private String mobile;
 }

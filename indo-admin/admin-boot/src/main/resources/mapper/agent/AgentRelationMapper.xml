@@ -48,18 +48,18 @@
         mb.total_enchashment AS totalEnchashment,
         mb.total_bet AS totalBet,
         mb.create_time AS registerTime,
-        ma.agent_id AS agent_id,
-        ma.superior AS superior,
-        ma.team_num AS teamNum
+        ar.agent_id AS agent_id,
+        ar.superior AS superior,
+        ar.team_num AS teamNum
         FROM
-        mem_agent ma
-        INNER JOIN mem_baseinfo mb ON ma.mem_id = mb.id
-        AND ma.is_del = 1
+        agent_relation ar
+        INNER JOIN mem_baseinfo mb ON ar.mem_id = mb.id
+        AND ar.is_del = 1
         -- AND ma.parent_id != 0
         <if test="req.parentId !=null">
             and ma.parent_id = #{req.parentId}
         </if>
         ORDER BY
-        ma.create_time DESC
+        ar.create_time DESC
     </select>
 </mapper>

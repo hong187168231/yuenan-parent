@@ -5,10 +5,12 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.Date;
+
 @Data
 public class MsgStationLetterVO {
 
-    @ApiModelProperty(value = "主键")
+    @ApiModelProperty(value = "主键id")
     private Long id;
 
     @ApiModelProperty(value = "标题")
@@ -23,12 +25,6 @@ public class MsgStationLetterVO {
     @ApiModelProperty(value = "接收人 (会员账号)")
     private String receiver;
 
-    @ApiModelProperty(value = "接收等级")
-    private Integer receiverLevel;
-
-    @ApiModelProperty(value = "接收支付组")
-    private Integer receivePayGroup;
-
     @ApiModelProperty(value = "发送类型: 1 按收件人发送 2 按会员等级发送 3 按支付层级发送")
     private Integer sendType;
 
@@ -38,6 +34,10 @@ public class MsgStationLetterVO {
     @ApiModelProperty(value = "创建人")
     private String createUser;
 
+    @ApiModelProperty(value = "创建时间")
+    private String createTime;
+
     @ApiModelProperty(value = "备注")
     private String remark;
+
 }

@@ -2,11 +2,15 @@ package com.indo.user.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.pojo.req.agnet.AgentRebateRecordReq;
+import com.indo.admin.pojo.vo.MemBetVo;
 import com.indo.admin.pojo.vo.agent.AgentRebateInfoVO;
 import com.indo.admin.pojo.vo.agent.AgentRebateRecordVO;
 import com.indo.admin.pojo.vo.agent.AgentSubVO;
+import com.indo.common.annotation.AllowAccess;
 import com.indo.common.annotation.LoginUser;
+import com.indo.common.constant.RedisKeys;
 import com.indo.common.pojo.bo.LoginInfo;
+import com.indo.common.redis.utils.RedisUtils;
 import com.indo.common.result.Result;
 import com.indo.user.pojo.req.mem.MemAgentApplyReq;
 import com.indo.user.pojo.req.mem.SubordinateAppReq;
@@ -51,6 +55,15 @@ public class AgentController {
     public Result<AgentRebateInfoVO> rebateInfo(@LoginUser LoginInfo loginInfo) {
         AgentRebateInfoVO infoVO = iAgentRebateRecordService.rebateInfo(loginInfo);
         return Result.success(infoVO);
+    }
+
+
+    @ApiOperation(value = "获取返佣配置", httpMethod = "GET")
+    @GetMapping(value = "/rebateConfig")
+    @AllowAccess
+    public Result<List<MemBetVo>> rebateConfig() {
+        List<MemBetVo> list = RedisUtils.get(RedisKeys.SYS_REBATE_KEY);
+        return Result.success(list);
     }
 
     @ApiOperation(value = "佣金列表", httpMethod = "GET")

@@ -2,24 +2,23 @@ package com.indo.core.pojo.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.indo.common.pojo.entity.BaseEntity;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
-import java.math.BigDecimal;
 
 /**
  * <p>
  * 会员等级表
  * </p>
  *
- * @author kevin
- * @since 2021-11-03
+ * @author xxx
+ * @since 2022-01-14
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("mem_level")
+@ApiModel(value="MemLevel对象", description="会员等级表")
 public class MemLevel extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
@@ -27,55 +26,38 @@ public class MemLevel extends BaseEntity {
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
-    /**
-     * 会员等级
-     */
+    @ApiModelProperty(value = "会员等级")
     private Integer level;
 
-    /**
-     * 所需存款
-     */
-    private BigDecimal needDeposit;
+    @ApiModelProperty(value = "所需存款")
+    private Long needDeposit;
 
-    /**
-     * 所需投注
-     */
-    private BigDecimal needBet;
+    @ApiModelProperty(value = "所需投注")
+    private Long needBet;
 
-    /**
-     * 晋级奖励
-     */
-    private BigDecimal reward;
+    @ApiModelProperty(value = "晋级奖励")
+    private Long reward;
 
-    /**
-     * 每日礼金
-     */
-    private BigDecimal everydayGift;
+    @ApiModelProperty(value = "每日礼金")
+    private Long everydayGift;
 
-    /**
-     * 每周礼金
-     */
-    private BigDecimal weekGift;
+    @ApiModelProperty(value = "每周礼金")
+    private Long weekGift;
 
-    /**
-     * 每月礼金
-     */
-    private BigDecimal monthGift;
+    @ApiModelProperty(value = "每月礼金")
+    private Long monthGift;
 
-    /**
-     * 每年礼金
-     */
-    private BigDecimal yearGift;
+    @ApiModelProperty(value = "每年礼金")
+    private Long yearGift;
 
-    /**
-     * 生日礼金
-     */
-    private BigDecimal birthdayGift;
+    @ApiModelProperty(value = "生日礼金")
+    private Long birthdayGift;
 
-    /**
-     * 会员人数
-     */
+    @ApiModelProperty(value = "会员人数")
     private Integer memNum;
+
+    @ApiModelProperty(value = "图标")
+    private String icon;
 
 
 }
