@@ -45,7 +45,7 @@
                         0
                     END
                 )
-        WHERE m.id = #{userId}
+        WHERE m.id = #{memId}
         ]]>
     </update>
 </mapper>

@@ -2,7 +2,7 @@ package com.indo.admin.modules.agent.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.modules.agent.service.IAgentApplyService;
-import com.indo.admin.pojo.req.agnet.MemAgentApplyPageReq;
+import com.indo.admin.pojo.req.agnet.MemAgentApplyReq;
 import com.indo.admin.pojo.req.agnet.MemApplyAuditReq;
 import com.indo.admin.pojo.vo.agent.AgentApplyVO;
 import com.indo.common.result.Result;
@@ -32,7 +32,7 @@ public class AgentApplyController {
 
     @ApiOperation(value = "申请列表", httpMethod = "GET")
     @GetMapping(value = "/page")
-    public Result<List<AgentApplyVO>> page(MemAgentApplyPageReq req) {
+    public Result<List<AgentApplyVO>> page(MemAgentApplyReq req) {
         Page<AgentApplyVO> result = agentApplyService.getPage(req);
         return Result.success(result.getRecords(), result.getTotal());
     }

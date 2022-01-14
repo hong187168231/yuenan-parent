@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.indo.admin.modules.agent.mapper.AgentRelationMapper;
 import com.indo.admin.modules.agent.service.IAgentRelationService;
 import com.indo.admin.modules.mem.mapper.MemBaseinfoMapper;
-import com.indo.admin.pojo.req.agnet.MemAgentPageReq;
+import com.indo.admin.pojo.req.agnet.MemAgentReq;
 import com.indo.admin.pojo.req.agnet.SubordinateReq;
 import com.indo.admin.pojo.vo.agent.AgentSubVO;
 import com.indo.admin.pojo.vo.agent.AgentVo;
@@ -35,7 +35,7 @@ public class AgentRelationServiceImpl extends ServiceImpl<AgentRelationMapper, A
     private MemBaseinfoMapper memBaseinfoMapper;
 
     @Override
-    public Page<AgentVo> getPage(MemAgentPageReq req) {
+    public Page<AgentVo> getPage(MemAgentReq req) {
         Page<AgentVo> page = new Page<>(req.getPage(), req.getLimit());
         List<AgentVo> list = memAgentMapper.queryList(page, req);
         page.setRecords(list);

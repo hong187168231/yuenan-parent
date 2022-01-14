@@ -3,7 +3,7 @@ package com.indo.admin.modules.agent.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.modules.agent.service.IAgentRelationService;
-import com.indo.admin.pojo.req.agnet.MemAgentPageReq;
+import com.indo.admin.pojo.req.agnet.MemAgentReq;
 import com.indo.admin.pojo.req.agnet.SubordinateReq;
 import com.indo.admin.pojo.vo.agent.AgentSubVO;
 import com.indo.admin.pojo.vo.agent.AgentVo;
@@ -35,7 +35,7 @@ public class AgentRelationController {
 
     @ApiOperation(value = "代理列表", httpMethod = "GET")
     @GetMapping(value = "/list")
-    public Result<List<AgentVo>> list(MemAgentPageReq req) {
+    public Result<List<AgentVo>> list(MemAgentReq req) {
         Page<AgentVo> result = agentRelationService.getPage(req);
         return Result.success(result.getRecords(), result.getTotal());
     }

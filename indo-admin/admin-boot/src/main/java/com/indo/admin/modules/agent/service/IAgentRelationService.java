@@ -2,7 +2,7 @@ package com.indo.admin.modules.agent.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.indo.admin.pojo.req.agnet.MemAgentPageReq;
+import com.indo.admin.pojo.req.agnet.MemAgentReq;
 import com.indo.admin.pojo.req.agnet.SubordinateReq;
 import com.indo.admin.pojo.vo.agent.AgentSubVO;
 import com.indo.admin.pojo.vo.agent.AgentVo;
@@ -18,7 +18,7 @@ import com.indo.core.pojo.entity.AgentRelation;
  */
 public interface IAgentRelationService extends IService<AgentRelation> {
 
-    Page<AgentVo> getPage(MemAgentPageReq req);
+    Page<AgentVo> getPage(MemAgentReq req);
 
     Page<AgentSubVO> subordinatePage(SubordinateReq req);
 

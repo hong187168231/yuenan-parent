@@ -23,7 +23,7 @@ import java.math.BigDecimal;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @TableName("mem_gold_change")
-@ApiModel(value="GoldChange对象", description="会员账变记录表")
+@ApiModel(value = "GoldChange对象", description = "会员账变记录表")
 public class MemGoldChange extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
@@ -40,7 +40,7 @@ public class MemGoldChange extends BaseEntity {
     private String serialNo;
 
     @ApiModelProperty(value = "用户id")
-    private Long userId;
+    private Long memId;
 
     @ApiModelProperty(value = "变动类型 1充值 2充值附赠 3提現 5投注 6代理结算 等等其他类型-需要的时候进行补充")
     private Integer changeType;

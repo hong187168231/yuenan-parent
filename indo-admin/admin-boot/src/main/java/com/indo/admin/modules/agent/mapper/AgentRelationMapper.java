@@ -2,7 +2,7 @@ package com.indo.admin.modules.agent.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.indo.admin.pojo.req.agnet.MemAgentPageReq;
+import com.indo.admin.pojo.req.agnet.MemAgentReq;
 import com.indo.admin.pojo.req.agnet.SubordinateReq;
 import com.indo.admin.pojo.vo.agent.AgentSubVO;
 import com.indo.admin.pojo.vo.agent.AgentVo;
@@ -23,7 +23,7 @@ import java.util.List;
 @Mapper
 public interface AgentRelationMapper extends BaseMapper<AgentRelation> {
 
-    List<AgentVo> queryList(@Param("page") Page<AgentVo> page, @Param("req") MemAgentPageReq req);
+    List<AgentVo> queryList(@Param("page") Page<AgentVo> page, @Param("req") MemAgentReq req);
 
     List<AgentSubVO> subordinateList(Page<AgentSubVO> page, SubordinateReq req);
 }

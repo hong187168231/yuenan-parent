@@ -7,7 +7,7 @@ import com.indo.admin.modules.agent.mapper.AgentApplyMapper;
 import com.indo.admin.modules.agent.mapper.AgentRelationMapper;
 import com.indo.admin.modules.agent.service.IAgentApplyService;
 import com.indo.admin.modules.mem.mapper.MemInviteCodeMapper;
-import com.indo.admin.pojo.req.agnet.MemAgentApplyPageReq;
+import com.indo.admin.pojo.req.agnet.MemAgentApplyReq;
 import com.indo.admin.pojo.req.agnet.MemApplyAuditReq;
 import com.indo.admin.pojo.vo.agent.AgentApplyVO;
 import com.indo.common.enums.AudiTypeEnum;
@@ -43,7 +43,7 @@ public class AgentApplyServiceImpl extends ServiceImpl<AgentApplyMapper, AgentAp
 
 
     @Override
-    public Page<AgentApplyVO> getPage(MemAgentApplyPageReq req) {
+    public Page<AgentApplyVO> getPage(MemAgentApplyReq req) {
         Page<AgentApplyVO> page = new Page<>(req.getPage(), req.getLimit());
         List<AgentApplyVO> list = agentApplyMapper.queryList(page, req);
         page.setRecords(list);
