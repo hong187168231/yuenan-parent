@@ -7,6 +7,8 @@ import com.indo.admin.modules.msg.mapper.MsgPushRecordMapper;
 import com.indo.admin.modules.msg.service.IMsgPushRecordService;
 import com.indo.admin.pojo.dto.MsgDTO;
 import com.indo.admin.pojo.vo.MsgPushRecordVO;
+import com.indo.admin.pojo.vo.MsgStationLetterVO;
+import com.indo.common.web.util.DozerUtil;
 import com.indo.common.web.util.JwtUtils;
 import com.indo.core.pojo.entity.MsgPushRecord;
 import com.indo.user.pojo.dto.PushRecordAddDTO;
@@ -51,11 +53,11 @@ public class MsgPushRecordServiceImpl extends ServiceImpl<MsgPushRecordMapper, M
 
 
     @Override
-    public List<MsgPushRecord> getSysMsg(MsgDTO msgDTO) {
+    public List<MsgPushRecordVO> getSysMsg(MsgDTO msgDTO) {
         Page<MsgPushRecord> page = new Page<>(msgDTO.getPage(), msgDTO.getLimit());
         LambdaQueryWrapper<MsgPushRecord> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(MsgPushRecord::getDeviceType, msgDTO.getDeviceType());
         Page<MsgPushRecord> pageList = baseMapper.selectPage(page, wrapper);
-        return pageList.getRecords();
+        return DozerUtil.convert(pageList.getRecords(), MsgPushRecordVO.class);
     }
 }

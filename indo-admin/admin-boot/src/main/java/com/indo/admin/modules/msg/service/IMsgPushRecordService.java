@@ -34,5 +34,5 @@ public interface IMsgPushRecordService extends IService<MsgPushRecord> {
     void add(PushRecordAddDTO pushRecordAddDTO);
 
 
-    List<MsgPushRecord> getSysMsg(MsgDTO msgDTO);
+    List<MsgPushRecordVO> getSysMsg(MsgDTO msgDTO);
 }

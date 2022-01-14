@@ -64,11 +64,11 @@ public class MsgStationLetterServiceImpl extends ServiceImpl<MsgStationLetterMap
     }
 
     @Override
-    public List<MsgStationLetter> getPersonalMsg(MsgDTO msgDTO) {
+    public List<MsgStationLetterVO> getPersonalMsg(MsgDTO msgDTO) {
         Page<MsgStationLetter> page = new Page<>(msgDTO.getPage(), msgDTO.getLimit());
         LambdaQueryWrapper<MsgStationLetter> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(MsgStationLetter::getMemId, msgDTO.getMemId());
         Page<MsgStationLetter> pageList = baseMapper.selectPage(page, wrapper);
-        return pageList.getRecords();
+        return DozerUtil.convert(pageList.getRecords(), MsgStationLetterVO.class);
     }
 }

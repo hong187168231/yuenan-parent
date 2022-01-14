@@ -2,6 +2,7 @@ package com.indo.pay.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.indo.common.pojo.bo.LoginInfo;
+import com.indo.core.pojo.entity.PayWayConfig;
 import com.indo.pay.pojo.vo.PayWayVO;
 
 import java.util.List;

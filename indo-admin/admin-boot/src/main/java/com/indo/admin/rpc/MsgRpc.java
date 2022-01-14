@@ -40,7 +40,7 @@ public class MsgRpc {
      */
     @PostMapping("/personal")
     public Result<List<MsgStationLetterVO>> getPersonalMsg(@RequestBody MsgDTO msgDTO) {
-//        List<MsgStationLetterVO> pageResult = iMsgStationLetterService.getPersonalMsg(msgDTO);
+        List<MsgStationLetterVO> pageResult = iMsgStationLetterService.getPersonalMsg(msgDTO);
         return Result.success(null);
     }
 
@@ -52,8 +52,7 @@ public class MsgRpc {
      */
     @PostMapping("/sys")
     public Result<List<MsgPushRecordVO>> getSysMsg(@RequestBody MsgDTO msgDTO) {
-//        return Result.success(iMsgPushRecordService.getSysMsg(msgDTO));
-        return null;
+        return Result.success(iMsgPushRecordService.getSysMsg(msgDTO));
     }
 
 }    

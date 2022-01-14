@@ -36,6 +36,6 @@ public interface IMsgStationLetterService extends IService<MsgStationLetter> {
     int add(StationLetterAddDTO letterDTO);
 
 
-    List<MsgStationLetter> getPersonalMsg(MsgDTO msgDTO);
+    List<MsgStationLetterVO> getPersonalMsg(MsgDTO msgDTO);
 
 }
