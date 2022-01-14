@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.indo.admin.modules.pay.mapper.PayRechargeMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.indo.core.pojo.entity.PayRechargeOrder">
+        <id column="recharge_order_id" property="rechargeOrderId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="pay_channel_id" property="payChannelId"/>
+        <result column="pay_way_id" property="payWayId"/>
+        <result column="order_no" property="orderNo"/>
+        <result column="transaction_no" property="transactionNo"/>
+        <result column="user_id" property="memId"/>
+        <result column="bank_account" property="bankAccount"/>
+        <result column="bank_name" property="bankName"/>
+        <result column="bank_card_no" property="bankCardNo"/>
+        <result column="channel_type" property="channelType"/>
+        <result column="order_date" property="orderDate"/>
+        <result column="expire_date" property="expireDate"/>
+        <result column="old_amount" property="oldAmount"/>
+        <result column="total_amount" property="totalAmount"/>
+        <result column="real_amount" property="realAmount"/>
+        <result column="order_status" property="orderStatus"/>
+        <result column="cancel_reason" property="cancelReason"/>
+        <result column="pay_time" property="payTime"/>
+        <result column="pay_postscript" property="payPostscript"/>
+        <result column="order_note" property="orderNote"/>
+        <result column="operator_user" property="operatorUser"/>
+        <result column="create_user" property="createUser"/>
+        <result column="update_user" property="updateUser"/>
+        <result column="order_source" property="orderSource"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        create_time
+        ,
+        update_time,
+        recharge_order_id, pay_channel_id, pay_way_id, order_no, transaction_no, user_id, bank_account, bank_name, bank_card_no, channel_type, order_date, expire_date, old_amount, total_amount, real_amount, order_status, cancel_reason, pay_date, pay_postscript, order_note, operator_user, create_user, update_user, order_source
+    </sql>
+
+    <select id="rechargeList" resultType="com.indo.admin.pojo.vo.pay.RechargeOrderVO">
+        SELECT
+        a.*, (
+        SELECT
+        pcc.channel_name
+        FROM
+        pay_channel_config pcc
+        WHERE
+        pcc.pay_channel_id = a.payChannelId
+        LIMIT 1
+        ) AS channelName,
+        (
+        SELECT
+        pwc.way_name
+        FROM
+        pay_way_config pwc
+        WHERE
+        pwc.pay_way_id = a.payWayId
+        LIMIT 1
+        ) AS wayName
+        FROM
+        (
+        SELECT
+        pro.recharge_order_id AS rechargeOrderId,
+        pro.order_no AS orderNo,
+        mb.id AS memId,
+        mb.mem_level AS memLevel,
+        pro.real_amount AS realAmount,
+        pro.pay_channel_id AS payChannelId,
+        pro.pay_way_id AS payWayId,
+        pro.pay_time AS payTime
+        FROM
+        pay_recharge_order pro
+        INNER JOIN mem_baseinfo mb ON pro.mem_id = mb.id
+        ) a
+        where 1=1
+        <if test="req.payChannelId != null ">
+            and a.pay_channel_id = #{req.payChannelId}
+        </if>
+        <if test="req.payWayId != null ">
+            and a.pay_way_id = #{req.payWayId}
+        </if>
+        <if test="req.orderNo != null ">
+            and a.order_no = #{req.orderNo}
+        </if>
+        <if test="req.memId != null ">
+            and a.mem_id = #{req.memId}
+        </if>
+        <if test="req.beginAmount != null ">
+            and a.actual_amount &gt;= #{req.beginAmount}
+        </if>
+        <if test="req.endAmount ">
+            and a.actual_amount &lt;= #{req.endAmount}
+        </if>
+        <if test="req.beginTime != null">
+            and a.create_time &gt;= #{req.beginTime}
+        </if>
+        <if test="req.endTime != null ">
+            and a.create_time &lt;= #{req.endTime}
+        </if>
+
+    </select>
+
+
+</mapper>

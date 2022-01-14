@@ -7,13 +7,13 @@ import com.indo.common.utils.DateUtils;
 import com.indo.common.utils.StringUtils;
 import com.indo.common.web.util.http.HttpClient;
 import com.indo.core.pojo.entity.PayChannelConfig;
-import com.indo.core.pojo.entity.PayRechargeOrder;
+import com.indo.core.pojo.entity.PayRecharge;
 import com.indo.pay.common.constant.PayConstants;
 import com.indo.pay.factory.AbstractOnlinePaymentService;
-import com.indo.pay.mapper.PayChannelConfigMapper;
-import com.indo.pay.mapper.PayRechargeOrderMapper;
-import com.indo.pay.pojo.dto.RechargeCallBackDto;
-import com.indo.pay.pojo.dto.RechargeDto;
+import com.indo.pay.mapper.PayChannelMapper;
+import com.indo.pay.mapper.RechargeMapper;
+import com.indo.pay.pojo.dto.RechargeCallBackDTO;
+import com.indo.pay.pojo.dto.RechargeDTO;
 import com.indo.pay.pojo.req.BaseCallBackReq;
 import com.indo.pay.pojo.req.BasePayReq;
 import com.indo.pay.pojo.req.HuaRenPayReq;
@@ -40,7 +40,7 @@ import java.util.*;
 public class HuarenOnlinePaymentServiceImpl extends AbstractOnlinePaymentService {
 
     @Resource
-    private PayRechargeOrderMapper payRechargeOrderMapper;
+    private RechargeMapper rechargeMapper;
 
     @Resource
     private PaymentService paymentService;
@@ -48,7 +48,7 @@ public class HuarenOnlinePaymentServiceImpl extends AbstractOnlinePaymentService
     private PaymentCallBackService paymentCallBackService;
 
     @Resource
-    private PayChannelConfigMapper payChannelConfigMapper;
+    private PayChannelMapper payChannelConfigMapper;
 
     @Override
     protected <T> T callPayService(BasePayReq req, Class<T> clazz) {
@@ -120,7 +120,7 @@ public class HuarenOnlinePaymentServiceImpl extends AbstractOnlinePaymentService
             return false;
         }
         // 请求参数
-        RechargeDto rechargeDto = new RechargeDto();
+        RechargeDTO rechargeDto = new RechargeDTO();
         rechargeDto.setAmount(huaRenPayReq.getTradeAmount().toString());
         rechargeDto.setOrderNo(req.getMerchantOrderNo());
         rechargeDto.setMemId(req.getMemId());
@@ -130,16 +130,16 @@ public class HuarenOnlinePaymentServiceImpl extends AbstractOnlinePaymentService
     @Override
     protected <R extends BaseCallBackReq> boolean accountRecharge(R req) {
         // 平台订单号、交易金额、商户订单号
-        RechargeCallBackDto callBackDto = new RechargeCallBackDto();
+        RechargeCallBackDTO callBackDto = new RechargeCallBackDTO();
         callBackDto.setTransactionNo(req.getTransactionNo());
         callBackDto.setAmount(new BigDecimal(req.getAmount()));
         callBackDto.setOrderNo(req.getMchOrderNo());
         // 根据商户订单号，查询订单信息
-        QueryWrapper<PayRechargeOrder> query = new QueryWrapper<>();
-        query.lambda().eq(PayRechargeOrder::getOrderNo, req.getMchOrderNo());
-        PayRechargeOrder rechargeOrder = payRechargeOrderMapper.selectOne(query);
+        QueryWrapper<PayRecharge> query = new QueryWrapper<>();
+        query.lambda().eq(PayRecharge::getOrderNo, req.getMchOrderNo());
+        PayRecharge payRecharge = rechargeMapper.selectOne(query);
         // 完结订单，更新订单信息
-        boolean SuccessFlag = paymentCallBackService.paymentSuccess(callBackDto, rechargeOrder);
+        boolean SuccessFlag = paymentCallBackService.paymentSuccess(callBackDto, payRecharge);
         return SuccessFlag;
     }
 
@@ -157,14 +157,14 @@ public class HuarenOnlinePaymentServiceImpl extends AbstractOnlinePaymentService
             return false;
         }
         // 根据商户订单号，查询订单信息
-        QueryWrapper<PayRechargeOrder> query = new QueryWrapper<>();
-        query.lambda().eq(PayRechargeOrder::getOrderNo, req.getMchOrderNo());
-        PayRechargeOrder rechargeOrder = payRechargeOrderMapper.selectOne(query);
-        if (ObjectUtils.isEmpty(rechargeOrder)) {
+        QueryWrapper<PayRecharge> query = new QueryWrapper<>();
+        query.lambda().eq(PayRecharge::getOrderNo, req.getMchOrderNo());
+        PayRecharge payRecharge = rechargeMapper.selectOne(query);
+        if (ObjectUtils.isEmpty(payRecharge)) {
             log.info("众宝支付参数验证异常,查无此订单,req={}", JSON.toJSONString(req));
             return false;
         }
-        PayChannelConfig payChannelConfig = payChannelConfigMapper.selectById(rechargeOrder.getPayChannelId());
+        PayChannelConfig payChannelConfig = payChannelConfigMapper.selectById(payRecharge.getChannelId());
         if (ObjectUtils.isEmpty(payChannelConfig)) {
             log.info("hr支付参数验证异常,商户无,req={}", JSON.toJSONString(req));
             return false;
@@ -188,12 +188,12 @@ public class HuarenOnlinePaymentServiceImpl extends AbstractOnlinePaymentService
             log.error("hr支付宝签名不在确=={}", signStr);
             return false;
         }
-        if (PayConstants.PAY_RECHARGE_STATUS_COMPLETE.equals(rechargeOrder.getOrderStatus())) {
+        if (PayConstants.PAY_RECHARGE_STATUS_COMPLETE.equals(payRecharge.getOrderStatus())) {
             log.error("hr支付此单号已经处理=={}", huaRenCallbackReq.getTransactionNo());
             return false;
         }
         // 验证金额
-        BigDecimal payAmt = rechargeOrder.getRealAmount().setScale(2, BigDecimal.ROUND_HALF_UP);
+        BigDecimal payAmt = payRecharge.getRealAmount().setScale(2, BigDecimal.ROUND_HALF_UP);
         if (new BigDecimal(huaRenCallbackReq.getAmount()).compareTo(payAmt) != 0) {
             log.error("paylog hr支付 回调参数验证 {} checkCallBackParams 金额不一致 {} {}", this.getClass().getName(), huaRenCallbackReq.getAmount(), payAmt);
             return false;

@@ -5,15 +5,15 @@ import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.core.pojo.dto.MemGoldChangeDto;
 import com.indo.core.pojo.entity.MemBaseinfo;
-import com.indo.core.pojo.entity.PayOrderFirst;
-import com.indo.core.pojo.entity.PayRechargeOrder;
+import com.indo.core.pojo.entity.PayFirstRecharge;
+import com.indo.core.pojo.entity.PayRecharge;
 import com.indo.core.service.IMemGoldChangeService;
 import com.indo.pay.factory.OnlinePaymentService;
-import com.indo.pay.mapper.PayOrderFirstMapper;
-import com.indo.pay.mapper.PayRechargeOrderMapper;
+import com.indo.pay.mapper.PayFirstRechargeMapper;
+import com.indo.pay.mapper.RechargeMapper;
 import com.indo.pay.common.constant.PayConstants;
 import com.indo.common.utils.ViewUtil;
-import com.indo.pay.pojo.dto.RechargeCallBackDto;
+import com.indo.pay.pojo.dto.RechargeCallBackDTO;
 import com.indo.pay.pojo.resp.HuaRenCallbackReq;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -34,10 +34,10 @@ import java.util.Date;
 public class PaymentCallBackService {
 
     @Resource
-    private PayRechargeOrderMapper payRechargeOrderMapper;
+    private RechargeMapper payRechargeOrderMapper;
 
     @Resource
-    private PayOrderFirstMapper payOrderFirstMapper;
+    private PayFirstRechargeMapper payOrderFirstMapper;
 
     @Resource
     private IMemGoldChangeService iMemGoldChangeService;
@@ -63,40 +63,40 @@ public class PaymentCallBackService {
      * 公共回调订单处理成功
      */
     @Transactional
-    public boolean paymentSuccess(RechargeCallBackDto callBackDto, PayRechargeOrder rechargeOrder) {
-        log.info("进入回调数据成功处理========================================={}==", rechargeOrder.getOrderNo());
+    public boolean paymentSuccess(RechargeCallBackDTO callBackDto, PayRecharge payRecharge) {
+        log.info("进入回调数据成功处理========================================={}==", payRecharge.getOrderNo());
         // 【分布式读写锁】
         try {
             MemBaseinfo memBaseinfo = new MemBaseinfo();//todo
-            double amount = rechargeOrder.getRealAmount().setScale(3, BigDecimal.ROUND_DOWN).doubleValue();
+            double amount = payRecharge.getRealAmount().setScale(3, BigDecimal.ROUND_DOWN).doubleValue();
             if (null != memBaseinfo) {
                 Date now = new Date();
-                int count = payRechargeOrderMapper.countMemIsFirstRecharge(rechargeOrder.getMemId());
+                int count = payRechargeOrderMapper.countMemIsFirstRecharge(payRecharge.getMemId());
                 if (count == 0) {
-                    PayOrderFirst firstOrder = new PayOrderFirst();
-                    firstOrder.setOrderNo(rechargeOrder.getOrderNo());
-                    firstOrder.setMemId(rechargeOrder.getMemId());
+                    PayFirstRecharge firstOrder = new PayFirstRecharge();
+                    firstOrder.setOrderNo(payRecharge.getOrderNo());
+                    firstOrder.setMemId(payRecharge.getMemId());
                     firstOrder.setCreateUser("system");
                     firstOrder.setPayType(1);
                     firstOrder.setPayTime(now);
                     payOrderFirstMapper.insert(firstOrder);
                 }
                 //更新充值订单表信息
-                rechargeOrder.setTotalAmount(ViewUtil.getTradeOffAmount(new BigDecimal(amount)));
-                rechargeOrder.setTransactionNo(callBackDto.getTransactionNo());
-                rechargeOrder.setOrderStatus(PayConstants.PAY_RECHARGE_STATUS_COMPLETE);
-                rechargeOrder.setPayTime(now);
-                boolean flag = payRechargeOrderMapper.updateById(rechargeOrder) > 0;
+                payRecharge.setTotalAmount(ViewUtil.getTradeOffAmount(new BigDecimal(amount)));
+                payRecharge.setTransactionNo(callBackDto.getTransactionNo());
+                payRecharge.setOrderStatus(PayConstants.PAY_RECHARGE_STATUS_COMPLETE);
+                payRecharge.setPayTime(now);
+                boolean flag = payRechargeOrderMapper.updateById(payRecharge) > 0;
                 if (!flag) {
                     throw new RuntimeException("修改订单为成功状态失败");
                 }
                 //更新会员等级 替换 updateMemLevel
                 // TODO
                 MemGoldChangeDto goldChangeDO = new MemGoldChangeDto();
-                goldChangeDO.setChangeAmount(rechargeOrder.getRealAmount());
+                goldChangeDO.setChangeAmount(payRecharge.getRealAmount());
                 goldChangeDO.setTradingEnum(TradingEnum.INCOME);
                 goldChangeDO.setGoldchangeEnum(GoldchangeEnum.CZ);
-                goldChangeDO.setUserId(rechargeOrder.getMemId());
+                goldChangeDO.setUserId(payRecharge.getMemId());
 //                goldChangeDO.setRefId(rechargeOrder.getRechargeOrderId());
                 boolean changeFlag = iMemGoldChangeService.updateMemGoldChange(goldChangeDO);
                 if (!changeFlag) {
@@ -104,7 +104,7 @@ public class PaymentCallBackService {
                     throw new RuntimeException("订单处理失败！");
                 }
             }
-            log.info("进入回调数据成功处理结束========================================={}==", rechargeOrder.getOrderNo());
+            log.info("进入回调数据成功处理结束========================================={}==", payRecharge.getOrderNo());
         } catch (TransactionSystemException e) {
             log.error("paymentSucesss occur error.", e);
             throw new RuntimeException(e.getMessage());

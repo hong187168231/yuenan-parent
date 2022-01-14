@@ -4,8 +4,9 @@ package com.indo.pay.controller;
 import com.indo.common.annotation.LoginUser;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
-import com.indo.pay.pojo.vo.PayChannelVO;
-import com.indo.pay.service.IPayChannelService;
+import com.indo.pay.pojo.vo.MemBankVO;
+import com.indo.pay.pojo.vo.PayBankVO;
+import com.indo.pay.service.IPayBankService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,22 +24,18 @@ import java.util.List;
  * @author puff
  * @since 2021-11-13
  */
-@Api(tags = "支付渠道")
+@Api(tags = "银行卡")
 @RestController
-@RequestMapping("/pay/channel")
-public class PayChannelController {
+@RequestMapping("/pay/memBank")
+public class BankController {
 
     @Resource
-    private IPayChannelService channelConfigService;
+    private IPayBankService iPayBankService;
 
-    /**
-     * 支付渠道列表
-     * @return
-     */
-    @ApiOperation(value = "支付渠道列表")
-    @GetMapping("/list")
-    public Result<List<PayChannelVO>> getPayBankList(@LoginUser LoginInfo loginInfo){
-        return Result.success(channelConfigService.channelList(loginInfo));
+    @ApiOperation(value = "会员可绑定银行列表")
+    @GetMapping("/bankList")
+    public Result<List<PayBankVO>> bankList() {
+        return Result.success(iPayBankService.bankList());
     }
 
 }

@@ -3,7 +3,7 @@ package com.indo.admin.modules.pay.service.impl;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.modules.mem.mapper.MemBaseinfoMapper;
 import com.indo.admin.modules.pay.mapper.PayManualRechargeMapper;
-import com.indo.admin.modules.pay.mapper.PayRechargeOrderMapper;
+import com.indo.admin.modules.pay.mapper.PayRechargeMapper;
 import com.indo.admin.modules.pay.service.IPayManualRechargeService;
 import com.indo.common.constant.GlobalConstants;
 import com.indo.common.enums.GoldchangeEnum;
@@ -15,7 +15,6 @@ import com.indo.core.base.service.impl.SuperServiceImpl;
 import com.indo.core.pojo.dto.MemGoldChangeDto;
 import com.indo.core.pojo.entity.MemBaseinfo;
 import com.indo.core.pojo.entity.PayManualRecharge;
-import com.indo.core.pojo.entity.PayRechargeOrder;
 import com.indo.core.service.IMemGoldChangeService;
 import com.indo.pay.pojo.vo.ManualRechargeMemVO;
 import com.indo.pay.pojo.vo.ManualRechargeRecordVO;
@@ -41,7 +40,7 @@ public class PayManualRechargeServiceImpl extends SuperServiceImpl<PayManualRech
     private PayManualRechargeMapper payManualRechargeMapper;
 
     @Autowired
-    private PayRechargeOrderMapper payRechargeOrderMapper;
+    private PayRechargeMapper payRechargeOrderMapper;
 
     @Autowired
     private MemBaseinfoMapper memBaseinfoMapper;

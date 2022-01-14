@@ -4,12 +4,10 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.indo.common.web.util.DozerUtil;
 import com.indo.core.pojo.entity.PayBank;
-import com.indo.pay.mapper.PayBankMapper;
 import com.indo.pay.pojo.vo.PayBankVO;
 import com.indo.pay.service.IPayBankService;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 /**

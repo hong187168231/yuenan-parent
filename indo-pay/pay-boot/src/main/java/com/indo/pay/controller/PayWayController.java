@@ -4,9 +4,8 @@ package com.indo.pay.controller;
 import com.indo.common.annotation.LoginUser;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
-import com.indo.pay.pojo.vo.PayChannelVO;
 import com.indo.pay.pojo.vo.PayWayVO;
-import com.indo.pay.service.IPayWayConfigService;
+import com.indo.pay.service.IPayWayService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +28,7 @@ public class PayWayController {
 
 
     @Resource
-    private IPayWayConfigService iPayWayConfigService;
+    private IPayWayService iPayWayConfigService;
 
     /**
      * 支付渠道列表

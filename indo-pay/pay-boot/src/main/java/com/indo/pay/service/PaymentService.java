@@ -7,15 +7,14 @@ import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.utils.SnowflakeIdWorker;
 import com.indo.common.web.exception.BizException;
 import com.indo.core.pojo.entity.PayChannelConfig;
-import com.indo.core.pojo.entity.PayRechargeOrder;
 import com.indo.core.pojo.entity.PayWayConfig;
-import com.indo.pay.mapper.PayChannelConfigMapper;
-import com.indo.pay.mapper.PayWayConfigMapper;
+import com.indo.pay.mapper.PayChannelMapper;
+import com.indo.pay.mapper.PayWayMapper;
 import com.indo.pay.common.constant.PayConstants;
 import com.indo.pay.factory.OnlinePaymentService;
-import com.indo.pay.mapper.PayRechargeOrderMapper;
+import com.indo.pay.mapper.RechargeMapper;
 import com.indo.common.result.Result;
-import com.indo.pay.pojo.dto.RechargeDto;
+import com.indo.pay.pojo.dto.RechargeDTO;
 import com.indo.pay.pojo.req.HuaRenPayReq;
 import com.indo.pay.pojo.req.RechargeReq;
 import com.indo.pay.pojo.resp.HuaRenPayResp;
@@ -39,13 +38,13 @@ public class PaymentService {
     private OnlinePaymentService huaRenOnlinePaymentService;
 
     @Autowired
-    private PayRechargeOrderMapper payRechargeOrderMapper;
+    private RechargeMapper payRechargeOrderMapper;
 
     @Autowired
-    private PayWayConfigMapper payWayConfigMapper;
+    private PayWayMapper payWayConfigMapper;
 
     @Autowired
-    private PayChannelConfigMapper payChannelConfigMapper;
+    private PayChannelMapper payChannelConfigMapper;
 
 
     public Result paymentRequestByUser(LoginInfo loginInfo, RechargeReq rechargeReq) {
@@ -66,7 +65,7 @@ public class PaymentService {
     }
 
 
-    public boolean insertPayment(RechargeDto rechargeDTO) {
+    public boolean insertPayment(RechargeDTO rechargeDTO) {
 
         PayRechargeOrder rechargeOrder = new PayRechargeOrder();
         rechargeOrder.setMemId(rechargeDTO.getMemId());
