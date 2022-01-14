@@ -16,5 +16,7 @@ import com.indo.core.pojo.entity.AgentRebateRecord;
  */
 public interface IAgentRebateRecordService extends IService<AgentRebateRecord> {
 
+    boolean grantRebate(Long id);
+
     Page<AgentRebateRecordVO> queryList(AgentRebateRecordReq req);
 }

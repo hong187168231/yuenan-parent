@@ -3,8 +3,8 @@
 <mapper namespace="com.indo.admin.modules.pay.mapper.PayTakeCashMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.indo.core.pojo.entity.PayCashOrder">
-        <id column="cash_order_id" property="cashOrderId"/>
+    <resultMap id="BaseResultMap" type="com.indo.core.pojo.entity.PayTakeCash">
+        <id column="take_cash_id" property="takeCashId"/>
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
         <result column="mem_bank_id" property="memBankId"/>
@@ -17,7 +17,7 @@
         <result column="bank_card_no" property="bankCardNo"/>
         <result column="bank_city" property="bankCity"/>
         <result column="ifsc_code" property="ifscCode"/>
-        <result column="order_status" property="orderStatus"/>
+        <result column="cash_status" property="cashStatus"/>
         <result column="remit_time" property="remitTime"/>
         <result column="order_note" property="orderNote"/>
         <result column="operator_user" property="operatorUser"/>
@@ -26,33 +26,13 @@
     </resultMap>
 
 
-    <resultMap id="cashApplyMap" type="com.indo.pay.pojo.vo.PayCashOrderApplyVO" extends="BaseResultMap">
-        <result column="user_id" property="userId"/>
-        <result column="mem_level" property="memLevel"/>
-    </resultMap>
-
-
     <!-- 通用查询结果列 -->
-    <sql id="Base_Column_List">
-        create_time
-        ,
-        update_time,
-        cash_order_id, bank_card_id, order_no, user_id, applyTime, apply_amount, actual_amount, bank_name, bank_card, bank_city, ifsc_code, order_status, remit_time, order_note, operator_user, create_user, update_user
-    </sql>
-
-    <sql id="cash_Apply_Column_List">
-        user_id
-        , mem_level,
-        cash_order_id, bank_card_id, order_no, user_id, applyTime, apply_amount, actual_amount, bank_name, bank_card, bank_city, ifsc_code, order_status, remit_time, order_note, operator_user, create_user, update_user
-    </sql>
-
-    <!-- 通用查询结果列 -->
-    <select id="cashApplyList" resultType="com.indo.admin.pojo.vo.pay.PayTakeCashApplyVO" >
+    <select id="cashApplyList" resultType="com.indo.admin.pojo.vo.pay.PayTakeCashApplyVO">
         SELECT
-        pco.*, mb.id AS user_id,
-        mb.mem_level
+        pco.*, mb.id AS memId,
+        mb.mem_level AS memLevel
         FROM
-        pay_cash_order pco
+        pay_task_cash pco
         INNER JOIN mem_baseinfo mb ON pco.user_id = mb.id
         where 1=1
         <if test="dto.dto.orderNo != null ">

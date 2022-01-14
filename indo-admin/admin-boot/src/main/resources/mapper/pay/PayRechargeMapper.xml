@@ -3,12 +3,12 @@
 <mapper namespace="com.indo.admin.modules.pay.mapper.PayRechargeMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.indo.core.pojo.entity.PayRechargeOrder">
-        <id column="recharge_order_id" property="rechargeOrderId"/>
+    <resultMap id="BaseResultMap" type="com.indo.core.pojo.entity.PayRecharge">
+        <id column="recharge_id" property="rechargeId"/>
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
-        <result column="pay_channel_id" property="payChannelId"/>
-        <result column="pay_way_id" property="payWayId"/>
+        <result column="channel_id" property="channelId"/>
+        <result column="way_id" property="wayId"/>
         <result column="order_no" property="orderNo"/>
         <result column="transaction_no" property="transactionNo"/>
         <result column="user_id" property="memId"/>
@@ -32,13 +32,6 @@
         <result column="order_source" property="orderSource"/>
     </resultMap>
 
-    <!-- 通用查询结果列 -->
-    <sql id="Base_Column_List">
-        create_time
-        ,
-        update_time,
-        recharge_order_id, pay_channel_id, pay_way_id, order_no, transaction_no, user_id, bank_account, bank_name, bank_card_no, channel_type, order_date, expire_date, old_amount, total_amount, real_amount, order_status, cancel_reason, pay_date, pay_postscript, order_note, operator_user, create_user, update_user, order_source
-    </sql>
 
     <select id="rechargeList" resultType="com.indo.admin.pojo.vo.pay.RechargeOrderVO">
         SELECT

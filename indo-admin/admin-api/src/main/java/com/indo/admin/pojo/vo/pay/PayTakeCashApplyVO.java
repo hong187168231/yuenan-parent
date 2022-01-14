@@ -14,13 +14,10 @@ import java.time.LocalDateTime;
 public class PayTakeCashApplyVO implements Serializable {
 
     @ApiModelProperty(value = "用户id")
-    private Long userId;
+    private Long memId;
 
     @ApiModelProperty(value = "用户等级")
     private Integer memLevel;
-
-    @ApiModelProperty(value = "用户层级")
-    private Integer groupLevel;
 
     @ApiModelProperty(value = "提现申请id")
     private Long cashOrderId;

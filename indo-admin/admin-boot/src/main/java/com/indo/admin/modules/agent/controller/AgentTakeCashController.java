@@ -27,7 +27,7 @@ import java.util.List;
  */
 @Api(tags = "代理提现接口")
 @RestController
-@RequestMapping("/agent/cash")
+@RequestMapping("/agent/takeCash")
 public class AgentTakeCashController {
 
 

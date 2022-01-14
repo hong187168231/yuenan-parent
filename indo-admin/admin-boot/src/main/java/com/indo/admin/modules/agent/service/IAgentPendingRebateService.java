@@ -18,6 +18,6 @@ public interface IAgentPendingRebateService extends IService<AgentPendingRebate>
 
     Page<AgentPendingRebateVO> queryList(AgentPendingRebateReq req);
 
-    boolean grantRebate(Long id);
+
 
 }

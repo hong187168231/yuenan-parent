@@ -47,6 +47,9 @@ public class AgentRebateRecord extends BaseEntity {
     @ApiModelProperty(value = "返点金额")
     private BigDecimal rebateAmout;
 
+    @ApiModelProperty(value = "状态，0-待发放，1-已发放")
+    private Integer status;
+
     @ApiModelProperty(value = "发放人")
     private String createUser;
 

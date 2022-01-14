@@ -15,6 +15,7 @@ import com.indo.core.base.service.impl.SuperServiceImpl;
 import com.indo.core.pojo.dto.MemGoldChangeDTO;
 import com.indo.core.pojo.entity.MemBaseinfo;
 import com.indo.core.pojo.entity.PayManualRecharge;
+import com.indo.core.pojo.entity.PayRecharge;
 import com.indo.core.service.IMemGoldChangeService;
 import com.indo.pay.pojo.vo.ManualRechargeMemVO;
 import com.indo.pay.pojo.vo.ManualRechargeRecordVO;
@@ -64,7 +65,7 @@ public class PayManualRechargeServiceImpl extends SuperServiceImpl<PayManualRech
             throw new BizException("该用户不存在");
         }
         BigDecimal operateAmount = new BigDecimal(amount);
-        PayRechargeOrder rechargeOrder = new PayRechargeOrder();
+        PayRecharge rechargeOrder = new PayRecharge();
         rechargeOrder.setMemId(memId);
         rechargeOrder.setOrderNo("RG_" + SnowflakeIdWorker.createOrderSn());
         //实际金额
@@ -75,7 +76,7 @@ public class PayManualRechargeServiceImpl extends SuperServiceImpl<PayManualRech
         int row = payRechargeOrderMapper.insert(rechargeOrder);
         if (row > 0) {
             PayManualRecharge payManualRecharge = new PayManualRecharge();
-            payManualRecharge.setRechargeId(rechargeOrder.getRechargeOrderId());
+            payManualRecharge.setRechargeId(rechargeOrder.getRechargeId());
             payManualRecharge.setMemId(memId);
             payManualRecharge.setGoldChangeId(null);
             payManualRecharge.setAccount(memBaseinfo.getAccount());
