@@ -1,4 +1,4 @@
-package com.indo.core.pojo.vo;
+package com.indo.user.pojo.bo;
 
 
 import io.swagger.annotations.ApiModel;
@@ -15,7 +15,7 @@ import java.math.BigDecimal;
  */
 @Data
 @ApiModel
-public class MemTradingVO {
+public class MemTradingBO {
 
     @ApiModelProperty(value = "用户ID")
     private Long id;
@@ -23,6 +23,8 @@ public class MemTradingVO {
     @ApiModelProperty(value = "用户ID")
     private String account;
 
+    @ApiModelProperty(value = "昵称")
+    private String nickName;
 
     @ApiModelProperty(value = "余额")
     private Integer memLevel;

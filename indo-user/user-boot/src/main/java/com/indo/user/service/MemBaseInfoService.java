@@ -5,6 +5,7 @@ import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
 import com.indo.core.base.service.SuperService;
 import com.indo.core.pojo.entity.MemBaseinfo;
+import com.indo.user.pojo.bo.MemTradingBO;
 import com.indo.user.pojo.req.LogOutReq;
 import com.indo.user.pojo.req.LoginReq;
 import com.indo.user.pojo.req.RegisterReq;
@@ -61,7 +62,7 @@ public interface MemBaseInfoService extends SuperService<MemBaseinfo> {
 
     MemBaseinfo findByMobile(String mobule);
 
-    MemTradingVo tradingInfo(Long memId);
+    MemTradingBO tradingInfo(String account);
 
 
 }

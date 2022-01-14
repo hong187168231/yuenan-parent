@@ -16,7 +16,6 @@ import com.indo.core.pojo.entity.MemBankRelation;
 import com.indo.core.pojo.entity.PayCashOrder;
 import com.indo.core.pojo.vo.MemTradingVO;
 import com.indo.core.service.IMemGoldChangeService;
-import com.indo.core.service.IMemTradingService;
 import com.indo.pay.mapper.MemBankRelationMapper;
 import com.indo.pay.mapper.PayCashOrderMapper;
 import com.indo.pay.pojo.req.CashApplyReq;

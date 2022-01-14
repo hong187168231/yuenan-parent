@@ -5,7 +5,9 @@ import com.indo.common.config.OpenAPIProperties;
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.common.result.Result;
+import com.indo.core.pojo.bo.MemBaseinfoBo;
 import com.indo.game.service.common.GameCommonService;
+import com.indo.user.pojo.bo.MemTradingBO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -31,7 +33,7 @@ public class TestController {
     @AllowAccess
     public Result<?> queryGameRecord() {
         System.out.println(OpenAPIProperties.PROXY_HOST_NAME);
-        MemBaseinfo memBaseinfo = new MemBaseinfo();
+        MemTradingBO memBaseinfo = new MemTradingBO();
         memBaseinfo.setId(42L);
         memBaseinfo.setAccount("swuserid");
         iGameManageService.updateUserBalance(memBaseinfo, new BigDecimal("20.0"), GoldchangeEnum.REFUND, TradingEnum.INCOME);

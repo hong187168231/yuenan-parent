@@ -13,6 +13,7 @@ import com.indo.game.pojo.vo.callback.ug.UgCallBackGetBalanceResp;
 import com.indo.game.pojo.vo.callback.ug.UgCallBackTransferResp;
 import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.ug.UgCallbackService;
+import com.indo.user.pojo.bo.MemTradingBO;
 import com.indo.user.pojo.entity.MemBaseinfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,7 +34,7 @@ public class UgCallbackServiceImpl implements UgCallbackService {
 
     //取得用户的余额
     public Object getBalance(UgCallBackGetBalanceReq ugCallBackGetBalanceReq) {
-        MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(ugCallBackGetBalanceReq.getAccount());
+        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(ugCallBackGetBalanceReq.getAccount());
         UgCallBackGetBalanceResp ugCallBackGetBalanceResp = new UgCallBackGetBalanceResp();
 
         if (null == memBaseinfo) {
@@ -60,7 +61,7 @@ public class UgCallbackServiceImpl implements UgCallbackService {
         String errorMessage = "";
         BigDecimal balance = BigDecimal.valueOf(0);
         for (UgCallBackTransactionItemReq ugCallBackTransactionItemReq : ugCallBackTransactionItemReqList) {
-            MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(ugCallBackTransactionItemReq.getAccount());
+            MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(ugCallBackTransactionItemReq.getAccount());
             UgCallBackBalanceResp ugCallBackBalanceResp = new UgCallBackBalanceResp();
             ugCallBackBalanceResp.setAccount(ugCallBackTransactionItemReq.getAccount());
             ugCallBackBalanceResp.setTransactionNo(ugCallBackTransactionItemReq.getTransactionNo());
@@ -137,7 +138,7 @@ public class UgCallbackServiceImpl implements UgCallbackService {
     // 取消交易
     public Object cancel(UgCallBackCancelReq ugCallBackCancelReq) {
 
-        MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(ugCallBackCancelReq.getAccount());
+        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(ugCallBackCancelReq.getAccount());
         UgCallBackCancelResp ugCallBackCancelResp = new UgCallBackCancelResp();
         ugCallBackCancelResp.setAccount(ugCallBackCancelReq.getAccount());
         ugCallBackCancelResp.setTransactionNo(ugCallBackCancelReq.getTransactionNo());
@@ -198,7 +199,7 @@ public class UgCallbackServiceImpl implements UgCallbackService {
     //检查交易结果
     public Object check(UgCallBackCancelReq ugCallBackCancelReq) {
 
-        MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(ugCallBackCancelReq.getAccount());
+        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(ugCallBackCancelReq.getAccount());
         UgCallBackBalanceResp ugCallBackBalanceResp = new UgCallBackBalanceResp();
         ugCallBackBalanceResp.setAccount(ugCallBackCancelReq.getAccount());
         ugCallBackBalanceResp.setTransactionNo(ugCallBackCancelReq.getTransactionNo());

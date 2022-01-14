@@ -2,8 +2,10 @@ package com.indo.game.service.common;
 
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
+import com.indo.core.pojo.bo.MemBaseinfoBo;
 import com.indo.game.pojo.entity.manage.GameCategory;
 import com.indo.game.pojo.entity.manage.GamePlatform;
+import com.indo.user.pojo.bo.MemTradingBO;
 import com.indo.user.pojo.entity.MemBaseinfo;
 
 import java.math.BigDecimal;
@@ -20,12 +22,12 @@ public interface GameCommonService {
     GamePlatform getGamePlatformByplatformCode(String platformCode);
 
     /**
-     * 查询用户信息
+     * 查询用交易信息
      *
-     * @param userId
+     * @param account
      * @return
      */
-    MemBaseinfo getMemBaseInfo(String userId);
+    MemTradingBO getMemTradingInfo(String account);
 
 
     /**
@@ -38,16 +40,18 @@ public interface GameCommonService {
 
     /**
      * 修改用户余额
-     * @param memBaseinfo
+     *
+     * @param memBaseinfoBo
      * @param changeAmount
      * @param goldchangeEnum
      * @param tradingEnum
      * @return
      */
-    void updateUserBalance(MemBaseinfo memBaseinfo, BigDecimal changeAmount, GoldchangeEnum goldchangeEnum, TradingEnum tradingEnum);
+    void updateUserBalance(MemTradingBO memBaseinfoBo, BigDecimal changeAmount, GoldchangeEnum goldchangeEnum, TradingEnum tradingEnum);
 
     /**
      * 查询分类信息
+     *
      * @param id
      * @return
      */

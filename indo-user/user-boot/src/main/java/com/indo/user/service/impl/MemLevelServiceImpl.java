@@ -9,6 +9,7 @@ import com.indo.common.utils.CollectionUtil;
 import com.indo.core.pojo.entity.MemLevel;
 import com.indo.user.common.util.UserBusinessRedisUtils;
 import com.indo.user.mapper.MemLevelMapper;
+import com.indo.user.pojo.bo.MemTradingBO;
 import com.indo.user.pojo.vo.level.Gift;
 import com.indo.user.pojo.vo.level.LevelInfo;
 import com.indo.user.pojo.vo.level.MemLevelVo;
@@ -45,7 +46,7 @@ public class MemLevelServiceImpl extends ServiceImpl<MemLevelMapper, MemLevel> i
         Long memId = loginInfo.getId();
 
         MemLevelVo memLevelVo = new MemLevelVo();
-        MemTradingVo memTradingVo = memBaseInfoService.tradingInfo(loginInfo.getId());
+        MemTradingBO memTradingVo = memBaseInfoService.tradingInfo(loginInfo.getAccount());
         memLevelVo.setTradingVo(memTradingVo);
 
         List<LevelInfo> levelInfoList = new ArrayList<>();

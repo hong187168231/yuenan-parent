@@ -90,18 +90,6 @@
         where mb.account =#{account}
     </select>
 
-    <select id="tradingInfo" resultType="com.indo.core.pojo.vo.MemTradingVO">
-        select mb.id                as id,
-               mb.account           as account,
-               mb.mem_level         as memLevel,
-               mb.balance           as balance,
-               mb.can_amount        as canAmount,
-               mb.total_deposit     as totalDeposit,
-               mb.total_enchashment as totalEnchashment,
-               mb.total_bet         as totalBet
-        from mem_baseinfo mb
-        where mb.account = #{account}
-    </select>
 
 
 </mapper>

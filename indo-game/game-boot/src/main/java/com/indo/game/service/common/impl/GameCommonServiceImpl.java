@@ -6,6 +6,7 @@ import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.common.result.Result;
 import com.indo.common.web.exception.BizException;
+import com.indo.core.pojo.bo.MemBaseinfoBo;
 import com.indo.core.pojo.dto.MemGoldChangeDto;
 import com.indo.core.service.IMemGoldChangeService;
 import com.indo.game.common.util.GameBusinessRedisUtils;
@@ -15,6 +16,7 @@ import com.indo.game.pojo.entity.manage.GameCategory;
 import com.indo.game.pojo.entity.manage.GamePlatform;
 import com.indo.game.service.common.GameCommonService;
 import com.indo.user.api.MemBaseInfoFeignClient;
+import com.indo.user.pojo.bo.MemTradingBO;
 import com.indo.user.pojo.entity.MemBaseinfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +51,17 @@ public class GameCommonServiceImpl implements GameCommonService {
     }
 
     @Override
+    public MemTradingBO getMemTradingInfo(String account) {
+        Result<MemTradingBO> result = memBaseInfoFeignClient.getMemTradingInfo(account);
+        if (Result.success().getCode().equals(result.getCode())) {
+            MemTradingBO memBaseinfo = result.getData();
+            return memBaseinfo;
+        } else {
+            throw new BizException("No client with requested id: " + account);
+        }
+    }
+
+    @Override
     public GameCategory getGameCategoryById(Long id) {
         GameCategory gameCategory = GameBusinessRedisUtils.get(RedisKeys.GAME_PLATFORM_KEY + id);
         if (null == gameCategory) {
@@ -57,16 +70,6 @@ public class GameCommonServiceImpl implements GameCommonService {
         return gameCategory;
     }
 
-
-    public MemBaseinfo getMemBaseInfo(String userId) {
-        Result<MemBaseinfo> result = memBaseInfoFeignClient.getMemBaseInfo(Long.parseLong(userId));
-        if (Result.success().getCode().equals(result.getCode())) {
-            MemBaseinfo memBaseinfo = result.getData();
-            return memBaseinfo;
-        } else {
-            throw new BizException("No client with requested id: " + userId);
-        }
-    }
 
     @Override
     public MemBaseinfo getByAccountNo(String accountNo) {
@@ -82,13 +85,13 @@ public class GameCommonServiceImpl implements GameCommonService {
     }
 
     @Override
-    public void updateUserBalance(MemBaseinfo memBaseinfo, BigDecimal changeAmount, GoldchangeEnum goldchangeEnum, TradingEnum tradingEnum) {
+    public void updateUserBalance(MemTradingBO memTradingBO, BigDecimal changeAmount, GoldchangeEnum goldchangeEnum, TradingEnum tradingEnum) {
         MemGoldChangeDto goldChangeDO = new MemGoldChangeDto();
         goldChangeDO.setChangeAmount(changeAmount);
         goldChangeDO.setTradingEnum(tradingEnum);
         goldChangeDO.setGoldchangeEnum(goldchangeEnum);
-        goldChangeDO.setUserId(memBaseinfo.getId());
-        goldChangeDO.setUpdateUser(memBaseinfo.getAccount());
+        goldChangeDO.setUserId(memTradingBO.getId());
+        goldChangeDO.setUpdateUser(memTradingBO.getAccount());
 //      goldChangeDO.setRefId(rechargeOrder.getRechargeOrderId());
         boolean flag = iMemGoldChangeService.updateMemGoldChange(goldChangeDO);
         if (!flag) {

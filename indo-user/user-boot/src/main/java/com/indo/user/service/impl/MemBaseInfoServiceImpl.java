@@ -13,10 +13,12 @@ import com.indo.core.pojo.bo.MemBaseinfoBo;
 import com.indo.core.pojo.entity.MemAgent;
 import com.indo.core.pojo.entity.MemBaseinfo;
 import com.indo.core.pojo.entity.MemInviteCode;
+import com.indo.core.pojo.vo.MemTradingVO;
 import com.indo.user.common.util.UserBusinessRedisUtils;
 import com.indo.user.mapper.MemAgentMapper;
 import com.indo.user.mapper.MemBaseInfoMapper;
 import com.indo.user.mapper.MemInviteCodeMapper;
+import com.indo.user.pojo.bo.MemTradingBO;
 import com.indo.user.pojo.req.LogOutReq;
 import com.indo.user.pojo.req.LoginReq;
 import com.indo.user.pojo.req.RegisterReq;
@@ -39,8 +41,6 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, MemBaseinfo> implements MemBaseInfoService {
 
-    @Resource
-    private MemBaseInfoMapper memBaseInfoMapper;
 
     @Autowired
     private MemAgentMapper memAgentMapper;
@@ -93,10 +93,10 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
         if (!req.getPassword().equals(req.getConfirmPassword())) {
             return Result.failed("两次密码填写不一样！");
         }
-//        String uuidKey = UserBusinessRedisUtils.get(req.getUuid());
-//        if (StringUtils.isEmpty(uuidKey) || !req.getImgCode().equalsIgnoreCase(uuidKey)) {
-//            return Result.failed("图像验证码错误！");
-//        }
+        String uuidKey = UserBusinessRedisUtils.get(req.getUuid());
+        if (StringUtils.isEmpty(uuidKey) || !req.getImgCode().equalsIgnoreCase(uuidKey)) {
+            return Result.failed("图像验证码错误！");
+        }
         // 验证邀请码
         MemInviteCode memInviteCode = null;
         if (StringUtils.isNotBlank(req.getInviteCode())) {
@@ -250,11 +250,8 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
 
 
     @Override
-    public MemTradingVo tradingInfo(Long memId) {
-        MemBaseinfo memBaseinfo = baseMapper.selectById(memId);
-        MemTradingVo memTradingVo = DozerUtil.map(memBaseinfo, MemTradingVo.class);
-        return memTradingVo;
+    public MemTradingBO tradingInfo(String account) {
+        return this.baseMapper.tradingInfo(account);
     }
-
 
 }

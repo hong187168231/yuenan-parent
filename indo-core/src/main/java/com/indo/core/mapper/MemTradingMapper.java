@@ -24,7 +24,4 @@ public interface MemTradingMapper {
 
     MemBaseinfoBo findMemBaseInfoByAccount(@Param("account") String account);
 
-    MemTradingVO tradingInfo(String account);
-
-
 }
