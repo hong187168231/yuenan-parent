@@ -30,21 +30,7 @@ import java.util.List;
 public class PayBankController {
 
     @Resource
-    private IMemBankService iMemBankService;
-
-    @Resource
     private IPayBankService iPayBankService;
-
-    /**
-     * 支付渠道列表
-     *
-     * @return
-     */
-    @ApiOperation(value = "会员已绑定银行卡")
-    @GetMapping("/bindlist")
-    public Result<List<MemBankVO>> bindlist(@LoginUser LoginInfo loginInfo) {
-        return Result.success(iMemBankService.memBankList(loginInfo));
-    }
 
 
     @ApiOperation(value = "会员可绑定银行列表")

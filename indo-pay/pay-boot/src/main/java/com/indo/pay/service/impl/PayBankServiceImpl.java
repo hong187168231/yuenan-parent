@@ -23,14 +23,12 @@ import java.util.List;
 @Service
 public class PayBankServiceImpl extends ServiceImpl<PayBankMapper, PayBank> implements IPayBankService {
 
-    @Resource
-    private DozerUtil dozerUtil;
 
     @Override
     public List<PayBankVO> bankList() {
         LambdaQueryWrapper<PayBank> wrapper = new LambdaQueryWrapper<>();
         List<PayBank> list = baseMapper.selectList(wrapper);
-        List<PayBankVO> result = dozerUtil.convert(list, PayBankVO.class);
+        List<PayBankVO> result = DozerUtil.convert(list, PayBankVO.class);
         return result;
     }
 }

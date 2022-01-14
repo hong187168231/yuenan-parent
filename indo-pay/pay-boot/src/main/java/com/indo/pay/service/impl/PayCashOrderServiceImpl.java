@@ -21,6 +21,8 @@ import com.indo.pay.mapper.PayCashOrderMapper;
 import com.indo.pay.pojo.req.CashApplyReq;
 import com.indo.pay.pojo.vo.PayCashOrderVO;
 import com.indo.pay.service.IPayCashOrderService;
+import com.indo.user.api.MemBaseInfoFeignClient;
+import com.indo.user.pojo.bo.MemTradingBO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,7 +46,7 @@ public class PayCashOrderServiceImpl extends ServiceImpl<PayCashOrderMapper, Pay
     @Autowired
     private IMemGoldChangeService iMemGoldChangeService;
     @Autowired
-    private IMemTradingService iMemTradingService;
+    private MemBaseInfoFeignClient memBaseInfoFeignClient;
     @Autowired
     private MemBankRelationMapper memBankRelationMapper;
 
@@ -102,13 +104,13 @@ public class PayCashOrderServiceImpl extends ServiceImpl<PayCashOrderMapper, Pay
      * @param cashApplyReq
      */
     public void logicConditionCheck(LoginInfo loginUser, CashApplyReq cashApplyReq, MemBankRelation bridgeMemBank) {
-        MemTradingVO moneyVO = iMemTradingService.tradingInfo(loginUser.getAccount());
+        MemTradingBO memTradingBO = this.getMemTradingInfo(loginUser.getAccount());
         // 账户余额不足
-        if (cashApplyReq.getCashAmount().compareTo(moneyVO.getBalance()) == 1) {
+        if (cashApplyReq.getCashAmount().compareTo(memTradingBO.getBalance()) == 1) {
 //            throw new BizException(StatusCode.ACCOUNT_BALANCE_DEFICIENCY);
         }
         // 大于可提现金额
-        if (cashApplyReq.getCashAmount().compareTo(moneyVO.getCanAmount()) == 1) {
+        if (cashApplyReq.getCashAmount().compareTo(memTradingBO.getCanAmount()) == 1) {
 //            throw new BizException(StatusCode.DOT_MEET_CAN_AMOUNT);
         }
         // 存在处理中的提现订单
@@ -222,5 +224,16 @@ public class PayCashOrderServiceImpl extends ServiceImpl<PayCashOrderMapper, Pay
         goldChangeDO.setRefId(applyId);
         iMemGoldChangeService.updateMemGoldChange(goldChangeDO);
     }
+
+    public MemTradingBO getMemTradingInfo(String account) {
+        Result<MemTradingBO> result = memBaseInfoFeignClient.getMemTradingInfo(account);
+        if (Result.success().getCode().equals(result.getCode())) {
+            MemTradingBO memBaseinfo = result.getData();
+            return memBaseinfo;
+        } else {
+            throw new BizException("No client with requested id: " + account);
+        }
+    }
+
 
 }

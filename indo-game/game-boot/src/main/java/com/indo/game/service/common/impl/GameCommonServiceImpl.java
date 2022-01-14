@@ -17,7 +17,6 @@ import com.indo.game.pojo.entity.manage.GamePlatform;
 import com.indo.game.service.common.GameCommonService;
 import com.indo.user.api.MemBaseInfoFeignClient;
 import com.indo.user.pojo.bo.MemTradingBO;
-import com.indo.user.pojo.entity.MemBaseinfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -54,7 +53,7 @@ public class GameCommonServiceImpl implements GameCommonService {
     public MemTradingBO getMemTradingInfo(String account) {
         Result<MemTradingBO> result = memBaseInfoFeignClient.getMemTradingInfo(account);
         if (Result.success().getCode().equals(result.getCode())) {
-            MemTradingBO memBaseinfo = result.getData();
+            MemTradingBO  memBaseinfo = result.getData();
             return memBaseinfo;
         } else {
             throw new BizException("No client with requested id: " + account);
@@ -71,18 +70,7 @@ public class GameCommonServiceImpl implements GameCommonService {
     }
 
 
-    @Override
-    public MemBaseinfo getByAccountNo(String accountNo) {
-        Result<MemBaseinfo> result = memBaseInfoFeignClient.getByAccount(accountNo);
-        MemBaseinfo memBaseinfo = null;
-        if (null != result && Result.success().getCode().equals(result.getCode())) {
-            memBaseinfo = result.getData();
 
-        } else {
-            throw new BizException("No client with requested accountNo: " + accountNo);
-        }
-        return memBaseinfo;
-    }
 
     @Override
     public void updateUserBalance(MemTradingBO memTradingBO, BigDecimal changeAmount, GoldchangeEnum goldchangeEnum, TradingEnum tradingEnum) {
