@@ -11,7 +11,7 @@ import com.indo.core.pojo.entity.SmsSendRecord;
 import com.indo.user.common.constant.UserConstants;
 import com.indo.user.pojo.req.VerifyCodeReq;
 import com.indo.user.pojo.vo.sms.SmsCodeVo;
-import com.indo.user.service.MemBaseInfoService;
+import com.indo.user.service.AppMemBaseInfoService;
 import com.indo.user.service.sms.ISmsSendRecordService;
 import com.indo.user.service.sms.ISmsService;
 import lombok.extern.slf4j.Slf4j;
@@ -41,7 +41,7 @@ public class SmsServiceImpl implements ISmsService {
     private ISmsSendRecordService iSmsSendRecordService;
 
     @Autowired
-    private MemBaseInfoService memBaseInfoService;
+    private AppMemBaseInfoService memBaseInfoService;
 
     @Autowired
     private SmsSendTemplate smsSendTemplate;

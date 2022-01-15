@@ -8,7 +8,7 @@ import com.indo.common.result.Result;
 import com.indo.user.pojo.req.mem.AddBankCardReq;
 import com.indo.user.pojo.vo.MemBankVo;
 import com.indo.user.pojo.vo.PayBankVO;
-import com.indo.user.service.IMemBankRelationService;
+import com.indo.user.service.AppMemBankService;
 import com.indo.user.service.IPayBankService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -32,7 +32,7 @@ import java.util.List;
 public class MemBankRelationController {
 
     @Autowired
-    private IMemBankRelationService memBankRelationService;
+    private AppMemBankService memBankRelationService;
 
     @Resource
     private IPayBankService iPayBankService;

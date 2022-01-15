@@ -1,6 +1,9 @@
 package com.indo.user.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.indo.admin.pojo.req.agnet.AgentRebateRecordReq;
+import com.indo.admin.pojo.vo.agent.AgentRebateInfoVO;
+import com.indo.admin.pojo.vo.agent.AgentRebateRecordVO;
 import com.indo.admin.pojo.vo.agent.AgentSubVO;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.core.base.service.SuperService;
@@ -21,5 +24,11 @@ public interface IMemAgentService extends SuperService<AgentRelation> {
     boolean apply(MemAgentApplyReq req, LoginInfo loginInfo);
 
     Page<AgentSubVO> subordinatePage(SubordinateAppReq req, LoginInfo loginInfo);
+
+    AgentRebateInfoVO rebateInfo(LoginInfo loginInfo);
+
+    Page<AgentRebateRecordVO> queryList(AgentRebateRecordReq req, LoginInfo loginInfo);
+
+    Page<AgentRebateRecordVO> subRebateList(AgentRebateRecordReq req, LoginInfo loginInfo);
 
 }

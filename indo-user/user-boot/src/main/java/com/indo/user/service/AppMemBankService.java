@@ -16,7 +16,7 @@ import java.util.List;
  * @author xxx
  * @since 2021-11-17
  */
-public interface IMemBankRelationService extends IService<MemBank> {
+public interface AppMemBankService extends IService<MemBank> {
 
     boolean addBankCard(AddBankCardReq req,LoginInfo loginUser);
 

@@ -14,14 +14,12 @@ import com.indo.user.pojo.vo.level.Gift;
 import com.indo.user.pojo.vo.level.LevelInfo;
 import com.indo.user.pojo.vo.level.LevelUpRuleVO;
 import com.indo.user.pojo.vo.level.MemLevelVo;
-import com.indo.user.pojo.vo.mem.MemTradingVo;
 import com.indo.user.service.IMemGiftReceiveService;
 import com.indo.user.service.IMemLevelService;
-import com.indo.user.service.MemBaseInfoService;
+import com.indo.user.service.AppMemBaseInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,7 +36,7 @@ import java.util.List;
 public class MemLevelServiceImpl extends ServiceImpl<MemLevelMapper, MemLevel> implements IMemLevelService {
 
     @Autowired
-    private MemBaseInfoService memBaseInfoService;
+    private AppMemBaseInfoService memBaseInfoService;
 
     @Autowired
     private IMemGiftReceiveService iMemGiftReceiveService;

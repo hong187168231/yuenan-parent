@@ -7,16 +7,13 @@ import com.indo.common.result.Result;
 import com.indo.user.pojo.req.LogOutReq;
 import com.indo.user.pojo.req.LoginReq;
 import com.indo.user.pojo.req.RegisterReq;
-import com.indo.user.pojo.req.mem.AddBankCardReq;
-import com.indo.user.pojo.req.mem.MemInfoReq;
 import com.indo.user.pojo.req.mem.UpdateBaseInfoReq;
 import com.indo.user.pojo.req.mem.UpdatePasswordReq;
 import com.indo.user.pojo.vo.AppLoginVo;
 import com.indo.user.pojo.vo.mem.MemBaseInfoVo;
-import com.indo.user.service.MemBaseInfoService;
+import com.indo.user.service.AppMemBaseInfoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +26,7 @@ import javax.annotation.Resource;
 public class MemBaseInfoController {
 
     @Resource
-    private MemBaseInfoService memBaseInfoService;
+    private AppMemBaseInfoService memBaseInfoService;
 
     @ApiOperation(value = "登录接口", httpMethod = "POST")
     @PostMapping(value = "/login")

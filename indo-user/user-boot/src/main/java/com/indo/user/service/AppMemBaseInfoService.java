@@ -17,7 +17,7 @@ import com.indo.user.pojo.vo.mem.MemBaseInfoVo;
 import com.indo.user.pojo.vo.mem.MemTradingVo;
 import org.apache.ibatis.annotations.Param;
 
-public interface MemBaseInfoService extends SuperService<MemBaseinfo> {
+public interface AppMemBaseInfoService extends SuperService<MemBaseinfo> {
 
     /**
      * 用户登录

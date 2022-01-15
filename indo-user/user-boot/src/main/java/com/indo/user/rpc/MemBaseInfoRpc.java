@@ -2,7 +2,7 @@ package com.indo.user.rpc;
 
 import com.indo.common.result.Result;
 import com.indo.user.pojo.bo.MemTradingBO;
-import com.indo.user.service.MemBaseInfoService;
+import com.indo.user.service.AppMemBaseInfoService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -21,7 +21,7 @@ import javax.annotation.Resource;
 public class MemBaseInfoRpc {
 
     @Resource
-    private MemBaseInfoService memBaseInfoService;
+    private AppMemBaseInfoService memBaseInfoService;
 
     @GetMapping("/getMemTradingInfo/{account}")
     public Result<MemTradingBO> getMemTradingInfo(@PathVariable String account) {

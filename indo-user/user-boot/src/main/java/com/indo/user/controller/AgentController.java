@@ -14,7 +14,6 @@ import com.indo.common.redis.utils.RedisUtils;
 import com.indo.common.result.Result;
 import com.indo.user.pojo.req.mem.MemAgentApplyReq;
 import com.indo.user.pojo.req.mem.SubordinateAppReq;
-import com.indo.user.service.IAgentRebateRecordService;
 import com.indo.user.service.IMemAgentService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -40,9 +39,6 @@ public class AgentController {
     @Autowired
     private IMemAgentService iMemAgentService;
 
-    @Autowired
-    private IAgentRebateRecordService iAgentRebateRecordService;
-
     @ApiOperation(value = "申请", httpMethod = "POST")
     @PostMapping(value = "/apply")
     public Result add(@RequestBody MemAgentApplyReq req, @LoginUser LoginInfo loginInfo) {
@@ -53,7 +49,7 @@ public class AgentController {
     @ApiOperation(value = "我的佣金", httpMethod = "GET")
     @GetMapping(value = "/rebateInfo")
     public Result<AgentRebateInfoVO> rebateInfo(@LoginUser LoginInfo loginInfo) {
-        AgentRebateInfoVO infoVO = iAgentRebateRecordService.rebateInfo(loginInfo);
+        AgentRebateInfoVO infoVO = iMemAgentService.rebateInfo(loginInfo);
         return Result.success(infoVO);
     }
 
@@ -69,7 +65,7 @@ public class AgentController {
     @ApiOperation(value = "佣金列表", httpMethod = "GET")
     @GetMapping(value = "/rebateList")
     public Result rebateList(@RequestBody AgentRebateRecordReq req, @LoginUser LoginInfo loginInfo) {
-        Page<AgentRebateRecordVO> result = iAgentRebateRecordService.queryList(req, loginInfo);
+        Page<AgentRebateRecordVO> result = iMemAgentService.queryList(req, loginInfo);
         return Result.success(result.getRecords(), result.getTotal());
     }
 
@@ -77,7 +73,7 @@ public class AgentController {
     @ApiOperation(value = "下级佣金明细", httpMethod = "GET")
     @GetMapping(value = "/subRebateList")
     public Result subRebateList(@RequestBody AgentRebateRecordReq req, @LoginUser LoginInfo loginInfo) {
-        Page<AgentRebateRecordVO> result = iAgentRebateRecordService.subRebateList(req, loginInfo);
+        Page<AgentRebateRecordVO> result = iMemAgentService.subRebateList(req, loginInfo);
         return Result.success(result.getRecords(), result.getTotal());
     }
 

@@ -8,7 +8,7 @@ import com.indo.core.pojo.entity.MemBank;
 import com.indo.user.mapper.MemBankRelationMapper;
 import com.indo.user.pojo.req.mem.AddBankCardReq;
 import com.indo.user.pojo.vo.MemBankVo;
-import com.indo.user.service.IMemBankRelationService;
+import com.indo.user.service.AppMemBankService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,7 +24,7 @@ import java.util.List;
  * @since 2021-11-17
  */
 @Service
-public class MemBankRelationServiceImpl extends ServiceImpl<MemBankRelationMapper, MemBank> implements IMemBankRelationService {
+public class AppMemBankServiceImpl extends ServiceImpl<MemBankRelationMapper, MemBank> implements AppMemBankService {
 
     @Autowired
     private MemBankRelationMapper memBankRelationMapper;
