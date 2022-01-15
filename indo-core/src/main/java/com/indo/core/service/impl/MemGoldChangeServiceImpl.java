@@ -153,7 +153,7 @@ public class MemGoldChangeServiceImpl extends SuperServiceImpl<MemGoldChangeMapp
                     memGoldChange.setAfterAmount(newBalance);
                     memGoldChange.setBeforeCodeAmount(canAmount);
                     memGoldChange.setAfterCodeAmount(afterCodeAmount);
-                    memGoldChange.setUserId(change.getUserId());
+                    memGoldChange.setMemId(change.getUserId());
                     memGoldChange.setRefId(change.getRefId());
                     memGoldChange.setSerialNo(change.getSerialNo());
                     if (StringUtils.isBlank(change.getSerialNo())) {

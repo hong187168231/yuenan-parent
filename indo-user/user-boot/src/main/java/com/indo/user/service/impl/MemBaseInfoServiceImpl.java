@@ -116,7 +116,7 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
         if (StringUtils.isNotBlank(req.getDeviceCode())) {
             // userInfo.setDeviceCode(req.getDeviceCode());
         }
-        userInfo.setInviteCode(req.getInviteCode());
+//        userInfo.setInviteCode(req.getInviteCode());
         //保存注册信息
         initRegister(userInfo, memInviteCode);
         MemBaseinfoBo memBaseinfoBo = DozerUtil.map(userInfo, MemBaseinfoBo.class);

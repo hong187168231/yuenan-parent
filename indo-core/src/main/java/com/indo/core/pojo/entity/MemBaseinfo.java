@@ -40,9 +40,6 @@ public class MemBaseinfo extends BaseEntity {
     @ApiModelProperty(value = "用户唯一标识")
     private String account;
 
-    @ApiModelProperty(value = "密码盐值")
-    private String salt;
-
     @ApiModelProperty(value = "登陆密码")
     private String password;
 
@@ -64,12 +61,6 @@ public class MemBaseinfo extends BaseEntity {
     @ApiModelProperty(value = "whatsapp")
     private String whatsApp;
 
-    @ApiModelProperty(value = "注册时使用的邀请码（上级的）")
-    private String inviteCode;
-
-    @ApiModelProperty(value = "支付层级id")
-    private Long groupId;
-
     @ApiModelProperty(value = "用户等级")
     private Integer memLevel;
 
@@ -84,7 +75,6 @@ public class MemBaseinfo extends BaseEntity {
 
     @ApiModelProperty(value = "余额")
     private BigDecimal balance;
-
 
     @ApiModelProperty(value = "可提金额")
     private BigDecimal canAmount;

@@ -12,7 +12,6 @@ import com.indo.game.pojo.vo.callback.saba.*;
 import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.saba.SabaCallbackService;
 import com.indo.user.pojo.bo.MemTradingBO;
-import com.indo.user.pojo.entity.MemBaseinfo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,7 +33,7 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
     //取得用户的余额
     public Object getBalance(SabaCallBackReq<SabaCallBackParentReq> sabaCallBackReq) {
         SabaCallBackParentReq sabaCallBackParentReq = sabaCallBackReq.getMessage();
-        MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(sabaCallBackParentReq.getUserId());
+        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sabaCallBackParentReq.getUserId());
         SabaCallBackGetBalanceResp sabaCallBackGetBalanceResp = new SabaCallBackGetBalanceResp();
 
         if (null == memBaseinfo) {
@@ -275,7 +274,7 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
         SabaCallBackConfirmBet3rdReq<ConfirmBet3rdTicketInfoReq> sabaCallBackConfirmBet3rdReq = sabaCallBackReq.getMessage();
 
         SabaCallBackConfirmBet3rdResp sabaCallBackConfirmBet3rdResp = new SabaCallBackConfirmBet3rdResp();
-        MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(sabaCallBackConfirmBet3rdReq.getUserId());
+        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sabaCallBackConfirmBet3rdReq.getUserId());
 
         if (null == memBaseinfo) {
             sabaCallBackConfirmBet3rdResp.setStatus("203");

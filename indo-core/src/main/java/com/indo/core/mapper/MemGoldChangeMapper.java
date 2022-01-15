@@ -25,7 +25,7 @@ public interface MemGoldChangeMapper extends BaseMapper<MemGoldChange> {
                            @Param("canAmount") BigDecimal canAmount,
                            @Param("betAmount") BigDecimal betAmount,
                            @Param("rechargeAmount") BigDecimal rechargeAmount,
-                           @Param("canAmount") BigDecimal cashAmount,
+                           @Param("cashAmount") BigDecimal cashAmount,
                            @Param("memId") Long memId);
 
 

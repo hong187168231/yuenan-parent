@@ -36,6 +36,7 @@ public class TestController {
         MemTradingBO memBaseinfo = new MemTradingBO();
         memBaseinfo.setId(42L);
         memBaseinfo.setAccount("swuserid");
+        MemTradingBO memTradingBO = iGameManageService.getMemTradingInfo("puff");
         iGameManageService.updateUserBalance(memBaseinfo, new BigDecimal("20.0"), GoldchangeEnum.REFUND, TradingEnum.INCOME);
         return Result.success(memBaseinfo);
     }

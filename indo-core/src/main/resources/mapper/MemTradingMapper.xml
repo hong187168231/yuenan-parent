@@ -9,7 +9,7 @@
         <result column="update_time" property="updateTime"/>
         <result column="refId" property="refId"/>
         <result column="serial_no" property="serialNo"/>
-        <result column="user_id" property="userId"/>
+        <result column="mem_id" property="memId"/>
         <result column="change_type" property="changeType"/>
         <result column="trading_type" property="tradingType"/>
         <result column="before_amount" property="beforeAmount"/>
@@ -68,11 +68,14 @@
 
     <!-- 通用查询结果列 -->
     <sql id="mem_Column_List">
-        id
-        , real_name, nick_name, account salt, password, password_md5, phone, email, face_book, whats_app,
-        invite_code, group_id, mem_level, acc_type, total_deposit, total_enchashment,
-        balance, register_source, register_ip, client_ip, status, prohibit_login, prohibit_invite,
-        prohibit_investment, prohibit_disbursement, prohibit_recharge, remark, create_user, last_login_time, update_user
+        create_time
+        ,
+        update_time,
+        id, account, acc_type, nick_name, real_name, head_image, password,
+        password_md5, birthday, phone, email, face_book, whats_app, mem_level, total_deposit,
+        total_enchashment, total_bet, balance, can_amount, register_source, register_ip, client_ip,
+        status, prohibit_login, prohibit_invite, prohibit_investment, prohibit_disbursement,
+        prohibit_recharge, last_login_time, create_user, update_user, remark
     </sql>
 
 
@@ -89,7 +92,6 @@
         from mem_baseinfo mb
         where mb.account =#{account}
     </select>
-
 
 
 </mapper>

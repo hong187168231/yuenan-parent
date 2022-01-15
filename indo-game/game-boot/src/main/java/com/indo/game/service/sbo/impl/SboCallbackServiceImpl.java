@@ -13,7 +13,6 @@ import com.indo.game.pojo.vo.callback.sbo.SboCallBackGetTransferStatusResp;
 import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.sbo.SboCallbackService;
 import com.indo.user.pojo.bo.MemTradingBO;
-import com.indo.user.pojo.entity.MemBaseinfo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
