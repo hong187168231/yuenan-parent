@@ -3,6 +3,7 @@ package com.indo.job.executor.jobhandler;
 import com.indo.common.constant.AppConstants;
 import com.indo.common.redis.utils.RedisUtils;
 import com.indo.common.utils.DateUtils;
+import com.indo.core.pojo.entity.StatUserRetention;
 import com.indo.job.service.IMemBaseinfoService;
 import com.indo.job.service.IUserRetentionService;
 import com.xxl.job.core.handler.annotation.XxlJob;
