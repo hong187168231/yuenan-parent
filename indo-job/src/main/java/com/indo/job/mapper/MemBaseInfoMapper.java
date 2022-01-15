@@ -1,6 +1,7 @@
 package com.indo.job.mapper;
 
-import com.indo.common.mybatis.base.mapper.SuperMapper;
+import com.indo.core.base.mapper.SuperMapper;
+import com.indo.core.pojo.entity.MemBaseinfo;
 import org.apache.ibatis.annotations.Mapper;
 
 

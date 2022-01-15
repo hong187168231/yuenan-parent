@@ -1,8 +1,9 @@
 package com.indo.job.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.indo.common.mybatis.base.service.impl.SuperServiceImpl;
 import com.indo.common.rabbitmq.bo.Message;
+import com.indo.core.base.service.impl.SuperServiceImpl;
+import com.indo.core.pojo.entity.MemBaseinfo;
 import com.indo.job.mapper.MemBaseInfoMapper;
 import com.indo.job.service.IMemBaseinfoService;
 import com.indo.job.service.IMemLevelService;
@@ -23,7 +24,6 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
 
     @Autowired
     private IMemLevelService iMemLevelService;
-
 
 
     @Override
