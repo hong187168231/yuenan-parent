@@ -7,6 +7,7 @@ import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.utils.SnowflakeIdWorker;
 import com.indo.common.web.exception.BizException;
 import com.indo.core.pojo.entity.PayChannelConfig;
+import com.indo.core.pojo.entity.PayRecharge;
 import com.indo.core.pojo.entity.PayWayConfig;
 import com.indo.pay.mapper.PayChannelMapper;
 import com.indo.pay.mapper.PayWayMapper;
@@ -67,7 +68,7 @@ public class PaymentService {
 
     public boolean insertPayment(RechargeDTO rechargeDTO) {
 
-        PayRechargeOrder rechargeOrder = new PayRechargeOrder();
+        PayRecharge rechargeOrder = new PayRecharge();
         rechargeOrder.setMemId(rechargeDTO.getMemId());
         rechargeOrder.setOrderNo(rechargeDTO.getOrderNo());
 //        rechargeOrder.setPayWayId(payRequestVo.getChannelWay());
