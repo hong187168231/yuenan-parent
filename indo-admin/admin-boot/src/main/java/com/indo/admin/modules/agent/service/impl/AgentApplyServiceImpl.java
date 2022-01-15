@@ -7,6 +7,7 @@ import com.indo.admin.modules.agent.mapper.AgentApplyMapper;
 import com.indo.admin.modules.agent.mapper.AgentRelationMapper;
 import com.indo.admin.modules.agent.service.IAgentApplyService;
 import com.indo.admin.modules.mem.mapper.MemInviteCodeMapper;
+import com.indo.admin.modules.mem.service.IMemBaseinfoService;
 import com.indo.admin.pojo.req.agnet.MemAgentApplyReq;
 import com.indo.admin.pojo.req.agnet.MemApplyAuditReq;
 import com.indo.admin.pojo.vo.agent.AgentApplyVO;
@@ -14,9 +15,11 @@ import com.indo.common.enums.AudiTypeEnum;
 import com.indo.common.utils.ShareCodeUtil;
 import com.indo.common.utils.StringUtils;
 import com.indo.common.web.exception.BizException;
+import com.indo.core.pojo.dto.MemBaseInfoDTO;
 import com.indo.core.pojo.entity.AgentApply;
 import com.indo.core.pojo.entity.AgentRelation;
 import com.indo.core.pojo.entity.MemInviteCode;
+import io.swagger.annotations.ApiModelProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,7 +43,8 @@ public class AgentApplyServiceImpl extends ServiceImpl<AgentApplyMapper, AgentAp
     private AgentRelationMapper agentRelationMapper;
     @Autowired
     private MemInviteCodeMapper memInviteCodeMapper;
-
+    @Autowired
+    private IMemBaseinfoService iMemBaseinfoService;
 
     @Override
     public Page<AgentApplyVO> getPage(MemAgentApplyReq req) {
@@ -87,6 +91,10 @@ public class AgentApplyServiceImpl extends ServiceImpl<AgentApplyMapper, AgentAp
                 if (!agentflag || !inviteFlag) {
                     throw new BizException("代理审核出错!");
                 }
+
+                MemBaseInfoDTO memBaseInfoDTO = new MemBaseInfoDTO();
+                memBaseInfoDTO.setAccType(AudiTypeEnum.agree.getStatus());
+                iMemBaseinfoService.refreshMemBaseInfo(memBaseInfoDTO, memAgent.getAccount());
                 return true;
             }
             return true;

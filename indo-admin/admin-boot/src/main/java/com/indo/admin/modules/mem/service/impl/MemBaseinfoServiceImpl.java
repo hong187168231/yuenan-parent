@@ -18,10 +18,13 @@ import com.indo.admin.pojo.req.mem.MemEditReq;
 import com.indo.admin.pojo.vo.mem.MemBaseInfoVo;
 import com.indo.admin.pojo.vo.mem.MemBaseDetailVO;
 import com.indo.common.web.exception.BizException;
+import com.indo.common.web.util.DozerUtil;
 import com.indo.core.base.service.impl.SuperServiceImpl;
-import com.indo.core.pojo.bo.MemBaseinfoBo;
+import com.indo.core.pojo.bo.MemBaseInfoBO;
+import com.indo.core.pojo.dto.MemBaseInfoDTO;
 import com.indo.core.pojo.entity.AgentRelation;
 import com.indo.core.pojo.entity.MemBaseinfo;
+import com.indo.core.util.BusinessRedisUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -57,13 +60,13 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
     @Override
     @Transactional
     public void addMemBaseInfo(MemAddReq req) {
-        MemBaseinfoBo curentMem = getMemCacheBaseInfo(req.getAccount());
+        MemBaseInfoBO curentMem = this.memBaseInfoMapper.findMemBaseInfoByAccount(req.getAccount());
         if (curentMem != null) {
             throw new BizException("该账号已存在!");
         }
-        MemBaseinfoBo supperMem = null;
+        MemBaseInfoBO supperMem = null;
         if (StringUtils.isNotBlank(req.getSuperAccno())) {
-            supperMem = this.getMemCacheBaseInfo(req.getSuperAccno());
+            supperMem = this.memBaseInfoMapper.findMemBaseInfoByAccount(req.getSuperAccno());
             if (supperMem == null || !supperMem.getAccType().equals(2)) {
                 throw new BizException("请填入正确的代理账号");
             }
@@ -105,18 +108,23 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
 
     @Override
     public boolean editMemBaseInfo(MemEditReq req) {
-        MemBaseinfo memBaseinfo = new MemBaseinfo();
+        MemBaseinfo memBaseinfo = checkMemIsExist(req.getId());
         memBaseinfo.setId(req.getId());
-        BeanUtils.copyProperties(req, memBaseinfo);
+        DozerUtil.map(req, memBaseinfo);
+        MemBaseInfoDTO memBaseInfoDTO = new MemBaseInfoDTO();
+        DozerUtil.map(req, memBaseInfoDTO);
+        refreshMemBaseInfo(memBaseInfoDTO, memBaseinfo.getAccount());
         return baseMapper.updateById(memBaseinfo) > 0;
     }
 
     @Override
     public boolean updateMemLevel(Long memId, Integer memLevel) {
-        MemBaseinfo memBaseinfo = new MemBaseinfo();
+        MemBaseinfo memBaseinfo = checkMemIsExist(memId);
         memBaseinfo.setMemLevel(memLevel);
-        memBaseinfo.setId(
-                memId);
+        memBaseinfo.setId(memId);
+        MemBaseInfoDTO memBaseInfoDTO = new MemBaseInfoDTO();
+        memBaseInfoDTO.setMemLevel(memLevel);
+        refreshMemBaseInfo(memBaseInfoDTO, memBaseinfo.getAccount());
         return baseMapper.updateById(memBaseinfo) > 0;
     }
 
@@ -138,22 +146,43 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
 
     @Override
     public boolean editStatus(MemEditStatusReq req) {
-        MemBaseinfo memBaseinfo = new MemBaseinfo();
-        memBaseinfo.setId(req.getId());
-        BeanUtils.copyProperties(req, memBaseinfo);
+        MemBaseinfo memBaseinfo = checkMemIsExist(req.getId());
+        DozerUtil.map(req, memBaseinfo);
+        MemBaseInfoDTO memBaseInfoDTO = new MemBaseInfoDTO();
+        DozerUtil.map(req, memBaseinfo);
+        refreshMemBaseInfo(memBaseInfoDTO, memBaseinfo.getAccount());
         return baseMapper.updateById(memBaseinfo) > 0;
     }
 
     @Override
     public boolean resetPassword(Long memId) {
-        MemBaseinfo memBaseinfo = new MemBaseinfo();
-        memBaseinfo.setId(memId);
+        MemBaseinfo memBaseinfo = checkMemIsExist(memId);
         memBaseinfo.setPasswordMd5(MD5.md5("12345678"));
+        MemBaseInfoDTO memBaseInfoDTO = new MemBaseInfoDTO();
+        memBaseInfoDTO.setPasswordMd5(memBaseinfo.getPasswordMd5());
+        refreshMemBaseInfo(memBaseInfoDTO, memBaseinfo.getAccount());
         return baseMapper.updateById(memBaseinfo) > 0;
     }
 
     @Override
     public List<Long> findIdListByCreateTime(Date date) {
         return memBaseInfoMapper.findIdListByCreateTime(DateUtils.format(date, DateUtils.webFormat));
+    }
+    @Override
+    public void refreshMemBaseInfo(MemBaseInfoDTO memBaseInfoDTO, String account) {
+        MemBaseInfoBO memBaseInfoBO = this.getMemCacheBaseInfo(account);
+        if (null == memBaseInfoBO) {
+            memBaseInfoBO = this.baseMapper.findMemBaseInfoByAccount(account);
+        }
+        DozerUtil.map(memBaseInfoDTO, memBaseInfoBO);
+        BusinessRedisUtils.saveMemBaseInfo(memBaseInfoBO);
+    }
+
+    public MemBaseinfo checkMemIsExist(Long id) {
+        MemBaseinfo memBaseinfo = this.baseMapper.selectById(id);
+        if (memBaseinfo == null) {
+            throw new BizException("用户不存在");
+        }
+        return memBaseinfo;
     }
 }

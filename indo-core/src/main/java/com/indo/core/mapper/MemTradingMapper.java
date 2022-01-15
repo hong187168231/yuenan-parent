@@ -1,6 +1,6 @@
 package com.indo.core.mapper;
 
-import com.indo.core.pojo.bo.MemBaseinfoBo;
+import com.indo.core.pojo.bo.MemGoldInfoBO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -15,8 +15,6 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface MemTradingMapper {
 
-    MemBaseinfoBo findMemBaseInfoById(@Param("memId") Long memId);
-
-    MemBaseinfoBo findMemBaseInfoByAccount(@Param("account") String account);
+    MemGoldInfoBO findMemGoldInfo(@Param("memId") Long memId);
 
 }

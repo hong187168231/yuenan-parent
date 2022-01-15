@@ -11,7 +11,7 @@ import com.indo.common.web.exception.BizException;
 import com.indo.core.base.service.impl.SuperServiceImpl;
 import com.indo.core.mapper.MemGoldChangeMapper;
 import com.indo.core.mapper.MemTradingMapper;
-import com.indo.core.pojo.bo.MemBaseinfoBo;
+import com.indo.core.pojo.bo.MemGoldInfoBO;
 import com.indo.core.pojo.dto.MemGoldChangeDTO;
 import com.indo.core.pojo.entity.MemGoldChange;
 import com.indo.core.service.IMemGoldChangeService;
@@ -45,7 +45,6 @@ public class MemGoldChangeServiceImpl extends SuperServiceImpl<MemGoldChangeMapp
 
     @Autowired
     private RedissonClient redissonClient;
-
     @Autowired
     private MemTradingMapper memTradingMapper;
 
@@ -102,7 +101,7 @@ public class MemGoldChangeServiceImpl extends SuperServiceImpl<MemGoldChangeMapp
             if (bool) {
                 begin = System.currentTimeMillis();
                 log.info("用户修改余额拿到锁{}", change.getUserId());
-                MemBaseinfoBo memBaseinfo = memTradingMapper.findMemBaseInfoById(Long.valueOf(userId));
+                MemGoldInfoBO memBaseinfo = memTradingMapper.findMemGoldInfo(userId);
                 if (memBaseinfo == null) {
                     log.info("{} updateUserBalance member is null,memBaseinfo: {}", change.getUserId(), memBaseinfo);
                     throw new BizException("用户不存在");

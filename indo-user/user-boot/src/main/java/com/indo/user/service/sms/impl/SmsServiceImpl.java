@@ -83,7 +83,7 @@ public class SmsServiceImpl implements ISmsService {
             log.info("mobile: {} ,短信条数 {}", req.getPhone(), mobileCount);
             throw new BizException("今天短信条数超过限制");
         }
-        MemBaseinfo ml = memBaseInfoService.findByMobile(req.getPhone());
+        MemBaseinfo ml = null;// memBaseInfoService.findByMobile(req.getPhone());
         // 验证这个手机号是否已经存在 如果是发送注册
         if (req.getVerifCodeTypeEnum().equals(VerifCodeTypeEnum.register)) {
             // 手机号 不存在 才 3注册；

@@ -4,12 +4,10 @@ import com.indo.common.constant.RedisKeys;
 import com.indo.common.redis.utils.RedisUtils;
 import com.indo.common.result.ResultCode;
 import com.indo.common.web.exception.BizException;
-import com.indo.core.pojo.bo.MemBaseinfoBo;
+import com.indo.core.pojo.bo.MemBaseInfoBO;
 import com.indo.core.pojo.entity.SysParameter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-
-import java.util.List;
 
 
 /**
@@ -21,13 +19,13 @@ import java.util.List;
 public class BusinessRedisUtils extends RedisUtils {
 
 
-    public static void saveMemBaseInfo(MemBaseinfoBo userInfo) {
-        set(RedisKeys.MEM_BASE_INFO_KEY + userInfo.getId(), userInfo, 60 * 60 * 24 * 7);
+    public static void saveMemBaseInfo(MemBaseInfoBO userInfo) {
+        set(RedisKeys.MEM_BASE_INFO_KEY + userInfo.getAccount(), userInfo);
     }
 
 
-    public static MemBaseinfoBo getMemBaseInfoByAccount(String account) {
-        MemBaseinfoBo memBaseinfoBo = get(RedisKeys.MEM_BASE_INFO_KEY + account);
+    public static MemBaseInfoBO getMemBaseInfoByAccount(String account) {
+        MemBaseInfoBO memBaseinfoBo = get(RedisKeys.MEM_BASE_INFO_KEY + account);
         return memBaseinfoBo;
     }
 

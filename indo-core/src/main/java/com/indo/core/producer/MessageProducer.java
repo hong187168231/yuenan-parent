@@ -1,4 +1,4 @@
-package com.indo.core.api;
+package com.indo.core.producer;
 
 import com.indo.common.rabbitmq.bo.Message;
 import com.indo.common.rabbitmq.exc.MessageRunTimeException;

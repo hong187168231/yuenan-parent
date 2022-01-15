@@ -1,4 +1,4 @@
-package com.indo.core.api;
+package com.indo.core.util;
 
 
 import cn.hutool.core.util.IdUtil;

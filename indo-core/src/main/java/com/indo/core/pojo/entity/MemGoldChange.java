@@ -42,6 +42,9 @@ public class MemGoldChange extends BaseEntity {
     @ApiModelProperty(value = "用户id")
     private Long memId;
 
+    @ApiModelProperty(value = "用户账号")
+    private String account;
+
     @ApiModelProperty(value = "变动类型 1充值 2充值附赠 3提現 5投注 6代理结算 等等其他类型-需要的时候进行补充")
     private Integer changeType;
 

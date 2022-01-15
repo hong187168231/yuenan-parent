@@ -8,6 +8,7 @@ import com.indo.admin.pojo.req.mem.MemEditReq;
 import com.indo.admin.pojo.vo.mem.MemBaseInfoVo;
 import com.indo.admin.pojo.vo.mem.MemBaseDetailVO;
 import com.indo.core.base.service.SuperService;
+import com.indo.core.pojo.dto.MemBaseInfoDTO;
 import com.indo.core.pojo.entity.MemBaseinfo;
 
 import java.util.Date;
@@ -74,5 +75,7 @@ public interface IMemBaseinfoService extends SuperService<MemBaseinfo> {
 
 
     List<Long> findIdListByCreateTime(Date addDay);
+
+    void refreshMemBaseInfo(MemBaseInfoDTO memBaseInfoDTO, String account);
 
 }

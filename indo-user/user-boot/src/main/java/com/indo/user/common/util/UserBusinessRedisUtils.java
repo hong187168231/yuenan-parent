@@ -5,7 +5,7 @@ import com.alibaba.fastjson.JSON;
 import com.indo.common.constant.AppConstants;
 import com.indo.common.utils.RandomUtil;
 import com.indo.common.utils.encrypt.MD5;
-import com.indo.core.pojo.bo.MemBaseinfoBo;
+import com.indo.core.pojo.bo.MemBaseInfoBO;
 import com.indo.core.util.BusinessRedisUtils;
 import com.indo.user.pojo.req.LogOutReq;
 
@@ -16,7 +16,7 @@ import com.indo.user.pojo.req.LogOutReq;
  */
 public class UserBusinessRedisUtils extends BusinessRedisUtils {
 
-    public static String createMemAccToken(MemBaseinfoBo userInfo) {
+    public static String createMemAccToken(MemBaseInfoBO userInfo) {
         String secrecy = userInfo.getAccount() + RandomUtil.uuid();
         String accToken = MD5.md5(secrecy, "UTF-8");
         set(AppConstants.USER_LOGIN_ACCTOKEN + accToken, JSON.toJSONString(userInfo), 60 * 60 * 24 * 7);

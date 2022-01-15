@@ -1,7 +1,8 @@
 package com.indo.core.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.indo.core.pojo.bo.MemBaseinfoBo;
+import com.indo.core.pojo.bo.MemBaseInfoBO;
+import com.indo.core.pojo.bo.MemGoldInfoBO;
 import com.indo.core.pojo.entity.MemGoldChange;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;

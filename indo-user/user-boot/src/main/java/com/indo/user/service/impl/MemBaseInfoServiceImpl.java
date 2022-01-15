@@ -9,10 +9,12 @@ import com.indo.common.utils.BaseUtil;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
 import com.indo.core.base.service.impl.SuperServiceImpl;
-import com.indo.core.pojo.bo.MemBaseinfoBo;
+import com.indo.core.pojo.bo.MemBaseInfoBO;
+import com.indo.core.pojo.dto.MemBaseInfoDTO;
 import com.indo.core.pojo.entity.AgentRelation;
 import com.indo.core.pojo.entity.MemBaseinfo;
 import com.indo.core.pojo.entity.MemInviteCode;
+import com.indo.core.util.BusinessRedisUtils;
 import com.indo.user.common.util.UserBusinessRedisUtils;
 import com.indo.user.mapper.AgentRelationMapper;
 import com.indo.user.mapper.MemBaseInfoMapper;
@@ -54,13 +56,12 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
             return Result.failed("请填写密码！");
         }
         req.setPassword(req.getPassword().toLowerCase());
-        MemBaseinfo userInfo = getByAccount(req.getAccount());
+        MemBaseInfoBO userInfo = findMemBaseInfo(req.getAccount());
         //判断密码是否正确
         if (!req.getPassword().equals(userInfo.getPasswordMd5())) {
             return Result.failed("密码错误！");
         }
-        MemBaseinfoBo memBaseinfoBo = DozerUtil.map(userInfo, MemBaseinfoBo.class);
-        String accToken = UserBusinessRedisUtils.createMemAccToken(memBaseinfoBo);
+        String accToken = UserBusinessRedisUtils.createMemAccToken(userInfo);
         //返回登录信息
         AppLoginVo appLoginVo = this.getAppLoginVo(accToken);
         return Result.success(appLoginVo);
@@ -105,7 +106,7 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
             }
         }
         //查询是否存在当前用户
-        if (this.getByAccount(req.getAccount()) != null) {
+        if (this.findMemBaseInfo(req.getAccount()) != null) {
             return Result.failed("账号已存在！");
         }
         MemBaseinfo userInfo = new MemBaseinfo();
@@ -119,7 +120,7 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
 //        userInfo.setInviteCode(req.getInviteCode());
         //保存注册信息
         initRegister(userInfo, memInviteCode);
-        MemBaseinfoBo memBaseinfoBo = DozerUtil.map(userInfo, MemBaseinfoBo.class);
+        MemBaseInfoBO memBaseinfoBo = DozerUtil.map(userInfo, MemBaseInfoBO.class);
         String accToken = UserBusinessRedisUtils.createMemAccToken(memBaseinfoBo);
         //返回登录信息
         AppLoginVo appLoginVo = this.getAppLoginVo(accToken);
@@ -174,13 +175,6 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
 
     }
 
-    @Override
-    public MemBaseInfoVo getMemBaseInfo(String account) {
-        MemBaseinfoBo cacheMemBaseInfo = this.getMemCacheBaseInfo(account);
-        MemBaseInfoVo vo = DozerUtil.map(cacheMemBaseInfo, MemBaseInfoVo.class);
-        return vo;
-    }
-
 
     @Override
     public boolean updatePassword(UpdatePasswordReq req, LoginInfo loginUser) {
@@ -192,7 +186,32 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
             throw new BizException("新密码和旧密码不能一样");
         }
         memBaseinfo.setPasswordMd5(req.getNewPassword());
+        MemBaseInfoDTO memBaseInfoDTO = new MemBaseInfoDTO();
+        memBaseInfoDTO.setPasswordMd5(memBaseinfo.getPasswordMd5());
+        refreshMemBaseInfo(memBaseInfoDTO, loginUser.getAccount());
         return this.baseMapper.updateById(memBaseinfo) > 0;
+    }
+
+
+    @Override
+    public MemBaseInfoVo getMemBaseInfo(String account) {
+        MemBaseInfoBO cacheMemBaseInfo = this.getMemCacheBaseInfo(account);
+        if (cacheMemBaseInfo == null) {
+            cacheMemBaseInfo = findMemBaseInfo(account);
+        }
+        MemBaseInfoVo vo = DozerUtil.map(cacheMemBaseInfo, MemBaseInfoVo.class);
+        return vo;
+    }
+
+
+    private void refreshMemBaseInfo(MemBaseInfoDTO memBaseInfoDTO, String account) {
+        MemBaseInfoBO memBaseInfoBO = this.getMemCacheBaseInfo(account);
+        if (null == memBaseInfoBO) {
+            memBaseInfoBO = findMemBaseInfo(account);
+        }
+        DozerUtil.map(memBaseInfoDTO, memBaseInfoBO);
+        BusinessRedisUtils.saveMemBaseInfo(memBaseInfoBO);
+
     }
 
     @Override
@@ -200,6 +219,9 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
         MemBaseinfo memBaseinfo = new MemBaseinfo();
         memBaseinfo.setHeadImage(headImage);
         memBaseinfo.setId(loginUser.getId());
+        MemBaseInfoDTO memBaseInfoDTO = new MemBaseInfoDTO();
+        memBaseInfoDTO.setHeadImage(memBaseinfo.getHeadImage());
+        refreshMemBaseInfo(memBaseInfoDTO, loginUser.getAccount());
         return baseMapper.updateById(memBaseinfo) > 0;
     }
 
@@ -211,25 +233,18 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, 
         memBaseinfo.setFaceBook(req.getFacebook());
         memBaseinfo.setWhatsApp(req.getWhatsapp());
         memBaseinfo.setId(loginUser.getId());
+
+        MemBaseInfoDTO memBaseInfoDTO = new MemBaseInfoDTO();
+        DozerUtil.map(memBaseinfo, memBaseInfoDTO);
+        refreshMemBaseInfo(memBaseInfoDTO, loginUser.getAccount());
         this.baseMapper.updateById(memBaseinfo);
     }
 
 
     @Override
-    public MemBaseinfo getMemBaseInfoById(Long id) {
-        return baseMapper.selectById(id);
+    public MemBaseInfoBO findMemBaseInfo(String account) {
+        return this.baseMapper.findMemBaseInfoByAccount(account);
     }
-
-    @Override
-    public MemBaseinfo getByAccount(String account) {
-        return baseMapper.selectOne(new QueryWrapper<MemBaseinfo>().lambda().eq(MemBaseinfo::getAccount, account));
-    }
-
-    @Override
-    public MemBaseinfo findByMobile(String mobile) {
-        return baseMapper.selectOne(new QueryWrapper<MemBaseinfo>().lambda().eq(MemBaseinfo::getPhone, mobile));
-    }
-
 
     /**
      * 功能描述: 返回登录信息

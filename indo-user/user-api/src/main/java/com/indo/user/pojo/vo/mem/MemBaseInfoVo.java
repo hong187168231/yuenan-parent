@@ -49,12 +49,6 @@ public class MemBaseInfoVo {
     @ApiModelProperty(value = "whatsapp")
     private String whatsApp;
 
-    @ApiModelProperty(value = "注册时使用的邀请码（上级的）")
-    private String inviteCode;
-
-    @ApiModelProperty(value = "用户层级id")
-    private Long groupId;
-
     @ApiModelProperty(value = "用户等级")
     private Integer memLevel;
 

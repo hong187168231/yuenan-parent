@@ -5,7 +5,6 @@ import com.indo.common.config.OpenAPIProperties;
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.common.result.Result;
-import com.indo.core.pojo.bo.MemBaseinfoBo;
 import com.indo.game.service.common.GameCommonService;
 import com.indo.user.pojo.bo.MemTradingBO;
 import io.swagger.annotations.Api;
