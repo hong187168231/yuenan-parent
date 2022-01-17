@@ -20,7 +20,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @TableName("agent_apply")
-@ApiModel(value="AgentApply对象", description="会员下级表")
+@ApiModel(value = "AgentApply对象", description = "会员代理申请表")
 public class AgentApply extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
@@ -30,6 +30,9 @@ public class AgentApply extends BaseEntity {
 
     @ApiModelProperty(value = "用户ID")
     private Long memId;
+
+    @ApiModelProperty(value = "用户账号")
+    private String account;
 
     @ApiModelProperty(value = "手机号")
     private String mobile;

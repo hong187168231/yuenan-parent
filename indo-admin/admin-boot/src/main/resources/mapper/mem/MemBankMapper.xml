@@ -7,7 +7,7 @@
         where 1=1
         <if test="req.keyword !=null and req.keyword !=''">
             <if test="req.bankCategoryEnum == @com.indo.common.enums.BankCategoryEnum@MEM_ID">
-                and mb.mem_id = #{req.keyword}
+                and mb.account = #{req.keyword}
             </if>
             <if test="req.bankCategoryEnum == @com.indo.common.enums.BankCategoryEnum@BANK_CAED_NO">
                 and mb.bank_card_no like concat('%', #{req.keyword,jdbcType=VARCHAR}, '%')

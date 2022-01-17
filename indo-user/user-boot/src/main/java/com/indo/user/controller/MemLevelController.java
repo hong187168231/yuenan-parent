@@ -1,6 +1,7 @@
 package com.indo.user.controller;
 
 
+import com.indo.common.annotation.AllowAccess;
 import com.indo.common.annotation.LoginUser;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
@@ -37,6 +38,7 @@ public class MemLevelController {
 
 
     @ApiOperation(value = "等级升级规则", httpMethod = "GET")
+    @AllowAccess
     @GetMapping(value = "/upRule")
     public Result<MemLevelVo> upRule(@LoginUser LoginInfo loginInfo) {
         return Result.success(memLevelService.findInfo(loginInfo));

@@ -13,7 +13,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum BankCategoryEnum {
 
-    MEM_ID(1, "会员id"),
+    MEM_ACCOUNT(1, "会员账号"),
     BANK_CAED_NO(2, "银行卡号 "),
     CITY(3, "城市"),
     BANK_NAME(4, "银行名称");

@@ -24,6 +24,9 @@ public class RechargeOrderVO implements Serializable {
     @ApiModelProperty(value = "用户id")
     private Long memId;
 
+    @ApiModelProperty(value = "用户账号")
+    private String account;
+
     @ApiModelProperty(value = "用户等级")
     private Integer memLevel;
 

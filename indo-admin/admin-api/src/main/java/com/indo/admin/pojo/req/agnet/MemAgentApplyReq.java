@@ -11,6 +11,6 @@ import lombok.Data;
 public class MemAgentApplyReq extends BaseDTO {
 
     @ApiModelProperty("用户id")
-    private Long memId;
+    private String account;
 
 }
