@@ -50,7 +50,7 @@ public class MemBaseInfoBO {
     private String passwordMd5;
 
     @ApiModelProperty(value = "生日")
-    private LocalDate birthday;
+    private Date birthday;
 
     @ApiModelProperty(value = "手机号")
     private String phone;

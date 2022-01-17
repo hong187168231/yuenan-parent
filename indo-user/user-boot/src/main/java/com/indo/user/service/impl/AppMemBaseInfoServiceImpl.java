@@ -60,15 +60,22 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
         if (!req.getPassword().equals(userInfo.getPasswordMd5())) {
             return Result.failed("密码错误！");
         }
-        MemBaseInfoBO currentMem = findMemBaseInfo(req.getAccount());
-        if (currentMem.getProhibitLogin().equals(1) || !currentMem.getStatus().equals(0)) {
+        if (userInfo.getProhibitLogin().equals(1) || !userInfo.getStatus().equals(0)) {
             throw new BizException("你暂时不能登录,请联系管理员");
         }
-
+        modifyLogin(userInfo);
         String accToken = UserBusinessRedisUtils.createMemAccToken(userInfo);
         //返回登录信息
         AppLoginVo appLoginVo = this.getAppLoginVo(accToken);
         return Result.success(appLoginVo);
+    }
+
+
+    public void modifyLogin(MemBaseInfoBO baseInfoBO) {
+        MemBaseinfo memBaseinfo = new MemBaseinfo();
+        memBaseinfo.setLastLoginTime(new Date());
+        memBaseinfo.setId(baseInfoBO.getId());
+        this.baseMapper.updateById(memBaseinfo);
     }
 
     @Override
