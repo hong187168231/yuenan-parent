@@ -231,7 +231,7 @@ public class AwcServiceImpl implements AwcService {
             trr.put("platform", gamePlatform.getPlatformEnName());//游戏平台名称
 
 //            GameCategory gameCategory = gameCategoryMapper.selectById(gamePlatform.getCategoryId());
-            trr.put("gameType", "LIVE");//平台游戏类型
+            trr.put("gameType", gamePlatform.getGameType());//平台游戏类型
             trr.put("language", gamePlatform.getLanguageType());
             trr.put("gameForbidden", "");//仅针对 SEXYBCRT 进入特殊游戏大厅  Example 范例：SEXY
 //           platform: SEXYBCRT
