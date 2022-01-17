@@ -64,16 +64,8 @@ public class JwtUtils {
      */
     @SneakyThrows
     public static String getOAuthClientId() {
-        String clientId;
-
+        String clientId =null;
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-
-        // 从请求路径中获取
-        clientId = request.getParameter(AuthConstants.CLIENT_ID_KEY);
-        if (StrUtil.isNotBlank(clientId)) {
-            return clientId;
-        }
-
         // 从请求头获取
         String basic = request.getHeader(AuthConstants.AUTHORIZATION_KEY);
         if (StrUtil.isNotBlank(basic) && basic.startsWith(AuthConstants.BASIC_PREFIX)) {
