@@ -16,6 +16,7 @@ import java.math.BigDecimal;
 public class BasePayReq implements Serializable {
 
     private Long memId;//会员id
+    private Long payChannelId;//支付方式id
     private Long payWayId;//支付方式id
     private String payType; //支付通道编码
     private BigDecimal tradeAmount; //支付金额

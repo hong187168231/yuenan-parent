@@ -11,6 +11,8 @@ import com.indo.common.result.Result;
 import com.indo.common.utils.SnowflakeIdWorker;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
+import com.indo.core.base.service.impl.SuperServiceImpl;
+import com.indo.core.pojo.bo.MemBaseInfoBO;
 import com.indo.core.pojo.dto.MemGoldChangeDTO;
 import com.indo.core.pojo.entity.MemBank;
 import com.indo.core.pojo.entity.PayTakeCash;
@@ -40,7 +42,7 @@ import java.util.List;
  * @since 2021-11-13
  */
 @Service
-public class TakeCashServiceImpl extends ServiceImpl<TakeCashMapper, PayTakeCash> implements ITakeCashService {
+public class TakeCashServiceImpl extends SuperServiceImpl<TakeCashMapper, PayTakeCash> implements ITakeCashService {
 
     @Autowired
     private IMemGoldChangeService iMemGoldChangeService;
@@ -123,6 +125,10 @@ public class TakeCashServiceImpl extends ServiceImpl<TakeCashMapper, PayTakeCash
         if (memBank == null || memBank.getStatus().equals(0)
                 || !memBank.getAccount().equals(loginUser.getAccount())) {
 //            throw new BizException(StatusCode.CASH_BANK_INVALID);
+        }
+        MemBaseInfoBO currentMem = getMemCacheBaseInfo(loginUser.getAccount());
+        if (currentMem.getProhibitDisbursement().equals(1)) {
+            throw new BizException("你暂时提现,请联系管理员");
         }
         BeanUtils.copyProperties(memBank, bridgeMemBank);
     }

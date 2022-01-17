@@ -52,6 +52,7 @@ public interface AppMemBaseInfoService extends SuperService<MemBaseinfo> {
      */
     MemBaseInfoVo getMemBaseInfo(String account);
 
+
     /**
      * 修改密码
      *

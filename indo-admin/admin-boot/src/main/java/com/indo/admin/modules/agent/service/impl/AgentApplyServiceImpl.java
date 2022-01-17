@@ -15,9 +15,11 @@ import com.indo.common.enums.AudiTypeEnum;
 import com.indo.common.utils.ShareCodeUtil;
 import com.indo.common.utils.StringUtils;
 import com.indo.common.web.exception.BizException;
+import com.indo.core.pojo.bo.MemBaseInfoBO;
 import com.indo.core.pojo.dto.MemBaseInfoDTO;
 import com.indo.core.pojo.entity.AgentApply;
 import com.indo.core.pojo.entity.AgentRelation;
+import com.indo.core.pojo.entity.MemBaseinfo;
 import com.indo.core.pojo.entity.MemInviteCode;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +62,10 @@ public class AgentApplyServiceImpl extends ServiceImpl<AgentApplyMapper, AgentAp
         AgentApply memAgentApply = baseMapper.selectById(req.getAgentApplyId());
         if (memAgentApply == null) {
             throw new BizException("代理审核申请不存在");
+        }
+        MemBaseinfo superiorMem = iMemBaseinfoService.getMemBaseInfo(req.getMemId());
+        if (superiorMem.getProhibitInvite().equals(1)) {
+            throw new BizException("该邀请人已被禁止发展下级");
         }
         memAgentApply.setStatus(req.getAudiType().getStatus());
         if (req.getAudiType().name().equals(AudiTypeEnum.reject)) {

@@ -56,7 +56,7 @@ public interface IMemBaseinfoService extends SuperService<MemBaseinfo> {
      * @param uid
      * @return
      */
-    MemBaseDetailVO getMemBaseInfo(Long uid);
+    MemBaseinfo getMemBaseInfo(Long uid);
 
 
     MemBaseDetailVO getMemBaseInfoByAccount(String account);
@@ -73,8 +73,6 @@ public interface IMemBaseinfoService extends SuperService<MemBaseinfo> {
 
     boolean resetPassword(Long memId);
 
-
-    List<Long> findIdListByCreateTime(Date addDay);
 
     void refreshMemBaseInfo(MemBaseInfoDTO memBaseInfoDTO, String account);
 

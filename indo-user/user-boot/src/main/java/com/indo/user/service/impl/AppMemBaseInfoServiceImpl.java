@@ -60,6 +60,11 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
         if (!req.getPassword().equals(userInfo.getPasswordMd5())) {
             return Result.failed("密码错误！");
         }
+        MemBaseInfoBO currentMem = findMemBaseInfo(req.getAccount());
+        if (currentMem.getProhibitLogin().equals(1) || !currentMem.getStatus().equals(0)) {
+            throw new BizException("你暂时不能登录,请联系管理员");
+        }
+
         String accToken = UserBusinessRedisUtils.createMemAccToken(userInfo);
         //返回登录信息
         AppLoginVo appLoginVo = this.getAppLoginVo(accToken);
@@ -102,6 +107,10 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
             memInviteCode = memInviteCodeMapper.selectOne(wrapper);
             if (ObjectUtil.isNull(memInviteCode)) {
                 return Result.failed("邀请码无效！");
+            }
+            MemBaseInfoBO superiorMem = findMemBaseInfo(memInviteCode.getAccount());
+            if (superiorMem.getProhibitInvite().equals(1)) {
+                throw new BizException("该邀请人已被禁止发展下级");
             }
         }
         //查询是否存在当前用户

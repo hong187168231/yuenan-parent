@@ -14,7 +14,7 @@ import lombok.EqualsAndHashCode;
  * </p>
  *
  * @author xxx
- * @since 2021-12-20
+ * @since 2022-01-15
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -33,25 +33,18 @@ public class PayWayConfig extends BaseEntity {
     @ApiModelProperty(value = "支付方式名称")
     private String wayName;
 
-    private String bankName;
-
-    @ApiModelProperty(value = "支付账号")
-    private String bankAccount;
-
-    @ApiModelProperty(value = "支付层id")
-    private Long groupId;
-
-    @ApiModelProperty(value = "审核状态 1 手动 2自动")
-    private Integer auditStatus;
-
     @ApiModelProperty(value = "提示")
     private String tips;
 
     @ApiModelProperty(value = "最小金额")
-    private Integer minAmount;
+    private Long minAmount;
 
     @ApiModelProperty(value = "最大金额")
-    private Integer maxAmount;
+    private Long maxAmount;
+
+    private Long todayAmount;
+
+    private Long totalAmount;
 
     @ApiModelProperty(value = "状态 0 正常 1停用")
     private Integer status;

@@ -6,15 +6,12 @@ import com.indo.common.enums.ThirdPayChannelEnum;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.utils.SnowflakeIdWorker;
 import com.indo.common.web.exception.BizException;
-import com.indo.core.pojo.entity.PayChannelConfig;
-import com.indo.core.pojo.entity.PayRecharge;
-import com.indo.core.pojo.entity.PayWayConfig;
-import com.indo.pay.mapper.PayChannelMapper;
-import com.indo.pay.mapper.PayWayMapper;
 import com.indo.pay.common.constant.PayConstants;
 import com.indo.pay.factory.OnlinePaymentService;
-import com.indo.pay.mapper.RechargeMapper;
 import com.indo.common.result.Result;
+import com.indo.pay.pojo.bo.PayChannel;
+import com.indo.pay.pojo.bo.RechargeBO;
+import com.indo.pay.pojo.bo.PayWay;
 import com.indo.pay.pojo.dto.RechargeDTO;
 import com.indo.pay.pojo.req.HuaRenPayReq;
 import com.indo.pay.pojo.req.RechargeReq;
@@ -39,23 +36,17 @@ public class PaymentService {
     private OnlinePaymentService huaRenOnlinePaymentService;
 
     @Autowired
-    private RechargeMapper payRechargeOrderMapper;
-
-    @Autowired
-    private PayWayMapper payWayConfigMapper;
-
-    @Autowired
-    private PayChannelMapper payChannelConfigMapper;
+    private rechargeService rechargeService;
 
 
     public Result paymentRequestByUser(LoginInfo loginInfo, RechargeReq rechargeReq) {
         Result result = Result.failed();
-        PayChannelConfig payChannelConfig = payChannelConfigMapper.selectById(rechargeReq.getPayChannelId());
-        PayWayConfig payWayCfg = payWayConfigMapper.selectById(rechargeReq.getPayWayId());
-        ThirdPayChannelEnum payChannel = ThirdPayChannelEnum.valueOf(payChannelConfig.getChannelCode());
+        // 业务逻辑校验
+        RechargeBO rechargeBO = rechargeService.logicConditionCheck(rechargeReq, loginInfo);
+        ThirdPayChannelEnum payChannel = ThirdPayChannelEnum.valueOf(rechargeBO.getPayChannel().getChannelCode());
         switch (payChannel) {
             case HUAREN:
-                result = huarenPay(loginInfo, rechargeReq.getAmount(), payChannelConfig, payWayCfg);
+                result = huarenPay(loginInfo, rechargeReq.getAmount(), rechargeBO.getPayChannel(), rechargeBO.getPayWay());
                 break;
             case DILEI:
                 break;
@@ -67,19 +58,7 @@ public class PaymentService {
 
 
     public boolean insertPayment(RechargeDTO rechargeDTO) {
-
-        PayRecharge rechargeOrder = new PayRecharge();
-        rechargeOrder.setMemId(rechargeDTO.getMemId());
-        rechargeOrder.setOrderNo(rechargeDTO.getOrderNo());
-//        rechargeOrder.setPayWayId(payRequestVo.getChannelWay());
-        //实际金额
-        BigDecimal amount = new BigDecimal(rechargeDTO.getAmount());
-        rechargeOrder.setOldAmount(amount);
-        rechargeOrder.setTotalAmount(amount);
-        rechargeOrder.setRealAmount(amount);
-        rechargeOrder.setOrderStatus(PayConstants.PAY_RECHARGE_STATUS_PROCESS);
-        return payRechargeOrderMapper.insert(rechargeOrder) > 0;
-
+        return rechargeService.saveRechargeRecord(rechargeDTO);
     }
 
 
@@ -97,19 +76,21 @@ public class PaymentService {
     /**
      * 众宝支付
      */
-    private Result huarenPay(LoginInfo loginInfo, BigDecimal amount, PayChannelConfig payChannelConfig, PayWayConfig payWayCfg) {
+    private Result huarenPay(LoginInfo loginInfo, BigDecimal amount, PayChannel payChannel, PayWay payWay) {
         HuaRenPayReq req = new HuaRenPayReq();
         try {
             log.info("paylog huaren支付 创建订单");
             req.setMemId(loginInfo.getId());
-            req.setMerchantNo(payChannelConfig.getMerchantNo());
-            req.setNotifyUrl(payChannelConfig.getNotifyUrl());
-            req.setPageUrl(payChannelConfig.getPageUrl());
-            req.setPayType(payChannelConfig.getChannelType() + "");
-            req.setPayUrl(payChannelConfig.getPayUrl());
-            req.setSecretKey(payChannelConfig.getSecretKey());
+            req.setMerchantNo(payChannel.getMerchantNo());
+            req.setNotifyUrl(payChannel.getNotifyUrl());
+            req.setPageUrl(payChannel.getPageUrl());
+            req.setPayType(payChannel.getChannelType() + "");
+            req.setPayUrl(payChannel.getPayUrl());
+            req.setSecretKey(payChannel.getSecretKey());
             req.setMerchantOrderNo("RC" + SnowflakeIdWorker.createOrderSn());
             req.setTradeAmount(amount);
+            req.setPayChannelId(payChannel.getPayChannelId());
+            req.setPayWayId(payWay.getPayWayId());
             // 支付请求
             HuaRenPayResp huarenPayResp = huaRenOnlinePaymentService.onlinePayment(req, HuaRenPayResp.class);
             // 请求结果 flag为false表示异常

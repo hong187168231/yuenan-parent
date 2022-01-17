@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
+import com.indo.admin.common.util.AdminBusinessRedisUtils;
 import com.indo.admin.modules.agent.mapper.AgentRelationMapper;
 import com.indo.admin.modules.mem.mapper.MemBaseinfoMapper;
 import com.indo.admin.modules.mem.service.IMemBaseinfoService;
@@ -129,11 +130,9 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
     }
 
     @Override
-    public MemBaseDetailVO getMemBaseInfo(Long uid) {
+    public MemBaseinfo getMemBaseInfo(Long uid) {
         MemBaseinfo memBaseinfo = baseMapper.selectById(uid);
-        MemBaseDetailVO memBaseDetailVO = new MemBaseDetailVO();
-        BeanUtils.copyProperties(memBaseinfo, memBaseDetailVO);
-        return memBaseDetailVO;
+        return memBaseinfo;
     }
 
     @Override
@@ -145,13 +144,21 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
     }
 
     @Override
+    @Transactional
     public boolean editStatus(MemEditStatusReq req) {
         MemBaseinfo memBaseinfo = checkMemIsExist(req.getId());
         DozerUtil.map(req, memBaseinfo);
-        MemBaseInfoDTO memBaseInfoDTO = new MemBaseInfoDTO();
-        DozerUtil.map(req, memBaseinfo);
-        refreshMemBaseInfo(memBaseInfoDTO, memBaseinfo.getAccount());
-        return baseMapper.updateById(memBaseinfo) > 0;
+        if (baseMapper.updateById(memBaseinfo) > 0) {
+            MemBaseInfoDTO memBaseInfoDTO = new MemBaseInfoDTO();
+            DozerUtil.map(req, memBaseinfo);
+            refreshMemBaseInfo(memBaseInfoDTO, memBaseinfo.getAccount());
+            if (req.getStatus().equals(1) || req.getStatus().equals(2) ||
+                    req.getProhibitLogin().equals(0)) {
+                AdminBusinessRedisUtils.delMemAccToken(memBaseinfo.getAccount());
+            }
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -164,10 +171,7 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
         return baseMapper.updateById(memBaseinfo) > 0;
     }
 
-    @Override
-    public List<Long> findIdListByCreateTime(Date date) {
-        return memBaseInfoMapper.findIdListByCreateTime(DateUtils.format(date, DateUtils.webFormat));
-    }
+
     @Override
     public void refreshMemBaseInfo(MemBaseInfoDTO memBaseInfoDTO, String account) {
         MemBaseInfoBO memBaseInfoBO = this.getMemCacheBaseInfo(account);

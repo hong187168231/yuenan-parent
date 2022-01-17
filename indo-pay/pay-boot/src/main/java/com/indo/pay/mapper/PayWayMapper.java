@@ -3,7 +3,10 @@ package com.indo.pay.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.indo.core.pojo.entity.PayWayConfig;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -17,6 +20,9 @@ import java.util.List;
 @Mapper
 public interface PayWayMapper extends BaseMapper<PayWayConfig> {
 
-    List<PayWayConfig> wayList();
+    List<PayWayConfig> wayList(@Param("todayAmount") Long todayAmount,@Param("totalAmount") Long totalAmount);
+
+
+
 
 }

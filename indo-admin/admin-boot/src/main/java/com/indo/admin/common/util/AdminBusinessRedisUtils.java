@@ -1,6 +1,7 @@
 package com.indo.admin.common.util;
 
 import com.indo.admin.pojo.req.mem.MemRebateAddReq;
+import com.indo.common.constant.AppConstants;
 import com.indo.common.constant.RedisKeys;
 import com.indo.common.redis.utils.RedisUtils;
 import com.indo.common.result.ResultCode;
@@ -20,20 +21,6 @@ import java.util.List;
 @Slf4j
 public class AdminBusinessRedisUtils extends RedisUtils {
 
-    /**
-     * 删除系统参数
-     *
-     * @param code
-     */
-    public static void deleteSysParameter(String code) {
-        if (StringUtils.isNotBlank(code)) {
-            code = code.trim().toUpperCase();
-            del(RedisKeys.SYS_PARAMETER_CODE + code);
-        }
-    }
-
-
-
 
     /**
      * 添加返点配置
@@ -42,6 +29,13 @@ public class AdminBusinessRedisUtils extends RedisUtils {
      */
     public static void addMemRebate(MemRebateAddReq req) {
         lSet(RedisKeys.SYS_REBATE_KEY, req.getBetList());
+    }
+
+
+    public static void delMemAccToken(String account) {
+        String token = get(AppConstants.USER_LOGIN_ACCTOKEN + account);
+        del(AppConstants.USER_LOGIN_ACCTOKEN + token);
+        del(AppConstants.USER_LOGIN_INFO_KEY + account);
     }
 
     /**
@@ -53,10 +47,6 @@ public class AdminBusinessRedisUtils extends RedisUtils {
         lSet(RedisKeys.SYS_LEVEL_KEY, list);
     }
 
-
-    public static void paramError() {
-        throw new BizException(ResultCode.SYSPARAMETER_EMPTY.getCode());
-    }
 
 
 }    
