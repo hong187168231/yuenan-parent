@@ -31,7 +31,7 @@ public class JwtUtils {
         if (null == payload) {
             throw new BizException("请传入认证头");
         }
-        JSONObject jsonObject = JSONUtil.parseObj(URLDecoder.decode(payload,StandardCharsets.UTF_8.name()));
+        JSONObject jsonObject = JSONUtil.parseObj(URLDecoder.decode(payload, StandardCharsets.UTF_8.name()));
         return jsonObject;
     }
 
@@ -78,7 +78,9 @@ public class JwtUtils {
         String basic = request.getHeader(AuthConstants.AUTHORIZATION_KEY);
         if (StrUtil.isNotBlank(basic) && basic.startsWith(AuthConstants.BASIC_PREFIX)) {
             basic = basic.replace(AuthConstants.BASIC_PREFIX, Strings.EMPTY);
+            log.info("222222222222222222" + basic);
             String basicPlainText = new String(Base64.getDecoder().decode(basic.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
+            log.info("333333333333333333333" + basicPlainText);
             clientId = basicPlainText.split(":")[0]; //client:secret
         }
         return clientId;
