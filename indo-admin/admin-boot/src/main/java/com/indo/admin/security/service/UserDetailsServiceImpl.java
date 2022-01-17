@@ -2,6 +2,7 @@ package com.indo.admin.security.service;
 
 import com.indo.admin.api.UserFeignClient;
 import com.indo.admin.common.enums.OAuthClientEnum;
+import com.indo.admin.modules.sys.mapper.SysUserMapper;
 import com.indo.admin.modules.sys.service.ISysUserService;
 import com.indo.admin.pojo.entity.SysUser;
 import com.indo.admin.security.domain.OAuthUserDetails;
@@ -30,7 +31,7 @@ import org.springframework.stereotype.Service;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired
-    private ISysUserService iSysUserService;
+    private SysUserMapper sysUserMapper;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -39,8 +40,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         OAuthUserDetails oauthUserDetails;
         switch (client) {
             default:
-                SysUser sysUser = iSysUserService.getByUsername(username);
-                    oauthUserDetails = new OAuthUserDetails(sysUser);
+                SysUser sysUser = sysUserMapper.getByUsername(username);
+                oauthUserDetails = new OAuthUserDetails(sysUser);
                 break;
         }
         if (oauthUserDetails == null || oauthUserDetails.getId() == null) {

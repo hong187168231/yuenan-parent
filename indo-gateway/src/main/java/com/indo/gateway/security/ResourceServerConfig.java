@@ -9,6 +9,7 @@ import com.indo.common.result.ResultCode;
 import lombok.AllArgsConstructor;
 import lombok.Setter;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,6 +43,7 @@ import java.util.List;
 @AllArgsConstructor
 @Configuration
 @EnableWebFluxSecurity
+@Slf4j
 public class ResourceServerConfig {
 
     private ResourceServerManager resourceServerManager;
@@ -74,6 +76,7 @@ public class ResourceServerConfig {
     @Bean
     ServerAccessDeniedHandler accessDeniedHandler() {
         return (exchange, denied) -> {
+            log.info("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCccc");
             Mono<Void> mono = Mono.defer(() -> Mono.just(exchange.getResponse()))
                     .flatMap(response -> ResponseUtils.writeErrorInfo(response, ResultCode.ACCESS_UNAUTHORIZED));
             return mono;
@@ -86,6 +89,7 @@ public class ResourceServerConfig {
     @Bean
     ServerAuthenticationEntryPoint authenticationEntryPoint() {
         return (exchange, e) -> {
+            log.info("yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy");
             Mono<Void> mono = Mono.defer(() -> Mono.just(exchange.getResponse()))
                     .flatMap(response -> ResponseUtils.writeErrorInfo(response, ResultCode.TOKEN_INVALID_OR_EXPIRED));
             return mono;
