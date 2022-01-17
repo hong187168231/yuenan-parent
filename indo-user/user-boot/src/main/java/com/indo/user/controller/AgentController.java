@@ -12,6 +12,7 @@ import com.indo.common.constant.RedisKeys;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.redis.utils.RedisUtils;
 import com.indo.common.result.Result;
+import com.indo.common.web.util.DozerUtil;
 import com.indo.user.pojo.req.mem.MemAgentApplyReq;
 import com.indo.user.pojo.req.mem.SubordinateAppReq;
 import com.indo.user.service.IMemAgentService;
@@ -54,7 +55,7 @@ public class AgentController {
     }
 
 
-    @ApiOperation(value = "获取返佣配置", httpMethod = "GET")
+    @ApiOperation(value = "获取返佣配置", response = MemBetVo.class, httpMethod = "GET")
     @GetMapping(value = "/rebateConfig")
     @AllowAccess
     public Result<List<MemBetVo>> rebateConfig() {
@@ -84,4 +85,6 @@ public class AgentController {
         Page<AgentSubVO> result = iMemAgentService.subordinatePage(req, loginInfo);
         return Result.success(result.getRecords(), result.getTotal());
     }
+
+
 }
