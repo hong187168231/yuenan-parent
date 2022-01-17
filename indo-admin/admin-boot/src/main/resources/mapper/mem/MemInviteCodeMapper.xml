@@ -14,9 +14,9 @@
         mic.create_time AS createTime
         FROM
         mem_invite_code mic
-        LEFT JOIN mem_agent ma ON mic.mem_id = ma.mem_id
-        <if test="req.memId !=null">
-            and mic.mem_id = #{req.memId}
+        LEFT JOIN agent_relation ma ON mic.mem_id = ma.mem_id
+        <if test="req.account !=null and req.account != ''">
+            and mic.account = #{req.account}
         </if>
         <if test="req.inviteCode !=null and req.inviteCode != '' ">
             and mic.invite_code = #{req.inviteCode}

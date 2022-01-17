@@ -15,6 +15,9 @@ public class InviteCodeReq extends BaseDTO {
     @ApiModelProperty("会员ID")
     private Long memId;
 
+    @ApiModelProperty("会员账号")
+    private String account;
+
     @ApiModelProperty("邀请码")
     private String inviteCode;
 

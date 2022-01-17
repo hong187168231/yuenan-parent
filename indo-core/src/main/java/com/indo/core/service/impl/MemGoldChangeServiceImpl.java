@@ -173,7 +173,7 @@ public class MemGoldChangeServiceImpl extends SuperServiceImpl<MemGoldChangeMapp
                         betAmount,
                         rechargeAmount,
                         cashAmount,
-                        memBaseinfo.getId());
+                        memBaseinfo.getMemId());
                 if (row != 1) {
                     log.error("{} updateUserBalance updateMemberAmount 更新余额失败. return:{}", userId, row);
                     throw new BizException("操作失败");

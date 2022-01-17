@@ -18,7 +18,7 @@ import java.util.Date;
 public class MemGoldInfoBO {
 
     @ApiModelProperty(value = "用户ID")
-    private Long id;
+    private Long memId;
 
     @ApiModelProperty(value = "用户账号")
     private String account;

@@ -19,6 +19,8 @@ public class MemBaseInfoReq extends BaseDTO {
 
     @ApiModelProperty("会员ID")
     private Long id;
+    @ApiModelProperty("会员账号")
+    private String account;
     @ApiModelProperty("用户等级")
     private Integer memLevel;
     @ApiModelProperty("层级ID")
