@@ -36,13 +36,13 @@ public class GamePlatform extends BaseEntity {
     @ApiModelProperty(value = "平台图片路径")
     private String picturePath;
 
-    @ApiModelProperty(value = "是否启用")
+    @ApiModelProperty(value = "是否启用 0关闭  1启用")
     private String isStart;//0关闭  1启用
 
-    @ApiModelProperty(value = "是否热门显示")
+    @ApiModelProperty(value = "是否热门显示 0关闭  1显示")
     private String isHotShow;//0关闭  1显示
 
-    @ApiModelProperty(value = "是否开启维护")
+    @ApiModelProperty(value = "是否开启维护 0关闭  1启用")
     private String isOpenMaintenance;//0关闭  1启用
 
     @ApiModelProperty(value = "维护内容")
@@ -70,5 +70,5 @@ public class GamePlatform extends BaseEntity {
     private double maxTransfer;
 
     @ApiModelProperty(value = "系统与厂商间的最小限制转帐金额")
-    private double minTransfer ;
+    private double minTransfer;
 }
