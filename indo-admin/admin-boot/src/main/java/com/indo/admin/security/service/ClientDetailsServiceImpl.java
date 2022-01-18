@@ -27,7 +27,6 @@ public class ClientDetailsServiceImpl implements ClientDetailsService {
     @SneakyThrows
     public ClientDetails loadClientByClientId(String clientId) {
         try {
-                log.info("bbbbbbbbbbbbbbbbbbbbbbbbbbb");
             SysOauthClient client = sysOauthClientMapper.selectById(clientId);
             BaseClientDetails clientDetails = new BaseClientDetails(
                     client.getClientId(),

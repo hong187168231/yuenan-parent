@@ -64,15 +64,13 @@ public class JwtUtils {
      */
     @SneakyThrows
     public static String getOAuthClientId() {
-        String clientId =null;
+        String clientId = null;
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         // 从请求头获取
         String basic = request.getHeader(AuthConstants.AUTHORIZATION_KEY);
         if (StrUtil.isNotBlank(basic) && basic.startsWith(AuthConstants.BASIC_PREFIX)) {
             basic = basic.replace(AuthConstants.BASIC_PREFIX, Strings.EMPTY);
-            log.info("222222222222222222" + basic);
             String basicPlainText = new String(Base64.getDecoder().decode(basic.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
-            log.info("333333333333333333333" + basicPlainText);
             clientId = basicPlainText.split(":")[0]; //client:secret
         }
         return clientId;
