@@ -1,11 +1,13 @@
 package com.indo.user.service.impl;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.pojo.req.agnet.AgentRebateRecordReq;
 import com.indo.admin.pojo.vo.agent.AgentRebateInfoVO;
 import com.indo.admin.pojo.vo.agent.AgentRebateRecordVO;
 import com.indo.admin.pojo.vo.agent.AgentSubVO;
+import com.indo.common.constant.GlobalConstants;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
 import com.indo.common.web.exception.BizException;
@@ -49,15 +51,29 @@ public class AppAgentServiceImpl extends SuperServiceImpl<AgentRelationMapper, A
     @Autowired
     private AgentRebateMapper agentRebateMapper;
 
-
     @Override
     public boolean apply(MemAgentApplyReq req, LoginInfo loginInfo) {
         String uuidKey = UserBusinessRedisUtils.get(req.getUuid());
         if (StringUtils.isEmpty(uuidKey) || !req.getImgCode().equalsIgnoreCase(uuidKey)) {
             throw new BizException("图像验证码错误！");
         }
-        AgentApply agentApply = new AgentApply();
+        LambdaQueryWrapper<AgentApply> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(AgentApply::getAccount, loginInfo.getAccount());
+        AgentApply agentApply = agentApplyMapper.selectOne(wrapper);
+        if (ObjectUtil.isNotNull(agentApply)) {
+            if (agentApply.getStatus().equals(GlobalConstants.AGENT_APPLY_STATUS_AUDIT)) {
+                throw new BizException("代理申请审核中，请勿重复提交!");
+            }
+            if (agentApply.getStatus().equals(GlobalConstants.AGENT_APPLY_STATUS_PASS)) {
+                throw new BizException("您已经是代理了哦呦!");
+            }
+            if (agentApply.getStatus().equals(GlobalConstants.AGENT_APPLY_STATUS_REJECT)) {
+                throw new BizException("代理申请被拒,请联系客服处理!");
+            }
+        }
+        agentApply = new AgentApply();
         agentApply.setMemId(loginInfo.getId());
+        agentApply.setAccount(loginInfo.getAccount());
         agentApply.setStatus(0);
         return agentApplyMapper.insert(agentApply) > 0;
     }

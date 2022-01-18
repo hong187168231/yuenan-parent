@@ -28,7 +28,7 @@ import java.util.List;
  * 会员下级表 前端控制器
  * </p>
  *
- * @author xxx
+ * @author puff
  * @since 2021-11-19
  */
 
@@ -53,7 +53,6 @@ public class AgentController {
         AgentRebateInfoVO infoVO = iMemAgentService.rebateInfo(loginInfo);
         return Result.success(infoVO);
     }
-
 
     @ApiOperation(value = "获取返佣配置", response = MemBetVo.class, httpMethod = "GET")
     @GetMapping(value = "/rebateConfig")

@@ -39,6 +39,14 @@ public interface GlobalConstants {
 
 
     /**
+     * 代理申请状态   状态0 待审核 1 已通过，2 拒绝
+     */
+    public static final Integer AGENT_APPLY_STATUS_AUDIT = 0;
+    public static final Integer AGENT_APPLY_STATUS_PASS = 1;
+    public static final Integer AGENT_APPLY_STATUS_REJECT = 2;
+
+
+    /**
      * 常用接口
      */
     public static class Url {
