@@ -59,6 +59,7 @@
         pro.recharge_id AS rechargeId,
         pro.order_no AS orderNo,
         mb.id AS memId,
+        mb.account AS account,
         mb.mem_level AS memLevel,
         pro.real_amount AS realAmount,
         pro.channel_id AS channelId,

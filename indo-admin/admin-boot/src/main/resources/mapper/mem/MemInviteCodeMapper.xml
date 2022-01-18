@@ -15,6 +15,7 @@
         FROM
         mem_invite_code mic
         LEFT JOIN agent_relation ma ON mic.mem_id = ma.mem_id
+        where mic.`status` = 1
         <if test="req.account !=null and req.account != ''">
             and mic.account = #{req.account}
         </if>

@@ -18,8 +18,8 @@
     <select id="queryList" resultMap="BaseResultMap">
         SELECT * FROM agent_rebate_record m
         <where>
-            <if test="req.memId !=null">
-                and m.mem_id = #{req.memId}
+            <if test="req.account !=null">
+                and m.account = #{req.account}
             </if>
             <if test="req.startTime != null and req.startTime != ''">
                 and m.create_time &gt;= #{req.startTime}

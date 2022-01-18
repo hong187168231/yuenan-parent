@@ -5,8 +5,6 @@ import com.indo.admin.common.enums.OAuthClientEnum;
 import com.indo.common.constant.AuthConstants;
 import com.indo.common.result.Result;
 import com.indo.common.web.util.JwtUtils;
-import com.nimbusds.jose.jwk.JWKSet;
-import com.nimbusds.jose.jwk.RSAKey;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -19,9 +17,7 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import java.security.KeyPair;
 import java.security.Principal;
-import java.security.interfaces.RSAPublicKey;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -34,7 +30,6 @@ public class OAuthController {
 
     private TokenEndpoint tokenEndpoint;
     private RedisTemplate redisTemplate;
-    private KeyPair keyPair;
 
     @ApiOperation(value = "OAuth2认证", notes = "login")
     @ApiImplicitParams({
@@ -48,27 +43,20 @@ public class OAuthController {
     @PostMapping("/token")
     public Object postAccessToken(
             @ApiIgnore Principal principal,
-            @ApiIgnore @RequestParam Map<String, String> parameters
-    ) throws HttpRequestMethodNotSupportedException {
-
-        /**
-         * 获取登录认证的客户端ID
-         *
-         * 兼容两种方式获取Oauth2客户端信息（client_id、clien;lt_secret）
-         * 方式一：client_id、client_secret放在请求路径中(注：当前版本已废弃)
-         * 方式二：放在请求头（Request Headers）中的Authorization字段，且经过加密，例如 Basic Y2xpZW50OnNlY3JldA== 明文等于 client:secret
-         */
-        System.out.println("=============================");
+            @ApiIgnore @RequestParam Map<String,
+                    String> parameters) throws HttpRequestMethodNotSupportedException {
         String clientId = JwtUtils.getOAuthClientId();
-        System.out.println("============================="+clientId);
+        log.info("=============================" + clientId);
         OAuthClientEnum client = OAuthClientEnum.getByClientId(clientId);
-            switch (client) {
+        switch (client) {
             case TEST: // knife4j接口测试文档使用 client_id/client_secret : client/123456
                 return tokenEndpoint.postAccessToken(principal, parameters).getBody();
             default:
                 return Result.success(tokenEndpoint.postAccessToken(principal, parameters).getBody());
         }
     }
+
+
 
 
     @ApiOperation(value = "注销", notes = "logout")
@@ -88,11 +76,5 @@ public class OAuthController {
         return Result.success("注销成功");
     }
 
-    @ApiOperation(value = "获取公钥", notes = "login")
-    @GetMapping("/public-key")
-    public Map<String, Object> getPublicKey() {
-        RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
-        RSAKey key = new RSAKey.Builder(publicKey).build();
-        return new JWKSet(key).toJSONObject();
-    }
+
 }

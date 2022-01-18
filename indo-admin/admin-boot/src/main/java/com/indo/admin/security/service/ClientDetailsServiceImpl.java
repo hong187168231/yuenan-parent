@@ -1,6 +1,7 @@
 package com.indo.admin.security.service;
 
 import com.indo.admin.common.enums.PasswordEncoderTypeEnum;
+import com.indo.admin.modules.sys.mapper.SysOauthClientMapper;
 import com.indo.admin.modules.sys.service.ISysOauthClientService;
 import com.indo.admin.pojo.entity.SysOauthClient;
 import com.indo.common.result.Result;
@@ -18,14 +19,13 @@ import org.springframework.stereotype.Service;
 public class ClientDetailsServiceImpl implements ClientDetailsService {
 
     @Autowired
-    private ISysOauthClientService iSysOauthClientService;
-
+    private SysOauthClientMapper sysOauthClientMapper;
 
     @Override
     @SneakyThrows
     public ClientDetails loadClientByClientId(String clientId) {
         try {
-            SysOauthClient client = iSysOauthClientService.getById(clientId);
+            SysOauthClient client = sysOauthClientMapper.selectById(clientId);
             BaseClientDetails clientDetails = new BaseClientDetails(
                     client.getClientId(),
                     client.getResourceIds(),

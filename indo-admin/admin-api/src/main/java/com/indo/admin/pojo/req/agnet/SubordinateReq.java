@@ -12,6 +12,6 @@ import java.util.Date;
 public class SubordinateReq extends QueryParam {
 
     @ApiModelProperty(value = "代理上级ID")
-    private Long parentId;
+    private String superior;
 
 }

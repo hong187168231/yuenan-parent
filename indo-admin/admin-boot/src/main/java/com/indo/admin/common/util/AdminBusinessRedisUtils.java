@@ -28,7 +28,7 @@ public class AdminBusinessRedisUtils extends RedisUtils {
      * @param req
      */
     public static void addMemRebate(MemRebateAddReq req) {
-        lSet(RedisKeys.SYS_REBATE_KEY, req.getBetList());
+       set(RedisKeys.SYS_REBATE_KEY, req.getBetList());
     }
 
 

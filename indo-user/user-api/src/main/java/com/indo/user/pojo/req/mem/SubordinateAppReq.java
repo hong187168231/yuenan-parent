@@ -11,12 +11,7 @@ import java.util.Date;
 @ApiModel(value = "代理申请参数类")
 public class SubordinateAppReq extends QueryParam {
 
-    @ApiModelProperty(value = "下级账号")
-    private String account;
+    @ApiModelProperty(value = "下级账号", hidden = true)
+    private String superior;
 
-    @ApiModelProperty(value = "开始时间")
-    private Date startTime;
-
-    @ApiModelProperty(value = "结束时间")
-    private Date endTime;
 }

@@ -24,17 +24,17 @@
     </sql>
 
     <select id="queryList" resultMap="agentResultMap">
-        SELECT * FROM mem_agent ma
+        SELECT * FROM agent_relation ar
         left join mem_baseinfo mb
-        on ma.mem_id = mb.id
-        where ma.is_del = 1
+        on ar.mem_id = mb.id
+        where ar.is_del = 1
         <if test="req.memId !=null">
-            and ma.mem_id = #{req.memId}
+            and ar.mem_id = #{req.memId}
         </if>
         <if test="req.memAgentId !=null">
-            and ma.agent_id = #{req.memAgentId}
+            and ar.agent_id = #{req.memAgentId}
         </if>
-        ORDER BY ma.create_time desc
+        ORDER BY ar.create_time desc
     </select>
 
     <select id="subordinateList" resultType="com.indo.admin.pojo.vo.agent.AgentSubVO">
@@ -57,7 +57,7 @@
         AND ar.is_del = 1
         -- AND ma.parent_id != 0
         <if test="req.parentId !=null">
-            and ma.parent_id = #{req.parentId}
+            and ar.superior = #{req.superior}
         </if>
         ORDER BY
         ar.create_time DESC

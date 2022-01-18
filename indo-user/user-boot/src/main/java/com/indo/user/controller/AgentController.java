@@ -12,6 +12,7 @@ import com.indo.common.constant.RedisKeys;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.redis.utils.RedisUtils;
 import com.indo.common.result.Result;
+import com.indo.common.web.util.DozerUtil;
 import com.indo.user.pojo.req.mem.MemAgentApplyReq;
 import com.indo.user.pojo.req.mem.SubordinateAppReq;
 import com.indo.user.service.IMemAgentService;
@@ -54,7 +55,7 @@ public class AgentController {
     }
 
 
-    @ApiOperation(value = "获取返佣配置", httpMethod = "GET")
+    @ApiOperation(value = "获取返佣配置", response = MemBetVo.class, httpMethod = "GET")
     @GetMapping(value = "/rebateConfig")
     @AllowAccess
     public Result<List<MemBetVo>> rebateConfig() {
@@ -62,26 +63,20 @@ public class AgentController {
         return Result.success(list);
     }
 
-    @ApiOperation(value = "佣金列表", httpMethod = "GET")
+    @ApiOperation(value = "佣金明细", httpMethod = "GET")
     @GetMapping(value = "/rebateList")
-    public Result rebateList(@RequestBody AgentRebateRecordReq req, @LoginUser LoginInfo loginInfo) {
+    public Result rebateList(AgentRebateRecordReq req, @LoginUser LoginInfo loginInfo) {
         Page<AgentRebateRecordVO> result = iMemAgentService.queryList(req, loginInfo);
-        return Result.success(result.getRecords(), result.getTotal());
-    }
-
-
-    @ApiOperation(value = "下级佣金明细", httpMethod = "GET")
-    @GetMapping(value = "/subRebateList")
-    public Result subRebateList(@RequestBody AgentRebateRecordReq req, @LoginUser LoginInfo loginInfo) {
-        Page<AgentRebateRecordVO> result = iMemAgentService.subRebateList(req, loginInfo);
         return Result.success(result.getRecords(), result.getTotal());
     }
 
 
     @ApiOperation(value = "下级列表", httpMethod = "GET")
     @GetMapping(value = "/subList")
-    public Result<List<AgentSubVO>> subList(@RequestBody SubordinateAppReq req, @LoginUser LoginInfo loginInfo) {
+    public Result<List<AgentSubVO>> subList(SubordinateAppReq req, @LoginUser LoginInfo loginInfo) {
         Page<AgentSubVO> result = iMemAgentService.subordinatePage(req, loginInfo);
         return Result.success(result.getRecords(), result.getTotal());
     }
+
+
 }

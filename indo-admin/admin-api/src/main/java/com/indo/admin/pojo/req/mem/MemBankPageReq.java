@@ -15,7 +15,7 @@ import java.util.Date;
 @ApiModel
 public class MemBankPageReq extends BaseDTO {
 
-    @ApiModelProperty("银行类别枚举 MEM_ID (会员id) | BANK_CAED_NO (银行卡号) | CITY (城市) | BANK_NAME (银行名称)")
+    @ApiModelProperty("银行类别枚举 MEM_ACCOUNT (会员id) | BANK_CAED_NO (银行卡号) | CITY (城市) | BANK_NAME (银行名称)")
     private BankCategoryEnum bankCategoryEnum;
 
     @ApiModelProperty("搜索关键字")

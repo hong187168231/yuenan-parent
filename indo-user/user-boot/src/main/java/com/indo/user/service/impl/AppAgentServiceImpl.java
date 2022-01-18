@@ -7,11 +7,13 @@ import com.indo.admin.pojo.vo.agent.AgentRebateInfoVO;
 import com.indo.admin.pojo.vo.agent.AgentRebateRecordVO;
 import com.indo.admin.pojo.vo.agent.AgentSubVO;
 import com.indo.common.pojo.bo.LoginInfo;
+import com.indo.common.result.Result;
 import com.indo.common.web.exception.BizException;
 import com.indo.core.base.service.impl.SuperServiceImpl;
 import com.indo.core.pojo.entity.AgentApply;
 import com.indo.core.pojo.entity.AgentRebate;
 import com.indo.core.pojo.entity.AgentRelation;
+import com.indo.user.common.util.UserBusinessRedisUtils;
 import com.indo.user.mapper.AgentApplyMapper;
 import com.indo.user.mapper.AgentRebateMapper;
 import com.indo.user.mapper.AgentRebateRecordMapper;
@@ -19,6 +21,7 @@ import com.indo.user.mapper.AgentRelationMapper;
 import com.indo.user.pojo.req.mem.MemAgentApplyReq;
 import com.indo.user.pojo.req.mem.SubordinateAppReq;
 import com.indo.user.service.IMemAgentService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -49,6 +52,10 @@ public class AppAgentServiceImpl extends SuperServiceImpl<AgentRelationMapper, A
 
     @Override
     public boolean apply(MemAgentApplyReq req, LoginInfo loginInfo) {
+        String uuidKey = UserBusinessRedisUtils.get(req.getUuid());
+        if (StringUtils.isEmpty(uuidKey) || !req.getImgCode().equalsIgnoreCase(uuidKey)) {
+            throw new BizException("图像验证码错误！");
+        }
         AgentApply agentApply = new AgentApply();
         agentApply.setMemId(loginInfo.getId());
         agentApply.setStatus(0);
@@ -57,17 +64,7 @@ public class AppAgentServiceImpl extends SuperServiceImpl<AgentRelationMapper, A
 
     @Override
     public Page<AgentSubVO> subordinatePage(SubordinateAppReq req, LoginInfo loginInfo) {
-        LambdaQueryWrapper<AgentRelation> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(AgentRelation::getSuperior, loginInfo.getAccount());
-        Integer agentCount = agentRelationMapper.selectCount(wrapper);
-        if (agentCount < 1) {
-            throw new BizException("你还没有下级");
-        }
-        wrapper.eq(AgentRelation::getAccount, req.getAccount());
-        agentCount = agentRelationMapper.selectCount(wrapper);
-        if (agentCount < 1) {
-            throw new BizException("请输入正确的下级账号");
-        }
+        req.setSuperior(loginInfo.getAccount());
         Page<AgentSubVO> page = new Page<>(req.getPage(), req.getLimit());
         List<AgentSubVO> agentList = agentRelationMapper.subordinateList(page, req);
         page.setRecords(agentList);
@@ -99,23 +96,5 @@ public class AppAgentServiceImpl extends SuperServiceImpl<AgentRelationMapper, A
         return page;
     }
 
-    @Override
-    public Page<AgentRebateRecordVO> subRebateList(AgentRebateRecordReq req, LoginInfo loginInfo) {
-        LambdaQueryWrapper<AgentRelation> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(AgentRelation::getSuperior, loginInfo.getAccount());
-        Integer agentCount = agentRelationMapper.selectCount(wrapper);
-        if (agentCount < 1) {
-            throw new BizException("你还没有下级");
-        }
-        wrapper.eq(AgentRelation::getAccount, req.getAccount());
-        agentCount = agentRelationMapper.selectCount(wrapper);
-        if (agentCount < 1) {
-            throw new BizException("请输入正确的下级账号");
-        }
-        req.setAccount(loginInfo.getAccount());
-        Page<AgentRebateRecordVO> page = new Page<>(req.getPage(), req.getLimit());
-        List<AgentRebateRecordVO> list = memRebateRecordMapper.queryList(page, req);
-        page.setRecords(list);
-        return page;
-    }
+
 }

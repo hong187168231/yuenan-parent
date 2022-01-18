@@ -53,6 +53,7 @@ public class SecurityGlobalFilter implements GlobalFilter, Ordered {
                 && (HttpMethod.DELETE.toString().equals(request.getMethodValue()) // 删除方法
                 || HttpMethod.PUT.toString().equals(request.getMethodValue())) // 修改方法
         ) {
+            log.info("pppppppppppppppppppppppppppppppppppppppp");
             return ResponseUtils.writeErrorInfo(response, ResultCode.FORBIDDEN_OPERATION);
         }
 
@@ -70,6 +71,7 @@ public class SecurityGlobalFilter implements GlobalFilter, Ordered {
         String jti = jsonObject.getStr(AuthConstants.JWT_JTI);
         Boolean isBlack = redisTemplate.hasKey(AuthConstants.TOKEN_BLACKLIST_PREFIX + jti);
         if (isBlack) {
+            log.info("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
             return ResponseUtils.writeErrorInfo(response, ResultCode.TOKEN_ACCESS_FORBIDDEN);
         }
 

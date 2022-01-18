@@ -7,17 +7,18 @@
         <id column="agent_apply_id" property="agentApplyId"/>
         <result column="create_time" property="createTime"/>
         <result column="mem_id" property="memId"/>
+        <result column="account" property="account"/>
         <result column="status" property="status"/>
         <result column="reject_reason" property="rejectReason"/>
     </resultMap>
 
 
     <select id="queryList" resultMap="BaseResultMap">
-        SELECT * FROM mem_agent_apply maa
-        where maa.status = 0
-        <if test="req.memId !=null">
-            and maa.mem_id = #{req.memId}
+        SELECT * FROM agent_apply aa
+        where aa.status = 0
+        <if test="req.account !=null and req.account !=''">
+            and aa.account = #{req.account}
         </if>
-        ORDER BY ma.create_time desc
+        ORDER BY aa.create_time desc
     </select>
 </mapper>

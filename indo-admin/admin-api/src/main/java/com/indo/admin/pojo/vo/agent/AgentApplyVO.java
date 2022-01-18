@@ -17,6 +17,9 @@ public class AgentApplyVO implements Serializable {
     @ApiModelProperty(value = "用户ID")
     private Long memId;
 
+    @ApiModelProperty(value = "用户账号")
+    private String account;
+
     @ApiModelProperty(value = "申请时间")
     private String createTime;
 

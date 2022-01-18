@@ -10,7 +10,6 @@ import com.indo.common.result.Result;
 import com.indo.common.result.ResultCode;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
@@ -41,13 +40,11 @@ import java.util.Map;
  */
 @Configuration
 @EnableAuthorizationServer
+@AllArgsConstructor
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
-    @Autowired
     private AuthenticationManager authenticationManager;
-    @Autowired
     private UserDetailsServiceImpl userDetailsService;
-    @Autowired
     private ClientDetailsServiceImpl clientDetailsService;
 
     /**
@@ -127,7 +124,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
     /**
      * 密码编码器
-     * <p>
+     *
      * 委托方式，根据密码的前缀选择对应的encoder，例如：{bcypt}前缀->标识BCYPT算法加密；{noop}->标识不使用任何加密即明文的方式
      * 密码判读 DaoAuthenticationProvider#additionalAuthenticationChecks
      */
