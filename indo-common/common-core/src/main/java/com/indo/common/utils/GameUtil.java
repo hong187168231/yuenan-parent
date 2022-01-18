@@ -78,6 +78,28 @@ public class GameUtil extends HttpCommonUtils {
         return jsonObject;
     }
 
+    public static JSONObject getJsonMap(Map<String, List<String>> packageParams) {
+        TreeMap sortedMap = new TreeMap(packageParams);
+        Iterator i$ = sortedMap.keySet().iterator();
+
+        Map<String, Map<String, String[]>> map = new TreeMap<>();
+
+        while (i$.hasNext()) {
+            String key = (String) i$.next();
+            List<String> value = packageParams.get(key);
+            if (null!=value&&value.size()>0) {
+                Map<String, String[]> map1 = new TreeMap<>();
+                for(int i=0;i<value.size();i++){
+                    String str[] = new String[]{"ALL"};
+                    map1.put(value.get(i),str);
+                }
+                map.put(key, map1);
+            }
+        }
+        JSONObject jsonObject = (JSONObject) JSONObject.toJSON(map);
+        return jsonObject;
+    }
+
     /**
      * 加密
      *

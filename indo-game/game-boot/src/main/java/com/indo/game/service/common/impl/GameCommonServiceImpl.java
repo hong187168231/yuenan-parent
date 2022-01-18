@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Slf4j
 @Service(value = "gameCommonService")
@@ -44,6 +45,18 @@ public class GameCommonServiceImpl implements GameCommonService {
             LambdaQueryWrapper<GamePlatform> wrapper = new LambdaQueryWrapper<GamePlatform>();
             wrapper.eq(GamePlatform::getPlatformCode, platformCode);
             gamePlatform = gamePlatformMapper.selectOne(wrapper);
+        }
+        return gamePlatform;
+    }
+
+    @Override
+    public List<GamePlatform> getGamePlatformByParentName(String parentName) {
+        List<GamePlatform> gamePlatform = GameBusinessRedisUtils.get(RedisKeys.GAME_PLATFORM_PARENT_KEY + parentName);
+        if (null == gamePlatform) {
+            LambdaQueryWrapper<GamePlatform> wrapper = new LambdaQueryWrapper<GamePlatform>();
+            wrapper.eq(GamePlatform::getParentName, parentName);
+            wrapper.orderByAsc(GamePlatform::getId);
+            gamePlatform = gamePlatformMapper.selectList(wrapper);
         }
         return gamePlatform;
     }

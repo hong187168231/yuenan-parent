@@ -228,12 +228,36 @@ public class AwcServiceImpl implements AwcService {
 //            用于导回您指定的网站，需要设置 http:// 或 https://
 //            Example 范例：http://www.google.com
             trr.put("externalURL", "");
-            trr.put("platform", gamePlatform.getPlatformEnName());//游戏平台名称
+            String str[] = gamePlatform.getPlatformCode().split("_");
+            trr.put("platform", str[0]);//游戏平台名称
 
 //            GameCategory gameCategory = gameCategoryMapper.selectById(gamePlatform.getCategoryId());
-            trr.put("gameType", gamePlatform.getGameType());//平台游戏类型
+            trr.put("gameType", str[1]);//平台游戏类型
             trr.put("language", gamePlatform.getLanguageType());
-            trr.put("gameForbidden", "");//仅针对 SEXYBCRT 进入特殊游戏大厅  Example 范例：SEXY
+            List<GamePlatform> gamePlatformList = gameCommonService.getGamePlatformByParentName("AWC");
+            List<String> codeList = new ArrayList<>();
+            Map<String, List<String>> gameForbiddenMap = new HashMap<>();
+
+            for(int i=0;i<gamePlatformList.size();i++){
+                GamePlatform gamePlatform1 = gamePlatformList.get(i);
+                if(!gamePlatform.getPlatformCode().equals(gamePlatform1.getPlatformCode())){
+                    String platformList[] = gamePlatform1.getPlatformCode().split("_");
+                    if(!gamePlatformList.contains(platformList[0])){
+                        codeList.add(platformList[0]);
+                        List<String> typeList = gameForbiddenMap.get(platformList[0]);
+                        if(null == typeList){
+                            typeList = new ArrayList<>();
+                            typeList.add(platformList[1]);
+
+                        }else {
+                            typeList.add(platformList[1]);
+                        }
+                        gameForbiddenMap.put(platformList[0], typeList);
+                    }
+                }
+            }
+            JSONObject gameForbiddenStr = GameUtil.getJsonMap(gameForbiddenMap);
+            trr.put("gameForbidden", gameForbiddenStr.toString());//指定对玩家隐藏游戏平台，您仅能透过 API 执行这个动作
 //           platform: SEXYBCRT
 //                   - gameType: LIVE
 //                   - value (ID): {"limitId":[IDs]}

@@ -33,9 +33,6 @@ public class GamePlatform extends BaseEntity {
     @ApiModelProperty(value = "平台中文名称")
     private String platformCnName;
 
-    @ApiModelProperty(value = "平台游戏类型")
-    private String gameType;
-
     @ApiModelProperty(value = "平台图片路径")
     private String picturePath;
 

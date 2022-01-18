@@ -7,17 +7,26 @@ import com.indo.game.pojo.entity.manage.GamePlatform;
 import com.indo.user.pojo.bo.MemTradingBO;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public interface GameCommonService {
 
 
     /**
-     * 判断游戏（彩种）是否开启
+     * 依据平台代码查询平台
      *
      * @param platformCode
      * @return
      */
     GamePlatform getGamePlatformByplatformCode(String platformCode);
+
+    /**
+     * 依据总平台查询平台
+     *
+     * @param parentName
+     * @return
+     */
+    public List<GamePlatform> getGamePlatformByParentName(String parentName);
 
     /**
      * 查询用交易信息

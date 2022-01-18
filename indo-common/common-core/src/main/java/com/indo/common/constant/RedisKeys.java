@@ -52,6 +52,9 @@ public class RedisKeys {
 
 
     public static final String GAME_PLATFORM_KEY = "GAME_PLATFORM_KEY_";
+
+    public static final String GAME_PLATFORM_PARENT_KEY = "GAME_PLATFORM_PARENT_KEY_";
+
     /**
      * 用户对象key: key后拼接id
      */
