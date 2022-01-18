@@ -57,8 +57,6 @@ public class OAuthController {
     }
 
 
-
-
     @ApiOperation(value = "注销", notes = "logout")
     @DeleteMapping("/logout")
     public Result logout() {

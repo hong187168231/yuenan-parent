@@ -1,4 +1,4 @@
-package com.indo.pay.pojo.dto;
+package com.indo.admin.pojo.req.pay;
 
 import com.indo.common.base.BaseDTO;
 import io.swagger.annotations.ApiModelProperty;
@@ -8,14 +8,9 @@ import lombok.Data;
  * 银行支付配置请求参数
  */
 @Data
-public class PayBankDTO extends BaseDTO {
+public class PayBankQueryReq extends BaseDTO {
 
-    private static final long serialVersionUID = 1L;
-
-    private Long bankId;
-
+    @ApiModelProperty(value = "银行名称")
     private String bankName;
-
-    private Integer status;
 
 }

@@ -17,7 +17,7 @@
         ma.superior AS superior,
         ma.team_num AS teamNum
         FROM
-        mem_agent ma
+        agent_relation ma
         INNER JOIN mem_baseinfo mb ON ma.mem_id = mb.id
         AND ma.is_del = 1
         <if test="req.superior !=null and req.superior !='' ">

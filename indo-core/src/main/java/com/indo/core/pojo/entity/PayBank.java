@@ -18,7 +18,7 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@ApiModel(value="PayBank对象", description="支付银行表")
+@ApiModel(value = "PayBank对象", description = "支付银行表")
 public class PayBank extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
@@ -33,5 +33,6 @@ public class PayBank extends BaseEntity {
     @ApiModelProperty(value = "银行名称")
     private String bankName;
 
-
+    @ApiModelProperty(value = "银行名称")
+    private Integer status;
 }

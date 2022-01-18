@@ -1,6 +1,8 @@
 package com.indo.admin.modules.pay.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.indo.admin.pojo.req.pay.PayBankAddReq;
+import com.indo.admin.pojo.req.pay.PayBankQueryReq;
 import com.indo.common.result.Result;
 import com.indo.core.pojo.entity.PayBank;
 import com.indo.pay.pojo.dto.PayBankDTO;
@@ -19,8 +21,10 @@ import java.util.List;
 public interface IPayBankService extends IService<PayBank> {
 
 
-    boolean addBank(PayBankDTO bankDTO);
+    boolean addBank(PayBankAddReq addReq);
 
-    Result<List<PayBankVO>> bankList(PayBankDTO bankDTO);
+    Result<List<PayBankVO>> bankList(PayBankQueryReq queryReq);
+
+    boolean editStatus(Integer status, Long bankId);
 
 }

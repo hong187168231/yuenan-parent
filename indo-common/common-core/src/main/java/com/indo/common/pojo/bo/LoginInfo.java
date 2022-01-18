@@ -11,37 +11,26 @@ public class LoginInfo implements Serializable {
 
     private Long id;
 
-    private Integer gender;
+    private String account;
 
     private Integer memLevel;
 
     private String nickName;
 
-    private String account;
-
     private String mobile;
 
     private LocalDate birthday;
 
-    private String avatarUrl;
+    private String headImage;
 
     private String openid;
 
-    private String sessionKey;
-
     private Integer status;
-
-    private Integer point;
-
-    private Integer deleted;
-
-    private BigDecimal balance;
 
     private String city;
 
-    private String country;
-
     private String language;
 
-    private String province;
+    private BigDecimal balance;
+
 }
