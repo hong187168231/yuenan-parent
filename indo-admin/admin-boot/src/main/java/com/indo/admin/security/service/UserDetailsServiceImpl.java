@@ -35,6 +35,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        log.info("cccccccccccccccccccccccccccccc");
         String clientId = JwtUtils.getOAuthClientId();
         OAuthClientEnum client = OAuthClientEnum.getByClientId(clientId);
         OAuthUserDetails oauthUserDetails;

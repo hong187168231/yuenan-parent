@@ -56,6 +56,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
         clients.withClientDetails(clientDetailsService);
     }
 
+
     /**
      * 配置授权（authorization）以及令牌（token）的访问端点和令牌服务(token services)
      */
@@ -124,7 +125,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
     /**
      * 密码编码器
-     *
+     * <p>
      * 委托方式，根据密码的前缀选择对应的encoder，例如：{bcypt}前缀->标识BCYPT算法加密；{noop}->标识不使用任何加密即明文的方式
      * 密码判读 DaoAuthenticationProvider#additionalAuthenticationChecks
      */

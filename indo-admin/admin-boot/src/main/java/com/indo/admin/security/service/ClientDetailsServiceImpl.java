@@ -6,6 +6,7 @@ import com.indo.admin.modules.sys.service.ISysOauthClientService;
 import com.indo.admin.pojo.entity.SysOauthClient;
 import com.indo.common.result.Result;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.oauth2.provider.ClientDetails;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 
 @Service
+@Slf4j
 public class ClientDetailsServiceImpl implements ClientDetailsService {
 
     @Autowired
@@ -25,6 +27,7 @@ public class ClientDetailsServiceImpl implements ClientDetailsService {
     @SneakyThrows
     public ClientDetails loadClientByClientId(String clientId) {
         try {
+                log.info("bbbbbbbbbbbbbbbbbbbbbbbbbbb");
             SysOauthClient client = sysOauthClientMapper.selectById(clientId);
             BaseClientDetails clientDetails = new BaseClientDetails(
                     client.getClientId(),
