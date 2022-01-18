@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 
 /**
  * 获取当前登录的用户
+ *
  * @date 2019-01-17
  */
 public class SecurityUtils {
@@ -30,6 +31,7 @@ public class SecurityUtils {
 
     /**
      * 获取系统用户名称
+     *
      * @return 系统用户名称
      */
     public static String getUsername() {
@@ -43,6 +45,7 @@ public class SecurityUtils {
 
     /**
      * 获取系统用户id
+     *
      * @return 系统用户id
      */
     public static Long getUserId() {

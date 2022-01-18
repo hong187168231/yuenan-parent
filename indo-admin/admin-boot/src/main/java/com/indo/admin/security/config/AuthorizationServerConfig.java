@@ -56,6 +56,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
         clients.withClientDetails(clientDetailsService);
     }
 
+
     /**
      * 配置授权（authorization）以及令牌（token）的访问端点和令牌服务(token services)
      */
@@ -118,7 +119,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setHideUserNotFoundExceptions(false); // 用户不存在异常抛出
         provider.setUserDetailsService(userDetailsService);
-        provider.setPasswordEncoder(passwordEncoder());
+        provider.setPasswordEncoder(delegatingPasswordEncoder());
         return provider;
     }
 
@@ -129,7 +130,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
      * 密码判读 DaoAuthenticationProvider#additionalAuthenticationChecks
      */
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    public PasswordEncoder delegatingPasswordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
