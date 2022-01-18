@@ -64,17 +64,7 @@ public class AppAgentServiceImpl extends SuperServiceImpl<AgentRelationMapper, A
 
     @Override
     public Page<AgentSubVO> subordinatePage(SubordinateAppReq req, LoginInfo loginInfo) {
-        LambdaQueryWrapper<AgentRelation> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(AgentRelation::getSuperior, loginInfo.getAccount());
-        Integer agentCount = agentRelationMapper.selectCount(wrapper);
-        if (agentCount < 1) {
-            throw new BizException("你还没有下级");
-        }
-        wrapper.eq(AgentRelation::getAccount, req.getAccount());
-        agentCount = agentRelationMapper.selectCount(wrapper);
-        if (agentCount < 1) {
-            throw new BizException("请输入正确的下级账号");
-        }
+        req.setSuperior(loginInfo.getAccount());
         Page<AgentSubVO> page = new Page<>(req.getPage(), req.getLimit());
         List<AgentSubVO> agentList = agentRelationMapper.subordinateList(page, req);
         page.setRecords(agentList);
@@ -106,23 +96,5 @@ public class AppAgentServiceImpl extends SuperServiceImpl<AgentRelationMapper, A
         return page;
     }
 
-    @Override
-    public Page<AgentRebateRecordVO> subRebateList(AgentRebateRecordReq req, LoginInfo loginInfo) {
-        LambdaQueryWrapper<AgentRelation> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(AgentRelation::getSuperior, loginInfo.getAccount());
-        Integer agentCount = agentRelationMapper.selectCount(wrapper);
-        if (agentCount < 1) {
-            throw new BizException("你还没有下级");
-        }
-        wrapper.eq(AgentRelation::getAccount, req.getAccount());
-        agentCount = agentRelationMapper.selectCount(wrapper);
-        if (agentCount < 1) {
-            throw new BizException("请输入正确的下级账号");
-        }
-        req.setAccount(loginInfo.getAccount());
-        Page<AgentRebateRecordVO> page = new Page<>(req.getPage(), req.getLimit());
-        List<AgentRebateRecordVO> list = memRebateRecordMapper.queryList(page, req);
-        page.setRecords(list);
-        return page;
-    }
+
 }

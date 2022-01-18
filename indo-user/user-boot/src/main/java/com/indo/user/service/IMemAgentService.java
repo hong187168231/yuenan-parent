@@ -29,6 +29,5 @@ public interface IMemAgentService extends SuperService<AgentRelation> {
 
     Page<AgentRebateRecordVO> queryList(AgentRebateRecordReq req, LoginInfo loginInfo);
 
-    Page<AgentRebateRecordVO> subRebateList(AgentRebateRecordReq req, LoginInfo loginInfo);
 
 }

@@ -63,25 +63,17 @@ public class AgentController {
         return Result.success(list);
     }
 
-    @ApiOperation(value = "佣金列表", httpMethod = "GET")
+    @ApiOperation(value = "佣金明细", httpMethod = "GET")
     @GetMapping(value = "/rebateList")
-    public Result rebateList(@RequestBody AgentRebateRecordReq req, @LoginUser LoginInfo loginInfo) {
+    public Result rebateList(AgentRebateRecordReq req, @LoginUser LoginInfo loginInfo) {
         Page<AgentRebateRecordVO> result = iMemAgentService.queryList(req, loginInfo);
-        return Result.success(result.getRecords(), result.getTotal());
-    }
-
-
-    @ApiOperation(value = "下级佣金明细", httpMethod = "GET")
-    @GetMapping(value = "/subRebateList")
-    public Result subRebateList(@RequestBody AgentRebateRecordReq req, @LoginUser LoginInfo loginInfo) {
-        Page<AgentRebateRecordVO> result = iMemAgentService.subRebateList(req, loginInfo);
         return Result.success(result.getRecords(), result.getTotal());
     }
 
 
     @ApiOperation(value = "下级列表", httpMethod = "GET")
     @GetMapping(value = "/subList")
-    public Result<List<AgentSubVO>> subList(@RequestBody SubordinateAppReq req, @LoginUser LoginInfo loginInfo) {
+    public Result<List<AgentSubVO>> subList(SubordinateAppReq req, @LoginUser LoginInfo loginInfo) {
         Page<AgentSubVO> result = iMemAgentService.subordinatePage(req, loginInfo);
         return Result.success(result.getRecords(), result.getTotal());
     }

@@ -21,12 +21,6 @@
             <if test="req.account !=null">
                 and m.account = #{req.account}
             </if>
-            <if test="req.startTime != null and req.startTime != ''">
-                and m.create_time &gt;= #{req.startTime}
-            </if>
-            <if test="req.endTime != null and req.endTime != ''">
-                and m.create_time &lt; #{req.endTime}
-            </if>
         </where>
         ORDER BY m.create_time desc
     </select>

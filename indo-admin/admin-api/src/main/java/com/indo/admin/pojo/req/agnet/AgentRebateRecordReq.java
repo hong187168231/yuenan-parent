@@ -13,10 +13,7 @@ import java.util.Date;
 @ApiModel
 public class AgentRebateRecordReq extends BaseDTO {
 
-    @ApiModelProperty("会员ID")
-    private Long memId;
-
-    @ApiModelProperty("会员账号")
+    @ApiModelProperty(value = "会员账号", hidden = true)
     private String account;
 
     @ApiModelProperty("开始时间")

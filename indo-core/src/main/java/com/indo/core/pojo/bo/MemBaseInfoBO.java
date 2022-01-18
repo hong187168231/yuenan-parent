@@ -41,6 +41,7 @@ public class MemBaseInfoBO {
     @ApiModelProperty(value = "真实姓名")
     private String realName;
 
+    @ApiModelProperty(value = "头像")
     private String headImage;
 
     @ApiModelProperty(value = "登陆密码")

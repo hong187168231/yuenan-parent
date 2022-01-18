@@ -20,8 +20,8 @@
         mem_agent ma
         INNER JOIN mem_baseinfo mb ON ma.mem_id = mb.id
         AND ma.is_del = 1
-        <if test="req.account !=null">
-            and ma.account = #{req.account}
+        <if test="req.superior !=null and req.superior !='' ">
+            and ma.superior = #{req.superior}
         </if>
         ORDER BY
         ma.create_time DESC

@@ -33,11 +33,14 @@ public class MemBaseInfoVo {
     @ApiModelProperty(value = "用户账号")
     private String account;
 
+    @ApiModelProperty(value = "头像")
+    private String headImage;
+
     @ApiModelProperty(value = "手机号")
     private String phone;
 
     @ApiModelProperty(value = "生日")
-    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date birthday;
 
     @ApiModelProperty(value = "电子邮件")
@@ -67,11 +70,11 @@ public class MemBaseInfoVo {
     @ApiModelProperty(value = "备注")
     private String remark;
 
-    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @ApiModelProperty(value = "注册时间")
     private Date createTime;
 
-    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @ApiModelProperty(value = "最后登录时间")
     private Date lastLoginTime;
 
