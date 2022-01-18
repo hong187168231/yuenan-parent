@@ -40,6 +40,8 @@ public class GameInfoRecord {
     private String method;
 
     @ApiModelProperty(value = "余额")
-    @NotNull(message = "余额")
     private BigDecimal balance;
+
+    @ApiModelProperty(value = "游戏商注单号")
+    private String platformTxId;
 }
