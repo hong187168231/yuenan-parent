@@ -10,18 +10,22 @@
         <result column="mem_level" property="memLevel"/>
         <result column="mem_real_name" property="realName"/>
         <result column="yesterday_remain" property="yesterdayRemain"/>
-        <result column="rebate_amout" property="rebateAmout"/>
+        <result column="rebate_amount" property="rebateAmount"/>
+        <result column="total_bet" property="totalBet"/>
         <result column="create_user" property="createUser"/>
     </resultMap>
 
 
     <select id="queryList" resultMap="BaseResultMap">
-        SELECT * FROM agent_rebate_record m
-        <where>
-            <if test="req.account !=null">
-                and m.account = #{req.account}
-            </if>
-        </where>
+        SELECT
+        m.*,
+        mb.total_bet
+        FROM
+        agent_rebate_record m
+        LEFT JOIN mem_baseinfo mb ON m.mem_id = mb.id
+        <if test="req.account !=null and req.account != ''">
+            and m.account = #{req.account}
+        </if>
         ORDER BY m.create_time desc
     </select>
 </mapper>

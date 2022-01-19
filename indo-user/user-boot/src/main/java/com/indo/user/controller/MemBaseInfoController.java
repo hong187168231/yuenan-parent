@@ -50,7 +50,6 @@ public class MemBaseInfoController {
 
     @ApiOperation(value = "个人基本信息", httpMethod = "POST")
     @PostMapping(value = "/info")
-    @AllowAccess
     public Result<MemBaseInfoVo> info(@LoginUser LoginInfo loginUser) {
         return Result.success(memBaseInfoService.getMemBaseInfo(loginUser.getAccount()));
     }

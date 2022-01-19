@@ -64,7 +64,7 @@ public class AgentController {
 
     @ApiOperation(value = "佣金明细", httpMethod = "GET")
     @GetMapping(value = "/rebateList")
-    public Result rebateList(AgentRebateRecordReq req, @LoginUser LoginInfo loginInfo) {
+    public Result<List<AgentRebateRecordVO>> rebateList(AgentRebateRecordReq req, @LoginUser LoginInfo loginInfo) {
         Page<AgentRebateRecordVO> result = iMemAgentService.queryList(req, loginInfo);
         return Result.success(result.getRecords(), result.getTotal());
     }

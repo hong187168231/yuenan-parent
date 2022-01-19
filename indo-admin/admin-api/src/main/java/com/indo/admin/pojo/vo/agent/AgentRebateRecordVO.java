@@ -46,7 +46,10 @@ public class AgentRebateRecordVO implements Serializable {
     private BigDecimal yesterdayRemain;
 
     @ApiModelProperty(value = "返点金额")
-    private BigDecimal rebateAmout;
+    private BigDecimal rebateAmount;
+
+    @ApiModelProperty(value = "累计投注")
+    private BigDecimal totalBet;
 
     @ApiModelProperty(value = "发放人")
     private String createUser;
