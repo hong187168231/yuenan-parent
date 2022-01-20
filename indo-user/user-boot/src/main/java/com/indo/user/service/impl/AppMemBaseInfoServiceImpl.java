@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
 import com.indo.common.utils.BaseUtil;
+import com.indo.common.utils.DeviceInfoUtil;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
 import com.indo.core.base.service.impl.SuperServiceImpl;
@@ -32,6 +33,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.Date;
 
@@ -74,6 +76,7 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
     public void modifyLogin(MemBaseInfoBO baseInfoBO) {
         MemBaseinfo memBaseinfo = new MemBaseinfo();
         memBaseinfo.setLastLoginTime(new Date());
+        memBaseinfo.setClientIp(DeviceInfoUtil.getIp());
         memBaseinfo.setId(baseInfoBO.getId());
         this.baseMapper.updateById(memBaseinfo);
     }
@@ -86,19 +89,7 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Result<AppLoginVo> register(RegisterReq req) {
-        if (StringUtils.isBlank(req.getAccount())) {
-            return Result.failed("请填写账号！");
-        }
-        if (!BaseUtil.checkIsNumOrletter(req.getAccount())) {
-            return Result.failed("请输入4-11位字母或数字的用户名");
-        }
-        if (StringUtils.isBlank(req.getPassword())) {
-            return Result.failed("请填写密码！");
-        }
-        if (StringUtils.isBlank(req.getConfirmPassword())) {
-            return Result.failed("请填写确认密码！");
-        }
+    public Result<AppLoginVo> register( RegisterReq req) {
         if (!req.getPassword().equals(req.getConfirmPassword())) {
             return Result.failed("两次密码填写不一样！");
         }
@@ -129,10 +120,9 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
         //userInfo.setSource(Integer.valueOf(DeviceInfoUtil.getSource()));
         userInfo.setPassword(req.getPassword());
         userInfo.setPasswordMd5(req.getPassword());
-        if (StringUtils.isNotBlank(req.getDeviceCode())) {
-            // userInfo.setDeviceCode(req.getDeviceCode());
+        if (StringUtils.isNotBlank(DeviceInfoUtil.getDeviceId())) {
+            userInfo.setDeviceCode(DeviceInfoUtil.getDeviceId());
         }
-//        userInfo.setInviteCode(req.getInviteCode());
         //保存注册信息
         initRegister(userInfo, memInviteCode);
         MemBaseInfoBO memBaseinfoBo = DozerUtil.map(userInfo, MemBaseInfoBO.class);

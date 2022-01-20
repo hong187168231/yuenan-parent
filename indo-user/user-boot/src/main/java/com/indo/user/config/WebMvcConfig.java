@@ -9,11 +9,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
 import java.util.List;
-
+import java.util.Locale;
 
 
 @Configuration
@@ -23,12 +25,11 @@ public class WebMvcConfig extends com.indo.common.web.config.WebMvcConfig {
     private AuthorizationInterceptor authorizationInterceptor;
     @Autowired
     private UserTokenResolver userTokenResolver;
-    @Autowired
-    private MessageSource messageSource;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(authorizationInterceptor).addPathPatterns("/**");
+        registry.addInterceptor(localeChangeInterceptor());
     }
 
     @Override
@@ -36,16 +37,16 @@ public class WebMvcConfig extends com.indo.common.web.config.WebMvcConfig {
         argumentResolvers.add(userTokenResolver);
     }
 
-    @Override
-    public Validator getValidator() {
-        return validator();
+    @Bean
+    public LocaleResolver localeResolver() {
+        SessionLocaleResolver localeResolver = new SessionLocaleResolver ();
+        //指定默认语言为中文
+        localeResolver.setDefaultLocale(Locale.SIMPLIFIED_CHINESE);
+        return localeResolver;
     }
 
-    @Bean
-    public Validator validator() {
-        LocalValidatorFactoryBean validator = new LocalValidatorFactoryBean();
-        validator.setValidationMessageSource(messageSource);
-        return validator;
-    }
+
+
+
 
 }

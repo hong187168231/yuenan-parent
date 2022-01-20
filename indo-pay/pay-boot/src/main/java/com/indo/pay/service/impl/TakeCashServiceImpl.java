@@ -198,7 +198,7 @@ public class TakeCashServiceImpl extends SuperServiceImpl<TakeCashMapper, PayTak
         orderCash.setApplyAmount(cashApplyReq.getTakeCashAmount());
         orderCash.setBankName(memBank.getBankName());
         orderCash.setBankCardNo(memBank.getBankCardNo());
-        orderCash.setBankCity(memBank.getCity());
+        orderCash.setBankCity(memBank.getBankCity());
         orderCash.setOrderNo("TX" + SnowflakeIdWorker.createOrderSn());
         orderCash.setApplyTime(new Date());
         orderCash.setCreateUser(loginUser.getAccount());

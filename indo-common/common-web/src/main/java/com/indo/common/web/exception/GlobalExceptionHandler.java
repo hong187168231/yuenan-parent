@@ -4,6 +4,8 @@ import cn.hutool.json.JSONObject;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.indo.common.result.Result;
 import com.indo.common.result.ResultCode;
+import com.indo.common.utils.CollectionUtil;
+import com.indo.common.web.util.LocaleMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpStatus;
@@ -23,6 +25,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
+import java.sql.Connection;
 import java.util.List;
 import java.util.concurrent.CompletionException;
 import java.util.regex.Matcher;
@@ -63,13 +66,15 @@ public class GlobalExceptionHandler {
 
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
-    public <T> Result<T> methodArgumentNotValid(HttpServletRequest req, MethodArgumentNotValidException  ex)  {
-        List<ObjectError> errors =ex.getBindingResult().getAllErrors();
-        StringBuffer errorMsg=new StringBuffer();
-        errors.stream().forEach(x -> errorMsg.append(x.getDefaultMessage()).append(";"));
-        log.error("---MethodArgumentNotValidException Handler--- ERROR: {}", errorMsg.toString());
-        return  Result.failed(ResultCode.PARAM_ERROR, errorMsg.toString());
+    public <T> Result<T> methodArgumentNotValid(HttpServletRequest req, MethodArgumentNotValidException ex) {
+        List<ObjectError> errors = ex.getBindingResult().getAllErrors();
+        String errorMsg = "";
+        if (errors != null && !errors.isEmpty()) {
+            errorMsg = errors.get(0).getDefaultMessage();
+        }
+        return Result.failed(ResultCode.PARAM_ERROR, LocaleMessage.getMessage(errorMsg));
     }
+
 
     /**
      * 普通参数(非 java bean)校验出错时抛出 ConstraintViolationException 异常

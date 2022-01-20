@@ -19,6 +19,7 @@ public enum ResultCode implements IResultCode, Serializable {
 
 
     USER_ERROR("A0001", "用户端错误"),
+    SUBMIT_ERROR("A0002", "点击的太快了,请慢一点!"),
     USER_LOGIN_ERROR("A0200", "用户登录异常"),
 
     USER_NOT_EXIST("A0201", "用户不存在"),

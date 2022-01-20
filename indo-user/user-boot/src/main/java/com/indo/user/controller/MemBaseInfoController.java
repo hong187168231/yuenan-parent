@@ -15,6 +15,7 @@ import com.indo.user.service.AppMemBaseInfoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -44,7 +45,7 @@ public class MemBaseInfoController {
     @ApiOperation(value = "注册接口", httpMethod = "POST")
     @PostMapping(value = "/register")
     @AllowAccess
-    public Result<AppLoginVo> register(@RequestBody RegisterReq req) {
+    public Result<AppLoginVo> register(@RequestBody @Validated RegisterReq req) {
         return memBaseInfoService.register(req);
     }
 

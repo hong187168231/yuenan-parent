@@ -4,4 +4,6 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   com.indo.common.web.exception.GlobalExceptionHandler,\
   com.indo.common.web.config.DozerConfig,\
   com.indo.common.web.util.DozerUtil,\
-  com.indo.common.web.exception.KeepErrMsgConfiguration
+  com.indo.common.web.exception.KeepErrMsgConfiguration,\
+  com.indo.common.web.config.ValidationConfig,\
+  com.indo.common.web.util.LocaleMessage

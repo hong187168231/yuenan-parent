@@ -3,23 +3,27 @@ package com.indo.core.pojo.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.indo.common.pojo.entity.BaseEntity;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
  * <p>
- *
+ * 会员基础信息表
  * </p>
  *
- * @author puff
- * @since 2021-08-26
+ * @author xxx
+ * @since 2022-01-15
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
+@ApiModel(value = "MemBaseinfo对象", description = "会员基础信息表")
 public class MemBaseinfo extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
@@ -28,17 +32,20 @@ public class MemBaseinfo extends BaseEntity {
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
-    @ApiModelProperty(value = "真实姓名")
-    private String realName;
+    @ApiModelProperty(value = "用户账号")
+    private String account;
+
+    @ApiModelProperty(value = "账户类型：1 玩家 2-代理")
+    private Integer accType;
 
     @ApiModelProperty(value = "昵称")
     private String nickName;
 
-    @ApiModelProperty(value = "昵称")
-    private String headImage;
+    @ApiModelProperty(value = "真实姓名")
+    private String realName;
 
-    @ApiModelProperty(value = "用户唯一标识")
-    private String account;
+    @ApiModelProperty(value = "头像")
+    private String headImage;
 
     @ApiModelProperty(value = "登陆密码")
     private String password;
@@ -64,11 +71,10 @@ public class MemBaseinfo extends BaseEntity {
     @ApiModelProperty(value = "用户等级")
     private Integer memLevel;
 
-    @ApiModelProperty(value = "账户类型：1 玩家 2-代理")
-    private Integer accType;
-
+    @ApiModelProperty(value = "存款总额")
     private BigDecimal totalDeposit;
 
+    @ApiModelProperty(value = "取款总额")
     private BigDecimal totalEnchashment;
 
     private BigDecimal totalBet;
@@ -92,29 +98,34 @@ public class MemBaseinfo extends BaseEntity {
     private Integer status;
 
     @ApiModelProperty(value = "禁止登陆")
-    private Boolean prohibitLogin;
+    private Integer prohibitLogin;
 
     @ApiModelProperty(value = "是否禁止邀请发展下级和会员：0 否 1 是")
-    private Boolean prohibitInvite;
+    private Integer prohibitInvite;
 
     @ApiModelProperty(value = "是否禁止投注：0 否 1 是")
-    private Boolean prohibitInvestment;
+    private Integer prohibitInvestment;
 
     @ApiModelProperty(value = "是否禁止出款：0 否 1 是")
-    private Boolean prohibitDisbursement;
+    private Integer prohibitDisbursement;
 
     @ApiModelProperty(value = "是否禁止充值：0 否 1 是")
-    private Boolean prohibitRecharge;
-
-    @ApiModelProperty(value = "备注")
-    private String remark;
-
-    @ApiModelProperty(value = "创建人")
-    private String createUser;
+    private Integer prohibitRecharge;
 
     @ApiModelProperty(value = "最后登录时间")
     private Date lastLoginTime;
 
+    @ApiModelProperty(value = "创建人")
+    private String createUser;
+
     @ApiModelProperty(value = "最后修改人")
     private String updateUser;
+
+    @ApiModelProperty(value = "备注")
+    private String remark;
+
+    @ApiModelProperty(value = "设备号")
+    private String deviceCode;
+
+
 }

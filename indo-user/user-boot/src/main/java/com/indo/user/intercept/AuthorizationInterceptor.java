@@ -21,6 +21,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -54,25 +55,22 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
             DeviceInfoUtil.setDeviceId(deviceId);
         }
 
-        AllowAccess annotation;
-        if (handler instanceof HandlerMethod) {
-            annotation = ((HandlerMethod) handler).getMethodAnnotation(AllowAccess.class);
-        } else {
-            return true;
-        }
-        Object userObj = redisUtils.get(AppConstants.USER_LOGIN_ACCTOKEN + token);
-        if (annotation != null || isWhiteUri(uri)) {
+        HandlerMethod handlerMethod = (HandlerMethod) handler;
+        Method method = handlerMethod.getMethod();
+        if (method.getAnnotation(AllowAccess.class) != null || isWhiteUri(uri)) {
             return super.preHandle(request, response, handler);
         } else if (StringUtils.isEmpty(token)) {
             BaseUtil.writer401Response(response, ResultCode.LIVE_ERROR_401);
             return false;
-        } else if (null == userObj) {
+        }
+        Object userObj = redisUtils.get(AppConstants.USER_LOGIN_ACCTOKEN + token);
+        if (null == userObj) {
             BaseUtil.writer401Response(response, ResultCode.LIVE_ERROR_401);
             return false;
         } else {
             LoginInfo loginInfo = JSONObject.parseObject((String) userObj, LoginInfo.class);
             if (loginInfo != null) {
-                String newToken = (String) redisUtils.get(AppConstants.USER_LOGIN_INFO_KEY + loginInfo.getAccount());
+                String newToken = redisUtils.get(AppConstants.USER_LOGIN_INFO_KEY + loginInfo.getAccount());
                 if (StringUtils.isEmpty(newToken)) {
                     BaseUtil.writer401Response(response, ResultCode.LIVE_ERROR_401);
                     return false;

@@ -25,11 +25,10 @@ public class UserTokenResolver implements HandlerMethodArgumentResolver {
     private RedisUtils redisUtils;
 
 
-    //使用自定义的注解
     @Override
     public boolean supportsParameter(MethodParameter methodParameter) {
-        return methodParameter.getParameterType().isAssignableFrom(LoginInfo.class) && methodParameter.hasParameterAnnotation(LoginUser.class);
-//        return methodParameter.hasParameterAnnotation(LoginUser.class);
+        return methodParameter.getParameterType().isAssignableFrom(LoginInfo.class)
+                && methodParameter.hasParameterAnnotation(LoginUser.class);
     }
 
     //将值注入参数

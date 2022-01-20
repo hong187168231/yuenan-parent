@@ -26,17 +26,17 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
- * @author 
+ * @author
  * @date 2021-03-01
  */
 @Aspect
 @Component
 @AllArgsConstructor
 @Slf4j
-@ConditionalOnProperty(value = "spring.application.name", havingValue = "live-auth")
+@ConditionalOnProperty(value = "spring.application.name", havingValue = "indo-admin")
 public class LoginLogAspect {
 
-    @Pointcut("execution(public * com.indo.auth.controller.OAuthController.postAccessToken(..))")
+    @Pointcut("execution(public * com.indo.admin.modules.oauth.OAuthController.postAccessToken(..))")
     public void Log() {
     }
 
@@ -51,8 +51,8 @@ public class LoginLogAspect {
         HttpServletRequest request = attributes.getRequest();
 
         // 刷新token不记录
-        String grantType=request.getParameter(AuthConstants.GRANT_TYPE_KEY);
-        if(grantType.equals(AuthConstants.REFRESH_TOKEN)){
+        String grantType = request.getParameter(AuthConstants.GRANT_TYPE_KEY);
+        if (grantType.equals(AuthConstants.REFRESH_TOKEN)) {
             return result;
         }
 
