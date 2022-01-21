@@ -8,17 +8,20 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
 /**
  * <p>
- * 
+ * 代理佣金提现记录表
  * </p>
  *
  * @author xxx
- * @since 2022-01-13
+ * @since 2022-01-21
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@ApiModel(value="AgentCashRecord对象", description="")
+@ApiModel(value="AgentCashRecord对象", description="代理佣金提现记录表")
 public class AgentCashRecord extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
@@ -30,17 +33,20 @@ public class AgentCashRecord extends BaseEntity {
     @ApiModelProperty(value = "会员id")
     private Long memId;
 
+    @ApiModelProperty(value = "会员账号")
+    private String account;
+
     @ApiModelProperty(value = "会员等级")
     private Integer memLevel;
 
-    @ApiModelProperty(value = "真实姓名")
-    private String amount;
+    @ApiModelProperty(value = "打款金额")
+    private BigDecimal remitAmount;
 
     private String branchBank;
 
     private String bankName;
 
-    private Integer bankCardNo;
+    private String bankCardNo;
 
     private String city;
 
@@ -48,7 +54,14 @@ public class AgentCashRecord extends BaseEntity {
 
     private String channelName;
 
-    private String cashStatus;
+    @ApiModelProperty(value = "订单号")
+    private String orderNo;
+
+    private Integer cashStatus;
+
+    private LocalDateTime applyTime;
+
+    private LocalDateTime remitTime;
 
     @ApiModelProperty(value = "发放人")
     private String createUser;

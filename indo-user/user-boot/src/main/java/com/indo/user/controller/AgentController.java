@@ -17,10 +17,13 @@ import com.indo.user.pojo.req.mem.MemAgentApplyReq;
 import com.indo.user.pojo.req.mem.SubordinateAppReq;
 import com.indo.user.service.IMemAgentService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -53,6 +56,19 @@ public class AgentController {
         AgentRebateInfoVO infoVO = iMemAgentService.rebateInfo(loginInfo);
         return Result.success(infoVO);
     }
+
+
+    @ApiOperation(value = "佣金提现", httpMethod = "POST")
+    @PostMapping(value = "/takeRebate")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "rebateAmount", value = "佣金", defaultValue = "0.00", paramType = "query", dataType = "string"),
+            @ApiImplicitParam(name = "memBankId", value = "会员银行卡id", paramType = "query", dataType = "long")
+    })
+    public Result takeRebate(BigDecimal rebateAmount, Long memBankId, @LoginUser LoginInfo loginInfo) {
+        boolean flag = iMemAgentService.takeRebate(rebateAmount,memBankId, loginInfo);
+        return Result.judge(flag);
+    }
+
 
     @ApiOperation(value = "获取返佣配置", response = MemBetVo.class, httpMethod = "GET")
     @GetMapping(value = "/rebateConfig")

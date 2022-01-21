@@ -37,9 +37,11 @@ public enum GoldchangeEnum {
     register(307, "注册送好礼"),
     SUPERLOTTO(309, "国年大乐透"),
 
-
     TXKK(401, "提现扣款"),
-    JJTC(407, "奖金提出");
+    JJTC(407, "奖金提出"),
+
+
+    DLFY(501, "代理返佣");
 
     private Integer code;
     private String name;
