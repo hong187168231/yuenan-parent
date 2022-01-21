@@ -149,4 +149,7 @@ public class Txns {
     @ApiModelProperty(value = "游戏分类名称")
     private String categoryName;
 
+    @ApiModelProperty(value = "注单排序值")
+    private long SortNo;
+
 }

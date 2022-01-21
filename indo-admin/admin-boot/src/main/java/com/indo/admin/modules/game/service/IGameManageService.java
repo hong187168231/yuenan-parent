@@ -16,7 +16,7 @@ import java.util.Set;
 
 public interface IGameManageService {
 
-    Result<GameCategory> queryAllGameCategory();
+    Result queryAllGameCategory();
 
     boolean addGameCategory(GameCategory category);
 
@@ -34,9 +34,9 @@ public interface IGameManageService {
 
     boolean modifiyGamePlatform(GamePlatform platform);
 
-    Result<GameLanguageType> queryLanguageType();
+    Result queryLanguageType();
 
-    Result<GameCurrencyType> queryGameCurrencyType();
+    Result queryGameCurrencyType();
 
     public IPage<GameStatiRecord> queryAllGameInfoCount(GameInfoPageReq req);
 

@@ -11,6 +11,7 @@ import com.indo.common.annotation.AllowAccess;
 import com.indo.common.annotation.LoginUser;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
+import com.indo.common.utils.DateUtils;
 import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.pojo.entity.manage.*;
 import io.swagger.annotations.Api;
@@ -22,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -62,12 +64,14 @@ public class GameManageController {
     @ApiOperation(value = "新增游戏类别", httpMethod = "POST")
     @PostMapping(value = "/addGameCategory")
     public Result addGameCategory(GameCategory category) {
+        category.setCreateTime(DateUtils.format(new Date(),DateUtils.newFormat));
         return Result.judge(iGameManageService.addGameCategory(category));
     }
 
     @ApiOperation(value = "修改游戏类别", httpMethod = "POST")
     @PostMapping(value = "/modifyGameCategory")
     public Result modifyGameCategory(GameCategory category) {
+        category.setUpdateTime(DateUtils.format(new Date(),DateUtils.newFormat));
         return Result.judge(iGameManageService.modifiyGameCategory(category));
     }
 
@@ -94,6 +98,7 @@ public class GameManageController {
     @ApiOperation(value = "新增平台名称", httpMethod = "POST")
     @GetMapping(value = "/addGamePlatform")
     public Result addGamePlatform(GamePlatform gamePlatform) {
+        gamePlatform.setCreateTime(DateUtils.format(new Date(),DateUtils.newFormat));
         return Result.judge(iGameManageService.addGamePlatform(gamePlatform));
     }
 
@@ -106,6 +111,7 @@ public class GameManageController {
     @ApiOperation(value = "修改平台名称", httpMethod = "POST")
     @GetMapping(value = "/modifyGamePlatform")
     public Result modifyGamePlatform(GamePlatform gamePlatform) {
+        gamePlatform.setUpdateTime(DateUtils.format(new Date(),DateUtils.newFormat));
         return Result.judge(iGameManageService.modifiyGamePlatform(gamePlatform));
     }
 

@@ -1,19 +1,19 @@
 package com.indo.game.pojo.entity.manage;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.indo.common.pojo.entity.BaseEntity;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
 @TableName("game_category")
-public class GameCategory extends BaseEntity {
+public class GameCategory {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "id")
@@ -36,4 +36,8 @@ public class GameCategory extends BaseEntity {
 
     @ApiModelProperty(value = "排序序号")
     private int sortNumber;
+
+    private String createTime;
+
+    private String updateTime;
    }

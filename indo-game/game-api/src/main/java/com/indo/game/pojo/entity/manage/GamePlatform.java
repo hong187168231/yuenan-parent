@@ -10,9 +10,8 @@ import lombok.EqualsAndHashCode;
 
 import javax.validation.constraints.NotNull;
 @Data
-@EqualsAndHashCode(callSuper = true)
 @TableName("game_platform")
-public class GamePlatform extends BaseEntity {
+public class GamePlatform {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "id")
@@ -71,4 +70,8 @@ public class GamePlatform extends BaseEntity {
 
     @ApiModelProperty(value = "系统与厂商间的最小限制转帐金额")
     private double minTransfer;
+
+    private String createTime;
+
+    private String updateTime;
 }

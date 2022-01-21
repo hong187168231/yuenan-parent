@@ -18,4 +18,10 @@ public interface UgService {
     public Result logout(LoginInfo loginUser,String ip);
 
 
+    /**
+     * 同步注单
+     */
+    public void ugPullOrder();
+
+
 }

@@ -30,12 +30,10 @@ public class GameManageServiceImpl implements IGameManageService {
     @Autowired
     private TxnsMapper txnsMapper;
 
-    public Result<GameCategory> queryAllGameCategory() {
-        Result<GameCategory> result = new Result<>();
+    public Result queryAllGameCategory() {
         LambdaQueryWrapper<GameCategory> wrapper = new LambdaQueryWrapper<>();
         List<GameCategory> categoryList = gameCategoryMapper.selectList(wrapper);
-        result.success(categoryList);
-        return result;
+        return Result.success(categoryList);
     }
 
     public boolean addGameCategory(GameCategory category) {
@@ -58,12 +56,10 @@ public class GameManageServiceImpl implements IGameManageService {
     }
 
     public Result<List<GamePlatform>> queryHotGamePlatform() {
-        Result<List<GamePlatform>> result = new Result<List<GamePlatform>>();
         LambdaQueryWrapper<GamePlatform> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(GamePlatform::getIsHotShow, "1");
         List<GamePlatform> categoryList = gamePlatformMapper.selectList(wrapper);
-        result.success(categoryList);
-        return result;
+        return Result.success(categoryList);
     }
 
     public boolean addGamePlatform(GamePlatform platform) {
@@ -78,20 +74,16 @@ public class GameManageServiceImpl implements IGameManageService {
         return gamePlatformMapper.updateById(platform) > 0;
     }
 
-    public Result<GameLanguageType> queryLanguageType() {
-        Result<GameLanguageType> result = new Result<GameLanguageType>();
+    public Result queryLanguageType() {
         LambdaQueryWrapper<GameLanguageType> wrapper = new LambdaQueryWrapper<>();
         List<GameLanguageType> categoryList = gameLanguageTypeMapper.selectList(wrapper);
-        result.success(categoryList);
-        return result;
+        return Result.success(categoryList);
     }
 
-    public Result<GameCurrencyType> queryGameCurrencyType() {
-        Result<GameCurrencyType> result = new Result<GameCurrencyType>();
+    public Result queryGameCurrencyType() {
         LambdaQueryWrapper<GameCurrencyType> wrapper = new LambdaQueryWrapper<>();
         List<GameCurrencyType> categoryList = gameCurrencyTypeMapper.selectList(wrapper);
-        result.success(categoryList);
-        return result;
+        return Result.success(categoryList);
     }
 
     @Override

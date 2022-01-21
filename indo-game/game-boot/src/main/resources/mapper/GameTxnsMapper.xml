@@ -62,4 +62,10 @@
             </otherwise>
         </choose>
     </select>
+    <select id="getMaxPlatformTxId" resultType="java.lang.String">
+        SELECT MAX(t.sort_no)
+        FROM game_txns t
+        WHERE
+            t.platform = #{platform}
+    </select>
 </mapper>
