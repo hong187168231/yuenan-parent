@@ -6,15 +6,21 @@ import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
 import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.common.utils.GameUtil;
+import com.indo.game.mapper.TxnsMapper;
 import com.indo.game.mapper.frontend.GameCategoryMapper;
 import com.indo.game.mapper.frontend.GamePlatformMapper;
 import com.indo.game.mapper.frontend.GameTypeMapper;
 import com.indo.game.pojo.dto.ug.UgLoginJsonDTO;
 import com.indo.game.pojo.dto.ug.UgLogoutJsonDTO;
 import com.indo.game.pojo.dto.ug.UgRegisterPlayerJsonDTO;
+import com.indo.game.pojo.dto.ug.UgTasksJsonDTO;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.game.pojo.entity.manage.GamePlatform;
+import com.indo.game.pojo.entity.manage.Txns;
+import com.indo.game.pojo.vo.callback.ug.SortBetDto;
+import com.indo.game.pojo.vo.callback.ug.SubBetDto;
 import com.indo.game.pojo.vo.callback.ug.UgApiResponseData;
+import com.indo.game.pojo.vo.callback.ug.UgApiTasksResponseData;
 import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
 import com.indo.game.service.ug.UgService;
@@ -27,6 +33,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -49,6 +56,9 @@ public class UgServiceImpl implements UgService {
     GameCategoryMapper gameCategoryMapper;
     @Autowired
     private GamePlatformMapper gamePlatformMapper;
+
+    @Autowired
+    private TxnsMapper txnsMapper;
 
     /**
      * 登录游戏
@@ -222,4 +232,86 @@ public class UgServiceImpl implements UgService {
         return ugApiResponse;
     }
 
+    @Override
+    public void ugPullOrder(){
+
+        UgApiTasksResponseData ugApiResponse = null;
+        UgTasksJsonDTO ugTasksJsonDTO = new UgTasksJsonDTO();
+        String platformTxId = txnsMapper.getMaxPlatformTxId("UG Sports");
+        ugTasksJsonDTO.setSortNo(Long.valueOf(null!=platformTxId&&!"".equals(platformTxId)?platformTxId:"0"));//排序编号 返回大于该排序编号的注单
+        try {
+            ugApiResponse = commonTasksRequest(ugTasksJsonDTO, OpenAPIProperties.UG_API_URL+"/SportApi/GetBetSheetBySort",  "ugPullOrder");
+            if("000000".equals(ugApiResponse.getErrorCode())){
+                List<SortBetDto> subBetDtoList = ugApiResponse.getData();
+                for (SortBetDto sortBetDto:subBetDtoList){
+                    Txns txns = new Txns();
+                    txns.setPlatformTxId(sortBetDto.getBetID());// string 是 注单编号
+                    txns.setUserId(sortBetDto.getAccount());//  string 是 会员帐号
+                    txns.setWinAmount(sortBetDto.getPayout());//  Decimal 是 赔付金额
+                    txns.setBetAmount(sortBetDto.getBetAmount());//  Decimal 是 下注金额
+                    txns.setRealBetAmount(sortBetDto.getDeductAmount());// Decimal  是 扣款金额
+                    sortBetDto.getAllWin();// Decimal  是 全赢
+                    sortBetDto.getTurnover();// Decimal  是 有效投注金额
+                    sortBetDto.getBetOdds();//  Decimal 是 投注赔率
+                    sortBetDto.getWin();// Decimal  是 输赢
+                    sortBetDto.getOddsStyle();//  string 是 赔率样式
+                    sortBetDto.getBetDate();// Datetime 是 投注时间
+
+//                    0 等待中
+//                    1 已接受
+//                    2 已结算
+//                    3 已取消
+//                    4 已拒绝
+                    sortBetDto.getStatus();//  int 是    注单状态 见注单状态代码(Status) 如果 Status 为 1,则不必关心 Result 值
+//                    0 Draw
+//                    1 Win
+//                    2 Lose
+//                    3 Win Half
+//                    4 Lose Half
+                    sortBetDto.getResult();//  int 是 注单输赢结果 见注单结果代码(Result)
+
+                    sortBetDto.getReportDate();//  Datetime 是 注单报表时间
+                    sortBetDto.getBetIP();//  string 是 投注 IP
+                    sortBetDto.getUpdateTime();//  Datetime 是 注单修改时间
+                    sortBetDto.getAgentID();//  long 是 代理编号
+                    sortBetDto.getGroupComm();//  string 是 组别佣金代码
+                    sortBetDto.getMpID();//  int 是 混合过关类型 ID
+                    sortBetDto.getCurrency();//  string 是 货币代码
+//                    1 PC
+//                    2 Wap
+//                    4 Smart
+                    sortBetDto.getBetWay();//  int 是 投注方式
+                    txns.setSortNo(sortBetDto.getSortNo());//  long 是 注单排序值
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.info("ugPullOrder:",e);
+        }
+    }
+
+    /**
+     * 注单请求
+     */
+    public UgApiTasksResponseData commonTasksRequest(Object object, String url,String type) throws Exception {
+
+        UgApiTasksResponseData ugApiResponse = null;
+        logger.info("uglog {} commonRequest ,url:{},paramsMap:{}", url, object);
+//        Map<String, String> trr = new HashMap<>();
+//        trr.put("MemberAccount", "swuserid");
+//        trr.put("CompanyKey", "y6RbXQyRr4");
+//        trr.put("APIPassword", "RTJdTw36imErhpDm7p2ePb3Da3h6WT3S");
+//        logger.info("ug_api_request:"+JSONObject.toJSONString(object));
+//        String resultString1 = GameUtil.doProxyPostJson(OpenAPIProperties.PROXY_HOST_NAME, OpenAPIProperties.PROXY_PORT, OpenAPIProperties.PROXY_TCP,url, trr, type, userId);
+        String resultString = GameUtil.doProxyPostJson(OpenAPIProperties.PROXY_HOST_NAME, OpenAPIProperties.PROXY_PORT, OpenAPIProperties.PROXY_TCP,url, JSONObject.toJSONString(object), type);
+        logger.info("ug_api_response:"+resultString);
+        if (StringUtils.isNotEmpty(resultString)) {
+            ugApiResponse = JSONObject.parseObject(resultString, UgApiTasksResponseData.class);
+            //String operateFlag = (String) redisTemplate.opsForValue().get(Constants.AE_GAME_OPERATE_FLAG + userId);
+            logger.info("uglog {}:commonRequest type:{}, operateFlag:{}, url:{}, hostName:{}, params:{}, result:{}, ugApiResponse:{}",
+                    //userId, type, operateFlag, url,
+                     type, null, url, JSONObject.toJSONString(object), resultString, JSONObject.toJSONString(ugApiResponse));
+        }
+        return ugApiResponse;
+    }
 }

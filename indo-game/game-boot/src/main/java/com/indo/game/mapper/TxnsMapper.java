@@ -18,4 +18,6 @@ public interface TxnsMapper extends BaseMapper<Txns> {
     List<GameStatiRecord> queryAllGameInfoCount(@Param("page") IPage<GameStatiRecord> page, @Param("req") GameInfoPageReq req);
 
     List<GameInfoRecord> queryAllGameInfo(@Param("page") IPage<GameInfoRecord> page, @Param("req") GameInfoPageReq req);
+
+    String getMaxPlatformTxId(@Param("platform") String platform);
 }

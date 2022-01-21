@@ -660,7 +660,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                         BeanUtils.copyProperties(settleTxns, txns);
                         txns.setId(null);
                         txns.setBalance(balance);
-                        txns.setWinAmount(winAmount.subtract(settleTxns.getBetAmount()));
+                        txns.setWinningAmount(winAmount.subtract(settleTxns.getBetAmount()));
                         txns.setMethod("Settle");
                         txns.setStatus("Running");
                         txns.setCreateTime(dateStr);
