@@ -48,6 +48,10 @@
         WHERE m.id = #{memId}
         ]]>
     </update>
+    
+    
+
+    
 
 
 </mapper>

@@ -29,8 +29,12 @@ public class TestController {
     @AllowAccess
     @NoRepeatSubmit
     public Result hello(@RequestParam("name") String name) {
+        System.out.println(9090);
         return Result.success(testService.sayHello(name));
     }
+
+
+
 
 
 }
