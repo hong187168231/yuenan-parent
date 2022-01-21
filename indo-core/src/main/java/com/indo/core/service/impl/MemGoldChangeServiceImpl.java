@@ -5,8 +5,8 @@ import com.indo.common.constant.GlobalConstants;
 import com.indo.common.constant.RedisKeys;
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
+import com.indo.common.redis.component.GeneratorIdUtil;
 import com.indo.common.redis.utils.RedisUtils;
-import com.indo.common.utils.SnowflakeIdWorker;
 import com.indo.common.web.exception.BizException;
 import com.indo.core.base.service.impl.SuperServiceImpl;
 import com.indo.core.mapper.MemGoldChangeMapper;
@@ -157,7 +157,7 @@ public class MemGoldChangeServiceImpl extends SuperServiceImpl<MemGoldChangeMapp
                     memGoldChange.setSerialNo(change.getSerialNo());
                     if (StringUtils.isBlank(change.getSerialNo())) {
                         memGoldChange.setSerialNo(change.getGoldchangeEnum().name() +
-                                SnowflakeIdWorker.generateShortId());
+                                GeneratorIdUtil.generateId());
                     }
                     memGoldChange.setCreateUser(change.getUpdateUser());
                     memGoldChange.setUpdateUser(change.getUpdateUser());

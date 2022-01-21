@@ -3,6 +3,7 @@ package com.indo.user.controller;
 import com.indo.admin.api.FileFeignClient;
 import com.indo.common.result.Result;
 import com.indo.common.web.exception.BizException;
+import com.indo.user.pojo.vo.FileUploadVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -24,7 +25,6 @@ import javax.annotation.Resource;
 @RestController
 @RequestMapping("/api/v1/file")
 @Slf4j
-@AllArgsConstructor
 public class FileUploadController {
 
 
@@ -39,12 +39,12 @@ public class FileUploadController {
      */
     @ApiOperation(value = "文件上传接口", httpMethod = "POST")
     @PostMapping("/upload")
-    public Result<String> upload(@RequestParam("file") MultipartFile file) {
+    public Result<FileUploadVo> upload(@RequestParam("file") MultipartFile file) {
         Result<String> result = fileFeignClient.upload(file);
         if (Result.success().getCode().equals(result.getCode())) {
-            return Result.success(result.getData());
+            return Result.success(new FileUploadVo(result.getData()));
         } else {
-            throw new BizException("No client with requested ");
+            return Result.failed("No client with requested ");
         }
     }
 

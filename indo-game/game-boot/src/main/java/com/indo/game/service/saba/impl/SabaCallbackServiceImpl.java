@@ -3,8 +3,8 @@ package com.indo.game.service.saba.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
+import com.indo.common.redis.component.GeneratorIdUtil;
 import com.indo.common.utils.DateUtils;
-import com.indo.common.utils.SnowflakeIdWorker;
 import com.indo.game.mapper.TxnsMapper;
 import com.indo.game.pojo.entity.manage.Txns;
 import com.indo.game.pojo.dto.saba.*;
@@ -72,7 +72,7 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
                 gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
                 sabaCallBackPlaceBetResp.setStatus("0");
                 sabaCallBackPlaceBetResp.setRefId(sabaCallBackPlaceBetReq.getRefId());
-                sabaCallBackPlaceBetResp.setLicenseeTxId(SnowflakeIdWorker.createOrderSn());
+                sabaCallBackPlaceBetResp.setLicenseeTxId(GeneratorIdUtil.generateId());
 
                 Txns txns = new Txns();
                 BeanUtils.copyProperties(sabaCallBackPlaceBetReq, txns);
@@ -232,7 +232,7 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
         for (ComboInfo comboInfo : comboInfoList) {
             TicketInfoMapping ticketInfoMapping = new TicketInfoMapping();
             ticketInfoMapping.setRefId(comboInfo.getRefId());
-            ticketInfoMapping.setLicenseeTxId(SnowflakeIdWorker.createOrderSn());
+            ticketInfoMapping.setLicenseeTxId(GeneratorIdUtil.generateId());
             ticketInfoMappingList.add(ticketInfoMapping);
         }
         SabaCallBackPlaceBetParlayResp sabaCallBackPlaceBetParlayResp = new SabaCallBackPlaceBetParlayResp();

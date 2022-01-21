@@ -171,6 +171,17 @@ public class RedisUtils {
         }
     }
 
+
+    /**
+     * 递增
+     *
+     * @param key   键
+     * @return
+     */
+    public static long incr(String key) {
+        return redisTemplate.opsForValue().increment(key);
+    }
+
     /**
      * 递增
      *
