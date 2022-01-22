@@ -2,6 +2,7 @@ package com.indo.user.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.pojo.req.agnet.AgentRebateRecordReq;
+import com.indo.admin.pojo.vo.agent.RebateStatVO;
 import com.indo.admin.pojo.vo.mem.MemBetVo;
 import com.indo.admin.pojo.vo.agent.AgentRebateInfoVO;
 import com.indo.admin.pojo.vo.agent.AgentRebateRecordVO;
@@ -65,7 +66,7 @@ public class AgentController {
             @ApiImplicitParam(name = "memBankId", value = "会员银行卡id", paramType = "query", dataType = "long")
     })
     public Result takeRebate(BigDecimal rebateAmount, Long memBankId, @LoginUser LoginInfo loginInfo) {
-        boolean flag = iMemAgentService.takeRebate(rebateAmount,memBankId, loginInfo);
+        boolean flag = iMemAgentService.takeRebate(rebateAmount, memBankId, loginInfo);
         return Result.judge(flag);
     }
 
@@ -91,6 +92,17 @@ public class AgentController {
     public Result<List<AgentSubVO>> subList(SubordinateAppReq req, @LoginUser LoginInfo loginInfo) {
         Page<AgentSubVO> result = iMemAgentService.subordinatePage(req, loginInfo);
         return Result.success(result.getRecords(), result.getTotal());
+    }
+
+    @ApiOperation(value = "佣金报表统计", httpMethod = "GET")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "beginTime", value = "开始时间", required = true, paramType = "query", dataType = "string"),
+            @ApiImplicitParam(name = "endTime", value = "结束时间", required = true, paramType = "query", dataType = "string")
+    })
+    @GetMapping(value = "/rebateStat")
+    public Result<RebateStatVO> rebateStat(String beginTime, String endTime, @LoginUser LoginInfo loginInfo) {
+        RebateStatVO result = iMemAgentService.rebateStat(beginTime, endTime, loginInfo);
+        return Result.success(result);
     }
 
 

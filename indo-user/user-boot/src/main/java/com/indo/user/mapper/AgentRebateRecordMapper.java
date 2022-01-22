@@ -7,7 +7,9 @@ import com.indo.admin.pojo.vo.agent.AgentRebateRecordVO;
 import com.indo.core.pojo.entity.AgentRebateRecord;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -22,4 +24,6 @@ import java.util.List;
 public interface AgentRebateRecordMapper extends BaseMapper<AgentRebateRecord> {
 
     List<AgentRebateRecordVO> queryList(@Param("page") Page<AgentRebateRecordVO> page, @Param("req") AgentRebateRecordReq req);
+
+
 }

@@ -7,6 +7,7 @@ import com.indo.admin.pojo.req.agnet.AgentRebateRecordReq;
 import com.indo.admin.pojo.vo.agent.AgentRebateInfoVO;
 import com.indo.admin.pojo.vo.agent.AgentRebateRecordVO;
 import com.indo.admin.pojo.vo.agent.AgentSubVO;
+import com.indo.admin.pojo.vo.agent.RebateStatVO;
 import com.indo.common.constant.GlobalConstants;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
@@ -140,6 +141,25 @@ public class AppAgentServiceImpl extends SuperServiceImpl<AgentRelationMapper, A
         List<AgentRebateRecordVO> list = memRebateRecordMapper.queryList(page, req);
         page.setRecords(list);
         return page;
+    }
+
+    @Override
+    public RebateStatVO rebateStat(String beginTime, String endTime, LoginInfo loginInfo) {
+        RebateStatVO statVO = new RebateStatVO();
+        BigDecimal rebate = agentRelationMapper.selectRebateByTime(loginInfo.getAccount(), beginTime, endTime);
+        Integer teamNum = agentRelationMapper.selectTeamNum(loginInfo.getAccount());
+        BigDecimal teamRecharge = agentRelationMapper.selectTeamRecharge(loginInfo.getAccount(), beginTime, endTime);
+        Integer dayAdd = agentRelationMapper.selectDayAddNum(loginInfo.getAccount());
+        Integer monthAdd = agentRelationMapper.selectMonthAddNum(loginInfo.getAccount(), beginTime, endTime);
+        BigDecimal teamBet = agentRelationMapper.selectTeamBet(loginInfo.getAccount(), beginTime, endTime);
+
+        statVO.setRebateAmount(rebate);
+        statVO.setTeamNum(teamNum == null ? 0 : teamNum);
+        statVO.setTeamRecharge(teamRecharge);
+        statVO.setDayAddNum(dayAdd);
+        statVO.setMonthAddNum(monthAdd);
+        statVO.setTeamBet(teamBet);
+        return statVO;
     }
 
 
