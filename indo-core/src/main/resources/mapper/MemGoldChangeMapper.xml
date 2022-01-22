@@ -25,33 +25,35 @@
                 CASE
                     WHEN m.total_bet + #{betAmount} > 0 THEN
                         m.total_bet + #{betAmount}
-                    WHEN m.total_bet + #{betAmount} <= 0 THEN
-                        0
                     END
                 ),
             m.total_deposit     = (
                 CASE
                     WHEN m.total_deposit + #{rechargeAmount} > 0 THEN
                         m.total_deposit + #{rechargeAmount}
-                    WHEN m.total_deposit + #{rechargeAmount} <= 0 THEN
-                        0
                     END
                 ),
             m.total_enchashment = (
                 CASE
                     WHEN m.total_enchashment + #{cashAmount} > 0 THEN
                         m.total_enchashment + #{cashAmount}
-                    WHEN m.total_enchashment + #{cashAmount} <= 0 THEN
-                        0
+                    END
+                ),
+            m.deposit_num       = (
+                CASE
+                    WHEN m.total_deposit + #{rechargeAmount} > 0 THEN
+                        m.deposit_num + 1
+                    END
+                ),
+            m.take_cash_num     = (
+                CASE
+                    WHEN m.total_enchashment + #{cashAmount} > 0 THEN
+                        m.deposit_num + 1
                     END
                 )
         WHERE m.id = #{memId}
         ]]>
     </update>
-    
-    
-
-    
 
 
 </mapper>
