@@ -157,7 +157,7 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
     public void initMemAgent(MemBaseinfo memBaseinfo, MemInviteCode parentInviteCode) {
         AgentRelation agentRelation = new AgentRelation();
         agentRelation.setMemId(memBaseinfo.getId());
-        agentRelation.setIsDel(false);
+        agentRelation.setStatus(0);
         agentRelation.setParentId(parentInviteCode.getMemId());
         agentRelation.setSuperior(parentInviteCode.getAccount());
         memAgentMapper.insert(agentRelation);
@@ -167,7 +167,7 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
     public void initMemParentAgent(MemBaseinfo memBaseinfo, MemInviteCode parentInviteCode) {
         LambdaQueryWrapper<AgentRelation> wrapper = new LambdaQueryWrapper();
         wrapper.eq(AgentRelation::getMemId, parentInviteCode.getMemId())
-                .eq(AgentRelation::getIsDel, false);
+                .eq(AgentRelation::getStatus, 1);
         AgentRelation parentAgent = memAgentMapper.selectOne(wrapper);
         if (ObjectUtil.isNull(wrapper)) {
             throw new BizException("该邀请人未成为代理");

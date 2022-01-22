@@ -48,8 +48,8 @@ public class AgentRelation extends BaseEntity {
     @ApiModelProperty(value = "上级代理")
     private String superior;
 
-    @ApiModelProperty(value = "是否删除.1=删除,0=未删除")
-    private Boolean isDel;
+    @ApiModelProperty(value = "状态 0=删除,1=正常")
+    private Integer status;
 
     @ApiModelProperty(value = "备注")
     private String remark;
