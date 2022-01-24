@@ -4,6 +4,7 @@ import com.indo.admin.api.MsgFeignClient;
 import com.indo.admin.pojo.dto.MsgDTO;
 import com.indo.admin.pojo.vo.msg.MsgPushRecordVO;
 import com.indo.admin.pojo.vo.msg.MsgStationLetterVO;
+import com.indo.admin.pojo.vo.msg.MsgTotalVO;
 import com.indo.common.result.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -27,6 +28,12 @@ public class MsgFeignFallback implements MsgFeignClient {
 
     @Override
     public Result<List<MsgPushRecordVO>> getSysMsg(MsgDTO msgDTO) {
+        log.error("feign getByParamCode 远程调用失败");
+        return Result.failed("调用失败");
+    }
+
+    @Override
+    public Result<MsgTotalVO> msgTotal(MsgDTO msgDTO) {
         log.error("feign getByParamCode 远程调用失败");
         return Result.failed("调用失败");
     }

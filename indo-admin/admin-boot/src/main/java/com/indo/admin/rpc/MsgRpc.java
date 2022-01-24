@@ -6,6 +6,7 @@ import com.indo.admin.modules.msg.service.IMsgStationLetterService;
 import com.indo.admin.pojo.dto.MsgDTO;
 import com.indo.admin.pojo.vo.msg.MsgPushRecordVO;
 import com.indo.admin.pojo.vo.msg.MsgStationLetterVO;
+import com.indo.admin.pojo.vo.msg.MsgTotalVO;
 import com.indo.common.result.Result;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,7 +42,7 @@ public class MsgRpc {
     @PostMapping("/personal")
     public Result<List<MsgStationLetterVO>> getPersonalMsg(@RequestBody MsgDTO msgDTO) {
         List<MsgStationLetterVO> pageResult = iMsgStationLetterService.getPersonalMsg(msgDTO);
-        return Result.success(null);
+        return Result.success(pageResult);
     }
 
 
@@ -55,5 +56,21 @@ public class MsgRpc {
         return Result.success(iMsgPushRecordService.getSysMsg(msgDTO));
     }
 
-}    
+    /**
+     * 根据参数code 获取系统参数
+     *
+     * @return
+     */
+    @PostMapping("/total")
+    public Result<MsgTotalVO> msgTotal(@RequestBody MsgDTO msgDTO) {
+        Integer sysTotal = iMsgPushRecordService.sysMsgTotal(msgDTO);
+        Integer personalTotal = iMsgStationLetterService.personalMsgTotal(msgDTO);
+        MsgTotalVO totalVO = new MsgTotalVO();
+        totalVO.setSysMsgTotal(sysTotal);
+        totalVO.setPersonalMsgTotal(personalTotal);
+        return Result.success(totalVO);
+    }
+
+
+}
     

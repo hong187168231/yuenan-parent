@@ -84,7 +84,7 @@ public class ResourceServerConfig {
     }
 
     /**
-     * token无效或者已过期自定义响应
+     * token无效或者已过期自定义响应.
      */
     @Bean
     ServerAuthenticationEntryPoint authenticationEntryPoint() {

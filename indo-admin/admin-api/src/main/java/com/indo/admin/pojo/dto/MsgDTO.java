@@ -10,10 +10,17 @@ import lombok.Data;
 @Data
 public class MsgDTO extends BaseDTO {
 
-    @ApiModelProperty(value = "支付方式id")
+    @ApiModelProperty(value = "设备类型")
     private Integer deviceType;
-    
-    @ApiModelProperty(value = "支付方式id")
+
+    @ApiModelProperty(value = "会员id")
     private Long memId;
+
+    @ApiModelProperty(value = "开始时间")
+    private String beginTime;
+
+    @ApiModelProperty(value = "结束时间")
+    private String endTime;
+
 
 }

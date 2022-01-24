@@ -28,7 +28,7 @@ import java.util.List;
 @Api(tags = "app系统参数接口")
 @RestController
 @RequestMapping("/api/v1/users/param")
-public class SysParameterController {
+public class AppParamController {
 
     @Autowired
     private ISysParameterService iSysParameterService;

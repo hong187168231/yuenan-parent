@@ -6,6 +6,7 @@ import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
 import com.indo.common.utils.BaseUtil;
 import com.indo.common.utils.DeviceInfoUtil;
+import com.indo.common.utils.StringUtils;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
 import com.indo.core.base.service.impl.SuperServiceImpl;
@@ -29,7 +30,6 @@ import com.indo.user.pojo.vo.AppLoginVo;
 import com.indo.user.pojo.vo.mem.MemBaseInfoVo;
 import com.indo.user.service.AppMemBaseInfoService;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,6 +47,15 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
 
     @Autowired
     private MemInviteCodeMapper memInviteCodeMapper;
+
+    @Override
+    public boolean checkAccount(String account) {
+        LambdaQueryWrapper<MemBaseinfo> checkWrapper = new LambdaQueryWrapper<>();
+        if (StringUtils.isNotBlank(account)) {
+            checkWrapper.eq(MemBaseinfo::getAccount, account);
+        }
+        return baseMapper.selectCount(checkWrapper) > 0;
+    }
 
     @Override
     public Result<AppLoginVo> appLogin(LoginReq req) {
@@ -89,7 +98,7 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Result<AppLoginVo> register( RegisterReq req) {
+    public Result<AppLoginVo> register(RegisterReq req) {
         if (!req.getPassword().equals(req.getConfirmPassword())) {
             return Result.failed("两次密码填写不一样！");
         }
@@ -264,7 +273,6 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
         appLoginVo.setToken(token);
         return appLoginVo;
     }
-
 
     @Override
     public MemTradingBO tradingInfo(String account) {

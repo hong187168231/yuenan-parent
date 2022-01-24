@@ -1,6 +1,7 @@
 package com.indo.admin.pojo.vo.mem;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -66,13 +67,16 @@ public class MemBaseInfoVo {
 
     /*********************金额*****************************/
     @ApiModelProperty(value = "首冲时间")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private String firstRechargeTime;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @ApiModelProperty(value = "最后登录时间")
-    private String lastLoginTime;
+    private Date lastLoginTime;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @ApiModelProperty(value = "注册时间 ")
+    private Date createTime;
     @ApiModelProperty(value = "离开天数")
     private int leaveDays;
-    @ApiModelProperty(value = "注册时间 ")
-    private String createTime;
 
 
     /*********************冻结状态*****************************/

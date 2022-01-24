@@ -23,7 +23,7 @@ import java.util.List;
  * @author puff
  * @since 2021-11-05
  */
-@Api(tags = {"邀请码管理"})
+@Api(tags = {"邀请码信息"})
 @RestController
 @RequestMapping("/api/v1/mem/inviteCode")
 public class InviteCodeController {

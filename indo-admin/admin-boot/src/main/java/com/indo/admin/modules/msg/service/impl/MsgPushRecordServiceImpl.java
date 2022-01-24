@@ -7,9 +7,11 @@ import com.indo.admin.modules.msg.mapper.MsgPushRecordMapper;
 import com.indo.admin.modules.msg.service.IMsgPushRecordService;
 import com.indo.admin.pojo.dto.MsgDTO;
 import com.indo.admin.pojo.vo.msg.MsgPushRecordVO;
+import com.indo.common.utils.StringUtils;
 import com.indo.common.web.util.DozerUtil;
 import com.indo.common.web.util.JwtUtils;
 import com.indo.core.pojo.entity.MsgPushRecord;
+import com.indo.core.pojo.entity.MsgStationLetter;
 import com.indo.user.pojo.req.msg.PushRecordAddReq;
 import com.indo.user.pojo.req.msg.PushRecordQueryReq;
 import org.springframework.beans.BeanUtils;
@@ -42,7 +44,6 @@ public class MsgPushRecordServiceImpl extends ServiceImpl<MsgPushRecordMapper, M
 
     @Override
     public void add(PushRecordAddReq pushRecordAddDTO) {
-        // 向客户端推送 todo
         MsgPushRecord pushRecord = new MsgPushRecord();
         pushRecord.setCreateUser(JwtUtils.getUsername());
         BeanUtils.copyProperties(pushRecordAddDTO, pushRecord);
@@ -58,5 +59,19 @@ public class MsgPushRecordServiceImpl extends ServiceImpl<MsgPushRecordMapper, M
         wrapper.eq(MsgPushRecord::getDeviceType, msgDTO.getDeviceType());
         Page<MsgPushRecord> pageList = baseMapper.selectPage(page, wrapper);
         return DozerUtil.convert(pageList.getRecords(), MsgPushRecordVO.class);
+    }
+
+    @Override
+    public int sysMsgTotal(MsgDTO msgDTO) {
+        LambdaQueryWrapper<MsgPushRecord> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(MsgPushRecord::getDeviceType, msgDTO.getDeviceType());
+        if (StringUtils.isNotBlank(msgDTO.getBeginTime())) {
+            wrapper.ge(MsgPushRecord::getCreateTime, msgDTO.getBeginTime());
+        }
+        if (StringUtils.isNotBlank(msgDTO.getEndTime())) {
+            wrapper.le(MsgPushRecord::getCreateTime, msgDTO.getEndTime());
+        }
+        Integer total = baseMapper.selectCount(wrapper);
+        return total;
     }
 }

@@ -26,11 +26,13 @@ import com.indo.core.pojo.dto.MemBaseInfoDTO;
 import com.indo.core.pojo.entity.AgentRelation;
 import com.indo.core.pojo.entity.MemBaseinfo;
 import com.indo.core.util.BusinessRedisUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
@@ -43,6 +45,7 @@ import java.util.List;
  * @since 2021-10-23
  */
 @Service
+@Slf4j
 public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, MemBaseinfo> implements IMemBaseinfoService {
 
     @Autowired
@@ -54,13 +57,16 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
     public Page<MemBaseInfoVo> queryList(MemBaseInfoReq req) {
         Page<MemBaseInfoVo> page = new Page<>(req.getPage(), req.getLimit());
         List<MemBaseInfoVo> list = memBaseInfoMapper.queryList(page, req);
+        Date now = new Date();
+        list.forEach(item ->
+                item.setLeaveDays(DateUtils.daysBetween(item.getLastLoginTime(), now)));
         page.setRecords(list);
         return page;
     }
 
     @Override
     @Transactional
-    public void addMemBaseInfo(MemAddReq req) {
+    public  void addMemBaseInfo(MemAddReq req) {
         MemBaseInfoBO curentMem = this.memBaseInfoMapper.findMemBaseInfoByAccount(req.getAccount());
         if (curentMem != null) {
             throw new BizException("该账号已存在!");

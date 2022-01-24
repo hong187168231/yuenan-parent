@@ -26,9 +26,9 @@ public class Result<T> implements Serializable {
 
     public static <T> Result<T> success(T data) {
         ResultCode rce = ResultCode.SUCCESS;
-        if (data instanceof Boolean && Boolean.FALSE.equals(data)) {
-            rce = ResultCode.SYSTEM_EXECUTION_ERROR;
-        }
+//        if (data instanceof Boolean && Boolean.FALSE.equals(data)) {
+//            rce = ResultCode.SYSTEM_EXECUTION_ERROR;
+//        }
         return result(rce, data);
     }
 
@@ -51,7 +51,6 @@ public class Result<T> implements Serializable {
     }
 
 
-
     public static <T> Result<T> failed() {
         return result(ResultCode.SYSTEM_EXECUTION_ERROR.getCode(), ResultCode.SYSTEM_EXECUTION_ERROR.getMsg(), null);
     }
@@ -60,7 +59,7 @@ public class Result<T> implements Serializable {
         return result(ResultCode.SYSTEM_EXECUTION_ERROR.getCode(), msg, null);
     }
 
-    public static <T> Result<T> failed(String code,String msg) {
+    public static <T> Result<T> failed(String code, String msg) {
         return result(code, msg, null);
     }
 

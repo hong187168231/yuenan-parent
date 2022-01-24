@@ -29,7 +29,7 @@ import java.util.List;
 @Api(tags = "银行卡接口")
 @RestController
 @RequestMapping("/api/v1/users/bank")
-public class MemBankRelationController {
+public class MemBankController {
 
     @Autowired
     private AppMemBankService memBankRelationService;
