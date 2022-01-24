@@ -4,6 +4,7 @@ import com.indo.admin.api.MsgFeignClient;
 import com.indo.admin.pojo.dto.MsgDTO;
 import com.indo.admin.pojo.vo.msg.MsgPushRecordVO;
 import com.indo.admin.pojo.vo.msg.MsgStationLetterVO;
+import com.indo.admin.pojo.vo.msg.MsgTotalVO;
 import com.indo.common.annotation.LoginUser;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
@@ -55,6 +56,32 @@ public class MsgController {
         Result result = msgFeignClient.getSysMsg(dto);
         if (Result.success().getCode().equals(result.getCode())) {
             List<MsgPushRecordVO> data = (List<MsgPushRecordVO>) result.getData();
+            return Result.success(data);
+        } else {
+            throw new BizException("远程调用异常");
+        }
+    }
+
+
+    @ApiOperation(value = "消息条数接口", httpMethod = "GET")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "deviceType", value = "设备类型 ", paramType = "query", dataType = "int", required = true),
+            @ApiImplicitParam(name = "beginTime", value = "开始时间 ", paramType = "query", dataType = "string", required = true),
+            @ApiImplicitParam(name = "endTime", value = "结束时间 ", paramType = "query", dataType = "string", required = true)
+    })
+    @GetMapping(value = "/total")
+    public Result<MsgTotalVO> msgTotal(@RequestParam("beginTime") String beginTime,
+                                       @RequestParam("endTime") String endTime,
+                                       @RequestParam("deviceType") Integer deviceType,
+                                       @LoginUser LoginInfo loginInfo) {
+        MsgDTO dto = new MsgDTO();
+        dto.setDeviceType(deviceType);
+        dto.setBeginTime(beginTime);
+        dto.setEndTime(endTime);
+        dto.setMemId(loginInfo.getId());
+        Result result = msgFeignClient.msgTotal(dto);
+        if (Result.success().getCode().equals(result.getCode())) {
+            MsgTotalVO data = (MsgTotalVO) result.getData();
             return Result.success(data);
         } else {
             throw new BizException("远程调用异常");

@@ -4,6 +4,7 @@ import com.indo.admin.api.fallback.MsgFeignFallback;
 import com.indo.admin.pojo.dto.MsgDTO;
 import com.indo.admin.pojo.vo.msg.MsgPushRecordVO;
 import com.indo.admin.pojo.vo.msg.MsgStationLetterVO;
+import com.indo.admin.pojo.vo.msg.MsgTotalVO;
 import com.indo.common.constant.ServiceIdConstant;
 import com.indo.common.result.Result;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -20,5 +21,7 @@ public interface MsgFeignClient {
     @PostMapping("/rpc/msg/sys")
     Result<List<MsgPushRecordVO>> getSysMsg(MsgDTO msgDTO);
 
+    @PostMapping("/rpc/msg/total")
+    Result<MsgTotalVO> msgTotal(MsgDTO msgDTO);
 
 }

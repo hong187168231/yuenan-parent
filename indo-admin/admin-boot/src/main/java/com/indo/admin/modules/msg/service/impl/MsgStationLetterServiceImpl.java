@@ -9,6 +9,7 @@ import com.indo.admin.modules.msg.mapper.MsgStationLetterMapper;
 import com.indo.admin.modules.msg.service.IMsgStationLetterService;
 import com.indo.admin.pojo.dto.MsgDTO;
 import com.indo.admin.pojo.vo.msg.MsgStationLetterVO;
+import com.indo.common.utils.StringUtils;
 import com.indo.common.web.util.DozerUtil;
 import com.indo.core.pojo.entity.MsgStationLetter;
 import com.indo.user.pojo.req.msg.StationLetterAddReq;
@@ -32,13 +33,7 @@ import java.util.List;
 public class MsgStationLetterServiceImpl extends ServiceImpl<MsgStationLetterMapper, MsgStationLetter> implements IMsgStationLetterService {
 
     @Autowired
-    private MemBaseinfoMapper memBaseInfoMapper;
-    @Autowired
-    private MemLevelMapper levelMapper;
-    @Autowired
     private MsgStationLetterMapper letterMapper;
-    @Resource
-    private DozerUtil dozerUtil;
 
     @Override
     public Page<MsgStationLetterVO> queryList(StationLetterQueryReq queryDTO) {
@@ -70,5 +65,19 @@ public class MsgStationLetterServiceImpl extends ServiceImpl<MsgStationLetterMap
         wrapper.eq(MsgStationLetter::getMemId, msgDTO.getMemId());
         Page<MsgStationLetter> pageList = baseMapper.selectPage(page, wrapper);
         return DozerUtil.convert(pageList.getRecords(), MsgStationLetterVO.class);
+    }
+
+    @Override
+    public int personalMsgTotal(MsgDTO msgDTO) {
+        LambdaQueryWrapper<MsgStationLetter> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(MsgStationLetter::getMemId, msgDTO.getMemId());
+        if (StringUtils.isNotBlank(msgDTO.getBeginTime())) {
+            wrapper.ge(MsgStationLetter::getCreateTime, msgDTO.getBeginTime());
+        }
+        if (StringUtils.isNotBlank(msgDTO.getEndTime())) {
+            wrapper.le(MsgStationLetter::getCreateTime, msgDTO.getEndTime());
+        }
+        Integer total = baseMapper.selectCount(wrapper);
+        return total;
     }
 }
