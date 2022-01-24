@@ -9,6 +9,7 @@ import com.indo.game.mapper.frontend.GameCategoryMapper;
 import com.indo.game.mapper.frontend.GamePlatformMapper;
 import com.indo.game.pojo.dto.manage.GameInfoPageReq;
 import com.indo.game.pojo.entity.manage.*;
+import com.indo.game.pojo.vo.app.GameInfoAgentRecord;
 import com.indo.game.pojo.vo.app.GameInfoRecord;
 import com.indo.game.pojo.vo.app.GameStatiRecord;
 import com.indo.game.service.app.IGameManageService;
@@ -67,6 +68,13 @@ public class GameManageServiceImpl implements IGameManageService {
     public IPage<GameInfoRecord> queryAllGameInfo(GameInfoPageReq req) {
         IPage<GameInfoRecord> page = new Page<>(null==req.getPage()?1: req.getPage(), null==req.getLimit()?10:req.getLimit());
         page.setRecords(txnsMapper.queryAllGameInfo(page,req));
+        return page;
+    }
+
+    @Override
+    public IPage<GameInfoAgentRecord> queryAllAgentGameInfo(GameInfoPageReq req){
+        IPage<GameInfoAgentRecord> page = new Page<>(null==req.getPage()?1: req.getPage(), null==req.getLimit()?10:req.getLimit());
+        page.setRecords(txnsMapper.queryAllAgentGameInfo(page,req));
         return page;
     }
 }

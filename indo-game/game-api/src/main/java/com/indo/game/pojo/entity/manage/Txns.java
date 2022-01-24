@@ -79,10 +79,10 @@ public class Txns {
     @ApiModelProperty(value = "返还金额 (包含下注金额)")
     private BigDecimal winAmount;
 
-    @ApiModelProperty(value = "赌注的结果 : {赢:0,输:1,平手:2}.")
+    @ApiModelProperty(value = "赌注的结果 : AWC平台{赢:0,输:1,平手:2}  UG平台{0:Draw,1:Win,2:Lose,3:Win Half,4:Lose Half}")
     private int resultType;
 
-    @ApiModelProperty(value = "游戏平台有效投注")
+    @ApiModelProperty(value = "有效投注金额")
     private BigDecimal turnover;
 
     @ApiModelProperty(value = "辨认交易时间依据")
@@ -124,7 +124,7 @@ public class Txns {
     private BigDecimal odds;
 
     @ApiModelProperty(value = "赔率类型")
-    private short oddsType;
+    private String oddsType;
 
     @ApiModelProperty(value = "打赏资讯，此参数仅游戏商有提供资讯时才会出现")
     private String tipinfo;
@@ -148,6 +148,21 @@ public class Txns {
 
     @ApiModelProperty(value = "游戏分类名称")
     private String categoryName;
+
+    @ApiModelProperty(value = "投注 IP")
+    private String betIp;//  string 是 投注 IP
+
+    @ApiModelProperty(value = "代理编号")
+    private String agentId;//  long 是 代理编号
+
+    @ApiModelProperty(value = "组别佣金代码")
+    private String groupComm;//  string 是 组别佣金代码
+
+    @ApiModelProperty(value = "混合过关类型 ID")
+    private int mpId;//  int 是 混合过关类型 ID
+
+    @ApiModelProperty(value = "投注方式{1:PC,2:Wap,4:Smart}")
+    private int betWay;//  int 是 投注方式
 
     @ApiModelProperty(value = "注单排序值")
     private long SortNo;

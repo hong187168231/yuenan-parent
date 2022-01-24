@@ -28,4 +28,9 @@ public class GameInfoPageReq extends BaseDTO {
 
     private String userAcct;
 
+    @ApiModelProperty(value = "代理账号")
+    private String agentAcct;
+
+    @ApiModelProperty(value = "游戏商注单号")
+    private String platformTxId;
 }

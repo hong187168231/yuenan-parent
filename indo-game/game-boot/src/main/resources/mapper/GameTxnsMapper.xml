@@ -55,10 +55,10 @@
         </if>
         <choose>
             <when test="req.orderBy">
-                order by t.create_time asc;
+                order by t.create_time asc
             </when>
             <otherwise>
-                order by t.create_time desc;
+                order by t.create_time desc
             </otherwise>
         </choose>
     </select>
@@ -67,5 +67,50 @@
         FROM game_txns t
         WHERE
             t.platform = #{platform}
+    </select>
+    <select id="queryAllAgentGameInfo" resultType="com.indo.game.pojo.vo.app.GameInfoAgentRecord">
+        SELECT t.platform_en_name,m.account as user_acct,
+        t.game_name,
+        t.bet_amount,t.winning_amount,a.account as account,t.round_id,t.bet_time,t.odds,t.method,t.balance,t.platform_tx_id
+        FROM game_txns t left join mem_baseinfo m on t.user_id=m.account left join agent_relation a on LOCATE(m.id,a.sub_user_ids)
+        WHERE
+        ((t.method = 'Settle' and t.status = 'Running') or (t.method = 'Place Bet' and t.status = 'Running'))
+        <choose>
+            <when test='req.agentAcct != null and req.agentAcct.trim() neq ""'>
+                and  a.superior = #{req.agentAcct}
+            </when>
+            <otherwise>
+                and  a.superior = #{req.userAcct}
+            </otherwise>
+        </choose>
+        <if test='req.platformTxId != null and req.platformTxId.trim() neq ""'>
+            and  t.platform_tx_id = #{req.platformTxId}
+        </if>
+        <if test='req.platform != null and req.platform.size()>0'>
+            and t.platform IN
+            <foreach collection='req.platform' item='role' open='(' separator=',' close=')'>
+                #{role}
+            </foreach>
+        </if>
+        <if test='req.categoryId != null and req.categoryId.size()>0'>
+            and t.category_id IN
+            <foreach collection='req.categoryId' item='role' open='(' separator=',' close=')'>
+                #{role}
+            </foreach>
+        </if>
+        <if test='req.endTime != null and req.endTime.trim() neq ""'>
+            and t.create_time &lt;= #{req.endTime}
+        </if>
+        <if test='req.startTime != null and req.startTime.trim() neq ""'>
+            and t.create_time &gt;= #{req.startTime}
+        </if>
+        <choose>
+            <when test="req.orderBy">
+                order by t.create_time asc
+            </when>
+            <otherwise>
+                order by t.create_time desc
+            </otherwise>
+        </choose>
     </select>
 </mapper>

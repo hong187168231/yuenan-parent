@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class GameManageServiceImpl implements IGameManageService {
@@ -40,8 +39,8 @@ public class GameManageServiceImpl implements IGameManageService {
         return gameCategoryMapper.insert(category) > 0;
     }
 
-    public boolean deleteBatchGameCategory(Set<Long> ids) {
-        return gameCategoryMapper.deleteBatchIds(ids) > 0;
+    public boolean deleteBatchGameCategory(List<String> list) {
+        return gameCategoryMapper.deleteBatchIds(list) > 0;
     }
 
     public boolean modifiyGameCategory(GameCategory category) {
@@ -66,8 +65,8 @@ public class GameManageServiceImpl implements IGameManageService {
         return gamePlatformMapper.insert(platform) > 0;
     }
 
-    public boolean deleteBatchGamePlatform(Set<Long> ids) {
-        return gamePlatformMapper.deleteBatchIds(ids) > 0;
+    public boolean deleteBatchGamePlatform(List<String> list) {
+        return gamePlatformMapper.deleteBatchIds(list) > 0;
     }
 
     public boolean modifiyGamePlatform(GamePlatform platform) {

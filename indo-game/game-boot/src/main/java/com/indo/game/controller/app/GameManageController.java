@@ -6,8 +6,11 @@ import com.indo.common.annotation.AllowAccess;
 import com.indo.common.annotation.LoginUser;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
+import com.indo.common.utils.StringUtils;
+import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.pojo.dto.manage.GameInfoPageReq;
 import com.indo.game.pojo.entity.manage.*;
+import com.indo.game.pojo.vo.app.GameInfoAgentRecord;
 import com.indo.game.pojo.vo.app.GameInfoRecord;
 import com.indo.game.pojo.vo.app.GameStatiRecord;
 import com.indo.game.service.app.IGameManageService;
@@ -71,6 +74,9 @@ public class GameManageController {
     @PostMapping(value = "/allGameInfoCount")
     @ResponseBody
     public Result<List<GameStatiRecord>> queryAllGameInfoCount(@LoginUser LoginInfo loginUser, GameInfoPageReq req){
+        if (loginUser == null || StringUtils.isBlank(loginUser.getAccount())) {
+            return Result.failed(MessageUtils.get("youarenotloggedin"));
+        }
         req.setUserAcct(loginUser.getAccount());
         logger.info("查询所有平台记录allGameInfoCount {} req:{}", JSONObject.toJSONString(req));
         IPage<GameStatiRecord> result = iFrontEndGameManageService.queryAllGameInfoCount(req);
@@ -81,9 +87,26 @@ public class GameManageController {
     @PostMapping(value = "/allGameInfo")
     @ResponseBody
     public Result<List<GameInfoRecord>> queryAllGameInfo(@LoginUser LoginInfo loginUser, GameInfoPageReq req){
+        if (loginUser == null || StringUtils.isBlank(loginUser.getAccount())) {
+            return Result.failed(MessageUtils.get("youarenotloggedin"));
+        }
         req.setUserAcct(loginUser.getAccount());
         logger.info("查询所有平台记录allGameInfoCount {} req:{}", JSONObject.toJSONString(req));
         IPage<GameInfoRecord> result = iFrontEndGameManageService.queryAllGameInfo(req);
         return Result.success(result.getRecords(), result.getTotal());
     }
+
+    @ApiOperation(value = "查询代理游戏记录", httpMethod = "POST")
+    @PostMapping(value = "/allAgentGameInfo")
+    @ResponseBody
+    public Result<List<GameInfoAgentRecord>> queryAllAgentGameInfo(@LoginUser LoginInfo loginUser,GameInfoPageReq req){
+        if (loginUser == null || StringUtils.isBlank(loginUser.getAccount())) {
+            return Result.failed(MessageUtils.get("youarenotloggedin"));
+        }
+        req.setUserAcct(loginUser.getAccount());
+        logger.info("查询所有平台记录allGameInfoCount {} req:{}", JSONObject.toJSONString(req));
+        IPage<GameInfoAgentRecord> result = iFrontEndGameManageService.queryAllAgentGameInfo(req);
+        return Result.success(result.getRecords(), result.getTotal());
+    }
+
 }

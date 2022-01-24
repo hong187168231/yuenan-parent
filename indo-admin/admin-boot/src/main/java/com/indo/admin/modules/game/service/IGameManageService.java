@@ -7,12 +7,9 @@ import com.indo.admin.pojo.vo.game.manage.GameInfoRecord;
 import com.indo.admin.pojo.vo.game.manage.GameStatiRecord;
 import com.indo.common.result.Result;
 import com.indo.game.pojo.entity.manage.GameCategory;
-import com.indo.game.pojo.entity.manage.GameCurrencyType;
-import com.indo.game.pojo.entity.manage.GameLanguageType;
 import com.indo.game.pojo.entity.manage.GamePlatform;
 
 import java.util.List;
-import java.util.Set;
 
 public interface IGameManageService {
 
@@ -20,7 +17,7 @@ public interface IGameManageService {
 
     boolean addGameCategory(GameCategory category);
 
-    boolean deleteBatchGameCategory(Set<Long> ids);
+    boolean deleteBatchGameCategory(List<String> list);
 
     boolean modifiyGameCategory(GameCategory category);
 
@@ -30,7 +27,7 @@ public interface IGameManageService {
 
     boolean addGamePlatform(GamePlatform platform);
 
-    boolean deleteBatchGamePlatform(Set<Long> ids);
+    boolean deleteBatchGamePlatform(List<String> list);
 
     boolean modifiyGamePlatform(GamePlatform platform);
 

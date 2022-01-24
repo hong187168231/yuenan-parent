@@ -8,8 +8,6 @@ import com.indo.admin.pojo.dto.game.manage.GamePlatformPageReq;
 import com.indo.admin.pojo.vo.game.manage.GameInfoRecord;
 import com.indo.admin.pojo.vo.game.manage.GameStatiRecord;
 import com.indo.common.annotation.AllowAccess;
-import com.indo.common.annotation.LoginUser;
-import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
 import com.indo.common.utils.DateUtils;
 import com.indo.common.utils.i18n.MessageUtils;
@@ -23,9 +21,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/api/v1/game/platform")
@@ -77,8 +75,9 @@ public class GameManageController {
 
     @ApiOperation(value = "删除游戏类别", httpMethod = "DELETE")
     @DeleteMapping(value = "/deleteGameCategory")
-    public Result deleteGameCategory(Set<Long> ids) {
-        return Result.judge(iGameManageService.deleteBatchGameCategory(ids));
+    public Result deleteGameCategory(String ids) {
+        List<String> list = Arrays.asList(ids.split(","));
+        return Result.judge(iGameManageService.deleteBatchGameCategory(list));
     }
 
     @ApiOperation(value = "查询所有平台", httpMethod = "POST")
@@ -104,8 +103,9 @@ public class GameManageController {
 
     @ApiOperation(value = "删除平台名称", httpMethod = "POST")
     @GetMapping(value = "/deleteGamePlatform")
-    public Result deleteGamePlatform(Set<Long> ids) {
-        return Result.judge(iGameManageService.deleteBatchGamePlatform(ids));
+    public Result deleteGamePlatform(String ids) {
+        List<String> list = Arrays.asList(ids.split(","));
+        return Result.judge(iGameManageService.deleteBatchGamePlatform(list));
     }
 
     @ApiOperation(value = "修改平台名称", httpMethod = "POST")
