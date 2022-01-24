@@ -14,6 +14,7 @@ import com.indo.user.pojo.vo.AppLoginVo;
 import com.indo.user.pojo.vo.mem.MemBaseInfoVo;
 import com.indo.user.service.AppMemBaseInfoService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -29,6 +30,16 @@ public class MemBaseInfoController {
 
     @Resource
     private AppMemBaseInfoService memBaseInfoService;
+
+
+    @ApiOperation(value = "账号检查", httpMethod = "GET")
+    @GetMapping(value = "/checkAccount")
+    @ApiImplicitParam(name = "account", value = "账号", required = true, paramType = "query", dataType = "string")
+    @AllowAccess
+    public Result check(@RequestParam("account") String account) {
+        boolean flag = memBaseInfoService.checkAccount(account);
+        return Result.success(flag);
+    }
 
     @ApiOperation(value = "登录接口", httpMethod = "POST")
     @PostMapping(value = "/login")
@@ -79,8 +90,8 @@ public class MemBaseInfoController {
     }
 
 
-    @ApiOperation(value = "用户资金信息", httpMethod = "POST")
-    @PostMapping(value = "/tradingInfo")
+    @ApiOperation(value = "用户资金信息", httpMethod = "GET")
+    @GetMapping(value = "/tradingInfo")
     public Result<MemTradingBO> tradingInfo(@LoginUser LoginInfo loginUser) {
         MemTradingBO tradingV0 = memBaseInfoService.tradingInfo(loginUser.getAccount());
         return Result.success(tradingV0);
