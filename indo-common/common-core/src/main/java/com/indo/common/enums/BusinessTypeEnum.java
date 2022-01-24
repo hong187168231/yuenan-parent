@@ -10,8 +10,10 @@ import lombok.Setter;
 public enum BusinessTypeEnum {
 
     USER("user", 100),
-    MEMBER("member", 200),
-    ORDER("order", 300);
+    GAME("game", 200),
+    RECHARGE("recharge", 300),
+    TAKECASH("takeCash", 400),
+    AGENT("agent", 500);
 
     @Getter
     @Setter

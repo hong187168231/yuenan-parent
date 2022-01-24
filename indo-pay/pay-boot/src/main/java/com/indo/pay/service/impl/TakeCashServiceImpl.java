@@ -2,13 +2,12 @@ package com.indo.pay.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.indo.common.constant.RedisKeys;
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.common.pojo.bo.LoginInfo;
+import com.indo.common.redis.component.GeneratorIdUtil;
 import com.indo.common.result.Result;
-import com.indo.common.utils.SnowflakeIdWorker;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
 import com.indo.core.base.service.impl.SuperServiceImpl;
@@ -199,7 +198,7 @@ public class TakeCashServiceImpl extends SuperServiceImpl<TakeCashMapper, PayTak
         orderCash.setBankName(memBank.getBankName());
         orderCash.setBankCardNo(memBank.getBankCardNo());
         orderCash.setBankCity(memBank.getBankCity());
-        orderCash.setOrderNo("TX" + SnowflakeIdWorker.createOrderSn());
+        orderCash.setOrderNo(GeneratorIdUtil.generateId());
         orderCash.setApplyTime(new Date());
         orderCash.setCreateUser(loginUser.getAccount());
         boolean cashFlag = this.baseMapper.insert(orderCash) > 0;

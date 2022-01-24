@@ -2,6 +2,7 @@ package com.indo.user.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.pojo.req.agnet.AgentRebateRecordReq;
+import com.indo.admin.pojo.vo.agent.RebateStatVO;
 import com.indo.admin.pojo.vo.mem.MemBetVo;
 import com.indo.admin.pojo.vo.agent.AgentRebateInfoVO;
 import com.indo.admin.pojo.vo.agent.AgentRebateRecordVO;
@@ -17,10 +18,13 @@ import com.indo.user.pojo.req.mem.MemAgentApplyReq;
 import com.indo.user.pojo.req.mem.SubordinateAppReq;
 import com.indo.user.service.IMemAgentService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -54,6 +58,19 @@ public class AgentController {
         return Result.success(infoVO);
     }
 
+
+    @ApiOperation(value = "佣金提现", httpMethod = "POST")
+    @PostMapping(value = "/takeRebate")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "rebateAmount", value = "佣金", defaultValue = "0.00", paramType = "query", dataType = "string"),
+            @ApiImplicitParam(name = "memBankId", value = "会员银行卡id", paramType = "query", dataType = "long")
+    })
+    public Result takeRebate(BigDecimal rebateAmount, Long memBankId, @LoginUser LoginInfo loginInfo) {
+        boolean flag = iMemAgentService.takeRebate(rebateAmount, memBankId, loginInfo);
+        return Result.judge(flag);
+    }
+
+
     @ApiOperation(value = "获取返佣配置", response = MemBetVo.class, httpMethod = "GET")
     @GetMapping(value = "/rebateConfig")
     @AllowAccess
@@ -75,6 +92,17 @@ public class AgentController {
     public Result<List<AgentSubVO>> subList(SubordinateAppReq req, @LoginUser LoginInfo loginInfo) {
         Page<AgentSubVO> result = iMemAgentService.subordinatePage(req, loginInfo);
         return Result.success(result.getRecords(), result.getTotal());
+    }
+
+    @ApiOperation(value = "佣金报表统计", httpMethod = "GET")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "beginTime", value = "开始时间", required = true, paramType = "query", dataType = "string"),
+            @ApiImplicitParam(name = "endTime", value = "结束时间", required = true, paramType = "query", dataType = "string")
+    })
+    @GetMapping(value = "/rebateStat")
+    public Result<RebateStatVO> rebateStat(String beginTime, String endTime, @LoginUser LoginInfo loginInfo) {
+        RebateStatVO result = iMemAgentService.rebateStat(beginTime, endTime, loginInfo);
+        return Result.success(result);
     }
 
 

@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author xxx
@@ -20,7 +20,7 @@ import java.math.BigDecimal;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@ApiModel(value="AgentRebateRecord对象", description="")
+@ApiModel(value = "AgentRebateRecord对象", description = "")
 public class AgentRebateRecord extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
@@ -32,6 +32,9 @@ public class AgentRebateRecord extends BaseEntity {
     @ApiModelProperty(value = "会员id")
     private Long memId;
 
+    @ApiModelProperty(value = "account")
+    private String account;
+
     @ApiModelProperty(value = "会员等级")
     private Integer memLevel;
 
@@ -41,11 +44,14 @@ public class AgentRebateRecord extends BaseEntity {
     @ApiModelProperty(value = "上级代理")
     private String superior;
 
+    @ApiModelProperty(value = "上级代理")
+    private Integer teamNum;
+
     @ApiModelProperty(value = "昨日结余")
-    private BigDecimal yesterdayRemain;
+    private BigDecimal todayRemain;
 
     @ApiModelProperty(value = "返点金额")
-    private BigDecimal rebateAmout;
+    private BigDecimal rebateAmount;
 
     @ApiModelProperty(value = "状态，0-待发放，1-已发放")
     private Integer status;

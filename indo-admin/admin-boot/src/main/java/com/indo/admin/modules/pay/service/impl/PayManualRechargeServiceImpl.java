@@ -8,7 +8,7 @@ import com.indo.admin.modules.pay.service.IPayManualRechargeService;
 import com.indo.common.constant.GlobalConstants;
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
-import com.indo.common.utils.SnowflakeIdWorker;
+import com.indo.common.redis.component.GeneratorIdUtil;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.JwtUtils;
 import com.indo.core.base.service.impl.SuperServiceImpl;
@@ -67,7 +67,7 @@ public class PayManualRechargeServiceImpl extends SuperServiceImpl<PayManualRech
         BigDecimal operateAmount = new BigDecimal(amount);
         PayRecharge rechargeOrder = new PayRecharge();
         rechargeOrder.setMemId(memId);
-        rechargeOrder.setOrderNo("RG_" + SnowflakeIdWorker.createOrderSn());
+        rechargeOrder.setOrderNo(GeneratorIdUtil.generateId());
         //实际金额
         rechargeOrder.setOldAmount(operateAmount);
         rechargeOrder.setTotalAmount(operateAmount);

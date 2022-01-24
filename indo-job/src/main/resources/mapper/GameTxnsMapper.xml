@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.indo.job.mapper.GameTxnsMapper">
+
+    <select id="beforeDayBetList" resultType="com.indo.job.pojo.dto.BeforeDayBetDTO">
+        SELECT
+            mb.mem_level,as memLevel,
+            mb.real_name as realName,
+            ar.superior as superior,
+            ar.team_num as teamNum
+            gt.user_id AS account,
+            SUM(gt.real_bet_amount) AS realBetAmount
+        FROM
+        game_txns gt
+        LEFT JOIN agent_relation ar ON gt.user_id = ar.account
+        INNER JOIN  mem_baseinfo mb on  gt.user_id = mb.account
+        and TO_DAYS(NOW()) - TO_DAYS(gt.create_time) &lt; 1
+        GROUP BY
+        gt.user_id
+    </select>
+
+
+    <select id="teamSumBet" parameterType="String">
+        SELECT
+        SUM(gt.real_bet_amount) AS realBetAmount
+        FROM
+        game_txns gt
+        LEFT JOIN agent_relation ar ON gt.user_id = ar.account
+        WHERE
+        ar.superior = #{account}
+        AND TO_DAYS(NOW()) - TO_DAYS(gt.create_time)  &lt; 1
+
+    </select>
+
+</mapper>

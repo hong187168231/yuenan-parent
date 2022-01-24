@@ -2,6 +2,7 @@ package com.indo.common.redis.component;
 
 import com.indo.common.constant.RedisConstants;
 import com.indo.common.enums.BusinessTypeEnum;
+import com.indo.common.redis.utils.RedisUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -12,12 +13,8 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
 
-@Component
 @Slf4j
 public class BusinessNoGenerator {
-
-    @Autowired
-    private RedisTemplate redisTemplate;
 
     /**
      * @param businessType 业务类型枚举
@@ -27,8 +24,8 @@ public class BusinessNoGenerator {
     public String generate(BusinessTypeEnum businessType, Integer digit) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         String date = LocalDateTime.now(ZoneOffset.of("+8")).format(formatter);
-        String key = RedisConstants.BUSINESS_NO_PREFIX +businessType.getCode() + ":" + date;
-        Long increment = redisTemplate.opsForValue().increment(key);
+        String key = RedisConstants.BUSINESS_NO_PREFIX + businessType.getCode() + ":" + date;
+        Long increment = RedisUtils.incr(key);
         return date + businessType.getValue() + String.format("%0" + digit + "d", increment);
     }
 

@@ -3,6 +3,7 @@ package com.indo.common.constant;
 public interface RedisConstants {
 
     String BUSINESS_NO_PREFIX = "business_no:";
+    String BUSINESS_ID_PREFIX = "business_id:";
 
     /**
      * 优惠券码KEY前缀

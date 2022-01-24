@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -77,16 +78,17 @@ public class AgentApplyServiceImpl extends ServiceImpl<AgentApplyMapper, AgentAp
             if (req.getAudiType().name().equals(AudiTypeEnum.agree)) {
                 LambdaQueryWrapper<AgentRelation> wa = new LambdaQueryWrapper<>();
                 wa.eq(AgentRelation::getMemId, req.getMemId())
-                        .eq(AgentRelation::getIsDel, true);
+                        .eq(AgentRelation::getStatus, 0);
                 AgentRelation memAgent = agentRelationMapper.selectOne(wa);
                 boolean agentflag;
                 if (memAgent == null) {
                     memAgent = new AgentRelation();
                     memAgent.setMemId(memAgentApply.getMemId());
-                    memAgent.setIsDel(false);
+                    memAgent.setStatus(1);
                     agentflag = agentRelationMapper.insert(memAgent) > 0;
                 } else {
-                    memAgent.setIsDel(false);
+                    memAgent.setStatus(1);
+                    memAgent.setCreateTime(new Date());
                     agentflag = agentRelationMapper.updateById(memAgent) > 0;
                 }
                 MemInviteCode memInviteCode = new MemInviteCode();

@@ -12,7 +12,6 @@ import org.springframework.web.context.request.RequestContextListener;
 
 @EnableFeignClients(basePackages = "com.indo.*.api")
 @SpringBootApplication
-@EnableScheduling
 @EnableDiscoveryClient
 public class UserApplication {
 

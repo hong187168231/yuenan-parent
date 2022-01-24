@@ -1,4 +1,4 @@
-package com.indo.user.mapper;
+package com.indo.job.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -23,7 +23,7 @@ import java.util.List;
 @Mapper
 public interface AgentRebateRecordMapper extends BaseMapper<AgentRebateRecord> {
 
-    List<AgentRebateRecordVO> queryList(@Param("page") Page<AgentRebateRecordVO> page, @Param("req") AgentRebateRecordReq req);
-
-
+    @Select("SELECT arr.today_remain FROM agent_rebate_record arr WHERE account =#{account}" +
+            " and  TO_DAYS(NOW()) - TO_DAYS(gt.create_time)  < 1 ")
+    BigDecimal yesterdayRemain(@Param("account") String account);
 }

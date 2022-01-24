@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.indo.common.enums.ThirdPayChannelEnum;
 import com.indo.common.pojo.bo.LoginInfo;
-import com.indo.common.utils.SnowflakeIdWorker;
+import com.indo.common.redis.component.GeneratorIdUtil;
 import com.indo.common.web.exception.BizException;
 import com.indo.pay.common.constant.PayConstants;
 import com.indo.pay.factory.OnlinePaymentService;
@@ -87,7 +87,7 @@ public class PaymentService {
             req.setPayType(payChannel.getChannelType() + "");
             req.setPayUrl(payChannel.getPayUrl());
             req.setSecretKey(payChannel.getSecretKey());
-            req.setMerchantOrderNo("RC" + SnowflakeIdWorker.createOrderSn());
+            req.setMerchantOrderNo(GeneratorIdUtil.generateId());
             req.setTradeAmount(amount);
             req.setPayChannelId(payChannel.getPayChannelId());
             req.setPayWayId(payWay.getPayWayId());

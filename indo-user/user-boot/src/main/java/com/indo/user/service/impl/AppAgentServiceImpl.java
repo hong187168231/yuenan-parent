@@ -7,19 +7,15 @@ import com.indo.admin.pojo.req.agnet.AgentRebateRecordReq;
 import com.indo.admin.pojo.vo.agent.AgentRebateInfoVO;
 import com.indo.admin.pojo.vo.agent.AgentRebateRecordVO;
 import com.indo.admin.pojo.vo.agent.AgentSubVO;
+import com.indo.admin.pojo.vo.agent.RebateStatVO;
 import com.indo.common.constant.GlobalConstants;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
 import com.indo.common.web.exception.BizException;
 import com.indo.core.base.service.impl.SuperServiceImpl;
-import com.indo.core.pojo.entity.AgentApply;
-import com.indo.core.pojo.entity.AgentRebate;
-import com.indo.core.pojo.entity.AgentRelation;
+import com.indo.core.pojo.entity.*;
 import com.indo.user.common.util.UserBusinessRedisUtils;
-import com.indo.user.mapper.AgentApplyMapper;
-import com.indo.user.mapper.AgentRebateMapper;
-import com.indo.user.mapper.AgentRebateRecordMapper;
-import com.indo.user.mapper.AgentRelationMapper;
+import com.indo.user.mapper.*;
 import com.indo.user.pojo.req.mem.MemAgentApplyReq;
 import com.indo.user.pojo.req.mem.SubordinateAppReq;
 import com.indo.user.service.IMemAgentService;
@@ -50,6 +46,11 @@ public class AppAgentServiceImpl extends SuperServiceImpl<AgentRelationMapper, A
     private AgentRebateRecordMapper memRebateRecordMapper;
     @Autowired
     private AgentRebateMapper agentRebateMapper;
+    @Autowired
+    private AgentCashApplyMapper agentCashApplyMapper;
+    @Autowired
+    private MemBankRelationMapper memBankRelationMapper;
+
 
     @Override
     public boolean apply(MemAgentApplyReq req, LoginInfo loginInfo) {
@@ -76,6 +77,36 @@ public class AppAgentServiceImpl extends SuperServiceImpl<AgentRelationMapper, A
         agentApply.setAccount(loginInfo.getAccount());
         agentApply.setStatus(0);
         return agentApplyMapper.insert(agentApply) > 0;
+    }
+
+    @Override
+    public boolean
+    takeRebate(BigDecimal rebateAmount, Long memBankId, LoginInfo loginInfo) {
+        LambdaQueryWrapper<AgentRebate> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(AgentRebate::getMemId, loginInfo.getId());
+        AgentRebate agentRebate = agentRebateMapper.selectOne(wrapper);
+        if (null == agentRebate) {
+            throw new BizException("无返佣金额");
+        }
+        // 提现金额必须大于0
+        if (rebateAmount.intValue() < 100) {
+            throw new BizException("佣金提款金额必须在100以上!");
+        }
+        MemBank memBank = memBankRelationMapper.selectById(memBankId);
+        if (memBank == null) {
+            throw new BizException("银行卡信息为空!");
+        }
+        AgentCashApply agentCashApply = new AgentCashApply();
+        agentCashApply.setMemId(loginInfo.getId());
+        agentCashApply.setAccount(loginInfo.getAccount());
+        agentCashApply.setMemLevel(loginInfo.getMemLevel());
+        agentCashApply.setBankCardNo(memBank.getBankCardNo());
+        agentCashApply.setBankName(memBank.getBankName());
+        agentCashApply.setBranchBank(memBank.getBankBranch());
+        agentCashApply.setCashStatus(0);
+        agentCashApply.setCity(memBank.getBankCity());
+        agentCashApply.setIfsc(memBank.getIfsc());
+        return agentCashApplyMapper.insert(agentCashApply) > 0;
     }
 
     @Override
@@ -110,6 +141,25 @@ public class AppAgentServiceImpl extends SuperServiceImpl<AgentRelationMapper, A
         List<AgentRebateRecordVO> list = memRebateRecordMapper.queryList(page, req);
         page.setRecords(list);
         return page;
+    }
+
+    @Override
+    public RebateStatVO rebateStat(String beginTime, String endTime, LoginInfo loginInfo) {
+        RebateStatVO statVO = new RebateStatVO();
+        BigDecimal rebate = agentRelationMapper.selectRebateByTime(loginInfo.getAccount(), beginTime, endTime);
+        Integer teamNum = agentRelationMapper.selectTeamNum(loginInfo.getAccount());
+        BigDecimal teamRecharge = agentRelationMapper.selectTeamRecharge(loginInfo.getAccount(), beginTime, endTime);
+        Integer dayAdd = agentRelationMapper.selectDayAddNum(loginInfo.getAccount());
+        Integer monthAdd = agentRelationMapper.selectMonthAddNum(loginInfo.getAccount(), beginTime, endTime);
+        BigDecimal teamBet = agentRelationMapper.selectTeamBet(loginInfo.getAccount(), beginTime, endTime);
+
+        statVO.setRebateAmount(rebate);
+        statVO.setTeamNum(teamNum == null ? 0 : teamNum);
+        statVO.setTeamRecharge(teamRecharge);
+        statVO.setDayAddNum(dayAdd);
+        statVO.setMonthAddNum(monthAdd);
+        statVO.setTeamBet(teamBet);
+        return statVO;
     }
 
 
