@@ -8,7 +8,7 @@ import lombok.Data;
 import java.math.BigDecimal;
 
 /**
- * @Author: kevin
+ * @Author: puff
  * @Date: 2021/8/30 16:05
  * @Version: 1.0.0
  * @Desc: 相应参数实体
@@ -26,7 +26,7 @@ public class MemTradingBO {
     @ApiModelProperty(value = "昵称")
     private String nickName;
 
-    @ApiModelProperty(value = "余额")
+    @ApiModelProperty(value = "会员等级")
     private Integer memLevel;
 
     @ApiModelProperty(value = "余额")

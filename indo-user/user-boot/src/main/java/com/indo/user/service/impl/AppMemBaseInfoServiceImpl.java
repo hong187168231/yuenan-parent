@@ -265,7 +265,6 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
         return appLoginVo;
     }
 
-
     @Override
     public MemTradingBO tradingInfo(String account) {
         return this.baseMapper.tradingInfo(account);

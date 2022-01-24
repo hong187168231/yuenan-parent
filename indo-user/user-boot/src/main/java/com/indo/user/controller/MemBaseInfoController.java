@@ -4,6 +4,7 @@ import com.indo.common.annotation.AllowAccess;
 import com.indo.common.annotation.LoginUser;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
+import com.indo.user.pojo.bo.MemTradingBO;
 import com.indo.user.pojo.req.LogOutReq;
 import com.indo.user.pojo.req.LoginReq;
 import com.indo.user.pojo.req.RegisterReq;
@@ -75,5 +76,13 @@ public class MemBaseInfoController {
     public Result updateBaseInfo(@RequestBody UpdateBaseInfoReq req, @LoginUser LoginInfo loginUser) {
         memBaseInfoService.updateBaseInfo(req, loginUser);
         return Result.success();
+    }
+
+
+    @ApiOperation(value = "用户资金信息", httpMethod = "POST")
+    @PostMapping(value = "/tradingInfo")
+    public Result<MemTradingBO> tradingInfo(@LoginUser LoginInfo loginUser) {
+        MemTradingBO tradingV0 = memBaseInfoService.tradingInfo(loginUser.getAccount());
+        return Result.success(tradingV0);
     }
 }
