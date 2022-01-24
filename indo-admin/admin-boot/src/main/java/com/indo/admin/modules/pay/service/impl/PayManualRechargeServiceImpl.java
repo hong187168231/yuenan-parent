@@ -8,7 +8,7 @@ import com.indo.admin.modules.pay.service.IPayManualRechargeService;
 import com.indo.common.constant.GlobalConstants;
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
-import com.indo.common.redis.component.GeneratorIdUtil;
+import com.indo.common.redis.utils.GeneratorIdUtil;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.JwtUtils;
 import com.indo.core.base.service.impl.SuperServiceImpl;

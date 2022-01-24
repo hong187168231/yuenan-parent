@@ -6,7 +6,7 @@ import com.indo.common.constant.RedisKeys;
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.common.pojo.bo.LoginInfo;
-import com.indo.common.redis.component.GeneratorIdUtil;
+import com.indo.common.redis.utils.GeneratorIdUtil;
 import com.indo.common.result.Result;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;

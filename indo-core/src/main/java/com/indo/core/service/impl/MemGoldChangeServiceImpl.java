@@ -5,7 +5,7 @@ import com.indo.common.constant.GlobalConstants;
 import com.indo.common.constant.RedisKeys;
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
-import com.indo.common.redis.component.GeneratorIdUtil;
+import com.indo.common.redis.utils.GeneratorIdUtil;
 import com.indo.common.redis.utils.RedisUtils;
 import com.indo.common.web.exception.BizException;
 import com.indo.core.base.service.impl.SuperServiceImpl;

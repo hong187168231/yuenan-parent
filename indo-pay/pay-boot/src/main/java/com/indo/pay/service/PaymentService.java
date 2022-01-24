@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.indo.common.enums.ThirdPayChannelEnum;
 import com.indo.common.pojo.bo.LoginInfo;
-import com.indo.common.redis.component.GeneratorIdUtil;
+import com.indo.common.redis.utils.GeneratorIdUtil;
 import com.indo.common.web.exception.BizException;
 import com.indo.pay.common.constant.PayConstants;
 import com.indo.pay.factory.OnlinePaymentService;
