@@ -23,5 +23,9 @@ public interface UgService {
      */
     public void ugPullOrder();
 
+    /**
+     * 同步单一注单
+     */
+    public void ugPullOrderByBetID();
 
 }

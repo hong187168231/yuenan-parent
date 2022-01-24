@@ -11,24 +11,23 @@ import com.indo.game.mapper.TxnsMapper;
 import com.indo.game.mapper.frontend.GameCategoryMapper;
 import com.indo.game.mapper.frontend.GamePlatformMapper;
 import com.indo.game.mapper.frontend.GameTypeMapper;
-import com.indo.game.pojo.dto.ug.UgLoginJsonDTO;
-import com.indo.game.pojo.dto.ug.UgLogoutJsonDTO;
-import com.indo.game.pojo.dto.ug.UgRegisterPlayerJsonDTO;
-import com.indo.game.pojo.dto.ug.UgTasksJsonDTO;
+import com.indo.game.mapper.ug.UgInsBetMapper;
+import com.indo.game.mapper.ug.UgSubBetMapper;
+import com.indo.game.pojo.dto.ug.*;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.game.pojo.entity.manage.GameCategory;
 import com.indo.game.pojo.entity.manage.GamePlatform;
 import com.indo.game.pojo.entity.manage.Txns;
-import com.indo.game.pojo.vo.callback.ug.SortBetDto;
-import com.indo.game.pojo.vo.callback.ug.SubBetDto;
-import com.indo.game.pojo.vo.callback.ug.UgApiResponseData;
-import com.indo.game.pojo.vo.callback.ug.UgApiTasksResponseData;
+import com.indo.game.pojo.entity.ug.InsBet;
+import com.indo.game.pojo.entity.ug.SubBet;
+import com.indo.game.pojo.vo.callback.ug.*;
 import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
 import com.indo.game.service.ug.UgService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -61,6 +60,10 @@ public class UgServiceImpl implements UgService {
 
     @Autowired
     private TxnsMapper txnsMapper;
+    @Autowired
+    private UgInsBetMapper ugInsBetMapper;
+    @Autowired
+    private UgSubBetMapper ugSubBetMapper;
 
     /**
      * 登录游戏
@@ -239,8 +242,8 @@ public class UgServiceImpl implements UgService {
 
         UgApiTasksResponseData ugApiResponse = null;
         UgTasksJsonDTO ugTasksJsonDTO = new UgTasksJsonDTO();
-        String platformTxId = txnsMapper.getMaxPlatformTxId("UG Sports");
-        ugTasksJsonDTO.setSortNo(Long.valueOf(null!=platformTxId&&!"".equals(platformTxId)?platformTxId:"0"));//排序编号 返回大于该排序编号的注单
+        String sortNo = txnsMapper.getMaxSortNo("UG Sports");
+        ugTasksJsonDTO.setSortNo(Long.valueOf(null!=sortNo&&!"".equals(sortNo)?sortNo:"0"));//排序编号 返回大于该排序编号的注单
         try {
             ugApiResponse = commonTasksRequest(ugTasksJsonDTO, OpenAPIProperties.UG_API_URL+"/SportApi/GetBetSheetBySort",  "ugPullOrder");
             if("000000".equals(ugApiResponse.getErrorCode())){
@@ -315,11 +318,123 @@ public class UgServiceImpl implements UgService {
                     txns.setCategoryId(gameCategory.getId());
                     txns.setCategoryName(gameCategory.getGameName());
                     txnsMapper.insert(txns);
+                    List<SubBetDto> subBets = sortBetDto.getSubBets();
+                    for(SubBetDto subBetDto:subBets){
+                        SubBet subBet = new SubBet();
+                        BeanUtils.copyProperties(subBetDto, subBet);
+                        ugSubBetMapper.insert(subBet);
+                    }
+                    List< InsBetDto > insBets = sortBetDto.getInsBets();
+                    for(InsBetDto insBetDto:insBets){
+                        InsBet insBet = new InsBet();
+                        BeanUtils.copyProperties(insBetDto, insBet);
+                        ugInsBetMapper.insert(insBet);
+                    }
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
             logger.info("ugPullOrder:",e);
+        }
+    }
+
+    @Override
+    public void ugPullOrderByBetID(){
+
+        UgApiTasksResponseData ugApiResponse = null;
+        UgTasksJsonBetIdDTO ugTasksJsonBetIdDTO = new UgTasksJsonBetIdDTO();
+//        ugTasksJsonBetIdDTO.setBetID();
+        try {
+            ugApiResponse = commonTasksRequest(ugTasksJsonBetIdDTO, OpenAPIProperties.UG_API_URL+"/SportApi/GetBetSheetByBetID",  "ugPullOrderByBetID");
+            if("000000".equals(ugApiResponse.getErrorCode())){
+                GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode("UG Sports");
+                GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
+                List<SortBetDto> subBetDtoList = ugApiResponse.getData();
+                for (SortBetDto sortBetDto:subBetDtoList){
+                    Txns txns = new Txns();
+                    txns.setPlatformTxId(sortBetDto.getBetID());// string 是 注单编号
+                    txns.setUserId(sortBetDto.getAccount());//  string 是 会员帐号
+                    txns.setWinningAmount(sortBetDto.getPayout());//  Decimal 是 赔付金额
+                    txns.setBetAmount(sortBetDto.getBetAmount());//  Decimal 是 下注金额
+                    txns.setRealBetAmount(sortBetDto.getDeductAmount());// Decimal  是 扣款金额
+                    txns.setWinAmount(sortBetDto.getAllWin());// Decimal  是 预计全赢金额
+                    txns.setTurnover(sortBetDto.getTurnover());// Decimal  是 有效投注金额(打码量)
+                    txns.setOdds(sortBetDto.getBetOdds());//  Decimal 是 投注赔率
+                    txns.setRealWinAmount(sortBetDto.getWin());// Decimal  是 实际输赢
+                    txns.setOddsType(sortBetDto.getOddsStyle());//  string 是 赔率样式
+                    txns.setBetTime(sortBetDto.getBetDate());// Datetime 是 投注时间
+
+//                    0 等待中
+//                    1 已接受
+//                    2 已结算
+//                    3 已取消
+//                    4 已拒绝
+//  int 是    注单状态 见注单状态代码(Status) 如果 Status 为 1,则不必关心 Result 值
+                    if (0==sortBetDto.getStatus()){
+                        txns.setMethod("Waiting");
+                        txns.setStatus("Running");
+                    }
+                    if (1==sortBetDto.getStatus()){
+                        txns.setMethod("Place Bet");
+                        txns.setStatus("Running");
+                    }
+                    if (2==sortBetDto.getStatus()){
+                        txns.setMethod("Settle");
+                        txns.setStatus("Running");
+                    }
+                    if (3==sortBetDto.getStatus()){
+                        txns.setMethod("Cancel Bet");
+                        txns.setStatus("Running");
+                    }
+                    if (4==sortBetDto.getStatus()){
+                        txns.setMethod("Void Bet");
+                        txns.setStatus("Running");
+                    }
+//                    0 Draw 和
+//                    1 Win 赢
+//                    2 Lose 输
+//                    3 Win Half 赢一半
+//                    4 Lose Half 输一半
+                    txns.setResultType(sortBetDto.getResult());//  int 是 注单输赢结果 见注单结果代码(Result)
+
+                    txns.setTxTime(sortBetDto.getReportDate());//  Datetime 是 注单报表时间
+                    txns.setBetIp(sortBetDto.getBetIP());//  string 是 投注 IP
+                    txns.setUpdateTime(sortBetDto.getUpdateTime());//  Datetime 是 注单修改时间
+                    txns.setAgentId(String.valueOf(sortBetDto.getAgentID()));//  long 是 代理编号
+                    txns.setGroupComm(sortBetDto.getGroupComm());//  string 是 组别佣金代码
+                    txns.setMpId(sortBetDto.getMpID());//  int 是 混合过关类型 ID
+                    txns.setCurrency(sortBetDto.getCurrency());//  string 是 货币代码
+//                    1 PC
+//                    2 Wap
+//                    4 Smart
+                    txns.setBetWay(sortBetDto.getBetWay());//  int 是 投注方式
+                    txns.setSortNo(sortBetDto.getSortNo());//  long 是 注单排序值
+
+//                    String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
+//
+//                    txns.setCreateTime(dateStr);
+                    txns.setPlatformCnName(gamePlatform.getPlatformCnName());
+                    txns.setPlatformEnName(gamePlatform.getPlatformEnName());
+                    txns.setCategoryId(gameCategory.getId());
+                    txns.setCategoryName(gameCategory.getGameName());
+                    txnsMapper.insert(txns);
+                    List<SubBetDto> subBets = sortBetDto.getSubBets();
+                    for(SubBetDto subBetDto:subBets){
+                        SubBet subBet = new SubBet();
+                        BeanUtils.copyProperties(subBetDto, subBet);
+                        ugSubBetMapper.insert(subBet);
+                    }
+                    List< InsBetDto > insBets = sortBetDto.getInsBets();
+                    for(InsBetDto insBetDto:insBets){
+                        InsBet insBet = new InsBet();
+                        BeanUtils.copyProperties(insBetDto, insBet);
+                        ugInsBetMapper.insert(insBet);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.info("ugPullOrderByBetID:",e);
         }
     }
 

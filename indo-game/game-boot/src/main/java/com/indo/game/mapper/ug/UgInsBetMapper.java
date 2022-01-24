@@ -1,7 +1,7 @@
 package com.indo.game.mapper.ug;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.indo.game.pojo.entity.ug.SubBet;
+import com.indo.game.pojo.entity.ug.InsBet;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -13,6 +13,6 @@ import org.apache.ibatis.annotations.Mapper;
  * @since 2022-01-05
  */
 @Mapper
-public interface UgSubBet extends BaseMapper<SubBet> {
+public interface UgInsBetMapper extends BaseMapper<InsBet> {
 
 }

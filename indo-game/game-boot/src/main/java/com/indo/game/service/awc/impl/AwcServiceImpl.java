@@ -191,11 +191,15 @@ public class AwcServiceImpl implements AwcService {
             String betLimit = "";
             for (int i=0;i<categoryList.size();i++){
                 GamePlatform gp = categoryList.get(i);
-                betLimit += gp.getBetLimit();
-                if(i!=categoryList.size()-1){
-                    betLimit += ",";
+                if(null!=gp.getBetLimit()&&!"".equals(gp.getBetLimit())) {
+                    betLimit += gp.getBetLimit();
+                    if (i != categoryList.size() - 1) {
+                        betLimit += ",";
+                    }
                 }
-
+            }
+            if(",".equals(betLimit.substring(betLimit.length()-1))){
+                betLimit = betLimit.substring(0,betLimit.length()-1);
             }
             trr.put("betLimit", "{"+betLimit+"}");//下注限红
 

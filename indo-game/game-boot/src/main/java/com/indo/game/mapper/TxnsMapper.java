@@ -22,5 +22,5 @@ public interface TxnsMapper extends BaseMapper<Txns> {
 
     List<GameInfoAgentRecord> queryAllAgentGameInfo(@Param("page") IPage<GameInfoAgentRecord> page, @Param("req") GameInfoPageReq req);
 
-    String getMaxPlatformTxId(@Param("platform") String platform);
+    String getMaxSortNo(@Param("platform") String platform);
 }
