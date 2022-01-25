@@ -27,7 +27,7 @@ public class UgCallBackController {
     public Object getBalance(UgCallBackGetBalanceReq ugCallBackGetBalanceReq) {
         logger.info("ugCallBack {} callBack 回调,getBalance获取余额 params:{}",JSONObject.toJSONString(ugCallBackGetBalanceReq));
         Object getBalance = ugCallbackService.getBalance(ugCallBackGetBalanceReq);
-        logger.info("ugCallBack {} callBack 回调返回数据,getBalance获取余额 params:{}",ugCallBackGetBalanceReq);
+        logger.info("ugCallBack {} callBack 回调返回数据,getBalance获取余额 params:{}",JSONObject.toJSONString(getBalance));
         return getBalance;
     }
 
@@ -39,7 +39,7 @@ public class UgCallBackController {
     public Object transfer(UgCallBackTransferReq<UgCallBackTransactionItemReq> ugCallBackTransactionItemReqUgCallBackTransferReq) {
         logger.info("ugCallBack {} callBack 回调,transfer加余额/扣除余额 params:{}",JSONObject.toJSONString(ugCallBackTransactionItemReqUgCallBackTransferReq));
         Object transfer = ugCallbackService.transfer(ugCallBackTransactionItemReqUgCallBackTransferReq);
-        logger.info("ugCallBack {} callBack 回调返回数据,transfer加余额/扣除余额 params:{}",transfer);
+        logger.info("ugCallBack {} callBack 回调返回数据,transfer加余额/扣除余额 params:{}",JSONObject.toJSONString(transfer));
         return transfer;
     }
 
@@ -51,7 +51,7 @@ public class UgCallBackController {
     public Object cancel(UgCallBackCancelReq ugCallBackCancelReq) {
         logger.info("ugCallBack {} callBack 回调,cancel取消交易 params:{}",JSONObject.toJSONString(ugCallBackCancelReq));
         Object cancel = ugCallbackService.cancel(ugCallBackCancelReq);
-        logger.info("ugCallBack {} callBack 回调返回数据,cancel取消交易 params:{}",cancel);
+        logger.info("ugCallBack {} callBack 回调返回数据,cancel取消交易 params:{}",JSONObject.toJSONString(cancel));
         return cancel;
     }
 
@@ -63,7 +63,7 @@ public class UgCallBackController {
     public Object check(UgCallBackCancelReq ugCallBackCancelReq) {
         logger.info("ugCallBack {} callBack 回调,check检查交易结果 params:{}",JSONObject.toJSONString(ugCallBackCancelReq));
         Object check = ugCallbackService.check(ugCallBackCancelReq);
-        logger.info("ugCallBack {} callBack 回调返回数据,check检查交易结果 params:{}",check);
+        logger.info("ugCallBack {} callBack 回调返回数据,check检查交易结果 params:{}",JSONObject.toJSONString(check));
         return check;
     }
 }
