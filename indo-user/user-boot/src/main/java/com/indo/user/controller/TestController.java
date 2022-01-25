@@ -2,9 +2,7 @@ package com.indo.user.controller;
 
 import com.indo.common.annotation.AllowAccess;
 import com.indo.common.annotation.NoRepeatSubmit;
-import com.indo.common.enums.BusinessTypeEnum;
-import com.indo.common.redis.component.BusinessNoGenerator;
-import com.indo.common.redis.component.GeneratorIdUtil;
+import com.indo.common.redis.utils.GeneratorIdUtil;
 import com.indo.common.result.Result;
 import com.indo.user.service.TestService;
 import io.swagger.annotations.Api;
@@ -26,8 +24,6 @@ public class TestController {
 
     @Autowired
     private TestService testService;
-    @Autowired
-    private BusinessNoGenerator noGenerator;
 
     @GetMapping("/hello")
     @ApiOperation(value = "hello", httpMethod = "GET")
