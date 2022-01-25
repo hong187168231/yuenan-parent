@@ -107,7 +107,7 @@ public class UgServiceImpl implements UgService {
                 return restrictedPlayer(loginUser,gamePlatform, ip, cptOpenMember,WebType);
             } else {
                 Result result = this.logout(loginUser,ip);
-                if(null!=result&&"000000".equals(result.getCode())) {
+                if(null!=result&&"00000".equals(result.getCode())) {
                     CptOpenMember updateCptOpenMember = new CptOpenMember();
                     updateCptOpenMember.setId(cptOpenMember.getId());
                     updateCptOpenMember.setLoginTime(new Date());

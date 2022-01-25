@@ -63,10 +63,6 @@ public class AwcController {
                 if (resultInfo == null) {
                     log.info("AE真人、SV388斗鸡log {} initGame result is null. params:{},ip:{}", loginUser.getId(), params, ip);
                     return Result.failed(MessageUtils.get("networktimeout"));
-                } else {
-                    if (!resultInfo.getCode().equals(ResultCode.SUCCESS)) {
-                        return resultInfo;
-                    }
                 }
                 log.info("AE真人、SV388斗鸡log {} initGame resultInfo:{}, params:{}", loginUser.getId(), JSONObject.toJSONString(resultInfo), params);
                 return resultInfo;
@@ -80,7 +76,11 @@ public class AwcController {
             log.error("AE真人、SV388斗鸡log {} initGame occur error:{}. params:{}", loginUser.getId(), e.getMessage(), params);
             return Result.failed(MessageUtils.get("networktimeout"));
         } finally {
-            lock.unlock();
+            try {
+                lock.unlock();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
