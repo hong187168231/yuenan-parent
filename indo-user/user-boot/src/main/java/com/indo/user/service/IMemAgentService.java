@@ -26,6 +26,8 @@ public interface IMemAgentService extends SuperService<AgentRelation> {
 
     boolean apply(MemAgentApplyReq req, LoginInfo loginInfo);
 
+    Integer applyStatus(LoginInfo loginInfo);
+
     boolean takeRebate(BigDecimal rebateAmount, Long memBankId, LoginInfo loginInfo);
 
     Page<AgentSubVO> subordinatePage(SubordinateAppReq req, LoginInfo loginInfo);

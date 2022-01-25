@@ -80,6 +80,18 @@ public class AppAgentServiceImpl extends SuperServiceImpl<AgentRelationMapper, A
     }
 
     @Override
+    public Integer applyStatus(LoginInfo loginInfo) {
+        Integer status = -1;
+        LambdaQueryWrapper<AgentApply> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(AgentApply::getAccount, loginInfo.getAccount());
+        AgentApply agentApply = agentApplyMapper.selectOne(wrapper);
+        if(ObjectUtil.isNotNull(agentApply)){
+            status = agentApply.getStatus();
+        }
+        return status;
+    }
+
+    @Override
     public boolean
     takeRebate(BigDecimal rebateAmount, Long memBankId, LoginInfo loginInfo) {
         LambdaQueryWrapper<AgentRebate> wrapper = new LambdaQueryWrapper<>();

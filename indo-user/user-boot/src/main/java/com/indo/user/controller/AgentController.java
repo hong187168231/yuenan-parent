@@ -2,11 +2,8 @@ package com.indo.user.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.pojo.req.agnet.AgentRebateRecordReq;
-import com.indo.admin.pojo.vo.agent.RebateStatVO;
+import com.indo.admin.pojo.vo.agent.*;
 import com.indo.admin.pojo.vo.mem.MemBetVo;
-import com.indo.admin.pojo.vo.agent.AgentRebateInfoVO;
-import com.indo.admin.pojo.vo.agent.AgentRebateRecordVO;
-import com.indo.admin.pojo.vo.agent.AgentSubVO;
 import com.indo.common.annotation.AllowAccess;
 import com.indo.common.annotation.LoginUser;
 import com.indo.common.constant.RedisKeys;
@@ -49,6 +46,13 @@ public class AgentController {
     public Result add(@RequestBody MemAgentApplyReq req, @LoginUser LoginInfo loginInfo) {
         iMemAgentService.apply(req, loginInfo);
         return Result.success();
+    }
+
+    @ApiOperation(value = "代理申请状态", httpMethod = "GET")
+    @GetMapping(value = "/applyStatus")
+    public Result<ApplyStatusVO> applyStatus(@LoginUser LoginInfo loginInfo) {
+        Integer status = iMemAgentService.applyStatus(loginInfo);
+        return Result.success(new ApplyStatusVO(status));
     }
 
     @ApiOperation(value = "我的佣金", httpMethod = "GET")

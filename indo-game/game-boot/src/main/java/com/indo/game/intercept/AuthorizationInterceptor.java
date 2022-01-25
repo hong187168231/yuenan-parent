@@ -82,6 +82,7 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
                 }
                 String today = DateUtils.format(new Date(), DateUtils.shortFormat);
                 redisUtils.sSetAndTime(AppConstants.USER_DAILY_VISIT_LOG + today, 24 * 2 * 60 * 60, loginInfo.getId());
+                redisUtils.hset(AppConstants.USER_ACTIVE_KEY , loginInfo.getAccount(), today, 60 * 60 * 24 * 7);
                 return super.preHandle(request, response, handler);
             }
         }
@@ -97,6 +98,11 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
         set.add("/ug");
         List<String> result = set.stream().filter(a -> uri.contains(a)).collect(Collectors.toList());
         return !CollectionUtils.isEmpty(result);
+    }
+
+    public static void main(String[] args) {
+        String today = DateUtils.format(new Date(), DateUtils.shortFormat);
+        System.out.println(today);
     }
 
 }

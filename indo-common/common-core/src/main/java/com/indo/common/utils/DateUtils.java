@@ -1538,4 +1538,16 @@ public class DateUtils {
         return Integer.parseInt(String.valueOf(between_days));
     }
 
+    public static int daysBetween(String smdate, String bdate)  {
+        try {
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+            long to = df.parse(smdate).getTime();
+            long from = df.parse(bdate).getTime();
+            return (int) Math.abs((from - to) / (1000 * 60 * 60 * 24));
+        } catch (ParseException e) {
+            log.error("计算时间间隔天数异常======,smdate{},bdate {}", smdate, bdate);
+        }
+        return 0;
+    }
+
 }

@@ -82,6 +82,7 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
                 }
                 String today = DateUtils.format(new Date(), DateUtils.shortFormat);
                 redisUtils.sSetAndTime(AppConstants.USER_DAILY_VISIT_LOG + today, 24 * 2 * 60 * 60, loginInfo.getId());
+                redisUtils.hset(AppConstants.USER_ACTIVE_KEY , loginInfo.getAccount(), today, 60 * 60 * 24 * 7);
                 return super.preHandle(request, response, handler);
             }
         }

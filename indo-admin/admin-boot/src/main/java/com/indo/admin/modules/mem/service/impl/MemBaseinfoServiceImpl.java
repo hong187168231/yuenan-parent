@@ -9,6 +9,7 @@ import com.indo.admin.common.util.AdminBusinessRedisUtils;
 import com.indo.admin.modules.agent.mapper.AgentRelationMapper;
 import com.indo.admin.modules.mem.mapper.MemBaseinfoMapper;
 import com.indo.admin.modules.mem.service.IMemBaseinfoService;
+import com.indo.common.constant.AppConstants;
 import com.indo.common.utils.DateUtils;
 import com.indo.common.utils.StringUtils;
 import com.indo.common.utils.encrypt.MD5;
@@ -58,15 +59,23 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
         Page<MemBaseInfoVo> page = new Page<>(req.getPage(), req.getLimit());
         List<MemBaseInfoVo> list = memBaseInfoMapper.queryList(page, req);
         Date now = new Date();
-        list.forEach(item ->
-                item.setLeaveDays(DateUtils.daysBetween(item.getLastLoginTime(), now)));
+        list.forEach(item -> {
+            String lastActive = AdminBusinessRedisUtils.hget(AppConstants.USER_ACTIVE_KEY, item.getAccount()).toString();
+            if (StringUtils.isNotBlank(lastActive)) {
+                item.setLeaveDays(DateUtils.daysBetween(lastActive, DateUtils.getDateString(now)));
+            } else {
+                item.setLeaveDays(DateUtils.daysBetween(item.getLastLoginTime(), now));
+            }
+        });
+
+
         page.setRecords(list);
         return page;
     }
 
     @Override
     @Transactional
-    public  void addMemBaseInfo(MemAddReq req) {
+    public void addMemBaseInfo(MemAddReq req) {
         MemBaseInfoBO curentMem = this.memBaseInfoMapper.findMemBaseInfoByAccount(req.getAccount());
         if (curentMem != null) {
             throw new BizException("该账号已存在!");
