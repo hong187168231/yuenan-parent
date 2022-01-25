@@ -2,10 +2,14 @@ package com.indo.game.pojo.dto.ug;
 
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class UgCallBackCancelReq extends UgCallBackParentReq{
+    @JsonProperty("Method")
     private String Method;//
+    @JsonProperty("Account")
     private String Account;//登录帐号
+    @JsonProperty("TransactionNo")
     private String TransactionNo;//交易号
 
     @JSONField(name="Method")

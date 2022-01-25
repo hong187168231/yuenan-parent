@@ -1,12 +1,15 @@
 package com.indo.game.pojo.dto.ug;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
 
 public class UgCallBackTransferReq<T> extends UgCallBackParentReq {
+    @JsonProperty("Method")
     private String Method;
+    @JsonProperty("Data")
     private List<T> Data;
 
     @JSONField(name="Method")

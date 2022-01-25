@@ -24,7 +24,7 @@ public class UgCallBackController {
      */
     @RequestMapping(value="/GetBalance",method=RequestMethod.POST)
     @ResponseBody
-    public Object getBalance(UgCallBackGetBalanceReq ugCallBackGetBalanceReq) {
+    public Object getBalance(@RequestBody UgCallBackGetBalanceReq ugCallBackGetBalanceReq) {
         logger.info("ugCallBack {} callBack 回调,getBalance获取余额 params:{}",JSONObject.toJSONString(ugCallBackGetBalanceReq));
         Object getBalance = ugCallbackService.getBalance(ugCallBackGetBalanceReq);
         logger.info("ugCallBack {} callBack 回调返回数据,getBalance获取余额 params:{}",ugCallBackGetBalanceReq);
@@ -36,7 +36,7 @@ public class UgCallBackController {
      */
     @RequestMapping(value="/Transfer",method=RequestMethod.POST)
     @ResponseBody
-    public Object transfer(UgCallBackTransferReq<UgCallBackTransactionItemReq> ugCallBackTransactionItemReqUgCallBackTransferReq) {
+    public Object transfer(@RequestBody UgCallBackTransferReq<UgCallBackTransactionItemReq> ugCallBackTransactionItemReqUgCallBackTransferReq) {
         logger.info("ugCallBack {} callBack 回调,transfer加余额/扣除余额 params:{}",JSONObject.toJSONString(ugCallBackTransactionItemReqUgCallBackTransferReq));
         Object transfer = ugCallbackService.transfer(ugCallBackTransactionItemReqUgCallBackTransferReq);
         logger.info("ugCallBack {} callBack 回调返回数据,transfer加余额/扣除余额 params:{}",transfer);
@@ -48,7 +48,7 @@ public class UgCallBackController {
      */
     @RequestMapping(value="/Cancel",method=RequestMethod.POST)
     @ResponseBody
-    public Object cancel(UgCallBackCancelReq ugCallBackCancelReq) {
+    public Object cancel(@RequestBody UgCallBackCancelReq ugCallBackCancelReq) {
         logger.info("ugCallBack {} callBack 回调,cancel取消交易 params:{}",JSONObject.toJSONString(ugCallBackCancelReq));
         Object cancel = ugCallbackService.cancel(ugCallBackCancelReq);
         logger.info("ugCallBack {} callBack 回调返回数据,cancel取消交易 params:{}",cancel);
@@ -60,7 +60,7 @@ public class UgCallBackController {
      */
     @RequestMapping(value="/Check",method=RequestMethod.POST)
     @ResponseBody
-    public Object check(UgCallBackCancelReq ugCallBackCancelReq) {
+    public Object check(@RequestBody UgCallBackCancelReq ugCallBackCancelReq) {
         logger.info("ugCallBack {} callBack 回调,check检查交易结果 params:{}",JSONObject.toJSONString(ugCallBackCancelReq));
         Object check = ugCallbackService.check(ugCallBackCancelReq);
         logger.info("ugCallBack {} callBack 回调返回数据,check检查交易结果 params:{}",check);
