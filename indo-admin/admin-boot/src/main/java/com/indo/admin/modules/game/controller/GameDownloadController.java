@@ -25,6 +25,7 @@ public class GameDownloadController {
 
     @ApiOperation(value = "下载地址", httpMethod = "GET")
     @GetMapping(value = "/allGameDownload")
+    @AllowAccess
     public Result<List<GameDownload>> allGameDownload() {
         return Result.success(iGameDownloadService.queryAllGameDownload());
     }
@@ -43,7 +44,7 @@ public class GameDownloadController {
 
     @ApiOperation(value = "修改下载地址", httpMethod = "POST")
     @GetMapping(value = "/modifyGameDownload")
-    @AllowAccess
+
     public Result modifyGameDownload(GameDownload gameDownload) {
         return Result.judge(iGameDownloadService.modifiyGameDownload(gameDownload));
     }

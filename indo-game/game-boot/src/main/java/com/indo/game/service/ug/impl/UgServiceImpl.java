@@ -72,7 +72,7 @@ public class UgServiceImpl implements UgService {
      */
     @Override
     public Result ugGame(LoginInfo loginUser, String ip,String platform,String WebType) {
-        logger.info("uglog {} aeGame account:{}, aeCodeId:{}", loginUser.getId(), loginUser.getNickName());
+        logger.info("uglog ugGame {} aeGame account:{}, aeCodeId:{}", loginUser.getId(), loginUser.getNickName());
         // 是否开售校验
         GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(platform);
         if(null==gamePlatform){
@@ -107,7 +107,7 @@ public class UgServiceImpl implements UgService {
                 return restrictedPlayer(loginUser,gamePlatform, ip, cptOpenMember,WebType);
             } else {
                 Result result = this.logout(loginUser,ip);
-                if(null!=result&&"00000".equals(result.getCode())) {
+                if(null!=result&&"000000".equals(result.getCode())) {
                     CptOpenMember updateCptOpenMember = new CptOpenMember();
                     updateCptOpenMember.setId(cptOpenMember.getId());
                     updateCptOpenMember.setLoginTime(new Date());
@@ -128,7 +128,7 @@ public class UgServiceImpl implements UgService {
      * @return loginUser 用户信息
      */
     public Result restrictedPlayer(LoginInfo loginUser,GamePlatform gamePlatform, String ip,CptOpenMember cptOpenMember,String WebType) {
-        logger.info("uglog {} ugGame account:{}, ugCodeId:{}", loginUser.getId(), loginUser.getNickName());
+        logger.info("uglog restrictedPlayer {} ugGame account:{}, ugCodeId:{}", loginUser.getId(), loginUser.getNickName());
         try {
             UgRegisterPlayerJsonDTO ugRegisterPlayerJsonDTO = new UgRegisterPlayerJsonDTO();
             ugRegisterPlayerJsonDTO.setMemberAccount(loginUser.getAccount());//账户名,长度需要小于 20,大小写不敏感
@@ -155,7 +155,7 @@ public class UgServiceImpl implements UgService {
                 return Result.failed(ugApiResponse.getErrorCode(),ugApiResponse.getErrorMessage());
             }
         } catch (Exception e) {
-            logger.error("uglog game error {} ", e);
+            logger.error("uglog restrictedPlayer game error {} ", e);
             return null;
         }
     }
@@ -164,7 +164,7 @@ public class UgServiceImpl implements UgService {
      * 登录
      */
     private Result initGame(LoginInfo loginUser,GamePlatform gamePlatform, String ip,String WebType) throws Exception {
-        logger.info("uglog {} ugGame account:{}, ugCodeId:{},ip:{}", loginUser.getId(), loginUser.getNickName(),ip);
+        logger.info("uglog initGame Login {} initGame ugGame account:{}, ugCodeId:{},ip:{}", loginUser.getId(), loginUser.getNickName(),ip);
         try {
             UgLoginJsonDTO ugLoginJsonDTO = new UgLoginJsonDTO();
             ugLoginJsonDTO.setMemberAccount(loginUser.getAccount());//账户名,长度需要小于 20,大小写不敏感
@@ -186,7 +186,7 @@ public class UgServiceImpl implements UgService {
                 return Result.failed(ugApiResponse.getErrorCode(),ugApiResponse.getErrorMessage());
             }
         } catch (Exception e) {
-            logger.error("uglog game error {} ", e);
+            logger.error("uglog initGame Login game error {} ", e);
             return null;
         }
     }
@@ -195,6 +195,7 @@ public class UgServiceImpl implements UgService {
      * 强迫登出玩家
      */
     public Result logout(LoginInfo loginUser,String ip){
+        logger.info("uglog logout {} initGame ugGame account:{}, ugCodeId:{},ip:{}", loginUser.getId(), loginUser.getNickName(),ip);
         UgLogoutJsonDTO ugLogoutJsonDTO = new UgLogoutJsonDTO();
         ugLogoutJsonDTO.setMemberAccount(loginUser.getAccount());
 
@@ -208,6 +209,7 @@ public class UgServiceImpl implements UgService {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            logger.info("uglog logout {} ", e);
             return Result.failed(MessageUtils.get("tnibptal"));
         }
 
@@ -452,7 +454,7 @@ public class UgServiceImpl implements UgService {
     public UgApiTasksResponseData commonTasksRequest(Object object, String url,String type) throws Exception {
 
         UgApiTasksResponseData ugApiResponse = null;
-        logger.info("uglog {} commonRequest ,url:{},paramsMap:{}", url, object);
+        logger.info("uglog {} commonTasksRequest ,url:{},paramsMap:{}", url, object);
 //        Map<String, String> trr = new HashMap<>();
 //        trr.put("MemberAccount", "swuserid");
 //        trr.put("CompanyKey", "y6RbXQyRr4");
@@ -464,7 +466,7 @@ public class UgServiceImpl implements UgService {
         if (StringUtils.isNotEmpty(resultString)) {
             ugApiResponse = JSONObject.parseObject(resultString, UgApiTasksResponseData.class);
             //String operateFlag = (String) redisTemplate.opsForValue().get(Constants.AE_GAME_OPERATE_FLAG + userId);
-            logger.info("uglog {}:commonRequest type:{}, operateFlag:{}, url:{}, hostName:{}, params:{}, result:{}, ugApiResponse:{}",
+            logger.info("uglog {}:commonTasksRequest type:{}, operateFlag:{}, url:{}, hostName:{}, params:{}, result:{}, ugApiResponse:{}",
                     //userId, type, operateFlag, url,
                      type, null, url, JSONObject.toJSONString(object), resultString, JSONObject.toJSONString(ugApiResponse));
         }
