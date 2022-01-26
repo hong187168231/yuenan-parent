@@ -2,11 +2,13 @@ package com.indo.admin.modules.pay.service.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.indo.admin.common.util.AdminBusinessRedisUtils;
 import com.indo.admin.modules.pay.mapper.PayWayConfigMapper;
 import com.indo.admin.modules.pay.service.IPayWayConfigService;
 import com.indo.admin.pojo.dto.PayWayDTO;
 import com.indo.admin.pojo.dto.PayWayQueryDTO;
 import com.indo.admin.pojo.vo.pay.PayWayConfigVO;
+import com.indo.common.constant.RedisConstants;
 import com.indo.core.pojo.entity.PayWayConfig;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,13 +42,21 @@ public class PayWayConfigServiceImpl extends ServiceImpl<PayWayConfigMapper, Pay
     public boolean add(PayWayDTO addDto) {
         PayWayConfig payWayConfig = new PayWayConfig();
         BeanUtils.copyProperties(addDto, payWayConfig);
-        return this.baseMapper.insert(payWayConfig) > 0;
+        if (baseMapper.insert(payWayConfig) > 0) {
+            AdminBusinessRedisUtils.hset(RedisConstants.PAY_WAY_KEY, payWayConfig.getPayWayId() + "", payWayConfig);
+            return true;
+        }
+        return false;
     }
 
     @Override
     public boolean edit(PayWayDTO editDto) {
         PayWayConfig payWayConfig = new PayWayConfig();
         BeanUtils.copyProperties(editDto, payWayConfig);
-        return this.baseMapper.updateById(payWayConfig) > 0;
+        if (baseMapper.updateById(payWayConfig) > 0) {
+            AdminBusinessRedisUtils.hset(RedisConstants.PAY_WAY_KEY, payWayConfig.getPayWayId() + "", payWayConfig);
+            return true;
+        }
+        return false;
     }
 }

@@ -95,7 +95,7 @@ public class SignMd5Utils {
 
         while (it.hasNext()) {
             String key = (String) it.next();
-            String value = (String) packageParams.get(key);
+            String value = packageParams.get(key);
             if (StringUtils.isNotEmpty(value) && !"sign".equals(key) && !"key".equals(key)) {
                 toSign.append(key + "=" + value + "&");
             }
@@ -141,8 +141,6 @@ public class SignMd5Utils {
         toSignMdBuilder.append(str).append(signKey);
         return DigestUtils.md5Hex(toSignMdBuilder.toString());
     }
-
-
 
 
     /**

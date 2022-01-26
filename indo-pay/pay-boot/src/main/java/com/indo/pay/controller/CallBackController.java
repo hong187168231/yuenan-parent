@@ -3,9 +3,11 @@ package com.indo.pay.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.indo.common.annotation.AllowAccess;
 import com.indo.common.web.exception.BizException;
+import com.indo.pay.pojo.resp.EasyCallbackReq;
 import com.indo.pay.pojo.resp.HuaRenCallbackReq;
 import com.indo.pay.service.PaymentCallBackService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -37,7 +39,7 @@ public class CallBackController {
         try {
             // 订单状态
             String tradeResult = request.getParameter("tradeResult");
-                log.info("进入hr支付回调接口2=============================="+tradeResult);
+            log.info("进入hr支付回调接口2==============================" + tradeResult);
             // 商户号
             String mchId = request.getParameter("mchId");
             // 商家订单号
@@ -67,13 +69,30 @@ public class CallBackController {
             huaRenCallbackReq.setMerRetMsg(merRetMsg);
             huaRenCallbackReq.setSign(sign);
             huaRenCallbackReq.setSignType(signType);
-            log.info("进入hr支付回调接口3=============================="+ JSONObject.toJSONString(huaRenCallbackReq));
+            log.info("进入hr支付回调接口3==============================" + JSONObject.toJSONString(huaRenCallbackReq));
 
             result = paymentCallBackService.huaRenCallback(huaRenCallbackReq);
         } catch (BizException e) {
             log.error("{}.huaRenCallback 失败:{},params:{}", this.getClass().getName(), e.getMessage(), JSONObject.toJSON(huaRenCallbackReq), e);
         } catch (Exception e) {
             log.error("{}.huaRenCallback 出错:{},params:{}", this.getClass().getName(), e.getMessage(), JSONObject.toJSON(huaRenCallbackReq), e);
+        }
+        return result;
+
+    }
+
+
+    @AllowAccess
+    @RequestMapping("/easyCallback")
+    public String easyCallback(@RequestBody EasyCallbackReq callbackReq) {
+        String result = "";
+        try {
+            log.info("进入easy支付回调接口==============================" + JSONObject.toJSONString(callbackReq));
+            result = paymentCallBackService.easyCallback(callbackReq);
+        } catch (BizException e) {
+            log.error("{}.easyCallback 失败:{},params:{}", this.getClass().getName(), e.getMessage(), JSONObject.toJSON(callbackReq), e);
+        } catch (Exception e) {
+            log.error("{}.easyCallback 出错:{},params:{}", this.getClass().getName(), e.getMessage(), JSONObject.toJSON(callbackReq), e);
         }
         return result;
 

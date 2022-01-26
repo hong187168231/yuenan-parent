@@ -1,10 +1,15 @@
 package com.indo.pay.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.indo.common.constant.GlobalConstants;
+import com.indo.common.constant.RedisConstants;
 import com.indo.common.pojo.bo.LoginInfo;
+import com.indo.common.redis.utils.RedisUtils;
 import com.indo.common.result.Result;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
+import com.indo.core.pojo.entity.Activity;
+import com.indo.core.pojo.entity.PayChannelConfig;
 import com.indo.core.pojo.entity.PayWayConfig;
 import com.indo.pay.mapper.PayWayMapper;
 import com.indo.pay.mapper.RechargeMapper;
@@ -16,7 +21,11 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -41,8 +50,22 @@ public class PayWayServiceImpl extends ServiceImpl<PayWayMapper, PayWayConfig> i
     public List<PayWayVO> wayList(LoginInfo loginInfo) {
         BigDecimal todayAmount = rechargeMapper.countTodayAmount(loginInfo.getId());
         BigDecimal totalAmount = getMemTotalAmount(loginInfo.getAccount());
-        List<PayWayConfig> configList = baseMapper.wayList(todayAmount.longValue(), totalAmount.longValue());
-        return dozerUtil.convert(configList, PayWayVO.class);
+
+        Map<Object, Object> map = RedisUtils.hmget(RedisConstants.PAY_WAY_KEY);
+        List<PayWayConfig> wayList = new LinkedList(map.values());
+        Iterator<PayWayConfig> iter = wayList.iterator();
+        while (iter.hasNext()) {
+            PayWayConfig item = iter.next();
+            if (todayAmount.longValue() > item.getTodayAmount()) {
+                iter.remove();
+                continue;
+            }
+            if (totalAmount.longValue() > item.getTotalAmount()) {
+                iter.remove();
+                continue;
+            }
+        }
+        return dozerUtil.convert(wayList, PayWayVO.class);
     }
 
 

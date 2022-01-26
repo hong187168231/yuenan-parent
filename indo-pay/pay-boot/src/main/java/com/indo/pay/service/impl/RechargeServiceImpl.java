@@ -1,6 +1,8 @@
 package com.indo.pay.service.impl;
 
+import com.indo.common.constant.RedisConstants;
 import com.indo.common.pojo.bo.LoginInfo;
+import com.indo.common.redis.utils.RedisUtils;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
 import com.indo.core.base.service.impl.SuperServiceImpl;
@@ -22,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Map;
 
 /**
  * <p>
@@ -64,11 +67,13 @@ public class RechargeServiceImpl extends SuperServiceImpl<RechargeMapper, PayRec
         if (currentMem.getProhibitRecharge().equals(1)) {
             throw new BizException("你暂不能发起充值,请联系管理员");
         }
-        PayChannelConfig payChannelConfig = payChannelConfigMapper.selectById(rechargeReq.getPayChannelId());
+        PayChannelConfig  payChannelConfig = (PayChannelConfig)
+                RedisUtils.hget(RedisConstants.PAY_CHANNEL_KEY,rechargeReq.getPayChannelId()+"");
         if (null == payChannelConfig) {
             throw new BizException("暂无充值渠道");
         }
-        PayWayConfig payWayCfg = payWayConfigMapper.selectById(rechargeReq.getPayWayId());
+        PayWayConfig  payWayCfg = (PayWayConfig)
+                RedisUtils.hget(RedisConstants.PAY_WAY_KEY,rechargeReq.getPayWayId()+"");
         if (null == payWayCfg) {
             throw new BizException("暂无充值方式");
         }
