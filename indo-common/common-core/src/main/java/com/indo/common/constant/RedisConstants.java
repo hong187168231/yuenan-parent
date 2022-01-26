@@ -33,5 +33,10 @@ public interface RedisConstants {
 
     static final String ACTIVITY_KEY = "ACTIVITY_KEY";
 
+    static final String APP_VERSION_KEY = "APP_VERSION_KEY";
+
+    static final String PAY_CHANNEL_KEY = "PAY_CHANNEL_KEY";
+
+    static final String PAY_WAY_KEY = "PAY_WAY_KEY";
 
 }

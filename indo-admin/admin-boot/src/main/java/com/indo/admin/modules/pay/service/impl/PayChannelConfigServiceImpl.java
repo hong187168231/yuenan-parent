@@ -2,11 +2,13 @@ package com.indo.admin.modules.pay.service.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.indo.admin.common.util.AdminBusinessRedisUtils;
 import com.indo.admin.modules.pay.mapper.PayChannelConfigMapper;
 import com.indo.admin.modules.pay.service.IPayChannelConfigService;
 import com.indo.admin.pojo.dto.PayChannelDTO;
 import com.indo.admin.pojo.dto.PayChannelQueryDTO;
 import com.indo.admin.pojo.vo.pay.PayChannelConfigVO;
+import com.indo.common.constant.RedisConstants;
 import com.indo.core.pojo.entity.PayChannelConfig;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,15 +40,23 @@ public class PayChannelConfigServiceImpl extends ServiceImpl<PayChannelConfigMap
 
     @Override
     public boolean add(PayChannelDTO addDto) {
-        PayChannelConfig payChannelConfig = new PayChannelConfig();
-        BeanUtils.copyProperties(addDto, payChannelConfig);
-        return this.baseMapper.insert(payChannelConfig) > 0;
+        PayChannelConfig channelConfig = new PayChannelConfig();
+        BeanUtils.copyProperties(addDto, channelConfig);
+        if (baseMapper.insert(channelConfig) > 0) {
+            AdminBusinessRedisUtils.hset(RedisConstants.PAY_CHANNEL_KEY, channelConfig.getPayChannelId() + "", channelConfig);
+            return true;
+        }
+        return false;
     }
 
     @Override
     public boolean edit(PayChannelDTO editDto) {
-        PayChannelConfig payChannelConfig = new PayChannelConfig();
-        BeanUtils.copyProperties(editDto, payChannelConfig);
-        return this.baseMapper.updateById(payChannelConfig) > 0;
+        PayChannelConfig channelConfig = new PayChannelConfig();
+        BeanUtils.copyProperties(editDto, channelConfig);
+        if (baseMapper.updateById(channelConfig) > 0) {
+            AdminBusinessRedisUtils.hset(RedisConstants.PAY_CHANNEL_KEY, channelConfig.getPayChannelId() + "", channelConfig);
+            return true;
+        }
+        return false;
     }
 }

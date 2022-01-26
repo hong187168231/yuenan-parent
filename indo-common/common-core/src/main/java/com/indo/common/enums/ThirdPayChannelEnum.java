@@ -8,7 +8,7 @@ import lombok.Getter;
 public enum ThirdPayChannelEnum {
 
     DILEI("DILEI", "地雷支付"),
-
+    EASY("EASY", "EASY支付"),
     HUAREN("HUAREN", "HUAREN支付");
 
     private String code;

@@ -30,6 +30,9 @@ public class PayChannelConfig extends BaseEntity {
     @ApiModelProperty(value = "支付渠道名称")
     private String channelName;
 
+    @ApiModelProperty(value = "别名")
+    private String alias;
+
     private String channelCode;
 
     @ApiModelProperty(value = "支付渠道描述")

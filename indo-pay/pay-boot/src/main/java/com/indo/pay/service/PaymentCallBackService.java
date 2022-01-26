@@ -14,6 +14,7 @@ import com.indo.pay.mapper.RechargeMapper;
 import com.indo.pay.common.constant.PayConstants;
 import com.indo.common.utils.ViewUtil;
 import com.indo.pay.pojo.dto.RechargeCallBackDTO;
+import com.indo.pay.pojo.resp.EasyCallbackReq;
 import com.indo.pay.pojo.resp.HuaRenCallbackReq;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -45,11 +46,19 @@ public class PaymentCallBackService {
 
     @Resource(name = "huaRenOnlinePaymentService")
     private OnlinePaymentService huaRenOnlinePaymentService;
+    @Resource(name = "easyOnlinePaymentService")
+    private OnlinePaymentService easyOnlinePaymentService;
+
 
 
     public String huaRenCallback(HuaRenCallbackReq req) {
         return commonCallback(huaRenOnlinePaymentService.callBackProcess(req), PayConstants.PAY_CALLBACK_FAIL, PayConstants.PAY_CALLBACK_BIG_SUCCESS);
     }
+    public String easyCallback(EasyCallbackReq req) {
+        return commonCallback(easyOnlinePaymentService.callBackProcess(req), PayConstants.PAY_CALLBACK_FAIL, PayConstants.PAY_CALLBACK_BIG_OK);
+    }
+
+
 
     public String commonCallback(boolean result, String msgFail, String msgSuccess) {
         String msg = msgFail;

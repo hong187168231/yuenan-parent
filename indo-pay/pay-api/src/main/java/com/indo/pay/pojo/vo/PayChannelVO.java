@@ -18,11 +18,13 @@ public class PayChannelVO extends BaseEntity {
 
 
     @ApiModelProperty(value = "支付渠道id")
-    @TableId(value = "pay_channel_id", type = IdType.AUTO)
     private Long payChannelId;
 
     @ApiModelProperty(value = "支付渠道名称")
     private String channelName;
+
+    @ApiModelProperty(value = "别名")
+    private String alias;
 
     @ApiModelProperty(value = "支付渠道描述")
     private String channelDesc;
