@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @NoArgsConstructor
-public class RechargeCallBackDTO {
+public class PayCallBackDTO {
 
     private Long memId;// 价格
     private BigDecimal amount;// 价格

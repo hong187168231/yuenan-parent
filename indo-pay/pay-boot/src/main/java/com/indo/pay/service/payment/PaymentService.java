@@ -1,4 +1,4 @@
-package com.indo.pay.service;
+package com.indo.pay.service.payment;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -18,6 +18,7 @@ import com.indo.pay.pojo.req.HuaRenPayReq;
 import com.indo.pay.pojo.req.RechargeReq;
 import com.indo.pay.pojo.resp.EasyPayResp;
 import com.indo.pay.pojo.resp.HuaRenPayResp;
+import com.indo.pay.service.rechargeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -41,7 +42,7 @@ public class PaymentService {
 
 
     @Autowired
-    private rechargeService rechargeService;
+    private com.indo.pay.service.rechargeService rechargeService;
 
 
     public Result paymentRequestByUser(LoginInfo loginInfo, RechargeReq rechargeReq) {

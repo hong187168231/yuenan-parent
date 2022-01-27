@@ -5,7 +5,9 @@ import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
 import com.indo.core.base.service.SuperService;
 import com.indo.core.pojo.entity.PayTakeCash;
+import com.indo.pay.pojo.dto.PayCallBackDTO;
 import com.indo.pay.pojo.req.TakeCashApplyReq;
+import com.indo.pay.pojo.resp.withdraw.HuaRenWithdrawCallbackReq;
 import com.indo.pay.pojo.vo.TakeCashRecordVO;
 
 import java.util.List;
@@ -24,5 +26,7 @@ public interface ITakeCashService extends SuperService<PayTakeCash> {
     boolean takeCashApply(TakeCashApplyReq cashApplyReq, LoginInfo loginInfo);
 
     Result<List<TakeCashRecordVO>> cashRecordList(Integer page, Integer limit, LoginInfo loginInfo);
+
+    boolean withdrawSuccess(PayCallBackDTO callBackDTO);
 
 }

@@ -1,8 +1,9 @@
-package com.indo.pay.service.impl;
+package com.indo.pay.service.payment;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.indo.common.constant.GlobalConstants;
 import com.indo.common.utils.DateUtils;
 import com.indo.common.utils.StringUtils;
 import com.indo.common.web.util.http.HttpClient;
@@ -12,15 +13,13 @@ import com.indo.pay.common.constant.PayConstants;
 import com.indo.pay.factory.AbstractOnlinePaymentService;
 import com.indo.pay.mapper.PayChannelMapper;
 import com.indo.pay.mapper.RechargeMapper;
-import com.indo.pay.pojo.dto.RechargeCallBackDTO;
+import com.indo.pay.pojo.dto.PayCallBackDTO;
 import com.indo.pay.pojo.dto.RechargeDTO;
 import com.indo.pay.pojo.req.BaseCallBackReq;
 import com.indo.pay.pojo.req.BasePayReq;
 import com.indo.pay.pojo.req.HuaRenPayReq;
 import com.indo.pay.pojo.resp.HuaRenCallbackReq;
 import com.indo.pay.pojo.resp.HuaRenPayResp;
-import com.indo.pay.service.PaymentCallBackService;
-import com.indo.pay.service.PaymentService;
 import com.indo.pay.util.SignMd5Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -37,7 +36,7 @@ import java.util.*;
  **/
 @Slf4j
 @Service("huaRenOnlinePaymentService")
-public class HuarenOnlinePaymentServiceImpl extends AbstractOnlinePaymentService {
+public class HuarenOnlinePaymentService extends AbstractOnlinePaymentService {
 
     @Resource
     private RechargeMapper rechargeMapper;
@@ -130,7 +129,7 @@ public class HuarenOnlinePaymentServiceImpl extends AbstractOnlinePaymentService
     @Override
     protected <R extends BaseCallBackReq> boolean accountRecharge(R req) {
         // 平台订单号、交易金额、商户订单号
-        RechargeCallBackDTO callBackDto = new RechargeCallBackDTO();
+        PayCallBackDTO callBackDto = new PayCallBackDTO();
         callBackDto.setTransactionNo(req.getTransactionNo());
         callBackDto.setAmount(new BigDecimal(req.getAmount()));
         callBackDto.setOrderNo(req.getMchOrderNo());
@@ -188,7 +187,7 @@ public class HuarenOnlinePaymentServiceImpl extends AbstractOnlinePaymentService
             log.error("hr支付宝签名不在确=={}", signStr);
             return false;
         }
-        if (PayConstants.PAY_RECHARGE_STATUS_COMPLETE.equals(payRecharge.getOrderStatus())) {
+        if (GlobalConstants.PAY_RECHARGE_STATUS_COMPLETE.equals(payRecharge.getOrderStatus())) {
             log.error("hr支付此单号已经处理=={}", huaRenCallbackReq.getTransactionNo());
             return false;
         }

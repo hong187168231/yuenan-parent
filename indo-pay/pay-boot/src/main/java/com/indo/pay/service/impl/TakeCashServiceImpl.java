@@ -1,31 +1,43 @@
 package com.indo.pay.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.indo.common.constant.GlobalConstants;
 import com.indo.common.constant.RedisKeys;
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.redis.utils.GeneratorIdUtil;
+import com.indo.common.redis.utils.RedisUtils;
 import com.indo.common.result.Result;
+import com.indo.common.utils.ViewUtil;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
 import com.indo.core.base.service.impl.SuperServiceImpl;
 import com.indo.core.pojo.bo.MemBaseInfoBO;
 import com.indo.core.pojo.dto.MemGoldChangeDTO;
 import com.indo.core.pojo.entity.MemBank;
+import com.indo.core.pojo.entity.MemBaseinfo;
 import com.indo.core.pojo.entity.PayTakeCash;
 import com.indo.core.service.IMemGoldChangeService;
+import com.indo.pay.common.constant.PayConstants;
 import com.indo.pay.mapper.MemBankRelationMapper;
 import com.indo.pay.mapper.TakeCashMapper;
+import com.indo.pay.pojo.dto.PayCallBackDTO;
 import com.indo.pay.pojo.req.TakeCashApplyReq;
+import com.indo.pay.pojo.resp.withdraw.HuaRenWithdrawCallbackReq;
 import com.indo.pay.pojo.vo.TakeCashRecordVO;
 import com.indo.pay.service.ITakeCashService;
 import com.indo.user.api.MemBaseInfoFeignClient;
 import com.indo.user.pojo.bo.MemTradingBO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionSystemException;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -41,6 +53,7 @@ import java.util.List;
  * @since 2021-11-13
  */
 @Service
+@Slf4j
 public class TakeCashServiceImpl extends SuperServiceImpl<TakeCashMapper, PayTakeCash> implements ITakeCashService {
 
     @Autowired
@@ -152,13 +165,13 @@ public class TakeCashServiceImpl extends SuperServiceImpl<TakeCashMapper, PayTak
     public void cashFrequency(LoginInfo loginInfo) {
         // 控制频率
         String keySuffix = RedisKeys.CASH_FREQUENCY + loginInfo.getAccount();
-//        if (RedisLock.hasKey(keySuffix)) {
-//            throw new BusinessException(StatusCode.OPERATION_FREQUENT);
-//        }
-//        boolean haveAuth = RedisLock.setIfAbsent(keySuffix, "1", 1, TimeUnit.MINUTES);
-//        if (!haveAuth) {
-//            throw new BusinessException(StatusCode.OPERATION_FREQUENT);
-//        }
+        if (RedisUtils.hasKey(keySuffix)) {
+            throw new BizException("提现操作太频繁,请稍后再试!");
+        }
+        boolean haveAuth = RedisUtils.setIfAbsent(keySuffix, "1", 1L);
+        if (!haveAuth) {
+            throw new BizException("提现操作太频繁,请稍后再试!");
+        }
 
     }
 
@@ -210,7 +223,6 @@ public class TakeCashServiceImpl extends SuperServiceImpl<TakeCashMapper, PayTak
 
     }
 
-
     /**
      * 更新提现账变信息
      *
@@ -236,6 +248,59 @@ public class TakeCashServiceImpl extends SuperServiceImpl<TakeCashMapper, PayTak
             return memBaseinfo;
         } else {
             throw new BizException("No client with requested id: " + account);
+        }
+    }
+
+
+    /**
+     * 公共回调订单处理成功
+     */
+    @Transactional
+    public boolean withdrawSuccess(PayCallBackDTO callBackDTO) {
+        log.info("进入代付回调数据成功处理========================================={}==", callBackDTO.getOrderNo());
+        try {
+            MemBaseinfo memBaseinfo = new MemBaseinfo();//todo
+            if (null != memBaseinfo) {
+                Date now = new Date();
+                // 根据商户订单号，查询订单信息
+                QueryWrapper<PayTakeCash> query = new QueryWrapper<>();
+                query.lambda().eq(PayTakeCash::getOrderNo, callBackDTO.getOrderNo());
+                PayTakeCash payTakeCash = this.baseMapper.selectOne(query);
+
+                //更新充值订单表信息
+                payTakeCash.setActualAmount(ViewUtil.getTradeOffAmount(callBackDTO.getAmount()));
+                payTakeCash.setCashStatus(GlobalConstants.PAY_RECHARGE_STATUS_COMPLETE);
+                payTakeCash.setRemitTime(now);
+                boolean flag = this.baseMapper.updateById(payTakeCash) > 0;
+                if (!flag) {
+                    throw new RuntimeException("修改订单为成功状态失败");
+                }
+                // 更新用户余额
+                updateMemAmount(payTakeCash);
+            }
+            log.info("进入代付回调数据成功处理结束========================================={}==", callBackDTO.getOrderNo());
+        } catch (Exception e) {
+            log.error("withdrawSuccess occur error.", e);
+            throw new RuntimeException(e.getMessage());
+        }
+        return true;
+    }
+
+    /**
+     * 提现更新用户余额信息
+     *
+     * @param payTakeCash
+     */
+    public void updateMemAmount(PayTakeCash payTakeCash) {
+        MemGoldChangeDTO goldChangeDO = new MemGoldChangeDTO();
+        goldChangeDO.setChangeAmount(payTakeCash.getActualAmount());
+        goldChangeDO.setTradingEnum(TradingEnum.SPENDING);
+        goldChangeDO.setGoldchangeEnum(GoldchangeEnum.TXKK);
+        goldChangeDO.setUserId(payTakeCash.getMemId());
+        boolean changeFlag = iMemGoldChangeService.updateMemGoldChange(goldChangeDO);
+        if (!changeFlag) {
+            log.info("提现回调更新用户余额失败 error param{}", JSON.toJSONString(payTakeCash));
+            throw new RuntimeException("订单处理失败！");
         }
     }
 

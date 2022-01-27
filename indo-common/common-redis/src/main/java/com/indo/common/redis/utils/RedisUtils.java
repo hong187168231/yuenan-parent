@@ -64,7 +64,7 @@ public class RedisUtils {
      * @param key 键
      * @return true 存在 false不存在
      */
-    public boolean hasKey(String key) {
+    public static boolean hasKey(String key) {
         try {
             return redisTemplate.hasKey(key);
         } catch (Exception e) {
@@ -147,7 +147,6 @@ public class RedisUtils {
     }
 
 
-
     /**
      * 普通缓存放入并设置时间
      *
@@ -175,7 +174,7 @@ public class RedisUtils {
     /**
      * 递增
      *
-     * @param key   键
+     * @param key 键
      * @return
      */
     public static long incr(String key) {
@@ -218,10 +217,9 @@ public class RedisUtils {
      * @param item 项 不能为null
      * @return 值
      */
-    public  static Object hget(String key, String item) {
+    public static Object hget(String key, String item) {
         return redisTemplate.opsForHash().get(key, item);
     }
-
 
 
     /**
@@ -259,7 +257,7 @@ public class RedisUtils {
      * @param time 时间(秒)
      * @return true成功 false失败
      */
-    public static boolean   hmset(String key, Map<String, Object> map, long time) {
+    public static boolean hmset(String key, Map<String, Object> map, long time) {
         try {
             redisTemplate.opsForHash().putAll(key, map);
             if (time > 0) {
@@ -280,7 +278,7 @@ public class RedisUtils {
      * @param value 值
      * @return true 成功 false失败
      */
-    public  static boolean hset(String key, String item, Object value) {
+    public static boolean hset(String key, String item, Object value) {
         try {
             redisTemplate.opsForHash().put(key, item, value);
             return true;
@@ -432,7 +430,7 @@ public class RedisUtils {
      * @param key 键
      * @return
      */
-    public  static long sGetSetSize(String key) {
+    public static long sGetSetSize(String key) {
         try {
             return redisTemplate.opsForSet().size(key);
         } catch (Exception e) {
@@ -498,7 +496,7 @@ public class RedisUtils {
      * @param index 索引 index>=0时， 0 表头，1 第二个元素，依次类推；index<0时，-1，表尾，-2倒数第二个元素，依次类推
      * @return
      */
-    public  static Object lGetIndex(String key, long index) {
+    public static Object lGetIndex(String key, long index) {
         try {
             return redisTemplate.opsForList().index(key, index);
         } catch (Exception e) {
@@ -690,7 +688,7 @@ public class RedisUtils {
         }
     }
 
-    private static boolean setIfAbsent(final String key, final String value,Long expireTime) {
+    public static boolean setIfAbsent(final String key, final String value, Long expireTime) {
         boolean result = false;
         try {
             result = redisTemplate.opsForValue().setIfAbsent(key, value, expireTime, TimeUnit.SECONDS);
@@ -700,5 +698,6 @@ public class RedisUtils {
         }
         return result;
     }
+
 
 }

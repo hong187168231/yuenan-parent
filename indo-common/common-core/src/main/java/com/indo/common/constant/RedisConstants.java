@@ -39,4 +39,6 @@ public interface RedisConstants {
 
     static final String PAY_WAY_KEY = "PAY_WAY_KEY";
 
+    static final String PAY_WITHDRAW_KEY = "PAY_WITHDRAW_KEY";
+
 }

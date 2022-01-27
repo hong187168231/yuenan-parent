@@ -1,11 +1,11 @@
-package com.indo.pay.controller;
+package com.indo.pay.controller.callback;
 
 import com.alibaba.fastjson.JSONObject;
 import com.indo.common.annotation.AllowAccess;
 import com.indo.common.web.exception.BizException;
 import com.indo.pay.pojo.resp.EasyCallbackReq;
 import com.indo.pay.pojo.resp.HuaRenCallbackReq;
-import com.indo.pay.service.PaymentCallBackService;
+import com.indo.pay.service.payment.PaymentCallBackService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 @RestController
 @RequestMapping("/callback")
-public class CallBackController {
+public class RechargeCallBackController {
 
 
     @Resource

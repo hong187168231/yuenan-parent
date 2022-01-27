@@ -39,23 +39,7 @@ public class PayConstants {
     public static final String MOBILE_RECHARGE_CONTENT = "mobileContent";
 
 
-    /**
-     * 充值订单类型   0 处理中 1 已存入 2 已失败 3 已取消
-     */
-    public static final Integer PAY_RECHARGE_STATUS_PROCESS = 0;
-    public static final Integer PAY_RECHARGE_STATUS_COMPLETE = 1;
-    public static final Integer PAY_RECHARGE_STATUS_FAILURE = 2;
-    public static final Integer PAY_RECHARGE_STATUS_CANCEL = 3;
 
-
-    /**
-     * 提现订单类型   1待处理 2已锁定 2 已确定 4 已取消 5 已拒绝
-     */
-    public static final Integer PAY_CASH_STATUS_PROCESS = 1;
-    public static final Integer PAY_CASH_STATUS_LOCK = 2;
-    public static final Integer PAY_CASH_STATUS_OK = 3;
-    public static final Integer PAY_CASH_STATUS_CANCEL = 4;
-    public static final Integer PAY_CASH_STATUS_REJECT = 5;
 
     // 支付回调失败
     public static final String PAY_CALLBACK_FAIL = "fail";

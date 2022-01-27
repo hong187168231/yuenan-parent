@@ -1,6 +1,7 @@
-package com.indo.pay.service;
+package com.indo.pay.service.payment;
 
 import com.alibaba.fastjson.JSON;
+import com.indo.common.constant.GlobalConstants;
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.core.pojo.dto.MemGoldChangeDTO;
@@ -13,7 +14,7 @@ import com.indo.pay.mapper.PayFirstRechargeMapper;
 import com.indo.pay.mapper.RechargeMapper;
 import com.indo.pay.common.constant.PayConstants;
 import com.indo.common.utils.ViewUtil;
-import com.indo.pay.pojo.dto.RechargeCallBackDTO;
+import com.indo.pay.pojo.dto.PayCallBackDTO;
 import com.indo.pay.pojo.resp.EasyCallbackReq;
 import com.indo.pay.pojo.resp.HuaRenCallbackReq;
 import lombok.extern.slf4j.Slf4j;
@@ -72,7 +73,7 @@ public class PaymentCallBackService {
      * 公共回调订单处理成功
      */
     @Transactional
-    public boolean paymentSuccess(RechargeCallBackDTO callBackDto, PayRecharge payRecharge) {
+    public boolean paymentSuccess(PayCallBackDTO callBackDto, PayRecharge payRecharge) {
         log.info("进入回调数据成功处理========================================={}==", payRecharge.getOrderNo());
         // 【分布式读写锁】
         try {
@@ -93,7 +94,7 @@ public class PaymentCallBackService {
                 //更新充值订单表信息
                 payRecharge.setTotalAmount(ViewUtil.getTradeOffAmount(new BigDecimal(amount)));
                 payRecharge.setTransactionNo(callBackDto.getTransactionNo());
-                payRecharge.setOrderStatus(PayConstants.PAY_RECHARGE_STATUS_COMPLETE);
+                payRecharge.setOrderStatus(GlobalConstants.PAY_RECHARGE_STATUS_COMPLETE);
                 payRecharge.setPayTime(now);
                 boolean flag = payRechargeOrderMapper.updateById(payRecharge) > 0;
                 if (!flag) {
@@ -123,6 +124,5 @@ public class PaymentCallBackService {
         }
         return true;
     }
-
 
 }

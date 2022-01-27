@@ -1,9 +1,9 @@
-package com.indo.pay.service.impl;
+package com.indo.pay.service.payment;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.indo.common.utils.StringUtils;
+import com.indo.common.constant.GlobalConstants;
 import com.indo.common.web.util.http.HttpClient;
 import com.indo.core.pojo.entity.PayChannelConfig;
 import com.indo.core.pojo.entity.PayRecharge;
@@ -11,17 +11,14 @@ import com.indo.pay.common.constant.PayConstants;
 import com.indo.pay.factory.AbstractOnlinePaymentService;
 import com.indo.pay.mapper.PayChannelMapper;
 import com.indo.pay.mapper.RechargeMapper;
-import com.indo.pay.pojo.dto.RechargeCallBackDTO;
+import com.indo.pay.pojo.dto.PayCallBackDTO;
 import com.indo.pay.pojo.dto.RechargeDTO;
 import com.indo.pay.pojo.req.BaseCallBackReq;
 import com.indo.pay.pojo.req.BasePayReq;
 import com.indo.pay.pojo.req.EasyPayReq;
 import com.indo.pay.pojo.req.HuaRenPayReq;
 import com.indo.pay.pojo.resp.EasyCallbackReq;
-import com.indo.pay.pojo.resp.HuaRenCallbackReq;
 import com.indo.pay.pojo.resp.HuaRenPayResp;
-import com.indo.pay.service.PaymentCallBackService;
-import com.indo.pay.service.PaymentService;
 import com.indo.pay.util.SignMd5Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -38,7 +35,7 @@ import java.util.TreeMap;
  **/
 @Slf4j
 @Service("easyOnlinePaymentService")
-public class EasyOnlinePaymentServiceImpl extends AbstractOnlinePaymentService {
+public class EasyOnlinePaymentService extends AbstractOnlinePaymentService {
 
     @Resource
     private RechargeMapper rechargeMapper;
@@ -131,7 +128,7 @@ public class EasyOnlinePaymentServiceImpl extends AbstractOnlinePaymentService {
     @Override
     protected <R extends BaseCallBackReq> boolean accountRecharge(R req) {
         // 平台订单号、交易金额、商户订单号
-        RechargeCallBackDTO callBackDto = new RechargeCallBackDTO();
+        PayCallBackDTO callBackDto = new PayCallBackDTO();
         callBackDto.setTransactionNo(req.getTransactionNo());
         callBackDto.setAmount(new BigDecimal(req.getAmount()));
         callBackDto.setOrderNo(req.getMchOrderNo());
@@ -183,7 +180,7 @@ public class EasyOnlinePaymentServiceImpl extends AbstractOnlinePaymentService {
             log.error("easy支付签名不在确=={}", signStr);
             return false;
         }
-        if (PayConstants.PAY_RECHARGE_STATUS_COMPLETE.equals(payRecharge.getOrderStatus())) {
+        if (GlobalConstants.PAY_RECHARGE_STATUS_COMPLETE.equals(payRecharge.getOrderStatus())) {
             log.error("easy支付此单号已经处理=={}", easyCallbackReq.getTransactionNo());
             return false;
         }

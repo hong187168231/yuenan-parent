@@ -1,4 +1,4 @@
-package com.indo.core.pojo.entity;
+package com.indo.pay.pojo.bo;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -9,7 +9,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -21,14 +20,11 @@ import java.util.Date;
  * @since 2022-01-26
  */
 @Data
-@EqualsAndHashCode(callSuper = true)
-@ApiModel(value = "PayTakeCash对象", description = "")
-public class PayTakeCash extends BaseEntity {
+@ApiModel(value = "提现feign请求参数")
+public class PayTakeCashBO {
 
-    private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "提现申请id")
-    @TableId(value = "take_cash_id", type = IdType.AUTO)
     private Long takeCashId;
 
     @ApiModelProperty(value = "提现银行卡号")

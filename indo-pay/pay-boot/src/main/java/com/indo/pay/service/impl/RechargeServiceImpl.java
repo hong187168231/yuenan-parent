@@ -1,5 +1,6 @@
 package com.indo.pay.service.impl;
 
+import com.indo.common.constant.GlobalConstants;
 import com.indo.common.constant.RedisConstants;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.redis.utils.RedisUtils;
@@ -56,7 +57,7 @@ public class RechargeServiceImpl extends SuperServiceImpl<RechargeMapper, PayRec
         rechargeOrder.setOldAmount(amount);
         rechargeOrder.setTotalAmount(amount);
         rechargeOrder.setRealAmount(amount);
-        rechargeOrder.setOrderStatus(PayConstants.PAY_RECHARGE_STATUS_PROCESS);
+        rechargeOrder.setOrderStatus(GlobalConstants.PAY_RECHARGE_STATUS_PROCESS);
         return this.baseMapper.insert(rechargeOrder) > 0;
 
     }

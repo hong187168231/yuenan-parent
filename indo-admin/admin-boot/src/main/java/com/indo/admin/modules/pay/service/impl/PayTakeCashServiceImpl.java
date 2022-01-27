@@ -1,5 +1,6 @@
 package com.indo.admin.modules.pay.service.impl;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -7,11 +8,17 @@ import com.indo.admin.modules.pay.mapper.PayTakeCashMapper;
 import com.indo.admin.modules.pay.service.IPayTakeCashService;
 import com.indo.admin.pojo.vo.pay.PayTakeCashApplyVO;
 import com.indo.admin.pojo.vo.pay.PayTakeCashRecordVO;
+import com.indo.common.constant.GlobalConstants;
+import com.indo.common.enums.AudiTypeEnum;
 import com.indo.common.result.Result;
 import com.indo.common.utils.StringUtils;
+import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
 import com.indo.core.pojo.entity.PayTakeCash;
+import com.indo.pay.api.WithdrawFeignClient;
+import com.indo.pay.pojo.bo.PayTakeCashBO;
 import com.indo.pay.pojo.req.PayTakeCashReq;
+import com.indo.user.pojo.bo.MemTradingBO;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -30,6 +37,8 @@ public class PayTakeCashServiceImpl extends ServiceImpl<PayTakeCashMapper, PayTa
 
     @Resource
     private DozerUtil dozerUtil;
+    @Resource
+    private WithdrawFeignClient withdrawFeignClient;
 
     @Override
     public Page<PayTakeCashApplyVO> cashApplyList(PayTakeCashReq req) {
@@ -67,5 +76,36 @@ public class PayTakeCashServiceImpl extends ServiceImpl<PayTakeCashMapper, PayTa
         Page<PayTakeCash> pageList = baseMapper.selectPage(page, wrapper);
         List<PayTakeCashRecordVO> result = dozerUtil.convert(pageList.getRecords(), PayTakeCashRecordVO.class);
         return Result.success(result, page.getTotal());
+    }
+
+    @Override
+    public boolean takeCashOpera(AudiTypeEnum audiTypeEnum, Long takeCashId) {
+        PayTakeCash payTakeCash = this.baseMapper.selectById(takeCashId);
+        if (ObjectUtil.isEmpty(payTakeCash)) {
+            throw new BizException("提现订单不存在");
+        }
+        if (!payTakeCash.getCashStatus().equals(GlobalConstants.PAY_CASH_STATUS_PENDING)) {
+            throw new BizException("提现订单状态错误");
+        }
+        if (audiTypeEnum.name().equals(AudiTypeEnum.reject)) {
+            payTakeCash.setCashStatus(GlobalConstants.PAY_CASH_STATUS_REJECT);
+        } else {
+            payTakeCash.setCashStatus(GlobalConstants.PAY_CASH_STATUS_OK);
+            PayTakeCashBO payTakeCashBO = new PayTakeCashBO();
+            DozerUtil.map(payTakeCash, payTakeCashBO);
+            Result<Boolean> result = withdrawFeignClient.withdrawRequest(payTakeCashBO);
+            if (Result.success().getCode().equals(result.getCode())) {
+                Boolean flag = result.getData();
+                if (!flag.equals(true)) {
+                    throw new BizException("提现处理失败!");
+                } else {
+                    return true;
+                }
+            } else {
+                throw new BizException("takeCashOpera No client with requested ");
+            }
+
+        }
+        return this.baseMapper.updateById(payTakeCash) > 0;
     }
 }
