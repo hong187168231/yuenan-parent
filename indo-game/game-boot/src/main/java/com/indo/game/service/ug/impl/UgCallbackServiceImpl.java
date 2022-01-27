@@ -1,5 +1,6 @@
 package com.indo.game.service.ug.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
@@ -67,7 +68,9 @@ public class UgCallbackServiceImpl implements UgCallbackService {
         MemTradingBO memBaseinfo = new MemTradingBO();
 //        GameCategory gameCategory = new GameCategory();
 //        GamePlatform gamePlatform = new GamePlatform();
-        for (UgCallBackTransactionItemReq ugCallBackTransactionItemReq : ugCallBackTransactionItemReqList) {
+        for (int i=0;i<ugCallBackTransactionItemReqList.size();i++){
+//        for (UgCallBackTransactionItemReq ugCallBackTransactionItemReq : ugCallBackTransactionItemReqList) {
+            UgCallBackTransactionItemReq ugCallBackTransactionItemReq = JSONObject.parseObject(JSONObject.toJSONString(ugCallBackTransactionItemReqList.get(i)),UgCallBackTransactionItemReq.class);;
             UgCallBackBalanceResp ugCallBackBalanceResp = new UgCallBackBalanceResp();
             ugCallBackBalanceResp.setAccount(ugCallBackTransactionItemReq.getAccount());
             ugCallBackBalanceResp.setTransactionNo(ugCallBackTransactionItemReq.getTransactionNo());
