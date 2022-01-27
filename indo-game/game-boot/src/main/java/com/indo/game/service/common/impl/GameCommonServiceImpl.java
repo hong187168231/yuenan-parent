@@ -17,6 +17,8 @@ import com.indo.game.service.common.GameCommonService;
 import com.indo.user.api.MemBaseInfoFeignClient;
 import com.indo.user.pojo.bo.MemTradingBO;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +29,7 @@ import java.util.List;
 @Slf4j
 @Service(value = "gameCommonService")
 public class GameCommonServiceImpl implements GameCommonService {
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
     private GamePlatformMapper gamePlatformMapper;
 
@@ -86,6 +89,7 @@ public class GameCommonServiceImpl implements GameCommonService {
 
     @Override
     public void updateUserBalance(MemTradingBO memTradingBO, BigDecimal changeAmount, GoldchangeEnum goldchangeEnum, TradingEnum tradingEnum) {
+        logger.info("修改用户余额:memTradingBO{},changeAmount{},goldchangeEnum{},tradingEnum{}"+memTradingBO,changeAmount,goldchangeEnum,tradingEnum);
         MemGoldChangeDTO goldChangeDO = new MemGoldChangeDTO();
         goldChangeDO.setChangeAmount(changeAmount);
         goldChangeDO.setTradingEnum(tradingEnum);
