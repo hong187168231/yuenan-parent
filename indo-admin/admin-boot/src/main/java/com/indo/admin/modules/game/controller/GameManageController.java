@@ -31,7 +31,8 @@ import java.util.List;
 @AllArgsConstructor
 @Api(tags = "游戏管理-游戏平台")
 public class GameManageController {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+
     @Autowired
     private IGameManageService iGameManageService;
 
@@ -39,7 +40,7 @@ public class GameManageController {
     @PostMapping(value = "/allGameInfoCount")
     @ResponseBody
     public Result<List<GameStatiRecord>> queryAllGameInfoCount(GameInfoPageReq req){
-        logger.info("查询所有平台记录allGameInfoCount {} req:{}", JSONObject.toJSONString(req));
+        log.info("查询所有平台记录allGameInfoCount {} req:{}", JSONObject.toJSONString(req));
         IPage<GameStatiRecord> result = iGameManageService.queryAllGameInfoCount(req);
         return Result.success(result.getRecords(), result.getTotal());
     }
@@ -48,7 +49,7 @@ public class GameManageController {
     @PostMapping(value = "/allGameInfo")
     @ResponseBody
     public Result<List<GameInfoRecord>> queryAllGameInfo(GameInfoPageReq req){
-        logger.info("查询所有平台记录allGameInfoCount {} req:{}", JSONObject.toJSONString(req));
+        log.info("查询所有平台记录allGameInfoCount {} req:{}", JSONObject.toJSONString(req));
         IPage<GameInfoRecord> result = iGameManageService.queryAllGameInfo(req);
         return Result.success(result.getRecords(), result.getTotal());
     }
@@ -82,7 +83,7 @@ public class GameManageController {
     @ApiOperation(value = "查询所有平台", httpMethod = "POST")
     @PostMapping(value = "/queryAllGamePlatform")
     public Result<List<GamePlatform>> queryAllGamePlatform(GamePlatformPageReq req) {
-        logger.info("查询所有平台 queryAllGamePlatform {} req:{}", JSONObject.toJSONString(req));
+        log.info("查询所有平台 queryAllGamePlatform {} req:{}", JSONObject.toJSONString(req));
         IPage<GamePlatform> result = iGameManageService.queryAllGamePlatform(req);
         return Result.success(result.getRecords(), result.getTotal());
     }
@@ -122,7 +123,6 @@ public class GameManageController {
 
     @ApiOperation(value = "币种代码", httpMethod = "GET")
     @GetMapping(value = "/queryCurrencyType")
-    @AllowAccess
     public Result<GameCurrencyType> queryGameCurrencyType() {
         return iGameManageService.queryGameCurrencyType();
     }
