@@ -10,6 +10,7 @@ import com.indo.game.mapper.frontend.GameCategoryMapper;
 import com.indo.game.mapper.frontend.GamePlatformMapper;
 import com.indo.game.mapper.frontend.GameTypeMapper;
 import com.indo.game.pojo.entity.CptOpenMember;
+import com.indo.game.pojo.entity.manage.GamePlatform;
 import com.indo.game.pojo.vo.callback.saba.SabaApiResponseData;
 import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;

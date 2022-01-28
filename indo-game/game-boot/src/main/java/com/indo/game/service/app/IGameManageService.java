@@ -2,6 +2,8 @@ package com.indo.game.service.app;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.indo.game.pojo.dto.manage.GameInfoPageReq;
+import com.indo.game.pojo.entity.manage.GameCategory;
+import com.indo.game.pojo.entity.manage.GamePlatform;
 import com.indo.game.pojo.vo.app.GameInfoAgentRecord;
 import com.indo.game.pojo.vo.app.GameInfoRecord;
 import com.indo.game.pojo.vo.app.GameStatiRecord;

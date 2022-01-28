@@ -11,6 +11,8 @@ import com.indo.core.service.IMemGoldChangeService;
 import com.indo.game.common.util.GameBusinessRedisUtils;
 import com.indo.game.mapper.frontend.GameCategoryMapper;
 import com.indo.game.mapper.frontend.GamePlatformMapper;
+import com.indo.game.pojo.entity.manage.GameCategory;
+import com.indo.game.pojo.entity.manage.GamePlatform;
 import com.indo.game.service.common.GameCommonService;
 import com.indo.user.api.MemBaseInfoFeignClient;
 import com.indo.user.pojo.bo.MemTradingBO;

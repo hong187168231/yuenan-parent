@@ -7,6 +7,7 @@ import com.indo.common.constant.RedisConstants;
 import com.indo.common.redis.utils.RedisUtils;
 import com.indo.common.utils.QueryHelpPlus;
 import com.indo.game.mapper.frontend.GameDownloadMapper;
+import com.indo.game.pojo.entity.manage.GameDownload;
 import com.indo.game.service.app.IGameDownloadService;
 import org.springframework.stereotype.Service;
 

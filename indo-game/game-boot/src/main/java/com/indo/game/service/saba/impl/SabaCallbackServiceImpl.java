@@ -7,6 +7,7 @@ import com.indo.common.redis.utils.GeneratorIdUtil;
 import com.indo.common.utils.DateUtils;
 import com.indo.game.mapper.TxnsMapper;
 import com.indo.game.pojo.dto.saba.*;
+import com.indo.game.pojo.entity.manage.Txns;
 import com.indo.game.pojo.vo.callback.saba.*;
 import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.saba.SabaCallbackService;
