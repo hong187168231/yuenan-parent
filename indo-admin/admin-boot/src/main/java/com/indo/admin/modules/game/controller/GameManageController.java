@@ -38,7 +38,6 @@ public class GameManageController {
 
     @ApiOperation(value = "查询所有平台记录", httpMethod = "POST")
     @PostMapping(value = "/allGameInfoCount")
-    @ResponseBody
     public Result<List<GameStatiRecord>> queryAllGameInfoCount(GameInfoPageReq req){
         log.info("查询所有平台记录allGameInfoCount {} req:{}", JSONObject.toJSONString(req));
         IPage<GameStatiRecord> result = iGameManageService.queryAllGameInfoCount(req);
@@ -47,7 +46,6 @@ public class GameManageController {
 
     @ApiOperation(value = "查询所有游戏记录", httpMethod = "POST")
     @PostMapping(value = "/allGameInfo")
-    @ResponseBody
     public Result<List<GameInfoRecord>> queryAllGameInfo(GameInfoPageReq req){
         log.info("查询所有平台记录allGameInfoCount {} req:{}", JSONObject.toJSONString(req));
         IPage<GameInfoRecord> result = iGameManageService.queryAllGameInfo(req);
@@ -63,7 +61,6 @@ public class GameManageController {
     @ApiOperation(value = "新增游戏类别", httpMethod = "POST")
     @PostMapping(value = "/addGameCategory")
     public Result addGameCategory(GameCategory category) {
-        category.setCreateTime(DateUtils.format(new Date(),DateUtils.newFormat));
         return Result.judge(iGameManageService.addGameCategory(category));
     }
 
@@ -97,7 +94,6 @@ public class GameManageController {
     @ApiOperation(value = "新增平台名称", httpMethod = "POST")
     @GetMapping(value = "/addGamePlatform")
     public Result addGamePlatform(GamePlatform gamePlatform) {
-        gamePlatform.setCreateTime(DateUtils.format(new Date(),DateUtils.newFormat));
         return Result.judge(iGameManageService.addGamePlatform(gamePlatform));
     }
 
@@ -111,7 +107,6 @@ public class GameManageController {
     @ApiOperation(value = "修改平台名称", httpMethod = "POST")
     @GetMapping(value = "/modifyGamePlatform")
     public Result modifyGamePlatform(GamePlatform gamePlatform) {
-        gamePlatform.setUpdateTime(DateUtils.format(new Date(),DateUtils.newFormat));
         return Result.judge(iGameManageService.modifiyGamePlatform(gamePlatform));
     }
 
