@@ -1,6 +1,7 @@
 package com.indo.game.service.app.impl;
 
 import cn.hutool.core.util.ObjectUtil;
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -40,7 +41,6 @@ public class GameManageServiceImpl implements IGameManageService {
         categoryList = new ArrayList(map.values());
         if (ObjectUtil.isEmpty(categoryList)) {
             LambdaQueryWrapper<GameCategory> wrapper = new LambdaQueryWrapper<>();
-            wrapper.orderByAsc(GameCategory::getSortNumber);
             categoryList = gameCategoryMapper.selectList(wrapper);
         }
         categoryList.sort(Comparator.comparing(GameCategory::getSortNumber));
@@ -98,4 +98,6 @@ public class GameManageServiceImpl implements IGameManageService {
         page.setRecords(txnsMapper.queryAllAgentGameInfo(page, req));
         return page;
     }
+
+
 }

@@ -36,7 +36,7 @@ public class SwaggerConfiguration {
         //schema
         List<GrantType> grantTypes = new ArrayList<>();
         //密码模式
-        String passwordTokenUrl = "http://localhost:9999/indo-auth/oauth/token";
+        String passwordTokenUrl = "http://localhost:9999/indo-admin/oauth/token";
         ResourceOwnerPasswordCredentialsGrant resourceOwnerPasswordCredentialsGrant = new ResourceOwnerPasswordCredentialsGrant(passwordTokenUrl);
         grantTypes.add(resourceOwnerPasswordCredentialsGrant);
         OAuth oAuth = new OAuthBuilder().name("oauth2")
