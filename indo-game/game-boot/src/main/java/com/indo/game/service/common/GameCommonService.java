@@ -26,7 +26,7 @@ public interface GameCommonService {
      * @param parentName
      * @return
      */
-    public List<GamePlatform> getGamePlatformByParentName(String parentName);
+    List<GamePlatform> getGamePlatformByParentName(String parentName);
 
     /**
      * 查询用交易信息
@@ -53,7 +53,7 @@ public interface GameCommonService {
      * @param id
      * @return
      */
-    public GameCategory getGameCategoryById(Long id);
+    GameCategory getGameCategoryById(Long id);
 
 
 }
