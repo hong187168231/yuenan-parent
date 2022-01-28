@@ -25,7 +25,6 @@ public class GameDownloadController {
 
     @ApiOperation(value = "下载地址", httpMethod = "GET")
     @GetMapping(value = "/allGameDownload")
-    @AllowAccess
     public Result<List<GameDownload>> allGameDownload() {
         return Result.success(iGameDownloadService.queryAllGameDownload());
     }
