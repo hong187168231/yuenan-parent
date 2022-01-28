@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.indo.admin.pojo.dto.game.manage.GameInfoPageReq;
 import com.indo.admin.pojo.vo.game.manage.GameInfoRecord;
 import com.indo.admin.pojo.vo.game.manage.GameStatiRecord;
-import com.indo.game.pojo.entity.manage.Txns;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

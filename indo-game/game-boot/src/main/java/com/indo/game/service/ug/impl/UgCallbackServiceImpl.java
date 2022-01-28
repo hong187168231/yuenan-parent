@@ -4,16 +4,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
-import com.indo.common.utils.DateUtils;
 import com.indo.game.mapper.TxnsMapper;
 import com.indo.game.mapper.ug.UgTransferMapper;
 import com.indo.game.pojo.dto.ug.UgCallBackCancelReq;
 import com.indo.game.pojo.dto.ug.UgCallBackGetBalanceReq;
 import com.indo.game.pojo.dto.ug.UgCallBackTransactionItemReq;
 import com.indo.game.pojo.dto.ug.UgCallBackTransferReq;
-import com.indo.game.pojo.entity.manage.GameCategory;
-import com.indo.game.pojo.entity.manage.GamePlatform;
-import com.indo.game.pojo.entity.manage.Txns;
 import com.indo.game.pojo.entity.ug.UgTransfer;
 import com.indo.game.pojo.vo.callback.ug.UgCallBackBalanceResp;
 import com.indo.game.pojo.vo.callback.ug.UgCallBackCancelResp;
@@ -27,7 +23,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Service

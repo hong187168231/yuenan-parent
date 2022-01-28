@@ -2,7 +2,6 @@ package com.indo.game.controller.app;
 
 import com.indo.common.annotation.AllowAccess;
 import com.indo.common.result.Result;
-import com.indo.game.pojo.entity.manage.GameDownload;
 import com.indo.game.service.app.IGameDownloadService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -11,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/api/v1/game/download")

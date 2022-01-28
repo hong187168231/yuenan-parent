@@ -6,7 +6,6 @@ import com.indo.common.enums.TradingEnum;
 import com.indo.common.utils.DateUtils;
 import com.indo.game.mapper.TxnsMapper;
 import com.indo.game.pojo.dto.sbo.*;
-import com.indo.game.pojo.entity.manage.Txns;
 import com.indo.game.pojo.vo.callback.sbo.SboCallBackCommResp;
 import com.indo.game.pojo.vo.callback.sbo.SboCallBackGetBetStatusResp;
 import com.indo.game.pojo.vo.callback.sbo.SboCallBackGetTransferStatusResp;

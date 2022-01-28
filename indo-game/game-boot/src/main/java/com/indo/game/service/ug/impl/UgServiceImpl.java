@@ -16,9 +16,6 @@ import com.indo.game.mapper.ug.UgInsBetMapper;
 import com.indo.game.mapper.ug.UgSubBetMapper;
 import com.indo.game.pojo.dto.ug.*;
 import com.indo.game.pojo.entity.CptOpenMember;
-import com.indo.game.pojo.entity.manage.GameCategory;
-import com.indo.game.pojo.entity.manage.GamePlatform;
-import com.indo.game.pojo.entity.manage.Txns;
 import com.indo.game.pojo.entity.ug.InsBet;
 import com.indo.game.pojo.entity.ug.SubBet;
 import com.indo.game.pojo.vo.callback.ug.*;
@@ -34,9 +31,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * awc ae真人 游戏业务类

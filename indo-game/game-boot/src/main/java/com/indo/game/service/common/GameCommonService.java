@@ -2,8 +2,6 @@ package com.indo.game.service.common;
 
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
-import com.indo.game.pojo.entity.manage.GameCategory;
-import com.indo.game.pojo.entity.manage.GamePlatform;
 import com.indo.user.pojo.bo.MemTradingBO;
 
 import java.math.BigDecimal;

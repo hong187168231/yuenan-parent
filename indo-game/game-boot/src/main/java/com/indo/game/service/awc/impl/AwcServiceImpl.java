@@ -12,7 +12,6 @@ import com.indo.game.mapper.frontend.GamePlatformMapper;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.game.pojo.dto.awc.AwcTransaction;
 import com.indo.game.pojo.dto.awc.AwcApiResponseData;
-import com.indo.game.pojo.entity.manage.GamePlatform;
 import com.indo.game.service.awc.AwcService;
 import com.indo.common.utils.GameUtil;
 import com.indo.game.service.common.GameCommonService;

@@ -1,22 +1,16 @@
 package com.indo.game.service.app.impl;
 
 import cn.hutool.core.util.ObjectUtil;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.indo.admin.pojo.criteria.GameDownloadQueryCriteria;
-import com.indo.admin.pojo.criteria.SysLogQueryCriteria;
-import com.indo.admin.pojo.entity.SysLog;
 import com.indo.common.constant.RedisConstants;
 import com.indo.common.redis.utils.RedisUtils;
 import com.indo.common.utils.QueryHelpPlus;
 import com.indo.game.mapper.frontend.GameDownloadMapper;
-import com.indo.game.pojo.entity.manage.GameDownload;
-import com.indo.game.pojo.entity.manage.GamePlatform;
 import com.indo.game.service.app.IGameDownloadService;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class GameDownloadServiceImpl extends ServiceImpl<GameDownloadMapper, GameDownload> implements IGameDownloadService {

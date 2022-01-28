@@ -15,7 +15,6 @@ import com.indo.game.pojo.dto.sbo.SboPlayerLoginJsonDTO;
 import com.indo.game.pojo.dto.sbo.SboPlayerLogoutJsonDTO;
 import com.indo.game.pojo.dto.sbo.SboRegisterPlayerJsonDTO;
 import com.indo.game.pojo.entity.CptOpenMember;
-import com.indo.game.pojo.entity.manage.GamePlatform;
 import com.indo.game.pojo.entity.sbo.GameAgent;
 import com.indo.game.pojo.vo.callback.sbo.SboApiResponseData;
 import com.indo.game.service.common.GameCommonService;
