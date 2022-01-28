@@ -72,7 +72,7 @@ public class GameManageServiceImpl implements IGameManageService {
 
     public Result<List<GamePlatform>> queryHotGamePlatform() {
         LambdaQueryWrapper<GamePlatform> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(GamePlatform::getIsHotShow, "1");
+        wrapper.eq(GamePlatform::getIsHotShow, 1);
         List<GamePlatform> categoryList = gamePlatformMapper.selectList(wrapper);
         return Result.success(categoryList);
     }

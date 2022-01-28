@@ -64,7 +64,7 @@ public class GameManageServiceImpl implements IGameManageService {
         List<GamePlatform> platformList = queryAllGamePlatform();
         if (ObjectUtil.isNotEmpty(platformList)) {
             platformList = platformList.stream()
-                    .filter(platform -> "1".equals(platform.getIsHotShow()))
+                    .filter(platform -> platform.getIsHotShow().equals(1))
                     .collect(Collectors.toList());
         }
         return platformList;

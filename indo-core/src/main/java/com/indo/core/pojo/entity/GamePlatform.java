@@ -41,7 +41,7 @@ public class GamePlatform extends BaseEntity {
     private String isStart;//0关闭  1启用
 
     @ApiModelProperty(value = "是否热门显示")
-    private String isHotShow;//0关闭  1显示
+    private Integer isHotShow;//0关闭  1显示
 
     @ApiModelProperty(value = "是否开启维护")
     private String isOpenMaintenance;//0关闭  1启用

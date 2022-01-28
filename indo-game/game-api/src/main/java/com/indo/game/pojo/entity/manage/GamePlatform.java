@@ -71,7 +71,4 @@ public class GamePlatform {
     @ApiModelProperty(value = "系统与厂商间的最小限制转帐金额")
     private double minTransfer;
 
-    private String createTime;
-
-    private String updateTime;
 }
