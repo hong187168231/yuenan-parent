@@ -6,6 +6,8 @@ import com.indo.admin.pojo.dto.game.manage.GamePlatformPageReq;
 import com.indo.admin.pojo.vo.game.manage.GameInfoRecord;
 import com.indo.admin.pojo.vo.game.manage.GameStatiRecord;
 import com.indo.common.result.Result;
+import com.indo.game.pojo.entity.manage.GameCategory;
+import com.indo.game.pojo.entity.manage.GamePlatform;
 
 import java.util.List;
 

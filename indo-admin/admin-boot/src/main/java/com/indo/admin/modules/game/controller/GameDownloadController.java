@@ -2,6 +2,7 @@ package com.indo.admin.modules.game.controller;
 
 import com.indo.admin.modules.game.service.IGameDownloadService;
 import com.indo.common.result.Result;
+import com.indo.game.pojo.entity.manage.GameDownload;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;

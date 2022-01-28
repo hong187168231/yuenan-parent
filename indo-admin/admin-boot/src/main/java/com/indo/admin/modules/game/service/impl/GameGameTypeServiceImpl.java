@@ -3,6 +3,7 @@ package com.indo.admin.modules.game.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.indo.admin.modules.game.mapper.GameTypeMapper;
 import com.indo.admin.modules.game.service.IGameTypeService;
+import com.indo.game.pojo.entity.manage.GameType;
 import org.springframework.stereotype.Service;
 
 /**
