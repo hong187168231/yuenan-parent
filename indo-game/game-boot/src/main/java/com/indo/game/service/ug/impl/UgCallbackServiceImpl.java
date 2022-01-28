@@ -117,6 +117,7 @@ public class UgCallbackServiceImpl implements UgCallbackService {
 
                     b = true;
                     balance = balance.add(betAmount);
+                    ugCallBackBalanceResp.setBalance(balance);
 
 //                    Txns txns = new Txns();
 //                    txns.setMethod("Place Bet");
