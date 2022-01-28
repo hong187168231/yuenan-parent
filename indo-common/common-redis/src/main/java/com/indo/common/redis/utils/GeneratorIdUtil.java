@@ -26,7 +26,7 @@ public class GeneratorIdUtil {
             RedisUtils.expire(redisKey, 2);//2秒过期
         } else {
             RedisUtils.incr(redisKey, 1l);
-            valueNum = RedisUtils.get(redisKey);
+            valueNum = Long.parseLong(RedisUtils.get(redisKey).toString());
         }
         return valueNum;
     }
