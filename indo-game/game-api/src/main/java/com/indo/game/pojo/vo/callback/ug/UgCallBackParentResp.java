@@ -4,17 +4,17 @@ package com.indo.game.pojo.vo.callback.ug;
 import com.alibaba.fastjson.annotation.JSONField;
 
 public class UgCallBackParentResp {
-    private String ErrorCode;
+    private int ErrorCode;
     private String ErrorMessage;
 
     @JSONField(name="ErrorCode")
-    public String getErrorCode() {
-        return ErrorCode;
+    public void setErrorCode(int errorCode) {
+        ErrorCode = errorCode;
     }
 
     @JSONField(name="ErrorCode")
-    public void setErrorCode(String errorCode) {
-        ErrorCode = errorCode;
+    public int getErrorCode() {
+        return ErrorCode;
     }
 
     @JSONField(name="ErrorMessage")

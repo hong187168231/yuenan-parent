@@ -43,10 +43,10 @@ public class UgCallbackServiceImpl implements UgCallbackService {
         UgCallBackGetBalanceResp ugCallBackGetBalanceResp = new UgCallBackGetBalanceResp();
 
         if (null == memBaseinfo) {
-            ugCallBackGetBalanceResp.setErrorCode("010001");
+            ugCallBackGetBalanceResp.setErrorCode(010001);
             ugCallBackGetBalanceResp.setErrorMessage("会员帐号不存在");
         } else {
-            ugCallBackGetBalanceResp.setErrorCode("000000");
+            ugCallBackGetBalanceResp.setErrorCode(0);
             ugCallBackGetBalanceResp.setErrorMessage("操作成功");
             ugCallBackGetBalanceResp.setBalance(memBaseinfo.getBalance());
         }
@@ -62,7 +62,7 @@ public class UgCallbackServiceImpl implements UgCallbackService {
         UgCallBackTransferResp ugCallBackTransferResp = new UgCallBackTransferResp();
         List<UgCallBackBalanceResp> ugCallBackBalanceRespList = new ArrayList<>();
         boolean b = false;
-        String errorCode = "";
+        int errorCode = 0;
         String errorMessage = "";
         BigDecimal balance = BigDecimal.valueOf(0);
         MemTradingBO memBaseinfo = new MemTradingBO();
@@ -82,7 +82,7 @@ public class UgCallbackServiceImpl implements UgCallbackService {
                 balance = memBaseinfo.getBalance();
             }
             if (null == memBaseinfo) {
-                errorCode = "010001";
+                errorCode = 010001;
                 errorMessage = "会员帐号不存在";
                 ugCallBackBalanceResp.setErrorCode(errorCode);
                 ugCallBackBalanceResp.setErrorMessage(errorMessage);
@@ -91,7 +91,7 @@ public class UgCallbackServiceImpl implements UgCallbackService {
 
                 BigDecimal betAmount = ugCallBackTransactionItemReq.getAmount();
                 if (balance.compareTo(betAmount) == -1) {
-                    errorCode = "300004";
+                    errorCode = 300004;
                     errorMessage = "会员余额不足";
                     ugCallBackBalanceResp.setErrorCode(errorCode);
                     ugCallBackBalanceResp.setErrorMessage(errorMessage);
@@ -112,7 +112,7 @@ public class UgCallbackServiceImpl implements UgCallbackService {
                         }
                     }
                     gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
-                    ugCallBackBalanceResp.setErrorCode("000000");
+                    ugCallBackBalanceResp.setErrorCode(0);
                     ugCallBackBalanceResp.setErrorMessage("操作成功");
 
                     b = true;
@@ -142,7 +142,7 @@ public class UgCallbackServiceImpl implements UgCallbackService {
             ugCallBackBalanceRespList.add(ugCallBackBalanceResp);
         }
         if (b) {
-            ugCallBackTransferResp.setErrorCode("000000");
+            ugCallBackTransferResp.setErrorCode(0);
             ugCallBackTransferResp.setErrorMessage("操作成功");
         } else {
             ugCallBackTransferResp.setErrorCode(errorCode);
@@ -165,7 +165,7 @@ public class UgCallbackServiceImpl implements UgCallbackService {
         ugCallBackCancelResp.setTransactionNo(ugCallBackCancelReq.getTransactionNo());
 
         if (null == memBaseinfo) {
-            ugCallBackCancelResp.setErrorCode("010001");
+            ugCallBackCancelResp.setErrorCode(010001);
             ugCallBackCancelResp.setErrorMessage("会员帐号不存在");
         } else {
             LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
@@ -207,7 +207,7 @@ public class UgCallbackServiceImpl implements UgCallbackService {
 //                oldOperInfo.setStatus("Cancel");
 //                txnsMapper.updateById(oldOperInfo);
             }
-            ugCallBackCancelResp.setErrorCode("000000");
+            ugCallBackCancelResp.setErrorCode(0);
             ugCallBackCancelResp.setErrorMessage("操作成功");
 
         }
@@ -226,7 +226,7 @@ public class UgCallbackServiceImpl implements UgCallbackService {
         ugCallBackBalanceResp.setTransactionNo(ugCallBackCancelReq.getTransactionNo());
 
         if (null == memBaseinfo) {
-            ugCallBackBalanceResp.setErrorCode("010001");
+            ugCallBackBalanceResp.setErrorCode(010001);
             ugCallBackBalanceResp.setErrorMessage("会员帐号不存在");
         } else {
             LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
@@ -235,10 +235,10 @@ public class UgCallbackServiceImpl implements UgCallbackService {
             wrapper.eq(Txns::getPlatformTxId, ugCallBackCancelReq.getTransactionNo());
             Txns oldOperInfo = txnsMapper.selectOne(wrapper);
             if (null == oldOperInfo) {
-                ugCallBackBalanceResp.setErrorCode("300002");
+                ugCallBackBalanceResp.setErrorCode(300002);
                 ugCallBackBalanceResp.setErrorMessage("存取款失败");
             }
-            ugCallBackBalanceResp.setErrorCode("000000");
+            ugCallBackBalanceResp.setErrorCode(0);
             ugCallBackBalanceResp.setErrorMessage("操作成功");
 
             ugCallBackBalanceResp.setBalance(memBaseinfo.getBalance());
