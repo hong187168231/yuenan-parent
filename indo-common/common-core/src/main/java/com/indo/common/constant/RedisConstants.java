@@ -41,4 +41,8 @@ public interface RedisConstants {
 
     static final String PAY_WITHDRAW_KEY = "PAY_WITHDRAW_KEY";
 
+    static final String GAME_CATEGORY_KEY = "GAME_CATEGORY_KEY";
+
+    static final String GAME_PLATFORM_KEY = "GAME_PLATFORM_KEY";
+
 }

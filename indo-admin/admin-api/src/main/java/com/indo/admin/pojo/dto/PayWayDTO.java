@@ -32,4 +32,6 @@ public class PayWayDTO {
     @ApiModelProperty(value = "最大金额")
     private Integer todayAmount;
 
+    @ApiModelProperty(value = "状态 0关闭  1开启")
+    private Integer status;
 }

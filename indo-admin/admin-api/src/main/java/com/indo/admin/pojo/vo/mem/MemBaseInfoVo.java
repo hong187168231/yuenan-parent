@@ -42,8 +42,6 @@ public class MemBaseInfoVo {
     /*********************等级&团队*****************************/
     @ApiModelProperty(value = "会员等级")
     private String memLevel;
-    @ApiModelProperty(value = "会员层级")
-    private Long groupId;
     @ApiModelProperty(value = "注册来源:1-苹果,2-安卓,3-h5")
     private Integer registerSource;
     @ApiModelProperty(value = "账户类型:0-普通会员 1-代理会员")
@@ -57,7 +55,7 @@ public class MemBaseInfoVo {
     @ApiModelProperty(value = "存款总额")
     private BigDecimal totalDeposit;
     @ApiModelProperty(value = "取款总额")
-    private BigDecimal totalWithDraw;
+    private BigDecimal totalEnchantment;
     @ApiModelProperty(value = "投注总额")
     private BigDecimal totalBet;
     @ApiModelProperty(value = "存款次数")

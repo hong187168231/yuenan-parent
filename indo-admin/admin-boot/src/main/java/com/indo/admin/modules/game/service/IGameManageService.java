@@ -19,9 +19,9 @@ public interface IGameManageService {
 
     boolean deleteBatchGameCategory(List<String> list);
 
-    boolean modifiyGameCategory(GameCategory category);
+    boolean modifyGameCategory(GameCategory category);
 
-    public IPage<GamePlatform> queryAllGamePlatform(GamePlatformPageReq req);
+    IPage<GamePlatform> queryAllGamePlatform(GamePlatformPageReq req);
 
     Result<List<GamePlatform>> queryHotGamePlatform();
 
@@ -35,7 +35,7 @@ public interface IGameManageService {
 
     Result queryGameCurrencyType();
 
-    public IPage<GameStatiRecord> queryAllGameInfoCount(GameInfoPageReq req);
+    IPage<GameStatiRecord> queryAllGameInfoCount(GameInfoPageReq req);
 
-    public IPage<GameInfoRecord> queryAllGameInfo(GameInfoPageReq req);
+    IPage<GameInfoRecord> queryAllGameInfo(GameInfoPageReq req);
 }

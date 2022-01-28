@@ -1,9 +1,14 @@
 package com.indo.game.service.app.impl;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.indo.common.constant.RedisConstants;
+import com.indo.common.redis.utils.RedisUtils;
 import com.indo.common.result.Result;
+import com.indo.core.pojo.entity.Activity;
+import com.indo.core.pojo.entity.PayWithdrawConfig;
 import com.indo.game.mapper.TxnsMapper;
 import com.indo.game.mapper.frontend.GameCategoryMapper;
 import com.indo.game.mapper.frontend.GamePlatformMapper;
@@ -16,10 +21,12 @@ import com.indo.game.service.app.IGameManageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class GameManageServiceImpl implements IGameManageService {
+
     @Autowired
     private GamePlatformMapper gamePlatformMapper;
     @Autowired
@@ -27,54 +34,68 @@ public class GameManageServiceImpl implements IGameManageService {
     @Autowired
     private TxnsMapper txnsMapper;
 
-    public Result queryAllGameCategory(){
-        LambdaQueryWrapper<GameCategory> wrapper = new LambdaQueryWrapper<>();
-        wrapper.orderByAsc(GameCategory::getSortNumber);
-        List<GameCategory> categoryList = gameCategoryMapper.selectList(wrapper);
-        return Result.success(categoryList);
+    public List<GameCategory> queryAllGameCategory() {
+        List<GameCategory> categoryList;
+        Map<Object, Object> map = RedisUtils.hmget(RedisConstants.GAME_CATEGORY_KEY);
+        categoryList = new ArrayList(map.values());
+        if (ObjectUtil.isEmpty(categoryList)) {
+            LambdaQueryWrapper<GameCategory> wrapper = new LambdaQueryWrapper<>();
+            wrapper.orderByAsc(GameCategory::getSortNumber);
+            categoryList = gameCategoryMapper.selectList(wrapper);
+        }
+        categoryList.sort(Comparator.comparing(GameCategory::getSortNumber));
+        return categoryList;
     }
 
-    public Result queryAllGamePlatform(){
-        LambdaQueryWrapper<GamePlatform> wrapper = new LambdaQueryWrapper<>();
-        wrapper.orderByAsc(GamePlatform::getSortNumber);
-        List<GamePlatform> categoryList = gamePlatformMapper.selectList(wrapper);
-        return Result.success(categoryList);
+
+    public List<GamePlatform> queryAllGamePlatform() {
+        List<GamePlatform> platformList;
+        Map<Object, Object> map = RedisUtils.hmget(RedisConstants.GAME_PLATFORM_KEY);
+        platformList = new ArrayList(map.values());
+        if (ObjectUtil.isEmpty(platformList)) {
+            LambdaQueryWrapper<GamePlatform> wrapper = new LambdaQueryWrapper<>();
+            platformList = gamePlatformMapper.selectList(wrapper);
+        }
+        platformList.sort(Comparator.comparing(GamePlatform::getSortNumber));
+        return platformList;
     }
 
-    public Result queryHotGamePlatform(){
-        LambdaQueryWrapper<GamePlatform> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(GamePlatform::getIsHotShow,"1");
-        wrapper.orderByAsc(GamePlatform::getSortNumber);
-        List<GamePlatform> categoryList = gamePlatformMapper.selectList(wrapper);
-        return Result.success(categoryList);
+    public List<GamePlatform> queryHotGamePlatform() {
+        List<GamePlatform> platformList = queryAllGamePlatform();
+        if (ObjectUtil.isNotEmpty(platformList)) {
+            platformList = platformList.stream()
+                    .filter(platform -> "1".equals(platform.getIsHotShow()))
+                    .collect(Collectors.toList());
+        }
+        return platformList;
     }
 
-    public Result queryGamePlatformByCategory(Long categoryId){
+    public List<GamePlatform> queryGamePlatformByCategory(Long categoryId) {
         LambdaQueryWrapper<GamePlatform> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(GamePlatform::getCategoryId,categoryId);
+        wrapper.eq(GamePlatform::getCategoryId, categoryId);
         wrapper.orderByAsc(GamePlatform::getSortNumber);
         List<GamePlatform> categoryList = gamePlatformMapper.selectList(wrapper);
-        return Result.success(categoryList);
+        return categoryList;
     }
 
     @Override
     public IPage<GameStatiRecord> queryAllGameInfoCount(GameInfoPageReq req) {
-        IPage<GameStatiRecord> page = new Page<>(null==req.getPage()?1: req.getPage(), null==req.getLimit()?10:req.getLimit());
-        page.setRecords(txnsMapper.queryAllGameInfoCount(page,req));
+        IPage<GameStatiRecord> page = new Page<>(req.getPage(), req.getLimit());
+        page.setRecords(txnsMapper.queryAllGameInfoCount(page, req));
         return page;
     }
 
     @Override
     public IPage<GameInfoRecord> queryAllGameInfo(GameInfoPageReq req) {
-        IPage<GameInfoRecord> page = new Page<>(null==req.getPage()?1: req.getPage(), null==req.getLimit()?10:req.getLimit());
-        page.setRecords(txnsMapper.queryAllGameInfo(page,req));
+        IPage<GameInfoRecord> page = new Page<>(req.getPage(), req.getLimit());
+        page.setRecords(txnsMapper.queryAllGameInfo(page, req));
         return page;
     }
 
     @Override
-    public IPage<GameInfoAgentRecord> queryAllAgentGameInfo(GameInfoPageReq req){
-        IPage<GameInfoAgentRecord> page = new Page<>(null==req.getPage()?1: req.getPage(), null==req.getLimit()?10:req.getLimit());
-        page.setRecords(txnsMapper.queryAllAgentGameInfo(page,req));
+    public IPage<GameInfoAgentRecord> queryAllAgentGameInfo(GameInfoPageReq req) {
+        IPage<GameInfoAgentRecord> page = new Page<>(req.getPage(), req.getLimit());
+        page.setRecords(txnsMapper.queryAllAgentGameInfo(page, req));
         return page;
     }
 }

@@ -398,7 +398,6 @@ public class DateUtils {
 
     public static DateFormat getNewDateFormat(String pattern) {
         DateFormat df = new SimpleDateFormat(pattern);
-
         df.setLenient(false);
         return df;
     }
@@ -686,13 +685,11 @@ public class DateUtils {
      */
     public static String getDateString(Date date) {
         DateFormat df = getNewDateFormat(shortFormat);
-
         return df.format(date);
     }
 
     public static String getWebDateString(Date date) {
         DateFormat dateFormat = getNewDateFormat(webFormat);
-
         return getDateString(date, dateFormat);
     }
 
@@ -1538,9 +1535,9 @@ public class DateUtils {
         return Integer.parseInt(String.valueOf(between_days));
     }
 
-    public static int daysBetween(String smdate, String bdate)  {
+    public static int daysBetween(String smdate, String bdate) {
         try {
-            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");
             long to = df.parse(smdate).getTime();
             long from = df.parse(bdate).getTime();
             return (int) Math.abs((from - to) / (1000 * 60 * 60 * 24));
@@ -1548,6 +1545,10 @@ public class DateUtils {
             log.error("计算时间间隔天数异常======,smdate{},bdate {}", smdate, bdate);
         }
         return 0;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(  daysBetween("2022-01-25", "2022-01-28"));
     }
 
 }

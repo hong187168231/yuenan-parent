@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.indo.admin.modules.pay.mapper.PayWithdrawConfigMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.indo.admin.pojo.vo.pay.PayWithdrawConfigVO">
+        <id column="pay_withdraw_id" property="payWithdrawId" />
+        <result column="create_time" property="createTime" />
+        <result column="pay_channel_id" property="payChannelId" />
+        <result column="withdraw_name" property="withdrawName" />
+        <result column="notify_url" property="notifyUrl" />
+        <result column="secret_key" property="secretKey" />
+        <result column="min_amount" property="minAmount" />
+        <result column="max_amount" property="maxAmount" />
+        <result column="today_amount" property="todayAmount" />
+        <result column="total_amount" property="totalAmount" />
+        <result column="status" property="status" />
+        <result column="sort_by" property="sortBy" />
+        <result column="create_user" property="createUser" />
+        <result column="update_user" property="updateUser" />
+        <result column="remark" property="remark" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        create_time,
+        update_time,
+        pay_withdraw_id, pay_channel_id, withdraw_name, withdraw_url, notify_url, secret_key, min_amount, max_amount, today_amount, total_amount, status, sort_by, create_user, update_user, remark
+    </sql>
+
+    <!-- 通用查询结果列 -->
+    <select id="queryAll" resultMap="BaseResultMap">
+        SELECT
+        pwc.pay_withdraw_id,
+        pwc.pay_channel_id,
+        pcc.channel_name,
+        pwc.withdraw_name,
+        pwc.min_amount,
+        pwc.max_amount,
+        pwc.today_amount,
+        pwc.`status`
+        FROM
+        pay_withdraw_config pwc
+        INNER JOIN pay_channel_config pcc ON pwc.pay_channel_id = pcc.pay_channel_id
+    </select>
+
+
+</mapper>

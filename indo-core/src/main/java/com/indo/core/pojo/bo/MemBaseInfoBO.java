@@ -112,6 +112,9 @@ public class MemBaseInfoBO {
     @ApiModelProperty(value = "最后登录时间")
     private Date lastLoginTime;
 
+    @ApiModelProperty(value = "首冲时间")
+    private Date firstRechargeTime;
+
     @ApiModelProperty(value = "创建时间")
     private Date createTime;
 

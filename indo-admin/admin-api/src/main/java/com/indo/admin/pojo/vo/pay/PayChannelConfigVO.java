@@ -15,6 +15,9 @@ public class PayChannelConfigVO {
     @ApiModelProperty(value = "支付渠道名称")
     private String channelName;
 
+    @ApiModelProperty(value = "支付渠道别名")
+    private String alias;
+
     @ApiModelProperty(value = "支付渠道编码")
     private String channelCode;
 

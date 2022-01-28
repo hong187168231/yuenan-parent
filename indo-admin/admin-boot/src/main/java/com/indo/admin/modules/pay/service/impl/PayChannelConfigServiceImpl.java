@@ -4,12 +4,14 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.indo.admin.common.util.AdminBusinessRedisUtils;
 import com.indo.admin.modules.pay.mapper.PayChannelConfigMapper;
+import com.indo.admin.modules.pay.mapper.PayWithdrawConfigMapper;
 import com.indo.admin.modules.pay.service.IPayChannelConfigService;
 import com.indo.admin.pojo.dto.PayChannelDTO;
 import com.indo.admin.pojo.dto.PayChannelQueryDTO;
 import com.indo.admin.pojo.vo.pay.PayChannelConfigVO;
 import com.indo.common.constant.RedisConstants;
 import com.indo.core.pojo.entity.PayChannelConfig;
+import com.indo.core.pojo.entity.PayWithdrawConfig;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,6 +32,9 @@ public class PayChannelConfigServiceImpl extends ServiceImpl<PayChannelConfigMap
     @Autowired
     private PayChannelConfigMapper payChannelConfigMapper;
 
+    @Autowired
+    private PayWithdrawConfigMapper payWithdrawConfigMapper;
+
     @Override
     public Page<PayChannelConfigVO> queryAll(PayChannelQueryDTO dto) {
         Page<PayChannelConfigVO> page = new Page<>(dto.getPage(), dto.getLimit());
@@ -46,7 +51,9 @@ public class PayChannelConfigServiceImpl extends ServiceImpl<PayChannelConfigMap
             AdminBusinessRedisUtils.hset(RedisConstants.PAY_CHANNEL_KEY, channelConfig.getPayChannelId() + "", channelConfig);
             return true;
         }
-        return false;
+        PayWithdrawConfig payWithdrawConfig = new PayWithdrawConfig();
+        payWithdrawConfig.setPayChannelId(channelConfig.getPayChannelId());
+        return payWithdrawConfigMapper.insert(payWithdrawConfig) > 0;
     }
 
     @Override

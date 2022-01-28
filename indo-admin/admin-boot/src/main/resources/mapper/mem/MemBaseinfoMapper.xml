@@ -36,6 +36,7 @@
         <result column="prohibit_disbursement" property="prohibitDisbursement"/>
         <result column="prohibit_recharge" property="prohibitRecharge"/>
         <result column="last_login_time" property="lastLoginTime"/>
+        <result column="first_recharge_time" property="firstRechargeTime"/>
         <result column="create_user" property="createUser"/>
         <result column="update_user" property="updateUser"/>
     </resultMap>
@@ -43,23 +44,48 @@
 
     <!-- 通用查询结果列 -->
     <sql id="mem_Column_List">
-        create_time
-        ,
-        update_time,
-        id, account, acc_type, nick_name, real_name, head_image, password,
-        password_md5, birthday, phone, email, face_book, whats_app, mem_level,
-        total_deposit, total_enchashment, total_bet, balance, can_amount, register_source,
-        register_ip, client_ip, status, prohibit_login, prohibit_invite, prohibit_investment,
-        prohibit_disbursement, prohibit_recharge, last_login_time, create_user, update_user, remark
+        id, account, acc_type, nick_name, real_name,
+        head_image, password, password_md5, security_code, birthday, phone,
+        email, face_book, whats_app, mem_level, total_deposit, total_enchashment,
+        total_bet, balance, can_amount, deposit_num, take_cash_num, register_source,
+        register_ip, client_ip, token, status, prohibit_login, prohibit_invite,
+        prohibit_investment, prohibit_disbursement, prohibit_recharge, first_recharge_time,
+        last_login_time, device_code, create_user,update_user,create_time,update_time, remark
     </sql>
 
-
     <select id="queryList" resultType="com.indo.admin.pojo.vo.mem.MemBaseInfoVo">
-        SELECT * FROM mem_baseinfo mb
-        left join mem_invite_code mic
-        on mb.id = mic.mem_id
-        LEFT JOIN agent_relation ar
-        on mb.id = ar.mem_id
+        SELECT
+        mb.id,
+        mb.account,
+        mb.acc_type AS accType,
+        mb.mem_level AS memLevel,
+        mb.phone,
+        mb.email,
+        mb.face_book AS faceBook,
+        mb.whats_app AS whatsApp,
+        mb.balance,
+        mb.total_deposit AS totalDeposit,
+        mb.total_enchashment AS totalEnchashment,
+        mb.total_bet AS totalBet,
+        mb.deposit_num AS depositNum,
+        mb.take_cash_num AS takeCashNum,
+        mb.`status`,
+        mb.register_source AS registerSource,
+        mb.prohibit_login AS prohibitLogin,
+        mb.prohibit_invite AS prohibitInvite,
+        mb.prohibit_investment AS prohibitInvestment,
+        mb.prohibit_disbursement AS prohibitDisbursement,
+        mb.prohibit_recharge AS prohibitRecharge,
+        mb.first_recharge_time AS firstRechargeTime,
+        mb.last_login_time AS lastLoginTime,
+        mb.create_time AS createTime,
+        mic.invite_code AS inviteCode,
+        ar.team_num AS teamNum
+        FROM
+        mem_baseinfo mb
+        LEFT JOIN mem_invite_code mic ON mb.id = mic.mem_id
+        LEFT JOIN agent_relation ar ON mb.id = ar.mem_id
+
         <where>
             <if test="dto.account !=null and dto.account != '' ">
                 and mb.account = #{dto.account}

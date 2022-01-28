@@ -60,7 +60,7 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
         List<MemBaseInfoVo> list = memBaseInfoMapper.queryList(page, req);
         Date now = new Date();
         list.forEach(item -> {
-            String lastActive = AdminBusinessRedisUtils.hget(AppConstants.USER_ACTIVE_KEY, item.getAccount()).toString();
+            String lastActive = (String) AdminBusinessRedisUtils.hget(AppConstants.USER_ACTIVE_KEY, item.getAccount());
             if (StringUtils.isNotBlank(lastActive)) {
                 item.setLeaveDays(DateUtils.daysBetween(lastActive, DateUtils.getDateString(now)));
             } else {

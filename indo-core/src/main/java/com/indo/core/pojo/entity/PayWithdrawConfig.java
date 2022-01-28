@@ -33,11 +33,18 @@ public class PayWithdrawConfig extends BaseEntity {
     @ApiModelProperty(value = "支付方式名称")
     private String withdrawName;
 
+    @ApiModelProperty(value = "支付方式名称")
     private String withdrawUrl;
 
     private String notifyUrl;
 
     private String secretKey;
+
+    @ApiModelProperty(value = "每日总额度")
+    private Long minAmount;
+
+    @ApiModelProperty(value = "每日总额度")
+    private Long maxAmount;
 
     private Long todayAmount;
 

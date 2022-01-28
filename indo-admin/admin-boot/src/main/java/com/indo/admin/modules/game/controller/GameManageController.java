@@ -69,8 +69,7 @@ public class GameManageController {
     @ApiOperation(value = "修改游戏类别", httpMethod = "POST")
     @PostMapping(value = "/modifyGameCategory")
     public Result modifyGameCategory(GameCategory category) {
-        category.setUpdateTime(DateUtils.format(new Date(),DateUtils.newFormat));
-        return Result.judge(iGameManageService.modifiyGameCategory(category));
+        return Result.judge(iGameManageService.modifyGameCategory(category));
     }
 
     @ApiOperation(value = "删除游戏类别", httpMethod = "DELETE")

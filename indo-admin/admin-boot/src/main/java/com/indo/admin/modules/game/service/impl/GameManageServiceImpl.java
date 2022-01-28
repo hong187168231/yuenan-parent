@@ -3,12 +3,14 @@ package com.indo.admin.modules.game.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.indo.admin.common.util.AdminBusinessRedisUtils;
 import com.indo.admin.modules.game.mapper.*;
 import com.indo.admin.modules.game.service.IGameManageService;
 import com.indo.admin.pojo.dto.game.manage.GameInfoPageReq;
 import com.indo.admin.pojo.dto.game.manage.GamePlatformPageReq;
 import com.indo.admin.pojo.vo.game.manage.GameInfoRecord;
 import com.indo.admin.pojo.vo.game.manage.GameStatiRecord;
+import com.indo.common.constant.RedisConstants;
 import com.indo.common.result.Result;
 import com.indo.game.pojo.entity.manage.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,20 +38,34 @@ public class GameManageServiceImpl implements IGameManageService {
     }
 
     public boolean addGameCategory(GameCategory category) {
-        return gameCategoryMapper.insert(category) > 0;
+        if (gameCategoryMapper.insert(category) > 0) {
+            AdminBusinessRedisUtils.hset(RedisConstants.GAME_CATEGORY_KEY, category.getId() + "", category);
+            return true;
+        }
+        return false;
     }
 
     public boolean deleteBatchGameCategory(List<String> list) {
-        return gameCategoryMapper.deleteBatchIds(list) > 0;
+        if (gameCategoryMapper.deleteBatchIds(list) > 0) {
+            list.forEach(id -> {
+                AdminBusinessRedisUtils.hdel(RedisConstants.GAME_CATEGORY_KEY, id + "");
+            });
+            return true;
+        }
+        return false;
     }
 
-    public boolean modifiyGameCategory(GameCategory category) {
-        return gameCategoryMapper.updateById(category) > 0;
+    public boolean modifyGameCategory(GameCategory category) {
+        if (gameCategoryMapper.updateById(category) > 0) {
+            AdminBusinessRedisUtils.hset(RedisConstants.GAME_CATEGORY_KEY, category.getId() + "", category);
+            return true;
+        }
+        return false;
     }
 
     public IPage<GamePlatform> queryAllGamePlatform(GamePlatformPageReq req) {
-        IPage<GamePlatform> page = new Page<>(null==req.getPage()?1: req.getPage(), null==req.getLimit()?10:req.getLimit());
-        page.setRecords(gamePlatformMapper.queryAllGamePlatform(page,req));
+        IPage<GamePlatform> page = new Page<>(null == req.getPage() ? 1 : req.getPage(), null == req.getLimit() ? 10 : req.getLimit());
+        page.setRecords(gamePlatformMapper.queryAllGamePlatform(page, req));
         return page;
 
     }
@@ -62,15 +78,29 @@ public class GameManageServiceImpl implements IGameManageService {
     }
 
     public boolean addGamePlatform(GamePlatform platform) {
-        return gamePlatformMapper.insert(platform) > 0;
+        if (gamePlatformMapper.insert(platform) > 0) {
+            AdminBusinessRedisUtils.hset(RedisConstants.GAME_PLATFORM_KEY, platform.getId() + "", platform);
+            return true;
+        }
+        return false;
     }
 
     public boolean deleteBatchGamePlatform(List<String> list) {
-        return gamePlatformMapper.deleteBatchIds(list) > 0;
+        if (gamePlatformMapper.deleteBatchIds(list) > 0) {
+            list.forEach(id -> {
+                AdminBusinessRedisUtils.hdel(RedisConstants.GAME_PLATFORM_KEY, id + "");
+            });
+            return true;
+        }
+        return false;
     }
 
     public boolean modifiyGamePlatform(GamePlatform platform) {
-        return gamePlatformMapper.updateById(platform) > 0;
+        if (gamePlatformMapper.updateById(platform) > 0) {
+            AdminBusinessRedisUtils.hset(RedisConstants.GAME_PLATFORM_KEY, platform.getId() + "", platform);
+            return true;
+        }
+        return false;
     }
 
     public Result queryLanguageType() {
@@ -87,15 +117,15 @@ public class GameManageServiceImpl implements IGameManageService {
 
     @Override
     public IPage<GameStatiRecord> queryAllGameInfoCount(GameInfoPageReq req) {
-        IPage<GameStatiRecord> page = new Page<>(null==req.getPage()?1: req.getPage(), null==req.getLimit()?10:req.getLimit());
-        page.setRecords(txnsMapper.queryAllGameInfoCount(page,req));
+        IPage<GameStatiRecord> page = new Page<>(null == req.getPage() ? 1 : req.getPage(), null == req.getLimit() ? 10 : req.getLimit());
+        page.setRecords(txnsMapper.queryAllGameInfoCount(page, req));
         return page;
     }
 
     @Override
     public IPage<GameInfoRecord> queryAllGameInfo(GameInfoPageReq req) {
-        IPage<GameInfoRecord> page = new Page<>(null==req.getPage()?1: req.getPage(), null==req.getLimit()?10:req.getLimit());
-        page.setRecords(txnsMapper.queryAllGameInfo(page,req));
+        IPage<GameInfoRecord> page = new Page<>(null == req.getPage() ? 1 : req.getPage(), null == req.getLimit() ? 10 : req.getLimit());
+        page.setRecords(txnsMapper.queryAllGameInfo(page, req));
         return page;
     }
 }
