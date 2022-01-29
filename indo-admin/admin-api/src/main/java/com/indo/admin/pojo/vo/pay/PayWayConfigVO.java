@@ -33,8 +33,5 @@ public class PayWayConfigVO {
     @ApiModelProperty(value = "每日总额度")
     private Integer todayAmount;
 
-    @ApiModelProperty(value = "总额度")
-    private Integer totalAmount;
-
 
 }

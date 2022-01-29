@@ -9,10 +9,6 @@
         <result column="update_time" property="updateTime"/>
         <result column="pay_channel_id" property="payChannelId"/>
         <result column="way_name" property="wayName"/>
-        <result column="bank_name" property="bankName"/>
-        <result column="bank_account" property="bankAccount"/>
-        <result column="group_id" property="groupId"/>
-        <result column="audit_status" property="auditStatus"/>
         <result column="tips" property="tips"/>
         <result column="min_amount" property="minAmount"/>
         <result column="max_amount" property="maxAmount"/>
@@ -54,7 +50,6 @@
         pwc.min_amount,
         pwc.max_amount,
         pwc.today_amount,
-        pwc.total_amount,
         pwc.status
         FROM
         pay_way_config pwc

@@ -20,15 +20,14 @@ public class PayEasyTest {
         metaSignMap.put("productId", "1000");
         metaSignMap.put("goods", "indotest");
         metaSignMap.put("attach", "1");
-        metaSignMap.put("notifyUrl", "https://www.baidu.com/notify");
+        metaSignMap.put("notifyUrl", "http://gateway.jktest.net/indo-pay/callback/easyCallback");
         metaSignMap.put("redirectUrl", "https://www.baidu.com");
 
         String sign = SignMd5Utils.createSmallSign(metaSignMap, "71d6725b0744434da17265ca1ca3a67f");
         metaSignMap.put("sign", sign.toUpperCase());
         JSONObject httpRet = null;
         try {
-            Map<String, String> headerMap = new HashMap<>();
-            httpRet = HttpClient.doPost("http://pay.ddongame222.com/pay", JSON.toJSONString(metaSignMap));
+            httpRet = HttpClient.doPost("http://pay.ddongame222.com/pay"+"/v1/pay/createOrder", JSON.toJSONString(metaSignMap));
         } catch (Exception e) {
             System.out.println(e);
         }

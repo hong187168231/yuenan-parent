@@ -2,6 +2,7 @@ package com.indo.pay.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.indo.common.pojo.bo.LoginInfo;
+import com.indo.core.pojo.entity.PayChannelConfig;
 import com.indo.core.pojo.entity.PayWayConfig;
 import com.indo.pay.pojo.vo.PayWayVO;
 
@@ -18,6 +19,8 @@ import java.util.List;
 public interface IPayWayService extends IService<PayWayConfig> {
 
 
-    List<PayWayVO> wayList(LoginInfo loginInfo);
+    List<PayWayVO> wayList(LoginInfo loginInfo, Long payChannelId);
+
+    PayWayConfig getPayWayById(Long wayId);
 
 }

@@ -1,5 +1,6 @@
 package com.indo.pay.service.impl;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.indo.common.constant.GlobalConstants;
 import com.indo.common.constant.RedisConstants;
 import com.indo.common.pojo.bo.LoginInfo;
@@ -20,6 +21,8 @@ import com.indo.pay.pojo.bo.RechargeBO;
 import com.indo.pay.pojo.bo.PayWay;
 import com.indo.pay.pojo.dto.RechargeDTO;
 import com.indo.pay.pojo.req.RechargeReq;
+import com.indo.pay.service.IPayChannelService;
+import com.indo.pay.service.IPayWayService;
 import com.indo.pay.service.rechargeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,13 +41,11 @@ import java.util.Map;
 @Service
 public class RechargeServiceImpl extends SuperServiceImpl<RechargeMapper, PayRecharge> implements rechargeService {
 
+    @Autowired
+    private IPayChannelService iPayChannelService;
 
     @Autowired
-    private PayWayMapper payWayConfigMapper;
-
-    @Autowired
-    private PayChannelMapper payChannelConfigMapper;
-
+    private IPayWayService iPayWayService;
 
     @Override
     public boolean saveRechargeRecord(RechargeDTO rechargeDTO) {
@@ -68,20 +69,20 @@ public class RechargeServiceImpl extends SuperServiceImpl<RechargeMapper, PayRec
         if (currentMem.getProhibitRecharge().equals(1)) {
             throw new BizException("你暂不能发起充值,请联系管理员");
         }
-        PayChannelConfig  payChannelConfig = (PayChannelConfig)
-                RedisUtils.hget(RedisConstants.PAY_CHANNEL_KEY,rechargeReq.getPayChannelId()+"");
-        if (null == payChannelConfig) {
+        PayChannelConfig payChannelConfig = iPayChannelService.getPayChannelById(rechargeReq.getPayChannelId());
+        if (ObjectUtil.isEmpty(payChannelConfig)) {
             throw new BizException("暂无充值渠道");
         }
-        PayWayConfig  payWayCfg = (PayWayConfig)
-                RedisUtils.hget(RedisConstants.PAY_WAY_KEY,rechargeReq.getPayWayId()+"");
-        if (null == payWayCfg) {
+        PayWayConfig payWayCfg = iPayWayService.getPayWayById(rechargeReq.getPayWayId());
+        if (ObjectUtil.isEmpty(payWayCfg)) {
             throw new BizException("暂无充值方式");
         }
-        if (rechargeReq.getAmount().intValue() < payWayCfg.getMinAmount()) {
+        if (null != payWayCfg.getMinAmount() &&
+                rechargeReq.getAmount().intValue() < payWayCfg.getMinAmount()) {
             throw new BizException("小于渠道最低充值金额");
         }
-        if (rechargeReq.getAmount().intValue() > payWayCfg.getMaxAmount()) {
+        if (null != payWayCfg.getMaxAmount() &&
+                rechargeReq.getAmount().intValue() > payWayCfg.getMaxAmount()) {
             throw new BizException("大于渠道最高充值金额");
         }
         RechargeBO rechargeBO = new RechargeBO();

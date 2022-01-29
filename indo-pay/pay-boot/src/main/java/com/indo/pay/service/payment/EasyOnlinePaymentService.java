@@ -18,6 +18,7 @@ import com.indo.pay.pojo.req.BasePayReq;
 import com.indo.pay.pojo.req.EasyPayReq;
 import com.indo.pay.pojo.req.HuaRenPayReq;
 import com.indo.pay.pojo.resp.EasyCallbackReq;
+import com.indo.pay.pojo.resp.EasyPayResp;
 import com.indo.pay.pojo.resp.HuaRenPayResp;
 import com.indo.pay.util.SignMd5Utils;
 import lombok.extern.slf4j.Slf4j;
@@ -74,35 +75,35 @@ public class EasyOnlinePaymentService extends AbstractOnlinePaymentService {
 
         // http请求
         JSONObject httpJsonObj = new JSONObject();
-        HuaRenPayResp huaRenPayResp = new HuaRenPayResp();
+        EasyPayResp easyPayResp = new EasyPayResp();
         try {
             httpJsonObj = HttpClient.doPost(easyPayReq.getPayUrl() + "/v1/pay/createOrder", JSON.toJSONString(reqMap));
             log.info("paylog easy支付 创建订单请求 {} callPayService {}", this.getClass().getName(), reqMap);
         } catch (Exception e) {
             log.error("paylog easy支付 创建订单失败 {} callPayService {}", this.getClass().getName(), reqMap, e);
-            huaRenPayResp.setFlag(false);
-            huaRenPayResp.setMsg("支付异常 " + httpJsonObj);
-            return (T) huaRenPayResp;
+            easyPayResp.setFlag(false);
+            easyPayResp.setMsg("支付异常 " + httpJsonObj);
+            return (T) easyPayResp;
         }
         log.info("paylog easy支付 创建订单返回 {} callPayService {}", this.getClass().getName(), httpJsonObj);
         if (!ObjectUtils.isEmpty(httpJsonObj) && httpJsonObj.get("code") != null) {
             String msg = httpJsonObj.getString("message");
             if (httpJsonObj.get("code").equals(0)) {
                 JSONObject dataObj = httpJsonObj.getJSONObject("data");
-                huaRenPayResp.setFlag(true);
-                huaRenPayResp.setMsg("成功");
-                huaRenPayResp.setHtml(dataObj.getString("url"));
-                return (T) huaRenPayResp;
+                easyPayResp.setFlag(true);
+                easyPayResp.setMsg("成功");
+                easyPayResp.setHtml(dataObj.getString("url"));
+                return (T) easyPayResp;
             } else {
-                huaRenPayResp.setFlag(false);
-                huaRenPayResp.setMsg(msg);
-                return (T) huaRenPayResp;
+                easyPayResp.setFlag(false);
+                easyPayResp.setMsg(msg);
+                return (T) easyPayResp;
             }
         } else {
             log.error("paylog easy支付 创建订单返回错误 {} callPayService {}",
                     this.getClass().getName(), JSON.toJSONString(httpJsonObj));
-            huaRenPayResp.setFlag(false);
-            return (T) huaRenPayResp;
+            easyPayResp.setFlag(false);
+            return (T) easyPayResp;
         }
     }
 
@@ -110,16 +111,16 @@ public class EasyOnlinePaymentService extends AbstractOnlinePaymentService {
     @Override
     protected <R extends BasePayReq> boolean insertPayment(R req) {
         // 检验参数
-        HuaRenPayReq huaRenPayReq;
-        if (req instanceof HuaRenPayReq) {
-            huaRenPayReq = (HuaRenPayReq) req;
+        EasyPayReq easyPayReq;
+        if (req instanceof EasyPayReq) {
+            easyPayReq = (EasyPayReq) req;
         } else {
             log.error("paylog easy支付 持久化订单 {} insertPayment 入口参数错误 {}", this.getClass().getName(), JSON.toJSONString(req));
             return false;
         }
         // 请求参数
         RechargeDTO rechargeDto = new RechargeDTO();
-        rechargeDto.setAmount(huaRenPayReq.getTradeAmount().toString());
+        rechargeDto.setAmount(easyPayReq.getTradeAmount().toString());
         rechargeDto.setOrderNo(req.getMerchantOrderNo());
         rechargeDto.setMemId(req.getMemId());
         return paymentService.insertPayment(rechargeDto);

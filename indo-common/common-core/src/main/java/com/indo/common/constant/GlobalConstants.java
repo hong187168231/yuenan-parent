@@ -23,6 +23,12 @@ public interface GlobalConstants {
 
 
     /**
+     * 状态 0 -关闭 1-开启
+     */
+    public static final Integer STATUS_CLOSE = 0;
+    public static final Integer STATUS_OPEN = 1;
+
+    /**
      * 活动上下架 0 下架  1 上架 2 过期
      */
     public static final Integer ACT_SOLD_OUT = 0;

@@ -44,8 +44,6 @@ public class PayWayConfig extends BaseEntity {
 
     private Long todayAmount;
 
-    private Long totalAmount;
-
     @ApiModelProperty(value = "状态 0 正常 1停用")
     private Integer status;
 

@@ -23,7 +23,11 @@ public interface RechargeMapper extends BaseMapper<PayRecharge> {
     @Select("SELECT COUNT(1) from pay_recharge_order pro  WHERE pro.order_status = 1  and mem_id = #{memId}")
     int countMemIsFirstRecharge(@Param("memId") Long memId);
 
-    @Select("select sum(real_amount) from pay_recharge where  where to_days(create_time) = to_days(now()) and  order_status = 2 and memId = #{memId} ")
-    BigDecimal countTodayAmount(@Param("memId") Long memId);
+    @Select("select sum(real_amount) from pay_recharge where   to_days(create_time) = to_days(now()) and  order_status = 2 and mem_id = #{memId} ")
+    BigDecimal countMemTodayAmount(@Param("memId") Long memId);
+
+    @Select("select IFNULL(sum(real_amount),0.00)  from pay_recharge where  to_days(create_time) = to_days(now()) " +
+            " and  order_status = 2 and channel_id = #{channelId} and way_id = #{wayId} ")
+    BigDecimal countWayTodayAmount(@Param("channelId") Long channelId, @Param("wayId") Long wayId);
 
 }

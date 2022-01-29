@@ -1,9 +1,14 @@
 package com.indo.pay.service.impl;
 
+import cn.hutool.core.util.ObjectUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.indo.common.constant.GlobalConstants;
 import com.indo.common.constant.RedisConstants;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.redis.utils.RedisUtils;
+import com.indo.common.utils.CollectionUtil;
+import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
 import com.indo.core.pojo.entity.Activity;
 import com.indo.core.pojo.entity.PayChannelConfig;
@@ -17,6 +22,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -29,13 +35,30 @@ import java.util.Map;
 @Service
 public class PayChannelServiceImpl extends ServiceImpl<PayChannelMapper, PayChannelConfig> implements IPayChannelService {
 
-    @Resource
-    private DozerUtil dozerUtil;
 
     @Override
     public List<PayChannelVO> channelList(LoginInfo loginInfo) {
         Map<Object, Object> map = RedisUtils.hmget(RedisConstants.PAY_CHANNEL_KEY);
         List<PayChannelConfig> configList = new LinkedList(map.values());
-        return dozerUtil.convert(configList, PayChannelVO.class);
+        if (CollectionUtil.isEmpty(configList)) {
+            LambdaQueryWrapper<PayChannelConfig> wrapper = new LambdaQueryWrapper<>();
+            wrapper.eq(PayChannelConfig::getStatus, 1);
+            configList = this.baseMapper.selectList(wrapper);
+        } else {
+            configList = configList.stream()
+                    .filter(channelConfig -> channelConfig.getStatus().equals(1))
+                    .collect(Collectors.toList());
+        }
+        return DozerUtil.convert(configList, PayChannelVO.class);
+    }
+
+    @Override
+    public PayChannelConfig getPayChannelById(Long channelId) {
+        PayChannelConfig payChannelConfig = (PayChannelConfig) RedisUtils.hget(RedisConstants.PAY_CHANNEL_KEY, channelId + "");
+        if (ObjectUtil.isEmpty(payChannelConfig)) {
+            return this.baseMapper.selectEnableChannelById(channelId);
+        } else {
+            return GlobalConstants.STATUS_OPEN.equals(payChannelConfig.getStatus()) ? payChannelConfig : null;
+        }
     }
 }

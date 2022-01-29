@@ -7,6 +7,8 @@ import com.indo.common.result.Result;
 import com.indo.pay.pojo.vo.PayWayVO;
 import com.indo.pay.service.IPayWayService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,14 +33,17 @@ public class PayWayController {
     private IPayWayService iPayWayConfigService;
 
     /**
-     * 支付渠道列表
+     * 支付方式列表
      *
      * @return
      */
     @ApiOperation(value = "支付方式列表")
     @GetMapping("/list")
-    public Result<List<PayWayVO>> getPayWayList(@LoginUser LoginInfo loginInfo) {
-        return Result.success(iPayWayConfigService.wayList(loginInfo));
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "payChannelId", value = "支付渠道id", required = true, paramType = "query", dataType = "int"),
+    })
+    public Result<List<PayWayVO>> getPayWayList(@LoginUser LoginInfo loginInfo, @RequestParam("payChannelId") Long payChannelId) {
+        return Result.success(iPayWayConfigService.wayList(loginInfo, payChannelId));
     }
 
 }
