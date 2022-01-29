@@ -4,7 +4,6 @@ import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
-import com.indo.common.utils.BaseUtil;
 import com.indo.common.utils.DeviceInfoUtil;
 import com.indo.common.utils.StringUtils;
 import com.indo.common.web.exception.BizException;
@@ -33,7 +32,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
 
 import java.util.Date;
 
@@ -77,7 +75,7 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
         modifyLogin(userInfo);
         String accToken = UserBusinessRedisUtils.createMemAccToken(userInfo);
         //返回登录信息
-        AppLoginVo appLoginVo = this.getAppLoginVo(accToken);
+        AppLoginVo appLoginVo = this.getAppLoginVo(accToken, userInfo);
         return Result.success(appLoginVo);
     }
 
@@ -126,18 +124,20 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
         }
         MemBaseinfo userInfo = new MemBaseinfo();
         userInfo.setAccount(req.getAccount());
-        //userInfo.setSource(Integer.valueOf(DeviceInfoUtil.getSource()));
         userInfo.setPassword(req.getPassword());
         userInfo.setPasswordMd5(req.getPassword());
         if (StringUtils.isNotBlank(DeviceInfoUtil.getDeviceId())) {
             userInfo.setDeviceCode(DeviceInfoUtil.getDeviceId());
+        }
+        if (StringUtils.isNotBlank(DeviceInfoUtil.getSource())) {
+            userInfo.setRegisterSource(DeviceInfoUtil.getSource());
         }
         //保存注册信息
         initRegister(userInfo, memInviteCode);
         MemBaseInfoBO memBaseinfoBo = DozerUtil.map(userInfo, MemBaseInfoBO.class);
         String accToken = UserBusinessRedisUtils.createMemAccToken(memBaseinfoBo);
         //返回登录信息
-        AppLoginVo appLoginVo = this.getAppLoginVo(accToken);
+        AppLoginVo appLoginVo = this.getAppLoginVo(accToken, memBaseinfoBo);
         return Result.success(appLoginVo);
 
     }
@@ -153,7 +153,6 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
         Date nowDate = new Date();
         memBaseinfo.setAccType(1);
         memBaseinfo.setLastLoginTime(nowDate);
-        //userInfo.setDeviceCode(DeviceInfoUtil.getDeviceId());
         this.baseMapper.insert(memBaseinfo);
         if (ObjectUtil.isNotNull(parentInviteCode)) {
             initMemAgent(memBaseinfo, parentInviteCode);
@@ -191,6 +190,7 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
 
 
     @Override
+    @Transactional
     public boolean updatePassword(UpdatePasswordReq req, LoginInfo loginUser) {
         MemBaseinfo memBaseinfo = this.baseMapper.selectById(loginUser.getId());
         if (!memBaseinfo.getPasswordMd5().equals(req.getOldPassword())) {
@@ -229,10 +229,12 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
     }
 
     @Override
+    @Transactional
     public boolean updateHeadImage(String headImage, LoginInfo loginUser) {
         MemBaseinfo memBaseinfo = new MemBaseinfo();
         memBaseinfo.setHeadImage(headImage);
         memBaseinfo.setId(loginUser.getId());
+
         MemBaseInfoDTO memBaseInfoDTO = new MemBaseInfoDTO();
         memBaseInfoDTO.setHeadImage(memBaseinfo.getHeadImage());
         refreshMemBaseInfo(memBaseInfoDTO, loginUser.getAccount());
@@ -240,6 +242,7 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
     }
 
     @Override
+    @Transactional
     public void updateBaseInfo(UpdateBaseInfoReq req, LoginInfo loginUser) {
         MemBaseinfo memBaseinfo = new MemBaseinfo();
         memBaseinfo.setPhone(req.getPhone());
@@ -261,16 +264,16 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
     }
 
     /**
-     * 功能描述: 返回登录信息
+     * 返回登录信息
      *
-     * @auther:
-     * @param: [token, userInfo]
-     * @return: com.cp.common.vo.AppLoginVo
-     * @date: 2020/8/5 14:59
+     * @param token
+     * @param memBaseInfoBO
+     * @return
      */
-    private AppLoginVo getAppLoginVo(String token) {
+    private AppLoginVo getAppLoginVo(String token, MemBaseInfoBO memBaseInfoBO) {
         AppLoginVo appLoginVo = new AppLoginVo();
         appLoginVo.setToken(token);
+        appLoginVo.setHeadImage(memBaseInfoBO.getHeadImage());
         return appLoginVo;
     }
 

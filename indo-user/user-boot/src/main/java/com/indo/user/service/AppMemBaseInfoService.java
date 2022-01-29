@@ -19,7 +19,12 @@ import org.apache.ibatis.annotations.Param;
 
 public interface AppMemBaseInfoService extends SuperService<MemBaseinfo> {
 
-
+    /**
+     * 用户名检查
+     *
+     * @param account
+     * @return
+     */
     boolean checkAccount(String account);
 
     /**

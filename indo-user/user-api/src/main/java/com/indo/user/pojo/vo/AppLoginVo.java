@@ -18,20 +18,28 @@ public class AppLoginVo {
 
     @ApiModelProperty(value = "登录后token")
     private String token = "";
+
     @ApiModelProperty(value = "用户id")
     private String uid = "";
+
     @ApiModelProperty(value = "用户账号")
     private String account = "";
+
     @ApiModelProperty(value = "用户昵称")
     private String nickName = "";
+
     @ApiModelProperty(value = "手机号码")
     private String mobile = "";
+
     @ApiModelProperty(value = "头像url")
-    private String headUrl = "";
+    private String headImage = "";
+
     @ApiModelProperty(value = "等级")
-    private Integer level = 1;
+    private Integer level = 0;
+
     @ApiModelProperty(value = "注册天数")
     private Integer registerDay;
+
     @ApiModelProperty(value = "余额")
     private BigDecimal balance = new BigDecimal(0.00);
 

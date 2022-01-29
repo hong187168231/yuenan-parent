@@ -13,8 +13,11 @@ import lombok.Data;
 @Data
 @ApiModel(value = "登录请求参数类")
 public class LoginReq {
+
     @ApiModelProperty(value = "账号", required = true)
     private String account;
+
     @ApiModelProperty(value = "密码，MD5加密", required = true)
     private String password;
+    
 }

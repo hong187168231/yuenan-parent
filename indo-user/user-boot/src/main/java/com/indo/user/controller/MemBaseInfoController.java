@@ -76,6 +76,7 @@ public class MemBaseInfoController {
 
     @ApiOperation(value = "修改头像", httpMethod = "POST")
     @PostMapping(value = "/updateHeadImage")
+    @ApiImplicitParam(name = "headImage", value = "头像地址", required = true, paramType = "query", dataType = "String")
     public Result updateHeadImage(@RequestParam("headImage") String headImage, @LoginUser LoginInfo loginUser) {
         boolean flag = memBaseInfoService.updateHeadImage(headImage, loginUser);
         return Result.judge(flag);
