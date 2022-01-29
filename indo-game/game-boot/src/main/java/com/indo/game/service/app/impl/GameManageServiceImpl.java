@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.common.constant.RedisConstants;
 import com.indo.common.redis.utils.RedisUtils;
 import com.indo.common.result.Result;
+import com.indo.common.utils.CollectionUtil;
 import com.indo.core.pojo.entity.Activity;
 import com.indo.core.pojo.entity.PayWithdrawConfig;
 import com.indo.game.mapper.TxnsMapper;
@@ -19,6 +20,7 @@ import com.indo.game.pojo.vo.app.GameInfoAgentRecord;
 import com.indo.game.pojo.vo.app.GameInfoRecord;
 import com.indo.game.pojo.vo.app.GameStatiRecord;
 import com.indo.game.service.app.IGameManageService;
+import com.indo.game.service.common.GameCommonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +36,8 @@ public class GameManageServiceImpl implements IGameManageService {
     private GameCategoryMapper gameCategoryMapper;
     @Autowired
     private TxnsMapper txnsMapper;
+    @Autowired
+    private GameCommonService gameCommonService;
 
     public List<GameCategory> queryAllGameCategory() {
         List<GameCategory> categoryList;
@@ -47,21 +51,20 @@ public class GameManageServiceImpl implements IGameManageService {
         return categoryList;
     }
 
-
+    @Override
     public List<GamePlatform> queryAllGamePlatform() {
-        List<GamePlatform> platformList;
-        Map<Object, Object> map = RedisUtils.hmget(RedisConstants.GAME_PLATFORM_KEY);
-        platformList = new ArrayList(map.values());
-        if (ObjectUtil.isEmpty(platformList)) {
-            LambdaQueryWrapper<GamePlatform> wrapper = new LambdaQueryWrapper<>();
-            platformList = gamePlatformMapper.selectList(wrapper);
+        List<GamePlatform> platformList = gameCommonService.queryAllGamePlatform();
+        if (ObjectUtil.isNotEmpty(platformList)) {
+            platformList = platformList.stream()
+                    .filter(platform -> platform.getIsStart().equals(1))
+                    .collect(Collectors.toList());
         }
-        platformList.sort(Comparator.comparing(GamePlatform::getSortNumber));
         return platformList;
     }
 
+
     public List<GamePlatform> queryHotGamePlatform() {
-        List<GamePlatform> platformList = queryAllGamePlatform();
+        List<GamePlatform> platformList = gameCommonService.queryAllGamePlatform();
         if (ObjectUtil.isNotEmpty(platformList)) {
             platformList = platformList.stream()
                     .filter(platform -> platform.getIsHotShow().equals(1))
@@ -71,11 +74,13 @@ public class GameManageServiceImpl implements IGameManageService {
     }
 
     public List<GamePlatform> queryGamePlatformByCategory(Long categoryId) {
-        LambdaQueryWrapper<GamePlatform> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(GamePlatform::getCategoryId, categoryId);
-        wrapper.orderByAsc(GamePlatform::getSortNumber);
-        List<GamePlatform> categoryList = gamePlatformMapper.selectList(wrapper);
-        return categoryList;
+        List<GamePlatform> platformList = queryAllGamePlatform();
+        if (CollectionUtil.isNotEmpty(platformList)) {
+            platformList = platformList.stream()
+                    .filter(platform -> platform.getCategoryId().equals(categoryId))
+                    .collect(Collectors.toList());
+        }
+        return platformList;
     }
 
     @Override

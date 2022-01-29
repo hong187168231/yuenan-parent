@@ -13,6 +13,14 @@ public interface GameCommonService {
 
 
     /**
+     * 查询所有游戏平台
+     *
+     * @return
+     */
+    List<GamePlatform> queryAllGamePlatform();
+
+
+    /**
      * 依据平台代码查询平台
      *
      * @param platformCode
