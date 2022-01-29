@@ -67,7 +67,7 @@ public class GameCommonServiceImpl implements GameCommonService {
         List<GamePlatform> platformList;
         Map<Object, Object> map = RedisUtils.hmget(RedisConstants.GAME_PLATFORM_KEY);
         platformList = new ArrayList(map.values());
-        if (ObjectUtil.isEmpty(platformList)) {
+        if (CollectionUtil.isEmpty(platformList)) {
             LambdaQueryWrapper<GamePlatform> wrapper = new LambdaQueryWrapper<>();
             platformList = gamePlatformMapper.selectList(wrapper);
         }

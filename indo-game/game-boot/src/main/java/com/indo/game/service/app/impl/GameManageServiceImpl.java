@@ -43,7 +43,7 @@ public class GameManageServiceImpl implements IGameManageService {
         List<GameCategory> categoryList;
         Map<Object, Object> map = RedisUtils.hmget(RedisConstants.GAME_CATEGORY_KEY);
         categoryList = new ArrayList(map.values());
-        if (ObjectUtil.isEmpty(categoryList)) {
+        if (CollectionUtil.isEmpty(categoryList)) {
             LambdaQueryWrapper<GameCategory> wrapper = new LambdaQueryWrapper<>();
             categoryList = gameCategoryMapper.selectList(wrapper);
         }
@@ -54,7 +54,7 @@ public class GameManageServiceImpl implements IGameManageService {
     @Override
     public List<GamePlatform> queryAllGamePlatform() {
         List<GamePlatform> platformList = gameCommonService.queryAllGamePlatform();
-        if (ObjectUtil.isNotEmpty(platformList)) {
+        if (CollectionUtil.isNotEmpty(platformList)) {
             platformList = platformList.stream()
                     .filter(platform -> platform.getIsStart().equals(1))
                     .collect(Collectors.toList());
@@ -65,7 +65,7 @@ public class GameManageServiceImpl implements IGameManageService {
 
     public List<GamePlatform> queryHotGamePlatform() {
         List<GamePlatform> platformList = gameCommonService.queryAllGamePlatform();
-        if (ObjectUtil.isNotEmpty(platformList)) {
+        if (CollectionUtil.isNotEmpty(platformList)) {
             platformList = platformList.stream()
                     .filter(platform -> platform.getIsHotShow().equals(1))
                     .collect(Collectors.toList());
