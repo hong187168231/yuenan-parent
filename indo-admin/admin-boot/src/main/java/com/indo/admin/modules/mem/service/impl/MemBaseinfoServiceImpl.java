@@ -1,5 +1,7 @@
 package com.indo.admin.modules.mem.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -193,7 +195,8 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
         if (null == memBaseInfoBO) {
             memBaseInfoBO = this.baseMapper.findMemBaseInfoByAccount(account);
         }
-        DozerUtil.map(memBaseInfoDTO, memBaseInfoBO);
+        BeanUtil.copyProperties(memBaseInfoDTO, memBaseInfoBO,
+                CopyOptions.create().setIgnoreNullValue(true).setIgnoreError(true));
         BusinessRedisUtils.saveMemBaseInfo(memBaseInfoBO);
     }
 

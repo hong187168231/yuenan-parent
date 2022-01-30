@@ -19,9 +19,10 @@
         FROM
         agent_relation ma
         INNER JOIN mem_baseinfo mb ON ma.mem_id = mb.id
-        AND ma.is_del = 1
-        <if test="req.superior !=null and req.superior !='' ">
-            and ma.superior = #{req.superior}
+        AND ma.`status` = 1
+        and ma.superior = #{req.superior}
+        <if test="req.subAccount !=null and req.subAccount !='' ">
+            and ma.account = #{req.subAccount}
         </if>
         ORDER BY
         ma.create_time DESC
