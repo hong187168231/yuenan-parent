@@ -11,10 +11,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -50,7 +47,7 @@ public class TakeCashController {
             @ApiImplicitParam(name = "limit", value = "每页数量", defaultValue = "10", paramType = "query", dataType = "Long")
     })
     @GetMapping(value = "/list")
-    public Result<List<TakeCashRecordVO>> cashList(Integer page,
+    public Result<List<TakeCashRecordVO>> cashList(@RequestParam Integer page,
                                                    Integer limit, @LoginUser LoginInfo loginInfo) {
         return iPayCashOrderService.cashRecordList(page, limit, loginInfo);
     }
