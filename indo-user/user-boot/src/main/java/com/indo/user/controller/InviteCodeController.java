@@ -33,7 +33,7 @@ public class InviteCodeController {
 
     @ApiOperation(value = "邀请码信息")
     @PostMapping(value = "/info")
-    public Result<InviteCodeVo> page(@LoginUser LoginInfo loginInfo) {
+    public Result<InviteCodeVo> info(@LoginUser LoginInfo loginInfo) {
         InviteCodeVo info = memInviteCodeService.findInviteCode(loginInfo.getId());
         return Result.success(info);
     }
