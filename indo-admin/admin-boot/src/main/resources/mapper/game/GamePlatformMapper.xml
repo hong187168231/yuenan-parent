@@ -47,10 +47,10 @@
         </if>
         <choose>
             <when test="req.orderBy">
-                order by t.sort_number asc;
+                order by t.sort_number asc
             </when>
             <otherwise>
-                order by t.sort_number desc;
+                order by t.sort_number desc
             </otherwise>
         </choose>
     </select>
