@@ -92,20 +92,20 @@ public class GameManageController {
     }
 
     @ApiOperation(value = "新增平台名称", httpMethod = "POST")
-    @GetMapping(value = "/addGamePlatform")
+    @PostMapping(value = "/addGamePlatform")
     public Result addGamePlatform(GamePlatform gamePlatform) {
         return Result.judge(iGameManageService.addGamePlatform(gamePlatform));
     }
 
     @ApiOperation(value = "删除平台名称", httpMethod = "POST")
-    @GetMapping(value = "/deleteGamePlatform")
+    @PostMapping(value = "/deleteGamePlatform")
     public Result deleteGamePlatform(String ids) {
         List<String> list = Arrays.asList(ids.split(","));
         return Result.judge(iGameManageService.deleteBatchGamePlatform(list));
     }
 
     @ApiOperation(value = "修改平台名称", httpMethod = "POST")
-    @GetMapping(value = "/modifyGamePlatform")
+    @PostMapping(value = "/modifyGamePlatform")
     public Result modifyGamePlatform(GamePlatform gamePlatform) {
         return Result.judge(iGameManageService.modifiyGamePlatform(gamePlatform));
     }
