@@ -11,11 +11,13 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public enum AudiTypeEnum {
+public enum ProhibitStatusEnum {
 
-    wait(0),
-    agree(1),
-    reject(2);
+    login(1),
+    invite(1),
+    investment(1),
+    disbursement(1),
+    recharge(1);
 
     private Integer status;
 }

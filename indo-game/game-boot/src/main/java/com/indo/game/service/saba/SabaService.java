@@ -12,12 +12,12 @@ public interface SabaService {
     /**
      * saba Sports
      */
-    public Result sabaGame(LoginInfo loginUser, String ip,String platform) ;
+    Result sabaGame(LoginInfo loginUser, String ip, String platform);
 
     /**
      * saba Sports登出玩家
      */
-    public Result logout(LoginInfo loginUser,String ip);
+    Result logout(LoginInfo loginUser, String ip);
 
     SabaApiResponseData commonRequest(Map<String, String> paramsMap, String url, Integer userId, String ip, String type) throws Exception;
 

@@ -165,7 +165,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
             GamePlatform gamePlatform = new GamePlatform();
             for (int i = 0; i < placeBetTxnsList.size(); i++) {
                 PlaceBetTxns placeBetTxns = placeBetTxnsList.get(i);
-                String platformCode = placeBetTxns.getPlatform()+"_"+placeBetTxns.getGameType();
+                String platformCode = placeBetTxns.getPlatform() + "_" + placeBetTxns.getGameType();
                 if (!checkIp(ip, platformCode)) {
                     AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                     callBacekFail.setStatus("1029");
@@ -257,7 +257,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
             MemTradingBO memBaseinfo = new MemTradingBO();
             for (int i = 0; i < cancelBetTxnsList.size(); i++) {
                 CancelBetTxns cancelBetTxns = cancelBetTxnsList.get(i);
-                String platformCode = cancelBetTxns.getPlatform()+"_"+cancelBetTxns.getGameType();
+                String platformCode = cancelBetTxns.getPlatform() + "_" + cancelBetTxns.getGameType();
                 if (!checkIp(ip, platformCode)) {
                     AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                     callBacekFail.setStatus("1029");
@@ -339,7 +339,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
             MemTradingBO memBaseinfo = new MemTradingBO();
             for (int i = 0; i < adjustBetTxnsList.size(); i++) {
                 AdjustBetTxns adjustBetTxns = adjustBetTxnsList.get(i);
-                String platformCode = adjustBetTxns.getPlatform()+"_"+adjustBetTxns.getGameType();
+                String platformCode = adjustBetTxns.getPlatform() + "_" + adjustBetTxns.getGameType();
                 if (!checkIp(ip, platformCode)) {
                     AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                     callBacekFail.setStatus("1029");
@@ -423,7 +423,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
         List<VoidBetTxns> voidBetTxnsList = apiRequestData.getTxns();
         if (null != voidBetTxnsList && voidBetTxnsList.size() > 0) {
             for (VoidBetTxns voidBetTxns : voidBetTxnsList) {
-                String platformCode = voidBetTxns.getPlatform()+"_"+voidBetTxns.getGameType();
+                String platformCode = voidBetTxns.getPlatform() + "_" + voidBetTxns.getGameType();
                 if (!checkIp(ip, platformCode)) {
                     AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                     callBacekFail.setStatus("1029");
@@ -497,7 +497,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
         List<UnvoidBetTxns> unvoidBetTxnsList = apiRequestData.getTxns();
         if (null != unvoidBetTxnsList && unvoidBetTxnsList.size() > 0) {
             for (UnvoidBetTxns unvoidBetTxns : unvoidBetTxnsList) {
-                String platformCode = unvoidBetTxns.getPlatform()+"_"+unvoidBetTxns.getGameType();
+                String platformCode = unvoidBetTxns.getPlatform() + "_" + unvoidBetTxns.getGameType();
                 if (!checkIp(ip, platformCode)) {
                     AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                     callBacekFail.setStatus("1029");
@@ -562,7 +562,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
             GameCategory gameCategory = new GameCategory();
             GamePlatform gamePlatform = new GamePlatform();
             for (RefundTxns refundTxns : refundTxnsList) {
-                String platformCode = refundTxns.getPlatform()+"_"+refundTxns.getGameType();
+                String platformCode = refundTxns.getPlatform() + "_" + refundTxns.getGameType();
                 if (!checkIp(ip, platformCode)) {
                     AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                     callBacekFail.setStatus("1029");
@@ -619,7 +619,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
             GameCategory gameCategory = new GameCategory();
             GamePlatform gamePlatform = new GamePlatform();
             for (SettleTxns settleTxns : settleTxnsList) {
-                String platformCode = settleTxns.getPlatform()+"_"+settleTxns.getGameType();
+                String platformCode = settleTxns.getPlatform() + "_" + settleTxns.getGameType();
                 if (!checkIp(ip, platformCode)) {
                     AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                     callBacekFail.setStatus("1029");
@@ -693,7 +693,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
         List<UnsettleTxns> unsettleTxnsList = apiRequestData.getTxns();
         if (null != unsettleTxnsList && unsettleTxnsList.size() > 0) {
             for (UnsettleTxns unsettleTxns : unsettleTxnsList) {
-                String platformCode = unsettleTxns.getPlatform()+"_"+unsettleTxns.getGameType();
+                String platformCode = unsettleTxns.getPlatform() + "_" + unsettleTxns.getGameType();
                 if (!checkIp(ip, platformCode)) {
                     AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                     callBacekFail.setStatus("1029");
@@ -759,7 +759,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
         List<VoidSettleTxns> voidSettleTxnsList = apiRequestData.getTxns();
         if (null != voidSettleTxnsList && voidSettleTxnsList.size() > 0) {
             for (VoidSettleTxns voidSettleTxns : voidSettleTxnsList) {
-                String platformCode = voidSettleTxns.getPlatform()+"_"+voidSettleTxns.getGameType();
+                String platformCode = voidSettleTxns.getPlatform() + "_" + voidSettleTxns.getGameType();
                 if (!checkIp(ip, platformCode)) {
                     AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                     callBacekFail.setStatus("1029");
@@ -828,7 +828,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
             BigDecimal balance = BigDecimal.ZERO;
             for (int i = 0; i < unvoidSettleTxnsList.size(); i++) {
                 UnvoidSettleTxns unvoidSettleTxns = unvoidSettleTxnsList.get(i);
-                String platformCode = unvoidSettleTxns.getPlatform()+"_"+unvoidSettleTxns.getGameType();
+                String platformCode = unvoidSettleTxns.getPlatform() + "_" + unvoidSettleTxns.getGameType();
                 if (!checkIp(ip, platformCode)) {
                     AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                     callBacekFail.setStatus("1029");
@@ -904,7 +904,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
             GamePlatform gamePlatform = new GamePlatform();
             for (int i = 0; i < betNSettleTxnsList.size(); i++) {
                 BetNSettleTxns betNSettleTxns = betNSettleTxnsList.get(i);
-                String platformCode = betNSettleTxns.getPlatform()+"_"+betNSettleTxns.getGameType();
+                String platformCode = betNSettleTxns.getPlatform() + "_" + betNSettleTxns.getGameType();
                 if (!checkIp(ip, platformCode)) {
                     AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                     callBacekFail.setStatus("1029");
@@ -992,7 +992,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
             MemTradingBO memBaseinfo = new MemTradingBO();
             for (int i = 0; i < cancelBetNSettleTxnsList.size(); i++) {
                 CancelBetNSettleTxns cancelBetNSettleTxns = cancelBetNSettleTxnsList.get(i);
-                String platformCode = cancelBetNSettleTxns.getPlatform()+"_"+cancelBetNSettleTxns.getGameType();
+                String platformCode = cancelBetNSettleTxns.getPlatform() + "_" + cancelBetNSettleTxns.getGameType();
                 if (!checkIp(ip, platformCode)) {
                     AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                     callBacekFail.setStatus("1029");
@@ -1062,7 +1062,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
         List<FreeSpinTxns> freeSpinTxnsList = apiRequestData.getTxns();
         if (null != freeSpinTxnsList && freeSpinTxnsList.size() > 0) {
             for (FreeSpinTxns freeSpinTxns : freeSpinTxnsList) {
-                String platformCode = freeSpinTxns.getPlatform()+"_"+freeSpinTxns.getGameType();
+                String platformCode = freeSpinTxns.getPlatform() + "_" + freeSpinTxns.getGameType();
                 if (!checkIp(ip, platformCode)) {
                     AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                     callBacekFail.setStatus("1029");
@@ -1210,7 +1210,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
             MemTradingBO memBaseinfo = new MemTradingBO();
             for (int i = 0; i < tipTxnsList.size(); i++) {
                 TipTxns tipTxns = tipTxnsList.get(i);
-                String platformCode = tipTxns.getPlatform()+"_"+tipTxns.getGameType();
+                String platformCode = tipTxns.getPlatform() + "_" + tipTxns.getGameType();
                 if (!checkIp(ip, platformCode)) {
                     AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                     callBacekFail.setStatus("1029");
@@ -1293,7 +1293,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
             MemTradingBO memBaseinfo = new MemTradingBO();
             for (int i = 0; i < cancelTipTxnsList.size(); i++) {
                 CancelTipTxns cancelTipTxns = cancelTipTxnsList.get(i);
-                String platformCode = cancelTipTxns.getPlatform()+"_"+cancelTipTxns.getGameType();
+                String platformCode = cancelTipTxns.getPlatform() + "_" + cancelTipTxns.getGameType();
                 if (!checkIp(ip, platformCode)) {
                     AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                     callBacekFail.setStatus("1029");

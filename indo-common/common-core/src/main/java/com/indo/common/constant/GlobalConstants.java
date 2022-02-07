@@ -23,6 +23,26 @@ public interface GlobalConstants {
 
 
     /**
+     * 状态 0 -关闭 1-开启
+     */
+    public static final Integer STATUS_CLOSE = 0;
+    public static final Integer STATUS_OPEN = 1;
+
+
+    /**
+     * 状态 0 -禁用 1-正常
+     */
+    public static final Integer STATUS_DISABLE = 0;
+    public static final Integer STATUS_NORMAL = 1;
+
+    /**
+     * 账户类型 1-玩家 2-代理
+     */
+    public static final Integer ACC_TYPE_PLAY = 1;
+    public static final Integer ACC_TYPE_AGENT = 2;
+
+
+    /**
      * 活动上下架 0 下架  1 上架 2 过期
      */
     public static final Integer ACT_SOLD_OUT = 0;

@@ -35,6 +35,7 @@ public class AppMemBankServiceImpl extends ServiceImpl<MemBankRelationMapper, Me
         MemBank memBankRelation = new MemBank();
         BeanUtils.copyProperties(req, memBankRelation);
         memBankRelation.setMemId(loginUser.getId());
+        memBankRelation.setAccount(loginUser.getAccount());
         return baseMapper.insert(memBankRelation) > 0;
     }
 

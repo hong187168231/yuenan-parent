@@ -21,7 +21,7 @@ public class PayWayConfigVO {
     @ApiModelProperty(value = "支付方式名称")
     private String wayName;
 
-    @ApiModelProperty(value = "状态 状态 0 正常 1停用 ")
+    @ApiModelProperty(value = "状态 0关闭 1开启 ")
     private Integer status;
 
     @ApiModelProperty(value = "最小金额")

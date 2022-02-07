@@ -1,5 +1,6 @@
 package com.indo.admin.modules.agent.service.impl;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -11,7 +12,9 @@ import com.indo.admin.modules.mem.service.IMemBaseinfoService;
 import com.indo.admin.pojo.req.agnet.MemAgentApplyReq;
 import com.indo.admin.pojo.req.agnet.MemApplyAuditReq;
 import com.indo.admin.pojo.vo.agent.AgentApplyVO;
+import com.indo.common.constant.GlobalConstants;
 import com.indo.common.enums.AudiTypeEnum;
+import com.indo.common.enums.ProhibitStatusEnum;
 import com.indo.common.utils.ShareCodeUtil;
 import com.indo.common.utils.StringUtils;
 import com.indo.common.web.exception.BizException;
@@ -31,10 +34,10 @@ import java.util.List;
 
 /**
  * <p>
- * 会员下级表 服务实现类
+ * 代理申请 服务实现类
  * </p>
  *
- * @author xxx
+ * @author puff
  * @since 2021-11-19
  */
 @Service
@@ -59,54 +62,93 @@ public class AgentApplyServiceImpl extends ServiceImpl<AgentApplyMapper, AgentAp
 
     @Override
     @Transactional
-    public boolean applyAudit(MemApplyAuditReq req) {
+    public synchronized boolean applyAudit(MemApplyAuditReq req) {
         AgentApply memAgentApply = baseMapper.selectById(req.getAgentApplyId());
-        if (memAgentApply == null) {
+        if (ObjectUtil.isEmpty(memAgentApply) ||
+                !AudiTypeEnum.wait.getStatus().equals(memAgentApply.getStatus())) {
             throw new BizException("代理审核申请不存在");
         }
-        MemBaseinfo superiorMem = iMemBaseinfoService.getMemBaseInfo(req.getMemId());
-        if (superiorMem.getProhibitInvite().equals(1)) {
+        MemBaseinfo memBaseinfo = iMemBaseinfoService.getMemBaseInfo(memAgentApply.getMemId());
+        if (ProhibitStatusEnum.invite.getStatus().equals(memBaseinfo.getProhibitInvite())) {
             throw new BizException("该邀请人已被禁止发展下级");
         }
-        memAgentApply.setStatus(req.getAudiType().getStatus());
-        if (req.getAudiType().name().equals(AudiTypeEnum.reject)) {
+        if (req.getAudiType().name().equals(AudiTypeEnum.agree.name())) {
+            //更新代理关系
+            modifyAgentRelation(memBaseinfo);
+            //插入会员邀请码
+            saveMemInviteCode(memBaseinfo);
+            //更新会员代理状态
+            modifyMemAccType(memBaseinfo);
+        } else {
+            // 记录拒绝原因
             if (StringUtils.isNotBlank(req.getRejectReason())) {
                 memAgentApply.setRejectReason(req.getRejectReason());
             }
         }
-        if (baseMapper.updateById(memAgentApply) > 0) {
-            if (req.getAudiType().name().equals(AudiTypeEnum.agree)) {
-                LambdaQueryWrapper<AgentRelation> wa = new LambdaQueryWrapper<>();
-                wa.eq(AgentRelation::getMemId, req.getMemId())
-                        .eq(AgentRelation::getStatus, 0);
-                AgentRelation memAgent = agentRelationMapper.selectOne(wa);
-                boolean agentflag;
-                if (memAgent == null) {
-                    memAgent = new AgentRelation();
-                    memAgent.setMemId(memAgentApply.getMemId());
-                    memAgent.setStatus(1);
-                    agentflag = agentRelationMapper.insert(memAgent) > 0;
-                } else {
-                    memAgent.setStatus(1);
-                    memAgent.setCreateTime(new Date());
-                    agentflag = agentRelationMapper.updateById(memAgent) > 0;
-                }
-                MemInviteCode memInviteCode = new MemInviteCode();
-                String code = ShareCodeUtil.inviteCode(memAgent.getMemId());
-                memInviteCode.setMemId(memAgent.getMemId());
-                memInviteCode.setInviteCode(code.toLowerCase());
-                boolean inviteFlag = memInviteCodeMapper.insert(memInviteCode) > 0;
-                if (!agentflag || !inviteFlag) {
-                    throw new BizException("代理审核出错!");
-                }
-
-                MemBaseInfoDTO memBaseInfoDTO = new MemBaseInfoDTO();
-                memBaseInfoDTO.setAccType(AudiTypeEnum.agree.getStatus());
-                iMemBaseinfoService.refreshMemBaseInfo(memBaseInfoDTO, memAgent.getAccount());
-                return true;
-            }
-            return true;
-        }
-        return false;
+        memAgentApply.setStatus(req.getAudiType().getStatus());
+        return baseMapper.updateById(memAgentApply) > 0;
     }
+
+
+    /**
+     * 更新会员代理状态
+     *
+     * @param memBaseinfo
+     */
+    private void modifyMemAccType(MemBaseinfo memBaseinfo) {
+        memBaseinfo.setAccType(GlobalConstants.ACC_TYPE_AGENT);
+        boolean memFlag = iMemBaseinfoService.updateById(memBaseinfo);
+        if (!memFlag) {
+            throw new BizException("代理审核出错!");
+        }
+        // 刷新用户缓存
+        MemBaseInfoDTO memBaseInfoDTO = new MemBaseInfoDTO();
+        memBaseInfoDTO.setAccType(GlobalConstants.ACC_TYPE_AGENT);
+        iMemBaseinfoService.refreshMemBaseInfo(memBaseInfoDTO, memBaseinfo.getAccount());
+    }
+
+    /**
+     * 插入会员邀请码
+     *
+     * @param memBaseinfo
+     */
+    private void saveMemInviteCode(MemBaseinfo memBaseinfo) {
+        MemInviteCode memInviteCode = new MemInviteCode();
+        String code = ShareCodeUtil.inviteCode(memBaseinfo.getId());
+        memInviteCode.setMemId(memBaseinfo.getId());
+        memInviteCode.setAccount(memBaseinfo.getAccount());
+        memInviteCode.setInviteCode(code.toLowerCase());
+        boolean inviteFlag = memInviteCodeMapper.insert(memInviteCode) > 0;
+        if (!inviteFlag) {
+            throw new BizException("代理审核出错!");
+        }
+    }
+
+    /**
+     * 更新会员代理关系
+     *
+     * @param memBaseinfo
+     */
+    private void modifyAgentRelation(MemBaseinfo memBaseinfo) {
+        LambdaQueryWrapper<AgentRelation> wa = new LambdaQueryWrapper<>();
+        wa.eq(AgentRelation::getMemId, memBaseinfo.getId());
+        AgentRelation memAgent = agentRelationMapper.selectOne(wa);
+        boolean agentflag;
+        if (ObjectUtil.isEmpty(memAgent)) {
+            memAgent = new AgentRelation();
+            memAgent.setMemId(memBaseinfo.getId());
+            memAgent.setAccount(memBaseinfo.getAccount());
+            memAgent.setStatus(GlobalConstants.STATUS_NORMAL);
+            agentflag = agentRelationMapper.insert(memAgent) > 0;
+        } else {
+            memAgent.setStatus(GlobalConstants.STATUS_NORMAL);
+            memAgent.setCreateTime(new Date());
+            agentflag = agentRelationMapper.updateById(memAgent) > 0;
+        }
+        if (!agentflag) {
+            throw new BizException("代理审核出错!");
+        }
+    }
+
+
 }

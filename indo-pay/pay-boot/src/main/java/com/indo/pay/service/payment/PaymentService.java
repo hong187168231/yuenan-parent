@@ -46,7 +46,7 @@ public class PaymentService {
 
 
     public Result paymentRequestByUser(LoginInfo loginInfo, RechargeReq rechargeReq) {
-        Result result = Result.failed();
+        Result result;
         // 业务逻辑校验
         RechargeBO rechargeBO = rechargeService.logicConditionCheck(rechargeReq, loginInfo);
         ThirdPayChannelEnum payChannel = ThirdPayChannelEnum.valueOf(rechargeBO.getPayChannel().getChannelCode());

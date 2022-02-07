@@ -25,7 +25,7 @@ public interface MemGiftReceiveMapper extends BaseMapper<MemGiftReceive> {
 
 
     @Select("SELECT COUNT(1) from mem_gift_receive m WHERE m.mem_id = #{memId} " +
-            " and m.gift_code = #{giftCode} and m.create_time > = #{beginTime} and m.create_time <= #{endTime}")
+            " and m.gift_code = #{giftCode} and m.create_time >= #{beginTime} and m.create_time <= #{endTime}")
     int countVipTimeIntervalGift(@Param("memId") Long memId, @Param("giftCode") String giftCode,
                                  @Param("beginTime") Date beginTime, @Param("endTime") Date endTime);
 

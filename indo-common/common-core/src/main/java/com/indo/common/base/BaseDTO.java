@@ -19,4 +19,21 @@ public class BaseDTO implements Serializable {
     @ApiModelProperty(value = "分页数")
     private Integer limit = 10;
 
+//    public void setPage(Integer page) {
+//        if (page == null || page <= 0) {
+//            this.page = 1;
+//        } else {
+//            this.page = page;
+//        }
+//    }
+//
+//    public void setLimit(Integer limit) {
+//        if (limit == null || limit <= 0) {
+//            this.limit = 10;
+//        } else {
+//            this.limit = limit;
+//        }
+//    }
+
+
 }

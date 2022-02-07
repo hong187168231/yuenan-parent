@@ -16,7 +16,6 @@ import java.util.Date;
 public class PayChannelVO extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
-
     @ApiModelProperty(value = "支付渠道id")
     private Long payChannelId;
 

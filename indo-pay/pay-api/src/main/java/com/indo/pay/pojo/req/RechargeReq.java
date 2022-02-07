@@ -13,10 +13,11 @@ public class RechargeReq {
     @ApiModelProperty(value = "充值金额", required = true)
     private BigDecimal amount;
 
+    @ApiModelProperty(value = "支付渠道id", required = true)
+    private Long payChannelId;
+
     @ApiModelProperty(value = "支付方式id", required = true)
     private Long payWayId;
 
-    @ApiModelProperty(value = "支付渠道id", required = true)
-    private Long payChannelId;
 
 }

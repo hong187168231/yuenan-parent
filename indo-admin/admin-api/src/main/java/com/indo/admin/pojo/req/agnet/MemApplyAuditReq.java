@@ -13,9 +13,6 @@ public class MemApplyAuditReq {
     @ApiModelProperty("代理申请id")
     private Long agentApplyId;
 
-    @ApiModelProperty("用户id")
-    private Long memId;
-
     @ApiModelProperty(value = "审核类型")
     private AudiTypeEnum audiType;
 

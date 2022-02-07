@@ -1,6 +1,7 @@
 package com.indo.pay.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.indo.core.pojo.entity.PayChannelConfig;
 import com.indo.core.pojo.entity.PayWayConfig;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -20,9 +21,12 @@ import java.util.List;
 @Mapper
 public interface PayWayMapper extends BaseMapper<PayWayConfig> {
 
-    List<PayWayConfig> wayList(@Param("todayAmount") Long todayAmount,@Param("totalAmount") Long totalAmount);
+    List<PayWayConfig> wayList(@Param("todayAmount") Long todayAmount, @Param("totalAmount") Long totalAmount);
 
 
+    @Select("select * from pay_way_config where `status` = 1 and" +
+            " pay_way_id = #{payWayId} ")
+    PayWayConfig selectEnableWayById(@Param("payWayId") Long payWayId);
 
 
 }

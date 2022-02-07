@@ -27,7 +27,7 @@
         SELECT * FROM agent_relation ar
         left join mem_baseinfo mb
         on ar.mem_id = mb.id
-        where ar.is_del = 1
+        where ar.`status` = 1
         <if test="req.memId !=null">
             and ar.mem_id = #{req.memId}
         </if>
@@ -54,9 +54,9 @@
         FROM
         agent_relation ar
         INNER JOIN mem_baseinfo mb ON ar.mem_id = mb.id
-        AND ar.is_del = 1
+        AND ar.`status` = 1
         -- AND ma.parent_id != 0
-        <if test="req.parentId !=null">
+        <if test="req.superior !=null">
             and ar.superior = #{req.superior}
         </if>
         ORDER BY

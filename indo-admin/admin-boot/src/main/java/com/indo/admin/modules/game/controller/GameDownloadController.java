@@ -1,7 +1,6 @@
 package com.indo.admin.modules.game.controller;
 
 import com.indo.admin.modules.game.service.IGameDownloadService;
-import com.indo.common.annotation.AllowAccess;
 import com.indo.common.result.Result;
 import com.indo.game.pojo.entity.manage.GameDownload;
 import io.swagger.annotations.Api;
@@ -25,7 +24,6 @@ public class GameDownloadController {
 
     @ApiOperation(value = "下载地址", httpMethod = "GET")
     @GetMapping(value = "/allGameDownload")
-    @AllowAccess
     public Result<List<GameDownload>> allGameDownload() {
         return Result.success(iGameDownloadService.queryAllGameDownload());
     }
@@ -44,9 +42,8 @@ public class GameDownloadController {
 
     @ApiOperation(value = "修改下载地址", httpMethod = "POST")
     @GetMapping(value = "/modifyGameDownload")
-
     public Result modifyGameDownload(GameDownload gameDownload) {
-        return Result.judge(iGameDownloadService.modifiyGameDownload(gameDownload));
+        return Result.judge(iGameDownloadService.modifyGameDownload(gameDownload));
     }
 
 
