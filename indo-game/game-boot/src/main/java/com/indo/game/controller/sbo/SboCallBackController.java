@@ -128,41 +128,41 @@ public class SboCallBackController {
         return getBetStatus;
     }
 
-    /**
-     * 转帐交易
-     */
-    @RequestMapping(value="/Transfer",method=RequestMethod.POST)
-    @ResponseBody
-    public Object transfer(SboCallBackTransferReq sboCallBackTransferReq) {
-        logger.info("sboCallBack {} transfer 回调,取得投注状态 params:{}",JSONObject.toJSONString(sboCallBackTransferReq));
-        Object transfer = sboCallbackService.transfer(sboCallBackTransferReq);
-        logger.info("sboCallBack {} transfer 回调返回数据,取得投注状态 params:{}",transfer);
-        return transfer;
-    }
-
-    /**
-     * 转帐交易回滚
-     */
-    @RequestMapping(value="/RollbackTransfer",method=RequestMethod.POST)
-    @ResponseBody
-    public Object rollbackTransfer(SboCallBackRollbackTransferReq sboCallBackRollbackTransferReq) {
-        logger.info("sboCallBack {} rollbackTransfer 回调,转帐交易回滚 params:{}",JSONObject.toJSONString(sboCallBackRollbackTransferReq));
-        Object rollbackTransfer = sboCallbackService.rollbackTransfer(sboCallBackRollbackTransferReq);
-        logger.info("sboCallBack {} rollbackTransfer 回调返回数据,转帐交易回滚 params:{}",rollbackTransfer);
-        return rollbackTransfer;
-    }
-
-    /**
-     * 取得转帐交易状态
-     */
-    @RequestMapping(value="/GetTransferStatus",method=RequestMethod.POST)
-    @ResponseBody
-    public Object getTransferStatus(SboCallBackGetTransferStautsReq sboCallBackGetTransferStautsReq) {
-        logger.info("sboCallBack {} getTransferStatus 回调,取得转帐交易状态 params:{}",JSONObject.toJSONString(sboCallBackGetTransferStautsReq));
-        Object getTransferStatus = sboCallbackService.getTransferStatus(sboCallBackGetTransferStautsReq);
-        logger.info("sboCallBack {} getTransferStatus 回调返回数据,取得转帐交易状态 params:{}",getTransferStatus);
-        return getTransferStatus;
-    }
+//    /**
+//     * 转帐交易
+//     */
+//    @RequestMapping(value="/Transfer",method=RequestMethod.POST)
+//    @ResponseBody
+//    public Object transfer(SboCallBackTransferReq sboCallBackTransferReq) {
+//        logger.info("sboCallBack {} transfer 回调,取得投注状态 params:{}",JSONObject.toJSONString(sboCallBackTransferReq));
+//        Object transfer = sboCallbackService.transfer(sboCallBackTransferReq);
+//        logger.info("sboCallBack {} transfer 回调返回数据,取得投注状态 params:{}",transfer);
+//        return transfer;
+//    }
+//
+//    /**
+//     * 转帐交易回滚
+//     */
+//    @RequestMapping(value="/RollbackTransfer",method=RequestMethod.POST)
+//    @ResponseBody
+//    public Object rollbackTransfer(SboCallBackRollbackTransferReq sboCallBackRollbackTransferReq) {
+//        logger.info("sboCallBack {} rollbackTransfer 回调,转帐交易回滚 params:{}",JSONObject.toJSONString(sboCallBackRollbackTransferReq));
+//        Object rollbackTransfer = sboCallbackService.rollbackTransfer(sboCallBackRollbackTransferReq);
+//        logger.info("sboCallBack {} rollbackTransfer 回调返回数据,转帐交易回滚 params:{}",rollbackTransfer);
+//        return rollbackTransfer;
+//    }
+//
+//    /**
+//     * 取得转帐交易状态
+//     */
+//    @RequestMapping(value="/GetTransferStatus",method=RequestMethod.POST)
+//    @ResponseBody
+//    public Object getTransferStatus(SboCallBackGetTransferStautsReq sboCallBackGetTransferStautsReq) {
+//        logger.info("sboCallBack {} getTransferStatus 回调,取得转帐交易状态 params:{}",JSONObject.toJSONString(sboCallBackGetTransferStautsReq));
+//        Object getTransferStatus = sboCallbackService.getTransferStatus(sboCallBackGetTransferStautsReq);
+//        logger.info("sboCallBack {} getTransferStatus 回调返回数据,取得转帐交易状态 params:{}",getTransferStatus);
+//        return getTransferStatus;
+//    }
 
     /**
      * LiveCoin購買

@@ -21,12 +21,12 @@ public interface SboCallbackService {
     public Object returnStake(SboCallBackReturnStakeReq sboCallBackBonusReq);
     //取得投注状态
     public Object getBetStatus(SboCallBackGetBetStatusReq sboCallBackGetBetStatusReq);
-    //转帐交易
-    public Object transfer(SboCallBackTransferReq sboCallBackTransferReq);
-    //转帐交易回滚
-    public Object rollbackTransfer(SboCallBackRollbackTransferReq sboCallBackRollbackTransferReq);
-    //取得转帐交易状态
-    public Object getTransferStatus(SboCallBackGetTransferStautsReq sboCallBackGetTransferStautsReq);
+//    //转帐交易
+//    public Object transfer(SboCallBackTransferReq sboCallBackTransferReq);
+//    //转帐交易回滚
+//    public Object rollbackTransfer(SboCallBackRollbackTransferReq sboCallBackRollbackTransferReq);
+//    //取得转帐交易状态
+//    public Object getTransferStatus(SboCallBackGetTransferStautsReq sboCallBackGetTransferStautsReq);
     //LiveCoin購買
     public Object liveCoinTransaction(SboCallBackLiveCoinTransactionReq sboCallBackLiveCoinTransactionReq);
 }
