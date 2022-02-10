@@ -11,7 +11,7 @@ public interface AwcService {
     /**
      * 登录游戏AWC-AE真人、SV388斗鸡
      */
-    public Result awcGame(LoginInfo loginUser, String isMobileLogin,String ip,String platform) ;
+    public Result awcGame(LoginInfo loginUser, String isMobileLogin,String ip,String platform,String parentName) ;
 
     /**
      * AE真人、SV388斗鸡游戏 强迫登出玩家

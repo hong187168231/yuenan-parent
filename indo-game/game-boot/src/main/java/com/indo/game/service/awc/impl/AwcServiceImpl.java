@@ -12,6 +12,7 @@ import com.indo.game.mapper.frontend.GamePlatformMapper;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.game.pojo.dto.awc.AwcTransaction;
 import com.indo.game.pojo.dto.awc.AwcApiResponseData;
+import com.indo.game.pojo.entity.manage.GameParentPlatform;
 import com.indo.game.pojo.entity.manage.GamePlatform;
 import com.indo.game.service.awc.AwcService;
 import com.indo.common.utils.GameUtil;
@@ -45,21 +46,37 @@ public class AwcServiceImpl implements AwcService {
     GameCategoryMapper gameCategoryMapper;
     @Autowired
     private GamePlatformMapper gamePlatformMapper;
-
     /**
      * 登录游戏AWC-AE真人
      * @return loginUser 用户信息
      */
     @Override
-    public Result awcGame(LoginInfo loginUser, String isMobileLogin,String ip,String platform) {
+    public Result awcGame(LoginInfo loginUser, String isMobileLogin,String ip,String platform,String parentName) {
         logger.info("awclog {} aeGame account:{}, aeCodeId:{}", loginUser.getId(), loginUser.getNickName(), platform);
         // 是否开售校验
-        GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(platform);
-        if(null==gamePlatform){
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
+        if(null==gameParentPlatform){
             return Result.failed("(awc)"+MessageUtils.get("tgdne"));
         }
-        if ("0".equals(gamePlatform.getIsStart())) {
+        if ("0".equals(gameParentPlatform.getIsStart())) {
             return Result.failed(MessageUtils.get("tgocinyo"));
+        }
+        if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
+            return Result.failed(gameParentPlatform.getMaintenanceContent());
+        }
+        GamePlatform gamePlatform = new GamePlatform();
+        if(!platform.equals(parentName)) {
+            // 是否开售校验
+            gamePlatform = gameCommonService.getGamePlatformByplatformCode(platform);
+            if (null == gamePlatform) {
+                return Result.failed("(awc)" + MessageUtils.get("tgdne"));
+            }
+            if ("0".equals(gamePlatform.getIsStart())) {
+                return Result.failed(MessageUtils.get("tgocinyo"));
+            }
+            if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
+                return Result.failed(gamePlatform.getMaintenanceContent());
+            }
         }
 //        //初次判断站点棋牌余额是否够该用户
 //        MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(loginUser.getAccount());
@@ -77,7 +94,7 @@ public class AwcServiceImpl implements AwcService {
         try {
 
             // 验证且绑定（KY-CPT第三方会员关系）
-            CptOpenMember cptOpenMember = externalService.getCptOpenMember(loginUser.getId().intValue(), gamePlatform.getParentName());
+            CptOpenMember cptOpenMember = externalService.getCptOpenMember(loginUser.getId().intValue(), parentName);
             if (cptOpenMember == null) {
                 cptOpenMember = new CptOpenMember();
                 cptOpenMember.setUserId(loginUser.getId().intValue());
@@ -85,9 +102,9 @@ public class AwcServiceImpl implements AwcService {
                 cptOpenMember.setPassword(loginUser.getAccount());
                 cptOpenMember.setCreateTime(new Date());
                 cptOpenMember.setLoginTime(new Date());
-                cptOpenMember.setType(gamePlatform.getParentName());
+                cptOpenMember.setType(parentName);
                 //创建玩家
-                return createMemberGame(gamePlatform, ip, cptOpenMember,isMobileLogin);
+                return createMemberGame(gameParentPlatform,gamePlatform, ip, cptOpenMember,isMobileLogin);
             } else {
                 Result result = this.logout(loginUser,ip);
                 if(null!=result&&"00000".equals(result.getCode())) {
@@ -96,7 +113,7 @@ public class AwcServiceImpl implements AwcService {
                     updateCptOpenMember.setLoginTime(new Date());
                     externalService.updateCptOpenMember(updateCptOpenMember);
                     //登录
-                    return initGame(gamePlatform, ip, cptOpenMember, isMobileLogin);
+                    return initGame(gameParentPlatform,gamePlatform, ip, cptOpenMember, isMobileLogin);
                 }
                 return result;
             }
@@ -134,8 +151,8 @@ public class AwcServiceImpl implements AwcService {
     /**
      * 登录
      */
-    private Result initGame(GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember,String isMobileLogin) throws Exception {
-        AwcApiResponseData awcApiResponseData = game(gamePlatform, ip, cptOpenMember,isMobileLogin);
+    private Result initGame(GameParentPlatform gameParentPlatform,GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember,String isMobileLogin) throws Exception {
+        AwcApiResponseData awcApiResponseData = game(gameParentPlatform,gamePlatform, ip, cptOpenMember,isMobileLogin);
         if (null == awcApiResponseData ) {
             return Result.failed(MessageUtils.get("etgptal"));
         }
@@ -148,8 +165,8 @@ public class AwcServiceImpl implements AwcService {
     /**
      * 创建玩家
      */
-    private Result createMemberGame(GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember,String isMobileLogin) throws Exception {
-        AwcApiResponseData awcApiResponseData = createMember(gamePlatform, ip, cptOpenMember);
+    private Result createMemberGame(GameParentPlatform gameParentPlatform,GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember,String isMobileLogin) throws Exception {
+        AwcApiResponseData awcApiResponseData = createMember(gameParentPlatform,gamePlatform, ip, cptOpenMember);
 //        AwcApiResponseData awcApiResponseData = new AwcApiResponseData();
 //        awcApiResponseData.setStatus("0000");
         if (null == awcApiResponseData ) {
@@ -157,7 +174,7 @@ public class AwcServiceImpl implements AwcService {
         }
         if("0000".equals(awcApiResponseData.getStatus())||"1001".equals(awcApiResponseData.getStatus())){
             externalService.saveCptOpenMember(cptOpenMember);
-            return initGame(gamePlatform, ip, cptOpenMember,isMobileLogin);
+            return initGame(gameParentPlatform,gamePlatform, ip, cptOpenMember,isMobileLogin);
         }else {
             return Result.failed(awcApiResponseData.getStatus(),awcApiResponseData.getDesc());
         }
@@ -170,13 +187,13 @@ public class AwcServiceImpl implements AwcService {
      * @param cptOpenMember
      * @return
      */
-    public AwcApiResponseData createMember(GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember) {
+    public AwcApiResponseData createMember(GameParentPlatform gameParentPlatform,GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember) {
         try {
             String time = System.currentTimeMillis() / 1000 + "";
             Map<String, String> trr = new HashMap<>();
             trr.put("userId", cptOpenMember.getUserName());
-            trr.put("currency", gamePlatform.getCurrencyType());//玩家货币代码
-            trr.put("language", gamePlatform.getLanguageType());
+            trr.put("currency", gameParentPlatform.getCurrencyType());//玩家货币代码
+            trr.put("language", gameParentPlatform.getLanguageType());
             trr.put("userName", "");//玩家名称
 //           platform: SEXYBCRT
 //                   - gameType: LIVE
@@ -186,7 +203,7 @@ public class AwcServiceImpl implements AwcService {
 //            ※每个玩家每个最多允许 6 组下注限红 ID
             LambdaQueryWrapper<GamePlatform> wrapper = new LambdaQueryWrapper<>();
             wrapper.eq(GamePlatform::getIsStart,"1");
-            wrapper.eq(GamePlatform::getParentName,"AWC");
+            wrapper.eq(GamePlatform::getParentName,gameParentPlatform.getPlatformCode());
             List<GamePlatform> categoryList = gamePlatformMapper.selectList(wrapper);
             String betLimit = "";
             for (int i=0;i<categoryList.size();i++){
@@ -218,7 +235,7 @@ public class AwcServiceImpl implements AwcService {
      * @param cptOpenMember
      * @return
      */
-    public AwcApiResponseData game(GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember,String isMobileLogin) {
+    public AwcApiResponseData game(GameParentPlatform gameParentPlatform,GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember,String isMobileLogin) {
         try {
             Map<String, String> trr = new HashMap<>();
             trr.put("userId", cptOpenMember.getUserName());
@@ -232,36 +249,38 @@ public class AwcServiceImpl implements AwcService {
 //            用于导回您指定的网站，需要设置 http:// 或 https://
 //            Example 范例：http://www.google.com
             trr.put("externalURL", "");
-            String str[] = gamePlatform.getPlatformCode().split("_");
-            trr.put("platform", str[0]);//游戏平台名称
 
+            trr.put("language", gameParentPlatform.getLanguageType());
+            if(null!=gamePlatform) {
+                String str[] = gamePlatform.getPlatformCode().split("_");
+                trr.put("platform", str[0]);//游戏平台名称
 //            GameCategory gameCategory = gameCategoryMapper.selectById(gamePlatform.getCategoryId());
-            trr.put("gameType", str[1]);//平台游戏类型
-            trr.put("language", gamePlatform.getLanguageType());
-            List<GamePlatform> gamePlatformList = gameCommonService.getGamePlatformByParentName("AWC");
-            List<String> codeList = new ArrayList<>();
-            Map<String, List<String>> gameForbiddenMap = new HashMap<>();
+                trr.put("gameType", str[1]);//平台游戏类型
+                List<GamePlatform> gamePlatformList = gameCommonService.getGamePlatformByParentName(gameParentPlatform.getPlatformCode());
+                List<String> codeList = new ArrayList<>();
+                Map<String, List<String>> gameForbiddenMap = new HashMap<>();
 
-            for(int i=0;i<gamePlatformList.size();i++){
-                GamePlatform gamePlatform1 = gamePlatformList.get(i);
-                if(!gamePlatform.getPlatformCode().equals(gamePlatform1.getPlatformCode())){
-                    String platformList[] = gamePlatform1.getPlatformCode().split("_");
-                    if(!gamePlatformList.contains(platformList[0])){
-                        codeList.add(platformList[0]);
-                        List<String> typeList = gameForbiddenMap.get(platformList[0]);
-                        if(null == typeList){
-                            typeList = new ArrayList<>();
-                            typeList.add(platformList[1]);
+                for (int i = 0; i < gamePlatformList.size(); i++) {
+                    GamePlatform gamePlatform1 = gamePlatformList.get(i);
+                    if (!gamePlatform.getPlatformCode().equals(gamePlatform1.getPlatformCode())) {
+                        String platformList[] = gamePlatform1.getPlatformCode().split("_");
+                        if (!gamePlatformList.contains(platformList[0])) {
+                            codeList.add(platformList[0]);
+                            List<String> typeList = gameForbiddenMap.get(platformList[0]);
+                            if (null == typeList) {
+                                typeList = new ArrayList<>();
+                                typeList.add(platformList[1]);
 
-                        }else {
-                            typeList.add(platformList[1]);
+                            } else {
+                                typeList.add(platformList[1]);
+                            }
+                            gameForbiddenMap.put(platformList[0], typeList);
                         }
-                        gameForbiddenMap.put(platformList[0], typeList);
                     }
                 }
+                JSONObject gameForbiddenStr = GameUtil.getJsonMap(gameForbiddenMap);
+                trr.put("gameForbidden", gameForbiddenStr.toString());//指定对玩家隐藏游戏平台，您仅能透过 API 执行这个动作
             }
-            JSONObject gameForbiddenStr = GameUtil.getJsonMap(gameForbiddenMap);
-            trr.put("gameForbidden", gameForbiddenStr.toString());//指定对玩家隐藏游戏平台，您仅能透过 API 执行这个动作
 //           platform: SEXYBCRT
 //                   - gameType: LIVE
 //                   - value (ID): {"limitId":[IDs]}

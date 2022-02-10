@@ -43,9 +43,11 @@ public class AwcController {
     @PostMapping("/initGame")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "isMobileLogin", value = "是否手机登录 ", paramType = "query", dataType = "int", required = true),
-            @ApiImplicitParam(name = "platform", value = "第三方游戏平台 ", paramType = "query", dataType = "string", required = true)
+            @ApiImplicitParam(name = "platform", value = "第三方游戏平台 ", paramType = "query", dataType = "string", required = true),
+            @ApiImplicitParam(name = "parentName", value = "第三方平台代码（AWC） ", paramType = "query", dataType = "string", required = true)
     })
     public Result initGame(@LoginUser LoginInfo loginUser, @RequestParam("isMobileLogin") String isMobileLogin, @RequestParam("platform") String platform,
+                           @RequestParam("parentName") String parentName,
                            HttpServletRequest request) throws InterruptedException {
 
         String params = "";
@@ -59,7 +61,7 @@ public class AwcController {
         try {
             if (res) {
                 String ip = IPAddressUtil.getIpAddress(request);
-                Result resultInfo = awcService.awcGame(loginUser, isMobileLogin, ip, platform);
+                Result resultInfo = awcService.awcGame(loginUser, isMobileLogin, ip, platform,parentName);
                 if (resultInfo == null) {
                     log.info("AE真人、SV388斗鸡log {} initGame result is null. params:{},ip:{}", loginUser.getId(), params, ip);
                     return Result.failed(MessageUtils.get("networktimeout"));

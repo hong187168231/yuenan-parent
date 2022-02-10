@@ -42,9 +42,10 @@ public class SabaController {
     @ApiOperation(value = "saba游戏登录并初始化用户游戏账号", httpMethod = "POST")
     @PostMapping("/initGame")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "platform", value = "第三方游戏平台 ", paramType = "query", dataType = "string", required = true)
+            @ApiImplicitParam(name = "platform", value = "第三方游戏平台 ", paramType = "query", dataType = "string", required = true),
+            @ApiImplicitParam(name = "parentName", value = "第三方平台代码（AWC） ", paramType = "query", dataType = "string", required = true)
     })
-    public Result initGame(@LoginUser LoginInfo loginUser,@RequestParam("platform") String platform,
+    public Result initGame(@LoginUser LoginInfo loginUser,@RequestParam("platform") String platform,@RequestParam("parentName") String parentName,
                            HttpServletRequest request) throws InterruptedException {
 
         String params = "";
@@ -58,7 +59,7 @@ public class SabaController {
         try {
             if (res) {
                 String ip = IPAddressUtil.getIpAddress(request);
-                Result resultInfo = sabaService.sabaGame(loginUser, ip, platform);
+                Result resultInfo = sabaService.sabaGame(loginUser, ip, platform,parentName);
                 if (resultInfo == null) {
                     log.info("sabalog {} initGame result is null. params:{},ip:{}", loginUser.getId(), params, ip);
                     return Result.failed(MessageUtils.get("networktimeout"));

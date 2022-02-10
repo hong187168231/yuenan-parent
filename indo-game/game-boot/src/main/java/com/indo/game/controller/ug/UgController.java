@@ -44,9 +44,10 @@ public class UgController {
     @PostMapping("/initGame")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "platform", value = "平台 ", paramType = "query", dataType = "string", required = true),
-                @ApiImplicitParam(name = "WebType", value = "登录类型: PC,Smart,Wap", paramType = "query", dataType = "string", required = true)
+                @ApiImplicitParam(name = "WebType", value = "登录类型: PC,Smart,Wap", paramType = "query", dataType = "string", required = true),
+            @ApiImplicitParam(name = "parentName", value = "第三方平台代码（UG） ", paramType = "query", dataType = "string", required = true)
     })
-    public Result initGame(@LoginUser LoginInfo loginUser, @RequestParam("platform") String platform,String WebType,
+    public Result initGame(@LoginUser LoginInfo loginUser, @RequestParam("platform") String platform,String WebType,@RequestParam("parentName") String parentName,
                            HttpServletRequest request) throws InterruptedException {
 
         String params = "";
@@ -60,7 +61,7 @@ public class UgController {
         try {
             if (res) {
                 String ip = IPAddressUtil.getIpAddress(request);
-                Result resultInfo = ugService.ugGame(loginUser, ip, platform,WebType);
+                Result resultInfo = ugService.ugGame(loginUser, ip, platform,WebType,parentName);
                 if (resultInfo == null) {
                     log.info("uglog {} initGame result is null. params:{},ip:{}", loginUser.getId(), params, ip);
                     return Result.failed(MessageUtils.get("networktimeout"));

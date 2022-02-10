@@ -43,9 +43,10 @@ public class SboController {
     @ApiOperation(value = "sbo进入游戏", httpMethod = "POST")
     @PostMapping("/initGame")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "platform", value = "平台 ", paramType = "query", dataType = "string", required = true)
+            @ApiImplicitParam(name = "platform", value = "平台 ", paramType = "query", dataType = "string", required = true),
+            @ApiImplicitParam(name = "parentName", value = "第三方平台代码（SBO） ", paramType = "query", dataType = "string", required = true)
     })
-    public Result initGame(@LoginUser LoginInfo loginUser, @RequestParam("platform") String platform,
+    public Result initGame(@LoginUser LoginInfo loginUser, @RequestParam("platform") String platform,@RequestParam("parentName") String parentName,
                            HttpServletRequest request) throws InterruptedException {
 
         String params = "";
@@ -59,7 +60,7 @@ public class SboController {
         try {
             if (res) {
                 String ip = IPAddressUtil.getIpAddress(request);
-                Result resultInfo = sboSportsService.sboGame(loginUser, ip, platform);
+                Result resultInfo = sboSportsService.sboGame(loginUser, ip, platform,parentName);
                 if (resultInfo == null) {
                     log.info("sbolog {} initGame result is null. params:{},ip:{}", loginUser.getId(), params, ip);
                     return Result.failed(MessageUtils.get("networktimeout"));

@@ -10,7 +10,7 @@ public interface UgService {
     /**
      * UG Sports
      */
-    public Result ugGame(LoginInfo loginUser, String ip,String platform,String WebType) ;
+    public Result ugGame(LoginInfo loginUser, String ip,String platform,String WebType,String parentName) ;
 
     /**
      * UG Sports登出玩家

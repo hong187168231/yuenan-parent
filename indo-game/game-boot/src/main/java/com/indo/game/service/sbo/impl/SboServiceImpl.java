@@ -15,6 +15,7 @@ import com.indo.game.pojo.dto.sbo.SboPlayerLoginJsonDTO;
 import com.indo.game.pojo.dto.sbo.SboPlayerLogoutJsonDTO;
 import com.indo.game.pojo.dto.sbo.SboRegisterPlayerJsonDTO;
 import com.indo.game.pojo.entity.CptOpenMember;
+import com.indo.game.pojo.entity.manage.GameParentPlatform;
 import com.indo.game.pojo.entity.manage.GamePlatform;
 import com.indo.game.pojo.entity.sbo.GameAgent;
 import com.indo.game.pojo.vo.callback.sbo.SboApiResponseData;
@@ -59,15 +60,31 @@ public class SboServiceImpl implements SboService {
      * @return loginUser 用户信息
      */
     @Override
-    public Result sboGame(LoginInfo loginUser, String ip, String platform) {
+    public Result sboGame(LoginInfo loginUser, String ip, String platform,String parentName) {
         logger.info("sbolog {} aeGame account:{}, aeCodeId:{}", loginUser.getId(), loginUser.getNickName());
-        // 是否开售校验
-        GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(platform);
-        if (null == gamePlatform) {
-            return Result.failed("(sbo)" + MessageUtils.get("tgdne"));
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
+        if(null==gameParentPlatform){
+            return Result.failed("(awc)"+MessageUtils.get("tgdne"));
         }
-        if ("0".equals(gamePlatform.getIsStart())) {
+        if ("0".equals(gameParentPlatform.getIsStart())) {
             return Result.failed(MessageUtils.get("tgocinyo"));
+        }
+        if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
+            return Result.failed(gameParentPlatform.getMaintenanceContent());
+        }
+        GamePlatform gamePlatform = new GamePlatform();
+        if(!platform.equals(parentName)) {
+            // 是否开售校验
+            gamePlatform = gameCommonService.getGamePlatformByplatformCode(platform);
+            if (null == gamePlatform) {
+                return Result.failed("(sbo)" + MessageUtils.get("tgdne"));
+            }
+            if ("0".equals(gamePlatform.getIsStart())) {
+                return Result.failed(MessageUtils.get("tgocinyo"));
+            }
+            if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
+                return Result.failed(gamePlatform.getMaintenanceContent());
+            }
         }
         //初次判断站点棋牌余额是否够该用户
 //        MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(loginUser.getAccount());
@@ -82,7 +99,7 @@ public class SboServiceImpl implements SboService {
         try {
 
             // 验证且绑定（KY-CPT第三方会员关系）
-            CptOpenMember cptOpenMember = externalService.getCptOpenMember(loginUser.getId().intValue(), gamePlatform.getParentName());
+            CptOpenMember cptOpenMember = externalService.getCptOpenMember(loginUser.getId().intValue(), parentName);
             if (cptOpenMember == null) {
                 cptOpenMember = new CptOpenMember();
                 cptOpenMember.setUserId(loginUser.getId().intValue());
@@ -90,16 +107,16 @@ public class SboServiceImpl implements SboService {
                 cptOpenMember.setPassword(loginUser.getAccount());
                 cptOpenMember.setCreateTime(new Date());
                 cptOpenMember.setLoginTime(new Date());
-                cptOpenMember.setType(gamePlatform.getParentName());
+                cptOpenMember.setType(parentName);
                 //创建玩家
-                return restrictedPlayer(loginUser, gamePlatform, ip, cptOpenMember);
+                return restrictedPlayer(gameParentPlatform,loginUser, gamePlatform, ip, cptOpenMember);
             } else {
                 CptOpenMember updateCptOpenMember = new CptOpenMember();
                 updateCptOpenMember.setId(cptOpenMember.getId());
                 updateCptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(updateCptOpenMember);
                 //登录
-                return initGame(loginUser, gamePlatform, ip);
+                return initGame(gameParentPlatform,loginUser, gamePlatform, ip);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -112,11 +129,11 @@ public class SboServiceImpl implements SboService {
      *
      * @return loginUser 用户信息
      */
-    public Result restrictedPlayer(LoginInfo loginUser, GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember) {
+    public Result restrictedPlayer(GameParentPlatform gameParentPlatform,LoginInfo loginUser, GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember) {
         logger.info("sbolog {} sboGame account:{}, sboCodeId:{}", loginUser.getId(), loginUser.getNickName());
         try {
             LambdaQueryWrapper<GameAgent> wrapper = new LambdaQueryWrapper<>();
-            wrapper.eq(GameAgent::getParentName, gamePlatform.getParentName());
+            wrapper.eq(GameAgent::getParentName, gameParentPlatform.getPlatformCode());
             GameAgent gameAgent = gameAgentMapper.selectOne(wrapper);
             if(null==gameAgent){
                 return Result.failed(MessageUtils.get("praaa"));
@@ -133,7 +150,7 @@ public class SboServiceImpl implements SboService {
             }
             if ("0".equals(sboApiResponse.getError().getId()) || "4103".equals(sboApiResponse.getError().getId())) {
                 externalService.saveCptOpenMember(cptOpenMember);
-                return initGame(loginUser, gamePlatform, ip);
+                return initGame(gameParentPlatform,loginUser, gamePlatform, ip);
             } else {
                 return Result.failed(sboApiResponse.getError().getId(), sboApiResponse.getError().getMsg());
             }
@@ -146,12 +163,14 @@ public class SboServiceImpl implements SboService {
     /**
      * 登录
      */
-    private Result initGame(LoginInfo loginUser, GamePlatform gamePlatform, String ip) throws Exception {
+    private Result initGame(GameParentPlatform gameParentPlatform,LoginInfo loginUser, GamePlatform gamePlatform, String ip) throws Exception {
         logger.info("sbolog {} sboGame account:{}, sboCodeId:{}", loginUser.getId(), loginUser.getNickName());
         try {
             SboPlayerLoginJsonDTO sboPlayerLoginJsonDTO = new SboPlayerLoginJsonDTO();
             sboPlayerLoginJsonDTO.setUsername(loginUser.getAccount());
-            sboPlayerLoginJsonDTO.setPortfolio(gamePlatform.getPlatformCode());
+            if(null!=gamePlatform) {
+                sboPlayerLoginJsonDTO.setPortfolio(gamePlatform.getPlatformCode());
+            }
             sboPlayerLoginJsonDTO.setIsWapSports(false);
 
             SboApiResponseData sboApiResponse = commonRequest(sboPlayerLoginJsonDTO, OpenAPIProperties.SBO_API_URL + "/web-root/restricted/player/login.aspx", loginUser.getId().intValue(), ip, "PlayerLogin");
