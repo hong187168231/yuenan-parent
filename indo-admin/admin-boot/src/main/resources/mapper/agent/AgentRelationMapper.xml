@@ -45,18 +45,17 @@
         mb.real_name AS realName,
         mb.acc_type AS accType,
         mb.total_deposit AS totalDeposit,
-        mb.total_enchashment AS totalEnchashment,
+        mb.total_enchashment AS totalWithdraw,
         mb.total_bet AS totalBet,
         mb.create_time AS registerTime,
-        ar.agent_id AS agent_id,
+        ar.agent_id AS agentId,
         ar.superior AS superior,
         ar.team_num AS teamNum
         FROM
         agent_relation ar
         INNER JOIN mem_baseinfo mb ON ar.mem_id = mb.id
         AND ar.`status` = 1
-        -- AND ma.parent_id != 0
-        <if test="req.superior !=null">
+        <if test="req.superior !=null and req.superior !='' ">
             and ar.superior = #{req.superior}
         </if>
         ORDER BY

@@ -25,5 +25,5 @@ public interface AgentRelationMapper extends BaseMapper<AgentRelation> {
 
     List<AgentVo> queryList(@Param("page") Page<AgentVo> page, @Param("req") MemAgentReq req);
 
-    List<AgentSubVO> subordinateList(Page<AgentSubVO> page, SubordinateReq req);
+    List<AgentSubVO> subordinateList(@Param("page")Page<AgentSubVO> page,  @Param("req") SubordinateReq req);
 }
