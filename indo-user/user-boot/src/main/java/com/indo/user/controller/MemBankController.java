@@ -9,7 +9,6 @@ import com.indo.user.pojo.req.mem.AddBankCardReq;
 import com.indo.user.pojo.vo.MemBankVo;
 import com.indo.user.pojo.vo.PayBankVO;
 import com.indo.user.service.AppMemBankService;
-import com.indo.user.service.IPayBankService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,9 +33,6 @@ public class MemBankController {
     @Autowired
     private AppMemBankService memBankRelationService;
 
-    @Resource
-    private IPayBankService iPayBankService;
-
     @ApiOperation(value = "添加银行卡", httpMethod = "POST")
     @PostMapping(value = "/add")
     public Result addBankCard(@RequestBody AddBankCardReq req, @LoginUser LoginInfo loginUser) {
@@ -48,13 +44,6 @@ public class MemBankController {
     @GetMapping(value = "/list")
     public Result<List<MemBankVo>> findPage(@LoginUser LoginInfo loginUser) {
         return Result.success(memBankRelationService.findPage(loginUser));
-    }
-
-    @ApiOperation(value = "会员可绑定银行列表")
-    @AllowAccess
-    @GetMapping("/bindList")
-    public Result<List<PayBankVO>> bindList() {
-        return Result.success(iPayBankService.bankList());
     }
 
 }

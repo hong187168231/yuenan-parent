@@ -18,7 +18,7 @@ import com.indo.pay.pojo.req.HuaRenPayReq;
 import com.indo.pay.pojo.req.RechargeReq;
 import com.indo.pay.pojo.resp.EasyPayResp;
 import com.indo.pay.pojo.resp.HuaRenPayResp;
-import com.indo.pay.service.rechargeService;
+import com.indo.pay.service.IRechargeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -42,7 +42,7 @@ public class PaymentService {
 
 
     @Autowired
-    private com.indo.pay.service.rechargeService rechargeService;
+    private IRechargeService rechargeService;
 
 
     public Result paymentRequestByUser(LoginInfo loginInfo, RechargeReq rechargeReq) {

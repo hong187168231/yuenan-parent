@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * 提取方式配置返回
@@ -14,29 +15,36 @@ import java.io.Serializable;
 @Data
 public class TakeCashRecordVO implements Serializable {
 
-    @ApiModelProperty(value = "提现id")
-    private Long takeCashId;
 
-    @ApiModelProperty(value = "提现银行")
-    private String bankName;
+    @ApiModelProperty(value = "充值订单id")
+    private Long rechargeOrderId;
+
+    @ApiModelProperty(value = "充值订单号")
+    private String orderNo;
+
+    @ApiModelProperty(value = "用户id")
+    private Long memId;
 
     @ApiModelProperty(value = "用户账号")
     private String account;
 
-    @ApiModelProperty(value = "提现金额")
-    private String actualAmount;
+    @ApiModelProperty(value = "用户等级")
+    private Integer memLevel;
 
-    @ApiModelProperty(value = "提现银行卡号")
-    private String bankCardNo;
+    @ApiModelProperty(value = "实际充值金额")
+    private BigDecimal realAmount;
 
-    @ApiModelProperty(value = "提现状态 1待处理 2已锁定 3 已确定 4 已取消 5 已拒绝")
-    private Integer cashStatus;
+    @ApiModelProperty(value = "支付平台")
+    private String channelName;
 
-    @ApiModelProperty(value = "提现申请时间")
-    private String applyTime;
+    @ApiModelProperty(value = "支付方式")
+    private String wayName;
 
-    @ApiModelProperty(value = "打款时间")
-    private String remitTime;
+    @ApiModelProperty(value = "付款实际")
+    private String createTime;
+
+    @ApiModelProperty(value = "付款实际")
+    private String payTime;
 
 
 }

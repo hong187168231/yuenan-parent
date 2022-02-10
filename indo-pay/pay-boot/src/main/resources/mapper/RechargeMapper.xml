@@ -1,5 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.indo.code.modules.pay.mapper.RechargeOrderMapper">
+<mapper namespace="com.indo.pay.mapper.RechargeMapper">
+
+
+    <select id="rechargeRecordList" resultType="com.indo.pay.pojo.vo.RechargeRecordVO">
+        SELECT
+        a.*, (
+        SELECT
+        pcc.channel_name
+        FROM
+        pay_channel_config pcc
+        WHERE
+        pcc.pay_channel_id = a.channelId
+        LIMIT 1
+        ) AS channelName,
+        (
+        SELECT
+        pwc.way_name
+        FROM
+        pay_way_config pwc
+        WHERE
+        pwc.pay_way_id = a.wayId
+        LIMIT 1
+        ) AS wayName
+        FROM
+        (
+        SELECT
+        pro.recharge_id AS rechargeId,
+        pro.order_no AS orderNo,
+        mb.id AS memId,
+        mb.account AS account,
+        mb.mem_level AS memLevel,
+        pro.real_amount AS realAmount,
+        pro.channel_id AS channelId,
+        pro.way_id AS wayId,
+        pro.pay_time AS payTime
+        FROM
+        pay_recharge pro
+        INNER JOIN mem_baseinfo mb ON pro.mem_id = mb.id
+        ) a
+        where 1=1
+        and a.mem_id = #{req.memId}
+        <if test="req.beginTime != null">
+            and a.create_time &gt;= #{req.beginTime}
+        </if>
+        <if test="req.endTime != null ">
+            and a.create_time &lt;= #{req.endTime}
+        </if>
+
+    </select>
 
 </mapper>
