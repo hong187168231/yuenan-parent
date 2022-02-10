@@ -13,6 +13,7 @@ import com.indo.core.pojo.entity.Activity;
 import com.indo.core.pojo.entity.PayWithdrawConfig;
 import com.indo.game.mapper.TxnsMapper;
 import com.indo.game.mapper.frontend.GameCategoryMapper;
+import com.indo.game.mapper.frontend.GameParentPlatformMapper;
 import com.indo.game.mapper.frontend.GamePlatformMapper;
 import com.indo.game.pojo.dto.manage.GameInfoPageReq;
 import com.indo.game.pojo.entity.manage.*;
@@ -33,12 +34,14 @@ public class GameManageServiceImpl implements IGameManageService {
     @Autowired
     private GamePlatformMapper gamePlatformMapper;
     @Autowired
+    private GameParentPlatformMapper gameParentPlatformMapper;
+    @Autowired
     private GameCategoryMapper gameCategoryMapper;
     @Autowired
     private TxnsMapper txnsMapper;
     @Autowired
     private GameCommonService gameCommonService;
-
+    @Override
     public List<GameCategory> queryAllGameCategory() {
         List<GameCategory> categoryList;
         Map<Object, Object> map = RedisUtils.hmget(RedisConstants.GAME_CATEGORY_KEY);
@@ -62,7 +65,7 @@ public class GameManageServiceImpl implements IGameManageService {
         return platformList;
     }
 
-
+    @Override
     public List<GamePlatform> queryHotGamePlatform() {
         List<GamePlatform> platformList = gameCommonService.queryAllGamePlatform();
         if (CollectionUtil.isNotEmpty(platformList)) {
@@ -72,7 +75,7 @@ public class GameManageServiceImpl implements IGameManageService {
         }
         return platformList;
     }
-
+    @Override
     public List<GamePlatform> queryGamePlatformByCategory(Long categoryId) {
         List<GamePlatform> platformList = queryAllGamePlatform();
         if (CollectionUtil.isNotEmpty(platformList)) {
@@ -104,5 +107,27 @@ public class GameManageServiceImpl implements IGameManageService {
         return page;
     }
 
+    @Override
+    public List<GameParentPlatform> queryAllGameParentPlatform() {
+        List<GameParentPlatform> categoryList;
+        Map<Object, Object> map = RedisUtils.hmget(RedisConstants.GAME_PARENT_PLATFORM_KEY);
+        categoryList = new ArrayList(map.values());
+        if (CollectionUtil.isEmpty(categoryList)) {
+            LambdaQueryWrapper<GameParentPlatform> wrapper = new LambdaQueryWrapper<>();
+            categoryList = gameParentPlatformMapper.selectList(wrapper);
+        }
+        categoryList.sort(Comparator.comparing(GameParentPlatform::getSortNumber));
+        return categoryList;
+    }
 
+    @Override
+    public List<GameParentPlatform> queryHotGameParentPlatform() {
+        List<GameParentPlatform> platformList = this.queryAllGameParentPlatform();
+        if (CollectionUtil.isNotEmpty(platformList)) {
+            platformList = platformList.stream()
+                    .filter(platform -> platform.getIsHotShow().equals(1))
+                    .collect(Collectors.toList());
+        }
+        return platformList;
+    }
 }

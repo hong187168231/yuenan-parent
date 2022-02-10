@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.indo.admin.modules.game.mapper.GameParentPlatformMapper">
+    <select id="queryAllGameParentPlatform" resultType="com.indo.game.pojo.entity.manage.GameParentPlatform">
+        SELECT *
+        FROM game_platform t
+        WHERE
+            1=1
+        <if test='req.platform != null and req.platform.size()>0'>
+            and t.platform_code IN
+            <foreach collection='req.platform' item='role' open='(' separator=',' close=')'>
+                #{role}
+            </foreach>
+        </if>
+        <if test='req.isStart != null and req.isStart.trim() neq ""'>
+            and t.is_start &lt;= #{isStart}
+        </if>
+        <if test='req.isHotShow != null and req.isHotShow.trim() neq ""'>
+            and t.is_hot_show &lt;= #{req.isHotShow}
+        </if>
+        <if test='req.isOpenMaintenance != null and req.isOpenMaintenance.trim() neq ""'>
+            and t.is_open_maintenance &lt;= #{req.isOpenMaintenance}
+        </if>
+        <if test='req.endTime != null and req.endTime.trim() neq ""'>
+            and t.create_time &lt;= #{req.endTime}
+        </if>
+        <if test='req.startTime != null and req.startTime.trim() neq ""'>
+            and t.create_time &gt;= #{req.startTime}
+        </if>
+        <choose>
+            <when test="req.orderBy">
+                order by t.sort_number asc
+            </when>
+            <otherwise>
+                order by t.sort_number desc
+            </otherwise>
+        </choose>
+    </select>
+</mapper>

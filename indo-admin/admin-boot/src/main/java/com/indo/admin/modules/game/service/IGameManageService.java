@@ -2,11 +2,13 @@ package com.indo.admin.modules.game.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.indo.admin.pojo.dto.game.manage.GameInfoPageReq;
+import com.indo.admin.pojo.dto.game.manage.GameParentPlatformPageReq;
 import com.indo.admin.pojo.dto.game.manage.GamePlatformPageReq;
 import com.indo.admin.pojo.vo.game.manage.GameInfoRecord;
 import com.indo.admin.pojo.vo.game.manage.GameStatiRecord;
 import com.indo.common.result.Result;
 import com.indo.game.pojo.entity.manage.GameCategory;
+import com.indo.game.pojo.entity.manage.GameParentPlatform;
 import com.indo.game.pojo.entity.manage.GamePlatform;
 
 import java.util.List;
@@ -38,4 +40,14 @@ public interface IGameManageService {
     IPage<GameStatiRecord> queryAllGameInfoCount(GameInfoPageReq req);
 
     IPage<GameInfoRecord> queryAllGameInfo(GameInfoPageReq req);
+
+    IPage<GameParentPlatform> queryAllGameParentPlatform(GameParentPlatformPageReq req);
+
+    Result<List<GameParentPlatform>> queryHotGameParentPlatform();
+
+    boolean addGameParentPlatform(GameParentPlatform gameParentPlatform);
+
+    boolean deleteBatchGameParentPlatform(List<String> list);
+
+    boolean modifiyGameParentPlatform(GameParentPlatform gameParentPlatform);
 }

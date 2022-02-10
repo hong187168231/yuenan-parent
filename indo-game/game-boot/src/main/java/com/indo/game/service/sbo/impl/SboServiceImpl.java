@@ -118,6 +118,9 @@ public class SboServiceImpl implements SboService {
             LambdaQueryWrapper<GameAgent> wrapper = new LambdaQueryWrapper<>();
             wrapper.eq(GameAgent::getParentName, gamePlatform.getParentName());
             GameAgent gameAgent = gameAgentMapper.selectOne(wrapper);
+            if(null==gameAgent){
+                return Result.failed(MessageUtils.get("praaa"));
+            }
 
             SboRegisterPlayerJsonDTO sboRegisterPlayerJsonDTO = new SboRegisterPlayerJsonDTO();
             sboRegisterPlayerJsonDTO.setUsername(loginUser.getAccount());

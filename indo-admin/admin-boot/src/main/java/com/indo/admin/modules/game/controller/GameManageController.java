@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.indo.admin.modules.game.service.IGameManageService;
 import com.indo.admin.pojo.dto.game.manage.GameInfoPageReq;
+import com.indo.admin.pojo.dto.game.manage.GameParentPlatformPageReq;
 import com.indo.admin.pojo.dto.game.manage.GamePlatformPageReq;
 import com.indo.admin.pojo.vo.game.manage.GameInfoRecord;
 import com.indo.admin.pojo.vo.game.manage.GameStatiRecord;
@@ -77,34 +78,34 @@ public class GameManageController {
         return Result.judge(iGameManageService.deleteBatchGameCategory(list));
     }
 
-    @ApiOperation(value = "查询所有平台", httpMethod = "POST")
+    @ApiOperation(value = "查询所有平台游戏", httpMethod = "POST")
     @PostMapping(value = "/queryAllGamePlatform")
     public Result<List<GamePlatform>> queryAllGamePlatform(GamePlatformPageReq req) {
-        log.info("查询所有平台 queryAllGamePlatform {} req:{}", JSONObject.toJSONString(req));
+        log.info("查询所有平台游戏 queryAllGamePlatform {} req:{}", JSONObject.toJSONString(req));
         IPage<GamePlatform> result = iGameManageService.queryAllGamePlatform(req);
         return Result.success(result.getRecords(), result.getTotal());
     }
 
-    @ApiOperation(value = "查询热门平台", httpMethod = "GET")
+    @ApiOperation(value = "查询所有热门游戏", httpMethod = "GET")
     @GetMapping(value = "/queryHotGamePlatform")
     public Result<List<GamePlatform>> queryHotGamePlatform() {
         return iGameManageService.queryHotGamePlatform();
     }
 
-    @ApiOperation(value = "新增平台名称", httpMethod = "POST")
+    @ApiOperation(value = "新增平台游戏", httpMethod = "POST")
     @PostMapping(value = "/addGamePlatform")
     public Result addGamePlatform(GamePlatform gamePlatform) {
         return Result.judge(iGameManageService.addGamePlatform(gamePlatform));
     }
 
-    @ApiOperation(value = "删除平台名称", httpMethod = "POST")
+    @ApiOperation(value = "删除平台游戏", httpMethod = "POST")
     @PostMapping(value = "/deleteGamePlatform")
     public Result deleteGamePlatform(String ids) {
         List<String> list = Arrays.asList(ids.split(","));
         return Result.judge(iGameManageService.deleteBatchGamePlatform(list));
     }
 
-    @ApiOperation(value = "修改平台名称", httpMethod = "POST")
+    @ApiOperation(value = "修改平台游戏", httpMethod = "POST")
     @PostMapping(value = "/modifyGamePlatform")
     public Result modifyGamePlatform(GamePlatform gamePlatform) {
         return Result.judge(iGameManageService.modifiyGamePlatform(gamePlatform));
@@ -120,5 +121,39 @@ public class GameManageController {
     @GetMapping(value = "/queryCurrencyType")
     public Result<GameCurrencyType> queryGameCurrencyType() {
         return iGameManageService.queryGameCurrencyType();
+    }
+
+
+    @ApiOperation(value = "查询所有平台", httpMethod = "POST")
+    @PostMapping(value = "/queryAllGameParentPlatform")
+    public Result<List<GameParentPlatform>> queryAllGameParentPlatform(GameParentPlatformPageReq req) {
+        log.info("查询所有平台游戏 queryAllGameParentPlatform {} req:{}", JSONObject.toJSONString(req));
+        IPage<GameParentPlatform> result = iGameManageService.queryAllGameParentPlatform(req);
+        return Result.success(result.getRecords(), result.getTotal());
+    }
+
+    @ApiOperation(value = "查询所有热门平台", httpMethod = "GET")
+    @GetMapping(value = "/queryHotGameParentPlatform")
+    public Result<List<GameParentPlatform>> queryHotGameParentPlatform() {
+        return iGameManageService.queryHotGameParentPlatform();
+    }
+
+    @ApiOperation(value = "新增平台", httpMethod = "POST")
+    @PostMapping(value = "/addGameParentPlatform")
+    public Result addGameParentPlatform(GameParentPlatform gameParentPlatform) {
+        return Result.judge(iGameManageService.addGameParentPlatform(gameParentPlatform));
+    }
+
+    @ApiOperation(value = "删除平台", httpMethod = "POST")
+    @PostMapping(value = "/deleteGameParentPlatform")
+    public Result deleteGameParentPlatform(String ids) {
+        List<String> list = Arrays.asList(ids.split(","));
+        return Result.judge(iGameManageService.deleteBatchGameParentPlatform(list));
+    }
+
+    @ApiOperation(value = "修改平台", httpMethod = "POST")
+    @PostMapping(value = "/modifyGameParentPlatform")
+    public Result modifyGameParentPlatform(GameParentPlatform gameParentPlatform) {
+        return Result.judge(iGameManageService.modifiyGameParentPlatform(gameParentPlatform));
     }
 }

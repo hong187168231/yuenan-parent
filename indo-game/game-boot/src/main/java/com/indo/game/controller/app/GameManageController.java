@@ -44,21 +44,21 @@ public class GameManageController {
         return Result.success(iGameManageService.queryAllGameCategory());
     }
 
-    @ApiOperation(value = "查询所有游戏平台", httpMethod = "GET")
+    @ApiOperation(value = "查询所有平台游戏", httpMethod = "GET")
     @GetMapping(value = "/queryAllGamePlatform")
     @AllowAccess
     public Result<List<GamePlatform>> queryAllGamePlatform() {
         return Result.success(iGameManageService.queryAllGamePlatform());
     }
 
-    @ApiOperation(value = "查询热门游戏平台", httpMethod = "GET")
+    @ApiOperation(value = "查询热门游戏", httpMethod = "GET")
     @GetMapping(value = "/queryHotGamePlatform")
     @AllowAccess
     public Result<List<GamePlatform>> queryHotGamePlatform() {
         return Result.success(iGameManageService.queryHotGamePlatform());
     }
 
-    @ApiOperation(value = "依据类别查询游戏平台", httpMethod = "GET")
+    @ApiOperation(value = "依据类别查询平台游戏", httpMethod = "GET")
     @GetMapping(value = "/queryGamePlatformByCategory")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "categoryId", value = "游戏类别ID ", paramType = "query", dataType = "int", required = true)
@@ -102,6 +102,20 @@ public class GameManageController {
         log.info("查询所有平台记录allGameInfoCount {} req:{}", JSONObject.toJSONString(req));
         IPage<GameInfoAgentRecord> result = iGameManageService.queryAllAgentGameInfo(req);
         return Result.success(result.getRecords(), result.getTotal());
+    }
+
+    @ApiOperation(value = "查询所有平台", httpMethod = "GET")
+    @GetMapping(value = "/queryAllGameParentPlatform")
+    @AllowAccess
+    public Result<List<GameParentPlatform>> queryAllGameParentPlatform() {
+        return Result.success(iGameManageService.queryAllGameParentPlatform());
+    }
+
+    @ApiOperation(value = "查询热门平台", httpMethod = "GET")
+    @GetMapping(value = "/queryHotGameParentPlatform")
+    @AllowAccess
+    public Result<List<GameParentPlatform>> queryHotGameParentPlatform() {
+        return Result.success(iGameManageService.queryHotGameParentPlatform());
     }
 
 }

@@ -41,7 +41,7 @@ public class GameDownloadController {
     }
 
     @ApiOperation(value = "修改下载地址", httpMethod = "POST")
-    @GetMapping(value = "/modifyGameDownload")
+    @PostMapping(value = "/modifyGameDownload")
     public Result modifyGameDownload(GameDownload gameDownload) {
         return Result.judge(iGameDownloadService.modifyGameDownload(gameDownload));
     }

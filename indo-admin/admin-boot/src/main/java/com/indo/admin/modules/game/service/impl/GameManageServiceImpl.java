@@ -7,6 +7,7 @@ import com.indo.admin.common.util.AdminBusinessRedisUtils;
 import com.indo.admin.modules.game.mapper.*;
 import com.indo.admin.modules.game.service.IGameManageService;
 import com.indo.admin.pojo.dto.game.manage.GameInfoPageReq;
+import com.indo.admin.pojo.dto.game.manage.GameParentPlatformPageReq;
 import com.indo.admin.pojo.dto.game.manage.GamePlatformPageReq;
 import com.indo.admin.pojo.vo.game.manage.GameInfoRecord;
 import com.indo.admin.pojo.vo.game.manage.GameStatiRecord;
@@ -22,6 +23,8 @@ import java.util.List;
 public class GameManageServiceImpl implements IGameManageService {
     @Autowired
     private GamePlatformMapper gamePlatformMapper;
+    @Autowired
+    private GameParentPlatformMapper gameParentPlatformMapper;
     @Autowired
     private GameCategoryMapper gameCategoryMapper;
     @Autowired
@@ -127,5 +130,45 @@ public class GameManageServiceImpl implements IGameManageService {
         IPage<GameInfoRecord> page = new Page<>(null == req.getPage() ? 1 : req.getPage(), null == req.getLimit() ? 10 : req.getLimit());
         page.setRecords(txnsMapper.queryAllGameInfo(page, req));
         return page;
+    }
+
+    public IPage<GameParentPlatform> queryAllGameParentPlatform(GameParentPlatformPageReq req) {
+        IPage<GameParentPlatform> page = new Page<>(null == req.getPage() ? 1 : req.getPage(), null == req.getLimit() ? 10 : req.getLimit());
+        page.setRecords(gameParentPlatformMapper.queryAllGameParentPlatform(page, req));
+        return page;
+
+    }
+
+    public Result<List<GameParentPlatform>> queryHotGameParentPlatform() {
+        LambdaQueryWrapper<GameParentPlatform> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(GameParentPlatform::getIsHotShow, 1);
+        List<GameParentPlatform> categoryList = gameParentPlatformMapper.selectList(wrapper);
+        return Result.success(categoryList);
+    }
+
+    public boolean addGameParentPlatform(GameParentPlatform gameParentPlatform) {
+        if (gameParentPlatformMapper.insert(gameParentPlatform) > 0) {
+            AdminBusinessRedisUtils.hset(RedisConstants.GAME_PARENT_PLATFORM_KEY, gameParentPlatform.getId() + "", gameParentPlatform);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean deleteBatchGameParentPlatform(List<String> list) {
+        if (gameParentPlatformMapper.deleteBatchIds(list) > 0) {
+            list.forEach(id -> {
+                AdminBusinessRedisUtils.hdel(RedisConstants.GAME_PARENT_PLATFORM_KEY, id + "");
+            });
+            return true;
+        }
+        return false;
+    }
+
+    public boolean modifiyGameParentPlatform(GameParentPlatform gameParentPlatform) {
+        if (gameParentPlatformMapper.updateById(gameParentPlatform) > 0) {
+            AdminBusinessRedisUtils.hset(RedisConstants.GAME_PARENT_PLATFORM_KEY, gameParentPlatform.getId() + "", gameParentPlatform);
+            return true;
+        }
+        return false;
     }
 }
