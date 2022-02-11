@@ -11,7 +11,7 @@ import java.util.List;
 @ApiModel
 public class GamePlatformPageReq extends BaseDTO {
 
-    @ApiModelProperty(value = "游戏平台代码")
+    @ApiModelProperty(value = "平台游戏代码")
     private List platform;
 
     @ApiModelProperty(value = "游戏分类ID")
@@ -34,15 +34,6 @@ public class GamePlatformPageReq extends BaseDTO {
 
     @ApiModelProperty(value = "是否开启维护")
     private String isOpenMaintenance;//0关闭  1启用
-
-    @ApiModelProperty(value = "支持语言")
-    private String languageType;
-
-    @ApiModelProperty(value = "支持币种")
-    private String currencyType;
-
-    @ApiModelProperty(value = "白名单IP")
-    private String ipAddr;
 
     @ApiModelProperty(value = "总平台名称")
     private String parentName;

@@ -14,7 +14,6 @@ public class GameParentPlatformPageReq extends BaseDTO {
     @ApiModelProperty(value = "游戏平台代码")
     private List platform;
 
-
     @ApiModelProperty(value = "开始时间")
     private String startTime;
 
@@ -33,4 +32,12 @@ public class GameParentPlatformPageReq extends BaseDTO {
     @ApiModelProperty(value = "是否开启维护")
     private String isOpenMaintenance;//0关闭  1启用
 
+    @ApiModelProperty(value = "支持语言")
+    private String languageType;
+
+    @ApiModelProperty(value = "支持币种")
+    private String currencyType;
+
+    @ApiModelProperty(value = "白名单IP")
+    private String ipAddr;
 }
