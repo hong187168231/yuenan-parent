@@ -64,13 +64,13 @@ public class SboServiceImpl implements SboService {
         logger.info("sbolog {} aeGame account:{}, aeCodeId:{}", loginUser.getId(), loginUser.getNickName());
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
         if(null==gameParentPlatform){
-            return Result.failed("(awc)"+MessageUtils.get("tgdne"));
+            return Result.failed("("+parentName+")游戏平台不存在");
         }
         if ("0".equals(gameParentPlatform.getIsStart())) {
-            return Result.failed(MessageUtils.get("tgocinyo"));
+            return Result.failed("g"+"100101","游戏平台未启用");
         }
         if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
-            return Result.failed(gameParentPlatform.getMaintenanceContent());
+            return Result.failed("g000001",gameParentPlatform.getMaintenanceContent());
         }
         GamePlatform gamePlatform = null;
         if(!platform.equals(parentName)) {
@@ -78,13 +78,13 @@ public class SboServiceImpl implements SboService {
             // 是否开售校验
             gamePlatform = gameCommonService.getGamePlatformByplatformCode(platform);
             if (null == gamePlatform) {
-                return Result.failed("(sbo)" + MessageUtils.get("tgdne"));
+                return Result.failed("("+platform+")平台游戏不存在");
             }
             if ("0".equals(gamePlatform.getIsStart())) {
-                return Result.failed(MessageUtils.get("tgocinyo"));
+                return Result.failed("g"+"100102","游戏未启用");
             }
             if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
-                return Result.failed(gamePlatform.getMaintenanceContent());
+                return Result.failed("g091047",gamePlatform.getMaintenanceContent());
             }
         }
         //初次判断站点棋牌余额是否够该用户
@@ -94,7 +94,7 @@ public class SboServiceImpl implements SboService {
         if (null == balance || BigDecimal.ZERO == balance) {
             logger.info("站点sbo余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
             //站点棋牌余额不足
-            return Result.failed(MessageUtils.get("tcgqifpccs"));
+            return Result.failed("g300004","会员余额不足");
         }
 
         try {
@@ -121,7 +121,7 @@ public class SboServiceImpl implements SboService {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.failed(MessageUtils.get("tnibptal"));
+            return Result.failed("g100104","网络繁忙，请稍后重试！");
         }
     }
 
@@ -147,13 +147,13 @@ public class SboServiceImpl implements SboService {
             SboApiResponseData sboApiResponse = commonRequest(sboRegisterPlayerJsonDTO, OpenAPIProperties.SBO_API_URL + "/web-root/restricted/player/register-player.aspx", loginUser.getId().intValue(), ip, "restrictedPlayer");
 
             if (null == sboApiResponse) {
-                return Result.failed(MessageUtils.get("etgptal"));
+                return Result.failed("g100104","网络繁忙，请稍后重试！");
             }
             if ("0".equals(sboApiResponse.getError().getId()) || "4103".equals(sboApiResponse.getError().getId())) {
                 externalService.saveCptOpenMember(cptOpenMember);
                 return initGame(gameParentPlatform,loginUser, gamePlatform, ip);
             } else {
-                return Result.failed(sboApiResponse.getError().getId(), sboApiResponse.getError().getMsg());
+                return errorCode(sboApiResponse.getError().getId(), sboApiResponse.getError().getMsg());
             }
         } catch (Exception e) {
             logger.error("sbolog game error {} ", e);
@@ -178,7 +178,7 @@ public class SboServiceImpl implements SboService {
             if ("0".equals(sboApiResponse.getError().getId())) {
                 return Result.success(sboApiResponse);
             } else {
-                return Result.failed(sboApiResponse.getError().getId(), sboApiResponse.getError().getMsg());
+                return errorCode(sboApiResponse.getError().getId(), sboApiResponse.getError().getMsg());
             }
         } catch (Exception e) {
             logger.error("sbolog game error {} ", e);
@@ -197,16 +197,16 @@ public class SboServiceImpl implements SboService {
         try {
             sboApiResponse = commonRequest(sboPlayerLogoutJsonDTO, OpenAPIProperties.SBO_API_URL + "/web-root/restricted/player/logout.aspx", Integer.valueOf(loginUser.getId().intValue()), ip, "logout");
             if (null == sboApiResponse) {
-                return Result.failed(MessageUtils.get("etgptal"));
+                return Result.failed("g100104","网络繁忙，请稍后重试！");
             }
             if ("0".equals(sboApiResponse.getError().getId())) {
                 return Result.success(sboApiResponse);
             } else {
-                return Result.failed(sboApiResponse.getError().getId(), sboApiResponse.getError().getMsg());
+                return errorCode(sboApiResponse.getError().getId(), sboApiResponse.getError().getMsg());
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.failed(MessageUtils.get("tnibptal"));
+            return Result.failed("g100104","网络繁忙，请稍后重试！");
         }
 
     }
@@ -228,6 +228,187 @@ public class SboServiceImpl implements SboService {
                     userId, type, null, url, JSONObject.toJSONString(obj), resultString, JSONObject.toJSONString(sboApiResponse));
         }
         return sboApiResponse;
+    }
+
+    public Result  errorCode(String errorCode,String errorMessage){
+//        0	No Error
+        if ("0".equals(errorCode)){
+            return Result.failed("",errorMessage);
+        }else
+//        1	无效的Company Key
+        if ("1".equals(errorCode)){
+            return Result.failed("g000004",errorMessage);
+        }else
+//        2	无效的请求格式
+        if ("2".equals(errorCode)){
+            return Result.failed("g091041",errorMessage);
+        }else
+//        3	内部错误
+        if ("3".equals(errorCode)){
+            return Result.failed("g009999",errorMessage);
+        }else
+//        4	无效的会员名称
+            if ("4".equals(errorCode)){
+                return Result.failed("g100002",errorMessage);
+            }else
+//        5	无效的国家
+            if ("5".equals(errorCode)){
+                return Result.failed("g100105",errorMessage);
+            }else
+//        6	无效的语言
+            if ("6".equals(errorCode)){
+                return Result.failed("g091005",errorMessage);
+            }else
+//        13	请选择安全系数更高的账号。建议您使用字母、数字和 '_' 的组合
+            if ("13".equals(errorCode)){
+                return Result.failed("g100106",errorMessage);
+            }else
+//        3101	无效的币别
+            if ("3101".equals(errorCode)){
+                return Result.failed("g100005",errorMessage);
+            }else
+//        3102	无效的主题Id
+            if ("3102".equals(errorCode)){
+                return Result.failed("g091048",errorMessage);
+            }else
+//        3104	创建代理失败
+            if ("3104".equals(errorCode)){
+                return Result.failed("g091036",errorMessage);
+            }else
+//        3201	更新状态失败
+            if ("3201".equals(errorCode)){
+                return Result.failed("g091049",errorMessage);
+            }else
+//        3202	无效的会员名称-更新状态
+            if ("3202".equals(errorCode)){
+                return Result.failed("g010001",errorMessage);
+            }else
+//        3203	已更新状态
+            if ("3203".equals(errorCode)){
+                return Result.failed("g091050",errorMessage);
+            }else
+//        3204	无效的状态
+            if ("3204".equals(errorCode)){
+                return Result.failed("g091025",errorMessage);
+            }else
+//        3205	无效的日期
+            if ("3205".equals(errorCode)){
+                return Result.failed("g091024",errorMessage);
+            }else
+//        3206	无效的单笔注单最低限额
+            if ("3206".equals(errorCode)){
+                return Result.failed("g091051",errorMessage);
+            }else
+//        3207	无效的单笔注单最高限额
+            if ("3207".equals(errorCode)){
+                return Result.failed("g091052",errorMessage);
+            }else
+//        3208	无效的单场比赛最高限额
+            if ("3208".equals(errorCode)){
+                return Result.failed("g091053",errorMessage);
+            }else
+//        3209	无效的真人赌场下注设定
+            if ("3209".equals(errorCode)){
+                return Result.failed("g091054",errorMessage);
+            }else
+//        3303	用户不存在
+            if ("3303".equals(errorCode)){
+                return Result.failed("g010001",errorMessage);
+            }else
+//        4101	代理不存在
+            if ("4101".equals(errorCode)){
+                return Result.failed("g091035",errorMessage);
+            }else
+//        4102	创建会员失败
+            if ("4102".equals(errorCode)){
+                return Result.failed("g100004",errorMessage);
+            }else
+//        4103	会员名称存在
+            if ("".equals(errorCode)){
+                return Result.failed("g100003",errorMessage);
+            }else
+//        4106	代理帐号为关闭状态
+            if ("4106".equals(errorCode)){
+                return Result.failed("g091055",errorMessage);
+            }else
+//        4107	請創建在代理而非下线底下
+            if ("4107".equals(errorCode)){
+                return Result.failed("g091057",errorMessage);
+            }else
+//        4201	验证失败
+            if ("4201".equals(errorCode)){
+                return Result.failed("g100107",errorMessage);
+            }else
+//        4401	无效的交易Id
+            if ("4401".equals(errorCode)){
+                return Result.failed("g091011",errorMessage);
+            }else
+//        4402	无效的交易金额.
+//            比如:输入金额为 负值 或
+//        输入金额含有 超过两位小数 (范例: 19.217 和 19.2245 均会报错)
+            if ("4402".equals(errorCode)){
+                return Result.failed("g300001",errorMessage);
+            }else
+//        4403	交易失败
+            if ("4403".equals(errorCode)){
+                return Result.failed("g091018",errorMessage);
+            }else
+//        4404	重复使用相同的交易Id
+            if ("4404".equals(errorCode)){
+                return Result.failed("g091038",errorMessage);
+            }else
+//        4501	余额不足
+            if ("4501".equals(errorCode)){
+                return Result.failed("g300004",errorMessage);
+            }else
+//        4502	于余额不足导致的回滚(Rollback Transaction)交易
+            if ("4502".equals(errorCode)){
+                return Result.failed("g300006",errorMessage);
+            }else
+//        4601	检查交易状态失败
+            if ("4601".equals(errorCode)){
+                return Result.failed("",errorMessage);
+            }else
+//        4602	未找到任何交易
+            if ("4602".equals(errorCode)){
+                return Result.failed("g091017",errorMessage);
+            }else
+//        4701	获得余额失败
+            if ("4701".equals(errorCode)){
+                return Result.failed("g300007",errorMessage);
+            }else
+//        6101	获取客户报表失败
+            if ("6101".equals(errorCode)){
+                return Result.failed("g091058",errorMessage);
+            }else
+//        6102	获取客户注单失败
+            if ("6102".equals(errorCode)){
+                return Result.failed("g091059",errorMessage);
+            }else
+//        6666	没有此下注纪录
+            if ("6666".equals(errorCode)){
+                return Result.failed("g091017",errorMessage);
+            }else
+//        9527	无效的运动类型
+            if ("9527".equals(errorCode)){
+                return Result.failed("g100111",errorMessage);
+            }else
+//        9528	无效的盘口
+            if ("9528".equals(errorCode)){
+                return Result.failed("g100110",errorMessage);
+            }else
+//        9720	提款请求次数太过频繁
+            if ("9720".equals(errorCode)){
+                return Result.failed("g100109",errorMessage);
+            }else
+//        9721	无效的密码格式
+            if ("9721".equals(errorCode)){
+                return Result.failed("g100108",errorMessage);
+            }else
+//        9999	失败
+        {
+            return Result.failed("g009999",errorMessage);
+        }
     }
 
 }

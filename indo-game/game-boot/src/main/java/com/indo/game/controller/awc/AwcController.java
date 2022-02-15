@@ -52,7 +52,7 @@ public class AwcController {
 
         String params = "";
         if (loginUser == null || StringUtils.isBlank(loginUser.getAccount())) {
-            return Result.failed(MessageUtils.get("youarenotloggedin"));
+            return Result.failed("g100103","会员登录失效，请重新登录！");
         }
         log.info("AE真人、SV388斗鸡log {} initGame 进入游戏。。。loginUser:{}", isMobileLogin,platform, loginUser);
 
@@ -64,19 +64,18 @@ public class AwcController {
                 Result resultInfo = awcService.awcGame(loginUser, isMobileLogin, ip, platform,parentName);
                 if (resultInfo == null) {
                     log.info("AE真人、SV388斗鸡log {} initGame result is null. params:{},ip:{}", loginUser.getId(), params, ip);
-                    return Result.failed(MessageUtils.get("networktimeout"));
+                    return Result.failed("g100104","网络繁忙，请稍后重试！");
                 }
                 log.info("AE真人、SV388斗鸡log {} initGame resultInfo:{}, params:{}", loginUser.getId(), JSONObject.toJSONString(resultInfo), params);
                 return resultInfo;
             } else {
                 log.info("AE真人、SV388斗鸡log {} initGame lock  repeat request. error");
-                String aeInitGame3 = MessageUtils.get("networktimeout");
-                return Result.failed(aeInitGame3);
+                return Result.failed("g100104","网络繁忙，请稍后重试！");
             }
         } catch (Exception e) {
             e.printStackTrace();
             log.error("AE真人、SV388斗鸡log {} initGame occur error:{}. params:{}", loginUser.getId(), e.getMessage(), params);
-            return Result.failed(MessageUtils.get("networktimeout"));
+            return Result.failed("g100104","网络繁忙，请稍后重试！");
         } finally {
             try {
                 lock.unlock();
@@ -96,7 +95,7 @@ public class AwcController {
 
         String params = "";
         if (loginUser == null) {
-            return Result.failed(MessageUtils.get("youarenotloggedin"));
+            return Result.failed("g100103","会员登录失效，请重新登录！");
         }
         log.info("AE真人、SV388斗鸡log {} logout 进入游戏。。。loginUser:{}", loginUser.getId(), loginUser);
 
@@ -105,7 +104,7 @@ public class AwcController {
             Result resultInfo = awcService.logout(loginUser, ip);
             if (resultInfo == null) {
                 log.info("AE真人、SV388斗鸡log {} initGame result is null. params:{},ip:{}", loginUser.getId(), params, ip);
-                return Result.failed(MessageUtils.get("networktimeout"));
+                return Result.failed("g100104","网络繁忙，请稍后重试！");
             } else {
                 if (!resultInfo.getCode().equals(ResultCode.SUCCESS)) {
                     return resultInfo;
@@ -116,7 +115,7 @@ public class AwcController {
         } catch (Exception e) {
             e.printStackTrace();
             log.error("AE真人、SV388斗鸡log {} logout occur error:{}. params:{}", loginUser.getId(), e.getMessage(), params);
-            return Result.failed(MessageUtils.get("networktimeout"));
+            return Result.failed("g100104","网络繁忙，请稍后重试！");
         }
     }
 }

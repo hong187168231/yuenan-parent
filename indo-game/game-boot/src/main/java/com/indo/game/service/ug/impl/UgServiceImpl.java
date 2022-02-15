@@ -74,13 +74,13 @@ public class UgServiceImpl implements UgService {
         logger.info("uglog ugGame {} aeGame account:{}, aeCodeId:{}", loginUser.getId(), loginUser.getNickName());
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
         if(null==gameParentPlatform){
-            return Result.failed("(awc)"+MessageUtils.get("tgdne"));
+            return Result.failed("("+parentName+")游戏平台不存在");
         }
         if ("0".equals(gameParentPlatform.getIsStart())) {
-            return Result.failed(MessageUtils.get("tgocinyo"));
+            return Result.failed("g"+"100101","游戏平台未启用");
         }
         if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
-            return Result.failed(gameParentPlatform.getMaintenanceContent());
+            return Result.failed("g000001",gameParentPlatform.getMaintenanceContent());
         }
         GamePlatform gamePlatform = null;
         if(!platform.equals(parentName)) {
@@ -88,13 +88,13 @@ public class UgServiceImpl implements UgService {
             // 是否开售校验
             gamePlatform = gameCommonService.getGamePlatformByplatformCode(platform);
             if (null == gamePlatform) {
-                return Result.failed("(ug)" + MessageUtils.get("tgdne"));
+                return Result.failed("("+platform+")平台游戏不存在");
             }
             if ("0".equals(gamePlatform.getIsStart())) {
-                return Result.failed(MessageUtils.get("tgocinyo"));
+                return Result.failed("g"+"100102","游戏未启用");
             }
             if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
-                return Result.failed(gamePlatform.getMaintenanceContent());
+                return Result.failed("g091047",gamePlatform.getMaintenanceContent());
             }
         }
         //初次判断站点棋牌余额是否够该用户
@@ -104,7 +104,7 @@ public class UgServiceImpl implements UgService {
         if (null==balance || BigDecimal.ZERO==balance) {
             logger.info("站点ug余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
             //站点棋牌余额不足
-            return Result.failed(MessageUtils.get("tcgqifpccs"));
+            return Result.failed("g300004","会员余额不足");
         }
 
         try {
@@ -135,7 +135,7 @@ public class UgServiceImpl implements UgService {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.failed(MessageUtils.get("tnibptal"));
+            return Result.failed("g100104","网络繁忙，请稍后重试！");
         }
     }
 
@@ -162,13 +162,13 @@ public class UgServiceImpl implements UgService {
             UgApiResponseData ugApiResponse = commonRequest(ugRegisterPlayerJsonDTO, url, loginUser.getId().intValue(), ip, "restrictedPlayer");
 
             if (null == ugApiResponse ) {
-                return Result.failed(MessageUtils.get("etgptal"));
+                return Result.failed("g100104","网络繁忙，请稍后重试！");
             }
             if("000000".equals(ugApiResponse.getErrorCode())){
                 externalService.saveCptOpenMember(cptOpenMember);
                 return initGame(gameParentPlatform,loginUser,gamePlatform, ip,WebType);
             }else {
-                return Result.failed(ugApiResponse.getErrorCode(),ugApiResponse.getErrorMessage());
+                return Result.failed("g"+ugApiResponse.getErrorCode(),ugApiResponse.getErrorMessage());
             }
         } catch (Exception e) {
             logger.error("uglog restrictedPlayer game error {} ", e);
@@ -199,7 +199,7 @@ public class UgServiceImpl implements UgService {
             if("000000".equals(ugApiResponse.getErrorCode())){
                 return Result.success(ugApiResponse);
             }else {
-                return Result.failed(ugApiResponse.getErrorCode(),ugApiResponse.getErrorMessage());
+                return Result.failed("g"+ugApiResponse.getErrorCode(),ugApiResponse.getErrorMessage());
             }
         } catch (Exception e) {
             logger.error("uglog initGame Login game error {} ", e);
@@ -221,12 +221,12 @@ public class UgServiceImpl implements UgService {
             if("000000".equals(ugApiResponse.getErrorCode())){
                 return Result.success(ugApiResponse);
             }else {
-                return Result.failed(ugApiResponse.getErrorCode(),ugApiResponse.getErrorMessage());
+                return Result.failed("g"+ugApiResponse.getErrorCode(),ugApiResponse.getErrorMessage());
             }
         } catch (Exception e) {
             e.printStackTrace();
             logger.info("uglog logout {} ", e);
-            return Result.failed(MessageUtils.get("tnibptal"));
+            return Result.failed("g100104","网络繁忙，请稍后重试！");
         }
 
     }
@@ -488,4 +488,5 @@ public class UgServiceImpl implements UgService {
         }
         return ugApiResponse;
     }
+
 }

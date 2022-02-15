@@ -57,13 +57,13 @@ public class SabaServiceImpl implements SabaService {
         logger.info("sabalog {} aeGame account:{}, aeCodeId:{}", loginUser.getId(), loginUser.getNickName());
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
         if(null==gameParentPlatform){
-            return Result.failed("(awc)"+MessageUtils.get("tgdne"));
+            return Result.failed("("+parentName+")游戏平台不存在");
         }
         if ("0".equals(gameParentPlatform.getIsStart())) {
-            return Result.failed(MessageUtils.get("tgocinyo"));
+            return Result.failed("g"+"100101","游戏平台未启用");
         }
         if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
-            return Result.failed(gameParentPlatform.getMaintenanceContent());
+            return Result.failed("g000001",gameParentPlatform.getMaintenanceContent());
         }
         GamePlatform gamePlatform = null;
         if(!platform.equals(parentName)) {
@@ -71,13 +71,13 @@ public class SabaServiceImpl implements SabaService {
             // 是否开售校验
             gamePlatform = gameCommonService.getGamePlatformByplatformCode(platform);
             if (null == gamePlatform) {
-                return Result.failed("(saba)" + MessageUtils.get("tgdne"));
+                return Result.failed("("+platform+")平台游戏不存在");
             }
             if ("0".equals(gamePlatform.getIsStart())) {
-                return Result.failed(MessageUtils.get("tgocinyo"));
+                return Result.failed("g"+"100102","游戏未启用");
             }
             if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
-                return Result.failed(gamePlatform.getMaintenanceContent());
+                return Result.failed("g091047",gamePlatform.getMaintenanceContent());
             }
         }
         //初次判断站点棋牌余额是否够该用户
@@ -87,7 +87,7 @@ public class SabaServiceImpl implements SabaService {
         if (null==balance || BigDecimal.ZERO==balance) {
             logger.info("站点saba余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
             //站点棋牌余额不足
-            return Result.failed(MessageUtils.get("tcgqifpccs"));
+            return Result.failed("g300004","会员余额不足");
         }
 
         try {
@@ -114,7 +114,7 @@ public class SabaServiceImpl implements SabaService {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.failed(MessageUtils.get("tnibptal"));
+            return Result.failed("g100104","网络繁忙，请稍后重试！");
         }
     }
 
@@ -193,7 +193,7 @@ public class SabaServiceImpl implements SabaService {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.failed(MessageUtils.get("tnibptal"));
+            return Result.failed("g100104","网络繁忙，请稍后重试！");
         }
 
     }
