@@ -57,7 +57,8 @@ public class PayWayServiceImpl extends ServiceImpl<PayWayMapper, PayWayConfig> i
         if (CollectionUtil.isEmpty(wayList)) {
             PayWayQueryCriteria criteria = new PayWayQueryCriteria();
             wayList = baseMapper.selectList(QueryHelpPlus.getPredicate(PayWayConfig.class, criteria));
-        } else {
+        }
+        if (CollectionUtil.isNotEmpty(wayList)) {
             wayList = wayList.stream()
                     .filter(wayConfig -> wayConfig.getPayChannelId().equals(payChannelId)
                             && wayConfig.getStatus().equals(1))

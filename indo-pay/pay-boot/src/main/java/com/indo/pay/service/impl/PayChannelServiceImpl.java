@@ -44,7 +44,7 @@ public class PayChannelServiceImpl extends ServiceImpl<PayChannelMapper, PayChan
             LambdaQueryWrapper<PayChannelConfig> wrapper = new LambdaQueryWrapper<>();
             wrapper.eq(PayChannelConfig::getStatus, 1);
             configList = this.baseMapper.selectList(wrapper);
-        } else {
+        } else if (CollectionUtil.isNotEmpty(configList)) {
             configList = configList.stream()
                     .filter(channelConfig -> channelConfig.getStatus().equals(1))
                     .collect(Collectors.toList());

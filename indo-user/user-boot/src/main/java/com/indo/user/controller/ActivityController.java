@@ -72,11 +72,10 @@ public class ActivityController {
                     .filter(act -> !actTypeId.equals(act.getActTypeId()))
                     .collect(Collectors.toList());
         }
-        if (!deviceType.equals(0)) {
-            activityList = activityList.stream()
-                    .filter(act -> deviceType.equals(act.getDeviceType()))
-                    .collect(Collectors.toList());
-        }
+        activityList = activityList.stream()
+                .filter(act -> act.getDeviceType().equals(deviceType)
+                        || act.getDeviceType().equals(0))
+                .collect(Collectors.toList());
 
         Iterator<Activity> iter = activityList.iterator();
         while (iter.hasNext()) {

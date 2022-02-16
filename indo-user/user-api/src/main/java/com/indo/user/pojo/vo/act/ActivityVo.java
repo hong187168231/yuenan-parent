@@ -37,7 +37,7 @@ public class ActivityVo {
     @ApiModelProperty(value = "设备类型1 ios 2 android")
     private Integer deviceType;
 
-    @ApiModelProperty(value = "是否永久活动 0否 1 是")
+    @ApiModelProperty(value = "是否永久活动")
     private Boolean isPer;
 
     @ApiModelProperty(value = "活动开始时间")
