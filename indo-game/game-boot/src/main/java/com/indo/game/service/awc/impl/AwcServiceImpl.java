@@ -12,6 +12,7 @@ import com.indo.game.mapper.frontend.GamePlatformMapper;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.game.pojo.dto.awc.AwcTransaction;
 import com.indo.game.pojo.dto.awc.AwcApiResponseData;
+import com.indo.game.pojo.entity.manage.GameParentPlatform;
 import com.indo.game.pojo.entity.manage.GamePlatform;
 import com.indo.game.service.awc.AwcService;
 import com.indo.common.utils.GameUtil;
@@ -45,21 +46,38 @@ public class AwcServiceImpl implements AwcService {
     GameCategoryMapper gameCategoryMapper;
     @Autowired
     private GamePlatformMapper gamePlatformMapper;
-
     /**
      * 登录游戏AWC-AE真人
      * @return loginUser 用户信息
      */
     @Override
-    public Result awcGame(LoginInfo loginUser, String isMobileLogin,String ip,String platform) {
+    public Result awcGame(LoginInfo loginUser, String isMobileLogin,String ip,String platform,String parentName) {
         logger.info("awclog {} aeGame account:{}, aeCodeId:{}", loginUser.getId(), loginUser.getNickName(), platform);
         // 是否开售校验
-        GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(platform);
-        if(null==gamePlatform){
-            return Result.failed("(awc)"+MessageUtils.get("tgdne"));
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
+        if(null==gameParentPlatform){
+            return Result.failed("("+parentName+")游戏平台不存在");
         }
-        if ("0".equals(gamePlatform.getIsStart())) {
-            return Result.failed(MessageUtils.get("tgocinyo"));
+        if ("0".equals(gameParentPlatform.getIsStart())) {
+            return Result.failed("g"+"100101","游戏平台未启用");
+        }
+        if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
+            return Result.failed("g000001",gameParentPlatform.getMaintenanceContent());
+        }
+        GamePlatform gamePlatform = null;
+        if(!platform.equals(parentName)) {
+            gamePlatform = new GamePlatform();
+            // 是否开售校验
+            gamePlatform = gameCommonService.getGamePlatformByplatformCode(platform);
+            if (null == gamePlatform) {
+                return Result.failed("("+platform+")平台游戏不存在");
+            }
+            if ("0".equals(gamePlatform.getIsStart())) {
+                return Result.failed("g"+"100102","游戏未启用");
+            }
+            if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
+                return Result.failed("g091047",gamePlatform.getMaintenanceContent());
+            }
         }
 //        //初次判断站点棋牌余额是否够该用户
 //        MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(loginUser.getAccount());
@@ -71,13 +89,13 @@ public class AwcServiceImpl implements AwcService {
         if (null==balance || BigDecimal.ZERO==balance) {
             logger.info("站点awc余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
             //站点棋牌余额不足
-            return Result.failed(MessageUtils.get("tcgqifpccs"));
+            return Result.failed("g300004","会员余额不足");
         }
 
         try {
 
             // 验证且绑定（KY-CPT第三方会员关系）
-            CptOpenMember cptOpenMember = externalService.getCptOpenMember(loginUser.getId().intValue(), gamePlatform.getParentName());
+            CptOpenMember cptOpenMember = externalService.getCptOpenMember(loginUser.getId().intValue(), parentName);
             if (cptOpenMember == null) {
                 cptOpenMember = new CptOpenMember();
                 cptOpenMember.setUserId(loginUser.getId().intValue());
@@ -85,9 +103,9 @@ public class AwcServiceImpl implements AwcService {
                 cptOpenMember.setPassword(loginUser.getAccount());
                 cptOpenMember.setCreateTime(new Date());
                 cptOpenMember.setLoginTime(new Date());
-                cptOpenMember.setType(gamePlatform.getParentName());
+                cptOpenMember.setType(parentName);
                 //创建玩家
-                return createMemberGame(gamePlatform, ip, cptOpenMember,isMobileLogin);
+                return createMemberGame(gameParentPlatform,gamePlatform, ip, cptOpenMember,isMobileLogin);
             } else {
                 Result result = this.logout(loginUser,ip);
                 if(null!=result&&"00000".equals(result.getCode())) {
@@ -96,13 +114,13 @@ public class AwcServiceImpl implements AwcService {
                     updateCptOpenMember.setLoginTime(new Date());
                     externalService.updateCptOpenMember(updateCptOpenMember);
                     //登录
-                    return initGame(gamePlatform, ip, cptOpenMember, isMobileLogin);
+                    return initGame(gameParentPlatform,gamePlatform, ip, cptOpenMember, isMobileLogin);
                 }
                 return result;
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.failed(MessageUtils.get("tnibptal"));
+            return Result.failed("g100104","网络繁忙，请稍后重试！");
         }
     }
 
@@ -117,16 +135,16 @@ public class AwcServiceImpl implements AwcService {
         try {
             awcApiResponseData = commonRequest(trr, OpenAPIProperties.AWC_API_URL_LOGIN+"/wallet/logout", Integer.valueOf(loginUser.getId().intValue()), ip, "logout");
             if (null == awcApiResponseData ) {
-                return Result.failed(MessageUtils.get("etgptal"));
+                return Result.failed("g100104","网络繁忙，请稍后重试！");
             }
             if("0000".equals(awcApiResponseData.getStatus())){
                 return Result.success(awcApiResponseData);
             }else {
-                return Result.failed(awcApiResponseData.getStatus(),awcApiResponseData.getDesc());
+                return errorCode(awcApiResponseData.getStatus(),awcApiResponseData.getDesc());
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.failed(MessageUtils.get("tnibptal"));
+            return Result.failed("g100104","网络繁忙，请稍后重试！");
         }
 
     }
@@ -134,32 +152,32 @@ public class AwcServiceImpl implements AwcService {
     /**
      * 登录
      */
-    private Result initGame(GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember,String isMobileLogin) throws Exception {
-        AwcApiResponseData awcApiResponseData = game(gamePlatform, ip, cptOpenMember,isMobileLogin);
+    private Result initGame(GameParentPlatform gameParentPlatform,GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember,String isMobileLogin) throws Exception {
+        AwcApiResponseData awcApiResponseData = game(gameParentPlatform,gamePlatform, ip, cptOpenMember,isMobileLogin);
         if (null == awcApiResponseData ) {
-            return Result.failed(MessageUtils.get("etgptal"));
+            return Result.failed("g100104","网络繁忙，请稍后重试！");
         }
         if("0000".equals(awcApiResponseData.getStatus())){
             return Result.success(awcApiResponseData);
         }else {
-            return Result.failed(awcApiResponseData.getStatus(),awcApiResponseData.getDesc());
+            return errorCode(awcApiResponseData.getStatus(),awcApiResponseData.getDesc());
         }
     }
     /**
      * 创建玩家
      */
-    private Result createMemberGame(GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember,String isMobileLogin) throws Exception {
-        AwcApiResponseData awcApiResponseData = createMember(gamePlatform, ip, cptOpenMember);
+    private Result createMemberGame(GameParentPlatform gameParentPlatform,GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember,String isMobileLogin) throws Exception {
+        AwcApiResponseData awcApiResponseData = createMember(gameParentPlatform,gamePlatform, ip, cptOpenMember);
 //        AwcApiResponseData awcApiResponseData = new AwcApiResponseData();
 //        awcApiResponseData.setStatus("0000");
         if (null == awcApiResponseData ) {
-            return Result.failed(MessageUtils.get("etgptal"));
+            return Result.failed("g100104","网络繁忙，请稍后重试！");
         }
         if("0000".equals(awcApiResponseData.getStatus())||"1001".equals(awcApiResponseData.getStatus())){
             externalService.saveCptOpenMember(cptOpenMember);
-            return initGame(gamePlatform, ip, cptOpenMember,isMobileLogin);
+            return initGame(gameParentPlatform,gamePlatform, ip, cptOpenMember,isMobileLogin);
         }else {
-            return Result.failed(awcApiResponseData.getStatus(),awcApiResponseData.getDesc());
+            return errorCode(awcApiResponseData.getStatus(),awcApiResponseData.getDesc());
         }
     }
 
@@ -170,13 +188,13 @@ public class AwcServiceImpl implements AwcService {
      * @param cptOpenMember
      * @return
      */
-    public AwcApiResponseData createMember(GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember) {
+    public AwcApiResponseData createMember(GameParentPlatform gameParentPlatform,GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember) {
         try {
             String time = System.currentTimeMillis() / 1000 + "";
             Map<String, String> trr = new HashMap<>();
             trr.put("userId", cptOpenMember.getUserName());
-            trr.put("currency", gamePlatform.getCurrencyType());//玩家货币代码
-            trr.put("language", gamePlatform.getLanguageType());
+            trr.put("currency", gameParentPlatform.getCurrencyType());//玩家货币代码
+            trr.put("language", gameParentPlatform.getLanguageType());
             trr.put("userName", "");//玩家名称
 //           platform: SEXYBCRT
 //                   - gameType: LIVE
@@ -186,7 +204,7 @@ public class AwcServiceImpl implements AwcService {
 //            ※每个玩家每个最多允许 6 组下注限红 ID
             LambdaQueryWrapper<GamePlatform> wrapper = new LambdaQueryWrapper<>();
             wrapper.eq(GamePlatform::getIsStart,"1");
-            wrapper.eq(GamePlatform::getParentName,"AWC");
+            wrapper.eq(GamePlatform::getParentName,gameParentPlatform.getPlatformCode());
             List<GamePlatform> categoryList = gamePlatformMapper.selectList(wrapper);
             String betLimit = "";
             for (int i=0;i<categoryList.size();i++){
@@ -218,7 +236,7 @@ public class AwcServiceImpl implements AwcService {
      * @param cptOpenMember
      * @return
      */
-    public AwcApiResponseData game(GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember,String isMobileLogin) {
+    public AwcApiResponseData game(GameParentPlatform gameParentPlatform,GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember,String isMobileLogin) {
         try {
             Map<String, String> trr = new HashMap<>();
             trr.put("userId", cptOpenMember.getUserName());
@@ -232,36 +250,38 @@ public class AwcServiceImpl implements AwcService {
 //            用于导回您指定的网站，需要设置 http:// 或 https://
 //            Example 范例：http://www.google.com
             trr.put("externalURL", "");
-            String str[] = gamePlatform.getPlatformCode().split("_");
-            trr.put("platform", str[0]);//游戏平台名称
 
+            trr.put("language", gameParentPlatform.getLanguageType());
+            if(null!=gamePlatform) {
+                String str[] = gamePlatform.getPlatformCode().split("_");
+                trr.put("platform", str[0]);//游戏平台名称
 //            GameCategory gameCategory = gameCategoryMapper.selectById(gamePlatform.getCategoryId());
-            trr.put("gameType", str[1]);//平台游戏类型
-            trr.put("language", gamePlatform.getLanguageType());
-            List<GamePlatform> gamePlatformList = gameCommonService.getGamePlatformByParentName("AWC");
-            List<String> codeList = new ArrayList<>();
-            Map<String, List<String>> gameForbiddenMap = new HashMap<>();
+                trr.put("gameType", str[1]);//平台游戏类型
+                List<GamePlatform> gamePlatformList = gameCommonService.getGamePlatformByParentName(gameParentPlatform.getPlatformCode());
+                List<String> codeList = new ArrayList<>();
+                Map<String, List<String>> gameForbiddenMap = new HashMap<>();
 
-            for(int i=0;i<gamePlatformList.size();i++){
-                GamePlatform gamePlatform1 = gamePlatformList.get(i);
-                if(!gamePlatform.getPlatformCode().equals(gamePlatform1.getPlatformCode())){
-                    String platformList[] = gamePlatform1.getPlatformCode().split("_");
-                    if(!gamePlatformList.contains(platformList[0])){
-                        codeList.add(platformList[0]);
-                        List<String> typeList = gameForbiddenMap.get(platformList[0]);
-                        if(null == typeList){
-                            typeList = new ArrayList<>();
-                            typeList.add(platformList[1]);
+                for (int i = 0; i < gamePlatformList.size(); i++) {
+                    GamePlatform gamePlatform1 = gamePlatformList.get(i);
+                    if (!gamePlatform.getPlatformCode().equals(gamePlatform1.getPlatformCode())) {
+                        String platformList[] = gamePlatform1.getPlatformCode().split("_");
+                        if (!gamePlatformList.contains(platformList[0])) {
+                            codeList.add(platformList[0]);
+                            List<String> typeList = gameForbiddenMap.get(platformList[0]);
+                            if (null == typeList) {
+                                typeList = new ArrayList<>();
+                                typeList.add(platformList[1]);
 
-                        }else {
-                            typeList.add(platformList[1]);
+                            } else {
+                                typeList.add(platformList[1]);
+                            }
+                            gameForbiddenMap.put(platformList[0], typeList);
                         }
-                        gameForbiddenMap.put(platformList[0], typeList);
                     }
                 }
+                JSONObject gameForbiddenStr = GameUtil.getJsonMap(gameForbiddenMap);
+                trr.put("gameForbidden", gameForbiddenStr.toString());//指定对玩家隐藏游戏平台，您仅能透过 API 执行这个动作
             }
-            JSONObject gameForbiddenStr = GameUtil.getJsonMap(gameForbiddenMap);
-            trr.put("gameForbidden", gameForbiddenStr.toString());//指定对玩家隐藏游戏平台，您仅能透过 API 执行这个动作
 //           platform: SEXYBCRT
 //                   - gameType: LIVE
 //                   - value (ID): {"limitId":[IDs]}
@@ -379,5 +399,202 @@ public class AwcServiceImpl implements AwcService {
         }
         return awcApiResponse;
     }
+    public Result  errorCode(String errorCode,String errorMessage){
+//        9998	系统繁忙
+        if ("9998".equals(errorCode)){
+            return Result.failed("g000005",errorMessage);
+        }else
+//        0000	成功
+        if ("0000".equals(errorCode)){
+            return Result.failed("0000",errorMessage);
+        }else
+//        10	请输入所有数据
+        if ("10".equals(errorCode)){
+            return Result.failed("g090010",errorMessage);
+        }else
+//        11	您的代理底下没有此游戏
+        if ("11".equals(errorCode)){
+            return Result.failed("g090011",errorMessage);
+        }else
+//        1000  无效的使用者账号
+        if ("1000".equals(errorCode)){
+            return Result.failed("g100002",errorMessage);
+        }else
+//        1001	帐号已存在
+        if ("1001".equals(errorCode)){
+            return Result.failed("g100003",errorMessage);
+        }else
+//        1002	帐号不存在
+        if ("1002".equals(errorCode)){
+            return Result.failed("g010001",errorMessage);
+        }else
+//        1004	无效的货币
+        if ("1004".equals(errorCode)){
+            return Result.failed("g100001",errorMessage);
+        }else
+//        1005	语言不存在
+        if ("1005".equals(errorCode)){
+            return Result.failed("g091005",errorMessage);
+        }else
+//        1006	PT 设定为空
+        if ("1006".equals(errorCode)){
+            return Result.failed("g091006",errorMessage);
+        }else
+//        1007	PT 设定与上线冲突
+        if ("1007".equals(errorCode)){
+            return Result.failed("g091007",errorMessage);
+        }else
+//        1008	无效的 token
+        if ("1008".equals(errorCode)){
+            return Result.failed("g091008",errorMessage);
+        }else
+//        1009	无效时区
+        if ("1009".equals(errorCode)){
+            return Result.failed("g091009",errorMessage);
+        }else
+//        1010	无效的数量
+        if ("1010".equals(errorCode)){
+            return Result.failed("g091010",errorMessage);
+        }else
+//        1011	无效的交易代码
+        if ("1011".equals(errorCode)){
+            return Result.failed("g091011",errorMessage);
+        }else
+//        1012	有待处理的转帐
+        if ("1012".equals(errorCode)){
+            return Result.failed("g091012",errorMessage);
+        }else
+//        1013	帐号已锁
+        if ("1013".equals(errorCode)){
+            return Result.failed("g200003",errorMessage);
+        }else
+//        1014	帐号暂停
+        if ("1014".equals(errorCode)){
+            return Result.failed("g200002",errorMessage);
+        }else
+//        1016	交易代码已被执行过
+        if ("1016".equals(errorCode)){
+            return Result.failed("g091016",errorMessage);
+        }else
+//        1017	交易代码不存在
+        if ("1017".equals(errorCode)){
+            return Result.failed("g091017",errorMessage);
+        }else
+//        1018	余额不足
+        if ("1018".equals(errorCode)){
+            return Result.failed("g300004",errorMessage);
+        }else
+//        1019	没有资料
+        if ("1019".equals(errorCode)){
+            return Result.failed("g091019",errorMessage);
+        }else
+//        1024	无效的日期 (时间) 格式
+        if ("1024".equals(errorCode)){
+            return Result.failed("g091024",errorMessage);
+        }else
+//        1025	无效的交易状态
+        if ("1025".equals(errorCode)){
+            return Result.failed("g091025",errorMessage);
+        }else
+//        1026	无效的投注限制设定
+        if ("1026".equals(errorCode)){
+            return Result.failed("g091026",errorMessage);
+        }else
+//        1027	无效的认证码
+        if ("1027".equals(errorCode)){
+            return Result.failed("g091027",errorMessage);
+        }else
+//        1028	无法执行指定的行为，
+        if ("1028".equals(errorCode)){
+            return Result.failed("g091028",errorMessage);
+        }else
+//        1029	无效的 IP
+//        通常发生于您的 IP 尚未加白
+        if ("1029".equals(errorCode)){
+            return Result.failed("g000003",errorMessage);
+        }else
+//        1030	使用无效的装置呼叫 (
+        if ("1030".equals(errorCode)){
+            return Result.failed("g091030",errorMessage);
+        }else
+//                1031	系统维护中
+        if ("1031".equals(errorCode)){
+            return Result.failed("g000001",errorMessage);
+        }else
+//                1032	重复登入
+        if ("1032".equals(errorCode)){
+            return Result.failed("g091032",errorMessage);
+        }else
+//                1033	无效的游戏代码
+        if ("1033".equals(errorCode)){
+            return Result.failed("g091033",errorMessage);
+        }else
+//                1034	您使用的时间参数不符
+        if ("1034".equals(errorCode)){
+            return Result.failed("g091034",errorMessage);
+        }else
+//                1035	无效的 Agent Id
+        if ("1035".equals(errorCode)){
+            return Result.failed("g091035",errorMessage);
+        }else
+//                1036	无效的参数
+        if ("1036".equals(errorCode)){
+            return Result.failed("g000007",errorMessage);
+        }else
+//                1037	错误的客户设定
+//                通常可能发生于您的目标回调
+        if ("1037".equals(errorCode)){
+            return Result.failed("g091037",errorMessage);
+        }else
+//                1038	重复的交易
+        if ("1038".equals(errorCode)){
+            return Result.failed("g091038",errorMessage);
+        }else
+//                1039	无此交易
+        if ("1039".equals(errorCode)){
+            return Result.failed("g091039",errorMessage);
+        }else
+//                1040	请求逾时
+        if ("1040".equals(errorCode)){
+            return Result.failed("g091040",errorMessage);
+        }else
+//                1041	HTTP 状态错误
+        if ("1041".equals(errorCode)){
+            return Result.failed("g091041",errorMessage);
+        }else
+//                1042	HTTP 请求空白
+        if ("1042".equals(errorCode)){
+            return Result.failed("g091042",errorMessage);
+        }else
+//                1043	下注已被取消
+        if ("1043".equals(errorCode)){
+            return Result.failed("g091043",errorMessage);
+        }else
+//                1044	无效的下注
+        if ("1044".equals(errorCode)){
+            return Result.failed("g091044",errorMessage);
+        }else
+//                1045	帐便记录新增失败
+        if ("1045".equals(errorCode)){
+            return Result.failed("g091045",errorMessage);
+        }else
+//                1046	转帐失败！请立即联系
+        if ("1046".equals(errorCode)){
+            return Result.failed("g091046",errorMessage);
+        }else
+//                1047	游戏维护中
+        if ("1047".equals(errorCode)){
+            return Result.failed("g091047",errorMessage);
+        }else
+//                1056	[任一参数]为空值
+        if ("1056".equals(errorCode)){
+            return Result.failed("g091056",errorMessage);
+        }else
+//        9999	失败
+            {
+                return Result.failed("g009999",errorMessage);
+            }
 
+
+    }
 }

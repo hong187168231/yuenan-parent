@@ -3,6 +3,7 @@ package com.indo.game.service.common;
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.game.pojo.entity.manage.GameCategory;
+import com.indo.game.pojo.entity.manage.GameParentPlatform;
 import com.indo.game.pojo.entity.manage.GamePlatform;
 import com.indo.user.pojo.bo.MemTradingBO;
 
@@ -11,9 +12,20 @@ import java.util.List;
 
 public interface GameCommonService {
 
-
     /**
      * 查询所有游戏平台
+     * @return
+     */
+    public List<GameParentPlatform> queryAllGameParentPlatform();
+
+    /**
+     * 依据平台代码查询平台
+     * @param platformCode
+     * @return
+     */
+    public GameParentPlatform getGameParentPlatformByplatformCode(String platformCode);
+    /**
+     * 查询所有游戏
      *
      * @return
      */
@@ -21,7 +33,7 @@ public interface GameCommonService {
 
 
     /**
-     * 依据平台代码查询平台
+     * 依据平台代码查询游戏
      *
      * @param platformCode
      * @return

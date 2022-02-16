@@ -3,7 +3,7 @@
 <mapper namespace="com.indo.admin.modules.game.mapper.GameParentPlatformMapper">
     <select id="queryAllGameParentPlatform" resultType="com.indo.game.pojo.entity.manage.GameParentPlatform">
         SELECT *
-        FROM game_platform t
+        FROM game_parent_platform t
         WHERE
             1=1
         <if test='req.platform != null and req.platform.size()>0'>
@@ -20,6 +20,15 @@
         </if>
         <if test='req.isOpenMaintenance != null and req.isOpenMaintenance.trim() neq ""'>
             and t.is_open_maintenance &lt;= #{req.isOpenMaintenance}
+        </if>
+        <if test='req.languageType != null and req.languageType.trim() neq ""'>
+            and t.language_type &lt;= #{req.languageType}
+        </if>
+        <if test='req.currencyType != null and req.currencyType.trim() neq ""'>
+            and t.currency_type &lt;= #{req.currencyType}
+        </if>
+        <if test='req.ipAddr != null and req.ipAddr.trim() neq ""'>
+            and t.ip_addr &lt;= #{req.ipAddr}
         </if>
         <if test='req.endTime != null and req.endTime.trim() neq ""'>
             and t.create_time &lt;= #{req.endTime}

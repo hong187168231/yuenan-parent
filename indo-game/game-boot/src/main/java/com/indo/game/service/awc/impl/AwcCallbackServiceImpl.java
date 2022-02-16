@@ -11,6 +11,7 @@ import com.indo.common.utils.DateUtils;
 import com.indo.game.mapper.TxnsMapper;
 import com.indo.game.pojo.dto.awc.*;
 import com.indo.game.pojo.entity.manage.GameCategory;
+import com.indo.game.pojo.entity.manage.GameParentPlatform;
 import com.indo.game.pojo.entity.manage.GamePlatform;
 import com.indo.game.pojo.entity.manage.Txns;
 import com.indo.game.pojo.vo.callback.awc.AwcCallBackParentRespSuccess;
@@ -1363,12 +1364,12 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
     }
 
     private boolean checkIp(String ip, String platform) {
-        GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(platform);
-        if (null == gamePlatform) {
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode("AWC");
+        if (null == gameParentPlatform) {
             return false;
-        } else if (null == gamePlatform.getIpAddr() || "".equals(gamePlatform.getIpAddr())) {
+        } else if (null == gameParentPlatform.getIpAddr() || "".equals(gameParentPlatform.getIpAddr())) {
             return true;
-        } else if (gamePlatform.getIpAddr().equals(ip)) {
+        } else if (gameParentPlatform.getIpAddr().equals(ip)) {
             return true;
         }
         return false;

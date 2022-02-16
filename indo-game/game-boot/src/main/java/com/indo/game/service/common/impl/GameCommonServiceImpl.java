@@ -14,8 +14,10 @@ import com.indo.core.pojo.dto.MemGoldChangeDTO;
 import com.indo.core.service.IMemGoldChangeService;
 import com.indo.game.common.util.GameBusinessRedisUtils;
 import com.indo.game.mapper.frontend.GameCategoryMapper;
+import com.indo.game.mapper.frontend.GameParentPlatformMapper;
 import com.indo.game.mapper.frontend.GamePlatformMapper;
 import com.indo.game.pojo.entity.manage.GameCategory;
+import com.indo.game.pojo.entity.manage.GameParentPlatform;
 import com.indo.game.pojo.entity.manage.GamePlatform;
 import com.indo.game.service.app.IGameManageService;
 import com.indo.game.service.common.GameCommonService;
@@ -41,7 +43,8 @@ public class GameCommonServiceImpl implements GameCommonService {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
     private GamePlatformMapper gamePlatformMapper;
-
+    @Autowired
+    private GameParentPlatformMapper gameParentPlatformMapper;
     @Autowired
     private GameCategoryMapper gameCategoryMapper;
 
@@ -50,6 +53,30 @@ public class GameCommonServiceImpl implements GameCommonService {
 
     @Resource
     private IMemGoldChangeService iMemGoldChangeService;
+
+    @Override
+    public List<GameParentPlatform> queryAllGameParentPlatform() {
+        List<GameParentPlatform> categoryList;
+        Map<Object, Object> map = RedisUtils.hmget(RedisConstants.GAME_PARENT_PLATFORM_KEY);
+        categoryList = new ArrayList(map.values());
+        if (CollectionUtil.isEmpty(categoryList)) {
+            LambdaQueryWrapper<GameParentPlatform> wrapper = new LambdaQueryWrapper<>();
+            categoryList = gameParentPlatformMapper.selectList(wrapper);
+        }
+        categoryList.sort(Comparator.comparing(GameParentPlatform::getSortNumber));
+        return categoryList;
+    }
+
+    @Override
+    public GameParentPlatform getGameParentPlatformByplatformCode(String platformCode) {
+        List<GameParentPlatform> platformList = queryAllGameParentPlatform();
+        if (CollectionUtil.isNotEmpty(platformList)) {
+            platformList = platformList.stream()
+                    .filter(platform -> platform.getPlatformCode().equals(platformCode))
+                    .collect(Collectors.toList());
+        }
+        return CollectionUtil.isEmpty(platformList) ? null : platformList.get(0);
+    }
 
     @Override
     public GamePlatform getGamePlatformByplatformCode(String platformCode) {
@@ -61,7 +88,6 @@ public class GameCommonServiceImpl implements GameCommonService {
         }
         return CollectionUtil.isEmpty(platformList) ? null : platformList.get(0);
     }
-
 
     public List<GamePlatform> queryAllGamePlatform() {
         List<GamePlatform> platformList;

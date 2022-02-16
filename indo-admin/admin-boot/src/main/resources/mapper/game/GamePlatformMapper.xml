@@ -27,15 +27,7 @@
         <if test='req.isOpenMaintenance != null and req.isOpenMaintenance.trim() neq ""'>
             and t.is_open_maintenance &lt;= #{req.isOpenMaintenance}
         </if>
-        <if test='req.languageType != null and req.languageType.trim() neq ""'>
-            and t.language_type &lt;= #{req.languageType}
-        </if>
-        <if test='req.currencyType != null and req.currencyType.trim() neq ""'>
-            and t.currency_type &lt;= #{req.currencyType}
-        </if>
-        <if test='req.ipAddr != null and req.ipAddr.trim() neq ""'>
-            and t.ip_addr &lt;= #{req.ipAddr}
-        </if>
+
         <if test='req.parentName != null and req.parentName.trim() neq ""'>
             and t.parent_name &lt;= #{req.parentName}
         </if>

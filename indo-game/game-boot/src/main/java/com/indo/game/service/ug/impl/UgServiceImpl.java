@@ -17,6 +17,7 @@ import com.indo.game.mapper.ug.UgSubBetMapper;
 import com.indo.game.pojo.dto.ug.*;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.game.pojo.entity.manage.GameCategory;
+import com.indo.game.pojo.entity.manage.GameParentPlatform;
 import com.indo.game.pojo.entity.manage.GamePlatform;
 import com.indo.game.pojo.entity.manage.Txns;
 import com.indo.game.pojo.entity.ug.InsBet;
@@ -69,15 +70,32 @@ public class UgServiceImpl implements UgService {
      * @return loginUser 用户信息
      */
     @Override
-    public Result ugGame(LoginInfo loginUser, String ip,String platform,String WebType) {
+    public Result ugGame(LoginInfo loginUser, String ip,String platform,String WebType,String parentName) {
         logger.info("uglog ugGame {} aeGame account:{}, aeCodeId:{}", loginUser.getId(), loginUser.getNickName());
-        // 是否开售校验
-        GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(platform);
-        if(null==gamePlatform){
-            return Result.failed("(ug)"+MessageUtils.get("tgdne"));
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
+        if(null==gameParentPlatform){
+            return Result.failed("("+parentName+")游戏平台不存在");
         }
-        if ("0".equals(gamePlatform.getIsStart())) {
-            return Result.failed(MessageUtils.get("tgocinyo"));
+        if ("0".equals(gameParentPlatform.getIsStart())) {
+            return Result.failed("g"+"100101","游戏平台未启用");
+        }
+        if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
+            return Result.failed("g000001",gameParentPlatform.getMaintenanceContent());
+        }
+        GamePlatform gamePlatform = null;
+        if(!platform.equals(parentName)) {
+            gamePlatform = new GamePlatform();
+            // 是否开售校验
+            gamePlatform = gameCommonService.getGamePlatformByplatformCode(platform);
+            if (null == gamePlatform) {
+                return Result.failed("("+platform+")平台游戏不存在");
+            }
+            if ("0".equals(gamePlatform.getIsStart())) {
+                return Result.failed("g"+"100102","游戏未启用");
+            }
+            if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
+                return Result.failed("g091047",gamePlatform.getMaintenanceContent());
+            }
         }
         //初次判断站点棋牌余额是否够该用户
 //        MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(loginUser.getAccount());
@@ -86,13 +104,13 @@ public class UgServiceImpl implements UgService {
         if (null==balance || BigDecimal.ZERO==balance) {
             logger.info("站点ug余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
             //站点棋牌余额不足
-            return Result.failed(MessageUtils.get("tcgqifpccs"));
+            return Result.failed("g300004","会员余额不足");
         }
 
         try {
 
             // 验证且绑定（KY-CPT第三方会员关系）
-            CptOpenMember cptOpenMember = externalService.getCptOpenMember(loginUser.getId().intValue(), gamePlatform.getParentName());
+            CptOpenMember cptOpenMember = externalService.getCptOpenMember(loginUser.getId().intValue(), parentName);
             if (cptOpenMember == null) {
                 cptOpenMember = new CptOpenMember();
                 cptOpenMember.setUserId(loginUser.getId().intValue());
@@ -100,9 +118,9 @@ public class UgServiceImpl implements UgService {
                 cptOpenMember.setPassword(loginUser.getAccount());
                 cptOpenMember.setCreateTime(new Date());
                 cptOpenMember.setLoginTime(new Date());
-                cptOpenMember.setType(gamePlatform.getParentName());
+                cptOpenMember.setType(parentName);
                 //创建玩家
-                return restrictedPlayer(loginUser,gamePlatform, ip, cptOpenMember,WebType);
+                return restrictedPlayer(gameParentPlatform,loginUser,gamePlatform, ip, cptOpenMember,WebType);
             } else {
                 Result result = this.logout(loginUser,ip);
                 if(null!=result&&"00000".equals(result.getCode())) {
@@ -111,13 +129,13 @@ public class UgServiceImpl implements UgService {
                     updateCptOpenMember.setLoginTime(new Date());
                     externalService.updateCptOpenMember(updateCptOpenMember);
                     //登录
-                    return initGame(loginUser, gamePlatform, ip, WebType);
+                    return initGame(gameParentPlatform,loginUser, gamePlatform, ip, WebType);
                 }
                 return result;
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.failed(MessageUtils.get("tnibptal"));
+            return Result.failed("g100104","网络繁忙，请稍后重试！");
         }
     }
 
@@ -125,13 +143,13 @@ public class UgServiceImpl implements UgService {
      * 注册会员
      * @return loginUser 用户信息
      */
-    public Result restrictedPlayer(LoginInfo loginUser,GamePlatform gamePlatform, String ip,CptOpenMember cptOpenMember,String WebType) {
+    public Result restrictedPlayer(GameParentPlatform gameParentPlatform,LoginInfo loginUser,GamePlatform gamePlatform, String ip,CptOpenMember cptOpenMember,String WebType) {
         logger.info("uglog restrictedPlayer {} ugGame account:{}, ugCodeId:{}", loginUser.getId(), loginUser.getNickName());
         try {
             UgRegisterPlayerJsonDTO ugRegisterPlayerJsonDTO = new UgRegisterPlayerJsonDTO();
             ugRegisterPlayerJsonDTO.setMemberAccount(loginUser.getAccount());//账户名,长度需要小于 20,大小写不敏感
             ugRegisterPlayerJsonDTO.setNickName(null==loginUser.getNickName()?"":loginUser.getNickName());//昵称,长度需要小于 50
-            ugRegisterPlayerJsonDTO.setCurrency(gamePlatform.getCurrencyType());//货币代码
+            ugRegisterPlayerJsonDTO.setCurrency(gameParentPlatform.getCurrencyType());//货币代码
             String url = "";
             if(null!=OpenAPIProperties.UG_AGENT&&!"".equals(OpenAPIProperties.UG_AGENT)){
                 ugRegisterPlayerJsonDTO.setAgentID(OpenAPIProperties.UG_AGENT);//代理编号
@@ -144,13 +162,13 @@ public class UgServiceImpl implements UgService {
             UgApiResponseData ugApiResponse = commonRequest(ugRegisterPlayerJsonDTO, url, loginUser.getId().intValue(), ip, "restrictedPlayer");
 
             if (null == ugApiResponse ) {
-                return Result.failed(MessageUtils.get("etgptal"));
+                return Result.failed("g100104","网络繁忙，请稍后重试！");
             }
             if("000000".equals(ugApiResponse.getErrorCode())){
                 externalService.saveCptOpenMember(cptOpenMember);
-                return initGame(loginUser,gamePlatform, ip,WebType);
+                return initGame(gameParentPlatform,loginUser,gamePlatform, ip,WebType);
             }else {
-                return Result.failed(ugApiResponse.getErrorCode(),ugApiResponse.getErrorMessage());
+                return Result.failed("g"+ugApiResponse.getErrorCode(),ugApiResponse.getErrorMessage());
             }
         } catch (Exception e) {
             logger.error("uglog restrictedPlayer game error {} ", e);
@@ -161,7 +179,7 @@ public class UgServiceImpl implements UgService {
     /**
      * 登录
      */
-    private Result initGame(LoginInfo loginUser,GamePlatform gamePlatform, String ip,String WebType) throws Exception {
+    private Result initGame(GameParentPlatform gameParentPlatform,LoginInfo loginUser,GamePlatform gamePlatform, String ip,String WebType) throws Exception {
         logger.info("uglog initGame Login {} initGame ugGame account:{}, ugCodeId:{},ip:{}", loginUser.getId(), loginUser.getNickName(),ip);
         try {
             UgLoginJsonDTO ugLoginJsonDTO = new UgLoginJsonDTO();
@@ -169,7 +187,7 @@ public class UgServiceImpl implements UgService {
             ugLoginJsonDTO.setWebType(null==WebType||"".equals(WebType)?"PC":WebType);//登录类型: PC \Smart \Wap；默认值：PC
             System.out.println("请求ip:"+ip);
             ugLoginJsonDTO.setLoginIP(ip);//登录 IP
-            ugLoginJsonDTO.setLanguage(gamePlatform.getLanguageType());// string 否 语言文字代码；默认值：EN
+            ugLoginJsonDTO.setLanguage(gameParentPlatform.getLanguageType());// string 否 语言文字代码；默认值：EN
 //            ugLoginJsonDTO.setPageStyle("");// string 否 网站版面 SP1, SP2, SP3, SP4, SP5,SP6,SP7；默认值：SP1
 //            ugLoginJsonDTO.setOddsStyle("");// string 否 赔率样式代码(OddsStyle) ；默认值：MY
 //            ugLoginJsonDTO.setHostUrl("");// string 否 对接商域名,如果有 cname 指向我们域名的可以传入该参数，指向的域名询问我们客服
@@ -181,7 +199,7 @@ public class UgServiceImpl implements UgService {
             if("000000".equals(ugApiResponse.getErrorCode())){
                 return Result.success(ugApiResponse);
             }else {
-                return Result.failed(ugApiResponse.getErrorCode(),ugApiResponse.getErrorMessage());
+                return Result.failed("g"+ugApiResponse.getErrorCode(),ugApiResponse.getErrorMessage());
             }
         } catch (Exception e) {
             logger.error("uglog initGame Login game error {} ", e);
@@ -203,12 +221,12 @@ public class UgServiceImpl implements UgService {
             if("000000".equals(ugApiResponse.getErrorCode())){
                 return Result.success(ugApiResponse);
             }else {
-                return Result.failed(ugApiResponse.getErrorCode(),ugApiResponse.getErrorMessage());
+                return Result.failed("g"+ugApiResponse.getErrorCode(),ugApiResponse.getErrorMessage());
             }
         } catch (Exception e) {
             e.printStackTrace();
             logger.info("uglog logout {} ", e);
-            return Result.failed(MessageUtils.get("tnibptal"));
+            return Result.failed("g100104","网络繁忙，请稍后重试！");
         }
 
     }
@@ -470,4 +488,5 @@ public class UgServiceImpl implements UgService {
         }
         return ugApiResponse;
     }
+
 }

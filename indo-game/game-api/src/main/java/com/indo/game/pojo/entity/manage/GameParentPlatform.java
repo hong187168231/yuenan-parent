@@ -48,4 +48,13 @@ public class GameParentPlatform   extends BaseEntity {
     @ApiModelProperty(value = "排序序号")
     private int sortNumber;
 
+    @ApiModelProperty(value = "支持语言")
+    private String languageType;
+
+    @ApiModelProperty(value = "支持币种")
+    private String currencyType;
+
+    @ApiModelProperty(value = "白名单IP")
+    private String ipAddr;
+
 }

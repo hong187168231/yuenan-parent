@@ -50,17 +50,11 @@ public class GamePlatform   extends BaseEntity{
     @ApiModelProperty(value = "维护内容")
     private String maintenanceContent;
 
-    @ApiModelProperty(value = "支持语言")
-    private String languageType;
-
-    @ApiModelProperty(value = "支持币种")
-    private String currencyType;
 
     @ApiModelProperty(value = "每个玩家每个最多允许 6 组下注限红 ID")
     private String betLimit;
 
-    @ApiModelProperty(value = "白名单IP")
-    private String ipAddr;
+
 
     @ApiModelProperty(value = "总平台名称")
     @NotNull(message = "总平台名称不能为空")

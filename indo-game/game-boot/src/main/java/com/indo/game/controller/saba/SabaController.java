@@ -42,14 +42,15 @@ public class SabaController {
     @ApiOperation(value = "saba游戏登录并初始化用户游戏账号", httpMethod = "POST")
     @PostMapping("/initGame")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "platform", value = "第三方游戏平台 ", paramType = "query", dataType = "string", required = true)
+            @ApiImplicitParam(name = "platform", value = "第三方游戏平台 ", paramType = "query", dataType = "string", required = true),
+            @ApiImplicitParam(name = "parentName", value = "第三方平台代码（AWC） ", paramType = "query", dataType = "string", required = true)
     })
-    public Result initGame(@LoginUser LoginInfo loginUser,@RequestParam("platform") String platform,
+    public Result initGame(@LoginUser LoginInfo loginUser,@RequestParam("platform") String platform,@RequestParam("parentName") String parentName,
                            HttpServletRequest request) throws InterruptedException {
 
         String params = "";
         if (loginUser == null || StringUtils.isBlank(loginUser.getAccount())) {
-            return Result.failed(MessageUtils.get("youarenotloggedin"));
+            return Result.failed("g100103","会员登录失效，请重新登录！");
         }
         log.info("sabalog {} initGame 进入游戏。。。loginUser:{}", platform, loginUser);
 
@@ -58,10 +59,10 @@ public class SabaController {
         try {
             if (res) {
                 String ip = IPAddressUtil.getIpAddress(request);
-                Result resultInfo = sabaService.sabaGame(loginUser, ip, platform);
+                Result resultInfo = sabaService.sabaGame(loginUser, ip, platform,parentName);
                 if (resultInfo == null) {
                     log.info("sabalog {} initGame result is null. params:{},ip:{}", loginUser.getId(), params, ip);
-                    return Result.failed(MessageUtils.get("networktimeout"));
+                    return Result.failed("g100104","网络繁忙，请稍后重试！");
                 } else {
                     if (!resultInfo.getCode().equals(ResultCode.SUCCESS)) {
                         return resultInfo;
@@ -71,13 +72,12 @@ public class SabaController {
                 return resultInfo;
             } else {
                 log.info("sabalog {} initGame lock  repeat request. error");
-                String aeInitGame3 = MessageUtils.get("networktimeout");
-                return Result.failed(aeInitGame3);
+                return Result.failed("g100104","网络繁忙，请稍后重试！");
             }
         } catch (Exception e) {
             e.printStackTrace();
             log.error("sabalog {} initGame occur error:{}. params:{}", loginUser.getId(), e.getMessage(), params);
-            return Result.failed(MessageUtils.get("networktimeout"));
+            return Result.failed("g100104","网络繁忙，请稍后重试！");
         } finally {
             lock.unlock();
         }
@@ -93,7 +93,7 @@ public class SabaController {
 
         String params = "";
         if (loginUser == null) {
-            return Result.failed(MessageUtils.get("youarenotloggedin"));
+            return Result.failed("g100103","会员登录失效，请重新登录！");
         }
         log.info("sabalog {} logout 进入游戏。。。loginUser:{}", loginUser.getId(), loginUser);
 
@@ -102,7 +102,7 @@ public class SabaController {
             Result resultInfo = sabaService.logout(loginUser, ip);
             if (resultInfo == null) {
                 log.info("sabalog {} initGame result is null. params:{},ip:{}", loginUser.getId(), params, ip);
-                return Result.failed(MessageUtils.get("networktimeout"));
+                return Result.failed("g100104","网络繁忙，请稍后重试！");
             } else {
                 if (!resultInfo.getCode().equals(ResultCode.SUCCESS)) {
                     return resultInfo;
@@ -113,7 +113,7 @@ public class SabaController {
         } catch (Exception e) {
             e.printStackTrace();
             log.error("sabalog {} logout occur error:{}. params:{}", loginUser.getId(), e.getMessage(), params);
-            return Result.failed(MessageUtils.get("networktimeout"));
+            return Result.failed("g100104","网络繁忙，请稍后重试！");
         }
     }
 }

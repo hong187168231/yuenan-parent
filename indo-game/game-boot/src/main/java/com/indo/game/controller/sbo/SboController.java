@@ -43,14 +43,15 @@ public class SboController {
     @ApiOperation(value = "sbo进入游戏", httpMethod = "POST")
     @PostMapping("/initGame")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "platform", value = "平台 ", paramType = "query", dataType = "string", required = true)
+            @ApiImplicitParam(name = "platform", value = "平台 ", paramType = "query", dataType = "string", required = true),
+            @ApiImplicitParam(name = "parentName", value = "第三方平台代码（SBO） ", paramType = "query", dataType = "string", required = true)
     })
-    public Result initGame(@LoginUser LoginInfo loginUser, @RequestParam("platform") String platform,
+    public Result initGame(@LoginUser LoginInfo loginUser, @RequestParam("platform") String platform,@RequestParam("parentName") String parentName,
                            HttpServletRequest request) throws InterruptedException {
 
         String params = "";
         if (loginUser == null || StringUtils.isBlank(loginUser.getAccount())) {
-            return Result.failed(MessageUtils.get("youarenotloggedin"));
+            return Result.failed("g100103","会员登录失效，请重新登录！");
         }
         log.info("sbolog {} initGame 进入游戏。。。loginUser:{}", platform, loginUser);
 
@@ -59,10 +60,10 @@ public class SboController {
         try {
             if (res) {
                 String ip = IPAddressUtil.getIpAddress(request);
-                Result resultInfo = sboSportsService.sboGame(loginUser, ip, platform);
+                Result resultInfo = sboSportsService.sboGame(loginUser, ip, platform,parentName);
                 if (resultInfo == null) {
                     log.info("sbolog {} initGame result is null. params:{},ip:{}", loginUser.getId(), params, ip);
-                    return Result.failed(MessageUtils.get("networktimeout"));
+                    return Result.failed("g100104","网络繁忙，请稍后重试！");
                 } else {
                     if (!resultInfo.getCode().equals(ResultCode.SUCCESS)) {
                         return resultInfo;
@@ -72,13 +73,12 @@ public class SboController {
                 return resultInfo;
             } else {
                 log.info("sbolog {} initGame lock  repeat request. error");
-                String sboInitGame3 = MessageUtils.get("networktimeout");
-                return Result.failed(sboInitGame3);
+                return Result.failed("g100104","网络繁忙，请稍后重试！");
             }
         } catch (Exception e) {
             e.printStackTrace();
             log.error("sbolog {} initGame occur error:{}. params:{}", loginUser.getId(), e.getMessage(), params);
-            return Result.failed(MessageUtils.get("networktimeout"));
+            return Result.failed("g100104","网络繁忙，请稍后重试！");
         } finally {
             lock.unlock();
         }
@@ -93,7 +93,7 @@ public class SboController {
 
         String params = "";
         if (loginUser == null) {
-            return Result.failed(MessageUtils.get("youarenotloggedin"));
+            return Result.failed("g100103","会员登录失效，请重新登录！");
         }
         log.info("sbolog {} logout 进入游戏。。。loginUser:{}", loginUser.getId(), loginUser);
 
@@ -102,7 +102,7 @@ public class SboController {
             Result resultInfo = sboSportsService.logout(loginUser, ip);
             if (resultInfo == null) {
                 log.info("sbolog {} initGame result is null. params:{},ip:{}", loginUser.getId(), params, ip);
-                return Result.failed(MessageUtils.get("networktimeout"));
+                return Result.failed("g100104","网络繁忙，请稍后重试！");
             } else {
                 if (!resultInfo.getCode().equals(ResultCode.SUCCESS)) {
                     return resultInfo;
@@ -113,7 +113,7 @@ public class SboController {
         } catch (Exception e) {
             e.printStackTrace();
             log.error("sbolog {} logout occur error:{}. params:{}", loginUser.getId(), e.getMessage(), params);
-            return Result.failed(MessageUtils.get("networktimeout"));
+            return Result.failed("g100104","网络繁忙，请稍后重试！");
         }
     }
 }

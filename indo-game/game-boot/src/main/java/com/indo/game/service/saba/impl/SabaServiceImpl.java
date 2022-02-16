@@ -10,6 +10,7 @@ import com.indo.game.mapper.frontend.GameCategoryMapper;
 import com.indo.game.mapper.frontend.GamePlatformMapper;
 import com.indo.game.mapper.frontend.GameTypeMapper;
 import com.indo.game.pojo.entity.CptOpenMember;
+import com.indo.game.pojo.entity.manage.GameParentPlatform;
 import com.indo.game.pojo.entity.manage.GamePlatform;
 import com.indo.game.pojo.vo.callback.saba.SabaApiResponseData;
 import com.indo.game.service.common.GameCommonService;
@@ -52,15 +53,32 @@ public class SabaServiceImpl implements SabaService {
      * @return loginUser 用户信息
      */
     @Override
-    public Result sabaGame(LoginInfo loginUser, String ip,String platform) {
+    public Result sabaGame(LoginInfo loginUser, String ip,String platform,String parentName) {
         logger.info("sabalog {} aeGame account:{}, aeCodeId:{}", loginUser.getId(), loginUser.getNickName());
-        // 是否开售校验
-        GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(platform);
-        if(null==gamePlatform){
-            return Result.failed("(saba)"+MessageUtils.get("tgdne"));
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
+        if(null==gameParentPlatform){
+            return Result.failed("("+parentName+")游戏平台不存在");
         }
-        if ("0".equals(gamePlatform.getIsStart())) {
-            return Result.failed(MessageUtils.get("tgocinyo"));
+        if ("0".equals(gameParentPlatform.getIsStart())) {
+            return Result.failed("g"+"100101","游戏平台未启用");
+        }
+        if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
+            return Result.failed("g000001",gameParentPlatform.getMaintenanceContent());
+        }
+        GamePlatform gamePlatform = null;
+        if(!platform.equals(parentName)) {
+            gamePlatform = new GamePlatform();
+            // 是否开售校验
+            gamePlatform = gameCommonService.getGamePlatformByplatformCode(platform);
+            if (null == gamePlatform) {
+                return Result.failed("("+platform+")平台游戏不存在");
+            }
+            if ("0".equals(gamePlatform.getIsStart())) {
+                return Result.failed("g"+"100102","游戏未启用");
+            }
+            if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
+                return Result.failed("g091047",gamePlatform.getMaintenanceContent());
+            }
         }
         //初次判断站点棋牌余额是否够该用户
 //        MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(loginUser.getAccount());
@@ -69,13 +87,13 @@ public class SabaServiceImpl implements SabaService {
         if (null==balance || BigDecimal.ZERO==balance) {
             logger.info("站点saba余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
             //站点棋牌余额不足
-            return Result.failed(MessageUtils.get("tcgqifpccs"));
+            return Result.failed("g300004","会员余额不足");
         }
 
         try {
 
             // 验证且绑定（KY-CPT第三方会员关系）
-            CptOpenMember cptOpenMember = externalService.getCptOpenMember(loginUser.getId().intValue(), gamePlatform.getParentName());
+            CptOpenMember cptOpenMember = externalService.getCptOpenMember(loginUser.getId().intValue(), parentName);
             if (cptOpenMember == null) {
                 cptOpenMember = new CptOpenMember();
                 cptOpenMember.setUserId(loginUser.getId().intValue());
@@ -83,20 +101,20 @@ public class SabaServiceImpl implements SabaService {
                 cptOpenMember.setPassword(loginUser.getAccount());
                 cptOpenMember.setCreateTime(new Date());
                 cptOpenMember.setLoginTime(new Date());
-                cptOpenMember.setType(gamePlatform.getParentName());
+                cptOpenMember.setType(parentName);
                 //创建玩家
-                return restrictedPlayer(loginUser,gamePlatform, ip, cptOpenMember);
+                return restrictedPlayer(gameParentPlatform,loginUser,gamePlatform, ip, cptOpenMember);
             } else {
                 CptOpenMember updateCptOpenMember = new CptOpenMember();
                 updateCptOpenMember.setId(cptOpenMember.getId());
                 updateCptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(updateCptOpenMember);
                 //登录
-                return initGame(loginUser,gamePlatform, ip);
+                return initGame(gameParentPlatform,loginUser,gamePlatform, ip);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.failed(MessageUtils.get("tnibptal"));
+            return Result.failed("g100104","网络繁忙，请稍后重试！");
         }
     }
 
@@ -104,17 +122,18 @@ public class SabaServiceImpl implements SabaService {
      * 注册会员
      * @return loginUser 用户信息
      */
-    public Result restrictedPlayer(LoginInfo loginUser,GamePlatform gamePlatform, String ip,CptOpenMember cptOpenMember) {
+    public Result restrictedPlayer(GameParentPlatform gameParentPlatform,LoginInfo loginUser,GamePlatform gamePlatform, String ip,CptOpenMember cptOpenMember) {
         logger.info("sabalog {} sabaGame account:{}, sabaCodeId:{}", loginUser.getId(), loginUser.getNickName());
         try {
             Map<String, String> trr = new HashMap<>();
             trr.put("vendor_Member_ID", loginUser.getAccount());//厂商会员识别码（建议跟 Username 一样）, 支援 ASCII Table 33-126, 最大长度 = 30
             trr.put("username", loginUser.getAccount());
             trr.put("oddsType", "");//为此会员设置赔率类型。请参考附件"赔率类型表"
-            trr.put("currency", gamePlatform.getLanguageType());//为此会员设置币别。请参考附件中"币别表"
-            trr.put("maxTransfer", String.valueOf(gamePlatform.getMaxTransfer()));//于 Sportsbook 系统与厂商间的最大限制转帐金额
-            trr.put("minTransfer", String.valueOf(gamePlatform.getMinTransfer()));//于 Sportsbook 系统与厂商间的最小限制转帐金额
-
+            trr.put("currency", gameParentPlatform.getLanguageType());//为此会员设置币别。请参考附件中"币别表"
+            if(null!=gamePlatform) {
+                trr.put("maxTransfer", String.valueOf(gamePlatform.getMaxTransfer()));//于 Sportsbook 系统与厂商间的最大限制转帐金额
+                trr.put("minTransfer", String.valueOf(gamePlatform.getMinTransfer()));//于 Sportsbook 系统与厂商间的最小限制转帐金额
+            }
             SabaApiResponseData sabaApiResponse = commonRequest(trr, OpenAPIProperties.SABA_API_URL+"/api/CreateMember", loginUser.getId().intValue(), ip, "restrictedPlayer");
 
             if (null == sabaApiResponse ) {
@@ -122,7 +141,7 @@ public class SabaServiceImpl implements SabaService {
             }
             if("0".equals(sabaApiResponse.getError_code())||"4103".equals(sabaApiResponse.getError_code())){
                 externalService.saveCptOpenMember(cptOpenMember);
-                return initGame(loginUser,gamePlatform, ip);
+                return initGame(gameParentPlatform,loginUser,gamePlatform, ip);
             }else {
                 return Result.failed(sabaApiResponse.getError_code(),sabaApiResponse.getMessage());
             }
@@ -135,12 +154,12 @@ public class SabaServiceImpl implements SabaService {
     /**
      * 登录
      */
-    private Result initGame(LoginInfo loginUser,GamePlatform gamePlatform, String ip) throws Exception {
+    private Result initGame(GameParentPlatform gameParentPlatform,LoginInfo loginUser,GamePlatform gamePlatform, String ip) throws Exception {
         logger.info("sabalog {} sabaGame account:{}, sabaCodeId:{}", loginUser.getId(), loginUser.getNickName());
         try {
             Map<String, String> trr = new HashMap<>();
             trr.put("username", loginUser.getAccount());
-            trr.put("portfolio", gamePlatform.getPlatformCode());
+            trr.put("portfolio", gameParentPlatform.getPlatformCode());
 
             SabaApiResponseData sabaApiResponse = commonRequest(trr, OpenAPIProperties.SABA_API_URL+"/api/GetSabaUrl", loginUser.getId().intValue(), ip, "restrictedPlayer");
             if("0".equals(sabaApiResponse.getError_code())){
@@ -174,7 +193,7 @@ public class SabaServiceImpl implements SabaService {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.failed(MessageUtils.get("tnibptal"));
+            return Result.failed("g100104","网络繁忙，请稍后重试！");
         }
 
     }
