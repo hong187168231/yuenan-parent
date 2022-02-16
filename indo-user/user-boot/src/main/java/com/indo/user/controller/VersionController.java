@@ -1,16 +1,19 @@
 package com.indo.user.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.indo.admin.pojo.vo.act.ActivityTypeVO;
 import com.indo.common.annotation.AllowAccess;
 import com.indo.common.constant.GlobalConstants;
 import com.indo.common.constant.RedisConstants;
 import com.indo.common.result.Result;
+import com.indo.common.utils.CollectionUtil;
 import com.indo.common.web.util.DozerUtil;
 import com.indo.core.pojo.entity.Activity;
 import com.indo.core.pojo.entity.ActivityType;
 import com.indo.core.pojo.entity.AppVersion;
 import com.indo.user.common.util.UserBusinessRedisUtils;
+import com.indo.user.mapper.AppVersionMapper;
 import com.indo.user.pojo.vo.act.ActivityVo;
 import com.indo.user.pojo.vo.app.AppVersionVo;
 import io.swagger.annotations.Api;
@@ -43,6 +46,9 @@ public class VersionController {
     @Resource
     private DozerUtil dozerUtil;
 
+    @Resource
+    private AppVersionMapper appVersionMapper;
+
 
     @ApiOperation(value = "app版本更新信息", httpMethod = "GET")
     @GetMapping(value = "/updateInfo")
@@ -53,6 +59,10 @@ public class VersionController {
     public Result<AppVersionVo> updateInfo(@RequestParam(value = "deviceType") Integer deviceType) {
         Map<Object, Object> map = UserBusinessRedisUtils.hmget(RedisConstants.APP_VERSION_KEY);
         List<AppVersion> versionList = new ArrayList(map.values());
+        if (CollectionUtil.isEmpty(versionList)) {
+            versionList = appVersionMapper.selectList(new LambdaQueryWrapper<AppVersion>().
+                    eq(AppVersion::getEnable, 1));
+        }
         List<AppVersionVo> voVersionList = dozerUtil.convert(versionList, AppVersionVo.class);
         voVersionList = voVersionList.stream()
                 .filter(act -> deviceType.equals(act.getDeviceType()))
