@@ -1,18 +1,15 @@
-package com.indo.game.pojo.entity.manage;
+package com.indo.admin.pojo.dto.game.manage;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.indo.common.pojo.entity.BaseEntity;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import javax.validation.constraints.NotNull;
 
 @Data
-@TableName("game_download")
-public class GameDownload {
+public class GameDownloadModifyDto {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "id")
@@ -26,7 +23,6 @@ public class GameDownload {
     @ApiModelProperty(value = "是否启用")
     private String isStart;//0关闭  1启用
 
+    @ApiModelProperty(value = "创建时间")
     private String createTime;
-
-    private String updateTime;
 }

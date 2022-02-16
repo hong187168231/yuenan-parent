@@ -1,14 +1,19 @@
 package com.indo.admin.modules.game.controller;
 
 import com.indo.admin.modules.game.service.IGameDownloadService;
+import com.indo.admin.pojo.dto.game.manage.GameDownloadAddDto;
+import com.indo.admin.pojo.dto.game.manage.GameDownloadModifyDto;
 import com.indo.common.result.Result;
+import com.indo.common.utils.DateUtils;
 import com.indo.game.pojo.entity.manage.GameDownload;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -22,7 +27,7 @@ public class GameDownloadController {
     private IGameDownloadService iGameDownloadService;
 
 
-    @ApiOperation(value = "下载地址", httpMethod = "GET")
+    @ApiOperation(value = "查询下载地址", httpMethod = "GET")
     @GetMapping(value = "/allGameDownload")
     public Result<List<GameDownload>> allGameDownload() {
         return Result.success(iGameDownloadService.queryAllGameDownload());
@@ -30,7 +35,12 @@ public class GameDownloadController {
 
     @ApiOperation(value = "新增下载地址", httpMethod = "POST")
     @PostMapping(value = "/addGameDownload")
-    public Result addGameDownload(GameDownload gameDownload) {
+    public Result addGameDownload(GameDownloadAddDto gameDownloadDto) {
+        GameDownload gameDownload = new GameDownload();
+
+        BeanUtils.copyProperties(gameDownloadDto, gameDownload);
+        String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
+        gameDownload.setCreateTime(dateStr);
         return Result.judge(iGameDownloadService.addGameDownload(gameDownload));
     }
 
@@ -42,7 +52,11 @@ public class GameDownloadController {
 
     @ApiOperation(value = "修改下载地址", httpMethod = "POST")
     @PostMapping(value = "/modifyGameDownload")
-    public Result modifyGameDownload(GameDownload gameDownload) {
+    public Result modifyGameDownload(GameDownloadModifyDto gameDownloadDto) {
+        GameDownload gameDownload = new GameDownload();
+        BeanUtils.copyProperties(gameDownloadDto, gameDownload);
+        String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
+        gameDownload.setUpdateTime(dateStr);
         return Result.judge(iGameDownloadService.modifyGameDownload(gameDownload));
     }
 

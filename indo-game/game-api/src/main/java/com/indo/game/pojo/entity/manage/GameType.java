@@ -18,10 +18,9 @@ import lombok.EqualsAndHashCode;
  * @since 2021-11-19
  */
 @Data
-@EqualsAndHashCode(callSuper = true)
 @TableName("game_type")
 @ApiModel(value="GameType对象", description="游戏种类字典表")
-public class GameType extends BaseEntity {
+public class GameType{
 
     private static final long serialVersionUID = 1L;
 
@@ -45,5 +44,6 @@ public class GameType extends BaseEntity {
 
     @ApiModelProperty(value = "是否启用")
     private String isStart;//0关闭  1启用
-
+    private String createTime;
+    private String updateTime;
 }
