@@ -14,7 +14,7 @@ public interface IGameDownloadService extends IService<GameDownload> {
 
     boolean addGameDownload(GameDownload gameDownload);
 
-    boolean deleteBatchGameDownload(Set<Long> ids);
+    boolean deleteBatchGameDownload(List<String> list);
 
     boolean modifyGameDownload(GameDownload gameDownload);
 }

@@ -137,7 +137,7 @@ public class SabaServiceImpl implements SabaService {
             SabaApiResponseData sabaApiResponse = commonRequest(trr, OpenAPIProperties.SABA_API_URL+"/api/CreateMember", loginUser.getId().intValue(), ip, "restrictedPlayer");
 
             if (null == sabaApiResponse ) {
-                return Result.failed(MessageUtils.get("etgptal"));
+                return Result.failed("g100104","网络繁忙，请稍后重试！");
             }
             if("0".equals(sabaApiResponse.getError_code())||"4103".equals(sabaApiResponse.getError_code())){
                 externalService.saveCptOpenMember(cptOpenMember);
@@ -184,7 +184,7 @@ public class SabaServiceImpl implements SabaService {
         try {
             sabaApiResponse = commonRequest(trr, OpenAPIProperties.SABA_API_URL+"/api/KickUser", Integer.valueOf(loginUser.getId().intValue()), ip, "logout");
             if (null == sabaApiResponse ) {
-                return Result.failed(MessageUtils.get("etgptal"));
+                return Result.failed("g100104","网络繁忙，请稍后重试！");
             }
             if("0".equals(sabaApiResponse.getError_code())){
                 return Result.success(sabaApiResponse);

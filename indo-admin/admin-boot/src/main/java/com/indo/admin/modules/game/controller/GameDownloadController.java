@@ -13,6 +13,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -39,15 +40,16 @@ public class GameDownloadController {
         GameDownload gameDownload = new GameDownload();
 
         BeanUtils.copyProperties(gameDownloadDto, gameDownload);
-        String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
+        String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
         gameDownload.setCreateTime(dateStr);
         return Result.judge(iGameDownloadService.addGameDownload(gameDownload));
     }
 
     @ApiOperation(value = "删除下载地址", httpMethod = "DELETE")
     @DeleteMapping(value = "/deleteGameDownload")
-    public Result deleteGameDownload(Set<Long> ids) {
-        return Result.judge(iGameDownloadService.deleteBatchGameDownload(ids));
+    public Result deleteGameDownload(String ids) {
+        List<String> list = Arrays.asList(ids.split(","));
+        return Result.judge(iGameDownloadService.deleteBatchGameDownload(list));
     }
 
     @ApiOperation(value = "修改下载地址", httpMethod = "POST")
@@ -55,7 +57,7 @@ public class GameDownloadController {
     public Result modifyGameDownload(GameDownloadModifyDto gameDownloadDto) {
         GameDownload gameDownload = new GameDownload();
         BeanUtils.copyProperties(gameDownloadDto, gameDownload);
-        String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
+        String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
         gameDownload.setUpdateTime(dateStr);
         return Result.judge(iGameDownloadService.modifyGameDownload(gameDownload));
     }

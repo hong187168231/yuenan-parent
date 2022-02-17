@@ -33,9 +33,9 @@ public class GameDownloadServiceImpl extends ServiceImpl<GameDownloadMapper, Gam
         return false;
     }
 
-    public boolean deleteBatchGameDownload(Set<Long> ids) {
-        if (this.baseMapper.deleteBatchIds(ids) > 0) {
-            ids.forEach(id -> {
+    public boolean deleteBatchGameDownload(List<String> list) {
+        if (this.baseMapper.deleteBatchIds(list) > 0) {
+            list.forEach(id -> {
                 AdminBusinessRedisUtils.hdel(RedisConstants.GAME_DOWNLOAD_KEY, id + "");
             });
             return true;

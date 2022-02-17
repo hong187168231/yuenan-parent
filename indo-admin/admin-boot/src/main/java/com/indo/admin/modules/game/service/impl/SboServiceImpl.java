@@ -56,13 +56,13 @@ public class SboServiceImpl implements SboService {
 //            trr.put("CasinoTableLimit", sboAgentDTO.getCasinoTableLimit().toString());//*	Integer	该代理底下玩家的预设真人赌场限额设定。 1： 低 2：中 3：高 4：VIP
 
             SboAgentJsonDTO sboAgentJsonDTO = new SboAgentJsonDTO();
-            BeanUtils.copyProperties(sboAgentJsonDTO,sboAgentDTO);
-//            sboAgentJsonDTO.setCompanyKey(OpenAPIProperties.SBO_KEY);
-//            sboAgentJsonDTO.setServerId(OpenAPIProperties.SBO_SERVERID);
+            BeanUtils.copyProperties(sboAgentDTO,sboAgentJsonDTO);
+            sboAgentJsonDTO.setCompanyKey(OpenAPIProperties.SBO_KEY);
+            sboAgentJsonDTO.setServerId(OpenAPIProperties.SBO_SERVERID);
             SboApiResponseData sboApiResponse = commonRequest(sboAgentJsonDTO, OpenAPIProperties.SBO_API_URL+"/web-root/restricted/agent/register-agent.aspx", JwtUtils.getUserId().intValue(), ip, "registerAgent");
 
             if (null == sboApiResponse ) {
-                return Result.failed(MessageUtils.get("etgptal"));
+                return Result.failed("g100104","网络繁忙，请稍后重试！");
             }
             if("0".equals(sboApiResponse.getError().getId())){
                 gameAgent = new GameAgent();
@@ -100,11 +100,13 @@ public class SboServiceImpl implements SboService {
 //            trr.put("Status", sboUpdateAgentStatusDTO.getStatus());
 
             SboUpdateAgentStatusJsonDTO sboUpdateAgentStatusJsonDTO = new SboUpdateAgentStatusJsonDTO();
-            BeanUtils.copyProperties(sboUpdateAgentStatusJsonDTO,sboUpdateAgentStatusDTO);
+            BeanUtils.copyProperties(sboUpdateAgentStatusDTO, sboUpdateAgentStatusJsonDTO);
+            sboUpdateAgentStatusJsonDTO.setCompanyKey(OpenAPIProperties.SBO_KEY);
+            sboUpdateAgentStatusJsonDTO.setServerId(OpenAPIProperties.SBO_SERVERID);
             SboApiResponseData sboApiResponse = commonRequest(sboUpdateAgentStatusJsonDTO, OpenAPIProperties.SBO_API_URL+"/web-root/restricted/agent/update-agent-status.aspx", JwtUtils.getUserId().intValue(), ip, "updateAgentStatus");
 
             if (null == sboApiResponse ) {
-                return Result.failed(MessageUtils.get("etgptal"));
+                return Result.failed("g100104","网络繁忙，请稍后重试！");
             }
             if("0".equals(sboApiResponse.getError().getId())){
                 gameAgent.setStatus(sboUpdateAgentStatusDTO.getStatus());
@@ -137,11 +139,13 @@ public class SboServiceImpl implements SboService {
             wrapper.eq(GameAgent::getParentName,"SBO");
             GameAgent gameAgent = gameAgentMapper.selectOne(wrapper);
             SboUpdateAgentPresetBetJsonDTO sboUpdateAgentPresetBetJsonDTO = new SboUpdateAgentPresetBetJsonDTO();
-            BeanUtils.copyProperties(sboUpdateAgentPresetBetJsonDTO,sboUpdateAgentPresetBetDTO);
+            BeanUtils.copyProperties(sboUpdateAgentPresetBetDTO,sboUpdateAgentPresetBetJsonDTO);
+            sboUpdateAgentPresetBetJsonDTO.setCompanyKey(OpenAPIProperties.SBO_KEY);
+            sboUpdateAgentPresetBetJsonDTO.setServerId(OpenAPIProperties.SBO_SERVERID);
             SboApiResponseData sboApiResponse = commonRequest(sboUpdateAgentPresetBetDTO, OpenAPIProperties.SBO_API_URL+"/web-root/restricted/agent/update-agent-preset-bet-settings.aspx", JwtUtils.getUserId().intValue(), ip, "updateAgentPresetBet");
 
             if (null == sboApiResponse ) {
-                return Result.failed(MessageUtils.get("etgptal"));
+                return Result.failed("g100104","网络繁忙，请稍后重试！");
             }
             if("0".equals(sboApiResponse.getError().getId())){
                 BeanUtils.copyProperties(sboUpdateAgentPresetBetDTO,gameAgent);
@@ -174,5 +178,4 @@ public class SboServiceImpl implements SboService {
         }
         return sboApiResponse;
     }
-
 }
