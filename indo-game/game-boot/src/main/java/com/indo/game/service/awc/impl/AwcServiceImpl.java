@@ -252,35 +252,38 @@ public class AwcServiceImpl implements AwcService {
             trr.put("externalURL", "");
 
             trr.put("language", gameParentPlatform.getLanguageType());
+            String url = "/wallet/login";
             if(null!=gamePlatform) {
                 String str[] = gamePlatform.getPlatformCode().split("_");
                 trr.put("platform", str[0]);//游戏平台名称
 //            GameCategory gameCategory = gameCategoryMapper.selectById(gamePlatform.getCategoryId());
                 trr.put("gameType", str[1]);//平台游戏类型
-                List<GamePlatform> gamePlatformList = gameCommonService.getGamePlatformByParentName(gameParentPlatform.getPlatformCode());
-                List<String> codeList = new ArrayList<>();
-                Map<String, List<String>> gameForbiddenMap = new HashMap<>();
-
-                for (int i = 0; i < gamePlatformList.size(); i++) {
-                    GamePlatform gamePlatform1 = gamePlatformList.get(i);
-                    if (!gamePlatform.getPlatformCode().equals(gamePlatform1.getPlatformCode())) {
-                        String platformList[] = gamePlatform1.getPlatformCode().split("_");
-                        if (!gamePlatformList.contains(platformList[0])) {
-                            codeList.add(platformList[0]);
-                            List<String> typeList = gameForbiddenMap.get(platformList[0]);
-                            if (null == typeList) {
-                                typeList = new ArrayList<>();
-                                typeList.add(platformList[1]);
-
-                            } else {
-                                typeList.add(platformList[1]);
-                            }
-                            gameForbiddenMap.put(platformList[0], typeList);
-                        }
-                    }
-                }
-                JSONObject gameForbiddenStr = GameUtil.getJsonMap(gameForbiddenMap);
-                trr.put("gameForbidden", gameForbiddenStr.toString());//指定对玩家隐藏游戏平台，您仅能透过 API 执行这个动作
+                trr.put("gameCode", "");//平台游戏代码
+//                List<GamePlatform> gamePlatformList = gameCommonService.getGamePlatformByParentName(gameParentPlatform.getPlatformCode());
+//                List<String> codeList = new ArrayList<>();
+//                Map<String, List<String>> gameForbiddenMap = new HashMap<>();
+//
+//                for (int i = 0; i < gamePlatformList.size(); i++) {
+//                    GamePlatform gamePlatform1 = gamePlatformList.get(i);
+//                    if (!gamePlatform.getPlatformCode().equals(gamePlatform1.getPlatformCode())) {
+//                        String platformList[] = gamePlatform1.getPlatformCode().split("_");
+//                        if (!gamePlatformList.contains(platformList[0])) {
+//                            codeList.add(platformList[0]);
+//                            List<String> typeList = gameForbiddenMap.get(platformList[0]);
+//                            if (null == typeList) {
+//                                typeList = new ArrayList<>();
+//                                typeList.add(platformList[1]);
+//
+//                            } else {
+//                                typeList.add(platformList[1]);
+//                            }
+//                            gameForbiddenMap.put(platformList[0], typeList);
+//                        }
+//                    }
+//                }
+//                JSONObject gameForbiddenStr = GameUtil.getJsonMap(gameForbiddenMap);
+//                trr.put("gameForbidden", gameForbiddenStr.toString());//指定对玩家隐藏游戏平台，您仅能透过 API 执行这个动作
+                url = "/wallet/doLoginAndLaunchGame";
             }
 //           platform: SEXYBCRT
 //                   - gameType: LIVE
@@ -290,7 +293,7 @@ public class AwcServiceImpl implements AwcService {
 //            ※每个玩家每个最多允许 6 组下注限红 ID
             trr.put("betLimit", "");//下注限红
 
-            return commonRequest(trr, OpenAPIProperties.AWC_API_URL_LOGIN+"/wallet/login", cptOpenMember.getUserId(), ip, "initGame");
+            return commonRequest(trr, OpenAPIProperties.AWC_API_URL_LOGIN+url, cptOpenMember.getUserId(), ip, "initGame");
         } catch (Exception e) {
             logger.error("awclog game error {} ", e);
             return null;
