@@ -29,7 +29,7 @@ public class SysParameterReq extends BaseDTO {
     @ApiModelProperty(value = "系统参数值")
     private String paramValue;
 
-    @ApiModelProperty(value = "是否删除 0 未删除 1 删除")
+    @ApiModelProperty(value = "是否删除 0关闭 1 开启")
     private Integer status;
 
     @ApiModelProperty(value = "参数说明")
