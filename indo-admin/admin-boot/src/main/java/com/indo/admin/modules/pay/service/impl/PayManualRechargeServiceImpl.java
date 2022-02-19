@@ -38,9 +38,6 @@ import java.util.List;
 public class PayManualRechargeServiceImpl extends SuperServiceImpl<PayManualRechargeMapper, PayManualRecharge> implements IPayManualRechargeService {
 
     @Autowired
-    private PayManualRechargeMapper payManualRechargeMapper;
-
-    @Autowired
     private PayRechargeMapper payRechargeOrderMapper;
 
     @Autowired
@@ -49,11 +46,12 @@ public class PayManualRechargeServiceImpl extends SuperServiceImpl<PayManualRech
     @Autowired
     private IMemGoldChangeService iMemGoldChangeService;
 
+
     @Override
-    public Page<ManualRechargeMemVO> memList(Integer page, Integer limit, String account) {
+    public Page<ManualRechargeMemVO> memList(Long page, Long limit, String account) {
         Page<ManualRechargeMemVO> muPage = new Page<>(page, limit);
-        List<ManualRechargeMemVO> list = payManualRechargeMapper.memList(muPage, account);
-        muPage.setRecords(list);
+        List<ManualRechargeMemVO> result = this.baseMapper.memList(muPage, account);
+        muPage.setRecords(result);
         return muPage;
     }
 
@@ -106,7 +104,7 @@ public class PayManualRechargeServiceImpl extends SuperServiceImpl<PayManualRech
     @Override
     public Page<ManualRechargeRecordVO> queryList(Integer page, Integer limit, String account, Integer operateType) {
         Page<ManualRechargeRecordVO> mrPage = new Page<>(page, limit);
-        List<ManualRechargeRecordVO> list = payManualRechargeMapper.queryList(mrPage, account, operateType);
+        List<ManualRechargeRecordVO> list = this.baseMapper.queryList(mrPage, account, operateType);
         mrPage.setRecords(list);
         return mrPage;
 

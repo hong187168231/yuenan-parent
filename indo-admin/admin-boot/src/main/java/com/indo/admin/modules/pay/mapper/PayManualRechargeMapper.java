@@ -2,6 +2,7 @@ package com.indo.admin.modules.pay.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.indo.admin.pojo.vo.pay.PayChannelConfigVO;
 import com.indo.core.pojo.entity.PayManualRecharge;
 import com.indo.pay.pojo.vo.ManualRechargeMemVO;
 import com.indo.pay.pojo.vo.ManualRechargeRecordVO;

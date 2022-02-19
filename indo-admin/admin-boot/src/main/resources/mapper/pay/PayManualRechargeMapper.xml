@@ -3,13 +3,17 @@
 <mapper namespace="com.indo.admin.modules.pay.mapper.PayManualRechargeMapper">
 
     <select id="memList" resultType="com.indo.pay.pojo.vo.ManualRechargeMemVO">
-        SELECT mb.id,
-               mb.account,
-               mb.mem_level AS memMevel,
-               ma.superior
+        SELECT mb.id as memId,
+        mb.account as account,
+        mb.mem_level AS memLevel,
+        mb.balance as balance,
+        ma.superior as superior
         FROM mem_baseinfo mb
-                 LEFT JOIN mem_agent ma ON mb.id = ma.mem_id
-            AND mb.`status` = 0
+        LEFT JOIN agent_relation ma ON mb.id = ma.mem_id
+        AND mb.`status` = 0
+        <if test="account != null and account != '' ">
+            and mb.account = #{account}
+        </if>
     </select>
 
 

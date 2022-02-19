@@ -19,8 +19,6 @@ public interface IPayChannelConfigService extends IService<PayChannelConfig> {
 
     Page<PayChannelConfigVO> queryAll(PayChannelQueryDTO queryDTO);
 
-
-
     boolean add(PayChannelDTO addDto);
 
 

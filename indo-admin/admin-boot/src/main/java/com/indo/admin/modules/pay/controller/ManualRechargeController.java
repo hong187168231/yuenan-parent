@@ -44,8 +44,8 @@ public class ManualRechargeController {
             @ApiImplicitParam(name = "account", value = "用户账号", required = false, paramType = "query", dataType = "String"),
     })
     public Result<List<ManualRechargeMemVO>> memList(
-            Integer page,
-            Integer limit,
+            Long page,
+            Long limit,
             String account) {
         Page<ManualRechargeMemVO> result = iPayManualRechargeService.memList(page, limit, account);
         return Result.success(result.getRecords(), result.getTotal());

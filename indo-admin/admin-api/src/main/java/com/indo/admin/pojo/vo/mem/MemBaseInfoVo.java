@@ -43,7 +43,7 @@ public class MemBaseInfoVo {
     @ApiModelProperty(value = "会员等级")
     private String memLevel;
     @ApiModelProperty(value = "注册来源:1-苹果,2-安卓,3-h5")
-    private Integer registerSource;
+    private String registerSource;
     @ApiModelProperty(value = "账户类型:0-普通会员 1-代理会员")
     private Integer accType;
     @ApiModelProperty(value = "注册邀请码")

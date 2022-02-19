@@ -17,7 +17,7 @@ import com.indo.pay.pojo.vo.ManualRechargeRecordVO;
 public interface IPayManualRechargeService extends SuperService<PayManualRecharge> {
 
 
-    Page<ManualRechargeMemVO> memList(Integer page, Integer limit, String account);
+    Page<ManualRechargeMemVO> memList(Long page, Long limit, String account);
 
 
     boolean operateRecharge(Integer operateType, Long memId, Float amount);
