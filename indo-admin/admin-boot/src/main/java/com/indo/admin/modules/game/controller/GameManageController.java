@@ -62,12 +62,16 @@ public class GameManageController {
     @ApiOperation(value = "新增游戏类别", httpMethod = "POST")
     @PostMapping(value = "/addGameCategory")
     public Result addGameCategory(GameCategory category) {
+        String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
+        category.setCreateTime(dateStr);
         return Result.judge(iGameManageService.addGameCategory(category));
     }
 
     @ApiOperation(value = "修改游戏类别", httpMethod = "POST")
     @PostMapping(value = "/modifyGameCategory")
     public Result modifyGameCategory(GameCategory category) {
+        String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
+        category.setUpdateTime(dateStr);
         return Result.judge(iGameManageService.modifyGameCategory(category));
     }
 
