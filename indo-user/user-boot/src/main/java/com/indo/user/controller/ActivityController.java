@@ -69,7 +69,7 @@ public class ActivityController {
         List<Activity> activityList = new ArrayList(map.values());
         if (actTypeId != null) {
             activityList = activityList.stream()
-                    .filter(act -> !actTypeId.equals(act.getActTypeId()))
+                    .filter(act -> actTypeId.equals(act.getActTypeId()))
                     .collect(Collectors.toList());
         }
         activityList = activityList.stream()
