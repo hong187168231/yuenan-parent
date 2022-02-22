@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.indo.admin.pojo.criteria.GameDownloadQueryCriteria;
 import com.indo.common.constant.RedisConstants;
 import com.indo.common.redis.utils.RedisUtils;
+import com.indo.common.utils.CollectionUtil;
 import com.indo.common.utils.QueryHelpPlus;
 import com.indo.core.pojo.entity.GameDownload;
 import com.indo.game.mapper.frontend.GameDownloadMapper;
@@ -12,6 +13,7 @@ import com.indo.game.service.app.IGameDownloadService;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class GameDownloadServiceImpl extends ServiceImpl<GameDownloadMapper, GameDownload> implements IGameDownloadService {
@@ -23,6 +25,11 @@ public class GameDownloadServiceImpl extends ServiceImpl<GameDownloadMapper, Gam
         if (ObjectUtil.isEmpty(gameDownloads)) {
             GameDownloadQueryCriteria criteria = new GameDownloadQueryCriteria();
             gameDownloads = baseMapper.selectList(QueryHelpPlus.getPredicate(GameDownload.class, criteria));
+        }
+        if (CollectionUtil.isNotEmpty(gameDownloads)) {
+            gameDownloads = gameDownloads.stream()
+                    .filter(platform -> platform.getIsStart().equals(1))
+                    .collect(Collectors.toList());
         }
         gameDownloads.sort(Comparator.comparing(GameDownload::getCreateTime));
         return gameDownloads;
