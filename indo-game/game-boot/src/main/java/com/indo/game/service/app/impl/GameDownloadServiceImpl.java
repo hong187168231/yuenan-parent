@@ -21,14 +21,16 @@ public class GameDownloadServiceImpl extends ServiceImpl<GameDownloadMapper, Gam
 
     public List<GameDownload> queryAllGameDownload() {
         Map<Object, Object> map = RedisUtils.hmget(RedisConstants.GAME_DOWNLOAD_KEY);
-        List<GameDownload> gameDownloads = new ArrayList(map.values());
-        if (ObjectUtil.isEmpty(gameDownloads)) {
+        List<GameDownload> gameDownloads;
+        if(ObjectUtil.isEmpty(map)){
             GameDownloadQueryCriteria criteria = new GameDownloadQueryCriteria();
             gameDownloads = baseMapper.selectList(QueryHelpPlus.getPredicate(GameDownload.class, criteria));
+        }else {
+            gameDownloads = new ArrayList(map.values());
         }
         if (CollectionUtil.isNotEmpty(gameDownloads)) {
             gameDownloads = gameDownloads.stream()
-                    .filter(platform -> platform.getIsStart().equals(1))
+                    .filter(gameDownload -> gameDownload.getIsStart().equals("1"))
                     .collect(Collectors.toList());
         }
         gameDownloads.sort(Comparator.comparing(GameDownload::getCreateTime));
