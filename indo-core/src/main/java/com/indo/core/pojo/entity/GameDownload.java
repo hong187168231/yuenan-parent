@@ -11,9 +11,8 @@ import lombok.EqualsAndHashCode;
 import javax.validation.constraints.NotNull;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
 @TableName("game_download")
-public class GameDownload  extends BaseEntity {
+public class GameDownload {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "id")
@@ -27,4 +26,7 @@ public class GameDownload  extends BaseEntity {
     @ApiModelProperty(value = "是否启用")
     private String isStart;//0关闭  1启用
 
+    private String createTime;
+
+    private String updateTime;
 }

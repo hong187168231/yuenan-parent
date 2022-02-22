@@ -5,7 +5,7 @@ import com.indo.admin.pojo.dto.game.manage.GameDownloadAddDto;
 import com.indo.admin.pojo.dto.game.manage.GameDownloadModifyDto;
 import com.indo.common.result.Result;
 import com.indo.common.utils.DateUtils;
-import com.indo.game.pojo.entity.manage.GameDownload;
+import com.indo.core.pojo.entity.GameDownload;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/api/v1/game/download")

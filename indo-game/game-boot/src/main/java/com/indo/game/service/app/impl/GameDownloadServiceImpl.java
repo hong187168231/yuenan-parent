@@ -6,8 +6,8 @@ import com.indo.admin.pojo.criteria.GameDownloadQueryCriteria;
 import com.indo.common.constant.RedisConstants;
 import com.indo.common.redis.utils.RedisUtils;
 import com.indo.common.utils.QueryHelpPlus;
+import com.indo.core.pojo.entity.GameDownload;
 import com.indo.game.mapper.frontend.GameDownloadMapper;
-import com.indo.game.pojo.entity.manage.GameDownload;
 import com.indo.game.service.app.IGameDownloadService;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +24,7 @@ public class GameDownloadServiceImpl extends ServiceImpl<GameDownloadMapper, Gam
             GameDownloadQueryCriteria criteria = new GameDownloadQueryCriteria();
             gameDownloads = baseMapper.selectList(QueryHelpPlus.getPredicate(GameDownload.class, criteria));
         }
-        gameDownloads.sort(Comparator.comparing(GameDownload::getUpdateTime));
+        gameDownloads.sort(Comparator.comparing(GameDownload::getCreateTime));
         return gameDownloads;
     }
 

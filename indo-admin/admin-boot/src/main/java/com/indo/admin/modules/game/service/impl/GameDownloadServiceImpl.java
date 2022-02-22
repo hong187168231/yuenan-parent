@@ -8,6 +8,7 @@ import com.indo.admin.modules.game.service.IGameDownloadService;
 import com.indo.admin.modules.game.service.IGameManageService;
 import com.indo.common.constant.RedisConstants;
 import com.indo.common.result.Result;
+import com.indo.core.pojo.entity.GameDownload;
 import com.indo.game.pojo.entity.manage.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
