@@ -58,7 +58,7 @@ public class PayChannelConfigServiceImpl extends ServiceImpl<PayChannelConfigMap
 
     @Override
     public boolean edit(PayChannelDTO editDto) {
-        PayChannelConfig channelConfig = new PayChannelConfig();
+        PayChannelConfig channelConfig = this.baseMapper.selectById(editDto.getPayChannelId());
         BeanUtils.copyProperties(editDto, channelConfig);
         if (baseMapper.updateById(channelConfig) > 0) {
             AdminBusinessRedisUtils.hset(RedisConstants.PAY_CHANNEL_KEY, channelConfig.getPayChannelId() + "", channelConfig);
