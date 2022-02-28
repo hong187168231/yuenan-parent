@@ -64,7 +64,7 @@ public class GameController {
         }
         log.info("登录平台或单一游戏登录 进入游戏。。。 platform:{},loginUser:{},parentName:{}",platform, loginUser,parentName);
 
-        RLock lock = redissonClient.getLock("AWC_GAME_" + loginUser.getId());
+        RLock lock = redissonClient.getLock("INITGAME_" + loginUser.getId());
         boolean res = lock.tryLock(5, TimeUnit.SECONDS);
         try {
             if (res) {
@@ -140,6 +140,9 @@ public class GameController {
             }
             if("SABA".equals(platform)){
                 resultInfo = sabaService.logout(loginUser, ip);
+            }
+            if("JDB".equals(platform)){
+                resultInfo = jdbService.logout(loginUser, ip);
             }
             if (resultInfo == null) {
                 log.info("退出平台log {} loginPlatform result is null. params:{},ip:{}", loginUser.getId(), params, ip);
