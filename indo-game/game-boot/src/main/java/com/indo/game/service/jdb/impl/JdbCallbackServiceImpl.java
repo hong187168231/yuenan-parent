@@ -44,10 +44,10 @@ public class JdbCallbackServiceImpl implements JdbCallbackService {
         JSONObject jsonObject = JSONObject.parseObject(jsonStr);
         Integer action = Integer.valueOf(jsonObject.getString("action"));
         if (!checkIp(ip)) {
-            JdbApiResponseError callBacekFail = new JdbApiResponseError();
-            callBacekFail.setStatus("9001");
-            callBacekFail.setErr_text("No authorized to access.");
-            return callBacekFail;
+            JdbApiResponseError callBackFail = new JdbApiResponseError();
+            callBackFail.setStatus("9001");
+            callBackFail.setErr_text("No authorized to access.");
+            return callBackFail;
         }
         try {//Get Balance 取得玩家余额
             if (6==action) {
@@ -65,10 +65,10 @@ public class JdbCallbackServiceImpl implements JdbCallbackService {
         } catch (Exception e) {
             e.printStackTrace();
             logger.info("awcCallBack {9999Fail} callBack 回调,IP:" + ip + " params:{}", e);
-            JdbApiResponseError callBacekFail = new JdbApiResponseError();
-            callBacekFail.setStatus("9999");
-            callBacekFail.setErr_text("Failed.");
-            return callBacekFail;
+            JdbApiResponseError callBackFail = new JdbApiResponseError();
+            callBackFail.setStatus("9999");
+            callBackFail.setErr_text("Failed.");
+            return callBackFail;
         }
         return "";
     }
@@ -79,10 +79,10 @@ public class JdbCallbackServiceImpl implements JdbCallbackService {
         });
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(apiRequestData.getUid());
         if (null == memBaseinfo) {
-            JdbApiResponseError callBacekFail = new JdbApiResponseError();
-            callBacekFail.setStatus("7501");
-            callBacekFail.setErr_text("User ID cannot be found.");
-            return callBacekFail;
+            JdbApiResponseError callBackFail = new JdbApiResponseError();
+            callBackFail.setStatus("7501");
+            callBackFail.setErr_text("User ID cannot be found.");
+            return callBackFail;
         } else {
             JdbApiResponseData getBalanceSuccess = new JdbApiResponseData();
             getBalanceSuccess.setStatus("0000");
@@ -106,10 +106,10 @@ public class JdbCallbackServiceImpl implements JdbCallbackService {
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(userId);
         balance = memBaseinfo.getBalance();
         if (null == memBaseinfo) {
-            JdbApiResponseError callBacekFail = new JdbApiResponseError();
-            callBacekFail.setStatus("7501");
-            callBacekFail.setErr_text("User ID cannot be found.");
-            return callBacekFail;
+            JdbApiResponseError callBackFail = new JdbApiResponseError();
+            callBackFail.setStatus("7501");
+            callBackFail.setErr_text("User ID cannot be found.");
+            return callBackFail;
         }
         BigDecimal betAmount = apiRequestData.getNetWin();
 
@@ -128,10 +128,10 @@ public class JdbCallbackServiceImpl implements JdbCallbackService {
         if(apiRequestData.getNetWin().compareTo(BigDecimal.ZERO)==-1){//输
 
             if (memBaseinfo.getBalance().compareTo(betAmount.abs()) == -1) {
-                JdbApiResponseError callBacekFail = new JdbApiResponseError();
-                callBacekFail.setStatus("6002");
-                callBacekFail.setErr_text("User balance is zero");
-                return callBacekFail;
+                JdbApiResponseError callBackFail = new JdbApiResponseError();
+                callBackFail.setStatus("6002");
+                callBackFail.setErr_text("User balance is zero");
+                return callBackFail;
             }
             balance = balance.subtract(betAmount.abs());
             gameCommonService.updateUserBalance(memBaseinfo, betAmount.abs(), GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
@@ -287,10 +287,10 @@ public class JdbCallbackServiceImpl implements JdbCallbackService {
 
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(apiRequestData.getUid());
         if (null == memBaseinfo) {
-            JdbApiResponseError callBacekFail = new JdbApiResponseError();
-            callBacekFail.setStatus("7501");
-            callBacekFail.setErr_text("User ID cannot be found.");
-            return callBacekFail;
+            JdbApiResponseError callBackFail = new JdbApiResponseError();
+            callBackFail.setStatus("7501");
+            callBackFail.setErr_text("User ID cannot be found.");
+            return callBackFail;
         }
         BigDecimal balance = memBaseinfo.getBalance();
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();

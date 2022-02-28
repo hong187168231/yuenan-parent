@@ -8,6 +8,7 @@ import com.indo.common.result.ResultCode;
 import com.indo.common.utils.IPAddressUtil;
 import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.service.awc.AwcService;
+import com.indo.game.service.jdb.JdbService;
 import com.indo.game.service.saba.SabaService;
 import com.indo.game.service.sbo.SboService;
 import com.indo.game.service.ug.UgService;
@@ -42,21 +43,26 @@ public class GameController {
     @Autowired
     private SabaService sabaService;
     @Autowired
+    private JdbService jdbService;
+    @Autowired
     private RedissonClient redissonClient;
 
-    @ApiOperation(value = "登录平台", httpMethod = "POST")
-    @PostMapping("/loginPlatform")
+    @ApiOperation(value = "登录平台或单一游戏登录", httpMethod = "POST")
+    @PostMapping("/initGame")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "platform", value = "第三方游戏平台代码(AWC,UG,SBO,SABA) ", paramType = "query", dataType = "string", required = true)
+            @ApiImplicitParam(name = "isMobileLogin", value = "是否手机登录1：手机 0:PC", paramType = "query", dataType = "string", required = true),
+            @ApiImplicitParam(name = "platform", value = "登录平台请输入平台代码parentName， 单一游戏登录请输入游戏代码", paramType = "query", dataType = "string", required = true),
+            @ApiImplicitParam(name = "parentName", value = "第三方平台代码（AWC,UG,SBO,SABA,JDB） ", paramType = "query", dataType = "string", required = true)
     })
-    public Result loginPlatform(@LoginUser LoginInfo loginUser, @RequestParam("platform") String platform,
+    public Result initGame(@LoginUser LoginInfo loginUser, @RequestParam("isMobileLogin") String isMobileLogin, @RequestParam("platform") String platform,
+                           @RequestParam("parentName") String parentName,
                            HttpServletRequest request) throws InterruptedException {
 
         String params = "";
         if (loginUser == null || StringUtils.isBlank(loginUser.getAccount())) {
             return Result.failed(MessageUtils.get("youarenotloggedin"));
         }
-        log.info("登录、退出平台log {} loginPlatform 进入游戏。。。loginUser:{}",platform, loginUser);
+        log.info("登录平台或单一游戏登录 进入游戏。。。 platform:{},loginUser:{},parentName:{}",platform, loginUser,parentName);
 
         RLock lock = redissonClient.getLock("AWC_GAME_" + loginUser.getId());
         boolean res = lock.tryLock(5, TimeUnit.SECONDS);
@@ -64,32 +70,39 @@ public class GameController {
             if (res) {
                 String ip = IPAddressUtil.getIpAddress(request);
                 Result resultInfo = null;
-                if("AWC".equals(platform)){
-                    resultInfo = awcService.awcGame(loginUser, "1", ip, platform,platform);
+                if("AWC".equals(parentName)){
+                    resultInfo = awcService.awcGame(loginUser, isMobileLogin, ip, platform,parentName);
                 }
-                if("UG".equals(platform)){
-                    resultInfo = ugService.ugGame(loginUser, ip, platform,"Smart",platform);
+                if("UG".equals(parentName)){
+                    String loginType = "Smart";
+                    if(!"1".equals(isMobileLogin))
+                        loginType = "PC";
+
+                    resultInfo = ugService.ugGame(loginUser, ip, platform,loginType,parentName);
                 }
-                if("SBO".equals(platform)){
-                    resultInfo = sboSportsService.sboGame(loginUser, ip, platform,platform);
+                if("SBO".equals(parentName)){
+                    resultInfo = sboSportsService.sboGame(loginUser, ip, platform,parentName);
                 }
-                if("SABA".equals(platform)){
-                    resultInfo = sabaService.sabaGame(loginUser, ip, platform,platform);
+                if("SABA".equals(parentName)){
+                    resultInfo = sabaService.sabaGame(loginUser, ip, platform,parentName);
+                }
+                if("JDB".equals(parentName)){
+                    resultInfo = jdbService.jdbGame(loginUser,isMobileLogin,ip,platform,parentName) ;
                 }
                 if (resultInfo == null) {
-                    log.info("登录、退出平台log {} loginPlatform result is null. params:{},ip:{}", loginUser.getId(), params, ip);
+                    log.info("登录平台或单一游戏登录log {} loginPlatform result is null. params:{},ip:{},parentName:{}", loginUser.getId(), params, ip,parentName);
                     return Result.failed(MessageUtils.get("networktimeout"));
                 }
-                log.info("登录、退出平台log {} loginPlatform resultInfo:{}, params:{}", loginUser.getId(), JSONObject.toJSONString(resultInfo), params);
+                log.info("登录平台或单一游戏登录log {} loginPlatform resultInfo:{}, params:{},parentName:{}", loginUser.getId(), JSONObject.toJSONString(resultInfo), params,parentName);
                 return resultInfo;
             } else {
-                log.info("登录、退出平台log {} loginPlatform lock  repeat request. error");
+                log.info("登录平台或单一游戏登录log {} loginPlatform lock  repeat request. error");
                 String aeInitGame3 = MessageUtils.get("networktimeout");
                 return Result.failed(aeInitGame3);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            log.error("登录、退出平台log {} loginPlatform occur error:{}. params:{}", loginUser.getId(), e.getMessage(), params);
+            log.error("登录平台或单一游戏登录log {} loginPlatform occur error:{}. params:{},parentName:{}", loginUser.getId(), e.getMessage(), params,parentName);
             return Result.failed(MessageUtils.get("networktimeout"));
         } finally {
             try {
@@ -99,7 +112,6 @@ public class GameController {
             }
         }
     }
-
 
     @ApiOperation(value = "强迫登出玩家", httpMethod = "POST")
     @ApiImplicitParams({
@@ -112,7 +124,7 @@ public class GameController {
         if (loginUser == null) {
             return Result.failed(MessageUtils.get("youarenotloggedin"));
         }
-        log.info("登录、退出平台log {} logout 进入游戏。。。loginUser:{}", loginUser.getId(), loginUser);
+        log.info("退出平台log {} logout 进入游戏。。。loginUser:{}", loginUser.getId(), loginUser);
 
         try {
             Result resultInfo = new Result();
@@ -130,18 +142,18 @@ public class GameController {
                 resultInfo = sabaService.logout(loginUser, ip);
             }
             if (resultInfo == null) {
-                log.info("登录、退出平台log {} loginPlatform result is null. params:{},ip:{}", loginUser.getId(), params, ip);
+                log.info("退出平台log {} loginPlatform result is null. params:{},ip:{}", loginUser.getId(), params, ip);
                 return Result.failed(MessageUtils.get("networktimeout"));
             } else {
                 if (!resultInfo.getCode().equals(ResultCode.SUCCESS)) {
                     return resultInfo;
                 }
             }
-            log.info("登录、退出平台log {} loginPlatform resultInfo:{}, params:{}", loginUser.getId(), JSONObject.toJSONString(resultInfo), params);
+            log.info("退出平台log {} loginPlatform resultInfo:{}, params:{}", loginUser.getId(), JSONObject.toJSONString(resultInfo), params);
             return resultInfo;
         } catch (Exception e) {
             e.printStackTrace();
-            log.error("登录、退出平台log {} logout occur error:{}. params:{}", loginUser.getId(), e.getMessage(), params);
+            log.error("退出平台log {} logout occur error:{}. params:{}", loginUser.getId(), e.getMessage(), params);
             return Result.failed(MessageUtils.get("networktimeout"));
         }
     }
