@@ -30,13 +30,15 @@
             pro.real_amount AS realAmount,
             pro.channel_id AS channelId,
             pro.way_id AS wayId,
-            pro.pay_time AS payTime
+            pro.create_time AS createTime,
+            pro.pay_time AS payTime,
+            pro.order_status AS orderStatus
             FROM
             pay_recharge pro
             INNER JOIN mem_baseinfo mb ON pro.mem_id = mb.id
             ) a
         where 1=1
-          and a.mem_id = #{memId}
+          and a.memId = #{memId}
 
     </select>
 

@@ -67,6 +67,9 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
         }
         req.setPassword(req.getPassword().toLowerCase());
         MemBaseInfoBO userInfo = findMemBaseInfo(req.getAccount());
+        if (ObjectUtil.isNull(userInfo)) {
+            return Result.failed("该账号不存在！");
+        }
         //判断密码是否正确
         if (!req.getPassword().equals(userInfo.getPasswordMd5())) {
             return Result.failed("账号或密码错误！");

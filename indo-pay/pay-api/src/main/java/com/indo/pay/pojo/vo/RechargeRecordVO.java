@@ -11,29 +11,26 @@ import java.io.Serializable;
 @Data
 public class RechargeRecordVO implements Serializable {
 
-    @ApiModelProperty(value = "提现id")
-    private Long takeCashId;
+    @ApiModelProperty(value = "充值id")
+    private Long rechargeId;
 
-    @ApiModelProperty(value = "提现银行")
-    private String bankName;
+    @ApiModelProperty(value = "充值渠道名称")
+    private String channelName;
 
     @ApiModelProperty(value = "用户账号")
     private String account;
 
-    @ApiModelProperty(value = "提现金额")
-    private String actualAmount;
+    @ApiModelProperty(value = "充值金额")
+    private String realAmount;
 
-    @ApiModelProperty(value = "提现银行卡号")
-    private String bankCardNo;
+    @ApiModelProperty(value = "订单状态：默认1，充值订单状态 1=待确认 2=已确认 3=取消")
+    private Integer orderStatus;
 
-    @ApiModelProperty(value = "提现状态 1待处理 2已锁定 3 已确定 4 已取消 5 已拒绝")
-    private Integer cashStatus;
+    @ApiModelProperty(value = "充值时间")
+    private String createTime;
 
-    @ApiModelProperty(value = "提现申请时间")
-    private String applyTime;
-
-    @ApiModelProperty(value = "打款时间")
-    private String remitTime;
+    @ApiModelProperty(value = "充值到账时间")
+    private String payTime;
 
 
 }
