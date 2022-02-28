@@ -1,6 +1,7 @@
 package com.indo.game.controller.sbo;
 
 import com.alibaba.fastjson.JSONObject;
+import com.indo.common.annotation.AllowAccess;
 import com.indo.game.pojo.dto.sbo.*;
 import com.indo.game.service.sbo.SboCallbackService;
 import org.slf4j.Logger;
@@ -25,6 +26,7 @@ public class SboCallBackController {
      */
     @RequestMapping(value="/GetBalance",method=RequestMethod.POST)
     @ResponseBody
+    @AllowAccess
     public Object getBalance(SboCallBackParentReq sboCallBackParentReq) {
         logger.info("sboCallBack {} GetBalance 回调,取得用户的余额 params:{}",JSONObject.toJSONString(sboCallBackParentReq));
         Object getBalance = sboCallbackService.getBalance(sboCallBackParentReq);
@@ -37,6 +39,7 @@ public class SboCallBackController {
      */
     @RequestMapping(value="/Deduct",method=RequestMethod.POST)
     @ResponseBody
+    @AllowAccess
     public Object deduct(SboCallBackDeductReq sboCallBackDeductReq) {
         logger.info("sboCallBack {} Deduct 回调,扣除投注金额 params:{}",JSONObject.toJSONString(sboCallBackDeductReq));
         Object deduct = sboCallbackService.deduct(sboCallBackDeductReq);
@@ -49,6 +52,7 @@ public class SboCallBackController {
      */
     @RequestMapping(value="/Settle",method=RequestMethod.POST)
     @ResponseBody
+    @AllowAccess
     public Object settle(SboCallBackSettleReq sboCallBackSettleReq) {
         logger.info("sboCallBack {} settle 回调,结算投注 params:{}",JSONObject.toJSONString(sboCallBackSettleReq));
         Object settle = sboCallbackService.settle(sboCallBackSettleReq);
@@ -61,6 +65,7 @@ public class SboCallBackController {
      */
     @RequestMapping(value="/Rollback",method=RequestMethod.POST)
     @ResponseBody
+    @AllowAccess
     public Object rollback(SboCallBackRollbackReq sboCallBackRollbackReq) {
         logger.info("sboCallBack {} rollback 回调,回滚 params:{}",JSONObject.toJSONString(sboCallBackRollbackReq));
         Object rollback = sboCallbackService.rollback(sboCallBackRollbackReq);
@@ -73,6 +78,7 @@ public class SboCallBackController {
      */
     @RequestMapping(value="/Cancel",method=RequestMethod.POST)
     @ResponseBody
+    @AllowAccess
     public Object cancel(SboCallBackCancelReq sboCallBackCancelReq) {
         logger.info("sboCallBack {} Cancel 回调,回滚 params:{}",JSONObject.toJSONString(sboCallBackCancelReq));
         Object cancel = sboCallbackService.cancel(sboCallBackCancelReq);
@@ -85,6 +91,7 @@ public class SboCallBackController {
      */
     @RequestMapping(value="/Tip",method=RequestMethod.POST)
     @ResponseBody
+    @AllowAccess
     public Object tip(SboCallBackTipReq sboCallBackTipReq) {
         logger.info("sboCallBack {} tip 回调,小费 params:{}",JSONObject.toJSONString(sboCallBackTipReq));
         Object tip = sboCallbackService.tip(sboCallBackTipReq);
@@ -97,6 +104,7 @@ public class SboCallBackController {
      */
     @RequestMapping(value="/Bonus",method=RequestMethod.POST)
     @ResponseBody
+    @AllowAccess
     public Object bonus(SboCallBackBonusReq sboCallBackBonusReq) {
         logger.info("sboCallBack {} bonus 回调,红利 params:{}",JSONObject.toJSONString(sboCallBackBonusReq));
         Object bonus = sboCallbackService.bonus(sboCallBackBonusReq);
@@ -109,6 +117,7 @@ public class SboCallBackController {
      */
     @RequestMapping(value="/ReturnStake",method=RequestMethod.POST)
     @ResponseBody
+    @AllowAccess
     public Object returnStake(SboCallBackReturnStakeReq sboCallBackBonusReq) {
         logger.info("sboCallBack {} returnStake 回调,归还注额 params:{}",JSONObject.toJSONString(sboCallBackBonusReq));
         Object returnStake = sboCallbackService.returnStake(sboCallBackBonusReq);
@@ -121,6 +130,7 @@ public class SboCallBackController {
      */
     @RequestMapping(value="/GetBetStatus",method=RequestMethod.POST)
     @ResponseBody
+    @AllowAccess
     public Object getBetStatus(SboCallBackGetBetStatusReq sboCallBackGetBetStatusReq) {
         logger.info("sboCallBack {} getBetStatus 回调,取得投注状态 params:{}",JSONObject.toJSONString(sboCallBackGetBetStatusReq));
         Object getBetStatus = sboCallbackService.getBetStatus(sboCallBackGetBetStatusReq);
@@ -169,6 +179,7 @@ public class SboCallBackController {
      */
     @RequestMapping(value="/liveCoinTransaction",method=RequestMethod.POST)
     @ResponseBody
+    @AllowAccess
     public Object liveCoinTransaction(SboCallBackLiveCoinTransactionReq sboCallBackLiveCoinTransactionReq) {
         logger.info("sboCallBack {} getTransferStatus 回调,LiveCoin購買 params:{}",JSONObject.toJSONString(sboCallBackLiveCoinTransactionReq));
         Object liveCoinTransaction = sboCallbackService.liveCoinTransaction(sboCallBackLiveCoinTransactionReq);

@@ -30,6 +30,9 @@
         <if test='req.ipAddr != null and req.ipAddr.trim() neq ""'>
             and t.ip_addr &lt;= #{req.ipAddr}
         </if>
+        <if test='req.isVirtual != null and req.isVirtual.trim() neq ""'>
+            and t.is_virtual &lt;= #{isVirtual}
+        </if>
         <if test='req.endTime != null and req.endTime.trim() neq ""'>
             and t.create_time &lt;= #{req.endTime}
         </if>

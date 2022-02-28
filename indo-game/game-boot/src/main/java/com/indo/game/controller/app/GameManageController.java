@@ -12,6 +12,7 @@ import com.indo.game.pojo.dto.manage.GameInfoPageReq;
 import com.indo.game.pojo.entity.manage.*;
 import com.indo.game.pojo.vo.app.GameInfoAgentRecord;
 import com.indo.game.pojo.vo.app.GameInfoRecord;
+import com.indo.game.pojo.vo.app.GamePlatformRecord;
 import com.indo.game.pojo.vo.app.GameStatiRecord;
 import com.indo.game.service.app.IGameManageService;
 import io.swagger.annotations.Api;
@@ -47,14 +48,14 @@ public class GameManageController {
     @ApiOperation(value = "查询所有平台游戏", httpMethod = "GET")
     @GetMapping(value = "/queryAllGamePlatform")
     @AllowAccess
-    public Result<List<GamePlatform>> queryAllGamePlatform() {
+    public Result<List<GamePlatformRecord>> queryAllGamePlatform() {
         return Result.success(iGameManageService.queryAllGamePlatform());
     }
 
     @ApiOperation(value = "查询热门游戏", httpMethod = "GET")
     @GetMapping(value = "/queryHotGamePlatform")
     @AllowAccess
-    public Result<List<GamePlatform>> queryHotGamePlatform() {
+    public Result<List<GamePlatformRecord>> queryHotGamePlatform() {
         return Result.success(iGameManageService.queryHotGamePlatform());
     }
 
@@ -64,7 +65,7 @@ public class GameManageController {
             @ApiImplicitParam(name = "categoryId", value = "游戏类别ID ", paramType = "query", dataType = "int", required = true)
     })
     @AllowAccess
-    public Result<List<GamePlatform>> queryGamePlatformByCategory(@RequestParam("categoryId") Long categoryId) {
+    public Result<List<GamePlatformRecord>> queryGamePlatformByCategory(@RequestParam("categoryId") Long categoryId) {
         return Result.success(iGameManageService.queryGamePlatformByCategory(categoryId));
     }
 

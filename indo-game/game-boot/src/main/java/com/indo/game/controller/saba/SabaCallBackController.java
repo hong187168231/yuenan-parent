@@ -1,6 +1,7 @@
 package com.indo.game.controller.saba;
 
 import com.alibaba.fastjson.JSONObject;
+import com.indo.common.annotation.AllowAccess;
 import com.indo.game.pojo.dto.saba.*;
 import com.indo.game.service.saba.SabaCallbackService;
 import org.slf4j.Logger;
@@ -25,6 +26,7 @@ public class SabaCallBackController {
      */
     @RequestMapping(value="/getbalance",method=RequestMethod.POST)
     @ResponseBody
+    @AllowAccess
     public Object getBalance(SabaCallBackReq<SabaCallBackParentReq> sabaCallBackReqq) {
         logger.info("sabaCallBack {} GetBalance 回调,取得用户的余额 params:{}",JSONObject.toJSONString(sabaCallBackReqq));
         Object getBalance = sabaCallbackService.getBalance(sabaCallBackReqq);
@@ -37,6 +39,7 @@ public class SabaCallBackController {
      */
     @RequestMapping(value="/placebet",method=RequestMethod.POST)
     @ResponseBody
+    @AllowAccess
     public Object placeBet(SabaCallBackReq<SabaCallBackPlaceBetReq> sabaCallBackReq) {
         logger.info("sabaCallBack {} placeBet 回调,扣除投注金额 params:{}",JSONObject.toJSONString(sabaCallBackReq));
         Object placeBet = sabaCallbackService.placeBet(sabaCallBackReq);
@@ -49,6 +52,7 @@ public class SabaCallBackController {
      */
     @RequestMapping(value="/confirmbet",method=RequestMethod.POST)
     @ResponseBody
+    @AllowAccess
     public Object confirmBet(SabaCallBackReq<SabaCallBackConfirmBetReq<TicketInfoReq>> sabaCallBackReq) {
         logger.info("sabaCallBack {} Deduct 回调,沙巴体育将会呼叫 ConfirmBet params:{}",JSONObject.toJSONString(sabaCallBackReq));
         Object confirmBet = sabaCallbackService.confirmBet(sabaCallBackReq);
@@ -61,6 +65,7 @@ public class SabaCallBackController {
      */
     @RequestMapping(value="/CancelBet",method=RequestMethod.POST)
     @ResponseBody
+    @AllowAccess
     public Object cancelBet(SabaCallBackReq<SabaCallBackCancelBetReq<TradingInfoReq>> sabaCallBackReq) {
         logger.info("sabaCallBack {} rollback 回调,回滚 params:{}",JSONObject.toJSONString(sabaCallBackReq));
         Object cancelBet = sabaCallbackService.cancelBet(sabaCallBackReq);
@@ -73,6 +78,7 @@ public class SabaCallBackController {
      */
     @RequestMapping(value="/Settle",method=RequestMethod.POST)
     @ResponseBody
+    @AllowAccess
     public Object settle(SabaCallBackReq<SabaCallBackSettleReq<SettleTradingInfoReq<ParlayDetailReq<SystemParlayDetailReq>>>> sabaCallBackReq) {
         logger.info("sabaCallBack {} settle 回调,结算投注 params:{}",JSONObject.toJSONString(sabaCallBackReq));
         Object settle = sabaCallbackService.settle(sabaCallBackReq);
@@ -85,6 +91,7 @@ public class SabaCallBackController {
      */
     @RequestMapping(value="/resettle",method=RequestMethod.POST)
     @ResponseBody
+    @AllowAccess
     public Object resettle(SabaCallBackReq<SabaCallBackSettleReq<SettleTradingInfoReq<ParlayDetailReq<SystemParlayDetailReq>>>> sabaCallBackReq)  {
         logger.info("sabaCallBack {} resettle 回调,重新结算投注 params:{}",JSONObject.toJSONString(sabaCallBackReq));
         Object resettle = sabaCallbackService.resettle(sabaCallBackReq);
@@ -97,6 +104,7 @@ public class SabaCallBackController {
      */
     @RequestMapping(value="/unsettle",method=RequestMethod.POST)
     @ResponseBody
+    @AllowAccess
     public Object unsettle(SabaCallBackReq<SabaCallBackSettleReq<SettleTradingInfoReq<ParlayDetailReq<SystemParlayDetailReq>>>> sabaCallBackReq){
         logger.info("sabaCallBack {} unsettle 回调,撤销结算投注 params:{}",JSONObject.toJSONString(sabaCallBackReq));
         Object unsettle = sabaCallbackService.unsettle(sabaCallBackReq);
@@ -109,6 +117,7 @@ public class SabaCallBackController {
      */
     @RequestMapping(value="/placeBetParlay",method=RequestMethod.POST)
     @ResponseBody
+    @AllowAccess
     public Object placeBetParlay(SabaCallBackReq<SabaCallBackPlaceBetParlayReq> sabaCallBackReq){
         logger.info("sabaCallBack {} placeBetParlay 回调,下注细节 params:{}",JSONObject.toJSONString(sabaCallBackReq));
         Object placeBetParlay = sabaCallbackService.placeBetParlay(sabaCallBackReq);
@@ -121,6 +130,7 @@ public class SabaCallBackController {
      */
     @RequestMapping(value="/confirmBetParlay",method=RequestMethod.POST)
     @ResponseBody
+    @AllowAccess
     public Object confirmBetParlay(SabaCallBackReq<SabaCallBackConfirmBetParlayReq> sabaCallBackReq){
         logger.info("sabaCallBack {} confirmBetParlay 回调,当沙巴体育通过 PlaceBetParlay 方法收到成功结果 params:{}",JSONObject.toJSONString(sabaCallBackReq));
         Object confirmBetParlay = sabaCallbackService.confirmBetParlay(sabaCallBackReq);
@@ -134,6 +144,7 @@ public class SabaCallBackController {
      */
     @RequestMapping(value="/placeBet3rd",method=RequestMethod.POST)
     @ResponseBody
+    @AllowAccess
     public Object placeBet3rd(SabaCallBackReq<SabaCallBackPlaceBet3rdReq<PlaceBet3rdTicketInfoReq>> sabaCallBackReq){
         logger.info("sabaCallBack {} placeBet3rd 回调,本方法支持快乐彩、彩票、桌面游戏产品 params:{}",JSONObject.toJSONString(sabaCallBackReq));
         Object placeBet3rd = sabaCallbackService.placeBet3rd(sabaCallBackReq);
@@ -147,6 +158,7 @@ public class SabaCallBackController {
      */
     @RequestMapping(value="/confirmBet3rd",method=RequestMethod.POST)
     @ResponseBody
+    @AllowAccess
     public Object confirmBet3rd(SabaCallBackReq<SabaCallBackConfirmBet3rdReq<ConfirmBet3rdTicketInfoReq>> sabaCallBackReq){
         logger.info("sabaCallBack {} confirmBet3rd 回调,本方法支持快乐彩、彩票、桌面游戏产品 params:{}",JSONObject.toJSONString(sabaCallBackReq));
         Object confirmBet3rd = sabaCallbackService.confirmBet3rd(sabaCallBackReq);
@@ -159,6 +171,7 @@ public class SabaCallBackController {
      */
     @RequestMapping(value="/cashOut",method=RequestMethod.POST)
     @ResponseBody
+    @AllowAccess
     public Object cashOut(SabaCallBackReq<SabaCallBackCashOutReq<CashOutTicketInfoReq>> sabaCallBackReq){
         logger.info("sabaCallBack {} cashOut 回调,当 Cash Out 交易被接受后，沙巴体育将会通过此方法传输交易 params:{}",JSONObject.toJSONString(sabaCallBackReq));
         Object cashOut = sabaCallbackService.cashOut(sabaCallBackReq);
@@ -171,6 +184,7 @@ public class SabaCallBackController {
      */
     @RequestMapping(value="/updateBet",method=RequestMethod.POST)
     @ResponseBody
+    @AllowAccess
     public Object updateBet(SabaCallBackReq<SabaCallBackCashOutReq<UpdateBetTicketInfoReq>> sabaCallBackReq){
         logger.info("sabaCallBack {} updateBet 回调,因 Cashout 票的异动造成原 Cashout 的主票发生变化，沙巴体育将会透过这支 API 传送原 Cashout 主票的信息。 params:{}",JSONObject.toJSONString(sabaCallBackReq));
         Object updateBet = sabaCallbackService.updateBet(sabaCallBackReq);
@@ -183,6 +197,7 @@ public class SabaCallBackController {
      */
     @RequestMapping(value="/healthcheck",method=RequestMethod.POST)
     @ResponseBody
+    @AllowAccess
     public Object healthcheck(SabaCallBackReq<HealthCheckReq> sabaCallBackReq){
         logger.info("sabaCallBack {} healthcheck 回调,检查沙巴体育与厂商之间的连结是否有效。 params:{}",JSONObject.toJSONString(sabaCallBackReq));
         Object healthcheck = sabaCallbackService.healthcheck(sabaCallBackReq);

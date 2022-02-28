@@ -1,6 +1,7 @@
 package com.indo.game.controller.awc;
 
 import com.alibaba.fastjson.JSONObject;
+import com.indo.common.annotation.AllowAccess;
 import com.indo.common.utils.IPAddressUtil;
 import com.indo.game.pojo.dto.awc.AwcApiRequestParentData;
 import com.indo.game.service.awc.AwcCallbackService;
@@ -25,6 +26,7 @@ public class AwcCallBackController {
      */
     @RequestMapping(value="/callBack",method=RequestMethod.POST)
     @ResponseBody
+    @AllowAccess
     public Object initGame(AwcApiRequestParentData awcApiRequestData, HttpServletRequest request) {
 
 

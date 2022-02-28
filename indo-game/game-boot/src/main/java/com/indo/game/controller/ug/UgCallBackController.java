@@ -1,6 +1,7 @@
 package com.indo.game.controller.ug;
 
 import com.alibaba.fastjson.JSONObject;
+import com.indo.common.annotation.AllowAccess;
 import com.indo.game.pojo.dto.ug.UgCallBackCancelReq;
 import com.indo.game.pojo.dto.ug.UgCallBackGetBalanceReq;
 import com.indo.game.pojo.dto.ug.UgCallBackTransactionItemReq;
@@ -28,6 +29,7 @@ public class UgCallBackController {
      */
     @RequestMapping(value="/GetBalance",method=RequestMethod.POST)
     @ResponseBody
+    @AllowAccess
     public Object getBalance(@RequestParam Map<String, String> params) {
         logger.info("ugCallBack {} callBack 回调,getBalance获取余额 params:{}",JSONObject.toJSONString(params));
         Set<String> keySet = params.keySet();
@@ -45,6 +47,7 @@ public class UgCallBackController {
      */
     @RequestMapping(value="/Transfer",method=RequestMethod.POST)
     @ResponseBody
+    @AllowAccess
     public Object transfer(@RequestParam Map<String, String> params) {
         logger.info("ugCallBack {} callBack 回调,transfer加余额/扣除余额 params:{}",JSONObject.toJSONString(params));
         Set<String> keySet = params.keySet();
@@ -62,6 +65,7 @@ public class UgCallBackController {
      */
     @RequestMapping(value="/Cancel",method=RequestMethod.POST)
     @ResponseBody
+    @AllowAccess
     public Object cancel(@RequestParam Map<String, String> params) {
         logger.info("ugCallBack {} callBack 回调,cancel取消交易 params:{}",JSONObject.toJSONString(params));
         Set<String> keySet = params.keySet();
@@ -79,6 +83,7 @@ public class UgCallBackController {
      */
     @RequestMapping(value="/Check",method=RequestMethod.POST)
     @ResponseBody
+    @AllowAccess
     public Object check(@RequestParam Map<String, String> params) {
         logger.info("ugCallBack {} callBack 回调,check检查交易结果 params:{}",JSONObject.toJSONString(params));
         Set<String> keySet = params.keySet();

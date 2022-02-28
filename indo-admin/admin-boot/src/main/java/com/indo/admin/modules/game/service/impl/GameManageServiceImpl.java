@@ -1,23 +1,30 @@
 package com.indo.admin.modules.game.service.impl;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.common.util.AdminBusinessRedisUtils;
 import com.indo.admin.modules.game.mapper.*;
 import com.indo.admin.modules.game.service.IGameManageService;
+import com.indo.admin.pojo.criteria.GameDownloadQueryCriteria;
 import com.indo.admin.pojo.dto.game.manage.GameInfoPageReq;
 import com.indo.admin.pojo.dto.game.manage.GameParentPlatformPageReq;
 import com.indo.admin.pojo.dto.game.manage.GamePlatformPageReq;
 import com.indo.admin.pojo.vo.game.manage.GameInfoRecord;
 import com.indo.admin.pojo.vo.game.manage.GameStatiRecord;
 import com.indo.common.constant.RedisConstants;
+import com.indo.common.redis.utils.RedisUtils;
 import com.indo.common.result.Result;
+import com.indo.common.utils.QueryHelpPlus;
+import com.indo.core.pojo.entity.GameDownload;
 import com.indo.game.pojo.entity.manage.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class GameManageServiceImpl implements IGameManageService {
@@ -35,8 +42,14 @@ public class GameManageServiceImpl implements IGameManageService {
     private TxnsMapper txnsMapper;
 
     public Result queryAllGameCategory() {
-        LambdaQueryWrapper<GameCategory> wrapper = new LambdaQueryWrapper<>();
-        List<GameCategory> categoryList = gameCategoryMapper.selectList(wrapper);
+        Map<Object, Object> map = RedisUtils.hmget(RedisConstants.GAME_CATEGORY_KEY);
+        List<GameCategory> categoryList;
+        if(ObjectUtil.isEmpty(map)){
+            LambdaQueryWrapper<GameCategory> wrapper = new LambdaQueryWrapper<>();
+            categoryList = gameCategoryMapper.selectList(wrapper);
+        }else {
+            categoryList = new ArrayList(map.values());
+        }
         return Result.success(categoryList);
     }
 

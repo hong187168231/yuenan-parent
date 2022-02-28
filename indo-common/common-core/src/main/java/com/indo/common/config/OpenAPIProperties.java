@@ -71,6 +71,22 @@ public class OpenAPIProperties implements InitializingBean {
     @Value("${ug.ugApiUrl}")
     private String ugApiUrl;
 
+    //JDB
+    public static String JDB_DC;
+    public static String JDB_KEY;
+    public static String JDB_IV;
+    public static String JDB_API_URL;
+    public static String JDB_AGENT;
+    @Value("${jdb.jdbdc}")
+    private String jdbdc;
+    @Value("${jdb.jdbkey}")
+    private String jdbkey;
+    @Value("${jdb.jdbiv}")
+    private String jdbiv;
+    @Value("${jdb.jdbapiurl}")
+    private String jdbapiurl;
+    @Value("${jdb.jdbagent}")
+    private String jdbagent;
 
     @Override
     public void afterPropertiesSet() {
@@ -97,5 +113,10 @@ public class OpenAPIProperties implements InitializingBean {
         UG_AGENT = ugAgentID;
         UG_API_URL = ugApiUrl;
 
-        }
+        JDB_DC = jdbdc;
+        JDB_KEY = jdbkey;
+        JDB_IV = jdbiv;
+        JDB_API_URL = jdbapiurl;
+        JDB_AGENT = jdbagent;
+    }
 }

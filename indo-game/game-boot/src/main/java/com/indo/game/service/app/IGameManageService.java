@@ -7,6 +7,7 @@ import com.indo.game.pojo.entity.manage.GameParentPlatform;
 import com.indo.game.pojo.entity.manage.GamePlatform;
 import com.indo.game.pojo.vo.app.GameInfoAgentRecord;
 import com.indo.game.pojo.vo.app.GameInfoRecord;
+import com.indo.game.pojo.vo.app.GamePlatformRecord;
 import com.indo.game.pojo.vo.app.GameStatiRecord;
 
 import java.util.List;
@@ -16,11 +17,11 @@ public interface IGameManageService {
 
     List<GameCategory> queryAllGameCategory();
 
-    List<GamePlatform> queryAllGamePlatform();
+    List<GamePlatformRecord> queryAllGamePlatform();
 
-    List<GamePlatform> queryHotGamePlatform();
+    List<GamePlatformRecord> queryHotGamePlatform();
 
-    List<GamePlatform> queryGamePlatformByCategory(Long categoryId);
+    List<GamePlatformRecord> queryGamePlatformByCategory(Long categoryId);
 
     IPage<GameStatiRecord> queryAllGameInfoCount(GameInfoPageReq req);
 

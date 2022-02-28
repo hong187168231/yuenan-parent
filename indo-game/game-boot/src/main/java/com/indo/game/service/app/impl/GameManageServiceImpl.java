@@ -19,6 +19,7 @@ import com.indo.game.pojo.dto.manage.GameInfoPageReq;
 import com.indo.game.pojo.entity.manage.*;
 import com.indo.game.pojo.vo.app.GameInfoAgentRecord;
 import com.indo.game.pojo.vo.app.GameInfoRecord;
+import com.indo.game.pojo.vo.app.GamePlatformRecord;
 import com.indo.game.pojo.vo.app.GameStatiRecord;
 import com.indo.game.service.app.IGameManageService;
 import com.indo.game.service.common.GameCommonService;
@@ -55,29 +56,24 @@ public class GameManageServiceImpl implements IGameManageService {
     }
 
     @Override
-    public List<GamePlatform> queryAllGamePlatform() {
-        List<GamePlatform> platformList = gameCommonService.queryAllGamePlatform();
-        if (CollectionUtil.isNotEmpty(platformList)) {
-            platformList = platformList.stream()
-                    .filter(platform -> platform.getIsStart().equals(1))
-                    .collect(Collectors.toList());
-        }
+    public List<GamePlatformRecord> queryAllGamePlatform() {
+        List<GamePlatformRecord> platformList = gamePlatformMapper.queryAllGamePlatform();
         return platformList;
     }
 
     @Override
-    public List<GamePlatform> queryHotGamePlatform() {
-        List<GamePlatform> platformList = gameCommonService.queryAllGamePlatform();
+    public List<GamePlatformRecord> queryHotGamePlatform() {
+        List<GamePlatformRecord> platformList = gamePlatformMapper.queryAllGamePlatform();
         if (CollectionUtil.isNotEmpty(platformList)) {
             platformList = platformList.stream()
-                    .filter(platform -> platform.getIsHotShow().equals(1))
+                    .filter(platform -> platform.getIsHotShow().equals("1"))
                     .collect(Collectors.toList());
         }
         return platformList;
     }
     @Override
-    public List<GamePlatform> queryGamePlatformByCategory(Long categoryId) {
-        List<GamePlatform> platformList = queryAllGamePlatform();
+    public List<GamePlatformRecord> queryGamePlatformByCategory(Long categoryId) {
+        List<GamePlatformRecord> platformList = queryAllGamePlatform();
         if (CollectionUtil.isNotEmpty(platformList)) {
             platformList = platformList.stream()
                     .filter(platform -> platform.getCategoryId().equals(categoryId))
@@ -109,15 +105,25 @@ public class GameManageServiceImpl implements IGameManageService {
 
     @Override
     public List<GameParentPlatform> queryAllGameParentPlatform() {
-        List<GameParentPlatform> categoryList;
+        List<GameParentPlatform> parentPlatformList;
         Map<Object, Object> map = RedisUtils.hmget(RedisConstants.GAME_PARENT_PLATFORM_KEY);
-        categoryList = new ArrayList(map.values());
-        if (CollectionUtil.isEmpty(categoryList)) {
+        parentPlatformList = new ArrayList(map.values());
+        if (CollectionUtil.isEmpty(parentPlatformList)) {
             LambdaQueryWrapper<GameParentPlatform> wrapper = new LambdaQueryWrapper<>();
-            categoryList = gameParentPlatformMapper.selectList(wrapper);
+            parentPlatformList = gameParentPlatformMapper.selectList(wrapper);
         }
-        categoryList.sort(Comparator.comparing(GameParentPlatform::getSortNumber));
-        return categoryList;
+        if (CollectionUtil.isNotEmpty(parentPlatformList)) {
+            parentPlatformList = parentPlatformList.stream()
+                    .filter(parentPlatform -> parentPlatform.getIsStart().equals("1"))
+                    .collect(Collectors.toList());
+        }
+        if (CollectionUtil.isNotEmpty(parentPlatformList)) {
+            parentPlatformList = parentPlatformList.stream()
+                    .filter(parentPlatform -> parentPlatform.getIsVirtual().equals("0"))
+                    .collect(Collectors.toList());
+        }
+        parentPlatformList.sort(Comparator.comparing(GameParentPlatform::getSortNumber));
+        return parentPlatformList;
     }
 
     @Override
@@ -125,7 +131,7 @@ public class GameManageServiceImpl implements IGameManageService {
         List<GameParentPlatform> platformList = this.queryAllGameParentPlatform();
         if (CollectionUtil.isNotEmpty(platformList)) {
             platformList = platformList.stream()
-                    .filter(platform -> platform.getIsHotShow().equals(1))
+                    .filter(platform -> platform.getIsHotShow().equals("1"))
                     .collect(Collectors.toList());
         }
         return platformList;

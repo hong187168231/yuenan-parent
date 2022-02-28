@@ -40,4 +40,7 @@ public class GameParentPlatformPageReq extends BaseDTO {
 
     @ApiModelProperty(value = "白名单IP")
     private String ipAddr;
+
+    @ApiModelProperty(value = "是否虚拟平台 0否  1是")
+    private String isVirtual;
 }

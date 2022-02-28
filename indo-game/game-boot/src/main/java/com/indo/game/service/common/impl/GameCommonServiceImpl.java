@@ -101,7 +101,6 @@ public class GameCommonServiceImpl implements GameCommonService {
         return platformList;
     }
 
-
     @Override
     public List<GamePlatform> getGamePlatformByParentName(String parentName) {
         List<GamePlatform> platformList = queryAllGamePlatform();

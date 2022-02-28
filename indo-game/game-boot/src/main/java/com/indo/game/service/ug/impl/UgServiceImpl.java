@@ -327,7 +327,7 @@ public class UgServiceImpl implements UgService {
 //                    2 Wap
 //                    4 Smart
                     txns.setBetWay(sortBetDto.getBetWay());//  int 是 投注方式
-                    txns.setSortNo(sortBetDto.getSortNo());//  long 是 注单排序值
+                    txns.setSortNo(String.valueOf(sortBetDto.getSortNo()));//  long 是 注单排序值
 
                     String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
 
@@ -433,7 +433,7 @@ public class UgServiceImpl implements UgService {
 //                    2 Wap
 //                    4 Smart
                         txns.setBetWay(sortBetDto.getBetWay());//  int 是 投注方式
-                        txns.setSortNo(sortBetDto.getSortNo());//  long 是 注单排序值
+                        txns.setSortNo(String.valueOf(sortBetDto.getSortNo()));//  long 是 注单排序值
 
 //                    String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
 //

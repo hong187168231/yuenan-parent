@@ -73,7 +73,7 @@ public class Txns {
     @ApiModelProperty(value = "真实下注金额,需增加在玩家的金额")
     private BigDecimal realBetAmount;
 
-    @ApiModelProperty(value = "真实返还金额,需从玩家扣除的金额")
+    @ApiModelProperty(value = "真实返还金额或游戏赢分")
     private BigDecimal realWinAmount;
 
     @ApiModelProperty(value = "返还金额 (包含下注金额)")
@@ -102,10 +102,10 @@ public class Txns {
     @ApiModelProperty(value = "标示无效的原因")
     private String voidType;
 
-    @ApiModelProperty(value = "判断玩家当前余额是否足够负担此笔 betNSettle 请求所需的金额")
-    private String requireAmount;
+    @ApiModelProperty(value = "判断玩家当前余额是否足够负担此笔 betNSettle 请求所需的金额。jdb彩金贡献值")
+    private BigDecimal requireAmount;
 
-    @ApiModelProperty(value = "玩家获得的活动派彩")
+    @ApiModelProperty(value = "玩家获得的活动派彩。jdb赢得彩金金额")
     private BigDecimal amount;
 
     @ApiModelProperty(value = "活动的交易代码")
@@ -117,7 +117,7 @@ public class Txns {
     @ApiModelProperty(value = "活动种类的代码")
     private String promotionTypeId;
 
-    @ApiModelProperty(value = "打赏给直播主的金额")
+    @ApiModelProperty(value = "打赏给直播主的金额 *jdb玩家合理最小余额")
     private BigDecimal tip;
 
     @ApiModelProperty(value = "赔率")
@@ -165,6 +165,21 @@ public class Txns {
     private int betWay;//  int 是 投注方式
 
     @ApiModelProperty(value = "注单排序值")
-    private long SortNo;
+    private String sortNo;
 
+    @ApiModelProperty(value = "报表日期")
+    private String reportDate;
+
+    @ApiModelProperty(value = "奖金游戏")
+    private Integer hasBonusGame;// Integer 奖金游戏0: 否   1: 是
+    @ApiModelProperty(value = "博取游戏")
+    private Integer hasGamble;// Integer 博取游戏0: 否  1: 是
+    @ApiModelProperty(value = "游戏区域")
+    private Integer roomType;
+    // Integer 游戏区域
+    //-1:大厅（成就游戏）
+    // 0:小压码区
+    //1:中压码区
+    //2:大压码区
+    //※各压码区称号会依据机台类型有所不同
 }
