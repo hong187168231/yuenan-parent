@@ -330,7 +330,7 @@ public class JdbServiceImpl implements JdbService {
      * 公共请求
      */
     public JdbApiRequestBack commonRequest(String jsonStr, Integer userId, String ip, String type) throws Exception {
-        logger.info("jdblog {} commonRequest userId:{},paramsMap:{}", userId,  jsonStr);
+        logger.info("jdblog  commonRequest userId:{},paramsMap:{}", userId,  jsonStr);
 
         JdbApiRequestBack jdbApiRequestBack = null;
         Map<String, String> paramsMap = new HashMap<>();
