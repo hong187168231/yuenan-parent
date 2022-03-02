@@ -193,6 +193,7 @@ public class GameUtil extends HttpCommonUtils {
 
             //log参数
             paramsString = JSONObject.toJSONString(paramsMap);
+            logger.info(" commonRequest paramsMap:{}", userId,  paramsString);
             closeableHttpClient = httpClientBuilder.build();
             // 执行http请求
             response = closeableHttpClient.execute(httpPost);

@@ -60,7 +60,7 @@ public class GameController {
 
         String params = "";
         if (loginUser == null || StringUtils.isBlank(loginUser.getAccount())) {
-            return Result.failed(MessageUtils.get("youarenotloggedin"));
+            return Result.failed("g100103","会员登录失效，请重新登录！");
         }
         log.info("登录平台或单一游戏登录 进入游戏。。。 platform:{},loginUser:{},parentName:{}",platform, loginUser,parentName);
 
@@ -91,19 +91,18 @@ public class GameController {
                 }
                 if (resultInfo == null) {
                     log.info("登录平台或单一游戏登录log {} loginPlatform result is null. params:{},ip:{},parentName:{}", loginUser.getId(), params, ip,parentName);
-                    return Result.failed(MessageUtils.get("networktimeout"));
+                    return Result.failed("g100104","网络繁忙，请稍后重试！");
                 }
                 log.info("登录平台或单一游戏登录log {} loginPlatform resultInfo:{}, params:{},parentName:{}", loginUser.getId(), JSONObject.toJSONString(resultInfo), params,parentName);
                 return resultInfo;
             } else {
                 log.info("登录平台或单一游戏登录log {} loginPlatform lock  repeat request. error");
-                String aeInitGame3 = MessageUtils.get("networktimeout");
-                return Result.failed(aeInitGame3);
+                return Result.failed("g100104","网络繁忙，请稍后重试！");
             }
         } catch (Exception e) {
             e.printStackTrace();
             log.error("登录平台或单一游戏登录log {} loginPlatform occur error:{}. params:{},parentName:{}", loginUser.getId(), e.getMessage(), params,parentName);
-            return Result.failed(MessageUtils.get("networktimeout"));
+            return Result.failed("g100104","网络繁忙，请稍后重试！");
         } finally {
             try {
                 lock.unlock();
@@ -122,9 +121,9 @@ public class GameController {
 
         String params = "";
         if (loginUser == null) {
-            return Result.failed(MessageUtils.get("youarenotloggedin"));
+            return Result.failed("g100103","会员登录失效，请重新登录！");
         }
-        log.info("退出平台log {} logout 进入游戏。。。loginUser:{}", loginUser.getId(), loginUser);
+        log.info("退出平台logout loginUser:{}, params:{}",  loginUser, platform);
 
         try {
             Result resultInfo = new Result();
@@ -146,7 +145,7 @@ public class GameController {
             }
             if (resultInfo == null) {
                 log.info("退出平台log {} loginPlatform result is null. params:{},ip:{}", loginUser.getId(), params, ip);
-                return Result.failed(MessageUtils.get("networktimeout"));
+                return Result.failed("g100104","网络繁忙，请稍后重试！");
             } else {
                 if (!resultInfo.getCode().equals(ResultCode.SUCCESS)) {
                     return resultInfo;
@@ -157,7 +156,7 @@ public class GameController {
         } catch (Exception e) {
             e.printStackTrace();
             log.error("退出平台log {} logout occur error:{}. params:{}", loginUser.getId(), e.getMessage(), params);
-            return Result.failed(MessageUtils.get("networktimeout"));
+            return Result.failed("g100104","网络繁忙，请稍后重试！");
         }
     }
 }
