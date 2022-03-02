@@ -334,7 +334,8 @@ public class JdbServiceImpl implements JdbService {
 
         JdbApiRequestBack jdbApiRequestBack = null;
         Map<String, String> paramsMap = new HashMap<>();
-        paramsMap.put("dc", JDBAESEncrypt.encrypt(jsonStr, OpenAPIProperties.JDB_KEY, OpenAPIProperties.JDB_IV));
+        paramsMap.put("dc", "jb");
+        paramsMap.put("x", JDBAESEncrypt.encrypt(jsonStr, OpenAPIProperties.JDB_KEY, OpenAPIProperties.JDB_IV));
         String resultString = GameUtil.doProxyPostJson(OpenAPIProperties.PROXY_HOST_NAME, OpenAPIProperties.PROXY_PORT, OpenAPIProperties.PROXY_TCP,OpenAPIProperties.JDB_API_URL+"/apiRequest.do", paramsMap, type, userId);
         logger.info("jdb_api_response:"+resultString);
         if (StringUtils.isNotEmpty(resultString)) {
