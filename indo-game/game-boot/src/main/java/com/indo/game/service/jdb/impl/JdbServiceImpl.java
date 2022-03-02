@@ -133,7 +133,7 @@ public class JdbServiceImpl implements JdbService {
     public Result logout(LoginInfo loginUser,String ip){
         JdbApiRequestParentDto jdbApiRequestParentDto = new JdbApiRequestParentDto();
         jdbApiRequestParentDto.setParent(OpenAPIProperties.JDB_AGENT);//代理账号
-        jdbApiRequestParentDto.setTs(DateUtils.getDateMinuteLong(new Date()));//当前系统时间
+        jdbApiRequestParentDto.setTs(new Date().getTime());//当前系统时间
         jdbApiRequestParentDto.setAction(17);//交易号
         jdbApiRequestParentDto.setUid(loginUser.getAccount());//玩家账号
 
@@ -161,7 +161,7 @@ public class JdbServiceImpl implements JdbService {
     public Result getToken(GameParentPlatform gameParentPlatform,GamePlatform gamePlatform,LoginInfo loginUser,String ip,String isMobileLogin){
         JdbApiRequestGetTokenDto jdbApiRequestParentDto = new JdbApiRequestGetTokenDto();
         jdbApiRequestParentDto.setParent(OpenAPIProperties.JDB_AGENT);//代理账号
-        jdbApiRequestParentDto.setTs(DateUtils.getDateMinuteLong(new Date()));//当前系统时间
+        jdbApiRequestParentDto.setTs(new Date().getTime());//当前系统时间
         jdbApiRequestParentDto.setAction(17);//交易号
         jdbApiRequestParentDto.setUid(loginUser.getAccount());//玩家账号
 
@@ -248,7 +248,7 @@ public class JdbServiceImpl implements JdbService {
     public Result getTryToken(GameParentPlatform gameParentPlatform,GamePlatform gamePlatform,LoginInfo loginUser,String ip,String isMobileLogin){
         JdbApiRequestGetTryTokenDto jdbApiRequestGetTryTokenDto = new JdbApiRequestGetTryTokenDto();
         jdbApiRequestGetTryTokenDto.setParent(OpenAPIProperties.JDB_AGENT);//代理账号
-        jdbApiRequestGetTryTokenDto.setTs(DateUtils.getDateMinuteLong(new Date()));//当前系统时间
+        jdbApiRequestGetTryTokenDto.setTs(new Date().getTime());//当前系统时间
         jdbApiRequestGetTryTokenDto.setAction(17);//交易号
         jdbApiRequestGetTryTokenDto.setUid(loginUser.getAccount());//玩家账号
 
