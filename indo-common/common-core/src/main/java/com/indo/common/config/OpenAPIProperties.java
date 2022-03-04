@@ -88,6 +88,7 @@ public class OpenAPIProperties implements InitializingBean {
     @Value("${jdb.jdbagent}")
     private String jdbagent;
 
+    //AE
     public static String AE_MERCHANT_ID;
     public static String AE_RGISTER;
     public static String AE_API_URL;
