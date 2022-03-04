@@ -27,7 +27,7 @@ public class AeCallBackController {
     /**
      * 回调 余额查询
      */
-    @RequestMapping(value = "/callBack", method = RequestMethod.POST)
+    @RequestMapping(value = "/callBack/single/wallet/balance", method = RequestMethod.POST)
     @ResponseBody
     @AllowAccess
     public Object getBalance(AeCallBackTransferReq aeApiRequestData, HttpServletRequest request) {
