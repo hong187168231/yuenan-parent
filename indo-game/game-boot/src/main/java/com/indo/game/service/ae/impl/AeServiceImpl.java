@@ -9,6 +9,7 @@ import com.indo.common.utils.GameUtil;
 import com.indo.common.utils.encrypt.Base64;
 import com.indo.common.utils.encrypt.MD5;
 import com.indo.game.pojo.dto.ae.AeApiResponseData;
+import com.indo.game.pojo.dto.comm.ApiResponseData;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.game.pojo.entity.manage.GameParentPlatform;
 import com.indo.game.pojo.entity.manage.GamePlatform;
@@ -126,12 +127,15 @@ public class AeServiceImpl implements AeService {
                             CptOpenMember cptOpenMember, String isMobileLogin) {
         AeApiResponseData aeApiResponseData = gameLogin(platformGameParent, gamePlatform, cptOpenMember, isMobileLogin);
         if (null == aeApiResponseData) {
-            return Result.failed("g100104", "网络繁忙，请稍后重试！");
+            return Result.failed("g091087", "第三方请求异常！");
         }
         if (("0").equals(aeApiResponseData.getCode())) {
+            ApiResponseData responseData = new ApiResponseData();
+            JSONObject jsonObject = JSON.parseObject(aeApiResponseData.getData().get(0).toString());
+            responseData.setPathUrl(jsonObject.getString("gameUrl"));
             return Result.success(aeApiResponseData);
         } else {
-            return Result.failed("g100104", "网络繁忙，请稍后重试！");
+            return Result.failed("g091088", "第三方响应异常！");
         }
     }
 
@@ -183,13 +187,13 @@ public class AeServiceImpl implements AeService {
     private Result createMemberGame(GameParentPlatform platformGameParent, GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember, String isMobileLogin) {
         AeApiResponseData aeApiResponseData = createMember(platformGameParent, gamePlatform, ip, cptOpenMember, isMobileLogin);
         if (null == aeApiResponseData) {
-            return Result.failed("g100104", "网络繁忙，请稍后重试！");
+            return Result.failed("g091087", "第三方请求异常！");
         }
         if (("0").equals(aeApiResponseData.getCode())) {
             externalService.saveCptOpenMember(cptOpenMember);
             return initGame(platformGameParent, gamePlatform, cptOpenMember, isMobileLogin);
         } else {
-            return Result.failed("g100104", "网络繁忙，请稍后重试！");
+            return Result.failed("g091088", "第三方响应异常！");
         }
     }
 
@@ -249,10 +253,13 @@ public class AeServiceImpl implements AeService {
             StringBuilder apiUrl = new StringBuilder();
             apiUrl.append(OpenAPIProperties.AE_API_URL).append(OpenAPIProperties.AE_RGISTER);
             AeApiResponseData aeApiResponseData = commonRequest(apiUrl.toString(), jsonStr, loginUser.getId().intValue(), "gameLogin");
+            if (null == aeApiResponseData) {
+                return Result.failed("g091087", "第三方请求异常！");
+            }
             if ("0".equals(aeApiResponseData.getCode())) {
                 return Result.success(aeApiResponseData);
             } else {
-                return Result.failed("g100104", "网络繁忙，请稍后重试！");
+                return Result.failed("g091088", "第三方响应异常！");
             }
         } catch (Exception e) {
             logger.error("aelog aeLogout:{}", e);

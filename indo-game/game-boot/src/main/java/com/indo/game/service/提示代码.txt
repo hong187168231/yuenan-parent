@@ -121,10 +121,9 @@ g091084 用户名无效。                                          Invalid user
 g091085 提取负数                                              Withdraw negative amount
 g091086 用户余额为零                                          User balance is zero
 
-
-
-
-
+   2022/3/4新增
+g091087 第三方请求异常                                          third request error
+g091088 第三方响应异常                                          third response error
 
 
 
