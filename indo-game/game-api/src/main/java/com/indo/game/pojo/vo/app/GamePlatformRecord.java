@@ -39,7 +39,7 @@ public class GamePlatformRecord extends BaseEntity{
     @ApiModelProperty(value = "是否热门显示 0关闭  1显示")
     private Integer isHotShow;//0关闭  1显示
 
-    @ApiModelProperty(value = "总平台名称")
+    @ApiModelProperty(value = "平台代码")
     @NotNull(message = "总平台名称不能为空")
     private String parentName;
 

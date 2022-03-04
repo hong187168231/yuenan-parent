@@ -186,13 +186,14 @@ public class GameUtil extends HttpCommonUtils {
             for (String key : paramsMap.keySet()) {
                 list.add(new BasicNameValuePair(key, String.valueOf(paramsMap.get(key))));
             }
-
+            logger.info("POST请求 commonRequest userId:{},paramsMap:{}", userId,  paramsMap);
             // 创建请求内容
             UrlEncodedFormEntity urlEncodedFormEntity = new UrlEncodedFormEntity(list, "utf-8");
             httpPost.setEntity(urlEncodedFormEntity);
 
             //log参数
             paramsString = JSONObject.toJSONString(paramsMap);
+            logger.info("POST请求 commonRequest userId:{},paramsString:{}", userId,  paramsString);
             closeableHttpClient = httpClientBuilder.build();
             // 执行http请求
             response = closeableHttpClient.execute(httpPost);

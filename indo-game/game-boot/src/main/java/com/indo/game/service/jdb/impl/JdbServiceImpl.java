@@ -16,6 +16,8 @@ import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.game.pojo.entity.manage.GameCategory;
 import com.indo.game.pojo.entity.manage.GameParentPlatform;
 import com.indo.game.pojo.entity.manage.GamePlatform;
+import com.indo.game.pojo.vo.callback.jdb.JdbApiIsGameingInfoRequestBack;
+import com.indo.game.pojo.vo.callback.jdb.JdbApiIsGameingRequestBack;
 import com.indo.game.pojo.vo.callback.jdb.JdbApiRequestBack;
 import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
@@ -114,6 +116,10 @@ public class JdbServiceImpl implements JdbService {
                 updateCptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(updateCptOpenMember);
             }
+            JdbApiIsGameingRequestBack<JdbApiIsGameingInfoRequestBack> jdbApiIsGameingRequestBack = getIsGameing(loginUser,ip);
+            if(null!=jdbApiIsGameingRequestBack){
+
+            }
             Result result = this.logout(loginUser,ip);
             if(null!=result&&"00000".equals(result.getCode())) {
 
@@ -133,13 +139,16 @@ public class JdbServiceImpl implements JdbService {
     public Result logout(LoginInfo loginUser,String ip){
         JdbApiRequestParentDto jdbApiRequestParentDto = new JdbApiRequestParentDto();
         jdbApiRequestParentDto.setParent(OpenAPIProperties.JDB_AGENT);//代理账号
-        jdbApiRequestParentDto.setTs(DateUtils.getDateMinuteLong(new Date()));//当前系统时间
+        jdbApiRequestParentDto.setTs(new Date().getTime());//当前系统时间
         jdbApiRequestParentDto.setAction(17);//交易号
         jdbApiRequestParentDto.setUid(loginUser.getAccount());//玩家账号
 
-        JdbApiRequestBack jdbApiRequestBack = null;
         try {
-            jdbApiRequestBack = commonRequest(JSONObject.toJSONString(jdbApiRequestParentDto), Integer.valueOf(loginUser.getId().intValue()), ip, "logout");
+            String resultString = commonRequest(JSONObject.toJSONString(jdbApiRequestParentDto), Integer.valueOf(loginUser.getId().intValue()), ip, "logout");
+            JdbApiRequestBack jdbApiRequestBack = null;
+            if (StringUtils.isNotEmpty(resultString)) {
+                jdbApiRequestBack = JSONObject.parseObject(resultString, JdbApiRequestBack.class);
+            }
             if (null == jdbApiRequestBack ) {
                 return Result.failed("g100104","网络繁忙，请稍后重试！");
             }
@@ -161,8 +170,8 @@ public class JdbServiceImpl implements JdbService {
     public Result getToken(GameParentPlatform gameParentPlatform,GamePlatform gamePlatform,LoginInfo loginUser,String ip,String isMobileLogin){
         JdbApiRequestGetTokenDto jdbApiRequestParentDto = new JdbApiRequestGetTokenDto();
         jdbApiRequestParentDto.setParent(OpenAPIProperties.JDB_AGENT);//代理账号
-        jdbApiRequestParentDto.setTs(DateUtils.getDateMinuteLong(new Date()));//当前系统时间
-        jdbApiRequestParentDto.setAction(17);//交易号
+        jdbApiRequestParentDto.setTs(new Date().getTime());//当前系统时间
+        jdbApiRequestParentDto.setAction(21);//交易号
         jdbApiRequestParentDto.setUid(loginUser.getAccount());//玩家账号
 
         jdbApiRequestParentDto.setBalance(loginUser.getBalance());// Double Y 余额
@@ -225,9 +234,12 @@ public class JdbServiceImpl implements JdbService {
         jdbApiRequestParentDto.setIsShowDollarSign(true);// Boolean N 是否显示币别符号
 //        true：显示币别符号
 //        false：不显示币别符号
-        JdbApiRequestBack jdbApiRequestBack = null;
         try {
-            jdbApiRequestBack = commonRequest(JSONObject.toJSONString(jdbApiRequestParentDto), Integer.valueOf(loginUser.getId().intValue()), ip, "logout");
+            String resultString = commonRequest(JSONObject.toJSONString(jdbApiRequestParentDto), Integer.valueOf(loginUser.getId().intValue()), ip, "logout");
+            JdbApiRequestBack jdbApiRequestBack = null;
+            if (StringUtils.isNotEmpty(resultString)) {
+                jdbApiRequestBack = JSONObject.parseObject(resultString, JdbApiRequestBack.class);
+            }
             if (null == jdbApiRequestBack ) {
                 return Result.failed("g100104","网络繁忙，请稍后重试！");
             }
@@ -248,8 +260,8 @@ public class JdbServiceImpl implements JdbService {
     public Result getTryToken(GameParentPlatform gameParentPlatform,GamePlatform gamePlatform,LoginInfo loginUser,String ip,String isMobileLogin){
         JdbApiRequestGetTryTokenDto jdbApiRequestGetTryTokenDto = new JdbApiRequestGetTryTokenDto();
         jdbApiRequestGetTryTokenDto.setParent(OpenAPIProperties.JDB_AGENT);//代理账号
-        jdbApiRequestGetTryTokenDto.setTs(DateUtils.getDateMinuteLong(new Date()));//当前系统时间
-        jdbApiRequestGetTryTokenDto.setAction(17);//交易号
+        jdbApiRequestGetTryTokenDto.setTs(new Date().getTime());//当前系统时间
+        jdbApiRequestGetTryTokenDto.setAction(47);//交易号
         jdbApiRequestGetTryTokenDto.setUid(loginUser.getAccount());//玩家账号
 
         jdbApiRequestGetTryTokenDto.setLang(gameParentPlatform.getLanguageType());// String(2) N 语系
@@ -308,9 +320,14 @@ public class JdbServiceImpl implements JdbService {
         jdbApiRequestGetTryTokenDto.setIsShowDollarSign(true);// Boolean N 是否显示币别符号
 //        true：显示币别符号
 //        false：不显示币别符号
-        JdbApiRequestBack jdbApiRequestBack = null;
         try {
-            jdbApiRequestBack = commonRequest(JSONObject.toJSONString(jdbApiRequestGetTryTokenDto), Integer.valueOf(loginUser.getId().intValue()), ip, "logout");
+            String resultString = commonRequest(JSONObject.toJSONString(jdbApiRequestGetTryTokenDto), Integer.valueOf(loginUser.getId().intValue()), ip, "logout");
+
+            JdbApiRequestBack jdbApiRequestBack = null;
+            if (StringUtils.isNotEmpty(resultString)) {
+                jdbApiRequestBack = JSONObject.parseObject(resultString, JdbApiRequestBack.class);
+
+            }
             if (null == jdbApiRequestBack ) {
                 return Result.failed("g100104","网络繁忙，请稍后重试！");
             }
@@ -327,24 +344,36 @@ public class JdbServiceImpl implements JdbService {
     }
 
     /**
-     * 公共请求
+     *  查询玩家是否在游戏中
      */
-    public JdbApiRequestBack commonRequest(String jsonStr, Integer userId, String ip, String type) throws Exception {
-        logger.info("jdblog {} commonRequest userId:{},paramsMap:{}", userId,  jsonStr);
+    public JdbApiIsGameingRequestBack<JdbApiIsGameingInfoRequestBack> getIsGameing(LoginInfo loginUser,String ip) throws Exception {
+        JdbApiRequestParentDto jdbApiRequestParentDto = new JdbApiRequestParentDto();
+        jdbApiRequestParentDto.setParent(OpenAPIProperties.JDB_AGENT);//代理账号
+        jdbApiRequestParentDto.setTs(new Date().getTime());//当前系统时间
+        jdbApiRequestParentDto.setAction(52);//交易号
+        jdbApiRequestParentDto.setUid(loginUser.getAccount());//玩家账号
+        JdbApiIsGameingRequestBack<JdbApiIsGameingInfoRequestBack> jdbApiRequestBack = null;
+        String resultString = commonRequest(JSONObject.toJSONString(jdbApiRequestParentDto), Integer.valueOf(loginUser.getId().intValue()), ip, "logout");
 
-        JdbApiRequestBack jdbApiRequestBack = null;
-        Map<String, String> paramsMap = new HashMap<>();
-        paramsMap.put("dc", JDBAESEncrypt.encrypt(jsonStr, OpenAPIProperties.JDB_KEY, OpenAPIProperties.JDB_IV));
-        String resultString = GameUtil.doProxyPostJson(OpenAPIProperties.PROXY_HOST_NAME, OpenAPIProperties.PROXY_PORT, OpenAPIProperties.PROXY_TCP,OpenAPIProperties.JDB_API_URL+"/apiRequest.do", paramsMap, type, userId);
-        logger.info("jdb_api_response:"+resultString);
         if (StringUtils.isNotEmpty(resultString)) {
-            jdbApiRequestBack = JSONObject.parseObject(resultString, JdbApiRequestBack.class);
-            //String operateFlag = (String) redisTemplate.opsForValue().get(Constants.AE_GAME_OPERATE_FLAG + userId);
-            logger.info("jdblog {}:commonRequest type:{}, operateFlag:{}, hostName:{}, params:{}, result:{}, awcApiResponse:{}",
-                    //userId, type, operateFlag, url,
-                    userId, type, null, jsonStr, resultString, JSONObject.toJSONString(jdbApiRequestBack));
+            jdbApiRequestBack = new JdbApiIsGameingRequestBack<JdbApiIsGameingInfoRequestBack>();
+            jdbApiRequestBack = JSONObject.parseObject(resultString, jdbApiRequestBack.getClass());
         }
         return jdbApiRequestBack;
+    }
+
+    /**
+     * 公共请求
+     */
+    public String commonRequest(String jsonStr, Integer userId, String ip, String type) throws Exception {
+        logger.info("jdblog  commonRequest userId:{},paramsMap:{}", userId,  jsonStr);
+        Map<String, String> paramsMap = new HashMap<>();
+        paramsMap.put("dc", OpenAPIProperties.JDB_DC);
+        paramsMap.put("x", JDBAESEncrypt.encrypt(jsonStr, OpenAPIProperties.JDB_KEY, OpenAPIProperties.JDB_IV));
+        String resultString = GameUtil.doProxyPostJson(OpenAPIProperties.PROXY_HOST_NAME, OpenAPIProperties.PROXY_PORT, OpenAPIProperties.PROXY_TCP,OpenAPIProperties.JDB_API_URL+"/apiRequest.do", paramsMap, type, userId);
+        logger.info("jdblog {}:commonRequest type:{}, operateFlag:{}, hostName:{}, params:{}, result:{}, awcApiResponse:{}",
+                userId, type, null, jsonStr, resultString);
+        return resultString;
     }
 
     public Result  errorCode(String errorCode,String errorMessage){
