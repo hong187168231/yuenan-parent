@@ -7,6 +7,7 @@ import com.indo.common.result.Result;
 import com.indo.common.result.ResultCode;
 import com.indo.common.utils.IPAddressUtil;
 import com.indo.common.utils.i18n.MessageUtils;
+import com.indo.game.service.ae.AeService;
 import com.indo.game.service.awc.AwcService;
 import com.indo.game.service.jdb.JdbService;
 import com.indo.game.service.saba.SabaService;
@@ -44,6 +45,8 @@ public class GameController {
     private SabaService sabaService;
     @Autowired
     private JdbService jdbService;
+    @Autowired
+    private AeService aeService;
     @Autowired
     private RedissonClient redissonClient;
 
@@ -88,6 +91,9 @@ public class GameController {
                 }
                 if("JDB".equals(parentName)){
                     resultInfo = jdbService.jdbGame(loginUser,isMobileLogin,ip,platform,parentName) ;
+                }
+                if("AE".equals(parentName)){
+                    resultInfo = aeService.aeGame(loginUser,isMobileLogin,ip,platform,parentName) ;
                 }
                 if (resultInfo == null) {
                     log.info("登录平台或单一游戏登录log {} loginPlatform result is null. params:{},ip:{},parentName:{}", loginUser.getId(), params, ip,parentName);
@@ -143,6 +149,9 @@ public class GameController {
             }
             if("JDB".equals(platform)){
                 resultInfo = jdbService.logout(loginUser, ip);
+            }
+            if("AE".equals(platform)){
+                resultInfo = aeService.logout(loginUser,platform, ip);
             }
             if (resultInfo == null) {
                 log.info("退出平台log {} loginPlatform result is null. params:{},ip:{}", loginUser.getId(), params, ip);

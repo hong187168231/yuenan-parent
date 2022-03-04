@@ -88,6 +88,23 @@ public class OpenAPIProperties implements InitializingBean {
     @Value("${jdb.jdbagent}")
     private String jdbagent;
 
+    public static String AE_MERCHANT_ID;
+    public static String AE_RGISTER;
+    public static String AE_API_URL;
+    public static String AE_MERCHANT_KEY;
+
+    @Value("${ae.aeRgister}")
+    private String aeRgister;
+
+    @Value("${ae.aeApiurl}")
+    private String aeApiurl;
+
+    @Value("${ae.aeMerchantKey}")
+    private String aeMerchantKey;
+
+    @Value("${ae.aeMerchantKey}")
+    private String aeMerchantId;
+
     @Override
     public void afterPropertiesSet() {
 
@@ -118,5 +135,11 @@ public class OpenAPIProperties implements InitializingBean {
         JDB_IV = jdbiv;
         JDB_API_URL = jdbapiurl;
         JDB_AGENT = jdbagent;
+
+
+        AE_RGISTER = aeRgister;
+        AE_API_URL = aeApiurl;
+        AE_MERCHANT_KEY = aeMerchantKey;
+        AE_MERCHANT_ID = aeMerchantId;
     }
 }
