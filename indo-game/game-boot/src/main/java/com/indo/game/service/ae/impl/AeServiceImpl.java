@@ -144,8 +144,6 @@ public class AeServiceImpl implements AeService {
      */
     private AeApiResponseData gameLogin(GameParentPlatform platformGameParent, GamePlatform gamePlatform, CptOpenMember cptOpenMemberm, String isMobileLogin) {
         long currentTime = System.currentTimeMillis();
-
-
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("merchantId", OpenAPIProperties.AE_MERCHANT_ID);
         params.put("currency", platformGameParent.getCurrencyType());
@@ -172,7 +170,7 @@ public class AeServiceImpl implements AeService {
         AeApiResponseData aeApiResponseData = null;
         try {
             StringBuilder apiUrl = new StringBuilder();
-            apiUrl.append(OpenAPIProperties.AE_API_URL).append(OpenAPIProperties.AE_RGISTER);
+            apiUrl.append(OpenAPIProperties.AE_API_URL).append("/api/login");
             aeApiResponseData = commonRequest(apiUrl.toString(), jsonStr, cptOpenMemberm.getUserId(), "gameLogin");
         } catch (Exception e) {
             logger.error("aelog aeGameLogin:{}", e);
@@ -217,7 +215,7 @@ public class AeServiceImpl implements AeService {
         params.put("brandCode", platformGameParent.getPlatformCode());
         String jsonStr = JSON.toJSONString(params);
         StringBuilder apiUrl = new StringBuilder();
-        apiUrl.append(OpenAPIProperties.AE_API_URL).append(OpenAPIProperties.AE_RGISTER);
+        apiUrl.append(OpenAPIProperties.AE_API_URL).append("/api/register");
         AeApiResponseData aeApiResponseData = null;
         try {
             aeApiResponseData = commonRequest(apiUrl.toString(), jsonStr, cptOpenMember.getUserId(), "createMember");
@@ -251,7 +249,7 @@ public class AeServiceImpl implements AeService {
             params.put("sign", sign);
             String jsonStr = JSON.toJSONString(params);
             StringBuilder apiUrl = new StringBuilder();
-            apiUrl.append(OpenAPIProperties.AE_API_URL).append(OpenAPIProperties.AE_RGISTER);
+            apiUrl.append(OpenAPIProperties.AE_API_URL).append("/api/logout");
             AeApiResponseData aeApiResponseData = commonRequest(apiUrl.toString(), jsonStr, loginUser.getId().intValue(), "gameLogin");
             if (null == aeApiResponseData) {
                 return Result.failed("g091087", "第三方请求异常！");

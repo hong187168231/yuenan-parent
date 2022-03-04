@@ -90,12 +90,9 @@ public class OpenAPIProperties implements InitializingBean {
 
     //AE
     public static String AE_MERCHANT_ID;
-    public static String AE_RGISTER;
     public static String AE_API_URL;
     public static String AE_MERCHANT_KEY;
 
-    @Value("${ae.aeRgister}")
-    private String aeRgister;
 
     @Value("${ae.aeApiurl}")
     private String aeApiurl;
@@ -138,7 +135,6 @@ public class OpenAPIProperties implements InitializingBean {
         JDB_AGENT = jdbagent;
 
 
-        AE_RGISTER = aeRgister;
         AE_API_URL = aeApiurl;
         AE_MERCHANT_KEY = aeMerchantKey;
         AE_MERCHANT_ID = aeMerchantId;
