@@ -103,7 +103,7 @@ public class OpenAPIProperties implements InitializingBean {
     @Value("${ae.aeMerchantKey}")
     private String aeMerchantKey;
 
-    @Value("${ae.aeMerchantKey}")
+    @Value("${ae.aeMerchantId}")
     private String aeMerchantId;
 
     @Override
