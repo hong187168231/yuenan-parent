@@ -118,15 +118,14 @@ public class JdbServiceImpl implements JdbService {
             }
             JdbApiIsGameingRequestBack<JdbApiIsGameingInfoRequestBack> jdbApiIsGameingRequestBack = getIsGameing(loginUser,ip);
             if(null!=jdbApiIsGameingRequestBack){
-
+                if("0000".equals(jdbApiIsGameingRequestBack.getErr_text())){
+                    List<JdbApiIsGameingInfoRequestBack> list = jdbApiIsGameingRequestBack.getData();
+                    if(null!=list&&list.size()>0){
+                        this.logout(loginUser,ip);
+                    }
+                }
             }
-            Result result = this.logout(loginUser,ip);
-            if(null!=result&&"00000".equals(result.getCode())) {
-
-                //登录
-                return getToken(gameParentPlatform,gamePlatform,loginUser, ip,isMobileLogin);
-            }
-            return result;
+            return getToken(gameParentPlatform,gamePlatform,loginUser, ip,isMobileLogin);
         } catch (Exception e) {
             e.printStackTrace();
             return Result.failed("g100104","网络繁忙，请稍后重试！");
