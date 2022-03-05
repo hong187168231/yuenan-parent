@@ -92,16 +92,20 @@ public class OpenAPIProperties implements InitializingBean {
     public static String AE_MERCHANT_ID;
     public static String AE_API_URL;
     public static String AE_MERCHANT_KEY;
-
-
     @Value("${ae.aeApiurl}")
     private String aeApiurl;
-
     @Value("${ae.aeMerchantKey}")
     private String aeMerchantKey;
-
     @Value("${ae.aeMerchantId}")
     private String aeMerchantId;
+
+    //CQ9
+    public static String CQ_API_TOKEN;
+    public static String CQ_API_URL;
+    //@Value("${cq.apiUrl}")
+    private String cqApiurl;
+    //@Value("${cq.cqApiToken}")
+    private String cqApiToken;
 
     @Override
     public void afterPropertiesSet() {
@@ -138,5 +142,8 @@ public class OpenAPIProperties implements InitializingBean {
         AE_API_URL = aeApiurl;
         AE_MERCHANT_KEY = aeMerchantKey;
         AE_MERCHANT_ID = aeMerchantId;
+
+        CQ_API_URL = cqApiurl;
+        CQ_API_TOKEN = cqApiToken;
     }
 }

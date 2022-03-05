@@ -131,7 +131,7 @@ public class AeServiceImpl implements AeService {
         }
         if (("0").equals(aeApiResponseData.getCode())) {
             ApiResponseData responseData = new ApiResponseData();
-            JSONObject jsonObject = JSON.parseObject(aeApiResponseData.getData().get(0).toString());
+            JSONObject jsonObject = JSON.parseObject(aeApiResponseData.getData());
             responseData.setPathUrl(jsonObject.getString("gameUrl"));
             return Result.success(aeApiResponseData);
         } else {
@@ -233,7 +233,7 @@ public class AeServiceImpl implements AeService {
         try {
             GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(platform);
             if (null == platformGameParent) {
-                return Result.failed("g100104", "网络繁忙，请稍后重试！");
+                return Result.failed();
             }
             long currentTime = System.currentTimeMillis();
             StringBuilder builder = new StringBuilder();
@@ -252,17 +252,17 @@ public class AeServiceImpl implements AeService {
             apiUrl.append(OpenAPIProperties.AE_API_URL).append("/api/logout");
             AeApiResponseData aeApiResponseData = commonRequest(apiUrl.toString(), jsonStr, loginUser.getId().intValue(), "gameLogin");
             if (null == aeApiResponseData) {
-                return Result.failed("g091087", "第三方请求异常！");
+                return Result.failed();
             }
             if ("0".equals(aeApiResponseData.getCode())) {
                 return Result.success(aeApiResponseData);
             } else {
-                return Result.failed("g091088", "第三方响应异常！");
+                return Result.failed();
             }
         } catch (Exception e) {
             logger.error("aelog aeLogout:{}", e);
             e.printStackTrace();
-            return Result.failed("g100104", "网络繁忙，请稍后重试！");
+            return Result.failed();
         }
 
     }

@@ -315,7 +315,7 @@ public class AeCallbackServiceImpl implements AeCallbackService {
         }
         txns.setResultType(resultTyep);
         //有效投注金额 或 投注面值
-        txns.setTurnover(new BigDecimal(aeApiRequestData.getWinAmount()));
+        txns.setTurnover(new BigDecimal(aeApiRequestData.getAmount()));
         //辨认交易时间依据
         txns.setTxTime(null != aeApiRequestData.getBetTime() ? DateUtils.format(aeApiRequestData.getBetTime(), DateUtils.newFormat) : "");
         //操作名称

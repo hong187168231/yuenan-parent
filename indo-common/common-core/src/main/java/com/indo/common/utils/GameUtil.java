@@ -1,6 +1,7 @@
 package com.indo.common.utils;
 
 import com.alibaba.fastjson.JSONObject;
+
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
@@ -21,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
+
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -87,11 +89,11 @@ public class GameUtil extends HttpCommonUtils {
         while (i$.hasNext()) {
             String key = (String) i$.next();
             List<String> value = packageParams.get(key);
-            if (null!=value&&value.size()>0) {
+            if (null != value && value.size() > 0) {
                 Map<String, String[]> map1 = new TreeMap<>();
-                for(int i=0;i<value.size();i++){
+                for (int i = 0; i < value.size(); i++) {
                     String str[] = new String[]{"ALL"};
-                    map1.put(value.get(i),str);
+                    map1.put(value.get(i), str);
                 }
                 map.put(key, map1);
             }
@@ -102,11 +104,6 @@ public class GameUtil extends HttpCommonUtils {
 
     /**
      * 加密
-     *
-     * @param sSrc
-     * @param aeskey
-     * @return
-     * @throws Exception
      */
     public static String encrypt(String sSrc, String aeskey) throws Exception {
         Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
@@ -120,10 +117,6 @@ public class GameUtil extends HttpCommonUtils {
 
     /**
      * 解密
-     *
-     * @param sSrc
-     * @param aeskey
-     * @return
      */
     public static String decrypt(String sSrc, String aeskey) {
         try {
@@ -147,12 +140,9 @@ public class GameUtil extends HttpCommonUtils {
     /**
      * 需要设置代理POST请求（带json参数）
      *
-     * @param url       请求地址
-     * @param paramsMap
-     * @param userId
-     * @return
+     * @param url 请求地址
      */
-    public static String doProxyPostJson(String proxyHostName,int proxyPort,String proxyTcp,String url, Map<String, String> paramsMap, String type, Integer userId) {
+    public static String doProxyPostJson(String proxyHostName, int proxyPort, String proxyTcp, String url, Map<String, String> paramsMap, String type, Integer userId) {
         // 设置代理IP、端口、协议
         // 创建HttpClientBuilder
         HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
@@ -186,14 +176,14 @@ public class GameUtil extends HttpCommonUtils {
             for (String key : paramsMap.keySet()) {
                 list.add(new BasicNameValuePair(key, String.valueOf(paramsMap.get(key))));
             }
-            logger.info("POST请求 commonRequest userId:{},paramsMap:{}", userId,  paramsMap);
+            logger.info("POST请求 commonRequest userId:{},paramsMap:{}", userId, paramsMap);
             // 创建请求内容
             UrlEncodedFormEntity urlEncodedFormEntity = new UrlEncodedFormEntity(list, "utf-8");
             httpPost.setEntity(urlEncodedFormEntity);
 
             //log参数
             paramsString = JSONObject.toJSONString(paramsMap);
-            logger.info("POST请求 commonRequest userId:{},paramsString:{}", userId,  paramsString);
+            logger.info("POST请求 commonRequest userId:{},paramsString:{}", userId, paramsString);
             closeableHttpClient = httpClientBuilder.build();
             // 执行http请求
             response = closeableHttpClient.execute(httpPost);
@@ -212,7 +202,7 @@ public class GameUtil extends HttpCommonUtils {
     }
 
 
-    public static String doProxyPostJson(String proxyHostName,int proxyPort,String proxyTcp,String weather_url, String json, String type, Integer userId) {
+    public static String doProxyPostJson(String proxyHostName, int proxyPort, String proxyTcp, String weather_url, String json, String type, Integer userId) {
 //        return GameUtil.httpProxy(weather_url,json,proxyHostName,proxyPort);
         // 设置代理IP、端口、协议
         // 创建HttpClientBuilder
@@ -259,7 +249,7 @@ public class GameUtil extends HttpCommonUtils {
 //            paramsString = JSONObject.toJSONString(paramsMap);
             // 执行http请求
             BasicResponseHandler handler = new BasicResponseHandler();
-            resultString = httpClient.execute(httpPost,handler);
+            resultString = httpClient.execute(httpPost, handler);
 //            // 执行http请求
 //            response = closeableHttpClient.execute(httpPost);
 //            HttpEntity entity = response.getEntity();
@@ -276,7 +266,7 @@ public class GameUtil extends HttpCommonUtils {
         return resultString;
     }
 
-    public static String doProxyPostJson(String proxyHostName,int proxyPort,String proxyTcp,String weather_url, String json, String type) {
+    public static String doProxyPostJson(String proxyHostName, int proxyPort, String proxyTcp, String weather_url, String json, String type) {
 //        return GameUtil.httpProxy(weather_url,json,proxyHostName,proxyPort);
         // 设置代理IP、端口、协议
         // 创建HttpClientBuilder
@@ -323,7 +313,7 @@ public class GameUtil extends HttpCommonUtils {
 //            paramsString = JSONObject.toJSONString(paramsMap);
             // 执行http请求
             BasicResponseHandler handler = new BasicResponseHandler();
-            resultString = httpClient.execute(httpPost,handler);
+            resultString = httpClient.execute(httpPost, handler);
 //            // 执行http请求
 //            response = closeableHttpClient.execute(httpPost);
 //            HttpEntity entity = response.getEntity();
@@ -341,7 +331,7 @@ public class GameUtil extends HttpCommonUtils {
     }
 
 
-    public static String httpProxy(String url,String param,String proxy,int port){
+    public static String httpProxy(String url, String param, String proxy, int port) {
         HttpURLConnection httpConn = null;
         PrintWriter out = null;
         OutputStreamWriter out1 = null;
@@ -350,55 +340,116 @@ public class GameUtil extends HttpCommonUtils {
         BufferedReader reader = null;
         try {
             URL urlClient = new URL(url);
-            logger.error("request URL:{}",url);
+            logger.error("request URL:{}", url);
             //创建代理
-            Proxy proxy1 = new Proxy(Proxy.Type.HTTP,new InetSocketAddress(proxy,port));
+            Proxy proxy1 = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxy, port));
             //设置代理
             httpConn = (HttpURLConnection) urlClient.openConnection(proxy1);
             //设置通用属性
-            httpConn.setRequestProperty("accept","*/*");
-            httpConn.setRequestProperty("Connection","Keep-Alive");//设置与服务器保持连接
-            httpConn.setRequestProperty("Charset","UTF-8");//设置字符编码类型
+            httpConn.setRequestProperty("accept", "*/*");
+            httpConn.setRequestProperty("Connection", "Keep-Alive");//设置与服务器保持连接
+            httpConn.setRequestProperty("Charset", "UTF-8");//设置字符编码类型
 
             //发送POST请求必须设置如下
             httpConn.setRequestMethod("POST");
             httpConn.setDoOutput(true);
             httpConn.setDoInput(true);
-            httpConn.setRequestProperty("Content-type","application/x-javascript->json");//json格式数据
+            httpConn.setRequestProperty("Content-type", "application/x-javascript->json");//json格式数据
 
-            out1 = new OutputStreamWriter(httpConn.getOutputStream(),"utf-8");
+            out1 = new OutputStreamWriter(httpConn.getOutputStream(), "utf-8");
             out1.write(param);
             out1.flush();
 
-            in = new BufferedReader(new InputStreamReader(httpConn.getInputStream(),"utf-8"));
+            in = new BufferedReader(new InputStreamReader(httpConn.getInputStream(), "utf-8"));
 
             String line;
-            while ((line = in.readLine())!=null) {
+            while ((line = in.readLine()) != null) {
                 result += line;
             }
             //断开连接
             httpConn.disconnect();
-            logger.error("request result:{}",result);
-            logger.error("request result:{}",httpConn.getResponseCode(),httpConn.getResponseMessage());
-        } catch (Exception e){
-            logger.error("request Exception:{}",e);
+            logger.error("request result:{}", result);
+            logger.error("request result:{}", httpConn.getResponseCode(), httpConn.getResponseMessage());
+        } catch (Exception e) {
+            logger.error("request Exception:{}", e);
             e.printStackTrace();
-        }finally {
+        } finally {
             try {
-                if(reader != null){
+                if (reader != null) {
                     reader.close();
                 }
-                if (in != null){
+                if (in != null) {
                     in.close();
                 }
-                if(out1 != null){
+                if (out1 != null) {
                     out1.close();
                 }
-            } catch (Exception e){
-                logger.error("request finally Exception:{}",e);
+            } catch (Exception e) {
+                logger.error("request finally Exception:{}", e);
                 e.printStackTrace();
             }
         }
         return result;
+    }
+
+
+    public static String doProxyPostHeaderJson(String proxyHostName, int proxyPort, String proxyTcp, String url, Map<String, String> paramsMap, String type, Integer userId, String header) {
+        // 设置代理IP、端口、协议
+        // 创建HttpClientBuilder
+        HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+        // 依次是代理地址，代理端口号，协议类型
+//        HttpHost proxy = new HttpHost(proxyHostName, proxyPort, proxyTcp);
+
+        CloseableHttpClient closeableHttpClient = null;
+        CloseableHttpResponse response = null;
+        String resultString = "";
+        String paramsString = "";
+        try {
+            // 创建Http Post请求
+            HttpPost httpPost = new HttpPost(url);
+            // 设置请求超时 20+10+25=55s 配合业务设置
+            RequestConfig requestConfig = RequestConfig.custom()
+                    // 设置连接超时时间,单位毫秒。
+                    .setConnectTimeout(CONNECT_TIMEOUT)
+                    // 从连接池获取到连接的超时,单位毫秒。
+                    .setConnectionRequestTimeout(CONNECTION_REQUEST_TIMEOUT)
+                    // 请求获取数据的超时时间,单位毫秒;
+                    .setSocketTimeout(SOCKET_TIMEOUT)
+                    //设置代理
+//                    .setProxy(proxy)
+                    .build();
+            //如果访问一个接口,多少时间内无法返回数据,就直接放弃此次调用。
+            httpPost.setConfig(requestConfig);
+            //不复用TCP SOCKET
+            httpPost.setHeader("connection", "close");
+            httpPost.setHeader("Content-Type", "application/x-www-form-urlencoded");
+            httpPost.setHeader("Authorization", header);
+            List<BasicNameValuePair> list = new ArrayList<>();
+            for (String key : paramsMap.keySet()) {
+                list.add(new BasicNameValuePair(key, String.valueOf(paramsMap.get(key))));
+            }
+            logger.info("POST请求 commonRequest userId:{},paramsMap:{}", userId, paramsMap);
+            // 创建请求内容
+            UrlEncodedFormEntity urlEncodedFormEntity = new UrlEncodedFormEntity(list, "utf-8");
+            httpPost.setEntity(urlEncodedFormEntity);
+
+            //log参数
+            paramsString = JSONObject.toJSONString(paramsMap);
+            logger.info("POST请求 commonRequest userId:{},paramsString:{}", userId, paramsString);
+            closeableHttpClient = httpClientBuilder.build();
+            // 执行http请求
+            response = closeableHttpClient.execute(httpPost);
+            HttpEntity entity = response.getEntity();
+            resultString = EntityUtils.toString(entity, "utf-8");
+            // 此句关闭了流
+            EntityUtils.consume(entity);
+        } catch (Exception e) {
+            logger.error("httplog {}:{} doProxyPostJson occur error:{}, url:{}, proxyHost:{}, proxyPort:{}, originParams:{}",
+                    userId, type, e.getMessage(), url, paramsString, e);
+            return resultString;
+        } finally {
+            HttpCommonUtils.closeHttpClientAndResponse(response, closeableHttpClient, url, paramsString);
+        }
+        return resultString;
     }
 }
