@@ -134,7 +134,7 @@ public class CqServiceImpl implements CqService {
             responseData.setPathUrl(cqApiResponseData.getData());
             return Result.success(responseData);
         } else {
-            return Result.failed("g091088", "第三方响应异常！");
+            return Result.failed("g" + jsonStatusObject.getString("code"), jsonStatusObject.getString("message"));
         }
     }
 
@@ -180,7 +180,7 @@ public class CqServiceImpl implements CqService {
             if ("0".equals(jsonObject.getString("code"))) {
                 return Result.success(cqApiResponseData);
             } else {
-                return Result.failed();
+                return Result.failed("g" + jsonObject.getString("code"), jsonObject.getString("message"));
             }
         } catch (Exception e) {
             logger.error("cqlog cqlogout:{}", e);

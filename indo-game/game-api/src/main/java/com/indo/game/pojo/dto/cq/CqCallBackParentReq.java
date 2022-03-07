@@ -36,7 +36,7 @@ public class CqCallBackParentReq {
      * 金額
      */
     @JSONField(name = "amount")
-    private String amount;
+    private Double amount;
 
 
 }
