@@ -131,9 +131,8 @@ public class AeServiceImpl implements AeService {
         }
         if (("0").equals(aeApiResponseData.getCode())) {
             ApiResponseData responseData = new ApiResponseData();
-            JSONObject jsonObject = JSON.parseObject(aeApiResponseData.getData());
-            responseData.setPathUrl(jsonObject.getString("gameUrl"));
-            return Result.success(aeApiResponseData);
+            responseData.setPathUrl(aeApiResponseData.getData());
+            return Result.success(responseData);
         } else {
             return Result.failed("g091088", "第三方响应异常！");
         }

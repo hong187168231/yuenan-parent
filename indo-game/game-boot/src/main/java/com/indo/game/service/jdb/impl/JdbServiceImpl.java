@@ -9,6 +9,7 @@ import com.indo.common.utils.GameUtil;
 import com.indo.game.common.util.JDBAESEncrypt;
 import com.indo.game.mapper.frontend.GameCategoryMapper;
 import com.indo.game.mapper.frontend.GamePlatformMapper;
+import com.indo.game.pojo.dto.comm.ApiResponseData;
 import com.indo.game.pojo.dto.jdb.JdbApiRequestGetTokenDto;
 import com.indo.game.pojo.dto.jdb.JdbApiRequestGetTryTokenDto;
 import com.indo.game.pojo.dto.jdb.JdbApiRequestParentDto;
@@ -243,7 +244,9 @@ public class JdbServiceImpl implements JdbService {
                 return Result.failed("g100104","网络繁忙，请稍后重试！");
             }
             if("0000".equals(jdbApiRequestBack.getStatus())){
-                return Result.success(jdbApiRequestBack);
+                ApiResponseData responseData = new ApiResponseData();
+                responseData.setPathUrl(jdbApiRequestBack.getPath());
+                return Result.success(responseData);
             }else {
                 return errorCode(jdbApiRequestBack.getStatus(),jdbApiRequestBack.getErr_text());
             }

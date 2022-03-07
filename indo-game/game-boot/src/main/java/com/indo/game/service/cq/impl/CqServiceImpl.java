@@ -129,12 +129,10 @@ public class CqServiceImpl implements CqService {
         if (null == cqApiResponseData) {
             return Result.failed("g091087", "第三方请求异常！");
         }
-        JSONObject jsonStatusObject = JSON.parseObject(cqApiResponseData.getStatus());
-        if (("0").equals(jsonStatusObject.getString("code"))) {
+        if (("0").equals(cqApiResponseData.getStatus())) {
             ApiResponseData responseData = new ApiResponseData();
-            JSONObject jsonDataObject = JSON.parseObject(cqApiResponseData.getData());
-            responseData.setPathUrl(jsonDataObject.getString("url"));
-            return Result.success(cqApiResponseData);
+            responseData.setPathUrl(cqApiResponseData.getData());
+            return Result.success(responseData);
         } else {
             return Result.failed("g091088", "第三方响应异常！");
         }
