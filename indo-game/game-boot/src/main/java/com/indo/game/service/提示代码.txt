@@ -124,80 +124,64 @@ g091086 用户余额为零                                          User balance
    2022/3/5新增
 g091087 第三方请求异常                                          third request error
 
-g091088 转帐识别码已存在    
-g091089  建立玩家账号错误    
-g091090  使用者认证错误    
-g091091  使用者登入错误    
+g091088 转帐识别码已存在
+g091089  建立玩家账号错误
+g091090  使用者认证错误
+g091091  使用者登入错误
 g091092  使用者注销错误    
 g091093  转帐错误    
 g091094  转帐查询错误    
 g091095  订单查询错误    
 g091096  用户启用停用功能错误    
 g091097  用户帐号或密码错误    
-g091098  用户帐号不存在    
-g091099  查询用户余额错误    
-g091100  查询订单详情错误    
-g091101  用户帐号已启用    
-g091102  用户帐号已停用    
-g091103  认证错误    
-g091104  访问被拒    
-g091105  用户帐号已存在    
-g091106  用户帐号格式错误    
-g091107  商户号格式错误    
-g091108  用户帐号前缀必页是运营商账号    
-g091109  此功能不支持单一钱包    
-g091110  查询时间只限定在7天内    
-g091111  该用户帐号不是玩家账号    
-g091112  查询每小时上限为30次    
-g091113  begineDate或begineTime不可大于currentTime    
-g091114  用户未登入    
-g091115  重新登入发生错误    
-g091116  侦测到同时有多笔转帐,请再试一次    
-g091117  用户帐号参数错误    
-g091118  订单编号参数错误    
-g091119  商户号参数错误    
-g091120  订单编号参数不得为空    
-g091121  merchantTransId	格式错误  	
-g091122  merchantTransId	参数不得为空  	
-g091123  amount	格式错误  	
-g091124  amount	参数不得为空  	
-g091125  转帐金额不得为	0  	
+g091098  查询订单详情错误
+g091099  用户帐号已启用
+g091100  用户帐号已停用
+g091101  认证错误
+g091102  访问被拒
+g091103  用户帐号格式错误
+g091104  商户号格式错误
+g091105  用户帐号前缀必页是运营商账号
+g091106  此功能不支持单一钱包
+g091107  查询时间只限定在7天内
+g091108  该用户帐号不是玩家账号
+g091109  查询每小时上限为30次
+g091110  begineDate或begineTime不可大于currentTime
+g091111  用户未登入
+g091112  重新登入发生错误
+g091113  侦测到同时有多笔转帐,请再试一次
+g091114  用户帐号参数错误
+g091115  订单编号参数错误
+g091116  商户号参数错误
+g091117  订单编号参数不得为空
+g091118  merchantTransId	格式错误
+g091119  merchantTransId	参数不得为空
+g091120  amount	格式错误
+g091121  amount	参数不得为空
+g091122  转帐金额不得为	0
       
-g091126  success    
-g091127  Insufficient	balance.  	
-g091128  Player	not	found.  
-g091129  Token	invalid.  	
-g091130  Authorization	invalid.  	
-g091131  Bad	parameters.  	
-g091132  Already	has	same	account.	
-g091133  Data	not	found.  
-g091134  MTCode	duplicate.  	
-g091135  Time	format	error.  
-g091136  Query	time	is	out	of
-g091137  Time	zone	must	be	UTC-4.
-g091138  Game	is	not	found.	
-g091139  Your	account	or	password	is
-g091140  Account	or	password	must	use
-g091141  check	account	api	error.	
-g091142  Game	is	under	maintenance.	
-g091143  Account	too	long.  
-g091144  Currency	is	not	support.	
-g091145  No	default	pool	type	
-g091146  Currency	does	not	match	Agent’s
-g091147  Transaction	in	progress,	please	check
-g091148  StartTime	and	EndTime	are	future
-g091149  Something	wrong.  	
-g091150  Auth	service	error.  
-g091151  User	service	error.  
-g091152  Transaction	service	error  
-g091153  Game	Manager	service	error	
-g091154  Wallet	service	error.  
-g091155  Tviewer	service	error.  
-g091156  Orderview	service	error.  
-g091157  Report	service	error.  
-g091158  This	owner	has	been	frozen.
-g091159  This	owner	has	been	disable.
-g091160  This	player	has	been    disable.
+091123  success
+g091124  Player	not	found.
+g091125  Authorization	invalid.
+g091126  MTCode	duplicate.
+g091127  Time	zone	must	be	UTC-4.
+g091128  Account or password must use the following characters:a-z A-Z 0-9 -
+g091129  check	account	api	error.
+g091130  Account	too	long.
+g091131  No	default	pool	type
+g091132  Transaction	in	progress,	please	check
+g091133  StartTime	and	EndTime	are	future
+g091134  Something	wrong.
+g091135  User	service	error.
+g091136  Transaction	service	error
+g091137  Game	Manager	service	error
+g091138  Wallet	service	error.
+g091139  Tviewer	service	error.
+g091140  Orderview	service	error.
+g091141  Report	service	error.
+g091142  This	owner	has	been	frozen.
+g091143  This	owner	has	been	disable.
+g091144  This	player	has	been    disable.
 
 
 

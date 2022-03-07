@@ -132,7 +132,7 @@ public class CqServiceImpl implements CqService {
             responseData.setPathUrl(jsonDataObject.getString("url"));
             return Result.success(responseData);
         } else {
-            return Result.failed("g" + jsonStatusObject.getString("code"), jsonStatusObject.getString("message"));
+            return errorCode(jsonStatusObject.getString("code"), jsonStatusObject.getString("message"));
         }
     }
 
@@ -178,7 +178,7 @@ public class CqServiceImpl implements CqService {
             if ("0".equals(jsonObject.getString("code"))) {
                 return Result.success(cqApiResponseData);
             } else {
-                return Result.failed();
+                return errorCode(jsonObject.getString("code"), jsonObject.getString("message"));
             }
         } catch (Exception e) {
             logger.error("cqlog cqlogout:{}", e);
@@ -209,75 +209,75 @@ public class CqServiceImpl implements CqService {
 
     public Result errorCode(String errorCode, String errorMessage) {
         if ("0".equals(errorCode)) {
-            return Result.failed("g091126", errorMessage);
+            return Result.failed("g091123", errorMessage);
         } else if ("1".equals(errorCode)) {
-            return Result.failed("g091127", errorMessage);
+            return Result.failed("g300004", errorMessage);
         } else if ("2".equals(errorCode)) {
-            return Result.failed("g091128", errorMessage);
+            return Result.failed("g091124", errorMessage);
         } else if ("3".equals(errorCode)) {
-            return Result.failed("g091129", errorMessage);
+            return Result.failed("g091008", errorMessage);
         } else if ("4".equals(errorCode)) {
-            return Result.failed("g091130", errorMessage);
+            return Result.failed("g091125", errorMessage);
         } else if ("5".equals(errorCode)) {
-            return Result.failed("g091131", errorMessage);
+            return Result.failed("g000007", errorMessage);
         } else if ("6".equals(errorCode)) {
-            return Result.failed("g091132", errorMessage);
+            return Result.failed("g100003", errorMessage);
         } else if ("8".equals(errorCode)) {
-            return Result.failed("g091133", errorMessage);
+            return Result.failed("g091068", errorMessage);
         } else if ("9".equals(errorCode)) {
-            return Result.failed("g091134", errorMessage);
+            return Result.failed("g091126", errorMessage);
         } else if ("10".equals(errorCode)) {
-            return Result.failed("g091135", errorMessage);
+            return Result.failed("g091024", errorMessage);
         } else if ("11".equals(errorCode)) {
-            return Result.failed("g091136", errorMessage);
+            return Result.failed("g091034", errorMessage);
         } else if ("12".equals(errorCode)) {
-            return Result.failed("g091137", errorMessage);
+            return Result.failed("g091127", errorMessage);
         } else if ("13".equals(errorCode)) {
-            return Result.failed("g091138", errorMessage);
+            return Result.failed("g091033", errorMessage);
         } else if ("14".equals(errorCode)) {
-            return Result.failed("g091139", errorMessage);
+            return Result.failed("g091097", errorMessage);
         } else if ("15".equals(errorCode)) {
-            return Result.failed("g091140", errorMessage);
+            return Result.failed("g091128", errorMessage);
         } else if ("16".equals(errorCode)) {
-            return Result.failed("g091141", errorMessage);
+            return Result.failed("g091129", errorMessage);
         } else if ("23".equals(errorCode)) {
-            return Result.failed("g091142", errorMessage);
+            return Result.failed("g000001", errorMessage);
         } else if ("24".equals(errorCode)) {
-            return Result.failed("g091143", errorMessage);
+            return Result.failed("g091130", errorMessage);
         } else if ("28".equals(errorCode)) {
-            return Result.failed("g091144", errorMessage);
+            return Result.failed("g100005", errorMessage);
         } else if ("29".equals(errorCode)) {
-            return Result.failed("g091145", errorMessage);
+            return Result.failed("g091131", errorMessage);
         } else if ("31".equals(errorCode)) {
-            return Result.failed("g091146", errorMessage);
+            return Result.failed("g100005", errorMessage);
         } else if ("33".equals(errorCode)) {
-            return Result.failed("g091147", errorMessage);
+            return Result.failed("g091132", errorMessage);
         } else if ("35".equals(errorCode)) {
-            return Result.failed("g091148", errorMessage);
+            return Result.failed("g091133", errorMessage);
         } else if ("100".equals(errorCode)) {
-            return Result.failed("g091149", errorMessage);
+            return Result.failed("g091134", errorMessage);
         } else if ("101".equals(errorCode)) {
-            return Result.failed("g091150", errorMessage);
+            return Result.failed("g091090", errorMessage);
         } else if ("102".equals(errorCode)) {
-            return Result.failed("g091151", errorMessage);
+            return Result.failed("g091135", errorMessage);
         } else if ("103".equals(errorCode)) {
-            return Result.failed("g091152", errorMessage);
+            return Result.failed("g091136", errorMessage);
         } else if ("104".equals(errorCode)) {
-            return Result.failed("g091153", errorMessage);
+            return Result.failed("g091137", errorMessage);
         } else if ("105".equals(errorCode)) {
-            return Result.failed("g091154", errorMessage);
+            return Result.failed("g091138", errorMessage);
         } else if ("106".equals(errorCode)) {
-            return Result.failed("g091155", errorMessage);
+            return Result.failed("g091139", errorMessage);
         } else if ("107".equals(errorCode)) {
-            return Result.failed("g091156", errorMessage);
+            return Result.failed("g091140", errorMessage);
         } else if ("108".equals(errorCode)) {
-            return Result.failed("g091157", errorMessage);
+            return Result.failed("g091141", errorMessage);
         } else if ("200".equals(errorCode)) {
-            return Result.failed("g091158", errorMessage);
+            return Result.failed("g091142", errorMessage);
         } else if ("201".equals(errorCode)) {
-            return Result.failed("g091159", errorMessage);
+            return Result.failed("g091143", errorMessage);
         } else if ("202".equals(errorCode)) {
-            return Result.failed("g091160", errorMessage);
+            return Result.failed("g091144", errorMessage);
         } else {
             return Result.failed("g009999", errorMessage);
         }
