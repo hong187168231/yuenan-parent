@@ -129,9 +129,11 @@ public class CqServiceImpl implements CqService {
         if (null == cqApiResponseData) {
             return Result.failed("g091087", "第三方请求异常！");
         }
-        if (("0").equals(cqApiResponseData.getStatus())) {
+        JSONObject jsonStatusObject = JSON.parseObject(cqApiResponseData.getStatus());
+        if (("0").equals(jsonStatusObject.getString("code"))) {
             ApiResponseData responseData = new ApiResponseData();
-            responseData.setPathUrl(cqApiResponseData.getData());
+            JSONObject jsonDataObject = JSON.parseObject(cqApiResponseData.getData());
+            responseData.setPathUrl(jsonDataObject.getString("url"));
             return Result.success(responseData);
         } else {
             return Result.failed("g" + jsonStatusObject.getString("code"), jsonStatusObject.getString("message"));
@@ -180,7 +182,7 @@ public class CqServiceImpl implements CqService {
             if ("0".equals(jsonObject.getString("code"))) {
                 return Result.success(cqApiResponseData);
             } else {
-                return Result.failed("g" + jsonObject.getString("code"), jsonObject.getString("message"));
+                return Result.failed();
             }
         } catch (Exception e) {
             logger.error("cqlog cqlogout:{}", e);
