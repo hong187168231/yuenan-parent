@@ -135,7 +135,7 @@ public class AeServiceImpl implements AeService {
             responseData.setPathUrl(jsonObject.getString("gameUrl"));
             return Result.success(aeApiResponseData);
         } else {
-            return Result.failed("g091088", "第三方响应异常！");
+            return Result.failed("g" + aeApiResponseData.getCode(), aeApiResponseData.getMsg());
         }
     }
 
@@ -191,7 +191,7 @@ public class AeServiceImpl implements AeService {
             externalService.saveCptOpenMember(cptOpenMember);
             return initGame(platformGameParent, gamePlatform, cptOpenMember, isMobileLogin);
         } else {
-            return Result.failed("g091088", "第三方响应异常！");
+            return Result.failed("g" + aeApiResponseData.getCode(), aeApiResponseData.getMsg());
         }
     }
 
@@ -257,7 +257,7 @@ public class AeServiceImpl implements AeService {
             if ("0".equals(aeApiResponseData.getCode())) {
                 return Result.success(aeApiResponseData);
             } else {
-                return Result.failed();
+                return Result.failed("g" + aeApiResponseData.getCode(), aeApiResponseData.getMsg());
             }
         } catch (Exception e) {
             logger.error("aelog aeLogout:{}", e);

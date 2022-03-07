@@ -102,9 +102,9 @@ public class OpenAPIProperties implements InitializingBean {
     //CQ9
     public static String CQ_API_TOKEN;
     public static String CQ_API_URL;
-    //@Value("${cq.apiUrl}")
+    @Value("${cq.apiUrl}")
     private String cqApiurl;
-    //@Value("${cq.cqApiToken}")
+    @Value("${cq.cqApiToken}")
     private String cqApiToken;
 
     @Override

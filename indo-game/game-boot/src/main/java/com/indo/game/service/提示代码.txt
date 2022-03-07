@@ -121,9 +121,83 @@ g091084 用户名无效。                                          Invalid user
 g091085 提取负数                                              Withdraw negative amount
 g091086 用户余额为零                                          User balance is zero
 
-   2022/3/4新增
+   2022/3/5新增
 g091087 第三方请求异常                                          third request error
 g091088 第三方响应异常                                          third response error
+g2200   转帐识别码已存在   
+g2201  建立玩家账号错误   
+g2202   使用者认证错误    
+g2203   使用者登入错误    
+g2204   使用者注销错误    
+g2205   转帐错误   
+g2206   转帐查询错误 
+g2207   订单查询错误 
+g2208   用户启用停用功能错误 
+g2209   用户帐号或密码错误  
+g2210   用户帐号不存在    
+g2211   查询用户余额错误   
+g2212   查询订单详情错误   
+g2213   用户帐号已启用    
+g2214   用户帐号已停用    
+g2215   认证错误   
+g2216   访问被拒   
+g2217   用户帐号已存在    
+g2218   用户帐号格式错误   
+g2219   商户号格式错误    
+g2220   用户帐号前缀必页是运营商账号 
+g2221   此功能不支持单一钱包 
+g2222   查询时间只限定在 7 天内  
+g2223   该用户帐号不是玩家账号    
+g2224   查询每小时上限为 30 次  
+g2225   begineDate 或 begineTime 不可大于 currentTime   
+g2226   用户未登入  
+g2227   重新登入发生错误   
+g2228   侦测到同时有多笔转帐,请再试一次   
+g2300   用户帐号参数错误   
+g2301   订单编号参数错误   
+g2302   商户号参数错误    
+g2303   订单编号参数不得为空 
+g2304   merchantTransId 格式错误   
+g2305   merchantTransId 参数不得为空 
+g2306   amount 格式错误    
+g2307   amount 参数不得为空  
+g2308   转帐金额不得为 0
+
+g0  success
+g1  Insufficient balance.
+g2  Player not found.
+g3  Token invalid.
+g4  Authorization invalid.
+g5  Bad parameters.
+g6  Already has same account.
+g8  Data not found.
+g9  MTCode duplicate.
+g10 Time format error.
+g11 Query time is out of range.
+g12 Time zone must be UTC-4.
+g13 Game is not found.
+g14 Your account or password is incorrect.
+g15 Account or password must use the following characters:a-z A-Z 0-9 -
+g16 check account api error.
+g23 Game is under maintenance.
+g24 Account too long.
+g28 Currency is not support.
+g29 No default pool type
+g31 Currency does not match Agent’s currency.
+g33 Transaction in progress, please check later.
+g35 StartTime and EndTime are future time.
+g100 Something wrong.
+g101 Auth service error.
+g102 User service error.
+g103 Transaction service error
+g104 Game Manager service error
+g105 Wallet service error.
+g106 Tviewer service error.
+g107 Orderview service error.
+g108 Report service error.
+g200 This owner has been frozen.
+g201 This owner has been disable.
+g202 This player has been disable.
 
 
 

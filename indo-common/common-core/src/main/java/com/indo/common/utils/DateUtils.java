@@ -1,6 +1,7 @@
 package com.indo.common.utils;
 
 import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
@@ -58,6 +59,8 @@ public class DateUtils {
 
     public final static String ISO8601_DATE_FORMAT1 = "YYYY-MM-DD'T'hh:mm:ss.sss";
 
+    public final static String RFC3339_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ssZ";
+
     public final static String HOURMINUTEFormat = "HH:mm";
 
     static {
@@ -103,9 +106,6 @@ public class DateUtils {
 
     /**
      * 获取一天最早的时间点
-     *
-     * @param date
-     * @return
      */
     public static Date getDateMinTime(Date date) {
         Calendar calendar = Calendar.getInstance();
@@ -128,9 +128,6 @@ public class DateUtils {
 
     /**
      * 获取一天最晚的时间点
-     *
-     * @param date
-     * @return
      */
     public static Date getDateMaxTime(Date date) {
         Calendar calendar = Calendar.getInstance();
@@ -144,10 +141,6 @@ public class DateUtils {
 
     /**
      * 获取一周中的第几天（周日开始，1-7）
-     *
-     * @param date
-     * @param day
-     * @return
      */
     public static Date getDateDayOfWeek(Date date, int day) {
         Calendar calendar = Calendar.getInstance();
@@ -158,8 +151,6 @@ public class DateUtils {
 
     /**
      * 获取本周的开始时间
-     *
-     * @return
      */
     @SuppressWarnings("unused")
     public static Date getBeginDayOfWeek() {
@@ -180,8 +171,6 @@ public class DateUtils {
 
     /**
      * 获取本周的结束时间
-     *
-     * @return
      */
     public static Date getEndDayOfWeek() {
         Calendar cal = Calendar.getInstance();
@@ -276,8 +265,6 @@ public class DateUtils {
 
     /**
      * 获取上月的开始时间
-     *
-     * @return
      */
     public static Date getBeginDayOfLastMonth() {
         Calendar calendar = Calendar.getInstance();
@@ -288,8 +275,6 @@ public class DateUtils {
 
     /**
      * 获取上月的结束时间
-     *
-     * @return
      */
     public static Date getEndDayOfLastMonth() {
         Calendar calendar = Calendar.getInstance();
@@ -302,8 +287,6 @@ public class DateUtils {
 
     /**
      * 获取今年是哪一年
-     *
-     * @return
      */
     public static Integer getNowYear() {
         Date date = new Date();
@@ -315,8 +298,6 @@ public class DateUtils {
 
     /**
      * 获取本月是哪一月
-     *
-     * @return
      */
     public static int getNowMonth() {
         Date date = new Date();
@@ -327,8 +308,6 @@ public class DateUtils {
 
     /**
      * 获取今天是哪天
-     *
-     * @return
      */
     public static int getNowDay() {
         Date date = new Date();
@@ -340,8 +319,6 @@ public class DateUtils {
 
     /**
      * 获取当天的开始时间
-     *
-     * @return
      */
     public static Date getDayBegin() {
         Calendar cal = new GregorianCalendar();
@@ -354,8 +331,6 @@ public class DateUtils {
 
     /**
      * 获取当天的结束时间
-     *
-     * @return
      */
     public static Date getDayEnd() {
         Calendar cal = new GregorianCalendar();
@@ -549,10 +524,6 @@ public class DateUtils {
 
     /**
      * 计算当前时间几小时之后的时间
-     *
-     * @param date
-     * @param hours
-     * @return
      */
     public static Date addHours(Date date, long hours) {
         return addMinutes(date, hours * 60);
@@ -560,19 +531,13 @@ public class DateUtils {
 
     /**
      * 计算当前时间几分钟之后的时间
-     *
-     * @param date
-     * @param minutes
-     * @return
      */
     public static Date addMinutes(Date date, long minutes) {
         return addSeconds(date, minutes * 60);
     }
 
     /**
-     * @param date1
-     * @param secs
-     * @return
+     *
      */
 
     public static Date addSeconds(Date date1, long secs) {
@@ -582,7 +547,6 @@ public class DateUtils {
     /**
      * 判断输入的字符串是否为合法的小时
      *
-     * @param hourStr
      * @return true/false
      */
     public static boolean isValidHour(String hourStr) {
@@ -600,7 +564,6 @@ public class DateUtils {
     /**
      * 判断输入的字符串是否为合法的分或秒
      *
-     * @param
      * @return true/false
      */
     public static boolean isValidMinuteOrSecond(String str) {
@@ -695,9 +658,6 @@ public class DateUtils {
 
     /**
      * 取得“X年X月X日”的日期格式
-     *
-     * @param date
-     * @return
      */
     public static String getChineseDateString(Date date) {
         DateFormat dateFormat = getNewDateFormat(chineseDtFormat);
@@ -734,8 +694,6 @@ public class DateUtils {
     /**
      * 取得两个日期间隔毫秒数（日期1-日期2）
      *
-     * @param one
-     * @param two
      * @return 间隔毫秒数
      */
     public static long getDiffMilliseconds(Date one, Date two) {
@@ -782,8 +740,6 @@ public class DateUtils {
     /**
      * 取得两个日期的间隔天数
      *
-     * @param
-     * @param
      * @return 间隔天数
      */
 //    public static long getDiffDays(Date one, Date two) {
@@ -843,9 +799,6 @@ public class DateUtils {
 
     /**
      * 判断表示时间的字符是否为符合yyyyMMddHHmmss格式
-     *
-     * @param strDate
-     * @return
      */
     public static boolean isValidLongDateFormat(String strDate) {
         if (strDate.length() != longFormat.length()) {
@@ -871,10 +824,6 @@ public class DateUtils {
 
     /**
      * 判断表示时间的字符是否为符合yyyyMMddHHmmss格式
-     *
-     * @param strDate
-     * @param delimiter
-     * @return
      */
     public static boolean isValidLongDateFormat(String strDate, String delimiter) {
         String temp = strDate.replaceAll(delimiter, "");
@@ -969,10 +918,7 @@ public class DateUtils {
     }
 
     /**
-     * @param date1
-     * @param date2
-     * @param
-     * @return
+     *
      */
     public static boolean dateNotLessThan(String date1, String date2,
                                           DateFormat format) {
@@ -1016,8 +962,6 @@ public class DateUtils {
 
     /**
      * 获取系统日期的前一天日期，返回Date
-     *
-     * @return
      */
     public static Date getBeforeDate() {
         Date date = new Date();
@@ -1027,8 +971,6 @@ public class DateUtils {
 
     /**
      * 得到系统当前的时间
-     *
-     * @return
      */
     public static String currentTime(String format) {
         if (StringUtils.isBlank(format)) {
@@ -1039,11 +981,7 @@ public class DateUtils {
     }
 
     /**
-     * 获取任意时间的上一个月
-     * 描述:<描述函数实现的功能>.
-     *
-     * @param repeatDate
-     * @return
+     * 获取任意时间的上一个月 描述:<描述函数实现的功能>.
      */
     public static String getLastMonth(String repeatDate) {
         String lastMonth = "";
@@ -1064,9 +1002,8 @@ public class DateUtils {
 
 
     /**
-     * Returns true if endDate is after startDate or if startDate equals
-     * endDate. Returns false if either value is null. If equalOK, returns true
-     * if the dates are equal.
+     * Returns true if endDate is after startDate or if startDate equals endDate. Returns false if
+     * either value is null. If equalOK, returns true if the dates are equal.
      **/
     public static boolean isValidDateRange(Date startDate, Date endDate,
                                            boolean equalOK) {
@@ -1116,10 +1053,6 @@ public class DateUtils {
 
     /**
      * 检查指定的时间与当前时间的间隔是否大于interval
-     *
-     * @param time
-     * @param interval
-     * @return
      */
     public static boolean compareWithNow(long time, long interval) {
         if ((System.currentTimeMillis() - time) > interval) {
@@ -1130,10 +1063,6 @@ public class DateUtils {
 
     /**
      * 当前时间与指定时间比，还有几天
-     *
-     * @param
-     * @param
-     * @return
      */
     public static long getDiffDaysWithNow(long target) {
         long t1 = target - System.currentTimeMillis();
@@ -1149,9 +1078,6 @@ public class DateUtils {
      * 不足的一天的天数不算入结果
      * 如 2.99天--->2天
      * </pre>
-     *
-     * @param target
-     * @return
      */
     public static long getPastDaysWithNow(long target) {
         long t1 = System.currentTimeMillis() - target;
@@ -1171,9 +1097,6 @@ public class DateUtils {
      * 小于1秒， --> 0
      * 如果输入时间比当前时间小，--> 0
      * </pre>
-     *
-     * @param target
-     * @return
      */
     public static String getDynamicLeftTime(long target) {
         long t1 = target - System.currentTimeMillis();
@@ -1226,9 +1149,6 @@ public class DateUtils {
 
     /**
      * 获取前一天日期
-     *
-     * @param date
-     * @return
      */
     public static Date getBeforeDay(Date date) {
         Calendar calendar = Calendar.getInstance();
@@ -1240,9 +1160,6 @@ public class DateUtils {
 
     /**
      * 获取下一天
-     *
-     * @param date
-     * @return
      */
     public static Date getNextDay(Date date) {
         Calendar calendar = Calendar.getInstance();
@@ -1255,10 +1172,6 @@ public class DateUtils {
 
     /**
      * 在指定时间加多少秒
-     *
-     * @param date
-     * @param
-     * @return
      */
     public static Date addDataSecond(Date date, int second) {
         Calendar ca = Calendar.getInstance();
@@ -1292,9 +1205,6 @@ public class DateUtils {
 
     /**
      * 获取每月的最大时间
-     *
-     * @param date
-     * @return
      */
     public static Date getMonthMaxTime(Date date) {
         Date date1 = getMaxMonthDate(date);
@@ -1310,9 +1220,6 @@ public class DateUtils {
 
     /**
      * 获取任意时间的月的最后一天
-     *
-     * @param repeatDate
-     * @return
      */
     private static Date getMaxMonthDate(Date repeatDate) {
         Calendar calendar = Calendar.getInstance();
@@ -1360,10 +1267,6 @@ public class DateUtils {
 
     /**
      * 两个日期相差的天数
-     *
-     * @param date1
-     * @param date2
-     * @return
      */
     public static int differentDays(Date date1, Date date2) {
         if (date1.after(date2)) {
@@ -1495,8 +1398,6 @@ public class DateUtils {
 
     /**
      * 获取带时区格式的时间
-     *
-     * @return
      */
     public static String getTimeAndZone() {
         Calendar ca = Calendar.getInstance();
@@ -1514,7 +1415,6 @@ public class DateUtils {
      * @param smdate 较小的时间
      * @param bdate  较大的时间
      * @return 相差天数
-     * @throws ParseException
      */
     public static int daysBetween(Date smdate, Date bdate) {
         long between_days = 0;
@@ -1548,7 +1448,7 @@ public class DateUtils {
     }
 
     public static void main(String[] args) {
-        System.out.println(  daysBetween("2022-01-25", "2022-01-28"));
+        System.out.println(daysBetween("2022-01-25", "2022-01-28"));
     }
 
 }
