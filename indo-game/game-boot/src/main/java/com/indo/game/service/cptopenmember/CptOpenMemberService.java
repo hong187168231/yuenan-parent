@@ -23,4 +23,12 @@ public interface CptOpenMemberService {
 
     void updateCptOpenMember(CptOpenMember cptOpenMember);
 
+    /**
+     * 根据token 类型 查询第三方用户信息
+     * @param token
+     * @param type
+     * @return
+     */
+    CptOpenMember quertCptOpenMember(String token, String type);
+
 }

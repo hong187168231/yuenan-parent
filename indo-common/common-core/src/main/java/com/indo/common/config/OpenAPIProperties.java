@@ -107,6 +107,18 @@ public class OpenAPIProperties implements InitializingBean {
     @Value("${cq.cqApiToken}")
     private String cqApiToken;
 
+
+    //PG
+    public static String PG_API_TOKEN;
+    public static String PG_API_URL;
+    public static String PG_SECRET_KEY;
+    @Value("${pg.apiUrl}")
+    private String pgApiurl;
+    @Value("${pg.pgSecretKey}")
+    private String pgSecretKey;
+    @Value("${pg.pgApiToken}")
+    private String pgApiToken;
+
     @Override
     public void afterPropertiesSet() {
 
@@ -145,5 +157,9 @@ public class OpenAPIProperties implements InitializingBean {
 
         CQ_API_URL = cqApiurl;
         CQ_API_TOKEN = cqApiToken;
+
+        PG_API_URL = pgApiurl;
+        PG_SECRET_KEY = pgSecretKey;
+        PG_API_TOKEN = pgApiToken;
     }
 }

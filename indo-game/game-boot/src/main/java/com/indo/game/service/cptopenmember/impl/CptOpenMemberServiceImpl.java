@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.indo.game.mapper.cptopenmember.CptOpenMemberMapper;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,8 +21,8 @@ public class CptOpenMemberServiceImpl implements CptOpenMemberService {
         CptOpenMember cptOpenMember = null;
         if (userId != null && StringUtils.isNotBlank(type)) {
             LambdaQueryWrapper<CptOpenMember> wrapper = new LambdaQueryWrapper();
-            wrapper.eq(CptOpenMember::getUserId,userId);
-            wrapper.eq(CptOpenMember::getType,type);
+            wrapper.eq(CptOpenMember::getUserId, userId);
+            wrapper.eq(CptOpenMember::getType, type);
             cptOpenMember = cptOpenMemberMapper.selectOne(wrapper);
         }
         return cptOpenMember;
@@ -37,6 +38,17 @@ public class CptOpenMemberServiceImpl implements CptOpenMemberService {
         cptOpenMemberMapper.updateById(cptOpenMember);
     }
 
+    @Override
+    public CptOpenMember quertCptOpenMember(String token, String type) {
+        CptOpenMember cptOpenMember = null;
+        if (StringUtils.isNotEmpty(token) && StringUtils.isNotBlank(type)) {
+            LambdaQueryWrapper<CptOpenMember> wrapper = new LambdaQueryWrapper();
+            wrapper.eq(CptOpenMember::getPassword, token);
+            wrapper.eq(CptOpenMember::getType, type);
+            cptOpenMember = cptOpenMemberMapper.selectOne(wrapper);
+        }
+        return cptOpenMember;
+    }
 
 
 }

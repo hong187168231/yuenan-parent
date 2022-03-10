@@ -11,6 +11,7 @@ import com.indo.game.service.ae.AeService;
 import com.indo.game.service.awc.AwcService;
 import com.indo.game.service.cq.CqService;
 import com.indo.game.service.jdb.JdbService;
+import com.indo.game.service.pg.PgService;
 import com.indo.game.service.saba.SabaService;
 import com.indo.game.service.sbo.SboService;
 import com.indo.game.service.ug.UgService;
@@ -53,6 +54,8 @@ public class GameController {
     private AeService aeService;
     @Autowired
     private CqService cqService;
+    @Autowired
+    private PgService pgService;
     @Autowired
     private RedissonClient redissonClient;
 
@@ -104,6 +107,10 @@ public class GameController {
                 if ("CQ".equals(parentName)) {
                     resultInfo = cqService.cqGame(loginUser, isMobileLogin, ip, platform, parentName);
                 }
+                if ("PG".equals(parentName)) {
+                    resultInfo = pgService.pgGame(loginUser, isMobileLogin, ip, platform, parentName);
+                }
+
 
                 if (resultInfo == null) {
                     log.info("登录平台或单一游戏登录log {} loginPlatform result is null. params:{},ip:{},parentName:{}", loginUser.getId(), params, ip, parentName);
@@ -161,6 +168,12 @@ public class GameController {
             }
             if ("AE".equals(platform)) {
                 resultInfo = aeService.logout(loginUser, platform, ip);
+            }
+            if ("CQ".equals(platform)) {
+                resultInfo = cqService.logout(loginUser, platform, ip);
+            }
+            if ("PG".equals(platform)) {
+                resultInfo = pgService.logout(loginUser, platform, ip);
             }
             if (resultInfo == null) {
                 log.info("退出平台log {} loginPlatform result is null. params:{},ip:{}", loginUser.getId(), params, ip);

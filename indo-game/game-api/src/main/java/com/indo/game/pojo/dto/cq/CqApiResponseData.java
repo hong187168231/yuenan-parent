@@ -1,4 +1,4 @@
-package com.indo.game.pojo.dto.ae.cq;
+package com.indo.game.pojo.dto.cq;
 
 
 import lombok.Data;
