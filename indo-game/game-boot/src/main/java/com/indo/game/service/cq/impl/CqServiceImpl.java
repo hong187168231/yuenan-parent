@@ -139,7 +139,7 @@ public class CqServiceImpl implements CqService {
         Map<String, String> params = new HashMap<String, String>();
         params.put("account", cptOpenMemberm.getUserName());
         params.put("lang", platformGameParent.getLanguageType());
-        params.put("session", platformGameParent.getCurrencyType());
+        params.put("session", cptOpenMemberm.getPassword());
         CqApiResponseData cqApiResponseData = null;
         try {
             StringBuilder apiUrl = new StringBuilder();
