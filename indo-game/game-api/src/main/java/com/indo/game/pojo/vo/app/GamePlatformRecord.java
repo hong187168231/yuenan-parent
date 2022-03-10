@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
 
 @Data
 @ApiModel
-public class GamePlatformRecord extends BaseEntity{
+public class GamePlatformRecord extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "id")

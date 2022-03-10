@@ -101,7 +101,9 @@ public class JdbServiceImpl implements JdbService {
 
             // 验证且绑定（KY-CPT第三方会员关系）
             CptOpenMember cptOpenMember = externalService.getCptOpenMember(loginUser.getId().intValue(), parentName);
+            boolean b = true;
             if (cptOpenMember == null) {
+                b = false;
                 cptOpenMember = new CptOpenMember();
                 cptOpenMember.setUserId(loginUser.getId().intValue());
                 cptOpenMember.setUserName(loginUser.getAccount());
@@ -117,12 +119,14 @@ public class JdbServiceImpl implements JdbService {
                 updateCptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(updateCptOpenMember);
             }
-            JdbApiIsGameingRequestBack<JdbApiIsGameingInfoRequestBack> jdbApiIsGameingRequestBack = getIsGameing(loginUser,ip);
-            if(null!=jdbApiIsGameingRequestBack){
-                if("0000".equals(jdbApiIsGameingRequestBack.getErr_text())){
-                    List<JdbApiIsGameingInfoRequestBack> list = jdbApiIsGameingRequestBack.getData();
-                    if(null!=list&&list.size()>0){
-                        this.logout(loginUser,ip);
+            if(b) {
+                JdbApiIsGameingRequestBack<JdbApiIsGameingInfoRequestBack> jdbApiIsGameingRequestBack = getIsGameing(loginUser, ip);
+                if (null != jdbApiIsGameingRequestBack) {
+                    if ("0000".equals(jdbApiIsGameingRequestBack.getErr_text())) {
+                        List<JdbApiIsGameingInfoRequestBack> list = jdbApiIsGameingRequestBack.getData();
+                        if (null != list && list.size() > 0) {
+                            this.logout(loginUser, ip);
+                        }
                     }
                 }
             }
