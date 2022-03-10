@@ -184,7 +184,8 @@ g091143  This	owner	has	been	disable.
 g091144  This	player	has	been    disable.
 
 
-
+g091145  内部服务器错误
+g091146  无效运营商
 
 
 
