@@ -29,7 +29,7 @@ public class CqCallBackController {
     /**
      * 查询余额
      */
-    @RequestMapping(value = "/transaction/balance", method = RequestMethod.GET)
+    @RequestMapping(value = "/callBack/transaction/balance", method = RequestMethod.GET)
     @AllowAccess
     public Object getBalance(@RequestParam(value = "account") String account,HttpServletRequest request) {
 
@@ -44,7 +44,7 @@ public class CqCallBackController {
     /**
      * 投注
      */
-    @RequestMapping(value = "/transaction/game/bet", method = RequestMethod.POST)
+    @RequestMapping(value = "/callBack/transaction/game/bet", method = RequestMethod.POST)
     @ResponseBody
     @AllowAccess
     public Object bet(CqBetCallBackReq cqApiRequestData, HttpServletRequest request) {
@@ -60,7 +60,7 @@ public class CqCallBackController {
     /**
      * 活動派彩
      */
-    @RequestMapping(value = "/transaction/user/payoff", method = RequestMethod.POST)
+    @RequestMapping(value = "/callBack/transaction/user/payoff", method = RequestMethod.POST)
     @ResponseBody
     @AllowAccess
     public Object payOff(CqBetCallBackReq cqApiRequestData, HttpServletRequest request) {
@@ -76,7 +76,7 @@ public class CqCallBackController {
     /**
      * 遊戲紅利
      */
-    @RequestMapping(value = "/transaction/game/bonus", method = RequestMethod.POST)
+    @RequestMapping(value = "/callBack/transaction/game/bonus", method = RequestMethod.POST)
     @ResponseBody
     @AllowAccess
     public Object bonus(CqBetCallBackReq cqApiRequestData, HttpServletRequest request) {
@@ -93,7 +93,7 @@ public class CqCallBackController {
     /**
      * 針對完成的訂單做補款
      */
-    @RequestMapping(value = "/transaction/game/credit", method = RequestMethod.POST)
+    @RequestMapping(value = "/callBack/transaction/game/credit", method = RequestMethod.POST)
     @ResponseBody
     @AllowAccess
     public Object credit(CqBetCallBackReq cqApiRequestData, HttpServletRequest request) {
@@ -109,7 +109,7 @@ public class CqCallBackController {
     /**
      * 針對完成的訂單做扣款
      */
-    @RequestMapping(value = "/transaction/game/debit", method = RequestMethod.POST)
+    @RequestMapping(value = "/callBack/transaction/game/debit", method = RequestMethod.POST)
     @ResponseBody
     @AllowAccess
     public Object debit(CqBetCallBackReq cqApiRequestData, HttpServletRequest request) {
@@ -126,7 +126,7 @@ public class CqCallBackController {
     /**
      * 遊戲结算
      */
-    @RequestMapping(value = "/transaction/game/rollin", method = RequestMethod.POST)
+    @RequestMapping(value = "/callBack/transaction/game/rollin", method = RequestMethod.POST)
     @ResponseBody
     @AllowAccess
     public Object rollin(CqBetCallBackReq cqApiRequestData, HttpServletRequest request) {
