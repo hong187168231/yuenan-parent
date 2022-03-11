@@ -120,7 +120,7 @@
     </select>
 
     <select id="findMemBaseInfoByAccount" resultType="com.indo.core.pojo.bo.MemBaseInfoBO">
-        selec
+        select
         <include refid="mem_Column_List"/>
         from mem_baseinfo mb
         where mb.account = #{account}

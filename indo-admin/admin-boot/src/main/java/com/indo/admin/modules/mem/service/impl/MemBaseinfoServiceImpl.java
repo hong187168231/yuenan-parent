@@ -29,6 +29,7 @@ import com.indo.core.pojo.dto.MemBaseInfoDTO;
 import com.indo.core.pojo.entity.AgentRelation;
 import com.indo.core.pojo.entity.MemBaseinfo;
 import com.indo.core.util.BusinessRedisUtils;
+import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -164,13 +165,14 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
     @Transactional
     public boolean editStatus(MemEditStatusReq req) {
         MemBaseinfo memBaseinfo = checkMemIsExist(req.getId());
+        Integer status = memBaseinfo.getStatus();
+        Integer prohibitLogin = memBaseinfo.getProhibitLogin();
         DozerUtil.map(req, memBaseinfo);
         if (baseMapper.updateById(memBaseinfo) > 0) {
             MemBaseInfoDTO memBaseInfoDTO = new MemBaseInfoDTO();
-            DozerUtil.map(req, memBaseinfo);
             refreshMemBaseInfo(memBaseInfoDTO, memBaseinfo.getAccount());
-            if (req.getStatus().equals(1) || req.getStatus().equals(2) ||
-                    req.getProhibitLogin().equals(0)) {
+            if (status.equals(1) || status.equals(2) ||
+                    prohibitLogin.equals(0)) {
                 AdminBusinessRedisUtils.delMemAccToken(memBaseinfo.getAccount());
             }
             return true;
