@@ -165,7 +165,7 @@ public class CqServiceImpl implements CqService {
             Map<String, String> params = new HashMap<String, String>();
             params.put("account", loginUser.getAccount());
             StringBuilder apiUrl = new StringBuilder();
-            apiUrl.append(OpenAPIProperties.AE_API_URL).append("/gameboy/player/logout");
+            apiUrl.append(OpenAPIProperties.CQ_API_URL).append("/gameboy/player/logout");
             CqApiResponseData cqApiResponseData = commonRequest(apiUrl.toString(), params, loginUser.getId().intValue(), "cqGameLogin");
             if (null == cqApiResponseData) {
                 return Result.failed();
