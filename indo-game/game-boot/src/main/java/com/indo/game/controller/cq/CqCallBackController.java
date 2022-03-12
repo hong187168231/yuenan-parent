@@ -9,9 +9,10 @@ import com.indo.game.service.cq.CqCallbackService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,15 +30,30 @@ public class CqCallBackController {
     /**
      * 查询余额
      */
-    @RequestMapping(value = "/callBack/transaction/balance", method = RequestMethod.GET)
+    @RequestMapping(value = "/callBack/transaction/balance/{account}", method = RequestMethod.GET)
     @AllowAccess
-    public Object getBalance(@RequestParam(value = "account") String account,HttpServletRequest request) {
+    public Object getBalance(@PathVariable(name = "account") String account, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
         String wtoken = request.getHeader("wtoken");
         logger.info("cqCallBack {} getBalance 回调,下注params:{}", JSONObject.toJSONString(account));
         Object object = cqCallbackService.cqBalanceCallback(account, ip, wtoken);
         logger.info("cqCallBack {} getBalance 回调下注返回数据,取得用户的余额 params:{}", object);
+        return object;
+    }
+
+    /**
+     * 验证用户
+     */
+    @RequestMapping(value = "/callBack/player/check/{account}", method = RequestMethod.GET)
+    @AllowAccess
+    public Object checkPlayer(@PathVariable(name = "account") String account, HttpServletRequest request) {
+
+        String ip = IPAddressUtil.getIpAddress(request);
+        String wtoken = request.getHeader("wtoken");
+        logger.info("cqCallBack {} checkPlayer回调,params:{}", JSONObject.toJSONString(account), wtoken);
+        Object object = cqCallbackService.cqCheckPlayerCallback(account, ip, wtoken);
+        logger.info("cqCallBack {} checkPlayer回调返回数据, params:{}", object);
         return object;
     }
 
@@ -51,9 +67,9 @@ public class CqCallBackController {
 
         String ip = IPAddressUtil.getIpAddress(request);
         String wtoken = request.getHeader("wtoken");
-        logger.info("cqCallBack {} bet 回调,下注params:{}", JSONObject.toJSONString(cqApiRequestData));
+        logger.info("cqCallBack {} bet回调params:{}", JSONObject.toJSONString(cqApiRequestData), wtoken);
         Object object = cqCallbackService.cqBetCallback(cqApiRequestData, ip, wtoken);
-        logger.info("cqCallBack {} bet 回调下注返回数据,取得用户的余额 params:{}", object);
+        logger.info("cqCallBack {} bet回调返回数据,取得用户的余额 params:{}", object);
         return object;
     }
 
@@ -67,9 +83,9 @@ public class CqCallBackController {
 
         String ip = IPAddressUtil.getIpAddress(request);
         String wtoken = request.getHeader("wtoken");
-        logger.info("cqCallBack {} payOff 回调,params:{}", JSONObject.toJSONString(cqApiRequestData));
+        logger.info("cqCallBack {} payOff回调,params:{}", JSONObject.toJSONString(cqApiRequestData), wtoken);
         Object object = cqCallbackService.cqPayOffCallback(cqApiRequestData, ip, wtoken);
-        logger.info("cqCallBack {} payOff 回调下注返回数据,取得用户的余额 params:{}", object);
+        logger.info("cqCallBack {} payOff回调返回数据,取得用户的余额 params:{}", object);
         return object;
     }
 
@@ -83,9 +99,9 @@ public class CqCallBackController {
 
         String ip = IPAddressUtil.getIpAddress(request);
         String wtoken = request.getHeader("wtoken");
-        logger.info("cqCallBack {} bonus 回调,params:{}", JSONObject.toJSONString(cqApiRequestData));
+        logger.info("cqCallBack {} bonus回调,params:{}", JSONObject.toJSONString(cqApiRequestData), wtoken);
         Object object = cqCallbackService.cqBonusCallback(cqApiRequestData, ip, wtoken);
-        logger.info("cqCallBack {} bonus 回调返回数据 params:{}", object);
+        logger.info("cqCallBack {} bonus回调返回数据 params:{}", object);
         return object;
     }
 
@@ -100,9 +116,9 @@ public class CqCallBackController {
 
         String ip = IPAddressUtil.getIpAddress(request);
         String wtoken = request.getHeader("wtoken");
-        logger.info("cqCallBack {} credit 回调,params:{}", JSONObject.toJSONString(cqApiRequestData));
+        logger.info("cqCallBack {} credit回调,params:{}", JSONObject.toJSONString(cqApiRequestData), wtoken);
         Object object = cqCallbackService.cqCreditCallback(cqApiRequestData, ip, wtoken);
-        logger.info("cqCallBack {} credit 回调返回数据 params:{}", object);
+        logger.info("cqCallBack {} credit回调返回数据 params:{}", object);
         return object;
     }
 
@@ -116,9 +132,9 @@ public class CqCallBackController {
 
         String ip = IPAddressUtil.getIpAddress(request);
         String wtoken = request.getHeader("wtoken");
-        logger.info("cqCallBack {} debit 回调,params:{}", JSONObject.toJSONString(cqApiRequestData));
+        logger.info("cqCallBack {} debit回调,params:{}", JSONObject.toJSONString(cqApiRequestData), wtoken);
         Object object = cqCallbackService.cqDebitCallback(cqApiRequestData, ip, wtoken);
-        logger.info("cqCallBack {} debit 回调返回数据 params:{}", object);
+        logger.info("cqCallBack {} debit回调返回数据 params:{}", object);
         return object;
     }
 
@@ -133,9 +149,9 @@ public class CqCallBackController {
 
         String ip = IPAddressUtil.getIpAddress(request);
         String wtoken = request.getHeader("wtoken");
-        logger.info("cqCallBack {} rollin 回调,params:{}", JSONObject.toJSONString(cqApiRequestData));
+        logger.info("cqCallBack {} rollin回调,params:{}", JSONObject.toJSONString(cqApiRequestData), wtoken);
         Object object = cqCallbackService.cqRollinCallback(cqApiRequestData, ip, wtoken);
-        logger.info("cqCallBack {} rollin 回调返回数据 params:{}", object);
+        logger.info("cqCallBack {} rollin回调返回数据 params:{}", object);
         return object;
     }
 

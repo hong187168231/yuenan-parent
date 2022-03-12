@@ -18,6 +18,7 @@ public interface CqCallbackService {
 
     Object cqRollinCallback(CqBetCallBackReq cqApiRequestData, String ip, String wtoken);
 
-
     Object cqBalanceCallback(String account, String ip, String wtoken);
+
+    Object cqCheckPlayerCallback(String account, String ip, String wtoken);
 }

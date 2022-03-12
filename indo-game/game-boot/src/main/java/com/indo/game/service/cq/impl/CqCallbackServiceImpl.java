@@ -374,6 +374,28 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         }
     }
 
+    @Override
+    public Object cqCheckPlayerCallback(String account, String ip, String wtoken) {
+        if (!checkIp(ip) && !OpenAPIProperties.CQ_API_TOKEN.equals(wtoken)) {
+            return commonReturnFail();
+        }
+        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(account);
+        if (null == memBaseinfo) {
+            return commonReturnFail();
+        } else {
+            String dataStr = DateUtils.format(new Date(), DateUtils.RFC3339_DATE_FORMAT);
+            JSONObject jsonStruts = new JSONObject();
+            jsonStruts.put("code", "0");
+            jsonStruts.put("message", "Success");
+            jsonStruts.put("datetime", dataStr);
+
+            JSONObject jsonData = new JSONObject();
+            jsonData.put("data", true);
+            jsonData.put("status", jsonStruts);
+            return jsonData;
+        }
+    }
+
 
     private boolean checkIp(String ip) {
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode("CQ");

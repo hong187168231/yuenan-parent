@@ -9,4 +9,8 @@ public interface PgCallbackService {
     Object pgVerifyCallback(PgVerifyCallBackReq pgVerifyCallBackReq, String ip);
 
     Object pgBalanceCallback(PgVerifyCallBackReq pgVerifyCallBackReq, String ip);
+
+    Object pgTransferInCallback(PgVerifyCallBackReq pgVerifyCallBackReq, String ip);
+
+    Object pgAdjustmentCallback(PgVerifyCallBackReq pgVerifyCallBackReq, String ip);
 }
