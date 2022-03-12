@@ -52,6 +52,6 @@ public class Advertise extends BaseEntity {
     private String remark;
 
     @ApiModelProperty(value = "广告类型：1顶部广告，2底部广告，3推广广告，4banner广告")
-    private Integer types;
+    private String types;
 
 }
