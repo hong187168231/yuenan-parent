@@ -12,6 +12,7 @@ import com.indo.admin.pojo.vo.msg.MsgStationLetterVO;
 import com.indo.common.utils.StringUtils;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
+import com.indo.core.pojo.bo.MemBaseInfoBO;
 import com.indo.core.pojo.entity.MsgPushRecord;
 import com.indo.core.pojo.entity.MsgStationLetter;
 import com.indo.user.pojo.req.msg.StationLetterAddReq;
@@ -37,6 +38,9 @@ public class MsgStationLetterServiceImpl extends ServiceImpl<MsgStationLetterMap
     @Autowired
     private MsgStationLetterMapper letterMapper;
 
+    @Resource
+    private MemBaseinfoMapper memBaseinfoMapper;
+
     @Override
     public Page<MsgStationLetterVO> queryList(StationLetterQueryReq queryDTO) {
         Page<MsgStationLetterVO> page = new Page<>(queryDTO.getPage(), queryDTO.getLimit());
@@ -54,6 +58,8 @@ public class MsgStationLetterServiceImpl extends ServiceImpl<MsgStationLetterMap
             List<String> list = letterDTO.getReceiver();
             list.forEach(item -> {
                 letter.setReceiver(item);
+                MemBaseInfoBO memBaseInfoBO =memBaseinfoMapper.findMemBaseInfoByAccount(item);
+                letter.setMemId(memBaseInfoBO.getId());
                 letterMapper.insert(letter);
             });
         }
