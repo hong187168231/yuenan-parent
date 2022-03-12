@@ -24,4 +24,7 @@ public interface MsgFeignClient {
     @PostMapping("/rpc/msg/total")
     Result<MsgTotalVO> msgTotal(MsgDTO msgDTO);
 
+    @PostMapping("/rpc/msg/deleteMsg")
+    Result deleteMsg(MsgDTO msgDTO);
+
 }

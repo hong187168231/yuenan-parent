@@ -71,6 +71,20 @@ public class MsgRpc {
         return Result.success(totalVO);
     }
 
+    /**
+     * 删除站内信或后台推送
+     * @param msgDTO
+     * @return
+     */
+    @PostMapping("/deleteMsg")
+    public Result deleteMsg(@RequestBody MsgDTO msgDTO) {
+        if(msgDTO.getMsgType().equals(1)){
+            iMsgStationLetterService.deleteMsg(msgDTO);
+        }else{
+            iMsgPushRecordService.deleteMsg(msgDTO);
+        }
+        return Result.success();
+    }
 
 }
     

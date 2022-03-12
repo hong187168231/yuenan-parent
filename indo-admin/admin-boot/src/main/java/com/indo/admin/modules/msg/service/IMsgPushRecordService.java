@@ -38,4 +38,6 @@ public interface IMsgPushRecordService extends IService<MsgPushRecord> {
 
 
     int sysMsgTotal(MsgDTO msgDTO);
+
+    void deleteMsg(MsgDTO msgDTO);
 }

@@ -22,5 +22,9 @@ public class MsgDTO extends BaseDTO {
     @ApiModelProperty(value = "结束时间")
     private String endTime;
 
+    @ApiModelProperty(value = "消息id")
+    private Long msgId;
 
+    @ApiModelProperty(value = "消息类型 1个人消息，2系统消息")
+    private Integer msgType;
 }

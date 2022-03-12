@@ -10,7 +10,9 @@ import com.indo.admin.modules.msg.service.IMsgStationLetterService;
 import com.indo.admin.pojo.dto.MsgDTO;
 import com.indo.admin.pojo.vo.msg.MsgStationLetterVO;
 import com.indo.common.utils.StringUtils;
+import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
+import com.indo.core.pojo.entity.MsgPushRecord;
 import com.indo.core.pojo.entity.MsgStationLetter;
 import com.indo.user.pojo.req.msg.StationLetterAddReq;
 import com.indo.user.pojo.req.msg.StationLetterQueryReq;
@@ -63,6 +65,7 @@ public class MsgStationLetterServiceImpl extends ServiceImpl<MsgStationLetterMap
         Page<MsgStationLetter> page = new Page<>(msgDTO.getPage(), msgDTO.getLimit());
         LambdaQueryWrapper<MsgStationLetter> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(MsgStationLetter::getMemId, msgDTO.getMemId());
+        wrapper.eq(MsgStationLetter::getIsDel,false);
         Page<MsgStationLetter> pageList = baseMapper.selectPage(page, wrapper);
         return DozerUtil.convert(pageList.getRecords(), MsgStationLetterVO.class);
     }
@@ -71,6 +74,7 @@ public class MsgStationLetterServiceImpl extends ServiceImpl<MsgStationLetterMap
     public int personalMsgTotal(MsgDTO msgDTO) {
         LambdaQueryWrapper<MsgStationLetter> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(MsgStationLetter::getMemId, msgDTO.getMemId());
+        wrapper.eq(MsgStationLetter::getIsDel,false);
         if (StringUtils.isNotBlank(msgDTO.getBeginTime())) {
             wrapper.ge(MsgStationLetter::getCreateTime, msgDTO.getBeginTime());
         }
@@ -79,5 +83,18 @@ public class MsgStationLetterServiceImpl extends ServiceImpl<MsgStationLetterMap
         }
         Integer total = baseMapper.selectCount(wrapper);
         return total;
+    }
+
+    @Override
+    public void deleteMsg(MsgDTO msgDTO) {
+        if(msgDTO.getMsgId()==null){
+            throw new BizException("主要参数不可为空");
+        }
+        MsgStationLetter msgStationLetter = baseMapper.selectById(msgDTO.getMsgId());
+        if(msgStationLetter==null){
+            throw new BizException("数据不存在");
+        }
+        msgStationLetter.setIsDel(true);
+        baseMapper.updateById(msgStationLetter);
     }
 }

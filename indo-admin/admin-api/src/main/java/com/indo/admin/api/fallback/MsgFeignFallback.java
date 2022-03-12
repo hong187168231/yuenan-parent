@@ -37,4 +37,10 @@ public class MsgFeignFallback implements MsgFeignClient {
         log.error("feign getByParamCode 远程调用失败");
         return Result.failed("调用失败");
     }
+
+    @Override
+    public Result deleteMsg(MsgDTO msgDTO) {
+        log.error("feign deleteMsg 远程调用失败");
+        return Result.failed("调用失败");
+    }
 }

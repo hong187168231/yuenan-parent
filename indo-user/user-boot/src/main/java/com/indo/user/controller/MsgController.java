@@ -87,6 +87,22 @@ public class MsgController {
             throw new BizException("远程调用异常");
         }
     }
-
+    @ApiOperation(value = "删除消息接口", httpMethod = "GET")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "msgType", value = "消息类型 1个人消息，2系统消息 ", dataType = "int", required = true),
+            @ApiImplicitParam(name = "msgId", value = "消息id ", dataType = "Long", required = true)
+    })
+    @GetMapping(value = "/delete")
+    public Result<List<MsgPushRecordVO>> delete(@RequestParam("msgType") Integer msgType,@RequestParam("msgId") Long msgId) {
+        MsgDTO dto = new MsgDTO();
+        dto.setMsgId(msgId);
+        dto.setMsgType(msgType);
+        Result result = msgFeignClient.deleteMsg(dto);
+        if (Result.success().getCode().equals(result.getCode())) {
+            return Result.success();
+        } else {
+            throw new BizException("远程调用异常");
+        }
+    }
 
 }

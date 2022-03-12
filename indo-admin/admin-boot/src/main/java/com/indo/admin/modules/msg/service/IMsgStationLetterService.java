@@ -41,4 +41,6 @@ public interface IMsgStationLetterService extends IService<MsgStationLetter> {
 
     int personalMsgTotal(MsgDTO msgDTO);
 
+    void deleteMsg(MsgDTO msgDTO);
+
 }

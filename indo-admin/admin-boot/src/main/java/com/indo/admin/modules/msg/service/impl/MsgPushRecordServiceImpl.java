@@ -8,6 +8,7 @@ import com.indo.admin.modules.msg.service.IMsgPushRecordService;
 import com.indo.admin.pojo.dto.MsgDTO;
 import com.indo.admin.pojo.vo.msg.MsgPushRecordVO;
 import com.indo.common.utils.StringUtils;
+import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
 import com.indo.common.web.util.JwtUtils;
 import com.indo.core.pojo.entity.MsgPushRecord;
@@ -57,6 +58,7 @@ public class MsgPushRecordServiceImpl extends ServiceImpl<MsgPushRecordMapper, M
         Page<MsgPushRecord> page = new Page<>(msgDTO.getPage(), msgDTO.getLimit());
         LambdaQueryWrapper<MsgPushRecord> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(MsgPushRecord::getDeviceType, msgDTO.getDeviceType());
+        wrapper.eq(MsgPushRecord::getIsDel,false);
         Page<MsgPushRecord> pageList = baseMapper.selectPage(page, wrapper);
         return DozerUtil.convert(pageList.getRecords(), MsgPushRecordVO.class);
     }
@@ -65,6 +67,7 @@ public class MsgPushRecordServiceImpl extends ServiceImpl<MsgPushRecordMapper, M
     public int sysMsgTotal(MsgDTO msgDTO) {
         LambdaQueryWrapper<MsgPushRecord> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(MsgPushRecord::getDeviceType, msgDTO.getDeviceType());
+        wrapper.eq(MsgPushRecord::getIsDel,false);
         if (StringUtils.isNotBlank(msgDTO.getBeginTime())) {
             wrapper.ge(MsgPushRecord::getCreateTime, msgDTO.getBeginTime());
         }
@@ -73,5 +76,18 @@ public class MsgPushRecordServiceImpl extends ServiceImpl<MsgPushRecordMapper, M
         }
         Integer total = baseMapper.selectCount(wrapper);
         return total;
+    }
+
+    @Override
+    public void deleteMsg(MsgDTO msgDTO) {
+       if(msgDTO.getMsgId()==null){
+           throw new BizException("主要参数不可为空");
+       }
+        MsgPushRecord msgPushRecord = baseMapper.selectById(msgDTO.getMsgId());
+       if(msgPushRecord==null){
+           throw new BizException("数据不存在");
+       }
+        msgPushRecord.setIsDel(true);
+        baseMapper.updateById(msgPushRecord);
     }
 }
