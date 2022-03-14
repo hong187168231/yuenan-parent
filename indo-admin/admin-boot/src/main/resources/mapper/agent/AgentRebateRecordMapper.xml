@@ -8,8 +8,8 @@
         <result column="create_time" property="createTime"/>
         <result column="mem_id" property="memId"/>
         <result column="mem_level" property="memLevel"/>
-        <result column="mem_real_name" property="realName"/>
-        <result column="yesterday_remain" property="yesterdayRemain"/>
+        <result column="real_name" property="realName"/>
+        <result column="superior" property="superior"/>
         <result column="rebate_amout" property="rebateAmout"/>
         <result column="team_num" property="teamNum"/>
         <result column="team_amout" property="teamAmout"/>
