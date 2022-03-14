@@ -452,4 +452,61 @@ public class GameUtil extends HttpCommonUtils {
         }
         return resultString;
     }
+
+    /**
+     * T9电子API请求
+     * @param url
+     * @param body
+     * @param headers
+     * @return
+     */
+    public static String postJson(String url, Map<String, Object> body, Map<String, String> headers) {
+        logger.info("POST请求 postJson url:{}", url);
+        logger.info("POST请求 postJson body:{}", body);
+        logger.info("POST请求 postJson headers:{}", headers);
+        String result = null;
+        if (true) {
+            String charset = "UTF-8";
+            CloseableHttpClient httpClient;
+            HttpPost httpPost;
+            CloseableHttpResponse response = null;
+            try {
+                httpClient = HttpConnectionManager.getInstance().getHttpClient();
+                httpPost = new HttpPost(url);
+
+                // 设置连接超时,设置读取超时
+                RequestConfig requestConfig = RequestConfig.custom()
+                        .setConnectTimeout(10000)
+                        .setSocketTimeout(10000)
+                        .build();
+                httpPost.setConfig(requestConfig);
+
+                for (Map.Entry entry : headers.entrySet()) {
+                    httpPost.setHeader(entry.getKey().toString(), entry.getValue().toString());
+                }
+
+                if (null != body) {
+                    // 设置参数
+                    StringEntity se = new StringEntity(JSONObject.toJSONString(body), "UTF-8");
+                    httpPost.setEntity(se);
+                    logger.info("POST请求 postJson body1s:{}", JSONObject.toJSONString(httpPost.getEntity()));
+                }
+                response = httpClient.execute(httpPost);
+                if (response != null) {
+                    HttpEntity resEntity = response.getEntity();
+                    result = EntityUtils.toString(resEntity, charset);
+                    EntityUtils.consume(resEntity); // 此句关闭了流
+                }
+            } catch (Exception e) {
+                logger.error("postJson occur error:{}", e.getMessage(), e);
+            } finally {
+                closeResponse(response, url, body);
+            }
+
+        } else {
+            result = "config.properties中 is_test 属性值为false, 若已正确设置请求值，请设置为true后再次测试";
+        }
+        logger.info("POST请求 postJson result:{}", result);
+        return result;
+    }
 }

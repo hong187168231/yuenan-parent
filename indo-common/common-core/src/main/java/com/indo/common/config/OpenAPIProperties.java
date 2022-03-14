@@ -119,6 +119,29 @@ public class OpenAPIProperties implements InitializingBean {
     //  @Value("${pg.pgApiToken}")
     private String pgApiToken;
 
+    //T9
+    public static String T9_API_KEY;
+    public static String T9_API_IV;
+    public static String T9_API_URL;
+    public static String T9_DOMAIN;
+    public static String T9_AGENT;
+    public static String T9_MERCHANT_CODE;
+    public static String T9_PLATFORM_CODE;
+    @Value("${t9.key}")
+    private String t9key;
+    @Value("${t9.iv}")
+    private String t9iv;
+    @Value("${t9.apiUrl}")
+    private String t9Apiurl;
+    @Value("${t9.domain}")
+    private String t9Domain;
+    @Value("${t9.agent}")
+    private String t9Agent;
+    @Value("${t9.merchantCode}")
+    private String t9MerchantCode;
+    @Value("${t9.platformCode:T9}")
+    private String t9PlatformCode;
+
     @Override
     public void afterPropertiesSet() {
 
@@ -161,5 +184,13 @@ public class OpenAPIProperties implements InitializingBean {
         PG_API_URL = pgApiurl;
         PG_SECRET_KEY = pgSecretKey;
         PG_API_TOKEN = pgApiToken;
+
+        T9_API_URL = t9Apiurl;
+        T9_DOMAIN = t9Domain;
+        T9_AGENT = t9Agent;
+        T9_MERCHANT_CODE = t9MerchantCode;
+        T9_API_KEY = t9key;
+        T9_API_IV = t9iv;
+        T9_PLATFORM_CODE = t9PlatformCode;
     }
 }

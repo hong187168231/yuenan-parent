@@ -14,6 +14,7 @@ import com.indo.game.service.jdb.JdbService;
 import com.indo.game.service.pg.PgService;
 import com.indo.game.service.saba.SabaService;
 import com.indo.game.service.sbo.SboService;
+import com.indo.game.service.t9.T9Service;
 import com.indo.game.service.ug.UgService;
 
 import io.swagger.annotations.Api;
@@ -56,6 +57,8 @@ public class GameController {
     private CqService cqService;
     @Autowired
     private PgService pgService;
+    @Autowired
+    private T9Service t9Service;
     @Autowired
     private RedissonClient redissonClient;
 
@@ -109,6 +112,9 @@ public class GameController {
                 }
                 if ("PG".equals(parentName)) {
                     resultInfo = pgService.pgGame(loginUser, isMobileLogin, ip, platform, parentName);
+                }
+                if ("T9".equals(parentName)) {
+                    resultInfo = t9Service.t9Game(loginUser, isMobileLogin, ip, platform, parentName);
                 }
 
 
@@ -174,6 +180,9 @@ public class GameController {
             }
             if ("PG".equals(platform)) {
                 resultInfo = pgService.logout(loginUser, platform, ip);
+            }
+            if ("T9".equals(platform)) {
+                resultInfo = t9Service.logout(loginUser, platform, ip);
             }
             if (resultInfo == null) {
                 log.info("退出平台log {} loginPlatform result is null. params:{},ip:{}", loginUser.getId(), params, ip);
