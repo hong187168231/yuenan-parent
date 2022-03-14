@@ -68,6 +68,7 @@ public class AgentRebateJob {
             agentRebateRecord.setRealName(BeforeData.getRealName());
             agentRebateRecord.setSuperior(BeforeData.getSuperior());
             agentRebateRecord.setTeamNum(BeforeData.getTeamNum());
+            agentRebateRecord.setTeamAmout(teamSumBet);
             agentRebateRecordMapper.insert(agentRebateRecord);
 
             MemGoldChangeDTO agentRebateChange = new MemGoldChangeDTO();

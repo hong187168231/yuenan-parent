@@ -11,6 +11,8 @@
         <result column="mem_real_name" property="realName"/>
         <result column="yesterday_remain" property="yesterdayRemain"/>
         <result column="rebate_amout" property="rebateAmout"/>
+        <result column="team_num" property="teamNum"/>
+        <result column="team_amout" property="teamAmout"/>
         <result column="create_user" property="createUser"/>
     </resultMap>
 

@@ -54,5 +54,10 @@ public class AgentRebateRecordVO implements Serializable {
     @ApiModelProperty(value = "发放人")
     private String createUser;
 
+    @ApiModelProperty(value = "团队人数")
+    private Integer teamNum;
+
+    @ApiModelProperty(value = "团队投注金额")
+    private BigDecimal teamAmout;
 
 }

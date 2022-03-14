@@ -24,6 +24,6 @@ import java.util.List;
 public interface AgentRebateRecordMapper extends BaseMapper<AgentRebateRecord> {
 
     @Select("SELECT arr.today_remain FROM agent_rebate_record arr WHERE account =#{account}" +
-            " and  TO_DAYS(NOW()) - TO_DAYS(gt.create_time)  < 1 ")
+            " and  TO_DAYS(NOW()) - TO_DAYS(arr.create_time)  < 1 ")
     BigDecimal yesterdayRemain(@Param("account") String account);
 }

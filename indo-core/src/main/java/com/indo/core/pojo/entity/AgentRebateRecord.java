@@ -44,8 +44,11 @@ public class AgentRebateRecord extends BaseEntity {
     @ApiModelProperty(value = "上级代理")
     private String superior;
 
-    @ApiModelProperty(value = "上级代理")
+    @ApiModelProperty(value = "团队人数")
     private Integer teamNum;
+
+    @ApiModelProperty(value = "团队投注金额")
+    private BigDecimal teamAmout;
 
     @ApiModelProperty(value = "昨日结余")
     private BigDecimal todayRemain;
