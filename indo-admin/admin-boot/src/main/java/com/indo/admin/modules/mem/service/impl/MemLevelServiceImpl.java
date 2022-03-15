@@ -41,14 +41,16 @@ public class MemLevelServiceImpl extends SuperServiceImpl<MemLevelMapper, MemLev
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean saveOne(MemLevelAddReq req) {
         MemLevel memLevel = new MemLevel();
         BeanUtils.copyProperties(req, memLevel);
         if (baseMapper.insert(memLevel) > 0) {
             refreshMemLevel();
+            return true;
+        } else {
+            return false;
         }
-        return false;
     }
 
     @Override
