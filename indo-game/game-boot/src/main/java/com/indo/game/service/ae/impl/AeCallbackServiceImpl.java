@@ -6,7 +6,6 @@ import com.indo.common.config.OpenAPIProperties;
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.common.utils.DateUtils;
-import com.indo.common.utils.encrypt.Base64;
 import com.indo.common.utils.encrypt.MD5;
 import com.indo.game.mapper.TxnsMapper;
 import com.indo.game.pojo.dto.ae.AeCallBackParentReq;
@@ -29,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Base64;
 import java.util.Date;
 
 import javax.annotation.Resource;
@@ -54,7 +54,7 @@ public class AeCallbackServiceImpl implements AeCallbackService {
         StringBuilder builder = new StringBuilder();
         builder.append(aeApiRequestData.getMerchantId()).append(aeApiRequestData.getCurrentTime());
         builder.append(aeApiRequestData.getAccountId()).append(aeApiRequestData.getCurrency());
-        builder.append("OTdiMjBmMzI5ODg1MTYyNGZjNjg5M2U2ZTVmZTY2ZTU0OTUyZDBiMDFlYjY0Zjc1OWU4YTIzMmE4ZjQxOTM4NThkNmYzMGIzZTM3NWE5NGM1MGFlMDliMWQ4MmEwMWFkNDQyMjc5NDk2ZGM3NmM4Y2ExNTZmYjJkZWYwYjE0NmQ=");
+        builder.append(Base64.getEncoder().encodeToString(OpenAPIProperties.AE_MERCHANT_KEY.getBytes()));
         String sign = MD5.md5(builder.toString());
         if (aeApiRequestData.getSign().equalsIgnoreCase(sign)) {
             String accountId = aeApiRequestData.getAccountId().substring(aeApiRequestData.getAccountId().indexOf("_") + 1);
@@ -105,7 +105,7 @@ public class AeCallbackServiceImpl implements AeCallbackService {
             builder.append(aeApiRequestData.getAccountId()).append(aeApiRequestData.getCurrency());
             builder.append(aeApiRequestData.getTxnId()).append(aeApiRequestData.getTxnTypeId());
             builder.append(aeApiRequestData.getGameId());
-            builder.append("OTdiMjBmMzI5ODg1MTYyNGZjNjg5M2U2ZTVmZTY2ZTU0OTUyZDBiMDFlYjY0Zjc1OWU4YTIzMmE4ZjQxOTM4NThkNmYzMGIzZTM3NWE5NGM1MGFlMDliMWQ4MmEwMWFkNDQyMjc5NDk2ZGM3NmM4Y2ExNTZmYjJkZWYwYjE0NmQ=");
+            builder.append(Base64.getEncoder().encodeToString(OpenAPIProperties.AE_MERCHANT_KEY.getBytes()));
             String sign = MD5.md5(builder.toString());
             if (aeApiRequestData.getSign().equalsIgnoreCase(sign)) {
                 //Bet(100), Adjust(200), LuckyDraw(300), Tournament(400)
