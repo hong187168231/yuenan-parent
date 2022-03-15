@@ -1,11 +1,9 @@
 package com.indo.common.utils;
 
 import com.alibaba.fastjson.JSONObject;
-
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpHost;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -22,10 +20,21 @@ import org.slf4j.LoggerFactory;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
-
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class GameUtil extends HttpCommonUtils {
     private static final Logger logger = LoggerFactory.getLogger(GameUtil.class);
@@ -455,6 +464,7 @@ public class GameUtil extends HttpCommonUtils {
 
     /**
      * T9电子API请求
+     *
      * @param url
      * @param body
      * @param headers
@@ -489,8 +499,68 @@ public class GameUtil extends HttpCommonUtils {
                     // 设置参数
                     StringEntity se = new StringEntity(JSONObject.toJSONString(body), "UTF-8");
                     httpPost.setEntity(se);
-                    logger.info("POST请求 postJson body1s:{}", JSONObject.toJSONString(httpPost.getEntity()));
                 }
+                response = httpClient.execute(httpPost);
+                if (response != null) {
+                    HttpEntity resEntity = response.getEntity();
+                    result = EntityUtils.toString(resEntity, charset);
+                    EntityUtils.consume(resEntity); // 此句关闭了流
+                }
+            } catch (Exception e) {
+                logger.error("postJson occur error:{}", e.getMessage(), e);
+            } finally {
+                closeResponse(response, url, body);
+            }
+
+        } else {
+            result = "config.properties中 is_test 属性值为false, 若已正确设置请求值，请设置为true后再次测试";
+        }
+        logger.info("POST请求 postJson result:{}", result);
+        return result;
+    }
+
+
+    /**
+     * PP电子 form表单请求
+     *
+     * @param url
+     * @param body
+     * @return
+     */
+    public static String postForm4PP(String url, Map<String, Object> body, String method) {
+        logger.info("POST请求 postJson url:{}, method: {}", url, method);
+        logger.info("POST请求 postJson body:{}", body);
+        String result = null;
+        if (true) {
+            String charset = "UTF-8";
+            CloseableHttpClient httpClient;
+            HttpPost httpPost;
+            CloseableHttpResponse response = null;
+            try {
+                httpClient = HttpConnectionManager.getInstance().getHttpClient();
+                httpPost = new HttpPost(url);
+
+                // 设置连接超时,设置读取超时
+                RequestConfig requestConfig = RequestConfig.custom()
+                        .setConnectTimeout(10000)
+                        .setSocketTimeout(10000)
+                        .build();
+                httpPost.setConfig(requestConfig);
+
+                httpPost.setHeader("Content-Type", "application/x-www-form-urlencoded");
+
+                if (null != body) {
+                    List<BasicNameValuePair> list = new ArrayList<>();
+                    for (String key : body.keySet()) {
+                        list.add(new BasicNameValuePair(key, String.valueOf(body.get(key))));
+                    }
+                    // 创建请求内容
+                    UrlEncodedFormEntity urlEncodedFormEntity = new UrlEncodedFormEntity(list, "utf-8");
+                    httpPost.setEntity(urlEncodedFormEntity);
+                    logger.info("POST请求 postJson ,urlEncodedFormEntity:{}", JSONObject.toJSONString(urlEncodedFormEntity));
+
+                }
+
                 response = httpClient.execute(httpPost);
                 if (response != null) {
                     HttpEntity resEntity = response.getEntity();

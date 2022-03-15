@@ -142,6 +142,26 @@ public class OpenAPIProperties implements InitializingBean {
     @Value("${t9.platformCode:T9}")
     private String t9PlatformCode;
 
+    // PP
+    public static String PP_API_SECRET_KEY;
+    public static String PP_API_URL;
+    public static String PP_PROVIDER_ID;
+    public static String PP_SECURE_LOGIN;
+    public static String PP_NAME;
+    public static String PP_PLATFORM_CODE;
+    @Value("${pp.apiUrl}")
+    private String ppApiurl;
+    @Value("${pp.secretKey}")
+    private String ppSecretKey;
+    @Value("${pp.providerId}")
+    private String ppProviderId ;
+    @Value("${pp.secureLogin}")
+    private String ppSecureLogin ;
+    @Value("${pp.ppName}")
+    private String ppName ;
+    @Value("${pp.platformCode:PP}")
+    private String ppPlatformCode;
+
     @Override
     public void afterPropertiesSet() {
 
@@ -192,5 +212,12 @@ public class OpenAPIProperties implements InitializingBean {
         T9_API_KEY = t9key;
         T9_API_IV = t9iv;
         T9_PLATFORM_CODE = t9PlatformCode;
+
+        PP_API_URL = ppApiurl;
+        PP_API_SECRET_KEY = ppSecretKey;
+        PP_SECURE_LOGIN = ppSecureLogin;
+        PP_PROVIDER_ID = ppProviderId;
+        PP_NAME = ppName;
+        PP_PLATFORM_CODE = ppPlatformCode;
     }
 }
