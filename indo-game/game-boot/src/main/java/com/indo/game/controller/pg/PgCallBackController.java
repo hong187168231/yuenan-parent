@@ -52,9 +52,9 @@ public class PgCallBackController {
     public Object verifySession(PgVerifyCallBackReq pgVerifyCallBackReq,HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("pgCallBack {} verifySession 回调,params:{}", JSONObject.toJSONString(pgVerifyCallBackReq));
+        logger.info("pgCallBack {} verifySession回调,params:{}", JSONObject.toJSONString(pgVerifyCallBackReq));
         Object object = pgCallbackService.pgVerifyCallback(pgVerifyCallBackReq, ip);
-        logger.info("pgCallBack {} verifySession 回调下注返回数据 params:{}", object);
+        logger.info("pgCallBack {} verifySession回调返回数据 params:{}", object);
         return object;
     }
 
@@ -68,9 +68,9 @@ public class PgCallBackController {
     public Object transferIn(PgVerifyCallBackReq pgVerifyCallBackReq,HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("pgCallBack {} TransferIn 回调,params:{}", JSONObject.toJSONString(pgVerifyCallBackReq));
+        logger.info("pgCallBack {} TransferIn回调,params:{}", JSONObject.toJSONString(pgVerifyCallBackReq));
         Object object = pgCallbackService.pgTransferInCallback(pgVerifyCallBackReq, ip);
-        logger.info("pgCallBack {} TransferIn 回调下注返回数据 params:{}", object);
+        logger.info("pgCallBack {} TransferIn回调返回数据 params:{}", object);
         return object;
     }
 
@@ -83,9 +83,9 @@ public class PgCallBackController {
     public Object adjustment(PgVerifyCallBackReq pgVerifyCallBackReq,HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("pgCallBack {} adjustment 回调,params:{}", JSONObject.toJSONString(pgVerifyCallBackReq));
+        logger.info("pgCallBack {} adjustment回调,params:{}", JSONObject.toJSONString(pgVerifyCallBackReq));
         Object object = pgCallbackService.pgAdjustmentCallback(pgVerifyCallBackReq, ip);
-        logger.info("pgCallBack {} adjustment 回调下注返回数据 params:{}", object);
+        logger.info("pgCallBack {} adjustment回调返回数据 params:{}", object);
         return object;
     }
 }

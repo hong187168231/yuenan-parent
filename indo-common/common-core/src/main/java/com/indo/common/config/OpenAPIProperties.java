@@ -112,11 +112,11 @@ public class OpenAPIProperties implements InitializingBean {
     public static String PG_API_TOKEN;
     public static String PG_API_URL;
     public static String PG_SECRET_KEY;
-    //  @Value("${pg.apiUrl}")
+    @Value("${pg.apiUrl}")
     private String pgApiurl;
-    // @Value("${pg.pgSecretKey}")
+    @Value("${pg.pgSecretKey}")
     private String pgSecretKey;
-    //  @Value("${pg.pgApiToken}")
+    @Value("${pg.pgApiToken}")
     private String pgApiToken;
 
     @Override
