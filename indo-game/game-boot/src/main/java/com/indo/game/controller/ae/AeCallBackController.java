@@ -3,12 +3,14 @@ package com.indo.game.controller.ae;
 import com.alibaba.fastjson.JSONObject;
 import com.indo.common.annotation.AllowAccess;
 import com.indo.common.utils.IPAddressUtil;
+import com.indo.game.pojo.dto.ae.AeCallBackParentReq;
 import com.indo.game.pojo.dto.ae.AeCallBackTransferReq;
 import com.indo.game.service.ae.AeCallbackService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -30,7 +32,7 @@ public class AeCallBackController {
     @RequestMapping(value = "/callBack/single/wallet/balance", method = RequestMethod.POST)
     @ResponseBody
     @AllowAccess
-    public Object getBalance(AeCallBackTransferReq aeApiRequestData, HttpServletRequest request) {
+    public Object getBalance(@RequestBody AeCallBackParentReq aeApiRequestData, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
         logger.info("aeCallBack {} GetBalance 回调,取得用户的余额 params:{}", JSONObject.toJSONString(aeApiRequestData));
@@ -46,7 +48,7 @@ public class AeCallBackController {
     @RequestMapping(value = "/callBack/single/wallet/fund/transfer", method = RequestMethod.POST)
     @ResponseBody
     @AllowAccess
-    public Object transfer(AeCallBackTransferReq aeApiRequestData, HttpServletRequest request) {
+    public Object transfer(@RequestBody AeCallBackTransferReq aeApiRequestData, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
         logger.info("aeCallBack {} transfer 回调,取得用户的余额 params:{}", JSONObject.toJSONString(aeApiRequestData));
@@ -61,7 +63,7 @@ public class AeCallBackController {
     @RequestMapping(value = "/callBack/single/wallet/fund/query", method = RequestMethod.POST)
     @ResponseBody
     @AllowAccess
-    public Object query(AeCallBackTransferReq aeApiRequestData, HttpServletRequest request) {
+    public Object query(@RequestBody AeCallBackTransferReq aeApiRequestData, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
         logger.info("aeCallBack {} query 回调,取得用户的余额 params:{}", JSONObject.toJSONString(aeApiRequestData));

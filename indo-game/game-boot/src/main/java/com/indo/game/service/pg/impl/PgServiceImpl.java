@@ -98,7 +98,7 @@ public class PgServiceImpl implements PgService {
                 cptOpenMember.setLoginTime(new Date());
                 cptOpenMember.setType(parentName);
                 //创建玩家
-                return createMemberGame(platformGameParent, gamePlatform, ip, cptOpenMember, isMobileLogin);
+                createMemberGame(platformGameParent, gamePlatform, ip, cptOpenMember, isMobileLogin);
             } else {
                 CptOpenMember updateCptOpenMember = new CptOpenMember();
                 updateCptOpenMember.setId(cptOpenMember.getId());
@@ -106,10 +106,10 @@ public class PgServiceImpl implements PgService {
                 externalService.updateCptOpenMember(updateCptOpenMember);
             }
             StringBuilder builder = new StringBuilder();
-            builder.append(OpenAPIProperties.PG_API_URL).append("/web-lobby/games?");
+            builder.append(OpenAPIProperties.PG_API_URL).append("/web-lobby?panel_type=games&");
             builder.append("operator_token=").append(OpenAPIProperties.PG_API_TOKEN);
             builder.append("&operator_player_session=").append(cptOpenMember.getPassword());
-            builder.append("&language=").append(platformGameParent.getCurrencyType());
+            builder.append("&language=").append(platformGameParent.getLanguageType());
 
             //登录
             ApiResponseData responseData = new ApiResponseData();

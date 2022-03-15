@@ -129,7 +129,7 @@ public class AeServiceImpl implements AeService {
             ApiResponseData responseData = new ApiResponseData();
             JSONObject jsonObject = JSON.parseObject(aeApiResponseData.getData());
             responseData.setPathUrl(jsonObject.getString("gameUrl"));
-            return Result.success(aeApiResponseData);
+            return Result.success(responseData);
         } else {
             return errorCode(aeApiResponseData.getCode(), aeApiResponseData.getMsg());
         }
@@ -157,7 +157,7 @@ public class AeServiceImpl implements AeService {
         StringBuilder builder = new StringBuilder();
         builder.append(OpenAPIProperties.AE_MERCHANT_ID).append(platformGameParent.getCurrencyType()).append(currentTime);
         builder.append(cptOpenMemberm.getUserName()).append("0").append(params.get("device")).append(gamePlatform.getPlatformCode());
-        builder.append(platformGameParent.getLanguageType()).append(Base64.encode(OpenAPIProperties.AE_MERCHANT_KEY.getBytes()));
+        builder.append(platformGameParent.getLanguageType()).append("OTdiMjBmMzI5ODg1MTYyNGZjNjg5M2U2ZTVmZTY2ZTU0OTUyZDBiMDFlYjY0Zjc1OWU4YTIzMmE4ZjQxOTM4NThkNmYzMGIzZTM3NWE5NGM1MGFlMDliMWQ4MmEwMWFkNDQyMjc5NDk2ZGM3NmM4Y2ExNTZmYjJkZWYwYjE0NmQ=");
         String sign = MD5.md5(builder.toString());
         params.put("gameId", gamePlatform.getPlatformCode());
         params.put("sign", sign);
@@ -199,7 +199,7 @@ public class AeServiceImpl implements AeService {
         long currentTime = System.currentTimeMillis();
         StringBuilder builder = new StringBuilder();
         builder.append(OpenAPIProperties.AE_MERCHANT_ID).append(platformGameParent.getCurrencyType()).append(currentTime);
-        builder.append(cptOpenMember.getUserName()).append(Base64.encode(OpenAPIProperties.AE_MERCHANT_KEY.getBytes()));
+        builder.append(cptOpenMember.getUserName()).append("OTdiMjBmMzI5ODg1MTYyNGZjNjg5M2U2ZTVmZTY2ZTU0OTUyZDBiMDFlYjY0Zjc1OWU4YTIzMmE4ZjQxOTM4NThkNmYzMGIzZTM3NWE5NGM1MGFlMDliMWQ4MmEwMWFkNDQyMjc5NDk2ZGM3NmM4Y2ExNTZmYjJkZWYwYjE0NmQ=");
         String sign = MD5.md5(builder.toString());
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("merchantId", OpenAPIProperties.AE_MERCHANT_ID);
@@ -208,7 +208,6 @@ public class AeServiceImpl implements AeService {
         params.put("username", cptOpenMember.getUserName());
         params.put("sign", sign);
         params.put("language", platformGameParent.getLanguageType());
-        params.put("brandCode", platformGameParent.getPlatformCode());
         String jsonStr = JSON.toJSONString(params);
         StringBuilder apiUrl = new StringBuilder();
         apiUrl.append(OpenAPIProperties.AE_API_URL).append("/api/register");
@@ -234,19 +233,19 @@ public class AeServiceImpl implements AeService {
             long currentTime = System.currentTimeMillis();
             StringBuilder builder = new StringBuilder();
             String name = OpenAPIProperties.AE_MERCHANT_ID + "_" + loginUser.getAccount();
-            builder.append(OpenAPIProperties.AE_MERCHANT_ID).append(platformGameParent.getCurrencyType()).append(currentTime);
-            builder.append(name).append(Base64.encode(OpenAPIProperties.AE_MERCHANT_KEY.getBytes()));
+            builder.append(OpenAPIProperties.AE_MERCHANT_ID).append("VNDS").append(currentTime);
+            builder.append(name).append("OTdiMjBmMzI5ODg1MTYyNGZjNjg5M2U2ZTVmZTY2ZTU0OTUyZDBiMDFlYjY0Zjc1OWU4YTIzMmE4ZjQxOTM4NThkNmYzMGIzZTM3NWE5NGM1MGFlMDliMWQ4MmEwMWFkNDQyMjc5NDk2ZGM3NmM4Y2ExNTZmYjJkZWYwYjE0NmQ=");
             String sign = MD5.md5(builder.toString());
             Map<String, Object> params = new HashMap<String, Object>();
             params.put("merchantId", OpenAPIProperties.AE_MERCHANT_ID);
-            params.put("currency", platformGameParent.getCurrencyType());  //币种必填项
+            params.put("currency", "VNDS");  //币种必填项
             params.put("username", name);
             params.put("currentTime", currentTime);
             params.put("sign", sign);
             String jsonStr = JSON.toJSONString(params);
             StringBuilder apiUrl = new StringBuilder();
             apiUrl.append(OpenAPIProperties.AE_API_URL).append("/api/logout");
-            AeApiResponseData aeApiResponseData = commonRequest(apiUrl.toString(), jsonStr, loginUser.getId().intValue(), "gameLogin");
+            AeApiResponseData aeApiResponseData = commonRequest(apiUrl.toString(), jsonStr, loginUser.getId().intValue(), "gameLogout");
             if (null == aeApiResponseData) {
                 return Result.failed();
             }

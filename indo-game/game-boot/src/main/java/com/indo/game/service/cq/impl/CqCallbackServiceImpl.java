@@ -438,6 +438,5 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         getBalanceSuccess.setStatus(statusResp);
         return JSONObject.toJSONString(getBalanceSuccess);
     }
-
 }
 
