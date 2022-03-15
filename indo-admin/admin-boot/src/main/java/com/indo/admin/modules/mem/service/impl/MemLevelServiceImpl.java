@@ -60,8 +60,10 @@ public class MemLevelServiceImpl extends SuperServiceImpl<MemLevelMapper, MemLev
         BeanUtils.copyProperties(req, memLevel);
         if (baseMapper.updateById(memLevel) > 0) {
             refreshMemLevel();
+            return true;
+        } else {
+            return false;
         }
-        return false;
     }
 
     @Override

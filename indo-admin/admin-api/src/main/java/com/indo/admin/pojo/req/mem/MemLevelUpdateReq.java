@@ -4,8 +4,6 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.math.BigDecimal;
-
 /**
  * @des:会员基础信息查询参数
  * @Author: kevin
@@ -16,34 +14,34 @@ import java.math.BigDecimal;
 public class MemLevelUpdateReq {
 
     @ApiModelProperty(value = "id")
-    private Integer id;
+    private Long id;
 
     @ApiModelProperty(value = "会员等级")
-    private String level;
+    private Integer level;
 
     @ApiModelProperty(value = "所需存款")
-    private BigDecimal needDeposit;
+    private Long needDeposit;
 
     @ApiModelProperty(value = "所需投注")
-    private BigDecimal needBet;
+    private Long needBet;
 
     @ApiModelProperty(value = "晋级奖励")
-    private BigDecimal reward;
+    private Long reward;
 
     @ApiModelProperty(value = "每日礼金")
-    private BigDecimal everydayGift;
+    private Long everydayGift;
 
     @ApiModelProperty(value = "每周礼金")
-    private BigDecimal weekGift;
+    private Long weekGift;
 
     @ApiModelProperty(value = "每月礼金")
-    private BigDecimal monthGift;
+    private Long monthGift;
 
     @ApiModelProperty(value = "每年礼金")
-    private BigDecimal yearGift;
+    private Long yearGift;
 
     @ApiModelProperty(value = "生日礼金")
-    private BigDecimal birthdayGift;
+    private Long birthdayGift;
 
     @ApiModelProperty(value = "会员人数")
     private Integer memNum;
