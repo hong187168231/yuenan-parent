@@ -12,6 +12,7 @@ import com.indo.game.service.awc.AwcService;
 import com.indo.game.service.cq.CqService;
 import com.indo.game.service.jdb.JdbService;
 import com.indo.game.service.pg.PgService;
+import com.indo.game.service.pp.PpService;
 import com.indo.game.service.saba.SabaService;
 import com.indo.game.service.sbo.SboService;
 import com.indo.game.service.t9.T9Service;
@@ -59,6 +60,8 @@ public class GameController {
     private PgService pgService;
     @Autowired
     private T9Service t9Service;
+    @Autowired
+    private PpService ppService;
     @Autowired
     private RedissonClient redissonClient;
 
@@ -116,7 +119,9 @@ public class GameController {
                 if ("T9".equals(parentName)) {
                     resultInfo = t9Service.t9Game(loginUser, isMobileLogin, ip, platform, parentName);
                 }
-
+                if ("PP".equals(parentName)) {
+                    resultInfo = ppService.ppGame(loginUser, isMobileLogin, ip, platform, parentName);
+                }
 
                 if (resultInfo == null) {
                     log.info("登录平台或单一游戏登录log {} loginPlatform result is null. params:{},ip:{},parentName:{}", loginUser.getId(), params, ip, parentName);
@@ -183,6 +188,9 @@ public class GameController {
             }
             if ("T9".equals(platform)) {
                 resultInfo = t9Service.logout(loginUser, platform, ip);
+            }
+            if ("PP".equals(platform)) {
+                resultInfo = ppService.logout(loginUser, platform, ip);
             }
             if (resultInfo == null) {
                 log.info("退出平台log {} loginPlatform result is null. params:{},ip:{}", loginUser.getId(), params, ip);

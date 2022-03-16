@@ -92,7 +92,7 @@ public class PpServiceImpl implements PpService {
                 cptOpenMember = new CptOpenMember();
                 cptOpenMember.setUserId(loginUser.getId().intValue());
                 cptOpenMember.setUserName(loginUser.getAccount());
-                cptOpenMember.setPassword(loginUser.getAccount());
+                cptOpenMember.setPassword(GeneratorIdUtil.generateId());
                 cptOpenMember.setCreateTime(new Date());
                 cptOpenMember.setLoginTime(new Date());
                 cptOpenMember.setType(parentName);
