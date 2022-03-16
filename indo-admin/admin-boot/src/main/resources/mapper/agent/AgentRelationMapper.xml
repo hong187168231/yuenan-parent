@@ -34,7 +34,7 @@
         <if test="req.memAgentId !=null">
             and ar.agent_id = #{req.memAgentId}
         </if>
-        <if test="req.account !=null">
+        <if test="req.account !=null and req.account !=''">
             and ar.account = #{req.account}
         </if>
         ORDER BY ar.create_time desc
