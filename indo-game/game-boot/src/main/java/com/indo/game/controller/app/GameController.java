@@ -13,6 +13,7 @@ import com.indo.game.service.cq.CqService;
 import com.indo.game.service.jdb.JdbService;
 import com.indo.game.service.pg.PgService;
 import com.indo.game.service.pp.PpService;
+import com.indo.game.service.rich.Rich88Service;
 import com.indo.game.service.saba.SabaService;
 import com.indo.game.service.sbo.SboService;
 import com.indo.game.service.t9.T9Service;
@@ -62,6 +63,8 @@ public class GameController {
     private T9Service t9Service;
     @Autowired
     private PpService ppService;
+    @Autowired
+    private Rich88Service rich88Service;
     @Autowired
     private RedissonClient redissonClient;
 
@@ -121,6 +124,9 @@ public class GameController {
                 }
                 if ("PP".equals(parentName)) {
                     resultInfo = ppService.ppGame(loginUser, isMobileLogin, ip, platform, parentName);
+                }
+                if ("RICH".equals(parentName)) {
+                    resultInfo = rich88Service.rich88Game(loginUser, isMobileLogin, ip, platform, parentName);
                 }
 
                 if (resultInfo == null) {
@@ -191,6 +197,9 @@ public class GameController {
             }
             if ("PP".equals(platform)) {
                 resultInfo = ppService.logout(loginUser, platform, ip);
+            }
+            if ("RICH".equals(platform)) {
+                resultInfo = rich88Service.logout(loginUser, platform, ip);
             }
             if (resultInfo == null) {
                 log.info("退出平台log {} loginPlatform result is null. params:{},ip:{}", loginUser.getId(), params, ip);

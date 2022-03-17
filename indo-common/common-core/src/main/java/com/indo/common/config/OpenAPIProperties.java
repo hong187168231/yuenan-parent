@@ -169,6 +169,23 @@ public class OpenAPIProperties implements InitializingBean {
     @Value("${ps.psHostId}")
     private String psHostId;
 
+    // RICH88
+    public static String RICH_API_URL;
+    public static String RICH_PRIVATE_KEY;
+    public static String RICH_PF_ID;
+    public static String RICH_PLATFORM_CODE;
+    public static String RICH_SESSION_ID;
+    @Value("${rich.apiUrl}")
+    private String richApiurl;
+    @Value("${rich.privateKey}")
+    private String richPrivateKey;
+    @Value("${rich.pfid}")
+    private String richPfid ;
+    @Value("${rich.platformCode:RICH}")
+    private String richPlatformCode;
+    @Value("${rich.sessionId}")
+    private String richSessionId ;
+
     @Override
     public void afterPropertiesSet() {
 
@@ -230,7 +247,11 @@ public class OpenAPIProperties implements InitializingBean {
         PS_API_URL = psApiurl;
         PS_HOST_ID = psHostId;
 
-
+        RICH_API_URL = richApiurl;
+        RICH_PRIVATE_KEY = richPrivateKey;
+        RICH_PF_ID = richPfid;
+        RICH_PLATFORM_CODE = richPlatformCode;
+        RICH_SESSION_ID = richSessionId;
 
     }
 }
