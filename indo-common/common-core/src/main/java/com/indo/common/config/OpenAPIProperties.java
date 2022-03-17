@@ -162,6 +162,16 @@ public class OpenAPIProperties implements InitializingBean {
     @Value("${pp.platformCode:PP}")
     private String ppPlatformCode;
 
+
+    //PlayStar
+    public static String PS_HOST_ID;
+    public static String PS_API_URL;
+    @Value("${pg.psApiurl}")
+    private String psApiurl;
+    @Value("${pg.pgHostId}")
+    private String psHostId;
+
+
     @Override
     public void afterPropertiesSet() {
 
@@ -219,5 +229,11 @@ public class OpenAPIProperties implements InitializingBean {
         PP_PROVIDER_ID = ppProviderId;
         PP_NAME = ppName;
         PP_PLATFORM_CODE = ppPlatformCode;
+
+        PS_API_URL = psApiurl;
+        PS_HOST_ID = psHostId;
+
+
+
     }
 }

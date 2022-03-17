@@ -107,8 +107,8 @@ public class Base64 {
     }
 
     public static void main(String[] args) {
-        String s = "美国队长";
-        System.out.println(Base64.encode(s.getBytes()));
+        String s = "97b20f3298851624fc6893e6e5fe66e54952d0b01eb64f759e8a232a8f4193858d6f30b3e375a94c50ae09b1d82a01ad442279496dc76c8ca156fb2def0b146d";
+        System.out.println((s.getBytes()));
         System.out.println(new String(Base64.decode("576O5Zu96Zif6ZW!")));
     }
 }
