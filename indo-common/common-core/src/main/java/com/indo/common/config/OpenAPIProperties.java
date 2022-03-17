@@ -107,7 +107,6 @@ public class OpenAPIProperties implements InitializingBean {
     @Value("${cq.cqApiToken}")
     private String cqApiToken;
 
-
     //PG
     public static String PG_API_TOKEN;
     public static String PG_API_URL;
@@ -162,7 +161,6 @@ public class OpenAPIProperties implements InitializingBean {
     @Value("${pp.platformCode:PP}")
     private String ppPlatformCode;
 
-
     //PlayStar
     public static String PS_HOST_ID;
     public static String PS_API_URL;
@@ -170,7 +168,6 @@ public class OpenAPIProperties implements InitializingBean {
     private String psApiurl;
     @Value("${ps.psHostId}")
     private String psHostId;
-
 
     @Override
     public void afterPropertiesSet() {
