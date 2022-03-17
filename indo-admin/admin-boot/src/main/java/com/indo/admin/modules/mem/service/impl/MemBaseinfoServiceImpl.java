@@ -156,6 +156,9 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
     @Override
     public MemBaseDetailVO getMemBaseInfoByAccount(String account) {
         MemBaseinfo memBaseinfo = baseMapper.selectOne(new QueryWrapper<MemBaseinfo>().lambda().eq(MemBaseinfo::getAccount, account));
+        if(memBaseinfo==null){
+            throw new BizException("无此人信息");
+        }
         MemBaseDetailVO memBaseDetailVO = new MemBaseDetailVO();
         BeanUtils.copyProperties(memBaseinfo, memBaseDetailVO);
         return memBaseDetailVO;
