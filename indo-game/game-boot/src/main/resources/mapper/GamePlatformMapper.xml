@@ -17,6 +17,6 @@
         m.platform_cn_name,
         m.picture_path
         FROM game_platform t left join game_parent_platform m on t.parent_name=m.platform_code
-        WHERE t.is_start='1' and m.is_start='1'
+        WHERE t.is_start='1' and m.is_start='1' order by t.sort_number asc
     </select>
 </mapper>

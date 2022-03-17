@@ -166,9 +166,9 @@ public class OpenAPIProperties implements InitializingBean {
     //PlayStar
     public static String PS_HOST_ID;
     public static String PS_API_URL;
-    @Value("${pg.psApiurl}")
+    @Value("${ps.psApiurl}")
     private String psApiurl;
-    @Value("${pg.pgHostId}")
+    @Value("${ps.psHostId}")
     private String psHostId;
 
 
