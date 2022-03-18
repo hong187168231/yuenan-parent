@@ -96,15 +96,21 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
         memBaseinfo.setPasswordMd5(MD5.md5(req.getPassword()));
         if (baseMapper.insert(memBaseinfo) > 0) {
             memAgent.setMemId(memBaseinfo.getId());
-            memAgent.setParentId(supperMem.getId());
-            memAgent.setSuperior(supperMem.getAccount());
+            memAgent.setAccount(memBaseinfo.getAccount());
+            if(supperMem!=null){
+                memAgent.setParentId(supperMem.getId());
+                memAgent.setSuperior(supperMem.getAccount());
+            }
             memAgent.setStatus(0);
             if (memBaseinfo.getAccType().equals(2)) {
                 memAgent.setStatus(1);
             }
             int row = agentRelationMapper.insert(memAgent);
             if (row > 0) {
-                initMemParentAgent(memBaseinfo, supperMem.getId());
+                //给上级增加下级相关参数
+                if(supperMem!=null){
+                    initMemParentAgent(memBaseinfo, supperMem.getId());
+                }
             }
         }
     }
