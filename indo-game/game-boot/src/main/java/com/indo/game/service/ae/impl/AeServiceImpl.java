@@ -6,7 +6,6 @@ import com.indo.common.config.OpenAPIProperties;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
 import com.indo.common.utils.GameUtil;
-import com.indo.common.utils.encrypt.Base64;
 import com.indo.common.utils.encrypt.MD5;
 import com.indo.game.pojo.dto.ae.AeApiResponseData;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
@@ -25,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 
 import java.math.BigDecimal;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -157,7 +157,7 @@ public class AeServiceImpl implements AeService {
         StringBuilder builder = new StringBuilder();
         builder.append(OpenAPIProperties.AE_MERCHANT_ID).append(platformGameParent.getCurrencyType()).append(currentTime);
         builder.append(cptOpenMemberm.getUserName()).append("0").append(params.get("device")).append(gamePlatform.getPlatformCode());
-        builder.append(platformGameParent.getLanguageType()).append("OTdiMjBmMzI5ODg1MTYyNGZjNjg5M2U2ZTVmZTY2ZTU0OTUyZDBiMDFlYjY0Zjc1OWU4YTIzMmE4ZjQxOTM4NThkNmYzMGIzZTM3NWE5NGM1MGFlMDliMWQ4MmEwMWFkNDQyMjc5NDk2ZGM3NmM4Y2ExNTZmYjJkZWYwYjE0NmQ=");
+        builder.append(platformGameParent.getLanguageType()).append(Base64.getEncoder().encodeToString(OpenAPIProperties.AE_MERCHANT_KEY.getBytes()));
         String sign = MD5.md5(builder.toString());
         params.put("gameId", gamePlatform.getPlatformCode());
         params.put("sign", sign);
@@ -199,7 +199,7 @@ public class AeServiceImpl implements AeService {
         long currentTime = System.currentTimeMillis();
         StringBuilder builder = new StringBuilder();
         builder.append(OpenAPIProperties.AE_MERCHANT_ID).append(platformGameParent.getCurrencyType()).append(currentTime);
-        builder.append(cptOpenMember.getUserName()).append("OTdiMjBmMzI5ODg1MTYyNGZjNjg5M2U2ZTVmZTY2ZTU0OTUyZDBiMDFlYjY0Zjc1OWU4YTIzMmE4ZjQxOTM4NThkNmYzMGIzZTM3NWE5NGM1MGFlMDliMWQ4MmEwMWFkNDQyMjc5NDk2ZGM3NmM4Y2ExNTZmYjJkZWYwYjE0NmQ=");
+        builder.append(cptOpenMember.getUserName()).append(Base64.getEncoder().encodeToString(OpenAPIProperties.AE_MERCHANT_KEY.getBytes()));
         String sign = MD5.md5(builder.toString());
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("merchantId", OpenAPIProperties.AE_MERCHANT_ID);
@@ -234,7 +234,7 @@ public class AeServiceImpl implements AeService {
             StringBuilder builder = new StringBuilder();
             String name = OpenAPIProperties.AE_MERCHANT_ID + "_" + loginUser.getAccount();
             builder.append(OpenAPIProperties.AE_MERCHANT_ID).append("VNDS").append(currentTime);
-            builder.append(name).append("OTdiMjBmMzI5ODg1MTYyNGZjNjg5M2U2ZTVmZTY2ZTU0OTUyZDBiMDFlYjY0Zjc1OWU4YTIzMmE4ZjQxOTM4NThkNmYzMGIzZTM3NWE5NGM1MGFlMDliMWQ4MmEwMWFkNDQyMjc5NDk2ZGM3NmM4Y2ExNTZmYjJkZWYwYjE0NmQ=");
+            builder.append(name).append(Base64.getEncoder().encodeToString(OpenAPIProperties.AE_MERCHANT_KEY.getBytes()));
             String sign = MD5.md5(builder.toString());
             Map<String, Object> params = new HashMap<String, Object>();
             params.put("merchantId", OpenAPIProperties.AE_MERCHANT_ID);

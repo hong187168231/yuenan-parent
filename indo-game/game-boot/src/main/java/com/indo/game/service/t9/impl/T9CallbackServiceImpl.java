@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.indo.common.config.OpenAPIProperties;
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
+import com.indo.common.redis.utils.GeneratorIdUtil;
 import com.indo.common.utils.DateUtils;
 import com.indo.common.utils.StringUtils;
 import com.indo.game.mapper.TxnsMapper;
@@ -108,6 +109,13 @@ public class T9CallbackServiceImpl implements T9CallbackService {
 
         try {
             BigDecimal balance = memBaseinfo.getBalance();
+
+            if (memBaseinfo.getBalance().compareTo(balance) == -1) {
+                T9ApiResponseData callBackFail = new T9ApiResponseData();
+                callBackFail.setStatusCode("1");
+                callBackFail.setErrorMessage("玩家余额不足");
+                return JSONObject.toJSONString(callBackFail);
+            }
             // 更新余额
             gameCommonService.updateUserBalance(memBaseinfo, pointAmount, GoldchangeEnum.DSFYXZZ, TradingEnum.SPENDING);
 
@@ -255,6 +263,14 @@ public class T9CallbackServiceImpl implements T9CallbackService {
         try{
             if (!"Cancel Bet".equals(oldTxns.getMethod())) {
                 BigDecimal betAmount = oldTxns.getBetAmount();
+                // 比对金额和订单金额要一致
+                if(betAmount.compareTo(betAmount) != 0) {
+                    T9ApiResponseData callBackFail = new T9ApiResponseData();
+                    callBackFail.setStatusCode("g000007");
+                    callBackFail.setErrorMessage("订单金额和下注金额不一致");
+                    return JSONObject.toJSONString(callBackFail);
+                }
+
                 // 存入点数失败, 余额扣除
                 if("Settle".equals(oldTxns.getMethod())){
 
@@ -269,6 +285,7 @@ public class T9CallbackServiceImpl implements T9CallbackService {
                 Txns txns = new Txns();
                 BeanUtils.copyProperties(oldTxns, txns);
                 txns.setId(null);
+                txns.setPlatformTxId(GoldchangeEnum.CANCEL_BET.name() + GeneratorIdUtil.generateId());
                 txns.setBalance(balance);
                 txns.setMethod("Cancel Bet");
                 txns.setStatus("Running");

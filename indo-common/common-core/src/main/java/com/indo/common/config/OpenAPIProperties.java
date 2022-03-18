@@ -107,7 +107,6 @@ public class OpenAPIProperties implements InitializingBean {
     @Value("${cq.cqApiToken}")
     private String cqApiToken;
 
-
     //PG
     public static String PG_API_TOKEN;
     public static String PG_API_URL;
@@ -161,6 +160,31 @@ public class OpenAPIProperties implements InitializingBean {
     private String ppName ;
     @Value("${pp.platformCode:PP}")
     private String ppPlatformCode;
+
+    //PlayStar
+    public static String PS_HOST_ID;
+    public static String PS_API_URL;
+    @Value("${ps.psApiurl}")
+    private String psApiurl;
+    @Value("${ps.psHostId}")
+    private String psHostId;
+
+    // RICH88
+    public static String RICH_API_URL;
+    public static String RICH_PRIVATE_KEY;
+    public static String RICH_PF_ID;
+    public static String RICH_PLATFORM_CODE;
+    public static String RICH_SESSION_ID;
+    @Value("${rich.apiUrl}")
+    private String richApiurl;
+    @Value("${rich.privateKey}")
+    private String richPrivateKey;
+    @Value("${rich.pfid}")
+    private String richPfid ;
+    @Value("${rich.platformCode:RICH}")
+    private String richPlatformCode;
+    @Value("${rich.sessionId}")
+    private String richSessionId ;
 
     @Override
     public void afterPropertiesSet() {
@@ -219,5 +243,15 @@ public class OpenAPIProperties implements InitializingBean {
         PP_PROVIDER_ID = ppProviderId;
         PP_NAME = ppName;
         PP_PLATFORM_CODE = ppPlatformCode;
+
+        PS_API_URL = psApiurl;
+        PS_HOST_ID = psHostId;
+
+        RICH_API_URL = richApiurl;
+        RICH_PRIVATE_KEY = richPrivateKey;
+        RICH_PF_ID = richPfid;
+        RICH_PLATFORM_CODE = richPlatformCode;
+        RICH_SESSION_ID = richSessionId;
+
     }
 }

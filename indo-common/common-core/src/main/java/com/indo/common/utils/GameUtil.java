@@ -502,6 +502,7 @@ public class GameUtil extends HttpCommonUtils {
                 }
                 response = httpClient.execute(httpPost);
                 if (response != null) {
+                    logger.info("POST请求 postJson status: {}", JSONObject.toJSONString(response.getStatusLine()));
                     HttpEntity resEntity = response.getEntity();
                     result = EntityUtils.toString(resEntity, charset);
                     EntityUtils.consume(resEntity); // 此句关闭了流

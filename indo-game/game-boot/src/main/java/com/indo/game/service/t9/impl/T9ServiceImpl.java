@@ -3,6 +3,7 @@ package com.indo.game.service.t9.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.indo.common.config.OpenAPIProperties;
 import com.indo.common.pojo.bo.LoginInfo;
+import com.indo.common.redis.utils.GeneratorIdUtil;
 import com.indo.common.result.Result;
 import com.indo.common.utils.GameUtil;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
@@ -92,7 +93,7 @@ public class T9ServiceImpl implements T9Service {
                 cptOpenMember = new CptOpenMember();
                 cptOpenMember.setUserId(loginUser.getId().intValue());
                 cptOpenMember.setUserName(loginUser.getAccount());
-                cptOpenMember.setPassword(loginUser.getAccount());
+                cptOpenMember.setPassword(GeneratorIdUtil.generateId());
                 cptOpenMember.setCreateTime(new Date());
                 cptOpenMember.setLoginTime(new Date());
                 cptOpenMember.setType(parentName);

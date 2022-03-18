@@ -12,6 +12,7 @@ import com.indo.common.utils.DateUtils;
 import com.indo.common.utils.GameUtil;
 import com.indo.game.common.util.PPHashAESEncrypt;
 import com.indo.game.mapper.TxnsMapper;
+import com.indo.game.pojo.dto.comm.ApiResponseData;
 import com.indo.game.pojo.dto.pp.PpApiGetBalanceReq;
 import com.indo.game.pojo.dto.pp.PpApiRequestData;
 import com.indo.game.pojo.dto.pp.PpApiResponseData;
@@ -92,7 +93,7 @@ public class PpServiceImpl implements PpService {
                 cptOpenMember = new CptOpenMember();
                 cptOpenMember.setUserId(loginUser.getId().intValue());
                 cptOpenMember.setUserName(loginUser.getAccount());
-                cptOpenMember.setPassword(loginUser.getAccount());
+                cptOpenMember.setPassword(GeneratorIdUtil.generateId());
                 cptOpenMember.setCreateTime(new Date());
                 cptOpenMember.setLoginTime(new Date());
                 cptOpenMember.setType(parentName);
@@ -328,7 +329,9 @@ public class PpServiceImpl implements PpService {
             return Result.failed("g100104", "网络繁忙，请稍后重试！");
         }
 
-        return Result.success(JSONObject.toJSONString(ppApiResponseData));
+        ApiResponseData responseData = new ApiResponseData();
+        responseData.setPathUrl(ppApiResponseData.getGameURL());
+        return Result.success(responseData);
     }
 
     /**
