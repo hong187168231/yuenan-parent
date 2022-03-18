@@ -5,7 +5,9 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.indo.common.constant.RedisKeys;
 import com.indo.common.enums.GiftEnum;
 import com.indo.common.pojo.bo.LoginInfo;
+import com.indo.common.redis.utils.RedisUtils;
 import com.indo.common.utils.CollectionUtil;
+import com.indo.common.web.util.BeanConvertUtils;
 import com.indo.core.pojo.entity.MemLevel;
 import com.indo.user.common.util.UserBusinessRedisUtils;
 import com.indo.user.mapper.MemLevelMapper;
@@ -14,9 +16,9 @@ import com.indo.user.pojo.vo.level.Gift;
 import com.indo.user.pojo.vo.level.LevelInfo;
 import com.indo.user.pojo.vo.level.LevelUpRuleVO;
 import com.indo.user.pojo.vo.level.MemLevelVo;
+import com.indo.user.service.AppMemBaseInfoService;
 import com.indo.user.service.IMemGiftReceiveService;
 import com.indo.user.service.IMemLevelService;
-import com.indo.user.service.AppMemBaseInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -149,12 +151,13 @@ public class MemLevelServiceImpl extends ServiceImpl<MemLevelMapper, MemLevel> i
 
 
     private List<MemLevel> getLevelList() {
-        List<MemLevel> cacheList = UserBusinessRedisUtils.get(RedisKeys.SYS_LEVEL_KEY);
+        List<Object> cacheList = UserBusinessRedisUtils.lGet(RedisKeys.SYS_LEVEL_KEY, 0, -1);
         if (CollectionUtil.isNotEmpty(cacheList)) {
-            return cacheList;
+            return BeanConvertUtils.srcToTarget(cacheList, MemLevel.class);
         }
         LambdaQueryWrapper<MemLevel> wrapper = new LambdaQueryWrapper<>();
         List<MemLevel> list = this.baseMapper.selectList(wrapper);
+        RedisUtils.lSet(RedisKeys.SYS_LEVEL_KEY, list.toArray());
         return list;
     }
 }

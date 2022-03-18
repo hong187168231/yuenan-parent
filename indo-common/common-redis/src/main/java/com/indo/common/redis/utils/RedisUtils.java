@@ -526,9 +526,9 @@ public class RedisUtils {
      * @param value 值
      * @return
      */
-    public static boolean lSet(String key, Object value) {
+    public static boolean lSet(String key, Object... value) {
         try {
-            redisTemplate.opsForList().rightPush(key, value);
+            redisTemplate.opsForList().leftPushAll(key, value);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -544,47 +544,9 @@ public class RedisUtils {
      * @param time  时间(秒)
      * @return
      */
-    public static boolean lSet(String key, Object value, long time) {
+    public static boolean lSet(String key, long time, Object... value) {
         try {
             redisTemplate.opsForList().rightPush(key, value);
-            if (time > 0) {
-                expire(key, time);
-            }
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    /**
-     * 将list放入缓存
-     *
-     * @param key   键
-     * @param value 值
-     * @return
-     */
-    public boolean lSet(String key, List<Object> value) {
-        try {
-            redisTemplate.opsForList().rightPushAll(key, value);
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    /**
-     * 将list放入缓存
-     *
-     * @param key   键
-     * @param value 值
-     * @param time  时间(秒)
-     * @return
-     */
-    public boolean lSet(String key, List<Object> value, long time) {
-        try {
-            redisTemplate.opsForList().rightPushAll(key, value);
             if (time > 0) {
                 expire(key, time);
             }
@@ -621,7 +583,7 @@ public class RedisUtils {
      * @param value 值
      * @return 移除的个数
      */
-    public long lRemove(String key, long count, Object value) {
+    public static long lRemove(String key, long count, Object value) {
         try {
             Long remove = redisTemplate.opsForList().remove(key, count, value);
             return remove;

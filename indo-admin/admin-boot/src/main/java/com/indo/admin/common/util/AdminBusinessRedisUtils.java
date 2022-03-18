@@ -44,7 +44,8 @@ public class AdminBusinessRedisUtils extends RedisUtils {
      * @param list
      */
     public static void refreshMemLevel(List<MemLevel> list) {
-        lSet(RedisKeys.SYS_LEVEL_KEY, list);
+        RedisUtils.del(RedisKeys.SYS_LEVEL_KEY);
+        RedisUtils.lSet(RedisKeys.SYS_LEVEL_KEY, list);
     }
 
 
