@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
-@RequestMapping("/ps")
+@RequestMapping("/playstar/callBack")
 public class PsCallBackController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
