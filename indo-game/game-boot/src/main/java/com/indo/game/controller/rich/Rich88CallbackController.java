@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletRequest;
  * RICH88 回调服务
  */
 @RestController
-@RequestMapping("/rich88")
+@RequestMapping("/RICH88/callBack")
 public class Rich88CallbackController {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());

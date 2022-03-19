@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletRequest;
  * T9 回调服务
  */
 @RestController
-@RequestMapping("/t9")
+@RequestMapping("/T9/callBack")
 public class T9CallbackController {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
