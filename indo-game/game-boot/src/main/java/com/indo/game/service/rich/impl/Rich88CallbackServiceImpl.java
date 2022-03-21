@@ -302,7 +302,7 @@ public class Rich88CallbackServiceImpl implements Rich88CallbackService {
      * @return
      */
     private boolean checkIp(String ip) {
-        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode("JDB");
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.RICH_PLATFORM_CODE);
         if (null == gameParentPlatform) {
             return false;
         } else if (null == gameParentPlatform.getIpAddr() || "".equals(gameParentPlatform.getIpAddr())) {

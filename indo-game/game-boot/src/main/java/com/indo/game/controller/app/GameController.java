@@ -11,8 +11,10 @@ import com.indo.game.service.ae.AeService;
 import com.indo.game.service.awc.AwcService;
 import com.indo.game.service.cq.CqService;
 import com.indo.game.service.jdb.JdbService;
+import com.indo.game.service.ka.KaService;
 import com.indo.game.service.pg.PgService;
 import com.indo.game.service.pp.PpService;
+import com.indo.game.service.ps.PsService;
 import com.indo.game.service.rich.Rich88Service;
 import com.indo.game.service.saba.SabaService;
 import com.indo.game.service.sbo.SboService;
@@ -64,7 +66,11 @@ public class GameController {
     @Autowired
     private PpService ppService;
     @Autowired
+    private PsService psService;
+    @Autowired
     private Rich88Service rich88Service;
+    @Autowired
+    private KaService kaService;
     @Autowired
     private RedissonClient redissonClient;
 
@@ -119,6 +125,9 @@ public class GameController {
                 if ("PG".equals(parentName)) {
                     resultInfo = pgService.pgGame(loginUser, isMobileLogin, ip, platform, parentName);
                 }
+                if ("PS".equals(parentName)) {
+                    resultInfo = psService.psGame(loginUser, isMobileLogin, ip, platform, parentName);
+                }
                 if ("T9".equals(parentName)) {
                     resultInfo = t9Service.t9Game(loginUser, isMobileLogin, ip, platform, parentName);
                 }
@@ -127,6 +136,9 @@ public class GameController {
                 }
                 if ("RICH".equals(parentName)) {
                     resultInfo = rich88Service.rich88Game(loginUser, isMobileLogin, ip, platform, parentName);
+                }
+                if ("KA".equals(parentName)) {
+                    resultInfo = kaService.kaGame(loginUser, isMobileLogin, ip, platform, parentName);
                 }
 
                 if (resultInfo == null) {
@@ -191,6 +203,9 @@ public class GameController {
             }
             if ("PG".equals(platform)) {
                 resultInfo = pgService.logout(loginUser, platform, ip);
+            }
+            if ("PS".equals(platform)) {
+                resultInfo = psService.logout(loginUser, platform, ip);
             }
             if ("T9".equals(platform)) {
                 resultInfo = t9Service.logout(loginUser, platform, ip);

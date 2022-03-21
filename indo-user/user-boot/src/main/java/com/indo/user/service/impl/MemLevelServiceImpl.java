@@ -5,7 +5,9 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.indo.common.constant.RedisKeys;
 import com.indo.common.enums.GiftEnum;
 import com.indo.common.pojo.bo.LoginInfo;
+import com.indo.common.redis.utils.RedisUtils;
 import com.indo.common.utils.CollectionUtil;
+import com.indo.common.web.util.BeanConvertUtils;
 import com.indo.core.pojo.entity.MemLevel;
 import com.indo.user.common.util.UserBusinessRedisUtils;
 import com.indo.user.mapper.MemLevelMapper;
@@ -14,11 +16,13 @@ import com.indo.user.pojo.vo.level.Gift;
 import com.indo.user.pojo.vo.level.LevelInfo;
 import com.indo.user.pojo.vo.level.LevelUpRuleVO;
 import com.indo.user.pojo.vo.level.MemLevelVo;
+import com.indo.user.service.AppMemBaseInfoService;
 import com.indo.user.service.IMemGiftReceiveService;
 import com.indo.user.service.IMemLevelService;
-import com.indo.user.service.AppMemBaseInfoService;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -52,84 +56,90 @@ public class MemLevelServiceImpl extends ServiceImpl<MemLevelMapper, MemLevel> i
         List<LevelInfo> levelInfoList = new ArrayList<>();
         List<MemLevel> list = getLevelList();
 
-        for (MemLevel memLevel : list) {
-            List<Gift> giftList = new ArrayList<>();
-            LevelInfo levelInfo = new LevelInfo();
+        if (!CollectionUtils.isEmpty(list)) {
+            for (MemLevel memLevel : list) {
+                if (memLevel == null) {
+                  continue;
+                }
+                List<Gift> giftList = new ArrayList<>();
+                LevelInfo levelInfo = new LevelInfo();
 
-            levelInfo.setLevel(memLevel.getLevel());
-            levelInfo.setPromotionGift(memLevel.getReward().intValue());
-            levelInfo.setNeedDeposit(memLevel.getNeedDeposit().intValue());
-            levelInfo.setNeedBet(memLevel.getNeedBet().intValue());
+                levelInfo.setLevel(memLevel.getLevel());
+                levelInfo.setPromotionGift(NumberUtils.toInt(memLevel.getReward() + ""));
+                levelInfo.setNeedDeposit(NumberUtils.toInt(memLevel.getNeedDeposit() + ""));
+                levelInfo.setNeedBet(NumberUtils.toInt(memLevel.getNeedBet() + ""));
 
-            if (memLevel.getReward() != null) {
-                Gift gift = new Gift();
-                gift.setGiftEnum(GiftEnum.reward);
-                gift.setGiftName(GiftEnum.reward.getName());
-                gift.setAmount(memLevel.getReward().intValue());
-                if (memTradingVo.getMemLevel() >= memLevel.getLevel()) {
-                    int count = iMemGiftReceiveService.countRewardReceive(memId, GiftEnum.reward.name(), memLevel.getLevel());
-                    gift.setReceiveStatus(count == 0 ? 1 : 2);
+                if (memLevel.getReward() != null) {
+                    Gift gift = new Gift();
+                    gift.setGiftEnum(GiftEnum.reward);
+                    gift.setGiftName(GiftEnum.reward.getName());
+                    gift.setAmount(memLevel.getReward().intValue());
+                    if (memTradingVo.getMemLevel() >= memLevel.getLevel()) {
+                        int count = iMemGiftReceiveService.countRewardReceive(memId, GiftEnum.reward.name(), memLevel.getLevel());
+                        gift.setReceiveStatus(count == 0 ? 1 : 2);
+                    }
+                    giftList.add(gift);
                 }
-                giftList.add(gift);
-            }
-            if (memLevel.getEverydayGift() != null) {
-                Gift gift = new Gift();
-                gift.setGiftEnum(GiftEnum.everyday);
-                gift.setGiftName(GiftEnum.everyday.getName());
-                gift.setAmount(memLevel.getEverydayGift().intValue());
-                if (memTradingVo.getMemLevel() >= memLevel.getLevel()) {
-                    int count = iMemGiftReceiveService.countTodayReceive(memId, GiftEnum.everyday.name());
-                    gift.setReceiveStatus(count == 0 ? 1 : 2);
+                if (memLevel.getEverydayGift() != null) {
+                    Gift gift = new Gift();
+                    gift.setGiftEnum(GiftEnum.everyday);
+                    gift.setGiftName(GiftEnum.everyday.getName());
+                    gift.setAmount(memLevel.getEverydayGift().intValue());
+                    if (memTradingVo.getMemLevel() >= memLevel.getLevel()) {
+                        int count = iMemGiftReceiveService.countTodayReceive(memId, GiftEnum.everyday.name());
+                        gift.setReceiveStatus(count == 0 ? 1 : 2);
+                    }
+                    giftList.add(gift);
                 }
-                giftList.add(gift);
-            }
-            if (memLevel.getWeekGift() != null) {
-                Gift gift = new Gift();
-                gift.setGiftEnum(GiftEnum.week);
-                gift.setGiftName(GiftEnum.week.getName());
-                gift.setAmount(memLevel.getWeekGift().intValue());
-                if (memTradingVo.getMemLevel() >= memLevel.getLevel()) {
-                    int count = iMemGiftReceiveService.countWeekReceive(memId, GiftEnum.week.name());
-                    gift.setReceiveStatus(count == 0 ? 1 : 2);
+                if (memLevel.getWeekGift() != null) {
+                    Gift gift = new Gift();
+                    gift.setGiftEnum(GiftEnum.week);
+                    gift.setGiftName(GiftEnum.week.getName());
+                    gift.setAmount(memLevel.getWeekGift().intValue());
+                    if (memTradingVo.getMemLevel() >= memLevel.getLevel()) {
+                        int count = iMemGiftReceiveService.countWeekReceive(memId, GiftEnum.week.name());
+                        gift.setReceiveStatus(count == 0 ? 1 : 2);
+                    }
+                    giftList.add(gift);
                 }
-                giftList.add(gift);
-            }
-            if (memLevel.getMonthGift() != null) {
-                Gift gift = new Gift();
-                gift.setGiftEnum(GiftEnum.month);
-                gift.setGiftName(GiftEnum.month.getName());
-                gift.setAmount(memLevel.getMonthGift().intValue());
-                if (memTradingVo.getMemLevel() >= memLevel.getLevel()) {
-                    int count = iMemGiftReceiveService.countMonthReceive(memId, GiftEnum.month.name());
-                    gift.setReceiveStatus(count == 0 ? 1 : 2);
+                if (memLevel.getMonthGift() != null) {
+                    Gift gift = new Gift();
+                    gift.setGiftEnum(GiftEnum.month);
+                    gift.setGiftName(GiftEnum.month.getName());
+                    gift.setAmount(memLevel.getMonthGift().intValue());
+                    if (memTradingVo.getMemLevel() >= memLevel.getLevel()) {
+                        int count = iMemGiftReceiveService.countMonthReceive(memId, GiftEnum.month.name());
+                        gift.setReceiveStatus(count == 0 ? 1 : 2);
+                    }
+                    giftList.add(gift);
                 }
-                giftList.add(gift);
-            }
-            if (memLevel.getYearGift() != null) {
-                Gift gift = new Gift();
-                gift.setGiftEnum(GiftEnum.year);
-                gift.setGiftName(GiftEnum.year.getName());
-                gift.setAmount(memLevel.getYearGift().intValue());
-                if (memTradingVo.getMemLevel() >= memLevel.getLevel()) {
-                    int count = iMemGiftReceiveService.countYearReceive(memId, GiftEnum.year.name());
-                    gift.setReceiveStatus(count == 0 ? 1 : 2);
+                if (memLevel.getYearGift() != null) {
+                    Gift gift = new Gift();
+                    gift.setGiftEnum(GiftEnum.year);
+                    gift.setGiftName(GiftEnum.year.getName());
+                    gift.setAmount(memLevel.getYearGift().intValue());
+                    if (memTradingVo.getMemLevel() >= memLevel.getLevel()) {
+                        int count = iMemGiftReceiveService.countYearReceive(memId, GiftEnum.year.name());
+                        gift.setReceiveStatus(count == 0 ? 1 : 2);
+                    }
+                    giftList.add(gift);
                 }
-                giftList.add(gift);
-            }
-            if (memLevel.getBirthdayGift() != null) {
-                Gift gift = new Gift();
-                gift.setGiftEnum(GiftEnum.birthday);
-                gift.setGiftName(GiftEnum.birthday.getName());
-                gift.setAmount(memLevel.getBirthdayGift().intValue());
-                if (memTradingVo.getMemLevel() >= memLevel.getLevel()) {
-                    int count = iMemGiftReceiveService.countBirthdayReceive(memId, GiftEnum.birthday.name());
-                    gift.setReceiveStatus(count == 0 ? 1 : 2);
+                if (memLevel.getBirthdayGift() != null) {
+                    Gift gift = new Gift();
+                    gift.setGiftEnum(GiftEnum.birthday);
+                    gift.setGiftName(GiftEnum.birthday.getName());
+                    gift.setAmount(memLevel.getBirthdayGift().intValue());
+                    if (memTradingVo.getMemLevel() >= memLevel.getLevel()) {
+                        int count = iMemGiftReceiveService.countBirthdayReceive(memId, GiftEnum.birthday.name());
+                        gift.setReceiveStatus(count == 0 ? 1 : 2);
+                    }
+                    giftList.add(gift);
                 }
-                giftList.add(gift);
+                levelInfo.setGiftList(giftList);
+                levelInfoList.add(levelInfo);
             }
-            levelInfo.setGiftList(giftList);
-            levelInfoList.add(levelInfo);
         }
+
         memLevelVo.setLevelList(levelInfoList);
         return memLevelVo;
     }
@@ -149,12 +159,13 @@ public class MemLevelServiceImpl extends ServiceImpl<MemLevelMapper, MemLevel> i
 
 
     private List<MemLevel> getLevelList() {
-        List<MemLevel> cacheList = UserBusinessRedisUtils.get(RedisKeys.SYS_LEVEL_KEY);
+        List<Object> cacheList = UserBusinessRedisUtils.lGet(RedisKeys.SYS_LEVEL_KEY, 0, -1);
         if (CollectionUtil.isNotEmpty(cacheList)) {
-            return cacheList;
+            return BeanConvertUtils.srcToTarget(cacheList, MemLevel.class);
         }
         LambdaQueryWrapper<MemLevel> wrapper = new LambdaQueryWrapper<>();
         List<MemLevel> list = this.baseMapper.selectList(wrapper);
+        RedisUtils.lSet(RedisKeys.SYS_LEVEL_KEY, list.toArray());
         return list;
     }
 }

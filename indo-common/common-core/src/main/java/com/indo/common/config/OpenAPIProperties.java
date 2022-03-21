@@ -186,6 +186,26 @@ public class OpenAPIProperties implements InitializingBean {
     @Value("${rich.sessionId}")
     private String richSessionId ;
 
+    // KA
+    public static String KA_API_URL;
+    public static String KA_API_SECRET_KEY;
+    public static String KA_ACCESS_KEY;
+    public static String KA_PLATFORM_CODE;
+    public static String KA_GAME_URL;
+    public static String KA_PARTNER_NAME;
+    @Value("${ka.apiUrl}")
+    private String kaApiUrl;
+    @Value("${ka.secretKey}")
+    private String kaSecretKey;
+    @Value("${ka.accessKey}")
+    private String kaAccessKey ;
+    @Value("${ka.platformCode:KA}")
+    private String kaPlatformCode;
+    @Value("${ka.gameUrl}")
+    private String kaGameUrl;
+    @Value("${ka.partnerName}")
+    private String kaPartnerName;
+
     @Override
     public void afterPropertiesSet() {
 
@@ -253,5 +273,11 @@ public class OpenAPIProperties implements InitializingBean {
         RICH_PLATFORM_CODE = richPlatformCode;
         RICH_SESSION_ID = richSessionId;
 
+        KA_API_URL = kaApiUrl;
+        KA_API_SECRET_KEY = kaSecretKey;
+        KA_ACCESS_KEY = kaAccessKey;
+        KA_PLATFORM_CODE = kaPlatformCode;
+        KA_GAME_URL = kaGameUrl;
+        KA_PARTNER_NAME = kaPartnerName;
     }
 }

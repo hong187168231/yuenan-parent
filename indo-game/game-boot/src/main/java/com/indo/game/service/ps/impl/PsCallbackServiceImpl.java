@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.Date;
 
 import javax.annotation.Resource;
@@ -50,6 +51,7 @@ public class PsCallbackServiceImpl implements PsCallbackService {
     @Autowired
     private TxnsMapper txnsMapper;
 
+    private static final DecimalFormat format = new DecimalFormat("#");
 
     @Override
     public Object psVerifyCallback(PsCallBackParentReq psCallBackParentReq, String ip) {
@@ -61,10 +63,11 @@ public class PsCallbackServiceImpl implements PsCallbackService {
             dataJson.put("message", "Token 无效");
             return dataJson;
         }
+        String signPrice = format.format(memBaseinfo.getBalance().multiply(new BigDecimal(100)));
         dataJson.put("status_code", "0");
         dataJson.put("member_id", cptOpenMember.getId());
         dataJson.put("member_name", cptOpenMember.getUserName());
-        dataJson.put("balance", memBaseinfo.getBalance());
+        dataJson.put("balance", signPrice);
         return dataJson;
     }
 
@@ -81,7 +84,7 @@ public class PsCallbackServiceImpl implements PsCallbackService {
         GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(psbetCallBackReq.getGame_id());
         GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         BigDecimal balance = memBaseinfo.getBalance();
-        BigDecimal betAmount = new BigDecimal(psbetCallBackReq.getTotal_bet());
+        BigDecimal betAmount = new BigDecimal(psbetCallBackReq.getTotal_bet()).divide(new BigDecimal(100));
         if (memBaseinfo.getBalance().compareTo(betAmount) == -1) {
             dataJson.put("status_code", "3");
             dataJson.put("message", "馀额不足");
@@ -160,8 +163,9 @@ public class PsCallbackServiceImpl implements PsCallbackService {
             dataJson.put("message", "单号无效");
             return dataJson;
         }
+        String signPrice = format.format(balance);
         dataJson.put("status_code", "0");
-        dataJson.put("balance", balance);
+        dataJson.put("balance", signPrice);
         return dataJson;
     }
 
@@ -184,8 +188,9 @@ public class PsCallbackServiceImpl implements PsCallbackService {
             dataJson.put("message", "单号无效");
             return dataJson;
         }
-        BigDecimal winAmount = new BigDecimal(psbetCallBackReq.getTotal_bet()).subtract(new BigDecimal(psbetCallBackReq.getBonus_win()));
-        BigDecimal balance = BigDecimal.valueOf(0D);
+        BigDecimal money = new BigDecimal(psbetCallBackReq.getTotal_bet()).subtract(new BigDecimal(psbetCallBackReq.getBonus_win()));
+        BigDecimal winAmount = money.divide(new BigDecimal(100));
+        BigDecimal balance = memBaseinfo.getBalance();
         balance = balance.add(winAmount);
         gameCommonService.updateUserBalance(memBaseinfo, winAmount, GoldchangeEnum.PLACE_BET, TradingEnum.INCOME);
 
@@ -207,9 +212,9 @@ public class PsCallbackServiceImpl implements PsCallbackService {
         oldTxns.setStatus("Settle");
         oldTxns.setUpdateTime(dateStr);
         txnsMapper.updateById(oldTxns);
-
+        String signPrice = format.format(balance);
         dataJson.put("status_code", "0");
-        dataJson.put("balance", balance);
+        dataJson.put("balance", signPrice);
         return dataJson;
     }
 
@@ -249,9 +254,9 @@ public class PsCallbackServiceImpl implements PsCallbackService {
         txns.setStatus("Running");
         txns.setCreateTime(dateStr);
         txnsMapper.insert(txns);
-
+        String signPrice = format.format(balance);
         dataJson.put("status_code", "0");
-        dataJson.put("balance", balance);
+        dataJson.put("balance", signPrice);
         return dataJson;
     }
 
@@ -277,7 +282,7 @@ public class PsCallbackServiceImpl implements PsCallbackService {
             return dataJson;
         }
         BigDecimal balance = memBaseinfo.getBalance();
-        BigDecimal amount = new BigDecimal(psbetCallBackReq.getBonus_reward());
+        BigDecimal amount = new BigDecimal(psbetCallBackReq.getBonus_reward()).divide(new BigDecimal(100));
         balance = balance.add(amount);
         gameCommonService.updateUserBalance(memBaseinfo, amount, GoldchangeEnum.ACTIVITY_GIVE, TradingEnum.INCOME);
         String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
@@ -297,8 +302,9 @@ public class PsCallbackServiceImpl implements PsCallbackService {
             dataJson.put("message", "单号无效");
             return dataJson;
         }
+        String signPrice = format.format(balance);
         dataJson.put("status_code", "0");
-        dataJson.put("balance", balance);
+        dataJson.put("balance", signPrice);
         return dataJson;
     }
 
@@ -312,8 +318,9 @@ public class PsCallbackServiceImpl implements PsCallbackService {
             return dataJson;
         }
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cptOpenMember.getUserName());
+        String signPrice = format.format(memBaseinfo.getBalance().multiply(new BigDecimal(100)));
         dataJson.put("status_code", "0");
-        dataJson.put("balance", memBaseinfo.getBalance());
+        dataJson.put("balance", signPrice);
         return dataJson;
     }
 }

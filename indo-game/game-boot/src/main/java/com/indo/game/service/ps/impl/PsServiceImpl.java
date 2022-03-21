@@ -106,7 +106,7 @@ public class PsServiceImpl implements PsService {
                 externalService.updateCptOpenMember(updateCptOpenMember);
             }
             StringBuilder builder = new StringBuilder();
-            builder.append(OpenAPIProperties.PS_API_URL).append("}/launch/?host_id=");
+            builder.append(OpenAPIProperties.PS_API_URL).append("/launch/?host_id=");
             builder.append(OpenAPIProperties.PS_HOST_ID);
             builder.append("&game_id=").append(platform);
             builder.append("&lang=").append(platformGameParent.getLanguageType());
