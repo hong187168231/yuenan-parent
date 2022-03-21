@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletRequest;
  * KA 回调服务
  */
 @RestController
-@RequestMapping("/ka")
+@RequestMapping("/ka/callBack")
 public class KACallbackController {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
