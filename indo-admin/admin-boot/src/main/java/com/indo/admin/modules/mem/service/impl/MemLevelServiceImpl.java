@@ -9,6 +9,7 @@ import com.indo.admin.pojo.req.mem.MemLevelPageReq;
 import com.indo.admin.pojo.req.mem.MemLevelUpdateReq;
 import com.indo.admin.modules.mem.service.IMemLevelService;
 import com.indo.admin.pojo.vo.mem.MemLevelVo;
+import com.indo.common.web.exception.BizException;
 import com.indo.core.base.service.impl.SuperServiceImpl;
 import com.indo.core.pojo.entity.MemLevel;
 import org.springframework.beans.BeanUtils;
@@ -56,6 +57,9 @@ public class MemLevelServiceImpl extends SuperServiceImpl<MemLevelMapper, MemLev
     @Override
     @Transactional
     public boolean updateOne(MemLevelUpdateReq req) {
+        if(req.getLevel()!=null||req.getLevel()>-1){
+            throw new BizException("不可修改等级");
+        }
         MemLevel memLevel = new MemLevel();
         BeanUtils.copyProperties(req, memLevel);
         if (baseMapper.updateById(memLevel) > 0) {
