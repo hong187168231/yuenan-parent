@@ -57,7 +57,6 @@
         FROM
         agent_relation ar
         INNER JOIN mem_baseinfo mb ON ar.mem_id = mb.id
-        AND ar.`status` = 1
         <if test="req.superior !=null and req.superior !='' ">
             and ar.superior = #{req.superior}
         </if>
