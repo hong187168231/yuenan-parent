@@ -3,6 +3,7 @@ package com.indo.admin.modules.act.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.indo.core.pojo.entity.ActivityType;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -16,5 +17,5 @@ import org.springframework.stereotype.Repository;
 @Mapper
 @Repository
 public interface ActivityTypeMapper extends BaseMapper<ActivityType> {
-
+    int updateMaxActNum(@Param("actTypeId") Long actTypeId);
 }
