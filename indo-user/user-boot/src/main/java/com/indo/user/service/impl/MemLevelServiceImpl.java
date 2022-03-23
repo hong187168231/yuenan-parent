@@ -64,7 +64,7 @@ public class MemLevelServiceImpl extends ServiceImpl<MemLevelMapper, MemLevel> i
                 List<Gift> giftList = new ArrayList<>();
                 LevelInfo levelInfo = new LevelInfo();
 
-                levelInfo.setLevel(memLevel.getLevel());
+                levelInfo.setLevel(NumberUtils.toInt(memLevel.getLevel() + ""));
                 levelInfo.setPromotionGift(NumberUtils.toInt(memLevel.getReward() + ""));
                 levelInfo.setNeedDeposit(NumberUtils.toInt(memLevel.getNeedDeposit() + ""));
                 levelInfo.setNeedBet(NumberUtils.toInt(memLevel.getNeedBet() + ""));

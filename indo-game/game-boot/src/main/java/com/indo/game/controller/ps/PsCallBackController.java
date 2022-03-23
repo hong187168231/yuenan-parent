@@ -5,6 +5,7 @@ import com.indo.common.annotation.AllowAccess;
 import com.indo.common.utils.IPAddressUtil;
 import com.indo.game.pojo.dto.pg.PgVerifyCallBackReq;
 import com.indo.game.pojo.dto.ps.PsCallBackParentReq;
+import com.indo.game.pojo.vo.callback.ps.PsCallBackResponse;
 import com.indo.game.service.pg.PgCallbackService;
 import com.indo.game.service.ps.PsCallbackService;
 
@@ -31,13 +32,15 @@ public class PsCallBackController {
      * 令牌验证
      */
     @RequestMapping(value = "/VerifySession", method = RequestMethod.GET)
-    public JSONObject verifySession(PsCallBackParentReq psVerifyCallBackReq, HttpServletRequest request) {
+    @ResponseBody
+    @AllowAccess
+    public PsCallBackResponse verifySession(PsCallBackParentReq psVerifyCallBackReq, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
         logger.info("psCallBack {} verifyToken回调,params:{}", JSONObject.toJSONString(psVerifyCallBackReq));
-        JSONObject object = psCallbackService.psVerifyCallback(psVerifyCallBackReq, ip);
-        logger.info("psCallBack {} verifyToken回调返回数据 params:{}", object);
-        return object;
+        PsCallBackResponse psCallBackResponse = psCallbackService.psVerifyCallback(psVerifyCallBackReq, ip);
+        logger.info("psCallBack {} verifyToken回调返回数据 params:{}", psCallBackResponse);
+        return psCallBackResponse;
     }
 
 

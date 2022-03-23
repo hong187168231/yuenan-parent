@@ -61,17 +61,17 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
 
         // long 转换为字符串
         SimpleModule simpleModule = new SimpleModule();
-        simpleModule.addSerializer(BigInteger.class, ToStringSerializer.instance);
-        simpleModule.addSerializer(Long.class, ToStringSerializer.instance);
-        simpleModule.addSerializer(Long.TYPE, ToStringSerializer.instance);
-        simpleModule.addSerializer(Integer.TYPE, ToStringSerializer.instance);
-        simpleModule.addSerializer(Integer.class, ToStringSerializer.instance);
-        simpleModule.addSerializer(int.class, ToStringSerializer.instance);
+//        simpleModule.addSerializer(BigInteger.class, ToStringSerializer.instance);
+//        simpleModule.addSerializer(Long.class, ToStringSerializer.instance);
+//        simpleModule.addSerializer(Long.TYPE, ToStringSerializer.instance);
+//        simpleModule.addSerializer(Integer.TYPE, ToStringSerializer.instance);
+//        simpleModule.addSerializer(Integer.class, ToStringSerializer.instance);
+//        simpleModule.addSerializer(int.class, ToStringSerializer.instance);
 
         // 浮点型使用字符串
-        simpleModule.addSerializer(Double.class, ToStringSerializer.instance);
-        simpleModule.addSerializer(Double.TYPE, ToStringSerializer.instance);
-        simpleModule.addSerializer(BigDecimal.class, ToStringSerializer.instance);
+//        simpleModule.addSerializer(Double.class, ToStringSerializer.instance);
+//        simpleModule.addSerializer(Double.TYPE, ToStringSerializer.instance);
+//        simpleModule.addSerializer(BigDecimal.class, ToStringSerializer.instance);
 
         //  时间格式化
         simpleModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(DATETIME_FORMAT));

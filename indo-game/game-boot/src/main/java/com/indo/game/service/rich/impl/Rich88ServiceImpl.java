@@ -162,7 +162,7 @@ public class Rich88ServiceImpl implements Rich88Service {
             Map<String, Object> params = new HashMap<>();
             params.put("account", cptOpenMember.getUserName());
             if (StringUtils.isNoneBlank(platform)) {
-//                params.put("game_code", platform);
+                params.put("game_code", platform);
             }
 //            params.put("entry", "");  //
             if (StringUtils.isNoneBlank(lang)) {

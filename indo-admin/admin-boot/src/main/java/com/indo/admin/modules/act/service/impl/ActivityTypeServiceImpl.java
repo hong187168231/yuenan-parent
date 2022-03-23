@@ -3,7 +3,7 @@ package com.indo.admin.modules.act.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-
+import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.indo.admin.common.util.AdminBusinessRedisUtils;
 import com.indo.admin.modules.act.mapper.ActivityTypeMapper;
 import com.indo.admin.modules.act.service.IActivityTypeService;
@@ -41,6 +41,7 @@ public class ActivityTypeServiceImpl extends ServiceImpl<ActivityTypeMapper, Act
         Page<ActivityType> agentApplyPage = new Page<>(page, limit);
         LambdaQueryWrapper<ActivityType> wrapper = new LambdaQueryWrapper<>();
         wrapper.orderByDesc(ActivityType::getUpdateTime);
+
         Page<ActivityType> pageList = this.baseMapper.selectPage(agentApplyPage, wrapper);
         List<ActivityTypeVO> result = dozerUtil.convert(pageList.getRecords(), ActivityTypeVO.class);
         return Result.success(result, agentApplyPage.getTotal());
@@ -70,5 +71,15 @@ public class ActivityTypeServiceImpl extends ServiceImpl<ActivityTypeMapper, Act
             return true;
         }
         return false;
+    }
+
+    /**
+     * 修改活动类型数量
+     * @param actTypeId 活动类型id
+     * @return
+     */
+    @Override
+    public boolean updateMaxActNum(Long actTypeId) {
+      return SqlHelper.retBool(this.baseMapper.updateMaxActNum(actTypeId));
     }
 }
