@@ -32,6 +32,8 @@ public class PsCallBackController {
      * 令牌验证
      */
     @RequestMapping(value = "/VerifySession", method = RequestMethod.GET)
+    @ResponseBody
+    @AllowAccess
     public PsCallBackResponse verifySession(PsCallBackParentReq psVerifyCallBackReq, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
