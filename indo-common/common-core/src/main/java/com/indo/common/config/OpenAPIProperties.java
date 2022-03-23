@@ -231,6 +231,20 @@ public class OpenAPIProperties implements InitializingBean {
     @Value("${fc.platformCode:FC}")
     private String fcPlatformCode;
 
+    // Jili
+    public static String JILI_API_URL;
+    public static String JILI_AGENT_KEY;
+    public static String JILI_AGENT_ID;
+    public static String JILI_PLATFORM_CODE;
+    @Value("${jili.apiUrl}")
+    private String jiliApiurl;
+    @Value("${jili.agentKey}")
+    private String jiliAgentKey;
+    @Value("${jili.agentId}")
+    private String jiliAgentId ;
+    @Value("${jili.platformCode:JILI}")
+    private String jiliPlatformCode;
+
     @Override
     public void afterPropertiesSet() {
 
@@ -315,5 +329,9 @@ public class OpenAPIProperties implements InitializingBean {
         FC_AGENT_KEY = fcAgentKey;
         FC_PLATFORM_CODE = fcPlatformCode;
 
+        JILI_API_URL = jiliApiurl;
+        JILI_AGENT_KEY = jiliAgentKey;
+        JILI_AGENT_ID = jiliAgentId;
+        JILI_PLATFORM_CODE = jiliPlatformCode;
     }
 }
