@@ -85,7 +85,6 @@ public class PsServiceImpl implements PsService {
             return Result.failed("g300004", "会员余额不足");
         }
         try {
-
             // 验证且绑定（AE-CPT第三方会员关系）
             CptOpenMember cptOpenMember = externalService.getCptOpenMember(loginUser.getId().intValue(), parentName);
             if (cptOpenMember == null) {
@@ -100,7 +99,6 @@ public class PsServiceImpl implements PsService {
                 externalService.saveCptOpenMember(cptOpenMember);
             } else {
                 CptOpenMember updateCptOpenMember = new CptOpenMember();
-                updateCptOpenMember.setPassword(SnowflakeId.generateId().toString());
                 updateCptOpenMember.setId(cptOpenMember.getId());
                 updateCptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(updateCptOpenMember);
@@ -123,9 +121,6 @@ public class PsServiceImpl implements PsService {
     }
 
 
-
-
-
     /**
      * 强迫登出玩家
      */
@@ -137,9 +132,9 @@ public class PsServiceImpl implements PsService {
             }
             Map<String, String> map = new HashMap<>();
             map.put("host_id", OpenAPIProperties.PS_HOST_ID);
-            map.put("member_id", loginUser.getId()+"");
+            map.put("member_id", loginUser.getId() + "");
             StringBuilder builder = new StringBuilder();
-            builder.append(OpenAPIProperties.PG_API_URL).append("/admin/kickout/");
+            builder.append(OpenAPIProperties.PS_API_URL).append("/admin/kickout");
             JSONObject jsonObject = commonRequest(builder.toString(), map, loginUser.getId().intValue(), "cqGameLogin");
             if (null == jsonObject) {
                 return Result.failed();
