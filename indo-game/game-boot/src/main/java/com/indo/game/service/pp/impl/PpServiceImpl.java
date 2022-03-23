@@ -158,7 +158,7 @@ public class PpServiceImpl implements PpService {
             BigDecimal balance = memBaseinfo.getBalance();
             // 存提金额
             BigDecimal betAmount = ppApiTransferReq.getAmount();
-            if (memBaseinfo.getBalance().compareTo(betAmount) == -1) {
+            if (memBaseinfo.getBalance().compareTo(betAmount) < 0) {
                 return Result.failed("g300004", "会员余额不足");
             }
             // 存提转账交易ID
@@ -184,13 +184,13 @@ public class PpServiceImpl implements PpService {
                 return errorCode(ppApiResponseData.getError().toString(), ppApiResponseData.getDescription());
             }
             // 大于0， 从平台转出， 转入PP电子
-            if (betAmount.compareTo(BigDecimal.ZERO) == 1) {
+            if (betAmount.compareTo(BigDecimal.ZERO) > 0) {
 
                 balance = balance.subtract(betAmount);
                 gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.DSFYXZZ, TradingEnum.SPENDING);
             }
             // 小于0， 从PP电子转出， 转入平台
-            if (betAmount.compareTo(BigDecimal.ZERO) == -1) {
+            if (betAmount.compareTo(BigDecimal.ZERO) < 0) {
 
                 balance = balance.add(betAmount.abs());
                 gameCommonService.updateUserBalance(memBaseinfo, betAmount.abs(), GoldchangeEnum.DSFYXZZ, TradingEnum.SPENDING);
@@ -472,20 +472,6 @@ public class PpServiceImpl implements PpService {
         return builder.toString();
     }
 
-
-    /**
-     * 初始化交互失败返回
-     *
-     * @param error       错误码
-     * @param description 错误描述
-     * @return
-     */
-    private String initErrorResponse(Integer error, String description) {
-        PpCommonResp ppCommonResp = new PpCommonResp();
-        ppCommonResp.setError(error);
-        ppCommonResp.setDescription(description);
-        return JSONObject.toJSONString(ppCommonResp);
-    }
 
     public Result errorCode(String errorCode, String errorMessage) {
 //        200 成功。                                                Succeed.
