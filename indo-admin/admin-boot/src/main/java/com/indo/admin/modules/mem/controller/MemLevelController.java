@@ -40,11 +40,12 @@ public class MemLevelController {
         return Result.success(result.getRecords(), result.getTotal());
     }
 
+/*产品设计需求变动
     @ApiOperation(value = "新增")
     @PostMapping(value = "/create")
     public Result create(@Validated @RequestBody MemLevelAddReq req) {
         return Result.judge(memLevelService.saveOne(req));
-    }
+    }*/
 
     @ApiOperation(value = "修改")
     @PutMapping(value = "/update")

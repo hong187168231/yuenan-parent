@@ -16,7 +16,10 @@
         mem_gold_change mgc
         where 1=1
         <if test="dto.refNo !=null and dto.refNo != '' ">
-            and mgc.ref_no = #{dto.refNo)
+            and mgc.ref_no = #{dto.refNo}
+        </if>
+        <if test="dto.account !=null and dto.account != '' ">
+            and mgc.account = #{dto.account}
         </if>
         <if test="dto.changeTypes !=null and changeTypes.size() > 0 ">
             and mgc.change_type in

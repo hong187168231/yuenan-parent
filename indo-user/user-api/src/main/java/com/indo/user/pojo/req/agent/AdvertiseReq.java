@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.indo.common.base.BaseDTO;
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.models.auth.In;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
@@ -30,6 +31,6 @@ public class AdvertiseReq {
     private String remark;
 
     @ApiModelProperty(value = "广告类型：1顶部广告，2底部广告，3推广广告，4banner广告")
-    private String types;
+    private Integer types;
 
 }

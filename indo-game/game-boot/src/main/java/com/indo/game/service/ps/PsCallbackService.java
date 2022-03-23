@@ -2,11 +2,12 @@ package com.indo.game.service.ps;
 
 
 import com.indo.game.pojo.dto.ps.PsCallBackParentReq;
+import com.indo.game.pojo.vo.callback.ps.PsCallBackResponse;
 
 public interface PsCallbackService {
 
 
-    Object psVerifyCallback(PsCallBackParentReq psCallBackParentReq, String ip);
+    PsCallBackResponse psVerifyCallback(PsCallBackParentReq psCallBackParentReq, String ip);
 
     Object psBetCallback(PsCallBackParentReq psbetCallBackReq, String ip);
 

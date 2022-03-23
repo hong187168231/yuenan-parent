@@ -57,6 +57,7 @@
         SELECT
         mb.id,
         mb.account,
+        mb.real_name as realName,
         mb.acc_type AS accType,
         mb.mem_level AS memLevel,
         mb.phone,
@@ -80,7 +81,8 @@
         mb.last_login_time AS lastLoginTime,
         mb.create_time AS createTime,
         mic.invite_code AS inviteCode,
-        ar.team_num AS teamNum
+        ar.team_num AS teamNum,
+        ar.superior AS superior
         FROM
         mem_baseinfo mb
         LEFT JOIN mem_invite_code mic ON mb.id = mic.mem_id
