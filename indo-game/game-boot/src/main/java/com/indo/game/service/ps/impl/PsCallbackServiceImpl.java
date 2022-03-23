@@ -2,23 +2,18 @@ package com.indo.game.service.ps.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.indo.common.config.OpenAPIProperties;
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.common.utils.DateUtils;
 import com.indo.game.mapper.TxnsMapper;
-import com.indo.game.pojo.dto.pg.PgVerifyCallBackReq;
 import com.indo.game.pojo.dto.ps.PsCallBackParentReq;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.game.pojo.entity.manage.GameCategory;
-import com.indo.game.pojo.entity.manage.GameParentPlatform;
 import com.indo.game.pojo.entity.manage.GamePlatform;
 import com.indo.game.pojo.entity.manage.Txns;
-import com.indo.game.pojo.vo.callback.ae.AeCallBackRespFail;
-import com.indo.game.pojo.vo.callback.pg.PgCallBackResponse;
+import com.indo.game.pojo.vo.callback.ps.PsCallBackResponse;
 import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
-import com.indo.game.service.pg.PgCallbackService;
 import com.indo.game.service.ps.PsCallbackService;
 import com.indo.user.pojo.bo.MemTradingBO;
 
@@ -33,8 +28,6 @@ import java.text.DecimalFormat;
 import java.util.Date;
 
 import javax.annotation.Resource;
-
-import io.swagger.models.auth.In;
 
 
 /**
@@ -56,21 +49,20 @@ public class PsCallbackServiceImpl implements PsCallbackService {
     private static final DecimalFormat format = new DecimalFormat("#");
 
     @Override
-    public JSONObject psVerifyCallback(PsCallBackParentReq psCallBackParentReq, String ip) {
+    public PsCallBackResponse psVerifyCallback(PsCallBackParentReq psCallBackParentReq, String ip) {
         CptOpenMember cptOpenMember = externalService.quertCptOpenMember(psCallBackParentReq.getAccess_token(), "PS");
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cptOpenMember.getUserName());
-        JSONObject dataJson = new JSONObject();
+        PsCallBackResponse psCallBackResponse = new PsCallBackResponse();
         if (cptOpenMember == null) {
-            dataJson.put("code", "1");
-            dataJson.put("message", "Token 无效");
-            return dataJson;
+            psCallBackResponse.setStatus_code(1);
+            return psCallBackResponse;
         }
         String signPrice = format.format(memBaseinfo.getBalance().multiply(new BigDecimal(100)));
-        dataJson.put("status_code", 0);
-        dataJson.put("member_id", cptOpenMember.getId());
-        dataJson.put("member_name", cptOpenMember.getUserName());
-        dataJson.put("balance", Integer.parseInt(signPrice));
-        return dataJson;
+        psCallBackResponse.setStatus_code(0);
+        psCallBackResponse.setMember_id(cptOpenMember.getId());
+        psCallBackResponse.setMember_name(cptOpenMember.getUserName());
+        psCallBackResponse.setBalance(Integer.parseInt(signPrice));
+        return psCallBackResponse;
     }
 
     @Override
