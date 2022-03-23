@@ -31,13 +31,11 @@ public class PsCallBackController {
      * 令牌验证
      */
     @RequestMapping(value = "/VerifySession", method = RequestMethod.GET)
-    @ResponseBody
-    @AllowAccess
-    public Object verifySession(PsCallBackParentReq psVerifyCallBackReq, HttpServletRequest request) {
+    public JSONObject verifySession(PsCallBackParentReq psVerifyCallBackReq, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
         logger.info("psCallBack {} verifyToken回调,params:{}", JSONObject.toJSONString(psVerifyCallBackReq));
-        Object object = psCallbackService.psVerifyCallback(psVerifyCallBackReq, ip);
+        JSONObject object = psCallbackService.psVerifyCallback(psVerifyCallBackReq, ip);
         logger.info("psCallBack {} verifyToken回调返回数据 params:{}", object);
         return object;
     }

@@ -34,6 +34,8 @@ import java.util.Date;
 
 import javax.annotation.Resource;
 
+import io.swagger.models.auth.In;
+
 
 /**
  * PS
@@ -54,7 +56,7 @@ public class PsCallbackServiceImpl implements PsCallbackService {
     private static final DecimalFormat format = new DecimalFormat("#");
 
     @Override
-    public Object psVerifyCallback(PsCallBackParentReq psCallBackParentReq, String ip) {
+    public JSONObject psVerifyCallback(PsCallBackParentReq psCallBackParentReq, String ip) {
         CptOpenMember cptOpenMember = externalService.quertCptOpenMember(psCallBackParentReq.getAccess_token(), "PS");
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cptOpenMember.getUserName());
         JSONObject dataJson = new JSONObject();
@@ -64,10 +66,10 @@ public class PsCallbackServiceImpl implements PsCallbackService {
             return dataJson;
         }
         String signPrice = format.format(memBaseinfo.getBalance().multiply(new BigDecimal(100)));
-        dataJson.put("status_code", "0");
+        dataJson.put("status_code", 0);
         dataJson.put("member_id", cptOpenMember.getId());
         dataJson.put("member_name", cptOpenMember.getUserName());
-        dataJson.put("balance", signPrice);
+        dataJson.put("balance", Integer.parseInt(signPrice));
         return dataJson;
     }
 
@@ -164,8 +166,8 @@ public class PsCallbackServiceImpl implements PsCallbackService {
             return dataJson;
         }
         String signPrice = format.format(balance);
-        dataJson.put("status_code", "0");
-        dataJson.put("balance", signPrice);
+        dataJson.put("status_code", 0);
+        dataJson.put("balance", Integer.parseInt(signPrice));
         return dataJson;
     }
 
@@ -213,8 +215,8 @@ public class PsCallbackServiceImpl implements PsCallbackService {
         oldTxns.setUpdateTime(dateStr);
         txnsMapper.updateById(oldTxns);
         String signPrice = format.format(balance);
-        dataJson.put("status_code", "0");
-        dataJson.put("balance", signPrice);
+        dataJson.put("status_code", 0);
+        dataJson.put("balance", Integer.parseInt(signPrice));
         return dataJson;
     }
 
@@ -255,8 +257,8 @@ public class PsCallbackServiceImpl implements PsCallbackService {
         txns.setCreateTime(dateStr);
         txnsMapper.insert(txns);
         String signPrice = format.format(balance);
-        dataJson.put("status_code", "0");
-        dataJson.put("balance", signPrice);
+        dataJson.put("status_code", 0);
+        dataJson.put("balance", Integer.parseInt(signPrice));
         return dataJson;
     }
 
@@ -303,8 +305,8 @@ public class PsCallbackServiceImpl implements PsCallbackService {
             return dataJson;
         }
         String signPrice = format.format(balance);
-        dataJson.put("status_code", "0");
-        dataJson.put("balance", signPrice);
+        dataJson.put("status_code", 0);
+        dataJson.put("balance", Integer.parseInt(signPrice));
         return dataJson;
     }
 
@@ -319,8 +321,8 @@ public class PsCallbackServiceImpl implements PsCallbackService {
         }
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cptOpenMember.getUserName());
         String signPrice = format.format(memBaseinfo.getBalance().multiply(new BigDecimal(100)));
-        dataJson.put("status_code", "0");
-        dataJson.put("balance", signPrice);
+        dataJson.put("status_code", 0);
+        dataJson.put("balance", Integer.parseInt(signPrice));
         return dataJson;
     }
 }

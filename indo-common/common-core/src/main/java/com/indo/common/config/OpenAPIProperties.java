@@ -153,11 +153,11 @@ public class OpenAPIProperties implements InitializingBean {
     @Value("${pp.secretKey}")
     private String ppSecretKey;
     @Value("${pp.providerId}")
-    private String ppProviderId ;
+    private String ppProviderId;
     @Value("${pp.secureLogin}")
-    private String ppSecureLogin ;
+    private String ppSecureLogin;
     @Value("${pp.ppName}")
-    private String ppName ;
+    private String ppName;
     @Value("${pp.platformCode:PP}")
     private String ppPlatformCode;
 
@@ -180,11 +180,11 @@ public class OpenAPIProperties implements InitializingBean {
     @Value("${rich.privateKey}")
     private String richPrivateKey;
     @Value("${rich.pfid}")
-    private String richPfid ;
+    private String richPfid;
     @Value("${rich.platformCode:RICH}")
     private String richPlatformCode;
     @Value("${rich.sessionId}")
-    private String richSessionId ;
+    private String richSessionId;
 
     // KA
     public static String KA_API_URL;
@@ -198,13 +198,24 @@ public class OpenAPIProperties implements InitializingBean {
     @Value("${ka.secretKey}")
     private String kaSecretKey;
     @Value("${ka.accessKey}")
-    private String kaAccessKey ;
+    private String kaAccessKey;
     @Value("${ka.platformCode:KA}")
     private String kaPlatformCode;
     @Value("${ka.gameUrl}")
     private String kaGameUrl;
     @Value("${ka.partnerName}")
     private String kaPartnerName;
+
+
+    public static String DJ_API_URL;
+    public static String DJ_API_KEY;
+    public static String DJ_AGENT_CODE;
+   // @Value("${dj.apiUrl}")
+    private String djApiUrl;
+    //@Value("${dj.apiKey}")
+    private String djApiKey;
+   // @Value("${dj.agentCode}")
+    private String djAgentCode;
 
     @Override
     public void afterPropertiesSet() {
@@ -279,5 +290,9 @@ public class OpenAPIProperties implements InitializingBean {
         KA_PLATFORM_CODE = kaPlatformCode;
         KA_GAME_URL = kaGameUrl;
         KA_PARTNER_NAME = kaPartnerName;
+
+        DJ_API_URL = djApiUrl;
+        DJ_API_KEY = djApiKey;
+        DJ_AGENT_CODE = djAgentCode;
     }
 }

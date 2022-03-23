@@ -1,12 +1,13 @@
 package com.indo.game.service.ps;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.indo.game.pojo.dto.ps.PsCallBackParentReq;
 
 public interface PsCallbackService {
 
 
-    Object psVerifyCallback(PsCallBackParentReq psCallBackParentReq, String ip);
+    JSONObject psVerifyCallback(PsCallBackParentReq psCallBackParentReq, String ip);
 
     Object psBetCallback(PsCallBackParentReq psbetCallBackReq, String ip);
 
