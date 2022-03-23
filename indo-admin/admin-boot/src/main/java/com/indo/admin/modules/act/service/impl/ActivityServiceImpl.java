@@ -7,6 +7,7 @@ import com.indo.admin.common.constant.SystemConstants;
 import com.indo.admin.common.util.AdminBusinessRedisUtils;
 import com.indo.admin.modules.act.mapper.ActivityMapper;
 import com.indo.admin.modules.act.service.IActivityService;
+import com.indo.admin.modules.act.service.IActivityTypeService;
 import com.indo.admin.pojo.dto.ActivityDTO;
 import com.indo.admin.pojo.dto.ActivityQueryDTO;
 import com.indo.common.constant.RedisConstants;
@@ -18,6 +19,7 @@ import com.indo.common.web.util.JwtUtils;
 import com.indo.core.pojo.entity.Activity;
 import com.indo.user.pojo.vo.act.ActivityVo;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,6 +40,9 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> i
     @Resource
     private DozerUtil dozerUtil;
 
+    @Autowired
+    IActivityTypeService activityTypeService;
+
     @Override
     public Result<List<ActivityVo>> queryList(ActivityQueryDTO queryDTO) {
         Page<Activity> activityPage = new Page<>(queryDTO.getPage(), queryDTO.getLimit());
@@ -52,11 +57,13 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> i
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean add(ActivityDTO activityDTO) {
         Activity activity = new Activity();
         BeanUtils.copyProperties(activityDTO, activity);
         if (baseMapper.insert(activity) > 0) {
+            // 增加活动数量
+            activityTypeService.updateMaxActNum(activityDTO.getActTypeId());
             AdminBusinessRedisUtils.hset(RedisConstants.ACTIVITY_KEY, activity.getActId() + "", activity);
             return true;
         }
