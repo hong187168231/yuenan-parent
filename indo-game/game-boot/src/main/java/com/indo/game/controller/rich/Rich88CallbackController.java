@@ -37,7 +37,7 @@ public class Rich88CallbackController {
     /**
      * 获取平台SESSION ID
      */
-    @RequestMapping(value="/session_id",method= RequestMethod.GET)
+    @RequestMapping(value="/rich88/session_id",method= RequestMethod.GET)
     @ResponseBody
     @AllowAccess
     public Object getSessionId(HttpServletRequest request) {
@@ -54,7 +54,7 @@ public class Rich88CallbackController {
     /**
      * 获取余额
      */
-    @RequestMapping(value="/balance/{account}",method= RequestMethod.GET)
+    @RequestMapping(value="/rich88/balance/{account}",method= RequestMethod.GET)
     @ResponseBody
     @AllowAccess
     public Object getBalance(@PathVariable(name = "account") String account, HttpServletRequest request) {
@@ -69,7 +69,7 @@ public class Rich88CallbackController {
     /**
      * 交易
      */
-    @RequestMapping(value="/transfer",method= RequestMethod.POST)
+    @RequestMapping(value="/rich88/transfer",method= RequestMethod.POST)
     @ResponseBody
     @AllowAccess
     public Object transfer(@RequestBody Rich88TransferReq rich88TransferReq, HttpServletRequest request) {
@@ -84,7 +84,7 @@ public class Rich88CallbackController {
     /**
      * 活动派奖
      */
-    @RequestMapping(value="/award_activity",method= RequestMethod.POST)
+    @RequestMapping(value="/rich88/award_activity",method= RequestMethod.POST)
     @ResponseBody
     @AllowAccess
     public Object awardActivity(@RequestBody Rich88ActivityReq rich88ActivityReq, HttpServletRequest request) {

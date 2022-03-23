@@ -46,5 +46,8 @@ public class TakeCashRecordVO implements Serializable {
     @ApiModelProperty(value = "付款实际")
     private String payTime;
 
+    @ApiModelProperty(value = "提现状态")
+    private Integer cashStatus;
+
 
 }

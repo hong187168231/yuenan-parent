@@ -44,6 +44,7 @@ public class Rich88CallbackServiceImpl implements Rich88CallbackService {
 
     @Override
     public Object getSessionId(String apiKey, String pfId, String timestamp, String ip) {
+        logger.info("rich88_getSessionId rich88Game paramJson:{}, ip:{}", pfId, ip);
         // 校验IP
         if (!checkIp(ip)) {
             return initFailureReturn(16005, "非信任來源IP");
@@ -65,6 +66,7 @@ public class Rich88CallbackServiceImpl implements Rich88CallbackService {
 
     @Override
     public Object getBalance(String authorization, String account, String ip) {
+        logger.info("rich88_getBalance rich88Game paramJson:{}, ip:{}", account, ip);
         // 校验IP
         if (!checkIp(ip)) {
             return initFailureReturn(16005, "非信任來源IP");
@@ -88,6 +90,7 @@ public class Rich88CallbackServiceImpl implements Rich88CallbackService {
 
     @Override
     public Object transfer(Rich88TransferReq rich88TransferReq, String authorization, String ip) {
+        logger.info("rich88_transfer rich88Game paramJson:{}, ip:{}", JSONObject.toJSONString(rich88TransferReq), ip);
         // 校验IP
         if (!checkIp(ip)) {
             return initFailureReturn(16005, "非信任來源IP");
@@ -182,6 +185,7 @@ public class Rich88CallbackServiceImpl implements Rich88CallbackService {
 
     @Override
     public Object awardActivity(Rich88ActivityReq rich88ActivityReq, String authorization, String ip) {
+        logger.info("rich88_awardActivity rich88Game paramJson:{}, ip:{}", JSONObject.toJSONString(rich88ActivityReq), ip);
         // 校验IP
         if (!checkIp(ip)) {
             return initFailureReturn(16005, "非信任來源IP");
