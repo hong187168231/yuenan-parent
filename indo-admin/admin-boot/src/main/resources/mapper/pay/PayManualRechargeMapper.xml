@@ -12,7 +12,7 @@
         LEFT JOIN agent_relation ma ON mb.id = ma.mem_id
         AND mb.`status` = 0
         <if test="account != null and account != '' ">
-            and mb.account = #{account}
+            where mb.account = #{account}
         </if>
     </select>
 
