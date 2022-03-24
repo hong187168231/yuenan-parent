@@ -50,7 +50,7 @@ public class PpServiceImpl implements PpService {
 
     @Override
     public Result ppGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName) {
-        logger.info("pplog {} ppGame account:{},ppCodeId:{}", loginUser.getId(), loginUser.getAccount(), platform);
+        logger.info("pplog ppGame account:{},ppCodeId:{}", loginUser.getId(), loginUser.getAccount(), platform);
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
         if (null == gameParentPlatform) {
@@ -110,7 +110,7 @@ public class PpServiceImpl implements PpService {
             ppApiRequestData.setSecureLogin(OpenAPIProperties.PP_SECURE_LOGIN);
             ppApiRequestData.setExternalPlayerId(loginUser.getAccount());
             ppApiRequestData.setGameId(platform);
-            ppApiRequestData.setLanguage("zh");
+            ppApiRequestData.setLanguage(gameParentPlatform.getLanguageType());
             return startGame(ppApiRequestData, ip);
         } catch (Exception e) {
             e.printStackTrace();
@@ -120,7 +120,7 @@ public class PpServiceImpl implements PpService {
 
     @Override
     public Result logout(LoginInfo loginUser, String platform, String ip) {
-        logger.info("pplogout {} ppGame account:{},t9CodeId:{}", loginUser.getId(), loginUser.getAccount(), platform);
+        logger.info("pplogout ppGame account:{},t9CodeId:{}", loginUser.getId(), loginUser.getAccount(), platform);
         try {
             PpApiRequestData ppApiRequestData = new PpApiRequestData();
             ppApiRequestData.setSecureLogin(OpenAPIProperties.PP_SECURE_LOGIN);
@@ -147,7 +147,7 @@ public class PpServiceImpl implements PpService {
 
     @Override
     public Result transfer(PpApiTransferReq ppApiTransferReq, String ip) {
-        logger.info("pp_transfer {} ppGame paramJson:{}, ip:{}", JSONObject.toJSONString(ppApiTransferReq), ip);
+        logger.info("pp_transfer ppGame paramJson:{}, ip:{}", JSONObject.toJSONString(ppApiTransferReq), ip);
         try {
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(ppApiTransferReq.getExternalPlayerId());
             GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(OpenAPIProperties.PP_PLATFORM_CODE);
@@ -269,7 +269,7 @@ public class PpServiceImpl implements PpService {
 
     @Override
     public Result getBalance(PpApiGetBalanceReq ppApiGetBalanceReq, String ip) {
-        logger.info("pp_getBalance {} ppGame paramJson:{}, ip:{}", JSONObject.toJSONString(ppApiGetBalanceReq), ip);
+        logger.info("pp_getBalance ppGame paramJson:{}, ip:{}", JSONObject.toJSONString(ppApiGetBalanceReq), ip);
         PpApiResponseData ppApiResponseData;
         try {
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(ppApiGetBalanceReq.getExternalPlayerId());
@@ -303,7 +303,7 @@ public class PpServiceImpl implements PpService {
 
     @Override
     public Result startGame(PpApiStartGameReq ppApiStartGameReq, String ip) {
-        logger.info("pp_startGame {} ppGame paramJson:{}, ip:{}", JSONObject.toJSONString(ppApiStartGameReq), ip);
+        logger.info("pp_startGame ppGame paramJson:{}, ip:{}", JSONObject.toJSONString(ppApiStartGameReq), ip);
         PpApiResponseData ppApiResponseData;
         try {
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(ppApiStartGameReq.getExternalPlayerId());

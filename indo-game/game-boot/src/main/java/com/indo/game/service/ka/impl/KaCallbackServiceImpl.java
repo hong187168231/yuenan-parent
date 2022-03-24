@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 
 /**
@@ -183,7 +184,7 @@ public class KaCallbackServiceImpl implements KaCallbackService {
                 int resultTyep;
                 if (freeWinAmount.compareTo(BigDecimal.ZERO) == 0) {
                     resultTyep = 2;
-                } else if (freeWinAmount.compareTo(BigDecimal.ZERO) == 1) {
+                } else if (freeWinAmount.compareTo(BigDecimal.ZERO) > 0) {
                     resultTyep = 0;
                 } else {
                     resultTyep = 1;
@@ -490,7 +491,7 @@ public class KaCallbackServiceImpl implements KaCallbackService {
         if (0 == amount) {
             return BigDecimal.ZERO;
         }
-        return BigDecimal.valueOf(amount).divide(BigDecimal.valueOf(100L));
+        return BigDecimal.valueOf(amount).divide(BigDecimal.valueOf(100L), 2, RoundingMode.HALF_UP);
     }
 
     /**

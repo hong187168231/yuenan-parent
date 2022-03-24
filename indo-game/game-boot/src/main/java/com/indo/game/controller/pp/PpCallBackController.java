@@ -15,6 +15,7 @@ import com.indo.game.service.pp.PpCallbackService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -37,12 +38,12 @@ public class PpCallBackController {
     @RequestMapping(value = "/Authenticate", method = RequestMethod.POST)
     @ResponseBody
     @AllowAccess
-    public Object authenticate(PpAuthenticateCallBackReq ppAuthenticateCallBackReq, HttpServletRequest request) {
+    public Object authenticate(@RequestBody PpAuthenticateCallBackReq ppAuthenticateCallBackReq, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("ppCallBack {} authenticate 回调,params:{}", JSONObject.toJSONString(ppAuthenticateCallBackReq));
+        logger.info("ppCallBack authenticate 回调,params:{}", JSONObject.toJSONString(ppAuthenticateCallBackReq));
         Object object = ppCallbackService.authenticate(ppAuthenticateCallBackReq, ip);
-        logger.info("ppCallBack {} authenticate 回调权限验证返回数据 params:{}", object);
+        logger.info("ppCallBack authenticate 回调权限验证返回数据 params:{}", object);
         return object;
     }
 
@@ -52,12 +53,12 @@ public class PpCallBackController {
     @RequestMapping(value = "/Balance", method = RequestMethod.POST)
     @ResponseBody
     @AllowAccess
-    public Object getBalance(PpBalanceCallBackReq ppBalanceCallBackReq, HttpServletRequest request) {
+    public Object getBalance(@RequestBody PpBalanceCallBackReq ppBalanceCallBackReq, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("ppCallBack {} getBalance 回调,params:{}", JSONObject.toJSONString(ppBalanceCallBackReq));
+        logger.info("ppCallBack getBalance 回调,params:{}", JSONObject.toJSONString(ppBalanceCallBackReq));
         Object object = ppCallbackService.getBalance(ppBalanceCallBackReq, ip);
-        logger.info("ppCallBack {} getBalance 回调查询余额返回数据 params:{}", object);
+        logger.info("ppCallBack getBalance 回调查询余额返回数据 params:{}", object);
         return object;
     }
 
@@ -68,12 +69,12 @@ public class PpCallBackController {
     @RequestMapping(value = "/Bet", method = RequestMethod.POST)
     @ResponseBody
     @AllowAccess
-    public Object bet(PpBetCallBackReq ppBetCallBackReq, HttpServletRequest request) {
+    public Object bet(@RequestBody PpBetCallBackReq ppBetCallBackReq, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("ppCallBack {} bet 回调,params:{}", JSONObject.toJSONString(ppBetCallBackReq));
+        logger.info("ppCallBack bet 回调,params:{}", JSONObject.toJSONString(ppBetCallBackReq));
         Object object = ppCallbackService.bet(ppBetCallBackReq, ip);
-        logger.info("ppCallBack {} bet 回调下注返回数据 params:{}", object);
+        logger.info("ppCallBack bet 回调下注返回数据 params:{}", object);
         return object;
     }
 
@@ -83,12 +84,12 @@ public class PpCallBackController {
     @RequestMapping(value = "/Result", method = RequestMethod.POST)
     @ResponseBody
     @AllowAccess
-    public Object result(PpResultCallBackReq ppResultCallBackReq, HttpServletRequest request) {
+    public Object result(@RequestBody PpResultCallBackReq ppResultCallBackReq, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("ppCallBack {} result 回调,params:{}", JSONObject.toJSONString(ppResultCallBackReq));
+        logger.info("ppCallBack result 回调,params:{}", JSONObject.toJSONString(ppResultCallBackReq));
         Object object = ppCallbackService.result(ppResultCallBackReq, ip);
-        logger.info("ppCallBack {} result 回调玩家中奖返回数据 params:{}", object);
+        logger.info("ppCallBack result 回调玩家中奖返回数据 params:{}", object);
         return object;
     }
 
@@ -98,12 +99,12 @@ public class PpCallBackController {
     @RequestMapping(value = "/BonusWin", method = RequestMethod.POST)
     @ResponseBody
     @AllowAccess
-    public Object bonusWin(PpBonusWinCallBackReq ppBonusWinCallBackReq, HttpServletRequest request) {
+    public Object bonusWin(@RequestBody PpBonusWinCallBackReq ppBonusWinCallBackReq, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("ppCallBack {} bonusWin 回调,params:{}", JSONObject.toJSONString(ppBonusWinCallBackReq));
+        logger.info("ppCallBack bonusWin 回调,params:{}", JSONObject.toJSONString(ppBonusWinCallBackReq));
         Object object = ppCallbackService.bonusWin(ppBonusWinCallBackReq, ip);
-        logger.info("ppCallBack {} bonusWin 回调玩家免费回合中奖返回数据 params:{}", object);
+        logger.info("ppCallBack bonusWin 回调玩家免费回合中奖返回数据 params:{}", object);
         return object;
     }
 
@@ -113,12 +114,12 @@ public class PpCallBackController {
     @RequestMapping(value = "/JackpotWin", method = RequestMethod.POST)
     @ResponseBody
     @AllowAccess
-    public Object jackpotWin(PpJackpotWinCallBackReq ppJackpotWinCallBackReq, HttpServletRequest request) {
+    public Object jackpotWin(@RequestBody PpJackpotWinCallBackReq ppJackpotWinCallBackReq, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("ppCallBack {} refund 回调,params:{}", JSONObject.toJSONString(ppJackpotWinCallBackReq));
+        logger.info("ppCallBack refund 回调,params:{}", JSONObject.toJSONString(ppJackpotWinCallBackReq));
         Object object = ppCallbackService.jackpotWin(ppJackpotWinCallBackReq, ip);
-        logger.info("ppCallBack {} refund 回调有关累积奖金赢奖返回数据 params:{}", object);
+        logger.info("ppCallBack refund 回调有关累积奖金赢奖返回数据 params:{}", object);
         return object;
     }
 
@@ -128,12 +129,12 @@ public class PpCallBackController {
     @RequestMapping(value = "/PromoWin", method = RequestMethod.POST)
     @ResponseBody
     @AllowAccess
-    public Object promoWin(PpPromoWinCallBackReq ppPromoWinCallBackReq, HttpServletRequest request) {
+    public Object promoWin(@RequestBody PpPromoWinCallBackReq ppPromoWinCallBackReq, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("ppCallBack {} refund 回调,params:{}", JSONObject.toJSONString(ppPromoWinCallBackReq));
+        logger.info("ppCallBack refund 回调,params:{}", JSONObject.toJSONString(ppPromoWinCallBackReq));
         Object object = ppCallbackService.promoWin(ppPromoWinCallBackReq, ip);
-        logger.info("ppCallBack {} refund 回调退款返回数据 params:{}", object);
+        logger.info("ppCallBack refund 回调退款返回数据 params:{}", object);
         return object;
     }
 
@@ -143,12 +144,12 @@ public class PpCallBackController {
     @RequestMapping(value = "/Refund", method = RequestMethod.POST)
     @ResponseBody
     @AllowAccess
-    public Object refund(PpRefundWinCallBackReq ppRefundWinCallBackReq, HttpServletRequest request) {
+    public Object refund(@RequestBody PpRefundWinCallBackReq ppRefundWinCallBackReq, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("ppCallBack {} refund 回调,params:{}", JSONObject.toJSONString(ppRefundWinCallBackReq));
+        logger.info("ppCallBack refund 回调,params:{}", JSONObject.toJSONString(ppRefundWinCallBackReq));
         Object object = ppCallbackService.refund(ppRefundWinCallBackReq, ip);
-        logger.info("ppCallBack {} refund 回调退款返回数据 params:{}", object);
+        logger.info("ppCallBack refund 回调退款返回数据 params:{}", object);
         return object;
     }
 
