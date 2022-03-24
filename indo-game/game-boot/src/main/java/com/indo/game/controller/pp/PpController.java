@@ -36,7 +36,7 @@ public class PpController {
     @RequestMapping(value = "/transfer", method = RequestMethod.POST)
     @ResponseBody
     @AllowAccess
-    public Object transfer(@RequestBody PpApiTransferReq ppApiTransferReq, HttpServletRequest request) {
+    public Object transfer(PpApiTransferReq ppApiTransferReq, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
         logger.info("ppController  transfer ,params:{}", JSONObject.toJSONString(ppApiTransferReq));
@@ -51,7 +51,7 @@ public class PpController {
     @RequestMapping(value = "/getBalance", method = RequestMethod.POST)
     @ResponseBody
     @AllowAccess
-    public Object getBalance(@RequestBody PpApiGetBalanceReq ppApiGetBalanceReq, HttpServletRequest request) {
+    public Object getBalance(PpApiGetBalanceReq ppApiGetBalanceReq, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
         logger.info("ppController  getBalance ,params:{}", JSONObject.toJSONString(ppApiGetBalanceReq));
@@ -66,7 +66,7 @@ public class PpController {
     @RequestMapping(value = "/startGame", method = RequestMethod.POST)
     @ResponseBody
     @AllowAccess
-    public Object startGame(@RequestBody PpApiStartGameReq ppApiStartGameReq, HttpServletRequest request) {
+    public Object startGame(PpApiStartGameReq ppApiStartGameReq, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
         logger.info("ppController  startGame ,params:{}", JSONObject.toJSONString(ppApiStartGameReq));

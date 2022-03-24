@@ -1,5 +1,6 @@
 package com.indo.game.common.util;
 
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.util.DigestUtils;
 
 import java.lang.reflect.Field;
@@ -39,6 +40,7 @@ public class PPHashAESEncrypt {
      * @return
      */
     private static String getOriginalHash(Object o, String secretKey) throws Exception {
+        System.out.println("getOriginalHash: "+JSONObject.toJSONString(o));
         Field[] fields = o.getClass().getDeclaredFields();
         String[] fieldNames = new String[fields.length-1];
         int strIdx = 0;
