@@ -29,6 +29,7 @@ import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Iterator;
@@ -50,10 +51,6 @@ public class GameUtil extends HttpCommonUtils {
      * 请求获取数据的超时时间,单位毫秒
      * */
     private static final int SOCKET_TIMEOUT = 7000;
-    /*
-     * 异常的最大重试次数
-     * */
-    private static final int EXCEPTION_MAX_RETRY = 2;
 
     public static String createSign(Map<String, String> packageParams, String signKey) {
         TreeMap sortedMap = new TreeMap(packageParams);
@@ -119,9 +116,9 @@ public class GameUtil extends HttpCommonUtils {
         byte[] raw = aeskey.getBytes();
         SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
         cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
-        byte[] encrypted = cipher.doFinal(sSrc.getBytes("utf-8"));
+        byte[] encrypted = cipher.doFinal(sSrc.getBytes(StandardCharsets.UTF_8));
         //此处使用BASE64做转码。
-        return URLEncoder.encode(Base64.getEncoder().encodeToString(encrypted), "UTF-8");
+        return URLEncoder.encode(Base64.getEncoder().encodeToString(encrypted), StandardCharsets.UTF_8.toString());
     }
 
     /**
@@ -137,7 +134,7 @@ public class GameUtil extends HttpCommonUtils {
             //先用base64解密
             byte[] encrypted1 = Base64.getDecoder().decode(sSrc);
             byte[] original = cipher.doFinal(encrypted1);
-            String originalString = new String(original, "utf-8");
+            String originalString = new String(original, StandardCharsets.UTF_8);
             return originalString;
         } catch (Exception ex) {
             logger.error("decrypt error", ex);
@@ -187,7 +184,7 @@ public class GameUtil extends HttpCommonUtils {
             }
             logger.info("POST请求 commonRequest userId:{},paramsMap:{}", userId, paramsMap);
             // 创建请求内容
-            UrlEncodedFormEntity urlEncodedFormEntity = new UrlEncodedFormEntity(list, "utf-8");
+            UrlEncodedFormEntity urlEncodedFormEntity = new UrlEncodedFormEntity(list, StandardCharsets.UTF_8);
             httpPost.setEntity(urlEncodedFormEntity);
 
             //log参数
@@ -197,7 +194,7 @@ public class GameUtil extends HttpCommonUtils {
             // 执行http请求
             response = closeableHttpClient.execute(httpPost);
             HttpEntity entity = response.getEntity();
-            resultString = EntityUtils.toString(entity, "utf-8");
+            resultString = EntityUtils.toString(entity, StandardCharsets.UTF_8);
             // 此句关闭了流
             EntityUtils.consume(entity);
         } catch (Exception e) {
@@ -247,10 +244,10 @@ public class GameUtil extends HttpCommonUtils {
 //            }
 
             // 创建请求内容
-//            UrlEncodedFormEntity urlEncodedFormEntity = new UrlEncodedFormEntity(list, "utf-8");
+//            UrlEncodedFormEntity urlEncodedFormEntity = new UrlEncodedFormEntity(list, StandardCharsets.UTF_8);
 //            httpPost.setEntity(urlEncodedFormEntity);
-            StringEntity stringEntityentity = new StringEntity(json, "utf-8");//解决中文乱码问题
-            stringEntityentity.setContentEncoding("UTF-8");
+            StringEntity stringEntityentity = new StringEntity(json, StandardCharsets.UTF_8);//解决中文乱码问题
+            stringEntityentity.setContentEncoding(StandardCharsets.UTF_8.toString());
             stringEntityentity.setContentType("application/json");
             httpPost.setEntity(stringEntityentity);
 
@@ -262,7 +259,7 @@ public class GameUtil extends HttpCommonUtils {
 //            // 执行http请求
 //            response = closeableHttpClient.execute(httpPost);
 //            HttpEntity entity = response.getEntity();
-//            resultString = EntityUtils.toString(entity, "utf-8");
+//            resultString = EntityUtils.toString(entity, StandardCharsets.UTF_8);
 //            // 此句关闭了流
 //            EntityUtils.consume(entity);
         } catch (Exception e) {
@@ -311,10 +308,10 @@ public class GameUtil extends HttpCommonUtils {
 //            }
 
             // 创建请求内容
-//            UrlEncodedFormEntity urlEncodedFormEntity = new UrlEncodedFormEntity(list, "utf-8");
+//            UrlEncodedFormEntity urlEncodedFormEntity = new UrlEncodedFormEntity(list, StandardCharsets.UTF_8);
 //            httpPost.setEntity(urlEncodedFormEntity);
-            StringEntity stringEntityentity = new StringEntity(json, "utf-8");//解决中文乱码问题
-            stringEntityentity.setContentEncoding("UTF-8");
+            StringEntity stringEntityentity = new StringEntity(json, StandardCharsets.UTF_8);//解决中文乱码问题
+            stringEntityentity.setContentEncoding(StandardCharsets.UTF_8.toString());
             stringEntityentity.setContentType("application/json");
             httpPost.setEntity(stringEntityentity);
 
@@ -326,7 +323,7 @@ public class GameUtil extends HttpCommonUtils {
 //            // 执行http请求
 //            response = closeableHttpClient.execute(httpPost);
 //            HttpEntity entity = response.getEntity();
-//            resultString = EntityUtils.toString(entity, "utf-8");
+//            resultString = EntityUtils.toString(entity, StandardCharsets.UTF_8);
 //            // 此句关闭了流
 //            EntityUtils.consume(entity);
         } catch (Exception e) {
@@ -357,7 +354,7 @@ public class GameUtil extends HttpCommonUtils {
             //设置通用属性
             httpConn.setRequestProperty("accept", "*/*");
             httpConn.setRequestProperty("Connection", "Keep-Alive");//设置与服务器保持连接
-            httpConn.setRequestProperty("Charset", "UTF-8");//设置字符编码类型
+            httpConn.setRequestProperty("Charset", StandardCharsets.UTF_8.toString());//设置字符编码类型
 
             //发送POST请求必须设置如下
             httpConn.setRequestMethod("POST");
@@ -365,11 +362,11 @@ public class GameUtil extends HttpCommonUtils {
             httpConn.setDoInput(true);
             httpConn.setRequestProperty("Content-type", "application/x-javascript->json");//json格式数据
 
-            out1 = new OutputStreamWriter(httpConn.getOutputStream(), "utf-8");
+            out1 = new OutputStreamWriter(httpConn.getOutputStream(), StandardCharsets.UTF_8);
             out1.write(param);
             out1.flush();
 
-            in = new BufferedReader(new InputStreamReader(httpConn.getInputStream(), "utf-8"));
+            in = new BufferedReader(new InputStreamReader(httpConn.getInputStream(), StandardCharsets.UTF_8));
 
             String line;
             while ((line = in.readLine()) != null) {
@@ -439,7 +436,7 @@ public class GameUtil extends HttpCommonUtils {
             }
             logger.info("POST请求 commonRequest userId:{},paramsMap:{}", userId, paramsMap);
             // 创建请求内容
-            UrlEncodedFormEntity urlEncodedFormEntity = new UrlEncodedFormEntity(list, "utf-8");
+            UrlEncodedFormEntity urlEncodedFormEntity = new UrlEncodedFormEntity(list, StandardCharsets.UTF_8);
             httpPost.setEntity(urlEncodedFormEntity);
 
             //log参数
@@ -449,7 +446,7 @@ public class GameUtil extends HttpCommonUtils {
             // 执行http请求
             response = closeableHttpClient.execute(httpPost);
             HttpEntity entity = response.getEntity();
-            resultString = EntityUtils.toString(entity, "utf-8");
+            resultString = EntityUtils.toString(entity, StandardCharsets.UTF_8);
             // 此句关闭了流
             EntityUtils.consume(entity);
         } catch (Exception e) {
@@ -476,7 +473,7 @@ public class GameUtil extends HttpCommonUtils {
         logger.info("POST请求 postJson headers:{}", headers);
         String result = null;
         if (true) {
-            String charset = "UTF-8";
+            String charset = StandardCharsets.UTF_8.toString();
             CloseableHttpClient httpClient;
             HttpPost httpPost;
             CloseableHttpResponse response = null;
@@ -497,7 +494,7 @@ public class GameUtil extends HttpCommonUtils {
 
                 if (null != body) {
                     // 设置参数
-                    StringEntity se = new StringEntity(JSONObject.toJSONString(body), "UTF-8");
+                    StringEntity se = new StringEntity(JSONObject.toJSONString(body), StandardCharsets.UTF_8);
                     httpPost.setEntity(se);
                 }
                 response = httpClient.execute(httpPost);
@@ -533,7 +530,7 @@ public class GameUtil extends HttpCommonUtils {
         logger.info("POST请求 postJson body:{}", body);
         String result = null;
         if (true) {
-            String charset = "UTF-8";
+            String charset = StandardCharsets.UTF_8.toString();
             CloseableHttpClient httpClient;
             HttpPost httpPost;
             CloseableHttpResponse response = null;
@@ -556,7 +553,7 @@ public class GameUtil extends HttpCommonUtils {
                         list.add(new BasicNameValuePair(key, String.valueOf(body.get(key))));
                     }
                     // 创建请求内容
-                    UrlEncodedFormEntity urlEncodedFormEntity = new UrlEncodedFormEntity(list, "utf-8");
+                    UrlEncodedFormEntity urlEncodedFormEntity = new UrlEncodedFormEntity(list, StandardCharsets.UTF_8);
                     httpPost.setEntity(urlEncodedFormEntity);
                     logger.info("POST请求 postJson ,urlEncodedFormEntity:{}", JSONObject.toJSONString(urlEncodedFormEntity));
 

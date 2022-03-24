@@ -15,7 +15,6 @@ import com.indo.game.service.pp.PpCallbackService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -153,16 +152,4 @@ public class PpCallBackController {
         return object;
     }
 
-
-    /**
-     * 通知娱乐场运营商游戏回合已结束以便结束交易。可选 EndRound
-     */
-
-    /**
-     * 返回玩家每个游戏的余额。可选 GetBalancePerGame
-     */
-
-    /**
-     * 通过这种方法，Pragmatic  Play 系统将向娱乐场运营商发送玩家需要调整的余额金额。可选 Adjustment
-     */
 }

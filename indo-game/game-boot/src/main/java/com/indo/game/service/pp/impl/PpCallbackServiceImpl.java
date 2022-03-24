@@ -10,13 +10,10 @@ import com.indo.common.utils.DateUtils;
 import com.indo.common.utils.StringUtils;
 import com.indo.game.common.util.PPHashAESEncrypt;
 import com.indo.game.mapper.TxnsMapper;
-import com.indo.game.pojo.dto.pp.PpCallbackApiResponseData;
 import com.indo.game.pojo.dto.pp.PpAuthenticateCallBackReq;
-import com.indo.game.pojo.dto.pp.PpAuthenticateResp;
 import com.indo.game.pojo.dto.pp.PpBalanceCallBackReq;
 import com.indo.game.pojo.dto.pp.PpBetCallBackReq;
 import com.indo.game.pojo.dto.pp.PpBonusWinCallBackReq;
-import com.indo.game.pojo.dto.pp.PpCommonResp;
 import com.indo.game.pojo.dto.pp.PpJackpotWinCallBackReq;
 import com.indo.game.pojo.dto.pp.PpPromoWinCallBackReq;
 import com.indo.game.pojo.dto.pp.PpRefundWinCallBackReq;
@@ -62,22 +59,29 @@ public class PpCallbackServiceImpl implements PpCallbackService {
         if (checkReqHash(ppAuthenticateCallBackReq, ppAuthenticateCallBackReq.getHash())) {
             return initFailureResponse(5, "请求参数非法");
         }
-
+        GameParentPlatform platformGameParent = getGameParentPlatform();
+        // 校验IP
+        if (checkIp(ip, platformGameParent)) {
+            return initFailureResponse(5, "非信任來源IP");
+        }
         String ppPlatformCode = OpenAPIProperties.PP_PLATFORM_CODE;
         CptOpenMember cptOpenMember = externalService.quertCptOpenMember(ppAuthenticateCallBackReq.getToken(), ppPlatformCode);
-        GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(ppPlatformCode);
 
-        PpAuthenticateResp ppAuthenticateResp = new PpAuthenticateResp();
         if (null == cptOpenMember) {
             return initFailureResponse(2, "玩家不存在");
         }
 
-        ppAuthenticateResp.setUserId(cptOpenMember.getUserName());
-        ppAuthenticateResp.setCurrency(platformGameParent.getCurrencyType());
-        ppAuthenticateResp.setCash(cptOpenMember.getBalance());
-        ppAuthenticateResp.setBonus(BigDecimal.ZERO);
-        ppAuthenticateResp.setToken(cptOpenMember.getPassword());
-        return JSONObject.toJSONString(ppAuthenticateResp);
+        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cptOpenMember.getUserId().toString());
+        if (null == memBaseinfo) {
+            return initFailureResponse(2, "玩家不存在");
+        }
+
+        JSONObject json = initSuccessResponse();
+        json.put("currency", platformGameParent.getCurrencyType());
+        json.put("cash", cptOpenMember.getBalance());
+        json.put("bonus", BigDecimal.ZERO);
+        json.put("token", cptOpenMember.getPassword());
+        return json;
     }
 
     // 获取余额
@@ -89,18 +93,21 @@ public class PpCallbackServiceImpl implements PpCallbackService {
         if (checkReqHash(ppBalanceCallBackReq, ppBalanceCallBackReq.getHash())) {
             return initFailureResponse(5, "请求参数非法");
         }
-
-        GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.PP_PLATFORM_CODE);
+        GameParentPlatform platformGameParent = getGameParentPlatform();
+        // 校验IP
+        if (checkIp(ip, platformGameParent)) {
+            return initFailureResponse(5, "非信任來源IP");
+        }
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(ppBalanceCallBackReq.getUserId());
         if (null == memBaseinfo) {
             return initFailureResponse(2, "玩家不存在");
         }
 
-        PpCallbackApiResponseData ppCallbackApiResponseData = new PpCallbackApiResponseData();
-        ppCallbackApiResponseData.setCurrency(platformGameParent.getCurrencyType());
-        ppCallbackApiResponseData.setCash(memBaseinfo.getBalance());
-        ppCallbackApiResponseData.setBonus(BigDecimal.ZERO);
-        return JSONObject.toJSONString(ppCallbackApiResponseData);
+        JSONObject json = initSuccessResponse();
+        json.put("currency", platformGameParent.getCurrencyType());
+        json.put("cash", memBaseinfo.getBalance());
+        json.put("bonus", BigDecimal.ZERO);
+        return json;
 
     }
 
@@ -112,13 +119,16 @@ public class PpCallbackServiceImpl implements PpCallbackService {
         if (checkReqHash(ppBetCallBackReq, ppBetCallBackReq.getHash())) {
             return initFailureResponse(5, "请求参数非法");
         }
+        GameParentPlatform platformGameParent = getGameParentPlatform();
+        // 校验IP
+        if (checkIp(ip, platformGameParent)) {
+            return initFailureResponse(5, "非信任來源IP");
+        }
 
-        PpCallbackApiResponseData ppCallbackApiResponseData = new PpCallbackApiResponseData();
         try {
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(ppBetCallBackReq.getUserId());
-            GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(OpenAPIProperties.PP_PLATFORM_CODE);
+            GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(ppBetCallBackReq.getGameId());
             GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
-            GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.PP_PLATFORM_CODE);
 
             // 会员余额
             BigDecimal balance = memBaseinfo.getBalance();
@@ -201,17 +211,17 @@ public class PpCallbackServiceImpl implements PpCallbackService {
                 return initFailureResponse(100, "订单入库请求失败");
             }
 
-            ppCallbackApiResponseData.setCurrency(platformGameParent.getCurrencyType());
-            ppCallbackApiResponseData.setCash(balance);
-            ppCallbackApiResponseData.setTransactionId(ppBetCallBackReq.getReference());
-            ppCallbackApiResponseData.setBonus(BigDecimal.ZERO);
-            ppCallbackApiResponseData.setUsedPromo(BigDecimal.ZERO);
+            JSONObject json = initSuccessResponse();
+            json.put("currency", platformGameParent.getCurrencyType());
+            json.put("cash", balance);
+            json.put("bonus", BigDecimal.ZERO);
+            json.put("usedPromo", BigDecimal.ZERO);
+            return json;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return initFailureResponse(100, e.getMessage());
         }
 
-        return JSONObject.toJSONString(ppCallbackApiResponseData);
     }
 
     // 中奖
@@ -222,11 +232,13 @@ public class PpCallbackServiceImpl implements PpCallbackService {
         if (checkReqHash(ppResultCallBackReq, ppResultCallBackReq.getHash())) {
             return initFailureResponse(5, "请求参数非法");
         }
-
-        PpCallbackApiResponseData ppCallbackApiResponseData = new PpCallbackApiResponseData();
+        GameParentPlatform platformGameParent = getGameParentPlatform();
+        // 校验IP
+        if (checkIp(ip, platformGameParent)) {
+            return initFailureResponse(5, "非信任來源IP");
+        }
         try {
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(ppResultCallBackReq.getUserId());
-            GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.PP_PLATFORM_CODE);
 
             // 查询用户请求订单
             Txns oldTxns = getTxns(ppResultCallBackReq.getReference(), memBaseinfo.getId());
@@ -237,7 +249,7 @@ public class PpCallbackServiceImpl implements PpCallbackService {
             // 中奖金额
             BigDecimal betAmount = ppResultCallBackReq.getAmount();
             // 中奖金额小于0
-            if (betAmount.compareTo(BigDecimal.ZERO)  < 0) {
+            if (betAmount.compareTo(BigDecimal.ZERO) < 0) {
                 return initFailureResponse(7, "中奖金额不能小0");
             }
 
@@ -287,16 +299,17 @@ public class PpCallbackServiceImpl implements PpCallbackService {
                 return initFailureResponse(100, "订单派奖请求失败");
             }
 
-            ppCallbackApiResponseData.setCurrency(platformGameParent.getCurrencyType());
-            ppCallbackApiResponseData.setCash(balance);
-            ppCallbackApiResponseData.setTransactionId(ppResultCallBackReq.getReference());
-            ppCallbackApiResponseData.setBonus(BigDecimal.ZERO);
+            JSONObject json = initSuccessResponse();
+            json.put("currency", platformGameParent.getCurrencyType());
+            json.put("cash", balance);
+            json.put("bonus", BigDecimal.ZERO);
+            json.put("transactionId", ppResultCallBackReq.getReference());
+            return json;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return initFailureResponse(100, e.getMessage());
         }
 
-        return JSONObject.toJSONString(ppCallbackApiResponseData);
     }
 
     // 免费回合赢奖
@@ -307,13 +320,15 @@ public class PpCallbackServiceImpl implements PpCallbackService {
         if (checkReqHash(ppBonusWinCallBackReq, ppBonusWinCallBackReq.getHash())) {
             return initFailureResponse(5, "请求参数非法");
         }
-
-        PpCallbackApiResponseData ppCallbackApiResponseData = new PpCallbackApiResponseData();
+        GameParentPlatform platformGameParent = getGameParentPlatform();
+        // 校验IP
+        if (checkIp(ip, platformGameParent)) {
+            return initFailureResponse(5, "非信任來源IP");
+        }
         try {
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(ppBonusWinCallBackReq.getUserId());
-            GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(OpenAPIProperties.PP_PLATFORM_CODE);
+            GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(ppBonusWinCallBackReq.getGameId());
             GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
-            GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.PP_PLATFORM_CODE);
 
             // 赢奖金额
             BigDecimal betAmount = ppBonusWinCallBackReq.getAmount();
@@ -403,16 +418,17 @@ public class PpCallbackServiceImpl implements PpCallbackService {
                 return initFailureResponse(100, "订单入库请求失败");
             }
 
-            ppCallbackApiResponseData.setCurrency(platformGameParent.getCurrencyType());
-            ppCallbackApiResponseData.setCash(balance);
-            ppCallbackApiResponseData.setTransactionId(ppBonusWinCallBackReq.getReference());
-            ppCallbackApiResponseData.setBonus(BigDecimal.ZERO);
+            JSONObject json = initSuccessResponse();
+            json.put("currency", platformGameParent.getCurrencyType());
+            json.put("cash", balance);
+            json.put("bonus", BigDecimal.ZERO);
+            json.put("transactionId", ppBonusWinCallBackReq.getReference());
+            return json;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return initFailureResponse(100, e.getMessage());
         }
 
-        return JSONObject.toJSONString(ppCallbackApiResponseData);
     }
 
     // 累计奖金赢奖(促销)
@@ -423,13 +439,15 @@ public class PpCallbackServiceImpl implements PpCallbackService {
         if (checkReqHash(ppJackpotWinCallBackReq, ppJackpotWinCallBackReq.getHash())) {
             return initFailureResponse(5, "请求参数非法");
         }
-
-        PpCallbackApiResponseData ppCallbackApiResponseData = new PpCallbackApiResponseData();
+        GameParentPlatform platformGameParent = getGameParentPlatform();
+        // 校验IP
+        if (checkIp(ip, platformGameParent)) {
+            return initFailureResponse(5, "非信任來源IP");
+        }
         try {
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(ppJackpotWinCallBackReq.getUserId());
-            GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(OpenAPIProperties.PP_PLATFORM_CODE);
+            GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(ppJackpotWinCallBackReq.getGameId());
             GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
-            GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.PP_PLATFORM_CODE);
 
             // 赢奖金额
             BigDecimal betAmount = ppJackpotWinCallBackReq.getAmount();
@@ -520,16 +538,17 @@ public class PpCallbackServiceImpl implements PpCallbackService {
                 return initFailureResponse(100, "订单入库请求失败");
             }
 
-            ppCallbackApiResponseData.setCurrency(platformGameParent.getCurrencyType());
-            ppCallbackApiResponseData.setCash(balance);
-            ppCallbackApiResponseData.setTransactionId(ppJackpotWinCallBackReq.getReference());
-            ppCallbackApiResponseData.setBonus(BigDecimal.ZERO);
+            JSONObject json = initSuccessResponse();
+            json.put("currency", platformGameParent.getCurrencyType());
+            json.put("cash", balance);
+            json.put("bonus", BigDecimal.ZERO);
+            json.put("transactionId", ppJackpotWinCallBackReq.getReference());
+            return json;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return initFailureResponse(100, e.getMessage());
         }
 
-        return JSONObject.toJSONString(ppCallbackApiResponseData);
     }
 
     // 活动奖励
@@ -540,13 +559,15 @@ public class PpCallbackServiceImpl implements PpCallbackService {
         if (checkReqHash(ppPromoWinCallBackReq, ppPromoWinCallBackReq.getHash())) {
             return initFailureResponse(5, "请求参数非法");
         }
-
-        PpCallbackApiResponseData ppCallbackApiResponseData = new PpCallbackApiResponseData();
+        GameParentPlatform platformGameParent = getGameParentPlatform();
+        // 校验IP
+        if (checkIp(ip, platformGameParent)) {
+            return initFailureResponse(5, "非信任來源IP");
+        }
         try {
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(ppPromoWinCallBackReq.getUserId());
             GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(OpenAPIProperties.PP_PLATFORM_CODE);
             GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
-            GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.PP_PLATFORM_CODE);
 
             // 赢奖金额
             BigDecimal betAmount = ppPromoWinCallBackReq.getAmount();
@@ -641,73 +662,88 @@ public class PpCallbackServiceImpl implements PpCallbackService {
                 return initFailureResponse(100, "活动派奖订单入库请求失败");
             }
 
-            ppCallbackApiResponseData.setCurrency(platformGameParent.getCurrencyType());
-            ppCallbackApiResponseData.setCash(balance);
-            ppCallbackApiResponseData.setTransactionId(ppPromoWinCallBackReq.getReference());
-            ppCallbackApiResponseData.setBonus(BigDecimal.ZERO);
+            JSONObject json = initSuccessResponse();
+            json.put("currency", platformGameParent.getCurrencyType());
+            json.put("cash", balance);
+            json.put("bonus", BigDecimal.ZERO);
+            json.put("transactionId", ppPromoWinCallBackReq.getReference());
+            return json;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return initFailureResponse(100, e.getMessage());
         }
-
-        return JSONObject.toJSONString(ppCallbackApiResponseData);
     }
 
     // 退款
     @Override
     public Object refund(PpRefundWinCallBackReq ppRefundWinCallBackReq, String ip) {
-        logger.info("pp_promowin  ppGame paramJson:{}, ip:{}", JSONObject.toJSONString(ppRefundWinCallBackReq), ip);
+        logger.info("pp_refund  ppGame paramJson:{}, ip:{}", JSONObject.toJSONString(ppRefundWinCallBackReq), ip);
         // 请求参数与哈希参数对比。如果失败，娱乐场运营商应发送错误代码5
         if (checkReqHash(ppRefundWinCallBackReq, ppRefundWinCallBackReq.getHash())) {
             return initFailureResponse(5, "请求参数非法");
         }
-
-        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(ppRefundWinCallBackReq.getUserId());
-        PpCallbackApiResponseData ppCallbackApiResponseData = new PpCallbackApiResponseData();
-        // 查询用户请求订单
-        Txns oldTxns = getTxns(ppRefundWinCallBackReq.getReference(), memBaseinfo.getId());
-        if (null == oldTxns) {
-            return JSONObject.toJSONString(ppCallbackApiResponseData);
+        GameParentPlatform platformGameParent = getGameParentPlatform();
+        // 校验IP
+        if (checkIp(ip, platformGameParent)) {
+            return initFailureResponse(5, "非信任來源IP");
         }
 
-        // 如果订单已经取消
-        if ("Cancel Bet".equals(oldTxns.getMethod())) {
-            ppCallbackApiResponseData.setTransactionId(ppRefundWinCallBackReq.getReference());
-            ppCallbackApiResponseData.setCash(memBaseinfo.getBalance());
-            return JSONObject.toJSONString(ppCallbackApiResponseData);
+        try {
+
+            MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(ppRefundWinCallBackReq.getUserId());
+
+            // 构建返回
+            JSONObject json = initSuccessResponse();
+
+            // 查询用户请求订单
+            Txns oldTxns = getTxns(ppRefundWinCallBackReq.getReference(), memBaseinfo.getId());
+            if (null == oldTxns) {
+                return json;
+            }
+
+            // 如果订单已经取消
+            if ("Cancel Bet".equals(oldTxns.getMethod())) {
+                json.put("cash", memBaseinfo.getBalance());
+                json.put("transactionId", ppRefundWinCallBackReq.getReference());
+                return json;
+            }
+            BigDecimal realWinAmount = ppRefundWinCallBackReq.getAmount();
+            if (null == realWinAmount) {
+                realWinAmount = oldTxns.getBetAmount();
+            }
+            BigDecimal balance = memBaseinfo.getBalance().add(oldTxns.getAmount());
+            gameCommonService.updateUserBalance(memBaseinfo, realWinAmount, GoldchangeEnum.REFUND, TradingEnum.INCOME);
+            String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
+
+            Txns txns = new Txns();
+            BeanUtils.copyProperties(oldTxns, txns);
+            txns.setBalance(balance);
+            txns.setId(null);
+            txns.setStatus("Running");
+            txns.setRealWinAmount(realWinAmount);//真实返还金额
+            txns.setMethod("Adjust Bet");
+            txns.setCreateTime(dateStr);
+            txnsMapper.insert(txns);
+
+            oldTxns.setStatus("Adjust");
+            oldTxns.setUpdateTime(dateStr);
+            txnsMapper.updateById(oldTxns);
+
+            json.put("transactionId", ppRefundWinCallBackReq.getReference());
+            return json;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return initFailureResponse(100, e.getMessage());
         }
-        BigDecimal realWinAmount = ppRefundWinCallBackReq.getAmount();
-        if (null == realWinAmount) {
-            realWinAmount = oldTxns.getBetAmount();
-        }
-        BigDecimal balance = memBaseinfo.getBalance().add(oldTxns.getAmount());
-        gameCommonService.updateUserBalance(memBaseinfo, realWinAmount, GoldchangeEnum.REFUND, TradingEnum.INCOME);
-        String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
-
-        Txns txns = new Txns();
-        BeanUtils.copyProperties(oldTxns, txns);
-        txns.setBalance(balance);
-        txns.setId(null);
-        txns.setStatus("Running");
-        txns.setRealWinAmount(realWinAmount);//真实返还金额
-        txns.setMethod("Adjust Bet");
-        txns.setCreateTime(dateStr);
-        txnsMapper.insert(txns);
-
-        oldTxns.setStatus("Adjust");
-        oldTxns.setUpdateTime(dateStr);
-        txnsMapper.updateById(oldTxns);
-
-        ppCallbackApiResponseData.setTransactionId(ppRefundWinCallBackReq.getReference());
-        return JSONObject.toJSONString(ppCallbackApiResponseData);
     }
+
 
     /**
      * 判断请求参数hash是否合法
      *
      * @param object  请求参数对象
      * @param reqHash 请求hash
-     * @return
+     * @return boolean
      */
     private boolean checkReqHash(Object object, String reqHash) {
         // 根据请求参数生成HASH
@@ -735,18 +771,48 @@ public class PpCallbackServiceImpl implements PpCallbackService {
     }
 
     /**
+     * 初始化成功json返回
+     *
+     * @return JSONObject
+     */
+    private JSONObject initSuccessResponse() {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("error", 0);
+        jsonObject.put("description", "Success");
+        return jsonObject;
+    }
+
+    /**
      * 初始化交互失败返回
      *
      * @param error       错误码
      * @param description 错误描述
-     * @return
+     * @return JSONObject
      */
-    private String initFailureResponse(Integer error, String description) {
-        PpCommonResp ppCommonResp = new PpCommonResp();
-        ppCommonResp.setError(error);
-        ppCommonResp.setDescription(description);
-        return JSONObject.toJSONString(ppCommonResp);
+    private JSONObject initFailureResponse(Integer error, String description) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("error", error);
+        jsonObject.put("description", description);
+        return jsonObject;
     }
 
+    /**
+     * 查询IP是否被封
+     *
+     * @param ip ip
+     * @return boolean
+     */
+    private boolean checkIp(String ip, GameParentPlatform platformGameParent) {
+        if (null == platformGameParent) {
+            return true;
+        } else if (null == platformGameParent.getIpAddr() || "".equals(platformGameParent.getIpAddr())) {
+            return false;
+        }
+        return !platformGameParent.getIpAddr().equals(ip);
 
+    }
+
+    private GameParentPlatform getGameParentPlatform(){
+        return gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.PP_PLATFORM_CODE);
+    }
 }

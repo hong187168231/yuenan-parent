@@ -6,7 +6,10 @@ import lombok.Data;
 import java.math.BigDecimal;
 
 @Data
-public class PpApiResponseData extends PpCommonResp {
+public class PpApiResponseData {
+    private Integer error;
+
+    private String description;
 
     // 钱包中的交易ID。
     private String transactionId;
