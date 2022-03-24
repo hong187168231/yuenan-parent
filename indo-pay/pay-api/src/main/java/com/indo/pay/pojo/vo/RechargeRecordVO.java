@@ -32,5 +32,6 @@ public class RechargeRecordVO implements Serializable {
     @ApiModelProperty(value = "充值到账时间")
     private String payTime;
 
-
+    @ApiModelProperty(value = "订单号")
+    private String orderNo;
 }
