@@ -3,7 +3,8 @@
 <mapper namespace="com.indo.admin.modules.act.mapper.ActivityTypeMapper">
 
 
-  <update id="updateMaxActNum">
-    update act_activity_type set act_num = act_num + 1 where act_type_id = #{actTypeId}
+  <update id="updateActNum">
+    update act_activity_type set act_num = act_num + #{actNum}
+    where act_type_id = #{actTypeId}
   </update>
 </mapper>

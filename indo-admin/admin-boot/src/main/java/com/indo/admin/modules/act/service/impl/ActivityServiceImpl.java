@@ -63,7 +63,7 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> i
         BeanUtils.copyProperties(activityDTO, activity);
         if (baseMapper.insert(activity) > 0) {
             // 增加活动数量
-            activityTypeService.updateMaxActNum(activityDTO.getActTypeId());
+            activityTypeService.updateActNum(activityDTO.getActTypeId(), 1);
             AdminBusinessRedisUtils.hset(RedisConstants.ACTIVITY_KEY, activity.getActId() + "", activity);
             return true;
         }
@@ -91,7 +91,9 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> i
     @Transactional
     public boolean delAct(Long actId) {
         checkAdeOpera(actId);
+        Activity activity = findActivityById(actId);
         if (this.baseMapper.deleteById(actId) > 0) {
+            activityTypeService.updateActNum(activity.getActTypeId(), -1);
             AdminBusinessRedisUtils.hdel(RedisConstants.ACTIVITY_KEY, actId + "");
             return true;
         }

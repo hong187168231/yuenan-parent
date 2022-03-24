@@ -44,5 +44,5 @@ public interface IActivityTypeService extends IService<ActivityType> {
      */
     boolean edit(ActivityTypeDTO activityTypeDTO);
 
-	  boolean updateMaxActNum(Long actTypeId);
+	  boolean updateActNum(Long actTypeId, Integer actNum);
 }
