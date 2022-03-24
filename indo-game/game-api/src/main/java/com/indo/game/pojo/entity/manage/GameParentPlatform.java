@@ -1,19 +1,20 @@
 package com.indo.game.pojo.entity.manage;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.indo.common.pojo.entity.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 @Data
 @TableName("game_parent_platform")
 @ApiModel
-public class GameParentPlatform   extends BaseEntity {
+public class GameParentPlatform {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "id")
@@ -59,4 +60,8 @@ public class GameParentPlatform   extends BaseEntity {
 
     @ApiModelProperty(value = "是否虚拟平台 0否  1是")
     private String isVirtual;
+
+    private String createTime;
+
+    private String updateTime;
 }

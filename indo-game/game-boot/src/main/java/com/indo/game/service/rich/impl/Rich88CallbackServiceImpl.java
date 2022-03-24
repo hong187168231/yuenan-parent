@@ -128,7 +128,7 @@ public class Rich88CallbackServiceImpl implements Rich88CallbackService {
                 if (null != oldTxns) {
                     return initFailureReturn(20008, "提款交易重复");
                 }
-                if (memBaseinfo.getBalance().compareTo(amount) == -1) {
+                if (memBaseinfo.getBalance().compareTo(amount) < 0) {
                     return initFailureReturn(22007, "單⼀錢包玩家⾦錢不⾜");
                 }
                 balance = balance.subtract(amount);

@@ -110,7 +110,7 @@ public class T9CallbackServiceImpl implements T9CallbackService {
         try {
             BigDecimal balance = memBaseinfo.getBalance();
 
-            if (memBaseinfo.getBalance().compareTo(balance) == -1) {
+            if (memBaseinfo.getBalance().compareTo(balance) < 0) {
                 T9ApiResponseData callBackFail = new T9ApiResponseData();
                 callBackFail.setStatusCode("1");
                 callBackFail.setErrorMessage("玩家余额不足");
@@ -398,14 +398,14 @@ public class T9CallbackServiceImpl implements T9CallbackService {
      * @return
      */
     private boolean checkIp(String ip) {
-        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode("JDB");
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.T9_PLATFORM_CODE);
         if (null == gameParentPlatform) {
             return false;
-        } else if (null == gameParentPlatform.getIpAddr() || "".equals(gameParentPlatform.getIpAddr())) {
-            return true;
-        } else if (gameParentPlatform.getIpAddr().equals(ip)) {
+        }
+        if (null == gameParentPlatform.getIpAddr() || "".equals(gameParentPlatform.getIpAddr())) {
             return true;
         }
-        return false;
+
+        return gameParentPlatform.getIpAddr().equals(ip);
     }
 }

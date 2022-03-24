@@ -13,25 +13,25 @@
             </foreach>
         </if>
         <if test='req.isStart != null and req.isStart.trim() neq ""'>
-            and t.is_start &lt;= #{isStart}
+            and t.is_start = #{isStart}
         </if>
         <if test='req.isHotShow != null and req.isHotShow.trim() neq ""'>
-            and t.is_hot_show &lt;= #{req.isHotShow}
+            and t.is_hot_show = #{req.isHotShow}
         </if>
         <if test='req.isOpenMaintenance != null and req.isOpenMaintenance.trim() neq ""'>
-            and t.is_open_maintenance &lt;= #{req.isOpenMaintenance}
+            and t.is_open_maintenance = #{req.isOpenMaintenance}
         </if>
         <if test='req.languageType != null and req.languageType.trim() neq ""'>
-            and t.language_type &lt;= #{req.languageType}
+            and t.language_type = #{req.languageType}
         </if>
         <if test='req.currencyType != null and req.currencyType.trim() neq ""'>
-            and t.currency_type &lt;= #{req.currencyType}
+            and t.currency_type = #{req.currencyType}
         </if>
         <if test='req.ipAddr != null and req.ipAddr.trim() neq ""'>
-            and t.ip_addr &lt;= #{req.ipAddr}
+            and t.ip_addr = #{req.ipAddr}
         </if>
         <if test='req.isVirtual != null and req.isVirtual.trim() neq ""'>
-            and t.is_virtual &lt;= #{isVirtual}
+            and t.is_virtual = #{isVirtual}
         </if>
         <if test='req.endTime != null and req.endTime.trim() neq ""'>
             and t.create_time &lt;= #{req.endTime}

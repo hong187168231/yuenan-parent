@@ -4,6 +4,7 @@ import com.indo.common.config.OpenAPIProperties;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.redis.utils.GeneratorIdUtil;
 import com.indo.common.result.Result;
+import com.indo.common.utils.StringUtils;
 import com.indo.game.mapper.TxnsMapper;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
 import com.indo.game.pojo.entity.CptOpenMember;
@@ -28,8 +29,6 @@ public class KaServiceImpl implements KaService {
     private CptOpenMemberService externalService;
     @Autowired
     private GameCommonService gameCommonService;
-    @Autowired
-    private TxnsMapper txnsMapper;
 
     @Override
     public Result kaGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName) {
@@ -88,7 +87,7 @@ public class KaServiceImpl implements KaService {
             }
 
             ApiResponseData responseData = new ApiResponseData();
-            responseData.setPathUrl(getStartGameUrl(cptOpenMember, platform, gameParentPlatform.getCurrencyType()));
+            responseData.setPathUrl(getStartGameUrl(cptOpenMember, platform, gameParentPlatform.getCurrencyType(), loginUser.getLanguage()));
             return Result.success(responseData);
         } catch (Exception e) {
             e.printStackTrace();
@@ -135,7 +134,7 @@ public class KaServiceImpl implements KaService {
      *
      * @return
      */
-    private String getStartGameUrl(CptOpenMember cptOpenMember, String platform, String currency) {
+    private String getStartGameUrl(CptOpenMember cptOpenMember, String platform, String currency, String lang) {
         StringBuilder url = new StringBuilder();
         url.append(OpenAPIProperties.KA_GAME_URL);
         url.append("/?g=").append(platform);
@@ -144,6 +143,9 @@ public class KaServiceImpl implements KaService {
         url.append("&t=").append(cptOpenMember.getPassword());
         url.append("&ak=").append(OpenAPIProperties.KA_ACCESS_KEY);
         url.append("&cr=").append(currency);
+        if (StringUtils.isNotEmpty(lang)) {
+            url.append("&loc=").append(lang);
+        }
         return url.toString();
     }
 

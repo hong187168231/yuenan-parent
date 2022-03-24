@@ -97,7 +97,6 @@ public class KACallbackController {
     @ResponseBody
     @AllowAccess
     public Object revoke(String params, HttpServletRequest request) {
-        params = "{\"transactionId\":\"76a5d8bcc406710d652a9cffa0397f34\",\"betAmount\":6000,\"winAmount\":0,\"jpc\":0,\"selections\":5,\"betPerSelection\":300,\"freeGames\":false,\"round\":0,\"roundsRemaining\":0,\"complete\":true,\"timestamp\":1645501617408,\"sessionId\":\"df58bb81ceb748196d97f3414bc69b42\",\"playerId\":\"swuserid\",\"currency\":\"USD\",\"action\":\"play\",\"gameId\":\"SuperShot2\",\"playerIp\":\"0:0:0:0:0:0:0:1\",\"token\":\"bd7ac51e8f71398216d08addaa710061244296a8c5bd23b0c0a608e4ebdc0c70\",\"partnerPlayerId\":\"swuserid\"}";
 
         String hash = request.getParameter("hash");
         // hash验证
@@ -118,7 +117,6 @@ public class KACallbackController {
     @ResponseBody
     @AllowAccess
     public Object balance(String params, HttpServletRequest request) {
-        params = "{\"transactionId\":\"76a5d8bcc406710d652a9cffa0397f34\",\"betAmount\":6000,\"winAmount\":0,\"jpc\":0,\"selections\":5,\"betPerSelection\":300,\"freeGames\":false,\"round\":0,\"roundsRemaining\":0,\"complete\":true,\"timestamp\":1645501617408,\"sessionId\":\"df58bb81ceb748196d97f3414bc69b42\",\"playerId\":\"swuserid\",\"currency\":\"USD\",\"action\":\"play\",\"gameId\":\"SuperShot2\",\"playerIp\":\"0:0:0:0:0:0:0:1\",\"token\":\"bd7ac51e8f71398216d08addaa710061244296a8c5bd23b0c0a608e4ebdc0c70\",\"partnerPlayerId\":\"swuserid\"}";
         String hash = request.getParameter("hash");
         // hash验证
         if (!checkHash(hash, params)) {

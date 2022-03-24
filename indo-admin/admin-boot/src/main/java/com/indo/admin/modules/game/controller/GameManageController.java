@@ -99,6 +99,8 @@ public class GameManageController {
     @ApiOperation(value = "新增平台游戏", httpMethod = "POST")
     @PostMapping(value = "/addGamePlatform")
     public Result addGamePlatform(GamePlatform gamePlatform) {
+        String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
+        gamePlatform.setCreateTime(dateStr);
         return Result.judge(iGameManageService.addGamePlatform(gamePlatform));
     }
 
@@ -112,6 +114,8 @@ public class GameManageController {
     @ApiOperation(value = "修改平台游戏", httpMethod = "POST")
     @PostMapping(value = "/modifyGamePlatform")
     public Result modifyGamePlatform(GamePlatform gamePlatform) {
+        String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
+        gamePlatform.setUpdateTime(dateStr);
         return Result.judge(iGameManageService.modifiyGamePlatform(gamePlatform));
     }
 
@@ -145,6 +149,8 @@ public class GameManageController {
     @ApiOperation(value = "新增平台", httpMethod = "POST")
     @PostMapping(value = "/addGameParentPlatform")
     public Result addGameParentPlatform(GameParentPlatform gameParentPlatform) {
+        String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
+        gameParentPlatform.setCreateTime(dateStr);
         return Result.judge(iGameManageService.addGameParentPlatform(gameParentPlatform));
     }
 
@@ -158,6 +164,8 @@ public class GameManageController {
     @ApiOperation(value = "修改平台", httpMethod = "POST")
     @PostMapping(value = "/modifyGameParentPlatform")
     public Result modifyGameParentPlatform(GameParentPlatform gameParentPlatform) {
+        String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
+        gameParentPlatform.setUpdateTime(dateStr);
         return Result.judge(iGameManageService.modifiyGameParentPlatform(gameParentPlatform));
     }
 }

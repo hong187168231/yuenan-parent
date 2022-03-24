@@ -19,17 +19,17 @@
             </foreach>
         </if>
         <if test='req.isStart != null and req.isStart.trim() neq ""'>
-            and t.is_start &lt;= #{isStart}
+            and t.is_start = #{isStart}
         </if>
         <if test='req.isHotShow != null and req.isHotShow.trim() neq ""'>
-            and t.is_hot_show &lt;= #{req.isHotShow}
+            and t.is_hot_show = #{req.isHotShow}
         </if>
         <if test='req.isOpenMaintenance != null and req.isOpenMaintenance.trim() neq ""'>
-            and t.is_open_maintenance &lt;= #{req.isOpenMaintenance}
+            and t.is_open_maintenance = #{req.isOpenMaintenance}
         </if>
 
         <if test='req.parentName != null and req.parentName.trim() neq ""'>
-            and t.parent_name &lt;= #{req.parentName}
+            and t.parent_name = #{req.parentName}
         </if>
         <if test='req.endTime != null and req.endTime.trim() neq ""'>
             and t.create_time &lt;= #{req.endTime}

@@ -1,8 +1,8 @@
 package com.indo.game.pojo.entity.manage;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.indo.common.pojo.entity.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -10,11 +10,12 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 @Data
 @TableName("game_platform")
 @ApiModel
-public class GamePlatform   extends BaseEntity{
+public class GamePlatform {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "id")
@@ -69,4 +70,7 @@ public class GamePlatform   extends BaseEntity{
     @ApiModelProperty(value = "系统与厂商间的最小限制转帐金额")
     private double minTransfer;
 
+    private String createTime;
+
+    private String updateTime;
 }

@@ -50,13 +50,13 @@ public class KaCallbackServiceImpl implements KaCallbackService {
 
             // 校验IP
             if (!ip.equals(commonReq.getPlayerIp()) || !checkIp(ip, gameParentPlatform)) {
-                return initErrorResponse(4, "玩家 IP 地址不匹配或玩家不存在");
+                return initFailureResponse(4, "玩家 IP 地址不匹配或玩家不存在");
             }
 
             // 查询玩家是否存在
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(commonReq.getPartnerPlayerId());
             if (null == memBaseinfo) {
-                return initErrorResponse(100, "玩家不存在");
+                return initFailureResponse(100, "玩家不存在");
             }
 
             // HASH 验证
@@ -73,7 +73,7 @@ public class KaCallbackServiceImpl implements KaCallbackService {
 
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            return initErrorResponse(1, e.getMessage());
+            return initFailureResponse(1, e.getMessage());
         }
     }
 
@@ -87,13 +87,13 @@ public class KaCallbackServiceImpl implements KaCallbackService {
 
             // 校验IP
             if (!ip.equals(kaCallbackPlayReq.getPlayerIp()) || !checkIp(ip, platformGameParent)) {
-                return initErrorResponse(4, "玩家 IP 地址不匹配或玩家不存在");
+                return initFailureResponse(4, "玩家 IP 地址不匹配或玩家不存在");
             }
 
             // 查询玩家是否存在
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(kaCallbackPlayReq.getPartnerPlayerId());
             if (null == memBaseinfo) {
-                return initErrorResponse(100, "玩家不存在");
+                return initFailureResponse(100, "玩家不存在");
             }
 
             // 会员余额
@@ -111,12 +111,12 @@ public class KaCallbackServiceImpl implements KaCallbackService {
                 }
             } else {
                 // 下注金额小于0
-                if (betAmount.compareTo(BigDecimal.ZERO) == -1) {
-                    return initErrorResponse(201, "下注金额不能小0");
+                if (betAmount.compareTo(BigDecimal.ZERO) < 0) {
+                    return initFailureResponse(201, "下注金额不能小0");
                 }
 
-                if (balance.compareTo(betAmount) == -1) {
-                    return initErrorResponse(200, "玩家没有足够余额以进行当前下注");
+                if (balance.compareTo(betAmount) < 0) {
+                    return initFailureResponse(200, "玩家没有足够余额以进行当前下注");
                 }
                 balance = balance.subtract(betAmount);
 
@@ -130,7 +130,7 @@ public class KaCallbackServiceImpl implements KaCallbackService {
             // 查询用户请求订单
             Txns oldTxns = getTxns(kaCallbackPlayReq.getTransactionId(), memBaseinfo.getId(), kaCallbackPlayReq.getRound());
             if (null != oldTxns) {
-                return initErrorResponse(201, "交易已存在");
+                return initFailureResponse(201, "交易已存在");
             }
 
 
@@ -206,7 +206,7 @@ public class KaCallbackServiceImpl implements KaCallbackService {
             txns.setBetIp(ip);//  string 是 投注 IP
             int num = txnsMapper.insert(txns);
             if (num <= 0) {
-                return initErrorResponse(1, "订单写入失败");
+                return initFailureResponse(1, "订单写入失败");
             }
 
             KACallbackStartResp kaCallbackStartResp = new KACallbackStartResp();
@@ -219,7 +219,7 @@ public class KaCallbackServiceImpl implements KaCallbackService {
             return JSONObject.toJSONString(kaCallbackStartResp);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            return initErrorResponse(1, e.getMessage());
+            return initFailureResponse(1, e.getMessage());
         }
     }
 
@@ -233,13 +233,13 @@ public class KaCallbackServiceImpl implements KaCallbackService {
 
             // 校验IP
             if (!ip.equals(kaCallbackCreditReq.getPlayerIp()) || !checkIp(ip, platformGameParent)) {
-                return initErrorResponse(4, "玩家 IP 地址不匹配或玩家不存在");
+                return initFailureResponse(4, "玩家 IP 地址不匹配或玩家不存在");
             }
 
             // 查询玩家是否存在
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(kaCallbackCreditReq.getPartnerPlayerId());
             if (null == memBaseinfo) {
-                return initErrorResponse(100, "玩家不存在");
+                return initFailureResponse(100, "玩家不存在");
             }
 
             // 会员余额
@@ -247,14 +247,14 @@ public class KaCallbackServiceImpl implements KaCallbackService {
             // 派奖金额
             BigDecimal amount = getDivideAmount(kaCallbackCreditReq.getAmount());
             // 派彩金额小于0
-            if (amount.compareTo(BigDecimal.ZERO) == -1) {
-                return initErrorResponse(201, "派彩金额不能小0");
+            if (amount.compareTo(BigDecimal.ZERO) < 0) {
+                return initFailureResponse(201, "派彩金额不能小0");
             }
 
             // 查询用户请求订单
             Txns oldTxns = getTxns(kaCallbackCreditReq.getTransactionId(), memBaseinfo.getId(), null);
             if (null != oldTxns) {
-                return initErrorResponse(201, "交易已存在");
+                return initFailureResponse(201, "交易已存在");
             }
 
             GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(kaCallbackCreditReq.getGameId());
@@ -318,7 +318,7 @@ public class KaCallbackServiceImpl implements KaCallbackService {
             txns.setBetIp(ip);//  string 是 投注 IP
             int num = txnsMapper.insert(txns);
             if (num <= 0) {
-                return initErrorResponse(1, "订单写入失败");
+                return initFailureResponse(1, "订单写入失败");
             }
 
             KACallbackStartResp kaCallbackStartResp = new KACallbackStartResp();
@@ -331,7 +331,7 @@ public class KaCallbackServiceImpl implements KaCallbackService {
             return JSONObject.toJSONString(kaCallbackStartResp);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            return initErrorResponse(1, e.getMessage());
+            return initFailureResponse(1, e.getMessage());
         }
     }
 
@@ -345,24 +345,24 @@ public class KaCallbackServiceImpl implements KaCallbackService {
 
             // 校验IP
             if (!ip.equals(kaCallbackRevokeReq.getPlayerIp()) || !checkIp(ip, platformGameParent)) {
-                return initErrorResponse(4, "玩家 IP 地址不匹配或玩家不存在");
+                return initFailureResponse(4, "玩家 IP 地址不匹配或玩家不存在");
             }
 
             // 查询玩家是否存在
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(kaCallbackRevokeReq.getPartnerPlayerId());
             if (null == memBaseinfo) {
-                return initErrorResponse(100, "玩家不存在");
+                return initFailureResponse(100, "玩家不存在");
             }
 
             // 查询用户请求订单
             Txns oldTxns = getTxns(kaCallbackRevokeReq.getTransactionId(), memBaseinfo.getId(), kaCallbackRevokeReq.getRound());
             if (null == oldTxns) {
-                return initErrorResponse(400, "该笔交易不存在");
+                return initFailureResponse(400, "该笔交易不存在");
             }
 
             // 如果订单已经取消
             if ("Cancel Bet".equals(oldTxns.getMethod())) {
-                return initErrorResponse(401, "该笔交易不能注销");
+                return initFailureResponse(401, "该笔交易不能注销");
             }
 
             // 会员余额
@@ -381,7 +381,7 @@ public class KaCallbackServiceImpl implements KaCallbackService {
             txns.setCreateTime(dateStr);
             txnsMapper.insert(txns);
 
-            oldTxns.setStatus("Adjust");
+            oldTxns.setStatus("Cancel Bet");
             oldTxns.setUpdateTime(dateStr);
             txnsMapper.updateById(oldTxns);
 
@@ -395,7 +395,7 @@ public class KaCallbackServiceImpl implements KaCallbackService {
             return JSONObject.toJSONString(kaCallbackStartResp);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            return initErrorResponse(1, e.getMessage());
+            return initFailureResponse(1, e.getMessage());
         }
     }
 
@@ -407,13 +407,13 @@ public class KaCallbackServiceImpl implements KaCallbackService {
             GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.KA_PLATFORM_CODE);
             // 校验IP
             if (!ip.equals(kaCallbackCommonReq.getPlayerIp()) || !checkIp(ip, gameParentPlatform)) {
-                return initErrorResponse(4, "玩家 IP 地址不匹配或玩家不存在");
+                return initFailureResponse(4, "玩家 IP 地址不匹配或玩家不存在");
             }
 
             // 查询玩家是否存在
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(kaCallbackCommonReq.getPartnerPlayerId());
             if (null == memBaseinfo) {
-                return initErrorResponse(100, "玩家不存在");
+                return initFailureResponse(100, "玩家不存在");
             }
 
             // 会员余额返回
@@ -427,7 +427,7 @@ public class KaCallbackServiceImpl implements KaCallbackService {
             return JSONObject.toJSONString(kaCallbackStartResp);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            return initErrorResponse(1, e.getMessage());
+            return initFailureResponse(1, e.getMessage());
         }
     }
 
@@ -438,7 +438,7 @@ public class KaCallbackServiceImpl implements KaCallbackService {
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.KA_PLATFORM_CODE);
         // 校验IP
         if (!ip.equals(kaCallbackCommonReq.getPlayerIp()) || !checkIp(ip, gameParentPlatform)) {
-            return initErrorResponse(4, "玩家 IP 地址不匹配或玩家不存在");
+            return initFailureResponse(4, "玩家 IP 地址不匹配或玩家不存在");
         }
 
         KAApiResponseData ppCommonResp = new KAApiResponseData();
@@ -502,12 +502,12 @@ public class KaCallbackServiceImpl implements KaCallbackService {
     private boolean checkIp(String ip, GameParentPlatform gameParentPlatform) {
         if (null == gameParentPlatform) {
             return false;
-        } else if (null == gameParentPlatform.getIpAddr() || "".equals(gameParentPlatform.getIpAddr())) {
-            return true;
-        } else if (gameParentPlatform.getIpAddr().equals(ip)) {
+        }
+        if (null == gameParentPlatform.getIpAddr() || "".equals(gameParentPlatform.getIpAddr())) {
             return true;
         }
-        return false;
+
+        return gameParentPlatform.getIpAddr().equals(ip);
     }
 
     /**
@@ -517,7 +517,7 @@ public class KaCallbackServiceImpl implements KaCallbackService {
      * @param description 错误描述
      * @return String
      */
-    private String initErrorResponse(Integer error, String description) {
+    private String initFailureResponse(Integer error, String description) {
         KAApiResponseData ppCommonResp = new KAApiResponseData();
         ppCommonResp.setStatusCode(error);
         ppCommonResp.setStatus(description);
