@@ -12,6 +12,7 @@ import com.indo.game.service.awc.AwcService;
 import com.indo.game.service.cq.CqService;
 import com.indo.game.service.dj.DjService;
 import com.indo.game.service.jdb.JdbService;
+import com.indo.game.service.jili.JiliService;
 import com.indo.game.service.ka.KaService;
 import com.indo.game.service.pg.PgService;
 import com.indo.game.service.pp.PpService;
@@ -74,6 +75,8 @@ public class GameController {
     private KaService kaService;
     @Autowired
     private DjService djService;
+    @Autowired
+    private JiliService jiliService;
     @Autowired
     private RedissonClient redissonClient;
 
@@ -145,6 +148,9 @@ public class GameController {
                 }
                 if ("DJ".equals(parentName)) {
                     resultInfo = djService.djGame(loginUser, isMobileLogin, ip, platform, parentName);
+                }
+                if ("JILI".equals(parentName)) {
+                    resultInfo = jiliService.jiliGame(loginUser, isMobileLogin, ip, platform, parentName);
                 }
 
                 if (resultInfo == null) {
@@ -224,6 +230,9 @@ public class GameController {
             }
             if ("DJ".equals(platform)) {
                 resultInfo = djService.logout(loginUser, platform, ip);
+            }
+            if ("JILI".equals(platform)) {
+                resultInfo = jiliService.logout(loginUser, platform, ip);
             }
             if (resultInfo == null) {
                 log.info("退出平台log {} loginPlatform result is null. params:{},ip:{}", loginUser.getId(), params, ip);

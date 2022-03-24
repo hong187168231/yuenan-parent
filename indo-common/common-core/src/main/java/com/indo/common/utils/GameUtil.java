@@ -3,16 +3,22 @@ package com.indo.common.utils;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.config.ConnectionConfig;
+import org.apache.http.config.SocketConfig;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
@@ -29,12 +35,16 @@ import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 
 public class GameUtil extends HttpCommonUtils {
@@ -51,6 +61,13 @@ public class GameUtil extends HttpCommonUtils {
      * 请求获取数据的超时时间,单位毫秒
      * */
     private static final int SOCKET_TIMEOUT = 7000;
+    // 连接主机超时（30s）
+    public static final int HTTP_CONNECT_TIMEOUT_30S = 30 * 1000;
+    // 从主机读取数据超时（3min）
+    public static final int HTTP_READ_TIMEOUT_3MIN = 180 * 1000;
+    public static final String DEFAULT_CHARSET = "utf-8";
+    public static final String DEFAULT_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+            + "(KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36";
 
     public static String createSign(Map<String, String> packageParams, String signKey) {
         TreeMap sortedMap = new TreeMap(packageParams);
@@ -576,5 +593,52 @@ public class GameUtil extends HttpCommonUtils {
         }
         logger.info("POST请求 postJson result:{}", result);
         return result;
+    }
+
+    public static String httpGetWithCookies(String url, Header[] headers, HttpHost proxy) {
+        logger.info("GET请求 httpGetWithCookies headers:{}, proxy: {}", headers, proxy);
+        logger.info("GET请求 httpGetWithCookies url:{}", url);
+        PoolingHttpClientConnectionManager connManager = new PoolingHttpClientConnectionManager();
+        connManager.setMaxTotal(150);
+        connManager.setDefaultConnectionConfig(ConnectionConfig.custom().setCharset(Charset.forName("utf-8")).build());
+        SocketConfig socketConfig = SocketConfig.custom().setSoTimeout(30000).setSoReuseAddress(true).build();
+        connManager.setDefaultSocketConfig(socketConfig);
+        CloseableHttpClient httpClient = HttpClients.custom().setConnectionManager(connManager).setConnectionManagerShared(true).build();
+
+        // 超时时间设置
+        HttpGet httpGet = new HttpGet(url);
+        RequestConfig.Builder requestConfigBuilder = buildDefaultRequestConfigBuilder();
+        if (Objects.nonNull(proxy)) {
+            requestConfigBuilder.setProxy(proxy);
+        }
+        httpGet.setConfig(requestConfigBuilder.build());
+        httpGet.setHeader("User-agent", DEFAULT_USER_AGENT);
+        if (headers != null && headers.length > 0) {
+            httpGet.setHeaders(headers);
+        }
+        long start = LocalDateTime.now().toInstant(ZoneOffset.of("+8")).toEpochMilli();
+        CloseableHttpResponse response = null;
+        try {
+            response = httpClient.execute(httpGet);
+            HttpEntity entity = response.getEntity();
+            String result = EntityUtils.toString(entity, DEFAULT_CHARSET);
+            EntityUtils.consume(entity); // 此句关闭了流
+            logger.info("GET请求 httpGetWithCookies result:{}", result);
+            return result;
+        } catch (Exception e) {
+            logger.error("请求的接口为:[{}], 发生异常原因: {}", url, e.getMessage(), e);
+            return "";
+        } finally {
+
+            closeResponse(response, url, null);
+            logger.error("httpGetWithCookies请求的地址为:[{}], 总共耗时：{} ms", url,
+                    (LocalDateTime.now().toInstant(ZoneOffset.of("+8")).toEpochMilli() - start));
+        }
+    }
+
+    private static RequestConfig.Builder buildDefaultRequestConfigBuilder() {
+        return RequestConfig.custom()
+                .setSocketTimeout(HTTP_READ_TIMEOUT_3MIN)
+                .setConnectTimeout(HTTP_CONNECT_TIMEOUT_30S);
     }
 }
