@@ -56,7 +56,7 @@ public class PpCallbackServiceImpl implements PpCallbackService {
     // 权限校验
     @Override
     public Object authenticate(PpAuthenticateCallBackReq ppAuthenticateCallBackReq, String ip) {
-        logger.info("pp_authenticate {} ppGame paramJson:{}, ip:{}", JSONObject.toJSONString(ppAuthenticateCallBackReq), ip);
+        logger.info("pp_authenticate  ppGame paramJson:{}, ip:{}", JSONObject.toJSONString(ppAuthenticateCallBackReq), ip);
 
         // 请求参数与哈希参数对比。如果失败，娱乐场运营商应发送错误代码5
         if (checkReqHash(ppAuthenticateCallBackReq, ppAuthenticateCallBackReq.getHash())) {
@@ -83,7 +83,7 @@ public class PpCallbackServiceImpl implements PpCallbackService {
     // 获取余额
     @Override
     public Object getBalance(PpBalanceCallBackReq ppBalanceCallBackReq, String ip) {
-        logger.info("pp_getBalance {} ppGame paramJson:{}, ip:{}", JSONObject.toJSONString(ppBalanceCallBackReq), ip);
+        logger.info("pp_getBalance  ppGame paramJson:{}, ip:{}", JSONObject.toJSONString(ppBalanceCallBackReq), ip);
 
         // 请求参数与哈希参数对比。如果失败，娱乐场运营商应发送错误代码5
         if (checkReqHash(ppBalanceCallBackReq, ppBalanceCallBackReq.getHash())) {
@@ -107,7 +107,7 @@ public class PpCallbackServiceImpl implements PpCallbackService {
     // 下注
     @Override
     public Object bet(PpBetCallBackReq ppBetCallBackReq, String ip) {
-        logger.info("pp_bet {} ppGame paramJson:{}, ip:{}", JSONObject.toJSONString(ppBetCallBackReq), ip);
+        logger.info("pp_bet  ppGame paramJson:{}, ip:{}", JSONObject.toJSONString(ppBetCallBackReq), ip);
         // 请求参数与哈希参数对比。如果失败，娱乐场运营商应发送错误代码5
         if (checkReqHash(ppBetCallBackReq, ppBetCallBackReq.getHash())) {
             return initFailureResponse(5, "请求参数非法");
@@ -217,7 +217,7 @@ public class PpCallbackServiceImpl implements PpCallbackService {
     // 中奖
     @Override
     public Object result(PpResultCallBackReq ppResultCallBackReq, String ip) {
-        logger.info("pp_result {} ppGame paramJson:{}, ip:{}", JSONObject.toJSONString(ppResultCallBackReq), ip);
+        logger.info("pp_result  ppGame paramJson:{}, ip:{}", JSONObject.toJSONString(ppResultCallBackReq), ip);
         // 请求参数与哈希参数对比。如果失败，娱乐场运营商应发送错误代码5
         if (checkReqHash(ppResultCallBackReq, ppResultCallBackReq.getHash())) {
             return initFailureResponse(5, "请求参数非法");
@@ -302,7 +302,7 @@ public class PpCallbackServiceImpl implements PpCallbackService {
     // 免费回合赢奖
     @Override
     public Object bonusWin(PpBonusWinCallBackReq ppBonusWinCallBackReq, String ip) {
-        logger.info("pp_bonuswin {} ppGame paramJson:{}, ip:{}", JSONObject.toJSONString(ppBonusWinCallBackReq), ip);
+        logger.info("pp_bonuswin  ppGame paramJson:{}, ip:{}", JSONObject.toJSONString(ppBonusWinCallBackReq), ip);
         // 请求参数与哈希参数对比。如果失败，娱乐场运营商应发送错误代码5
         if (checkReqHash(ppBonusWinCallBackReq, ppBonusWinCallBackReq.getHash())) {
             return initFailureResponse(5, "请求参数非法");
@@ -418,7 +418,7 @@ public class PpCallbackServiceImpl implements PpCallbackService {
     // 累计奖金赢奖(促销)
     @Override
     public Object jackpotWin(PpJackpotWinCallBackReq ppJackpotWinCallBackReq, String ip) {
-        logger.info("pp_jackpotwin {} ppGame paramJson:{}, ip:{}", JSONObject.toJSONString(ppJackpotWinCallBackReq), ip);
+        logger.info("pp_jackpotwin  ppGame paramJson:{}, ip:{}", JSONObject.toJSONString(ppJackpotWinCallBackReq), ip);
         // 请求参数与哈希参数对比。如果失败，娱乐场运营商应发送错误代码5
         if (checkReqHash(ppJackpotWinCallBackReq, ppJackpotWinCallBackReq.getHash())) {
             return initFailureResponse(5, "请求参数非法");
@@ -535,7 +535,7 @@ public class PpCallbackServiceImpl implements PpCallbackService {
     // 活动奖励
     @Override
     public Object promoWin(PpPromoWinCallBackReq ppPromoWinCallBackReq, String ip) {
-        logger.info("pp_promowin {} ppGame paramJson:{}, ip:{}", JSONObject.toJSONString(ppPromoWinCallBackReq), ip);
+        logger.info("pp_promowin  ppGame paramJson:{}, ip:{}", JSONObject.toJSONString(ppPromoWinCallBackReq), ip);
         // 请求参数与哈希参数对比。如果失败，娱乐场运营商应发送错误代码5
         if (checkReqHash(ppPromoWinCallBackReq, ppPromoWinCallBackReq.getHash())) {
             return initFailureResponse(5, "请求参数非法");
@@ -656,7 +656,7 @@ public class PpCallbackServiceImpl implements PpCallbackService {
     // 退款
     @Override
     public Object refund(PpRefundWinCallBackReq ppRefundWinCallBackReq, String ip) {
-        logger.info("pp_promowin {} ppGame paramJson:{}, ip:{}", JSONObject.toJSONString(ppRefundWinCallBackReq), ip);
+        logger.info("pp_promowin  ppGame paramJson:{}, ip:{}", JSONObject.toJSONString(ppRefundWinCallBackReq), ip);
         // 请求参数与哈希参数对比。如果失败，娱乐场运营商应发送错误代码5
         if (checkReqHash(ppRefundWinCallBackReq, ppRefundWinCallBackReq.getHash())) {
             return initFailureResponse(5, "请求参数非法");
