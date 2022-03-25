@@ -56,9 +56,14 @@ public class GameCommonServiceImpl implements GameCommonService {
 
     @Override
     public List<GameParentPlatform> queryAllGameParentPlatform() {
-        List<GameParentPlatform> categoryList;
-        Map<Object, Object> map = RedisUtils.hmget(RedisConstants.GAME_PARENT_PLATFORM_KEY);
-        categoryList = new ArrayList(map.values());
+        List<GameParentPlatform> categoryList = null;
+        try{
+            Map<Object, Object> map = RedisUtils.hmget(RedisConstants.GAME_PARENT_PLATFORM_KEY);
+            categoryList = new ArrayList(map.values());
+        }catch (Exception e) {
+            logger.error("queryAllGameParentPlatform.getcache.error "+e.getMessage(), e);
+        }
+
         if (CollectionUtil.isEmpty(categoryList)) {
             LambdaQueryWrapper<GameParentPlatform> wrapper = new LambdaQueryWrapper<>();
             categoryList = gameParentPlatformMapper.selectList(wrapper);
