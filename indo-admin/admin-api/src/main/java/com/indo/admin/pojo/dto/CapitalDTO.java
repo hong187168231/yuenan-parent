@@ -30,7 +30,7 @@ public class CapitalDTO extends BaseDTO {
     @ApiModelProperty(hidden = true)
     private Set<Integer> changeTypes;
 
-    @ApiModelProperty(value = "会员账号")
-    private Long account;
+    @ApiModelProperty(value = "会员ID")
+    private Long memId;
 
 }

@@ -14,7 +14,7 @@ public class MemTradingVO {
 
 
     @ApiModelProperty(value = "会员账号")
-    private Long account;
+    private String account;
 
     @ApiModelProperty(value = "交易类型")
     private String tradingType;
@@ -35,5 +35,7 @@ public class MemTradingVO {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
+    @ApiModelProperty(value = "会员ID")
+    private Long memId;
 
 }
