@@ -14,6 +14,7 @@ import com.indo.game.service.ka.KaCallbackService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -39,15 +40,15 @@ public class KACallbackController {
     @RequestMapping(value = "/start", method = RequestMethod.POST)
     @ResponseBody
     @AllowAccess
-    public Object startGame(String params, HttpServletRequest request) {
+    public Object startGame(@RequestBody KACallbackCommonReq kaCallbackCommonReq, HttpServletRequest request) {
         String hash = request.getParameter("hash");
         // hash验证
-        if (!checkHash(hash, params)) {
+        if (!checkHash(hash, JSONObject.toJSONString(kaCallbackCommonReq))) {
             return initFailureHash();
         }
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("KACallback callBackQuerypoint 回调,IP:" + ip + " params:{}", params);
-        Object object = kaCallbackService.startGame(JSONObject.parseObject(params, KACallbackCommonReq.class), ip);
+        logger.info("KACallback callBackQuerypoint 回调,IP:" + ip + " params:{}", JSONObject.toJSONString(kaCallbackCommonReq));
+        Object object = kaCallbackService.startGame(kaCallbackCommonReq, ip);
         logger.info("KACallback startGame 回调返回数据, params:{}", object);
         return object;
     }
@@ -58,15 +59,15 @@ public class KACallbackController {
     @RequestMapping(value = "/play", method = RequestMethod.POST)
     @ResponseBody
     @AllowAccess
-    public Object palyGame(String params, HttpServletRequest request) {
+    public Object palyGame(@RequestBody KACallbackPlayReq kaCallbackPlayReq, HttpServletRequest request) {
         String hash = request.getParameter("hash");
         // hash验证
-        if (!checkHash(hash, params)) {
+        if (!checkHash(hash, JSONObject.toJSONString(kaCallbackPlayReq))) {
             return initFailureHash();
         }
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("KACallback palyGame 回调,IP:" + ip + " params:{}", params);
-        Object object = kaCallbackService.palyGame(JSONObject.parseObject(params, KACallbackPlayReq.class), ip);
+        logger.info("KACallback palyGame 回调,IP:" + ip + " params:{}", JSONObject.toJSONString(kaCallbackPlayReq));
+        Object object = kaCallbackService.palyGame(kaCallbackPlayReq, ip);
         logger.info("KACallback palyGame 回调返回数据, params:{}", object);
         return object;
     }
@@ -77,15 +78,15 @@ public class KACallbackController {
     @RequestMapping(value = "/credit", method = RequestMethod.POST)
     @ResponseBody
     @AllowAccess
-    public Object credit(String params, HttpServletRequest request) {
+    public Object credit(@RequestBody KACallbackCreditReq kaCallbackCreditReq, HttpServletRequest request) {
         String hash = request.getParameter("hash");
         // hash验证
-        if (!checkHash(hash, params)) {
+        if (!checkHash(hash, JSONObject.toJSONString(kaCallbackCreditReq))) {
             return initFailureHash();
         }
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("KACallback credit 回调,IP:" + ip + " params:{}", params);
-        Object object = kaCallbackService.credit(JSONObject.parseObject(params, KACallbackCreditReq.class), ip);
+        logger.info("KACallback credit 回调,IP:" + ip + " params:{}", JSONObject.toJSONString(kaCallbackCreditReq));
+        Object object = kaCallbackService.credit(kaCallbackCreditReq, ip);
         logger.info("KACallback credit 回调返回数据, params:{}", object);
         return object;
     }
@@ -96,16 +97,16 @@ public class KACallbackController {
     @RequestMapping(value = "/revoke", method = RequestMethod.POST)
     @ResponseBody
     @AllowAccess
-    public Object revoke(String params, HttpServletRequest request) {
+    public Object revoke(@RequestBody KACallbackRevokeReq kaCallbackRevokeReq, HttpServletRequest request) {
 
         String hash = request.getParameter("hash");
         // hash验证
-        if (!checkHash(hash, params)) {
+        if (!checkHash(hash, JSONObject.toJSONString(kaCallbackRevokeReq))) {
             return initFailureHash();
         }
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("KACallback revoke 回调,IP:" + ip + " params:{}", params);
-        Object object = kaCallbackService.revoke(JSONObject.parseObject(params, KACallbackRevokeReq.class), ip);
+        logger.info("KACallback revoke 回调,IP:" + ip + " params:{}", JSONObject.toJSONString(kaCallbackRevokeReq));
+        Object object = kaCallbackService.revoke(kaCallbackRevokeReq, ip);
         logger.info("KACallback revoke 回调返回数据, params:{}", object);
         return object;
     }
@@ -116,15 +117,15 @@ public class KACallbackController {
     @RequestMapping(value = "/balance", method = RequestMethod.POST)
     @ResponseBody
     @AllowAccess
-    public Object balance(String params, HttpServletRequest request) {
+    public Object balance(@RequestBody KACallbackCommonReq kaCallbackCommonReq, HttpServletRequest request) {
         String hash = request.getParameter("hash");
         // hash验证
-        if (!checkHash(hash, params)) {
+        if (!checkHash(hash, JSONObject.toJSONString(kaCallbackCommonReq))) {
             return initFailureHash();
         }
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("KACallback balance 回调,IP:" + ip + " params:{}", params);
-        Object object = kaCallbackService.balance(JSONObject.parseObject(params, KACallbackCommonReq.class), ip);
+        logger.info("KACallback balance 回调,IP:" + ip + " params:{}", JSONObject.toJSONString(kaCallbackCommonReq));
+        Object object = kaCallbackService.balance(kaCallbackCommonReq, ip);
         logger.info("KACallback balance 回调返回数据, params:{}", object);
         return object;
     }
@@ -135,24 +136,25 @@ public class KACallbackController {
     @RequestMapping(value = "/end", method = RequestMethod.POST)
     @ResponseBody
     @AllowAccess
-    public Object end(String params, HttpServletRequest request) {
+    public Object end(@RequestBody KACallbackCommonReq kaCallbackCommonReq, HttpServletRequest request) {
         String hash = request.getParameter("hash");
         // hash验证
-        if (!checkHash(hash, params)) {
+        if (!checkHash(hash, JSONObject.toJSONString(kaCallbackCommonReq))) {
             return initFailureHash();
         }
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("KACallback end 回调,IP:" + ip + " params:{}", params);
-        Object object = kaCallbackService.end(JSONObject.parseObject(params, KACallbackCommonReq.class), ip);
+        logger.info("KACallback end 回调,IP:" + ip + " params:{}", JSONObject.toJSONString(kaCallbackCommonReq));
+        Object object = kaCallbackService.end(kaCallbackCommonReq, ip);
         logger.info("KACallback end 回调返回数据, params:{}", object);
         return object;
     }
 
     /**
      * hash 验证失败返回
+     *
      * @return Object
      */
-    private Object initFailureHash(){
+    private Object initFailureHash() {
         KAApiResponseData ppCommonResp = new KAApiResponseData();
         ppCommonResp.setStatusCode(3);
         ppCommonResp.setStatus("哈希码安全验证失败");
