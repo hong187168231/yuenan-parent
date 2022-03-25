@@ -145,7 +145,7 @@ public class GameController {
                 if ("KA".equals(parentName)) {
                     resultInfo = kaService.kaGame(loginUser, isMobileLogin, ip, platform, parentName);
                 }
-                if ("DJ".equals(parentName)) {
+                if ("S128".equals(parentName)) {
                     resultInfo = djService.djGame(loginUser, isMobileLogin, ip, platform, parentName);
                 }
                 if ("JILI".equals(parentName)) {
