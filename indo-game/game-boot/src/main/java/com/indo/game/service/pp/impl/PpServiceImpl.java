@@ -18,7 +18,6 @@ import com.indo.game.pojo.dto.pp.PpApiRequestData;
 import com.indo.game.pojo.dto.pp.PpApiResponseData;
 import com.indo.game.pojo.dto.pp.PpApiStartGameReq;
 import com.indo.game.pojo.dto.pp.PpApiTransferReq;
-import com.indo.game.pojo.dto.pp.PpCommonResp;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.game.pojo.entity.manage.GameCategory;
 import com.indo.game.pojo.entity.manage.GameParentPlatform;
@@ -35,7 +34,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -130,7 +128,7 @@ public class PpServiceImpl implements PpService {
             Map<String, Object> params = getPostParams(ppApiRequestData);
 
             // 退出游戏
-            PpCommonResp ppCommonResp = commonRequest(
+            PpApiResponseData ppCommonResp = commonRequest(
                     getLogOutPpPlayerUrl(), params,
                     loginUser.getId(), "loginoutPP");
 

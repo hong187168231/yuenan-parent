@@ -6,12 +6,13 @@ import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
 import com.indo.common.result.ResultCode;
 import com.indo.common.utils.IPAddressUtil;
-import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.service.ae.AeService;
 import com.indo.game.service.awc.AwcService;
 import com.indo.game.service.cq.CqService;
 import com.indo.game.service.dj.DjService;
+import com.indo.game.service.fc.FCService;
 import com.indo.game.service.jdb.JdbService;
+import com.indo.game.service.jili.JiliService;
 import com.indo.game.service.ka.KaService;
 import com.indo.game.service.pg.PgService;
 import com.indo.game.service.pp.PpService;
@@ -21,13 +22,11 @@ import com.indo.game.service.saba.SabaService;
 import com.indo.game.service.sbo.SboService;
 import com.indo.game.service.t9.T9Service;
 import com.indo.game.service.ug.UgService;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-
 import org.apache.commons.lang3.StringUtils;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
@@ -38,7 +37,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-
 import java.util.concurrent.TimeUnit;
 
 @RestController
@@ -74,6 +72,10 @@ public class GameController {
     private KaService kaService;
     @Autowired
     private DjService djService;
+    @Autowired
+    private JiliService jiliService;
+    @Autowired
+    private FCService fcService;
     @Autowired
     private RedissonClient redissonClient;
 
@@ -145,6 +147,12 @@ public class GameController {
                 }
                 if ("DJ".equals(parentName)) {
                     resultInfo = djService.djGame(loginUser, isMobileLogin, ip, platform, parentName);
+                }
+                if ("JILI".equals(parentName)) {
+                    resultInfo = jiliService.jiliGame(loginUser, isMobileLogin, ip, platform, parentName);
+                }
+                if ("FC".equals(parentName)) {
+                    resultInfo = fcService.fcGame(loginUser, isMobileLogin, ip, platform, parentName);
                 }
 
                 if (resultInfo == null) {
@@ -224,6 +232,12 @@ public class GameController {
             }
             if ("DJ".equals(platform)) {
                 resultInfo = djService.logout(loginUser, platform, ip);
+            }
+            if ("JILI".equals(platform)) {
+                resultInfo = jiliService.logout(loginUser, platform, ip);
+            }
+            if ("FC".equals(platform)) {
+                resultInfo = fcService.logout(loginUser, platform, ip);
             }
             if (resultInfo == null) {
                 log.info("退出平台log {} loginPlatform result is null. params:{},ip:{}", loginUser.getId(), params, ip);

@@ -94,7 +94,7 @@ public class Rich88ServiceImpl implements Rich88Service {
             }
 
             // 第一次登录自动创建玩家, 后续登录返回登录游戏URL
-            return createMemberGame(cptOpenMember, platform, loginUser.getLanguage());
+            return createMemberGame(cptOpenMember, platform, gameParentPlatform.getLanguageType());
 
         } catch (Exception e) {
             e.printStackTrace();

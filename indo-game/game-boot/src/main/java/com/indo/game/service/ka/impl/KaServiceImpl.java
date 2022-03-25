@@ -87,7 +87,7 @@ public class KaServiceImpl implements KaService {
             }
 
             ApiResponseData responseData = new ApiResponseData();
-            responseData.setPathUrl(getStartGameUrl(cptOpenMember, platform, gameParentPlatform.getCurrencyType(), loginUser.getLanguage()));
+            responseData.setPathUrl(getStartGameUrl(cptOpenMember, platform, gameParentPlatform.getCurrencyType(), gameParentPlatform.getLanguageType()));
             return Result.success(responseData);
         } catch (Exception e) {
             e.printStackTrace();

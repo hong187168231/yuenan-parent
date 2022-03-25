@@ -7,12 +7,10 @@ import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.common.utils.DateUtils;
 import com.indo.game.mapper.TxnsMapper;
-import com.indo.game.pojo.dto.ka.KAApiResponseData;
 import com.indo.game.pojo.dto.ka.KACallbackCommonReq;
 import com.indo.game.pojo.dto.ka.KACallbackCreditReq;
 import com.indo.game.pojo.dto.ka.KACallbackPlayReq;
 import com.indo.game.pojo.dto.ka.KACallbackRevokeReq;
-import com.indo.game.pojo.dto.ka.KACallbackStartResp;
 import com.indo.game.pojo.entity.manage.GameCategory;
 import com.indo.game.pojo.entity.manage.GameParentPlatform;
 import com.indo.game.pojo.entity.manage.GamePlatform;
@@ -47,10 +45,10 @@ public class KaCallbackServiceImpl implements KaCallbackService {
     public Object startGame(KACallbackCommonReq commonReq, String ip) {
         logger.info("ka_startGame kaGame paramJson:{}, ip:{}", JSONObject.toJSONString(commonReq), ip);
         try {
-            GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.KA_PLATFORM_CODE);
+            GameParentPlatform platformGameParent = getGameParentPlatform();
 
             // 校验IP
-            if (!ip.equals(commonReq.getPlayerIp()) || !checkIp(ip, gameParentPlatform)) {
+            if (!ip.equals(commonReq.getPlayerIp()) || checkIp(ip, platformGameParent)) {
                 return initFailureResponse(4, "玩家 IP 地址不匹配或玩家不存在");
             }
 
@@ -63,14 +61,12 @@ public class KaCallbackServiceImpl implements KaCallbackService {
             // HASH 验证
 
             // 会员余额返回
-            KACallbackStartResp kaCallbackStartResp = new KACallbackStartResp();
-            kaCallbackStartResp.setStatusCode(0);
-            kaCallbackStartResp.setStatus("success");
-            kaCallbackStartResp.setBalance(getMultiplyBalance(memBaseinfo.getBalance()));
-            kaCallbackStartResp.setCurrency(gameParentPlatform.getCurrencyType());
-            kaCallbackStartResp.setPlayerId(memBaseinfo.getAccount());
-            kaCallbackStartResp.setSessionId(commonReq.getSessionId());
-            return JSONObject.toJSONString(kaCallbackStartResp);
+            JSONObject jsonObject = initSuccessResponse();
+            jsonObject.put("balance", getMultiplyBalance(memBaseinfo.getBalance()));
+            jsonObject.put("currency", platformGameParent.getCurrencyType());
+            jsonObject.put("playerId", memBaseinfo.getAccount());
+            jsonObject.put("sessionId", commonReq.getSessionId());
+            return jsonObject;
 
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -84,10 +80,10 @@ public class KaCallbackServiceImpl implements KaCallbackService {
         logger.info("ka_palyGame kaGame paramJson:{}, ip:{}", JSONObject.toJSONString(kaCallbackPlayReq), ip);
         try {
 
-            GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.KA_PLATFORM_CODE);
+            GameParentPlatform platformGameParent = getGameParentPlatform();
 
             // 校验IP
-            if (!ip.equals(kaCallbackPlayReq.getPlayerIp()) || !checkIp(ip, platformGameParent)) {
+            if (!ip.equals(kaCallbackPlayReq.getPlayerIp()) || checkIp(ip, platformGameParent)) {
                 return initFailureResponse(4, "玩家 IP 地址不匹配或玩家不存在");
             }
 
@@ -210,14 +206,13 @@ public class KaCallbackServiceImpl implements KaCallbackService {
                 return initFailureResponse(1, "订单写入失败");
             }
 
-            KACallbackStartResp kaCallbackStartResp = new KACallbackStartResp();
-            kaCallbackStartResp.setStatusCode(0);
-            kaCallbackStartResp.setStatus("success");
-            kaCallbackStartResp.setBalance(getMultiplyBalance(balance));
-            kaCallbackStartResp.setCurrency(platformGameParent.getCurrencyType());
-            kaCallbackStartResp.setPlayerId(memBaseinfo.getAccount());
-            kaCallbackStartResp.setSessionId(kaCallbackPlayReq.getSessionId());
-            return JSONObject.toJSONString(kaCallbackStartResp);
+            // 会员余额返回
+            JSONObject jsonObject = initSuccessResponse();
+            jsonObject.put("balance", getMultiplyBalance(balance));
+            jsonObject.put("currency", platformGameParent.getCurrencyType());
+            jsonObject.put("playerId", memBaseinfo.getAccount());
+            jsonObject.put("sessionId", kaCallbackPlayReq.getSessionId());
+            return jsonObject;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return initFailureResponse(1, e.getMessage());
@@ -230,10 +225,10 @@ public class KaCallbackServiceImpl implements KaCallbackService {
         logger.info("ka_credit kaGame paramJson:{}, ip:{}", JSONObject.toJSONString(kaCallbackCreditReq), ip);
         try {
 
-            GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.KA_PLATFORM_CODE);
+            GameParentPlatform platformGameParent = getGameParentPlatform();
 
             // 校验IP
-            if (!ip.equals(kaCallbackCreditReq.getPlayerIp()) || !checkIp(ip, platformGameParent)) {
+            if (!ip.equals(kaCallbackCreditReq.getPlayerIp()) || checkIp(ip, platformGameParent)) {
                 return initFailureResponse(4, "玩家 IP 地址不匹配或玩家不存在");
             }
 
@@ -321,15 +316,12 @@ public class KaCallbackServiceImpl implements KaCallbackService {
             if (num <= 0) {
                 return initFailureResponse(1, "订单写入失败");
             }
-
-            KACallbackStartResp kaCallbackStartResp = new KACallbackStartResp();
-            kaCallbackStartResp.setStatusCode(0);
-            kaCallbackStartResp.setStatus("success");
-            kaCallbackStartResp.setBalance(getMultiplyBalance(balance));
-            kaCallbackStartResp.setCurrency(platformGameParent.getCurrencyType());
-            kaCallbackStartResp.setPlayerId(memBaseinfo.getAccount());
-            kaCallbackStartResp.setSessionId(kaCallbackCreditReq.getSessionId());
-            return JSONObject.toJSONString(kaCallbackStartResp);
+            JSONObject jsonObject = initSuccessResponse();
+            jsonObject.put("balance", getMultiplyBalance(balance));
+            jsonObject.put("currency", platformGameParent.getCurrencyType());
+            jsonObject.put("playerId", memBaseinfo.getAccount());
+            jsonObject.put("sessionId", kaCallbackCreditReq.getSessionId());
+            return jsonObject;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return initFailureResponse(1, e.getMessage());
@@ -342,10 +334,10 @@ public class KaCallbackServiceImpl implements KaCallbackService {
         logger.info("ka_revoke kaGame paramJson:{}, ip:{}", JSONObject.toJSONString(kaCallbackRevokeReq), ip);
         try {
 
-            GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.KA_PLATFORM_CODE);
+            GameParentPlatform platformGameParent = getGameParentPlatform();
 
             // 校验IP
-            if (!ip.equals(kaCallbackRevokeReq.getPlayerIp()) || !checkIp(ip, platformGameParent)) {
+            if (!ip.equals(kaCallbackRevokeReq.getPlayerIp()) || checkIp(ip, platformGameParent)) {
                 return initFailureResponse(4, "玩家 IP 地址不匹配或玩家不存在");
             }
 
@@ -386,14 +378,12 @@ public class KaCallbackServiceImpl implements KaCallbackService {
             oldTxns.setUpdateTime(dateStr);
             txnsMapper.updateById(oldTxns);
 
-            KACallbackStartResp kaCallbackStartResp = new KACallbackStartResp();
-            kaCallbackStartResp.setStatusCode(0);
-            kaCallbackStartResp.setStatus("success");
-            kaCallbackStartResp.setBalance(getMultiplyBalance(balance));
-            kaCallbackStartResp.setCurrency(platformGameParent.getCurrencyType());
-            kaCallbackStartResp.setPlayerId(memBaseinfo.getAccount());
-            kaCallbackStartResp.setSessionId(kaCallbackRevokeReq.getSessionId());
-            return JSONObject.toJSONString(kaCallbackStartResp);
+            JSONObject jsonObject = initSuccessResponse();
+            jsonObject.put("balance", getMultiplyBalance(balance));
+            jsonObject.put("currency", platformGameParent.getCurrencyType());
+            jsonObject.put("playerId", memBaseinfo.getAccount());
+            jsonObject.put("sessionId", kaCallbackRevokeReq.getSessionId());
+            return jsonObject;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return initFailureResponse(1, e.getMessage());
@@ -405,9 +395,9 @@ public class KaCallbackServiceImpl implements KaCallbackService {
     public Object balance(KACallbackCommonReq kaCallbackCommonReq, String ip) {
         logger.info("ka_balance kaGame paramJson:{}, ip:{}", JSONObject.toJSONString(kaCallbackCommonReq), ip);
         try {
-            GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.KA_PLATFORM_CODE);
+            GameParentPlatform platformGameParent = getGameParentPlatform();
             // 校验IP
-            if (!ip.equals(kaCallbackCommonReq.getPlayerIp()) || !checkIp(ip, gameParentPlatform)) {
+            if (!ip.equals(kaCallbackCommonReq.getPlayerIp()) || checkIp(ip, platformGameParent)) {
                 return initFailureResponse(4, "玩家 IP 地址不匹配或玩家不存在");
             }
 
@@ -418,14 +408,12 @@ public class KaCallbackServiceImpl implements KaCallbackService {
             }
 
             // 会员余额返回
-            KACallbackStartResp kaCallbackStartResp = new KACallbackStartResp();
-            kaCallbackStartResp.setStatusCode(0);
-            kaCallbackStartResp.setStatus("success");
-            kaCallbackStartResp.setBalance(getMultiplyBalance(memBaseinfo.getBalance()));
-            kaCallbackStartResp.setCurrency(gameParentPlatform.getCurrencyType());
-            kaCallbackStartResp.setPlayerId(memBaseinfo.getAccount());
-            kaCallbackStartResp.setSessionId(kaCallbackCommonReq.getSessionId());
-            return JSONObject.toJSONString(kaCallbackStartResp);
+            JSONObject jsonObject = initSuccessResponse();
+            jsonObject.put("balance", getMultiplyBalance(memBaseinfo.getBalance()));
+            jsonObject.put("currency", platformGameParent.getCurrencyType());
+            jsonObject.put("playerId", memBaseinfo.getAccount());
+            jsonObject.put("sessionId", kaCallbackCommonReq.getSessionId());
+            return jsonObject;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return initFailureResponse(1, e.getMessage());
@@ -436,16 +424,13 @@ public class KaCallbackServiceImpl implements KaCallbackService {
     @Override
     public Object end(KACallbackCommonReq kaCallbackCommonReq, String ip) {
         logger.info("ka_end kaGame paramJson:{}, ip:{}", JSONObject.toJSONString(kaCallbackCommonReq), ip);
-        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.KA_PLATFORM_CODE);
+        GameParentPlatform gameParentPlatform = getGameParentPlatform();
         // 校验IP
-        if (!ip.equals(kaCallbackCommonReq.getPlayerIp()) || !checkIp(ip, gameParentPlatform)) {
+        if (!ip.equals(kaCallbackCommonReq.getPlayerIp()) || checkIp(ip, gameParentPlatform)) {
             return initFailureResponse(4, "玩家 IP 地址不匹配或玩家不存在");
         }
 
-        KAApiResponseData ppCommonResp = new KAApiResponseData();
-        ppCommonResp.setStatusCode(0);
-        ppCommonResp.setStatus("succcess");
-        return JSONObject.toJSONString(ppCommonResp);
+        return initSuccessResponse();
     }
 
     /**
@@ -500,15 +485,26 @@ public class KaCallbackServiceImpl implements KaCallbackService {
      * @param ip ip
      * @return boolean
      */
-    private boolean checkIp(String ip, GameParentPlatform gameParentPlatform) {
-        if (null == gameParentPlatform) {
+    private boolean checkIp(String ip, GameParentPlatform platformGameParent) {
+        if (null == platformGameParent) {
+            return true;
+        } else if (null == platformGameParent.getIpAddr() || "".equals(platformGameParent.getIpAddr())) {
             return false;
         }
-        if (null == gameParentPlatform.getIpAddr() || "".equals(gameParentPlatform.getIpAddr())) {
-            return true;
-        }
+        return !platformGameParent.getIpAddr().equals(ip);
 
-        return gameParentPlatform.getIpAddr().equals(ip);
+    }
+
+    /**
+     * 初始化成功json返回
+     *
+     * @return JSONObject
+     */
+    private JSONObject initSuccessResponse() {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("statusCode", 0);
+        jsonObject.put("status", "Success");
+        return jsonObject;
     }
 
     /**
@@ -516,12 +512,16 @@ public class KaCallbackServiceImpl implements KaCallbackService {
      *
      * @param error       错误码
      * @param description 错误描述
-     * @return String
+     * @return JSONObject
      */
-    private String initFailureResponse(Integer error, String description) {
-        KAApiResponseData ppCommonResp = new KAApiResponseData();
-        ppCommonResp.setStatusCode(error);
-        ppCommonResp.setStatus(description);
-        return JSONObject.toJSONString(ppCommonResp);
+    private JSONObject initFailureResponse(Integer error, String description) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("statusCode", error);
+        jsonObject.put("status", description);
+        return jsonObject;
+    }
+
+    private GameParentPlatform getGameParentPlatform(){
+        return gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.KA_PLATFORM_CODE);
     }
 }

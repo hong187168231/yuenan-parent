@@ -3,16 +3,22 @@ package com.indo.common.utils;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.config.ConnectionConfig;
+import org.apache.http.config.SocketConfig;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
@@ -29,11 +35,16 @@ import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 
 public class GameUtil extends HttpCommonUtils {
@@ -50,10 +61,13 @@ public class GameUtil extends HttpCommonUtils {
      * 请求获取数据的超时时间,单位毫秒
      * */
     private static final int SOCKET_TIMEOUT = 7000;
-    /*
-     * 异常的最大重试次数
-     * */
-    private static final int EXCEPTION_MAX_RETRY = 2;
+    // 连接主机超时（30s）
+    public static final int HTTP_CONNECT_TIMEOUT_30S = 30 * 1000;
+    // 从主机读取数据超时（3min）
+    public static final int HTTP_READ_TIMEOUT_3MIN = 180 * 1000;
+    public static final String DEFAULT_CHARSET = "utf-8";
+    public static final String DEFAULT_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+            + "(KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36";
 
     public static String createSign(Map<String, String> packageParams, String signKey) {
         TreeMap sortedMap = new TreeMap(packageParams);
@@ -119,9 +133,9 @@ public class GameUtil extends HttpCommonUtils {
         byte[] raw = aeskey.getBytes();
         SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
         cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
-        byte[] encrypted = cipher.doFinal(sSrc.getBytes("utf-8"));
+        byte[] encrypted = cipher.doFinal(sSrc.getBytes(StandardCharsets.UTF_8));
         //此处使用BASE64做转码。
-        return URLEncoder.encode(Base64.getEncoder().encodeToString(encrypted), "UTF-8");
+        return URLEncoder.encode(Base64.getEncoder().encodeToString(encrypted), StandardCharsets.UTF_8.toString());
     }
 
     /**
@@ -137,7 +151,7 @@ public class GameUtil extends HttpCommonUtils {
             //先用base64解密
             byte[] encrypted1 = Base64.getDecoder().decode(sSrc);
             byte[] original = cipher.doFinal(encrypted1);
-            String originalString = new String(original, "utf-8");
+            String originalString = new String(original, StandardCharsets.UTF_8);
             return originalString;
         } catch (Exception ex) {
             logger.error("decrypt error", ex);
@@ -187,7 +201,7 @@ public class GameUtil extends HttpCommonUtils {
             }
             logger.info("POST请求 commonRequest userId:{},paramsMap:{}", userId, paramsMap);
             // 创建请求内容
-            UrlEncodedFormEntity urlEncodedFormEntity = new UrlEncodedFormEntity(list, "utf-8");
+            UrlEncodedFormEntity urlEncodedFormEntity = new UrlEncodedFormEntity(list, StandardCharsets.UTF_8);
             httpPost.setEntity(urlEncodedFormEntity);
 
             //log参数
@@ -197,7 +211,7 @@ public class GameUtil extends HttpCommonUtils {
             // 执行http请求
             response = closeableHttpClient.execute(httpPost);
             HttpEntity entity = response.getEntity();
-            resultString = EntityUtils.toString(entity, "utf-8");
+            resultString = EntityUtils.toString(entity, StandardCharsets.UTF_8);
             // 此句关闭了流
             EntityUtils.consume(entity);
         } catch (Exception e) {
@@ -247,10 +261,10 @@ public class GameUtil extends HttpCommonUtils {
 //            }
 
             // 创建请求内容
-//            UrlEncodedFormEntity urlEncodedFormEntity = new UrlEncodedFormEntity(list, "utf-8");
+//            UrlEncodedFormEntity urlEncodedFormEntity = new UrlEncodedFormEntity(list, StandardCharsets.UTF_8);
 //            httpPost.setEntity(urlEncodedFormEntity);
-            StringEntity stringEntityentity = new StringEntity(json, "utf-8");//解决中文乱码问题
-            stringEntityentity.setContentEncoding("UTF-8");
+            StringEntity stringEntityentity = new StringEntity(json, StandardCharsets.UTF_8);//解决中文乱码问题
+            stringEntityentity.setContentEncoding(StandardCharsets.UTF_8.toString());
             stringEntityentity.setContentType("application/json");
             httpPost.setEntity(stringEntityentity);
 
@@ -262,7 +276,7 @@ public class GameUtil extends HttpCommonUtils {
 //            // 执行http请求
 //            response = closeableHttpClient.execute(httpPost);
 //            HttpEntity entity = response.getEntity();
-//            resultString = EntityUtils.toString(entity, "utf-8");
+//            resultString = EntityUtils.toString(entity, StandardCharsets.UTF_8);
 //            // 此句关闭了流
 //            EntityUtils.consume(entity);
         } catch (Exception e) {
@@ -311,10 +325,10 @@ public class GameUtil extends HttpCommonUtils {
 //            }
 
             // 创建请求内容
-//            UrlEncodedFormEntity urlEncodedFormEntity = new UrlEncodedFormEntity(list, "utf-8");
+//            UrlEncodedFormEntity urlEncodedFormEntity = new UrlEncodedFormEntity(list, StandardCharsets.UTF_8);
 //            httpPost.setEntity(urlEncodedFormEntity);
-            StringEntity stringEntityentity = new StringEntity(json, "utf-8");//解决中文乱码问题
-            stringEntityentity.setContentEncoding("UTF-8");
+            StringEntity stringEntityentity = new StringEntity(json, StandardCharsets.UTF_8);//解决中文乱码问题
+            stringEntityentity.setContentEncoding(StandardCharsets.UTF_8.toString());
             stringEntityentity.setContentType("application/json");
             httpPost.setEntity(stringEntityentity);
 
@@ -326,7 +340,7 @@ public class GameUtil extends HttpCommonUtils {
 //            // 执行http请求
 //            response = closeableHttpClient.execute(httpPost);
 //            HttpEntity entity = response.getEntity();
-//            resultString = EntityUtils.toString(entity, "utf-8");
+//            resultString = EntityUtils.toString(entity, StandardCharsets.UTF_8);
 //            // 此句关闭了流
 //            EntityUtils.consume(entity);
         } catch (Exception e) {
@@ -357,7 +371,7 @@ public class GameUtil extends HttpCommonUtils {
             //设置通用属性
             httpConn.setRequestProperty("accept", "*/*");
             httpConn.setRequestProperty("Connection", "Keep-Alive");//设置与服务器保持连接
-            httpConn.setRequestProperty("Charset", "UTF-8");//设置字符编码类型
+            httpConn.setRequestProperty("Charset", StandardCharsets.UTF_8.toString());//设置字符编码类型
 
             //发送POST请求必须设置如下
             httpConn.setRequestMethod("POST");
@@ -365,11 +379,11 @@ public class GameUtil extends HttpCommonUtils {
             httpConn.setDoInput(true);
             httpConn.setRequestProperty("Content-type", "application/x-javascript->json");//json格式数据
 
-            out1 = new OutputStreamWriter(httpConn.getOutputStream(), "utf-8");
+            out1 = new OutputStreamWriter(httpConn.getOutputStream(), StandardCharsets.UTF_8);
             out1.write(param);
             out1.flush();
 
-            in = new BufferedReader(new InputStreamReader(httpConn.getInputStream(), "utf-8"));
+            in = new BufferedReader(new InputStreamReader(httpConn.getInputStream(), StandardCharsets.UTF_8));
 
             String line;
             while ((line = in.readLine()) != null) {
@@ -439,7 +453,7 @@ public class GameUtil extends HttpCommonUtils {
             }
             logger.info("POST请求 commonRequest userId:{},paramsMap:{}", userId, paramsMap);
             // 创建请求内容
-            UrlEncodedFormEntity urlEncodedFormEntity = new UrlEncodedFormEntity(list, "utf-8");
+            UrlEncodedFormEntity urlEncodedFormEntity = new UrlEncodedFormEntity(list, StandardCharsets.UTF_8);
             httpPost.setEntity(urlEncodedFormEntity);
 
             //log参数
@@ -449,7 +463,7 @@ public class GameUtil extends HttpCommonUtils {
             // 执行http请求
             response = closeableHttpClient.execute(httpPost);
             HttpEntity entity = response.getEntity();
-            resultString = EntityUtils.toString(entity, "utf-8");
+            resultString = EntityUtils.toString(entity, StandardCharsets.UTF_8);
             // 此句关闭了流
             EntityUtils.consume(entity);
         } catch (Exception e) {
@@ -476,7 +490,7 @@ public class GameUtil extends HttpCommonUtils {
         logger.info("POST请求 postJson headers:{}", headers);
         String result = null;
         if (true) {
-            String charset = "UTF-8";
+            String charset = StandardCharsets.UTF_8.toString();
             CloseableHttpClient httpClient;
             HttpPost httpPost;
             CloseableHttpResponse response = null;
@@ -497,7 +511,7 @@ public class GameUtil extends HttpCommonUtils {
 
                 if (null != body) {
                     // 设置参数
-                    StringEntity se = new StringEntity(JSONObject.toJSONString(body), "UTF-8");
+                    StringEntity se = new StringEntity(JSONObject.toJSONString(body), StandardCharsets.UTF_8);
                     httpPost.setEntity(se);
                 }
                 response = httpClient.execute(httpPost);
@@ -533,7 +547,7 @@ public class GameUtil extends HttpCommonUtils {
         logger.info("POST请求 postJson body:{}", body);
         String result = null;
         if (true) {
-            String charset = "UTF-8";
+            String charset = StandardCharsets.UTF_8.toString();
             CloseableHttpClient httpClient;
             HttpPost httpPost;
             CloseableHttpResponse response = null;
@@ -556,7 +570,7 @@ public class GameUtil extends HttpCommonUtils {
                         list.add(new BasicNameValuePair(key, String.valueOf(body.get(key))));
                     }
                     // 创建请求内容
-                    UrlEncodedFormEntity urlEncodedFormEntity = new UrlEncodedFormEntity(list, "utf-8");
+                    UrlEncodedFormEntity urlEncodedFormEntity = new UrlEncodedFormEntity(list, StandardCharsets.UTF_8);
                     httpPost.setEntity(urlEncodedFormEntity);
                     logger.info("POST请求 postJson ,urlEncodedFormEntity:{}", JSONObject.toJSONString(urlEncodedFormEntity));
 
@@ -579,5 +593,52 @@ public class GameUtil extends HttpCommonUtils {
         }
         logger.info("POST请求 postJson result:{}", result);
         return result;
+    }
+
+    public static String httpGetWithCookies(String url, Header[] headers, HttpHost proxy) {
+        logger.info("GET请求 httpGetWithCookies headers:{}, proxy: {}", headers, proxy);
+        logger.info("GET请求 httpGetWithCookies url:{}", url);
+        PoolingHttpClientConnectionManager connManager = new PoolingHttpClientConnectionManager();
+        connManager.setMaxTotal(150);
+        connManager.setDefaultConnectionConfig(ConnectionConfig.custom().setCharset(Charset.forName("utf-8")).build());
+        SocketConfig socketConfig = SocketConfig.custom().setSoTimeout(30000).setSoReuseAddress(true).build();
+        connManager.setDefaultSocketConfig(socketConfig);
+        CloseableHttpClient httpClient = HttpClients.custom().setConnectionManager(connManager).setConnectionManagerShared(true).build();
+
+        // 超时时间设置
+        HttpGet httpGet = new HttpGet(url);
+        RequestConfig.Builder requestConfigBuilder = buildDefaultRequestConfigBuilder();
+        if (Objects.nonNull(proxy)) {
+            requestConfigBuilder.setProxy(proxy);
+        }
+        httpGet.setConfig(requestConfigBuilder.build());
+        httpGet.setHeader("User-agent", DEFAULT_USER_AGENT);
+        if (headers != null && headers.length > 0) {
+            httpGet.setHeaders(headers);
+        }
+        long start = LocalDateTime.now().toInstant(ZoneOffset.of("+8")).toEpochMilli();
+        CloseableHttpResponse response = null;
+        try {
+            response = httpClient.execute(httpGet);
+            HttpEntity entity = response.getEntity();
+            String result = EntityUtils.toString(entity, DEFAULT_CHARSET);
+            EntityUtils.consume(entity); // 此句关闭了流
+            logger.info("GET请求 httpGetWithCookies result:{}", result);
+            return result;
+        } catch (Exception e) {
+            logger.error("请求的接口为:[{}], 发生异常原因: {}", url, e.getMessage(), e);
+            return "";
+        } finally {
+
+            closeResponse(response, url, null);
+            logger.error("httpGetWithCookies请求的地址为:[{}], 总共耗时：{} ms", url,
+                    (LocalDateTime.now().toInstant(ZoneOffset.of("+8")).toEpochMilli() - start));
+        }
+    }
+
+    private static RequestConfig.Builder buildDefaultRequestConfigBuilder() {
+        return RequestConfig.custom()
+                .setSocketTimeout(HTTP_READ_TIMEOUT_3MIN)
+                .setConnectTimeout(HTTP_CONNECT_TIMEOUT_30S);
     }
 }

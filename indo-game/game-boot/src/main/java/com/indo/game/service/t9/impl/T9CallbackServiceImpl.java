@@ -9,9 +9,6 @@ import com.indo.common.redis.utils.GeneratorIdUtil;
 import com.indo.common.utils.DateUtils;
 import com.indo.common.utils.StringUtils;
 import com.indo.game.mapper.TxnsMapper;
-import com.indo.game.pojo.dto.t9.T9ApiPayResponseData;
-import com.indo.game.pojo.dto.t9.T9ApiPlayerResponseData;
-import com.indo.game.pojo.dto.t9.T9ApiResponseData;
 import com.indo.game.pojo.entity.manage.GameCategory;
 import com.indo.game.pojo.entity.manage.GameParentPlatform;
 import com.indo.game.pojo.entity.manage.GamePlatform;
@@ -46,12 +43,10 @@ public class T9CallbackServiceImpl implements T9CallbackService {
     // 查询余额
     @Override
     public Object queryPoint(String callBackParam, String ip) {
+        GameParentPlatform platformGameParent = getGameParentPlatform();
         // 校验IP
-        if (!checkIp(ip)) {
-            T9ApiResponseData callBackFail = new T9ApiResponseData();
-            callBackFail.setStatusCode("70006");
-            callBackFail.setErrorMessage("No authorized to access.");
-            return JSONObject.toJSONString(callBackFail);
+        if (checkIp(ip, platformGameParent)) {
+            return initFailureResponse(70006, "No authorized to access.");
         }
 
         JSONObject jsonObject = JSONObject.parseObject(callBackParam);
@@ -59,39 +54,30 @@ public class T9CallbackServiceImpl implements T9CallbackService {
         // 查询玩家是否存在
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(playerID);
         if (null == memBaseinfo) {
-            T9ApiResponseData callBackFail = new T9ApiResponseData();
-            callBackFail.setStatusCode("70002");
-            callBackFail.setErrorMessage("会员不存在");
-            return JSONObject.toJSONString(callBackFail);
+            return initFailureResponse(70002, "会员不存在");
         }
 
         // 会员余额返回
         if (memBaseinfo.getBalance().compareTo(BigDecimal.ZERO) > 0) {
-            T9ApiResponseData getBalanceSuccess = new T9ApiResponseData();
-            getBalanceSuccess.setStatusCode("200");
-            T9ApiPlayerResponseData t9ApiPlayerResponseData = new T9ApiPlayerResponseData();
-            t9ApiPlayerResponseData.setBalance(memBaseinfo.getBalance());
-            getBalanceSuccess.setData(t9ApiPlayerResponseData);
-            return JSONObject.toJSONString(getBalanceSuccess);
+            JSONObject jsonObject1 = initSuccessResponse();
+            JSONObject balance = new JSONObject();
+            balance.put("balance", memBaseinfo.getBalance());
+            jsonObject1.put("data", balance);
+            return jsonObject1;
         }
 
         // 余额不足 70004
-        T9ApiResponseData callBackFail = new T9ApiResponseData();
-        callBackFail.setStatusCode("70004");
-        callBackFail.setErrorMessage("会员余额不足");
-        return JSONObject.toJSONString(callBackFail);
+        return initFailureResponse(70004, "会员余额不足");
     }
 
     // 提取点数
     @Override
     public Object withdrawal(String callBackParam, String ip) {
+        GameParentPlatform platformGameParent = getGameParentPlatform();
 
         // 校验IP
-        if (!checkIp(ip)) {
-            T9ApiResponseData callBackFail = new T9ApiResponseData();
-            callBackFail.setStatusCode("70006");
-            callBackFail.setErrorMessage("No authorized to access.");
-            return JSONObject.toJSONString(callBackFail);
+        if (checkIp(ip, platformGameParent)) {
+            return initFailureResponse(70006, "No authorized to access.");
         }
         JSONObject jsonObject = JSONObject.parseObject(callBackParam);
         String paySerialno = jsonObject.getString("paySerialno");   // 交易序号
@@ -101,71 +87,55 @@ public class T9CallbackServiceImpl implements T9CallbackService {
         // 查询玩家是否存在
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(playerID);
         if (null == memBaseinfo) {
-            T9ApiResponseData callBackFail = new T9ApiResponseData();
-            callBackFail.setStatusCode("70002");
-            callBackFail.setErrorMessage("会员不存在");
-            return JSONObject.toJSONString(callBackFail);
+            return initFailureResponse(70002, "会员不存在");
         }
 
         try {
             BigDecimal balance = memBaseinfo.getBalance();
 
             if (memBaseinfo.getBalance().compareTo(balance) < 0) {
-                T9ApiResponseData callBackFail = new T9ApiResponseData();
-                callBackFail.setStatusCode("1");
-                callBackFail.setErrorMessage("玩家余额不足");
-                return JSONObject.toJSONString(callBackFail);
+                return initFailureResponse(1, "玩家余额不足");
             }
             // 更新余额
             gameCommonService.updateUserBalance(memBaseinfo, pointAmount, GoldchangeEnum.DSFYXZZ, TradingEnum.SPENDING);
 
             GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(OpenAPIProperties.T9_PLATFORM_CODE);
-            GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(gamePlatform.getParentName());
 
             // 查询订单
-            Txns oldTxns = getTxns(gameParentPlatform, paySerialno, playerID);
+            Txns oldTxns = getTxns(platformGameParent, paySerialno, playerID);
             if (null != oldTxns) {
-                T9ApiResponseData callBackFail = new T9ApiResponseData();
-                callBackFail.setStatusCode("70008");
-                callBackFail.setErrorMessage("游戏平台交易序号(paySerialno)已存在");
-                return JSONObject.toJSONString(callBackFail);
+                return initFailureResponse(70008, "游戏平台交易序号(paySerialno)已存在");
             }
 
             // 生成订单数据
-            Txns txns = getInitTxns(gamePlatform, gameParentPlatform, paySerialno, playerID, pointAmount, balance, ip, "Place Bet");
+            Txns txns = getInitTxns(gamePlatform, platformGameParent, paySerialno, playerID, pointAmount, balance, ip, "Place Bet");
             int num = txnsMapper.insert(txns);
             if (num <= 0) {
-                T9ApiResponseData callBackFail = new T9ApiResponseData();
-                callBackFail.setStatusCode("70004");
-                callBackFail.setErrorMessage("会员余额不足");
-                return JSONObject.toJSONString(callBackFail);
+                return initFailureResponse(70004, "会员余额不足");
             }
-            T9ApiResponseData callBackSuc = new T9ApiResponseData();
-            callBackSuc.setStatusCode("200");
-            T9ApiPayResponseData t9ApiPayResponseData = new T9ApiPayResponseData();
-            t9ApiPayResponseData.setTransferID(paySerialno);
-            t9ApiPayResponseData.setPointAmount(pointAmount);
-            callBackSuc.setData(t9ApiPayResponseData);
-            return JSONObject.toJSONString(callBackSuc);
+
+            JSONObject jsonObject1 = initSuccessResponse();
+            JSONObject dataJson = new JSONObject();
+            dataJson.put("transferID", paySerialno);
+            dataJson.put("pointAmount", pointAmount);
+            jsonObject1.put("data", dataJson);
+            return jsonObject1;
+
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
 
-        T9ApiResponseData callBackFail = new T9ApiResponseData();
-        callBackFail.setStatusCode("70006");
-        callBackFail.setErrorMessage("资料库异常");
-        return JSONObject.toJSONString(callBackFail);
+        return initFailureResponse(70006, "资料库异常");
     }
 
     // 存入点数
     @Override
     public Object deposit(String callBackParam, String ip) {
+        GameParentPlatform platformGameParent = getGameParentPlatform();
+
         // 校验IP
-        if (!checkIp(ip)) {
-            T9ApiResponseData callBackFail = new T9ApiResponseData();
-            callBackFail.setStatusCode("70006");
-            callBackFail.setErrorMessage("No authorized to access.");
-            return JSONObject.toJSONString(callBackFail);
+        if (checkIp(ip, platformGameParent)) {
+            return initFailureResponse(70006, "No authorized to access.");
         }
 
         JSONObject jsonObject = JSONObject.parseObject(callBackParam);
@@ -176,10 +146,7 @@ public class T9CallbackServiceImpl implements T9CallbackService {
         // 查询玩家是否存在
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(playerID);
         if (null == memBaseinfo) {
-            T9ApiResponseData callBackFail = new T9ApiResponseData();
-            callBackFail.setStatusCode("70002");
-            callBackFail.setErrorMessage("会员不存在");
-            return JSONObject.toJSONString(callBackFail);
+            return initFailureResponse(70002, "会员不存在");
         }
         try {
             BigDecimal balance = memBaseinfo.getBalance();
@@ -187,96 +154,73 @@ public class T9CallbackServiceImpl implements T9CallbackService {
             gameCommonService.updateUserBalance(memBaseinfo, pointAmount, GoldchangeEnum.DSFYXZZ, TradingEnum.INCOME);
 
             GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(OpenAPIProperties.T9_PLATFORM_CODE);
-            GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(gamePlatform.getParentName());
 
             // 查询订单
-            Txns oldTxns = getTxns(gameParentPlatform, paySerialno, playerID);
+            Txns oldTxns = getTxns(platformGameParent, paySerialno, playerID);
             if (null != oldTxns) {
-                T9ApiResponseData callBackFail = new T9ApiResponseData();
-                callBackFail.setStatusCode("70008");
-                callBackFail.setErrorMessage("游戏平台交易序号(paySerialno)已存在");
-                return JSONObject.toJSONString(callBackFail);
+                return initFailureResponse(70008, "游戏平台交易序号(paySerialno)已存在");
             }
 
             // 生成订单数据
-            Txns txns = getInitTxns(gamePlatform, gameParentPlatform, paySerialno, playerID, pointAmount, balance, ip, "Settle");
+            Txns txns = getInitTxns(gamePlatform, platformGameParent, paySerialno, playerID, pointAmount, balance, ip, "Settle");
             int num = txnsMapper.insert(txns);
             if (num <= 0) {
-                T9ApiResponseData callBackFail = new T9ApiResponseData();
-                callBackFail.setStatusCode("70006");
-                callBackFail.setErrorMessage("资料库异常");
-                return JSONObject.toJSONString(callBackFail);
+                return initFailureResponse(70006, "资料库异常");
             }
-            T9ApiResponseData callBackSuc = new T9ApiResponseData();
-            callBackSuc.setStatusCode("200");
-            T9ApiPayResponseData t9ApiPayResponseData = new T9ApiPayResponseData();
-            t9ApiPayResponseData.setTransferID(paySerialno);
-            t9ApiPayResponseData.setPointAmount(pointAmount);
-            callBackSuc.setData(t9ApiPayResponseData);
-            return JSONObject.toJSONString(callBackSuc);
+
+            JSONObject jsonObject1 = initSuccessResponse();
+            JSONObject dataJson = new JSONObject();
+            dataJson.put("transferID", paySerialno);
+            dataJson.put("pointAmount", pointAmount);
+            jsonObject1.put("data", dataJson);
+            return jsonObject1;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
 
-        T9ApiResponseData callBackFail = new T9ApiResponseData();
-        callBackFail.setStatusCode("70006");
-        callBackFail.setErrorMessage("资料库异常");
-        return JSONObject.toJSONString(callBackFail);
+        return initFailureResponse(70006, "资料库异常");
     }
 
     // 取消交易
     @Override
     public Object canceltransfer(String callBackParam, String ip) {
+        GameParentPlatform platformGameParent = getGameParentPlatform();
+
         // 校验IP
-        if (!checkIp(ip)) {
-            T9ApiResponseData callBackFail = new T9ApiResponseData();
-            callBackFail.setStatusCode("70006");
-            callBackFail.setErrorMessage("No authorized to access.");
-            return JSONObject.toJSONString(callBackFail);
+        if (checkIp(ip, platformGameParent)) {
+            return initFailureResponse(70006, "No authorized to access.");
         }
 
         JSONObject jsonObject = JSONObject.parseObject(callBackParam);
         String paySerialno = jsonObject.getString("paySerialno");   // 交易序号
-        GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(OpenAPIProperties.T9_PLATFORM_CODE);
-        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(gamePlatform.getParentName());
 
         // 查询订单
-        Txns oldTxns = getTxns(gameParentPlatform, paySerialno, null);
+        Txns oldTxns = getTxns(platformGameParent, paySerialno, null);
         if (null == oldTxns) {
-            T9ApiResponseData callBackFail = new T9ApiResponseData();
-            callBackFail.setStatusCode("70009");
-            callBackFail.setErrorMessage("无法取消不存在的游戏平台交易序号(paySerialno)");
-            return JSONObject.toJSONString(callBackFail);
+            return initFailureResponse(70009, "无法取消不存在的游戏平台交易序号(paySerialno)");
         }
 
         // 查询玩家是否存在
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(oldTxns.getUserId());
         if (null == memBaseinfo) {
-            T9ApiResponseData callBackFail = new T9ApiResponseData();
-            callBackFail.setStatusCode("70002");
-            callBackFail.setErrorMessage("会员不存在");
-            return JSONObject.toJSONString(callBackFail);
+            return initFailureResponse(70002, "会员不存在");
         }
 
         BigDecimal balance = memBaseinfo.getBalance();
 
-        try{
+        try {
             if (!"Cancel Bet".equals(oldTxns.getMethod())) {
                 BigDecimal betAmount = oldTxns.getBetAmount();
-                // 比对金额和订单金额要一致
-                if(betAmount.compareTo(betAmount) != 0) {
-                    T9ApiResponseData callBackFail = new T9ApiResponseData();
-                    callBackFail.setStatusCode("g000007");
-                    callBackFail.setErrorMessage("订单金额和下注金额不一致");
-                    return JSONObject.toJSONString(callBackFail);
-                }
 
                 // 存入点数失败, 余额扣除
-                if("Settle".equals(oldTxns.getMethod())){
-
+                if ("Settle".equals(oldTxns.getMethod())) {
+                    // 会员余额不足
+                    if (balance.compareTo(betAmount) < 0) {
+                        return initFailureResponse(70004, "会员余额不足");
+                    }
                     balance = balance.subtract(betAmount);
                     gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
-                } else if("Place Bet".equals(oldTxns.getMethod())){ // 提取点数失败, 余额加上
+                } else if ("Place Bet".equals(oldTxns.getMethod())) { // 提取点数失败, 余额加上
 
                     balance = balance.add(betAmount.abs());
                     gameCommonService.updateUserBalance(memBaseinfo, betAmount.abs(), GoldchangeEnum.PLACE_BET, TradingEnum.INCOME);
@@ -297,26 +241,21 @@ public class T9CallbackServiceImpl implements T9CallbackService {
                 txnsMapper.updateById(oldTxns);
             }
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            T9ApiResponseData callBackFail = new T9ApiResponseData();
-            callBackFail.setStatusCode("70006");
-            callBackFail.setErrorMessage("资料库异常");
-            return JSONObject.toJSONString(callBackFail);
+            return initFailureResponse(70006, "资料库异常");
         }
 
-        T9ApiResponseData callBackSuc = new T9ApiResponseData();
-        callBackSuc.setStatusCode("200");
-        return JSONObject.toJSONString(callBackSuc);
+        return initSuccessResponse();
     }
 
     /**
      * 查询第三方订单是否存在
      *
-     * @param gameParentPlatform
-     * @param paySerialno
-     * @param playerID
-     * @return
+     * @param gameParentPlatform gameParentPlatform
+     * @param paySerialno        paySerialno
+     * @param playerID           playerID
+     * @return Txns
      */
     private Txns getTxns(GameParentPlatform gameParentPlatform, String paySerialno, String playerID) {
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
@@ -333,15 +272,15 @@ public class T9CallbackServiceImpl implements T9CallbackService {
     /**
      * 初始化第三方游戏交互订单数据
      *
-     * @param gamePlatform
-     * @param gameParentPlatform
-     * @param paySerialno
-     * @param playerID
-     * @param pointAmount
-     * @param balance
-     * @param ip
-     * @param method
-     * @return
+     * @param gamePlatform       gamePlatform
+     * @param gameParentPlatform gameParentPlatform
+     * @param paySerialno        paySerialno
+     * @param playerID           playerID
+     * @param pointAmount        pointAmount
+     * @param balance            balance
+     * @param ip                 ip
+     * @param method             method
+     * @return Txns
      */
     private Txns getInitTxns(GamePlatform gamePlatform, GameParentPlatform gameParentPlatform,
                              String paySerialno, String playerID, BigDecimal pointAmount, BigDecimal balance, String ip, String method) {
@@ -394,18 +333,47 @@ public class T9CallbackServiceImpl implements T9CallbackService {
 
     /**
      * 查询IP是否被封
-     * @param ip
-     * @return
+     *
+     * @param ip ip
+     * @return boolean
      */
-    private boolean checkIp(String ip) {
-        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.T9_PLATFORM_CODE);
-        if (null == gameParentPlatform) {
+    private boolean checkIp(String ip, GameParentPlatform platformGameParent) {
+        if (null == platformGameParent) {
+            return true;
+        } else if (null == platformGameParent.getIpAddr() || "".equals(platformGameParent.getIpAddr())) {
             return false;
         }
-        if (null == gameParentPlatform.getIpAddr() || "".equals(gameParentPlatform.getIpAddr())) {
-            return true;
-        }
+        return !platformGameParent.getIpAddr().equals(ip);
 
-        return gameParentPlatform.getIpAddr().equals(ip);
+    }
+
+    /**
+     * 初始化成功json返回
+     *
+     * @return JSONObject
+     */
+    private JSONObject initSuccessResponse() {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("statusCode", 200);
+        jsonObject.put("errorMessage", "Success");
+        return jsonObject;
+    }
+
+    /**
+     * 初始化交互失败返回
+     *
+     * @param error       错误码
+     * @param description 错误描述
+     * @return JSONObject
+     */
+    private JSONObject initFailureResponse(Integer error, String description) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("statusCode", error);
+        jsonObject.put("errorMessage", description);
+        return jsonObject;
+    }
+
+    private GameParentPlatform getGameParentPlatform(){
+        return gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.T9_PLATFORM_CODE);
     }
 }

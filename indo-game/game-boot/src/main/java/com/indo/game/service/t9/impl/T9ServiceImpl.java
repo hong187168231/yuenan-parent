@@ -25,6 +25,7 @@ import org.springframework.web.client.RestTemplate;
 import javax.annotation.Resource;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -242,7 +243,7 @@ public class T9ServiceImpl implements T9Service {
             checkValue.append(value);
         }
 
-        return DigestUtils.md5DigestAsHex(checkValue.toString().getBytes("utf-8"));
+        return DigestUtils.md5DigestAsHex(checkValue.toString().getBytes(StandardCharsets.UTF_8));
     }
 
     /**

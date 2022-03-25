@@ -11,14 +11,12 @@ import com.indo.common.utils.StringUtils;
 import com.indo.game.common.util.RichSHAEncrypt;
 import com.indo.game.mapper.TxnsMapper;
 import com.indo.game.pojo.dto.rich.Rich88ActivityReq;
-import com.indo.game.pojo.dto.rich.Rich88ApiResponseData;
 import com.indo.game.pojo.dto.rich.Rich88TransferReq;
 import com.indo.game.pojo.entity.manage.GameCategory;
 import com.indo.game.pojo.entity.manage.GameParentPlatform;
 import com.indo.game.pojo.entity.manage.GamePlatform;
 import com.indo.game.pojo.entity.manage.Txns;
 import com.indo.game.service.common.GameCommonService;
-import com.indo.game.service.cptopenmember.CptOpenMemberService;
 import com.indo.game.service.rich.Rich88CallbackService;
 import com.indo.user.pojo.bo.MemTradingBO;
 import org.slf4j.Logger;
@@ -38,82 +36,89 @@ public class Rich88CallbackServiceImpl implements Rich88CallbackService {
     @Resource
     private GameCommonService gameCommonService;
     @Autowired
-    private CptOpenMemberService externalService;
-    @Autowired
     private TxnsMapper txnsMapper;
 
     @Override
     public Object getSessionId(String apiKey, String pfId, String timestamp, String ip) {
         logger.info("rich88_getSessionId rich88Game paramJson:{}, ip:{}", pfId, ip);
+        GameParentPlatform gameParentPlatform = getGameParentPlatform();
         // 校验IP
-        if (!checkIp(ip)) {
-            return initFailureReturn(16005, "非信任來源IP");
+        if (checkIp(ip, gameParentPlatform)) {
+            return initFailureResponse(16005, "非信任來源IP");
         }
 
         // 校验API key
         if (StringUtils.isBlank(pfId) || !pfId.equals(OpenAPIProperties.RICH_PF_ID)) {
-            return initFailureReturn(20008, "PF_ID参数错误");
+            return initFailureResponse(20008, "PF_ID参数错误");
         }
 
         // 校验API key
         if (StringUtils.isBlank(apiKey) || !apiKey.equals(getApiKey(pfId, timestamp))) {
-            return initFailureReturn(16007, "API key 驗證錯誤");
+            return initFailureResponse(16007, "API key 驗證錯誤");
         }
+
+        JSONObject jsonObject = initSuccessResponse();
         JSONObject data = new JSONObject();
         data.put("sid", OpenAPIProperties.RICH_SESSION_ID);
-        return initSuccessReturn(data);
+        jsonObject.put("data", data);
+        return jsonObject;
     }
 
     @Override
     public Object getBalance(String authorization, String account, String ip) {
         logger.info("rich88_getBalance rich88Game paramJson:{}, ip:{}", account, ip);
+        GameParentPlatform gameParentPlatform = getGameParentPlatform();
+
         // 校验IP
-        if (!checkIp(ip)) {
-            return initFailureReturn(16005, "非信任來源IP");
+        if (checkIp(ip, gameParentPlatform)) {
+            return initFailureResponse(16005, "非信任來源IP");
         }
 
         // 验证sessionid
         if (!authorization.equals(OpenAPIProperties.RICH_SESSION_ID)) {
-            return initFailureReturn(22003, "Token 驗證錯誤");
+            return initFailureResponse(22003, "Token 驗證錯誤");
         }
 
         // 查询玩家是否存在
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(account);
         if (null == memBaseinfo) {
-            return initFailureReturn(13002, "帳號不存在");
+            return initFailureResponse(13002, "帳號不存在");
         }
 
+        JSONObject jsonObject = initSuccessResponse();
         JSONObject data = new JSONObject();
         data.put("balance", memBaseinfo.getBalance());
-        return initSuccessReturn(data);
+        jsonObject.put("data", data);
+        return jsonObject;
     }
 
     @Override
     public Object transfer(Rich88TransferReq rich88TransferReq, String authorization, String ip) {
         logger.info("rich88_transfer rich88Game paramJson:{}, ip:{}", JSONObject.toJSONString(rich88TransferReq), ip);
+        GameParentPlatform gameParentPlatform = getGameParentPlatform();
+
         // 校验IP
-        if (!checkIp(ip)) {
-            return initFailureReturn(16005, "非信任來源IP");
+        if (checkIp(ip, gameParentPlatform)) {
+            return initFailureResponse(16005, "非信任來源IP");
         }
 
         // 验证sessionid
         if (!authorization.equals(OpenAPIProperties.RICH_SESSION_ID)) {
-            return initFailureReturn(22003, "Token 驗證錯誤");
+            return initFailureResponse(22003, "Token 驗證錯誤");
         }
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(rich88TransferReq.getAccount());
         if (null == memBaseinfo) {
-            return initFailureReturn(13002, "帳號不存在");
+            return initFailureResponse(13002, "帳號不存在");
         }
         // 交易序号
         String paySerialno = StringUtils.isNotEmpty(rich88TransferReq.getTransfer_no())
                 ? rich88TransferReq.getTransfer_no()
                 : rich88TransferReq.getRecord_id();
         if (StringUtils.isBlank(paySerialno)) {
-            return initFailureReturn(20008, "交易序号不能为空");
+            return initFailureResponse(20008, "交易序号不能为空");
         }
         try {
-            GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(OpenAPIProperties.RICH_PLATFORM_CODE);
-            GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(gamePlatform.getParentName());
+            GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(rich88TransferReq.getGame_code());
 
             // 查询订单
             Txns oldTxns = getTxns(gameParentPlatform, paySerialno, rich88TransferReq.getAccount());
@@ -126,10 +131,10 @@ public class Rich88CallbackServiceImpl implements Rich88CallbackService {
             if ("withdraw".equals(rich88TransferReq.getAction())) {
                 // 重复订单
                 if (null != oldTxns) {
-                    return initFailureReturn(20008, "提款交易重复");
+                    return initFailureResponse(20008, "提款交易重复");
                 }
                 if (memBaseinfo.getBalance().compareTo(amount) < 0) {
-                    return initFailureReturn(22007, "單⼀錢包玩家⾦錢不⾜");
+                    return initFailureResponse(22007, "單⼀錢包玩家⾦錢不⾜");
                 }
                 balance = balance.subtract(amount);
                 txnsMethod = "Place Bet";
@@ -138,7 +143,7 @@ public class Rich88CallbackServiceImpl implements Rich88CallbackService {
             } else if ("deposit".equals(rich88TransferReq.getAction())) {   // 存款
                 // 重复订单
                 if (null != oldTxns) {
-                    return initFailureReturn(20008, "存款交易重复");
+                    return initFailureResponse(20008, "存款交易重复");
                 }
                 balance = balance.add(amount);
                 txnsMethod = "Settle";
@@ -147,11 +152,11 @@ public class Rich88CallbackServiceImpl implements Rich88CallbackService {
             } else {   // rollback 取消提款
                 // 取消提款订单不存在
                 if (null == oldTxns) {
-                    return initFailureReturn(22005, "單⼀錢包交易記錄不存在");
+                    return initFailureResponse(22005, "單⼀錢包交易記錄不存在");
                 }
                 // 比对金额和提款订单金额要一致
-                if(oldTxns.getAmount().compareTo(amount) != 0) {
-                    return initFailureReturn(20008, "取消提款不正确");
+                if (oldTxns.getAmount().compareTo(amount) != 0) {
+                    return initFailureResponse(20008, "取消提款不正确");
                 }
 
                 balance = balance.add(amount);
@@ -167,10 +172,10 @@ public class Rich88CallbackServiceImpl implements Rich88CallbackService {
                     rich88TransferReq.getAccount(), amount, balance, ip, txnsMethod);
             int num = txnsMapper.insert(txns);
             if (num <= 0) {
-                return initFailureReturn(22008, "單⼀錢包平台發⽣錯誤");
+                return initFailureResponse(22008, "單⼀錢包平台發⽣錯誤");
             }
 
-            if ("rollback".equals(rich88TransferReq.getAction())) {
+            if ("rollback".equals(rich88TransferReq.getAction()) && null != oldTxns) {
                 // 更新提款订单
                 oldTxns.setStatus("Cancel");
                 oldTxns.setUpdateTime(DateUtils.format(new Date(), DateUtils.newFormat));
@@ -180,45 +185,46 @@ public class Rich88CallbackServiceImpl implements Rich88CallbackService {
             logger.error(e.getMessage(), e);
         }
 
-        return initSuccessReturn(null);
+        return initSuccessResponse();
     }
 
     @Override
     public Object awardActivity(Rich88ActivityReq rich88ActivityReq, String authorization, String ip) {
         logger.info("rich88_awardActivity rich88Game paramJson:{}, ip:{}", JSONObject.toJSONString(rich88ActivityReq), ip);
+        GameParentPlatform platformGameParent = getGameParentPlatform();
+
         // 校验IP
-        if (!checkIp(ip)) {
-            return initFailureReturn(16005, "非信任來源IP");
+        if (checkIp(ip, platformGameParent)) {
+            return initFailureResponse(16005, "非信任來源IP");
         }
 
         // 验证sessionid
         if (!authorization.equals(OpenAPIProperties.RICH_SESSION_ID)) {
-            return initFailureReturn(22003, "Token 驗證錯誤");
+            return initFailureResponse(22003, "Token 驗證錯誤");
         }
 
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(rich88ActivityReq.getAccount());
         if (null == memBaseinfo) {
-            return initFailureReturn(13002, "帳號不存在");
+            return initFailureResponse(13002, "帳號不存在");
         }
 
         try {
 
             GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(OpenAPIProperties.RICH_PLATFORM_CODE);
             GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
-            GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.RICH_PLATFORM_CODE);
 
             // 赢奖金额
             BigDecimal betAmount = rich88ActivityReq.getMoney();
 
             // 赢奖金额小于0
             if (betAmount.compareTo(BigDecimal.ZERO) <= 0) {
-                return initFailureReturn(20007, "奖励金额小于等于0");
+                return initFailureResponse(20007, "奖励金额小于等于0");
             }
 
             // 查询用户请求订单
             Txns txns = getActivityTxns(platformGameParent, rich88ActivityReq.getAward_id(), memBaseinfo.getId().toString());
             if (null != txns) {
-                return initFailureReturn(20006, "獎勵已送出");
+                return initFailureResponse(20006, "獎勵已送出");
             }
 
             txns = new Txns();
@@ -288,33 +294,31 @@ public class Rich88CallbackServiceImpl implements Rich88CallbackService {
             txns.setBetIp(ip);//  string 是 投注 IP
             int num = txnsMapper.insert(txns);
             if (num <= 0) {
-                return initFailureReturn(10002, "活动派奖订单入库请求失败");
+                return initFailureResponse(10002, "活动派奖订单入库请求失败");
             }
 
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            return initFailureReturn(10010, e.getMessage());
+            return initFailureResponse(10010, e.getMessage());
         }
 
-        return initSuccessReturn(null);
+        return initSuccessResponse();
     }
 
     /**
      * 查询IP是否被封
      *
-     * @param ip
-     * @return
+     * @param ip ip
+     * @return boolean
      */
-    private boolean checkIp(String ip) {
-        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.RICH_PLATFORM_CODE);
-        if (null == gameParentPlatform) {
+    private boolean checkIp(String ip, GameParentPlatform platformGameParent) {
+        if (null == platformGameParent) {
+            return true;
+        } else if (null == platformGameParent.getIpAddr() || "".equals(platformGameParent.getIpAddr())) {
             return false;
-        } else if (null == gameParentPlatform.getIpAddr() || "".equals(gameParentPlatform.getIpAddr())) {
-            return true;
-        } else if (gameParentPlatform.getIpAddr().equals(ip)) {
-            return true;
         }
-        return false;
+        return !platformGameParent.getIpAddr().equals(ip);
+
     }
 
     /**
@@ -325,21 +329,17 @@ public class Rich88CallbackServiceImpl implements Rich88CallbackService {
      * @return String
      */
     private String getApiKey(String pfId, String timestamp) {
-        StringBuilder checkValue = new StringBuilder();
-        checkValue.append(pfId);
-        checkValue.append(OpenAPIProperties.RICH_PRIVATE_KEY);
-        checkValue.append(timestamp);
-
-        return RichSHAEncrypt.getSHA256Str(checkValue.toString());
+        String checkValue = pfId + OpenAPIProperties.RICH_PRIVATE_KEY + timestamp;
+        return RichSHAEncrypt.getSHA256Str(checkValue);
     }
 
     /**
      * 查询第三方订单是否存在
      *
-     * @param gameParentPlatform
-     * @param paySerialno
-     * @param playerID
-     * @return
+     * @param gameParentPlatform gameParentPlatform
+     * @param paySerialno        paySerialno
+     * @param playerID           playerID
+     * @return Txns
      */
     private Txns getTxns(GameParentPlatform gameParentPlatform, String paySerialno, String playerID) {
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
@@ -358,10 +358,10 @@ public class Rich88CallbackServiceImpl implements Rich88CallbackService {
     /**
      * 查询第三方活动派奖订单是否存在
      *
-     * @param gameParentPlatform
-     * @param paySerialno
-     * @param playerID
-     * @return
+     * @param gameParentPlatform gameParentPlatform
+     * @param paySerialno        paySerialno
+     * @param playerID           playerID
+     * @return Txns
      */
     private Txns getActivityTxns(GameParentPlatform gameParentPlatform, String paySerialno, String playerID) {
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
@@ -378,15 +378,15 @@ public class Rich88CallbackServiceImpl implements Rich88CallbackService {
     /**
      * 初始化第三方游戏交互订单数据
      *
-     * @param gamePlatform
-     * @param gameParentPlatform
-     * @param paySerialno
-     * @param playerID
-     * @param pointAmount
-     * @param balance
-     * @param ip
-     * @param method
-     * @return
+     * @param gamePlatform       gamePlatform
+     * @param gameParentPlatform gameParentPlatform
+     * @param paySerialno        paySerialno
+     * @param playerID           playerID
+     * @param pointAmount        pointAmount
+     * @param balance            balance
+     * @param ip                 ip
+     * @param method             method
+     * @return Txns
      */
     private Txns getInitTxns(GamePlatform gamePlatform, GameParentPlatform gameParentPlatform,
                              String paySerialno, String playerID, BigDecimal pointAmount, BigDecimal balance, String ip, String method) {
@@ -438,32 +438,32 @@ public class Rich88CallbackServiceImpl implements Rich88CallbackService {
     }
 
     /**
-     * 成功返回
+     * 初始化成功json返回
      *
-     * @param data data
-     * @return return
+     * @return JSONObject
      */
-    private String initSuccessReturn(JSONObject data) {
-        Rich88ApiResponseData rich88ApiResponseData = new Rich88ApiResponseData();
-        rich88ApiResponseData.setCode(0);
-        rich88ApiResponseData.setMsg("Success");
-        if (null != data) {
-            rich88ApiResponseData.setData(data);
-        }
-        return JSONObject.toJSONString(rich88ApiResponseData);
+    private JSONObject initSuccessResponse() {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("code", 0);
+        jsonObject.put("msg", "Success");
+        return jsonObject;
     }
 
     /**
-     * 失败返回
+     * 初始化交互失败返回
      *
-     * @param code code
-     * @param msg  msg
-     * @return return
+     * @param error       错误码
+     * @param description 错误描述
+     * @return JSONObject
      */
-    private String initFailureReturn(int code, String msg) {
-        Rich88ApiResponseData rich88ApiResponseData = new Rich88ApiResponseData();
-        rich88ApiResponseData.setCode(code);
-        rich88ApiResponseData.setMsg(msg);
-        return JSONObject.toJSONString(rich88ApiResponseData);
+    private JSONObject initFailureResponse(Integer error, String description) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("code", error);
+        jsonObject.put("msg", description);
+        return jsonObject;
+    }
+
+    private GameParentPlatform getGameParentPlatform(){
+        return gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.RICH_PLATFORM_CODE);
     }
 }

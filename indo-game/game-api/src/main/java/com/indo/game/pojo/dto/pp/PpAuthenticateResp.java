@@ -6,8 +6,10 @@ import lombok.Data;
 import java.math.BigDecimal;
 
 @Data
-public class PpAuthenticateResp extends PpCommonResp {
+public class PpAuthenticateResp {
+    private Integer error;
 
+    private String description;
     private String userId;  // 娱乐场运营商系统中的用户标识符。
     private String currency;//玩家的货币。
     private BigDecimal cash;//玩家的真钱余额。
