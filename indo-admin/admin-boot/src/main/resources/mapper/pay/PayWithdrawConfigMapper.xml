@@ -25,7 +25,8 @@
     <sql id="Base_Column_List">
         create_time,
         update_time,
-        pay_withdraw_id, pay_channel_id, withdraw_name, withdraw_url, notify_url, secret_key, min_amount, max_amount, today_amount, total_amount, status, sort_by, create_user, update_user, remark
+        pay_withdraw_id, pay_channel_id, withdraw_name, withdraw_url, notify_url, secret_key, min_amount, max_amount,
+        today_amount, total_amount, status, sort_by, create_user, update_user, remark
     </sql>
 
     <!-- 通用查询结果列 -->
