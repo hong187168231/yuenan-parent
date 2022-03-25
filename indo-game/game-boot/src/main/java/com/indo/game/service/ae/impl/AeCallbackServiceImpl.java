@@ -233,7 +233,7 @@ public class AeCallbackServiceImpl implements AeCallbackService {
         GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         BigDecimal balance = memBaseinfo.getBalance();
         BigDecimal betAmount = new BigDecimal(aeApiRequestData.getBetAmount());
-       if (memBaseinfo.getBalance().compareTo(betAmount) == -1) {
+        if (memBaseinfo.getBalance().compareTo(betAmount) == -1) {
             AeCallBackRespFail callBacekFail = new AeCallBackRespFail();
             callBacekFail.setCode("1018");
             callBacekFail.setMsg("Not Enough Balance");
@@ -274,8 +274,6 @@ public class AeCallbackServiceImpl implements AeCallbackService {
             balance = balance.subtract(betAmount.abs());
             gameCommonService.updateUserBalance(memBaseinfo, betAmount.abs(), GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
         }
-        balance = balance.subtract(betAmount);
-        gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
 
         Txns txns = new Txns();
         //游戏商注单号
