@@ -99,18 +99,16 @@ public class YlCallbackServiceImpl implements YlCallbackService {
             }
             BigDecimal winAmount = jsonObject.getBigDecimal("profit");
             if (winAmount.compareTo(BigDecimal.ZERO) == 1) {//赢
-                balance = balance.add(winAmount);
-                gameCommonService.updateUserBalance(memBaseinfo, winAmount, GoldchangeEnum.PLACE_BET, TradingEnum.INCOME);
+                balance = balance.add(winAmount).add(betAmount);
+                gameCommonService.updateUserBalance(memBaseinfo, winAmount.add(betAmount), GoldchangeEnum.PLACE_BET, TradingEnum.INCOME);
             }
-            if (winAmount.compareTo(BigDecimal.ZERO) < 1) {//输
-                if (memBaseinfo.getBalance().compareTo(betAmount.abs()) == -1) {
-                    dataJson.put("status", 500);
-                    dataJson.put("msg", "code:9003");
-                    return dataJson;
-                }
-                balance = balance.subtract(betAmount.abs());
-                gameCommonService.updateUserBalance(memBaseinfo, betAmount.abs(), GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
+            if (memBaseinfo.getBalance().compareTo(betAmount.abs()) == -1) {
+                dataJson.put("status", 500);
+                dataJson.put("msg", "code:9003");
+                return dataJson;
             }
+            balance = balance.subtract(betAmount.abs());
+            gameCommonService.updateUserBalance(memBaseinfo, betAmount.abs(), GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
 
             Txns txns = new Txns();
             //游戏商注单号

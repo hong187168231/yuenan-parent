@@ -264,16 +264,14 @@ public class AeCallbackServiceImpl implements AeCallbackService {
             balance = balance.add(new BigDecimal(aeApiRequestData.getWinAmount()));
             gameCommonService.updateUserBalance(memBaseinfo, new BigDecimal(aeApiRequestData.getWinAmount()), GoldchangeEnum.PLACE_BET, TradingEnum.INCOME);
         }
-        if (new BigDecimal(aeApiRequestData.getWinAmount()).compareTo(BigDecimal.ZERO) < 1) {//输
-            if (memBaseinfo.getBalance().compareTo(betAmount.abs()) == -1) {
-                AeCallBackRespFail callBacekFail = new AeCallBackRespFail();
-                callBacekFail.setCode("1201");
-                callBacekFail.setMsg("钱包余额过低");
-                return JSONObject.toJSON(callBacekFail);
-            }
-            balance = balance.subtract(betAmount.abs());
-            gameCommonService.updateUserBalance(memBaseinfo, betAmount.abs(), GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
+        if (memBaseinfo.getBalance().compareTo(betAmount.abs()) == -1) {
+            AeCallBackRespFail callBacekFail = new AeCallBackRespFail();
+            callBacekFail.setCode("1201");
+            callBacekFail.setMsg("钱包余额过低");
+            return JSONObject.toJSON(callBacekFail);
         }
+        balance = balance.subtract(betAmount.abs());
+        gameCommonService.updateUserBalance(memBaseinfo, betAmount.abs(), GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
 
         Txns txns = new Txns();
         //游戏商注单号
