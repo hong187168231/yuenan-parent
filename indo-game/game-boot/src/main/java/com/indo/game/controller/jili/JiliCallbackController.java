@@ -33,7 +33,7 @@ public class JiliCallbackController {
     /**
      * 权限验证
      */
-    @RequestMapping(value = "/auth", method = RequestMethod.GET)
+    @RequestMapping(value = "/auth", method = RequestMethod.POST)
     @ResponseBody
     @AllowAccess
     public Object auth(@RequestParam("token") String token, HttpServletRequest request) {
