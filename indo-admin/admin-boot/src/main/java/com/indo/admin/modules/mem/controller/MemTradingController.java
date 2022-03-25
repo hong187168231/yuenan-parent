@@ -13,9 +13,7 @@ import com.indo.common.result.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -37,8 +35,8 @@ public class MemTradingController {
     private IMemTradingService iMemTradingService;
 
     @ApiOperation(value = "资金明细")
-    @GetMapping(value = "/list")
-    public Result<List<MemTradingVO>> list(CapitalDTO queryDto) {
+    @PostMapping(value = "/list")
+    public Result<List<MemTradingVO>> list(@RequestBody CapitalDTO queryDto) {
         Page relust = iMemTradingService.capitalList(queryDto);
         return Result.success(relust.getRecords(), relust.getTotal());
     }
