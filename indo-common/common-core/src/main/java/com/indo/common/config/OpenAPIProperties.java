@@ -210,11 +210,11 @@ public class OpenAPIProperties implements InitializingBean {
     public static String DJ_API_URL;
     public static String DJ_API_KEY;
     public static String DJ_AGENT_CODE;
-    @Value("${dj.apiUrl}")
+    @Value("${s128.apiUrl}")
     private String djApiUrl;
-    @Value("${dj.apiKey}")
+    @Value("${s128.apiKey}")
     private String djApiKey;
-    @Value("${dj.agentCode}")
+    @Value("${s128.agentCode}")
     private String djAgentCode;
 
     // FC
