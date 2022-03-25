@@ -202,24 +202,25 @@ public class AwcServiceImpl implements AwcService {
 //            betLimit: {"SEXYBCRT":{"LIVE":{"limitId":[110901,110902]}}}
 //            ※Each player allowed max 6 betLimit IDs.
 //            ※每个玩家每个最多允许 6 组下注限红 ID
-            LambdaQueryWrapper<GamePlatform> wrapper = new LambdaQueryWrapper<>();
-            wrapper.eq(GamePlatform::getIsStart,"1");
-            wrapper.eq(GamePlatform::getParentName,gameParentPlatform.getPlatformCode());
-            List<GamePlatform> categoryList = gamePlatformMapper.selectList(wrapper);
-            String betLimit = "";
-            for (int i=0;i<categoryList.size();i++){
-                GamePlatform gp = categoryList.get(i);
-                if(null!=gp.getBetLimit()&&!"".equals(gp.getBetLimit())) {
-                    betLimit += gp.getBetLimit();
-                    if (i != categoryList.size() - 1) {
-                        betLimit += ",";
-                    }
-                }
-            }
-            if(",".equals(betLimit.substring(betLimit.length()-1))){
-                betLimit = betLimit.substring(0,betLimit.length()-1);
-            }
-            trr.put("betLimit", "{"+betLimit+"}");//下注限红
+//            LambdaQueryWrapper<GamePlatform> wrapper = new LambdaQueryWrapper<>();
+//            wrapper.eq(GamePlatform::getIsStart,"1");
+//            wrapper.eq(GamePlatform::getParentName,gameParentPlatform.getPlatformCode());
+//            List<GamePlatform> categoryList = gamePlatformMapper.selectList(wrapper);
+//            String betLimit = "";
+//            for (int i=0;i<categoryList.size();i++){
+//                GamePlatform gp = categoryList.get(i);
+//                if(null!=gp.getBetLimit()&&!"".equals(gp.getBetLimit())) {
+//                    betLimit += gp.getBetLimit();
+//                    if (i != categoryList.size() - 1) {
+//                        betLimit += ",";
+//                    }
+//                }
+//            }
+//            if(",".equals(betLimit.substring(betLimit.length()-1))){
+//                betLimit = betLimit.substring(0,betLimit.length()-1);
+//            }
+//            trr.put("betLimit", "{"+betLimit+"}");//下注限红
+            trr.put("betLimit", "{\"SEXYBCRT\":{\"LIVE\":{\"limitId\":[261101]}}}");//下注限红
 
 
             return commonRequest(trr, OpenAPIProperties.AWC_API_URL_LOGIN+"/wallet/createMember", cptOpenMember.getUserId(), ip, "createMember");
@@ -254,11 +255,14 @@ public class AwcServiceImpl implements AwcService {
             trr.put("language", gameParentPlatform.getLanguageType());
             String url = "/wallet/login";
             if(null!=gamePlatform) {
-                String str[] = gamePlatform.getPlatformCode().split("_");
-                trr.put("platform", str[0]);//游戏平台名称
+//                String str[] = gamePlatform.getPlatformCode().split("_");
+//                trr.put("platform", str[0]);//游戏平台名称
+                trr.put("platform", "SEXYBCRT");//游戏平台名称
+
 //            GameCategory gameCategory = gameCategoryMapper.selectById(gamePlatform.getCategoryId());
-                trr.put("gameType", str[1]);//平台游戏类型
-                trr.put("gameCode", "");//平台游戏代码
+//                trr.put("gameType", str[1]);//平台游戏类型
+                trr.put("gameType", "LIVE");//平台游戏类型
+                trr.put("gameCode", gamePlatform.getPlatformCode());//平台游戏代码
 //                List<GamePlatform> gamePlatformList = gameCommonService.getGamePlatformByParentName(gameParentPlatform.getPlatformCode());
 //                List<String> codeList = new ArrayList<>();
 //                Map<String, List<String>> gameForbiddenMap = new HashMap<>();
