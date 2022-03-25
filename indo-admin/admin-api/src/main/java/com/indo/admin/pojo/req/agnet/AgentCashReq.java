@@ -34,4 +34,7 @@ public class AgentCashReq extends BaseDTO {
 
     @ApiModelProperty("结束时间")
     private String endTime;
+
+    @ApiModelProperty("现金状态")
+    private Integer cashStatus;
 }

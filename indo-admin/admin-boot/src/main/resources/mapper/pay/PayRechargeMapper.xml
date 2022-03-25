@@ -71,28 +71,28 @@
         ) a
         where 1=1
         <if test="req.payChannelId != null ">
-            and a.channel_id = #{req.payChannelId}
+            and a.channelId = #{req.payChannelId}
         </if>
         <if test="req.payWayId != null ">
-            and a.way_id = #{req.payWayId}
+            and a.wayId = #{req.payWayId}
         </if>
         <if test="req.orderNo != null ">
-            and a.order_no = #{req.orderNo}
+            and a.orderNo = #{req.orderNo}
         </if>
         <if test="req.memId != null ">
-            and a.mem_id = #{req.memId}
+            and a.memId = #{req.memId}
         </if>
         <if test="req.beginAmount != null ">
-            and a.actual_amount &gt;= #{req.beginAmount}
+            and a.realAmount &gt;= #{req.beginAmount}
         </if>
         <if test="req.endAmount ">
-            and a.actual_amount &lt;= #{req.endAmount}
+            and a.realAmount &lt;= #{req.endAmount}
         </if>
         <if test="req.beginTime != null">
-            and a.create_time &gt;= #{req.beginTime}
+            and a.payTime &gt;= #{req.beginTime}
         </if>
         <if test="req.endTime != null ">
-            and a.create_time &lt;= #{req.endTime}
+            and a.payTime &lt;= #{req.endTime}
         </if>
 
     </select>

@@ -81,5 +81,4 @@ public class ManualRechargeController {
         return Result.success(result.getRecords(), result.getTotal());
     }
 
-
 }
