@@ -101,11 +101,13 @@ public class FCServiceImpl implements FCService {
     public Result logout(LoginInfo loginUser, String platform, String ip) {
         logger.info("fclogout {} fcGame account:{},t9CodeId:{}", ip, loginUser.getAccount(), platform);
         try {
+            GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.FC_PLATFORM_CODE);
             Map<String, Object> loginouotParam = new HashMap<>();
             loginouotParam.put("MemberAccount", loginUser.getAccount());
 
             Map<String, Object> param = new HashMap<>();
             param.put("AgentCode", OpenAPIProperties.FC_AGENT_CODE);
+            param.put("Currency", gameParentPlatform.getCurrencyType());
             param.put("Params", FCHashAESEncrypt.encrypt(JSONObject.toJSONString(loginouotParam), OpenAPIProperties.FC_AGENT_KEY));
             param.put("Sign", FCHashAESEncrypt.encryptMd5(JSONObject.toJSONString(loginouotParam)));
 
@@ -132,7 +134,7 @@ public class FCServiceImpl implements FCService {
             Map<String, Object> loginParam = new HashMap<>();
             loginParam.put("MemberAccount", playerID);
             loginParam.put("GameID", gameCode);
-            loginParam.put("LanguageID", convertLang(lang));
+            loginParam.put("LanguageID", lang);
 
             Map<String, Object> param = new HashMap<>();
             param.put("AgentCode", OpenAPIProperties.FC_AGENT_CODE);
@@ -154,19 +156,6 @@ public class FCServiceImpl implements FCService {
             return Result.failed("g200001", "登录操作失败");
         }
 
-    }
-
-    private Integer convertLang(String lang) {
-        if (StringUtils.isBlank(lang)) {
-            return 1;
-        }
-        if (lang.indexOf("zh") >= 0) {
-            return 2;
-        } else if (lang.indexOf("en") >= 0) {
-            return 1;
-        } else {
-            return 3;
-        }
     }
 
 
@@ -239,6 +228,8 @@ public class FCServiceImpl implements FCService {
             //        502 玩家不存在。                                            System is maintained.
             case "502":
                 return Result.failed("g100003", "账号重复");
+            case "504":
+                return Result.failed("g100103", "账号不在线");
             //        410 玩家不存在。                                            System is maintained.
             case "505":
                 return Result.failed("g100002", "账号过短");
