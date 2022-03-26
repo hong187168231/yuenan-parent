@@ -246,7 +246,7 @@ public class GameController {
             if ("FC".equals(platform)) {
                 resultInfo = fcService.logout(loginUser, platform, ip);
             }
-            if ("Yl".equals(platform)) {
+            if ("YL".equals(platform)) {
                 resultInfo = ylService.logout(loginUser, platform, ip);
             }
             if (resultInfo == null) {

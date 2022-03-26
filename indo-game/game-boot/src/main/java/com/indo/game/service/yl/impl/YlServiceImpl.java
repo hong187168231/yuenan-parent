@@ -135,7 +135,7 @@ public class YlServiceImpl implements YlService {
                 map.put("gameId", platform);
             }
             StringBuilder builder = new StringBuilder();
-            builder.append(OpenAPIProperties.YL_API_URL).append("/api/").append(OpenAPIProperties.YL_WEB_SITE).append("/loginV2");
+            builder.append(OpenAPIProperties.YL_API_URL).append("/api/").append(OpenAPIProperties.YL_WEB_SITE).append("/login");
             JSONObject jsonObject = commonRequest(builder.toString(), map, cptOpenMember.getUserId().intValue(), "yLGameLogin");
             logger.error("YL捕鱼登录请求返回：", jsonObject);
             if (null != jsonObject && "1".equals(jsonObject.getString("status"))) {
@@ -181,7 +181,7 @@ public class YlServiceImpl implements YlService {
             map.put("cert", OpenAPIProperties.YL_CERT);
             map.put("user", loginUser.getId() + "");
             StringBuilder builder = new StringBuilder();
-            builder.append(OpenAPIProperties.YL_API_URL).append("/api/").append(OpenAPIProperties.YL_WEB_SITE).append("/getKey");
+            builder.append(OpenAPIProperties.YL_API_URL).append("/api/").append(OpenAPIProperties.YL_WEB_SITE).append("/logout");
             JSONObject jsonObject = commonRequest(builder.toString(), map, loginUser.getId().intValue(), "yLLogOut");
             logger.info("YL捕鱼强迫登出玩家请求返回：", jsonObject);
             if (null != jsonObject && "1".equals(jsonObject.getString("status"))) {
