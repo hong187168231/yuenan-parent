@@ -34,11 +34,11 @@ public class PsCallBackController {
     @RequestMapping(value = "/VerifySession", method = RequestMethod.GET)
     @ResponseBody
     @AllowAccess
-    public PsCallBackResponse verifySession(PsCallBackParentReq psVerifyCallBackReq, HttpServletRequest request) {
+    public Object verifySession(PsCallBackParentReq psVerifyCallBackReq, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
         logger.info("psCallBack {} verifyToken回调,params:{}", JSONObject.toJSONString(psVerifyCallBackReq));
-        PsCallBackResponse psCallBackResponse = psCallbackService.psVerifyCallback(psVerifyCallBackReq, ip);
+        Object psCallBackResponse = psCallbackService.psVerifyCallback(psVerifyCallBackReq, ip);
         logger.info("psCallBack {} verifyToken回调返回数据 params:{}", psCallBackResponse);
         return psCallBackResponse;
     }
@@ -108,7 +108,7 @@ public class PsCallBackController {
     }
 
     /**
-     * 红利
+     * 余额
      */
     @RequestMapping(value = "/api/getbalance", method = RequestMethod.GET)
     @ResponseBody

@@ -49,20 +49,26 @@ public class PsCallbackServiceImpl implements PsCallbackService {
     private static final DecimalFormat format = new DecimalFormat("#");
 
     @Override
-    public PsCallBackResponse psVerifyCallback(PsCallBackParentReq psCallBackParentReq, String ip) {
+    public Object psVerifyCallback(PsCallBackParentReq psCallBackParentReq, String ip) {
         CptOpenMember cptOpenMember = externalService.quertCptOpenMember(psCallBackParentReq.getAccess_token(), "PS");
-        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cptOpenMember.getUserName());
-        PsCallBackResponse psCallBackResponse = new PsCallBackResponse();
+        JSONObject dataJson = new JSONObject();
         if (cptOpenMember == null) {
-            psCallBackResponse.setStatus_code(1);
-            return psCallBackResponse;
+            dataJson.put("code", 1);
+            dataJson.put("message", "Token 无效");
+            return dataJson;
+        }
+        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cptOpenMember.getUserName());
+        if (cptOpenMember == null) {
+            dataJson.put("code", 1);
+            dataJson.put("message", "Token 无效");
+            return dataJson;
         }
         String signPrice = format.format(memBaseinfo.getBalance().multiply(new BigDecimal(100)));
-        psCallBackResponse.setStatus_code(0);
-        psCallBackResponse.setMember_id(cptOpenMember.getId());
-        psCallBackResponse.setMember_name(cptOpenMember.getUserName());
-        psCallBackResponse.setBalance(Integer.parseInt(signPrice));
-        return psCallBackResponse;
+        dataJson.put("status_code", 0);
+        dataJson.put("member_id", cptOpenMember.getId() + "");
+        dataJson.put("member_name", cptOpenMember.getUserName());
+        dataJson.put("balance", Integer.parseInt(signPrice));
+        return dataJson;
     }
 
     @Override

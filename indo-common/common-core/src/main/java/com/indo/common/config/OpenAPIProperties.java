@@ -210,11 +210,11 @@ public class OpenAPIProperties implements InitializingBean {
     public static String DJ_API_URL;
     public static String DJ_API_KEY;
     public static String DJ_AGENT_CODE;
-   // @Value("${dj.apiUrl}")
+    @Value("${s128.apiUrl}")
     private String djApiUrl;
-    //@Value("${dj.apiKey}")
+    @Value("${s128.apiKey}")
     private String djApiKey;
-   // @Value("${dj.agentCode}")
+    @Value("${s128.agentCode}")
     private String djAgentCode;
 
     // FC
@@ -227,7 +227,7 @@ public class OpenAPIProperties implements InitializingBean {
     @Value("${fc.agentCode}")
     private String fcAgentCode;
     @Value("${fc.agentKey}")
-    private String fcAgentKey ;
+    private String fcAgentKey;
     @Value("${fc.platformCode:FC}")
     private String fcPlatformCode;
 
@@ -241,9 +241,23 @@ public class OpenAPIProperties implements InitializingBean {
     @Value("${jili.agentKey}")
     private String jiliAgentKey;
     @Value("${jili.agentId}")
-    private String jiliAgentId ;
+    private String jiliAgentId;
     @Value("${jili.platformCode:JILI}")
     private String jiliPlatformCode;
+
+
+    public static String YL_API_URL;
+    public static String YL_WEB_SITE;
+    public static String YL_CERT;
+    public static String YL_EXTENSION;
+    @Value("${yl.apiUrl}")
+    private String ylApiUrl;
+    @Value("${yl.ylWebSite}")
+    private String ylWebSite;
+    @Value("${yl.ylCert}")
+    private String ylCert;
+    @Value("${yl.ylExtension}")
+    private String ylExtension;
 
     @Override
     public void afterPropertiesSet() {
@@ -333,5 +347,10 @@ public class OpenAPIProperties implements InitializingBean {
         JILI_AGENT_KEY = jiliAgentKey;
         JILI_AGENT_ID = jiliAgentId;
         JILI_PLATFORM_CODE = jiliPlatformCode;
+
+        YL_API_URL = ylApiUrl;
+        YL_CERT = ylCert;
+        YL_EXTENSION = ylExtension;
+        YL_WEB_SITE = ylWebSite;
     }
 }

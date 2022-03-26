@@ -5,6 +5,7 @@
 
     <select id="capitalList" resultType="com.indo.admin.pojo.vo.mem.MemTradingVO">
         SELECT
+        mgc.mem_id AS memId,
         mgc.account AS account,
         mgc.amount AS amount,
         mgc.before_amount AS beforeAmount,
@@ -18,8 +19,8 @@
         <if test="dto.refNo !=null and dto.refNo != '' ">
             and mgc.ref_no = #{dto.refNo}
         </if>
-        <if test="dto.account !=null and dto.account != '' ">
-            and mgc.account = #{dto.account}
+        <if test="dto.memId !=null">
+            and mgc.mem_id = #{dto.memId}
         </if>
         <if test="dto.changeTypes !=null and changeTypes.size() > 0 ">
             and mgc.change_type in

@@ -210,7 +210,7 @@ public class Rich88CallbackServiceImpl implements Rich88CallbackService {
 
         try {
 
-            GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(OpenAPIProperties.RICH_PLATFORM_CODE);
+            GamePlatform gamePlatform = gameCommonService.getGamePlatformByParentName(OpenAPIProperties.RICH_PLATFORM_CODE).get(0);
             GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
 
             // 赢奖金额

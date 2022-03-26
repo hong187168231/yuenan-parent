@@ -7,7 +7,7 @@ import com.indo.game.pojo.vo.callback.ps.PsCallBackResponse;
 public interface PsCallbackService {
 
 
-    PsCallBackResponse psVerifyCallback(PsCallBackParentReq psCallBackParentReq, String ip);
+    Object psVerifyCallback(PsCallBackParentReq psCallBackParentReq, String ip);
 
     Object psBetCallback(PsCallBackParentReq psbetCallBackReq, String ip);
 

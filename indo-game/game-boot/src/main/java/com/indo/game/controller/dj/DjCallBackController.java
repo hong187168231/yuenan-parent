@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
-@RequestMapping("/dj/callBack")
+@RequestMapping("/s128/callBack")
 public class DjCallBackController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 

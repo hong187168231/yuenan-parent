@@ -22,6 +22,8 @@ import com.indo.game.service.saba.SabaService;
 import com.indo.game.service.sbo.SboService;
 import com.indo.game.service.t9.T9Service;
 import com.indo.game.service.ug.UgService;
+import com.indo.game.service.yl.YlService;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -76,6 +78,8 @@ public class GameController {
     private JiliService jiliService;
     @Autowired
     private FCService fcService;
+    @Autowired
+    private YlService ylService;
     @Autowired
     private RedissonClient redissonClient;
 
@@ -145,7 +149,7 @@ public class GameController {
                 if ("KA".equals(parentName)) {
                     resultInfo = kaService.kaGame(loginUser, isMobileLogin, ip, platform, parentName);
                 }
-                if ("DJ".equals(parentName)) {
+                if ("S128".equals(parentName)) {
                     resultInfo = djService.djGame(loginUser, isMobileLogin, ip, platform, parentName);
                 }
                 if ("JILI".equals(parentName)) {
@@ -153,6 +157,9 @@ public class GameController {
                 }
                 if ("FC".equals(parentName)) {
                     resultInfo = fcService.fcGame(loginUser, isMobileLogin, ip, platform, parentName);
+                }
+                if ("YL".equals(parentName)) {
+                    resultInfo = ylService.ylGame(loginUser, isMobileLogin, ip, platform, parentName);
                 }
 
                 if (resultInfo == null) {
@@ -238,6 +245,9 @@ public class GameController {
             }
             if ("FC".equals(platform)) {
                 resultInfo = fcService.logout(loginUser, platform, ip);
+            }
+            if ("YL".equals(platform)) {
+                resultInfo = ylService.logout(loginUser, platform, ip);
             }
             if (resultInfo == null) {
                 log.info("退出平台log {} loginPlatform result is null. params:{},ip:{}", loginUser.getId(), params, ip);

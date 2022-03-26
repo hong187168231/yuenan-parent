@@ -52,8 +52,10 @@ public class FCHashAESEncrypt {
     }
 
     public static void main(String[] args) {
+        String key = "SjnQIV3OlpqEvKiN"; // $ { KEY }
         // cf4e6c6b0e8c9dab74832204d5cef1ce
-        System.out.printf(encryptMd5("{\"MemberAccount\":\"test032301\",\"GameID\":\"21003\"}"));
+        System.out.println(encryptMd5("{\"MemberAccount\":\"test032301\",\"GameID\":\"21003\"}"));
+        System.out.printf(encrypt("{\"MemberAccount\":\"test032301\",\"GameID\":\"21003\"}", key));
     }
 
 }

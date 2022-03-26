@@ -43,6 +43,7 @@ public class T9CallbackServiceImpl implements T9CallbackService {
     // 查询余额
     @Override
     public Object queryPoint(String callBackParam, String ip) {
+        logger.info("t9_queryPoint t9Game paramJson:{}, ip:{}", callBackParam, ip);
         GameParentPlatform platformGameParent = getGameParentPlatform();
         // 校验IP
         if (checkIp(ip, platformGameParent)) {
@@ -73,6 +74,7 @@ public class T9CallbackServiceImpl implements T9CallbackService {
     // 提取点数
     @Override
     public Object withdrawal(String callBackParam, String ip) {
+        logger.info("t9_withdrawal t9Game paramJson:{}, ip:{}", callBackParam, ip);
         GameParentPlatform platformGameParent = getGameParentPlatform();
 
         // 校验IP
@@ -99,8 +101,6 @@ public class T9CallbackServiceImpl implements T9CallbackService {
             // 更新余额
             gameCommonService.updateUserBalance(memBaseinfo, pointAmount, GoldchangeEnum.DSFYXZZ, TradingEnum.SPENDING);
 
-            GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(OpenAPIProperties.T9_PLATFORM_CODE);
-
             // 查询订单
             Txns oldTxns = getTxns(platformGameParent, paySerialno, playerID);
             if (null != oldTxns) {
@@ -108,7 +108,7 @@ public class T9CallbackServiceImpl implements T9CallbackService {
             }
 
             // 生成订单数据
-            Txns txns = getInitTxns(gamePlatform, platformGameParent, paySerialno, playerID, pointAmount, balance, ip, "Place Bet");
+            Txns txns = getInitTxns(platformGameParent, paySerialno, playerID, pointAmount, balance, ip, "Place Bet");
             int num = txnsMapper.insert(txns);
             if (num <= 0) {
                 return initFailureResponse(70004, "会员余额不足");
@@ -131,6 +131,7 @@ public class T9CallbackServiceImpl implements T9CallbackService {
     // 存入点数
     @Override
     public Object deposit(String callBackParam, String ip) {
+        logger.info("t9_deposit t9Game paramJson:{}, ip:{}", callBackParam, ip);
         GameParentPlatform platformGameParent = getGameParentPlatform();
 
         // 校验IP
@@ -153,8 +154,6 @@ public class T9CallbackServiceImpl implements T9CallbackService {
             // 更新余额
             gameCommonService.updateUserBalance(memBaseinfo, pointAmount, GoldchangeEnum.DSFYXZZ, TradingEnum.INCOME);
 
-            GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(OpenAPIProperties.T9_PLATFORM_CODE);
-
             // 查询订单
             Txns oldTxns = getTxns(platformGameParent, paySerialno, playerID);
             if (null != oldTxns) {
@@ -162,7 +161,7 @@ public class T9CallbackServiceImpl implements T9CallbackService {
             }
 
             // 生成订单数据
-            Txns txns = getInitTxns(gamePlatform, platformGameParent, paySerialno, playerID, pointAmount, balance, ip, "Settle");
+            Txns txns = getInitTxns(platformGameParent, paySerialno, playerID, pointAmount, balance, ip, "Settle");
             int num = txnsMapper.insert(txns);
             if (num <= 0) {
                 return initFailureResponse(70006, "资料库异常");
@@ -184,6 +183,7 @@ public class T9CallbackServiceImpl implements T9CallbackService {
     // 取消交易
     @Override
     public Object canceltransfer(String callBackParam, String ip) {
+        logger.info("t9_canceltransfer t9Game paramJson:{}, ip:{}", callBackParam, ip);
         GameParentPlatform platformGameParent = getGameParentPlatform();
 
         // 校验IP
@@ -272,7 +272,6 @@ public class T9CallbackServiceImpl implements T9CallbackService {
     /**
      * 初始化第三方游戏交互订单数据
      *
-     * @param gamePlatform       gamePlatform
      * @param gameParentPlatform gameParentPlatform
      * @param paySerialno        paySerialno
      * @param playerID           playerID
@@ -282,8 +281,9 @@ public class T9CallbackServiceImpl implements T9CallbackService {
      * @param method             method
      * @return Txns
      */
-    private Txns getInitTxns(GamePlatform gamePlatform, GameParentPlatform gameParentPlatform,
-                             String paySerialno, String playerID, BigDecimal pointAmount, BigDecimal balance, String ip, String method) {
+    private Txns getInitTxns(GameParentPlatform gameParentPlatform, String paySerialno, String playerID,
+                             BigDecimal pointAmount, BigDecimal balance, String ip, String method) {
+        GamePlatform gamePlatform = gameCommonService.getGamePlatformByParentName(OpenAPIProperties.T9_PLATFORM_CODE).get(0);
         GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         Txns txns = new Txns();
         //游戏商注单号
