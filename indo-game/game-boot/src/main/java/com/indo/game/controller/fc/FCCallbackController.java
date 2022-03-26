@@ -2,7 +2,10 @@ package com.indo.game.controller.fc;
 
 import com.alibaba.fastjson.JSONObject;
 import com.indo.common.annotation.AllowAccess;
+import com.indo.common.config.OpenAPIProperties;
 import com.indo.common.utils.IPAddressUtil;
+import com.indo.game.common.util.FCHashAESDecrypt;
+import com.indo.game.common.util.T9AESDecrypt;
 import com.indo.game.pojo.dto.fc.FCBalanceCallbackReq;
 import com.indo.game.pojo.dto.fc.FCBetCallbackReq;
 import com.indo.game.pojo.dto.fc.FCCancelCallbackReq;
@@ -37,10 +40,16 @@ public class FCCallbackController {
     @RequestMapping(value = "/balance", method = RequestMethod.POST)
     @ResponseBody
     @AllowAccess
-    public Object balance(@RequestBody FCBalanceCallbackReq fcBalanceCallbackReq, HttpServletRequest request) {
+    public Object balance(String Params, HttpServletRequest request) {
+        String jsonStr = null;
+        try {
+            jsonStr = FCHashAESDecrypt.decrypt(Params, OpenAPIProperties.FC_AGENT_KEY);
+        } catch (Exception e) {
+            logger.info("FCCallback callBack balance 解密失败 {}, {}", Params, e);
+        }
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("FCCallback balance 回调,IP:" + ip + " params:{}", JSONObject.toJSONString(fcBalanceCallbackReq));
-        Object object = fcCallbackService.balance(fcBalanceCallbackReq, ip);
+        logger.info("FCCallback balance 回调,IP:" + ip + " params:{}", jsonStr);
+        Object object = fcCallbackService.balance(JSONObject.parseObject(jsonStr, FCBalanceCallbackReq.class), ip);
         logger.info("FCCallback balance 回调返回数据, params:{}", object);
         return object;
     }
@@ -51,10 +60,16 @@ public class FCCallbackController {
     @RequestMapping(value = "/bet", method = RequestMethod.POST)
     @ResponseBody
     @AllowAccess
-    public Object bet(@RequestBody FCBetCallbackReq fcBetCallbackReq, HttpServletRequest request) {
+    public Object bet(String Params, HttpServletRequest request) {
+        String jsonStr = null;
+        try {
+            jsonStr = FCHashAESDecrypt.decrypt(Params, OpenAPIProperties.FC_AGENT_KEY);
+        } catch (Exception e) {
+            logger.info("FCCallback callBack bet 解密失败 {}, {}", Params, e);
+        }
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("FCCallback bet 回调,IP:" + ip + " params:{}", JSONObject.toJSONString(fcBetCallbackReq));
-        Object object = fcCallbackService.bet(fcBetCallbackReq, ip);
+        logger.info("FCCallback bet 回调,IP:" + ip + " params:{}", jsonStr);
+        Object object = fcCallbackService.bet(JSONObject.parseObject(jsonStr, FCBetCallbackReq.class), ip);
         logger.info("FCCallback bet 回调返回数据, params:{}", object);
         return object;
     }
@@ -65,10 +80,16 @@ public class FCCallbackController {
     @RequestMapping(value = "/cancel", method = RequestMethod.POST)
     @ResponseBody
     @AllowAccess
-    public Object cancel(@RequestBody FCCancelCallbackReq fcCancelCallbackReq, HttpServletRequest request) {
+    public Object cancel(String Params, HttpServletRequest request) {
+        String jsonStr = null;
+        try {
+            jsonStr = FCHashAESDecrypt.decrypt(Params, OpenAPIProperties.FC_AGENT_KEY);
+        } catch (Exception e) {
+            logger.info("FCCallback callBack cancel 解密失败 {}, {}", Params, e);
+        }
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("FCCallback cancel 回调,IP:" + ip + " params:{}", JSONObject.toJSONString(fcCancelCallbackReq));
-        Object object = fcCallbackService.cancel(fcCancelCallbackReq, ip);
+        logger.info("FCCallback cancel 回调,IP:" + ip + " params:{}", jsonStr);
+        Object object = fcCallbackService.cancel(JSONObject.parseObject(jsonStr, FCCancelCallbackReq.class), ip);
         logger.info("FCCallback cancel 回调返回数据, params:{}", object);
         return object;
     }

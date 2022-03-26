@@ -5,26 +5,26 @@ import org.apache.commons.codec.binary.Base64;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
 
 /**
  * FC电子请求参数HASH解密
  */
 public class FCHashAESDecrypt {
-    public static String decrypt(String data, String key, String iv) throws Exception {
-        Cipher cipher = Cipher.getInstance("AES/CBC/NoPadding");
-        cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(key.getBytes(), "AES"),
-                new IvParameterSpec(iv.getBytes()));
-        String decryptData = new String(cipher.doFinal(Base64.decodeBase64(data)));
-        return decryptData;
+    public static String decrypt(String data, String agentKey) throws Exception {
+
+        java.util.Base64.Encoder encoder = java.util.Base64.getEncoder();
+        SecretKeySpec keySpec = new SecretKeySpec(agentKey.getBytes(StandardCharsets.UTF_8), "AES");
+        Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+        cipher.init(Cipher.DECRYPT_MODE, keySpec);
+        return new String(cipher.doFinal(Base64.decodeBase64(data)));
     }
 
     // Sample
     public static void main(String[] args) throws Exception {
-        String key = "key1234567Sample"; // $ { KEY }
-        String iv = "iv12345678Sample"; // $ { IV }
-        String encryptData =
-                "JYUwK_t1athMnX5mbEQ_stdBbYYgfIeC7utswa5A3Dw4vuORvpkTDWfmkFqpPtOPr_PJJA2WJLD4dBZV0qCnWAmBB7Fpuy7Rkgpbs-Xez6WlpKCApE4uY2TC0QegtWnj";
-        System.out.println(decrypt(encryptData, key, iv));
+        String key = "SjnQIV3OlpqEvKiN"; // $ { KEY }
+        String encryptData = "ZZApvVBOs6ZFlXeQpwmeIxE9YZ35zGCDbzMPUjkhG4f7f7QiGpCVfZETnR+3UmwR";
+        System.out.println(decrypt(encryptData, key));
 // decrypt data =>
 //        {"action":47,"ts":1632385601439,"lang":"en","gType":"0","mType":"8001","windowMode":"2"}
     }
