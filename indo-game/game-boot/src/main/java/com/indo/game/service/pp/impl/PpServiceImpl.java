@@ -148,7 +148,7 @@ public class PpServiceImpl implements PpService {
         logger.info("pp_transfer ppGame paramJson:{}, ip:{}", JSONObject.toJSONString(ppApiTransferReq), ip);
         try {
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(ppApiTransferReq.getExternalPlayerId());
-            GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(OpenAPIProperties.PP_PLATFORM_CODE);
+            GamePlatform gamePlatform = gameCommonService.getGamePlatformByParentName(OpenAPIProperties.PP_PLATFORM_CODE).get(0);
             GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
             GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.PP_PLATFORM_CODE);
 

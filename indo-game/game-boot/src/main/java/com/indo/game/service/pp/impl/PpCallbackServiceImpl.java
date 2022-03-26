@@ -566,7 +566,7 @@ public class PpCallbackServiceImpl implements PpCallbackService {
         }
         try {
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(ppPromoWinCallBackReq.getUserId());
-            GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(OpenAPIProperties.PP_PLATFORM_CODE);
+            GamePlatform gamePlatform = gameCommonService.getGamePlatformByParentName(OpenAPIProperties.PP_PLATFORM_CODE).get(0);
             GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
 
             // 赢奖金额

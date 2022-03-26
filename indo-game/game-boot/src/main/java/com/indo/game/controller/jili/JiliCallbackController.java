@@ -36,10 +36,10 @@ public class JiliCallbackController {
     @RequestMapping(value = "/auth", method = RequestMethod.POST)
     @ResponseBody
     @AllowAccess
-    public Object auth(@RequestParam("token") String token, HttpServletRequest request) {
+    public Object auth(@RequestBody JiliCallbackBetReq jiliCallbackBetReq, HttpServletRequest request) {
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("JiliCallback auth 回调,IP:" + ip + " params:{}", token);
-        Object object = jiliCallbackService.auth(token, ip);
+        logger.info("JiliCallback auth 回调,IP:" + ip + " params:{}", jiliCallbackBetReq.getToken());
+        Object object = jiliCallbackService.auth(jiliCallbackBetReq.getToken(), ip);
         logger.info("JiliCallback auth 回调返回数据, params:{}", object);
         return object;
     }
