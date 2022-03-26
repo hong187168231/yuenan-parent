@@ -43,6 +43,7 @@ public class T9CallbackServiceImpl implements T9CallbackService {
     // 查询余额
     @Override
     public Object queryPoint(String callBackParam, String ip) {
+        logger.info("t9_queryPoint t9Game paramJson:{}, ip:{}", callBackParam, ip);
         GameParentPlatform platformGameParent = getGameParentPlatform();
         // 校验IP
         if (checkIp(ip, platformGameParent)) {
@@ -73,6 +74,7 @@ public class T9CallbackServiceImpl implements T9CallbackService {
     // 提取点数
     @Override
     public Object withdrawal(String callBackParam, String ip) {
+        logger.info("t9_withdrawal t9Game paramJson:{}, ip:{}", callBackParam, ip);
         GameParentPlatform platformGameParent = getGameParentPlatform();
 
         // 校验IP
@@ -131,6 +133,7 @@ public class T9CallbackServiceImpl implements T9CallbackService {
     // 存入点数
     @Override
     public Object deposit(String callBackParam, String ip) {
+        logger.info("t9_deposit t9Game paramJson:{}, ip:{}", callBackParam, ip);
         GameParentPlatform platformGameParent = getGameParentPlatform();
 
         // 校验IP
@@ -184,6 +187,7 @@ public class T9CallbackServiceImpl implements T9CallbackService {
     // 取消交易
     @Override
     public Object canceltransfer(String callBackParam, String ip) {
+        logger.info("t9_canceltransfer t9Game paramJson:{}, ip:{}", callBackParam, ip);
         GameParentPlatform platformGameParent = getGameParentPlatform();
 
         // 校验IP
