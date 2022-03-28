@@ -50,7 +50,7 @@ public class KACallbackController {
         }
         KACallbackCommonReq kaCallbackCommonReq = JSONObject.parseObject(json, KACallbackCommonReq.class);
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("KACallback callBackQuerypoint 回调,IP:" + ip + " params:{}", json);
+        logger.info("KACallback callBackQuerypoint 回调,IP: {}, hash: {} params:{}",ip, hash, map.toString());
         Object object = kaCallbackService.startGame(kaCallbackCommonReq, ip);
         logger.info("KACallback startGame 回调返回数据, params:{}", object);
         return object;
@@ -72,7 +72,7 @@ public class KACallbackController {
 
         KACallbackPlayReq kaCallbackPlayReq = JSONObject.parseObject(json, KACallbackPlayReq.class);
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("KACallback callBackQuerypoint 回调,IP:" + ip + " params:{}", json);
+        logger.info("KACallback callBackQuerypoint 回调,IP: {}, hash: {} params:{}",ip, hash, map.toString());
         Object object = kaCallbackService.palyGame(kaCallbackPlayReq, ip);
         logger.info("KACallback palyGame 回调返回数据, params:{}", object);
         return object;
@@ -94,7 +94,7 @@ public class KACallbackController {
 
         KACallbackCreditReq kaCallbackCreditReq = JSONObject.parseObject(json, KACallbackCreditReq.class);
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("KACallback callBackQuerypoint 回调,IP:" + ip + " params:{}", json);
+        logger.info("KACallback callBackQuerypoint 回调,IP: {}, hash: {} params:{}",ip, hash, map.toString());
         Object object = kaCallbackService.credit(kaCallbackCreditReq, ip);
         logger.info("KACallback credit 回调返回数据, params:{}", object);
         return object;
@@ -117,7 +117,7 @@ public class KACallbackController {
 
         KACallbackRevokeReq kaCallbackRevokeReq = JSONObject.parseObject(json, KACallbackRevokeReq.class);
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("KACallback callBackQuerypoint 回调,IP:" + ip + " params:{}", json);
+        logger.info("KACallback callBackQuerypoint 回调,IP: {}, hash: {} params:{}",ip, hash, map.toString());
         Object object = kaCallbackService.revoke(kaCallbackRevokeReq, ip);
         logger.info("KACallback revoke 回调返回数据, params:{}", object);
         return object;
@@ -139,7 +139,7 @@ public class KACallbackController {
 
         KACallbackCommonReq kaCallbackCommonReq = JSONObject.parseObject(json, KACallbackCommonReq.class);
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("KACallback callBackQuerypoint 回调,IP:" + ip + " params:{}", json);
+        logger.info("KACallback callBackQuerypoint 回调,IP: {}, hash: {} params:{}",ip, hash, map.toString());
         Object object = kaCallbackService.balance(kaCallbackCommonReq, ip);
         logger.info("KACallback balance 回调返回数据, params:{}", object);
         return object;
@@ -160,7 +160,7 @@ public class KACallbackController {
         }
         KACallbackCommonReq kaCallbackCommonReq = JSONObject.parseObject(json, KACallbackCommonReq.class);
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("KACallback callBackQuerypoint 回调,IP:" + ip + " params:{}", json);
+        logger.info("KACallback callBackQuerypoint 回调,IP: {}, hash: {} params:{}",ip, hash, map.toString());
         Object object = kaCallbackService.end(kaCallbackCommonReq, ip);
         logger.info("KACallback end 回调返回数据, params:{}", object);
         return object;
