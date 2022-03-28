@@ -116,7 +116,7 @@ public class AppAgentServiceImpl extends SuperServiceImpl<AgentRelationMapper, A
         agentCashApply.setBankName(memBank.getBankName());
         agentCashApply.setBranchBank(memBank.getBankBranch());
         agentCashApply.setCashStatus(0);
-        agentCashApply.setCity(memBank.getBankCity());
+        agentCashApply.setCity(memBank.getCity());
         agentCashApply.setIfsc(memBank.getIfsc());
         return agentCashApplyMapper.insert(agentCashApply) > 0;
     }

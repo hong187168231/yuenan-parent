@@ -52,7 +52,7 @@ public class MemBank extends BaseEntity {
     private String ifsc;
 
     @ApiModelProperty(value = "城市")
-    private String bankCity;
+    private String city;
 
     @ApiModelProperty(value = "邮箱")
     private String email;
