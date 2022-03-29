@@ -210,7 +210,7 @@ public class TakeCashServiceImpl extends SuperServiceImpl<TakeCashMapper, PayTak
         orderCash.setApplyAmount(cashApplyReq.getTakeCashAmount());
         orderCash.setBankName(memBank.getBankName());
         orderCash.setBankCardNo(memBank.getBankCardNo());
-        orderCash.setBankCity(memBank.getBankCity());
+        orderCash.setBankCity(memBank.getCity());
         orderCash.setOrderNo(GeneratorIdUtil.generateId());
         orderCash.setApplyTime(new Date());
         orderCash.setCreateUser(loginUser.getAccount());
