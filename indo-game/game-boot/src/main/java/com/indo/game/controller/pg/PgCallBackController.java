@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
-@RequestMapping("/pg/callBack")
+@RequestMapping("PP/callBack")
 public class PgCallBackController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
