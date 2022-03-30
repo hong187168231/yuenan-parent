@@ -51,8 +51,8 @@ public interface GameCommonService {
     /**
      * 查询用交易信息
      *
-     * @param account
-     * @return
+     * @param account 用户名
+     * @return 用户信息
      */
     MemTradingBO getMemTradingInfo(String account);
 

@@ -83,7 +83,7 @@ public class JiliServiceImpl implements JiliService {
                 cptOpenMember.setCreateTime(new Date());
                 cptOpenMember.setLoginTime(new Date());
                 cptOpenMember.setType(parentName);
-
+                externalService.saveCptOpenMember(cptOpenMember);
             } else {
                 CptOpenMember updateCptOpenMember = new CptOpenMember();
                 updateCptOpenMember.setId(cptOpenMember.getId());
@@ -133,9 +133,6 @@ public class JiliServiceImpl implements JiliService {
         }
 
         if (0 == jiliApiResponse.getErrorCode()) {
-            if (null == cptOpenMember.getId()) {
-                externalService.saveCptOpenMember(cptOpenMember);
-            }
             // 请求URL
             ApiResponseData responseData = new ApiResponseData();
             JSONObject urlJson = JSONObject.parseObject(getStartGame(cptOpenMember, platform, lang));

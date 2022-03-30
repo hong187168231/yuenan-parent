@@ -71,7 +71,7 @@ public class PpCallbackServiceImpl implements PpCallbackService {
             return initFailureResponse(2, "玩家不存在");
         }
 
-        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cptOpenMember.getUserId().toString());
+        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cptOpenMember.getUserName());
         if (null == memBaseinfo) {
             return initFailureResponse(2, "玩家不存在");
         }

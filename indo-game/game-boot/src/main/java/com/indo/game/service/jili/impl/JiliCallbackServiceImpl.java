@@ -56,10 +56,13 @@ public class JiliCallbackServiceImpl implements JiliCallbackService {
             if (null == cptOpenMember) {
                 return initFailureResponse(4, "Api access token 已过期或无效");
             }
-
+            MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cptOpenMember.getUserName());
+            if (null == cptOpenMember) {
+                return initFailureResponse(4, "Api access token 已过期或无效");
+            }
             JSONObject jsonObject = initSuccessResponse();
             jsonObject.put("username", cptOpenMember.getUserName());
-            jsonObject.put("balance", cptOpenMember.getBalance());
+            jsonObject.put("balance", memBaseinfo.getBalance());
             jsonObject.put("currency", platformGameParent.getCurrencyType());
             return jsonObject;
 
@@ -531,8 +534,8 @@ public class JiliCallbackServiceImpl implements JiliCallbackService {
      */
     private JSONObject initSuccessResponse() {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("errorCode", 0);
-        jsonObject.put("message", "Success");
+        jsonObject.put("statusCode", 0);
+        jsonObject.put("status", "Success");
         return jsonObject;
     }
 
@@ -545,8 +548,8 @@ public class JiliCallbackServiceImpl implements JiliCallbackService {
      */
     private JSONObject initFailureResponse(Integer error, String description) {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("errorCode", error);
-        jsonObject.put("message", description);
+        jsonObject.put("statusCode", error);
+        jsonObject.put("status", description);
         return jsonObject;
     }
 
