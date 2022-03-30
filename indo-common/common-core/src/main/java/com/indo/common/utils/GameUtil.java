@@ -353,6 +353,55 @@ public class GameUtil extends HttpCommonUtils {
         return resultString;
     }
 
+    public static String doProxyPostJson(String weather_url, String json, Map<String, String> headers, String type) {
+        logger.info("POST请求 doProxyPostJson url:{}", weather_url);
+        logger.info("POST请求 doProxyPostJson body:{}", json);
+        logger.info("POST请求 doProxyPostJson headers:{}", headers);
+        // 创建HttpClientBuilder
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+
+        CloseableHttpResponse response = null;
+        String resultString = "";
+        String paramsString = "";
+        try {
+            // 创建Http Post请求
+            HttpPost httpPost = new HttpPost(weather_url);
+            // 设置请求超时 20+10+25=55s 配合业务设置
+            RequestConfig requestConfig = RequestConfig.custom()
+                    // 设置连接超时时间,单位毫秒。
+                    .setConnectTimeout(CONNECT_TIMEOUT)
+                    // 从连接池获取到连接的超时,单位毫秒。
+                    .setConnectionRequestTimeout(CONNECTION_REQUEST_TIMEOUT)
+                    // 请求获取数据的超时时间,单位毫秒;
+                    .setSocketTimeout(SOCKET_TIMEOUT)
+                    //设置代理
+//                    .setProxy(proxy)
+                    .build();
+            //如果访问一个接口,多少时间内无法返回数据,就直接放弃此次调用。
+            httpPost.setConfig(requestConfig);
+            for (Map.Entry entry : headers.entrySet()) {
+                httpPost.setHeader(entry.getKey().toString(), entry.getValue().toString());
+            }
+            // 创建请求内容
+            StringEntity stringEntityentity = new StringEntity(json, StandardCharsets.UTF_8);//解决中文乱码问题
+            stringEntityentity.setContentEncoding(StandardCharsets.UTF_8.toString());
+            stringEntityentity.setContentType("application/json");
+            httpPost.setEntity(stringEntityentity);
+
+            // 执行http请求
+            BasicResponseHandler handler = new BasicResponseHandler();
+            resultString = httpClient.execute(httpPost, handler);
+        } catch (Exception e) {
+            logger.error("httplog {}:{} doProxyPostJson occur error:{}, url:{}, proxyHost:{}, proxyPort:{}, originParams:{}",
+                    type, e.getMessage(), weather_url, paramsString, e);
+            return resultString;
+        } finally {
+            HttpCommonUtils.closeHttpClientAndResponse(response, httpClient, weather_url, paramsString);
+        }
+        logger.info("POST请求 doProxyPostJson result:{}", resultString);
+        return resultString;
+    }
+
 
     public static String httpProxy(String url, String param, String proxy, int port) {
         HttpURLConnection httpConn = null;

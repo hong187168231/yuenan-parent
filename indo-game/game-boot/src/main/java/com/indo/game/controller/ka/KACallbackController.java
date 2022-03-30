@@ -1,5 +1,6 @@
 package com.indo.game.controller.ka;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.indo.common.annotation.AllowAccess;
 import com.indo.common.config.OpenAPIProperties;
@@ -21,7 +22,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * KA 回调服务
@@ -98,6 +105,11 @@ public class KACallbackController {
         Object object = kaCallbackService.credit(kaCallbackCreditReq, ip);
         logger.info("KACallback credit 回调返回数据, params:{}", object);
         return object;
+    }
+
+    public static void main(String[] args) {
+        BigDecimal a = new BigDecimal(3.22);
+        System.out.println(Double.parseDouble(a.toString()));
     }
 
     /**

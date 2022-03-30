@@ -137,7 +137,7 @@ public class SboServiceImpl implements SboService {
             wrapper.eq(GameAgent::getParentName, gameParentPlatform.getPlatformCode());
             GameAgent gameAgent = gameAgentMapper.selectOne(wrapper);
             if(null==gameAgent){
-                return Result.failed(MessageUtils.get("praaa"));
+                return Result.failed("g000007","代理不存在");
             }
 
             SboRegisterPlayerJsonDTO sboRegisterPlayerJsonDTO = new SboRegisterPlayerJsonDTO();

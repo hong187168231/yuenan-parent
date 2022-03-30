@@ -4,6 +4,9 @@ package com.indo.game.pojo.dto.ka;
 import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * KA 取消交易回调请求对象
  */
@@ -16,5 +19,7 @@ public class KACallbackRevokeReq extends KACallbackCommonReq {
     // 当前游戏回合
     @JSONField(name = "round")
     private Long round;
+
+    List<KACallbackPlayReq> list = new ArrayList<>();
 
 }

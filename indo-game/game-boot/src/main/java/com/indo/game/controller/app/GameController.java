@@ -17,6 +17,7 @@ import com.indo.game.service.ka.KaService;
 import com.indo.game.service.pg.PgService;
 import com.indo.game.service.pp.PpService;
 import com.indo.game.service.ps.PsService;
+import com.indo.game.service.redtiger.RedtigerService;
 import com.indo.game.service.rich.Rich88Service;
 import com.indo.game.service.saba.SabaService;
 import com.indo.game.service.sbo.SboService;
@@ -80,6 +81,8 @@ public class GameController {
     private FCService fcService;
     @Autowired
     private YlService ylService;
+    @Autowired
+    private RedtigerService redtigerService;
     @Autowired
     private RedissonClient redissonClient;
 
@@ -160,6 +163,9 @@ public class GameController {
                 }
                 if ("YL".equals(parentName)) {
                     resultInfo = ylService.ylGame(loginUser, isMobileLogin, ip, platform, parentName);
+                }
+                if ("RT".equals(parentName)) {
+                    resultInfo = redtigerService.redtigerGame(loginUser, isMobileLogin, ip, platform, parentName);
                 }
 
                 if (resultInfo == null) {

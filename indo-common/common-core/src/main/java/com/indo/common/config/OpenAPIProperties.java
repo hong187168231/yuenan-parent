@@ -259,6 +259,20 @@ public class OpenAPIProperties implements InitializingBean {
     @Value("${yl.ylExtension}")
     private String ylExtension;
 
+    // Regtiger
+    public static String REDTIGER_API_URL;
+    public static String REDTIGER_CASINO_KEY;
+    public static String REDTIGER_API_TOKEN;
+    public static String REDTIGER_PLATFORM_CODE;
+    @Value("${redtiger.apiUrl}")
+    private String redtigerApiurl;
+    @Value("${redtiger.casinoKey}")
+    private String redtigerCasinoKey;
+    @Value("${redtiger.apiToken}")
+    private String redtigerApiToken;
+    @Value("${redtiger.platformCode:RT}")
+    private String redtigerPlatformCode;
+
     @Override
     public void afterPropertiesSet() {
 
@@ -352,5 +366,10 @@ public class OpenAPIProperties implements InitializingBean {
         YL_CERT = ylCert;
         YL_EXTENSION = ylExtension;
         YL_WEB_SITE = ylWebSite;
+
+        REDTIGER_API_URL = redtigerApiurl;
+        REDTIGER_CASINO_KEY = redtigerCasinoKey;
+        REDTIGER_API_TOKEN = redtigerApiToken;
+        REDTIGER_PLATFORM_CODE = redtigerPlatformCode;
     }
 }

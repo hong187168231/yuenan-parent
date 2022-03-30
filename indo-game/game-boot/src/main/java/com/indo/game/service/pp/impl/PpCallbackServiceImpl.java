@@ -256,7 +256,7 @@ public class PpCallbackServiceImpl implements PpCallbackService {
             // 会员余额
             BigDecimal balance = memBaseinfo.getBalance().add(betAmount);
             // 更新玩家余额
-            gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.PLACE_BET, TradingEnum.INCOME);
+            gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
 
             //游戏商注单号
             oldTxns.setPlatformTxId(ppResultCallBackReq.getReference());
