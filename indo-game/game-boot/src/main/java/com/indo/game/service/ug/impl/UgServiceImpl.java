@@ -14,6 +14,7 @@ import com.indo.game.mapper.frontend.GamePlatformMapper;
 import com.indo.game.mapper.frontend.GameTypeMapper;
 import com.indo.game.mapper.ug.UgInsBetMapper;
 import com.indo.game.mapper.ug.UgSubBetMapper;
+import com.indo.game.pojo.dto.comm.ApiResponseData;
 import com.indo.game.pojo.dto.ug.*;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.game.pojo.entity.manage.GameCategory;
@@ -189,7 +190,7 @@ public class UgServiceImpl implements UgService {
             ugLoginJsonDTO.setLoginIP(ip);//登录 IP
             ugLoginJsonDTO.setLanguage(gameParentPlatform.getLanguageType());// string 否 语言文字代码；默认值：EN
 //            ugLoginJsonDTO.setPageStyle("");// string 否 网站版面 SP1, SP2, SP3, SP4, SP5,SP6,SP7；默认值：SP1
-//            ugLoginJsonDTO.setOddsStyle("");// string 否 赔率样式代码(OddsStyle) ；默认值：MY
+            ugLoginJsonDTO.setOddsStyle(gamePlatform.getPlatformCode());// string 否 赔率样式代码(OddsStyle) ；默认值：MY
 //            ugLoginJsonDTO.setHostUrl("");// string 否 对接商域名,如果有 cname 指向我们域名的可以传入该参数，指向的域名询问我们客服
 //            ugLoginJsonDTO.setPUrl("");// string 否 对接商的首页的链接，仅 Smart 版有效
 //            ugLoginJsonDTO.setBalance("");// decimal 否 用于登录后的余额展示，仅 H5 版有效
@@ -197,13 +198,15 @@ public class UgServiceImpl implements UgService {
 
             UgApiResponseData ugApiResponse = commonRequest(ugLoginJsonDTO, OpenAPIProperties.UG_API_URL+"/SportApi/Login", loginUser.getId().intValue(), ip, "Login");
             if("000000".equals(ugApiResponse.getErrorCode())){
-                return Result.success(ugApiResponse);
+                ApiResponseData responseData = new ApiResponseData();
+                responseData.setPathUrl(ugApiResponse.getData());
+                return Result.success(responseData);
             }else {
                 return Result.failed("g"+ugApiResponse.getErrorCode(),ugApiResponse.getErrorMessage());
             }
         } catch (Exception e) {
             logger.error("uglog initGame Login game error {} ", e);
-            return null;
+            return Result.failed("g100104","网络繁忙，请稍后重试！");
         }
     }
 
