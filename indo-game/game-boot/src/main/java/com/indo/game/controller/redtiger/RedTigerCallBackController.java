@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.LinkedHashMap;
 
 @RestController
-@RequestMapping("/redtiger/callBack")
+@RequestMapping("/RT/callBack")
 public class RedTigerCallBackController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
