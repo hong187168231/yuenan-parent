@@ -9,6 +9,7 @@ import com.indo.common.utils.DateUtils;
 import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.mapper.frontend.GameCategoryMapper;
 import com.indo.game.mapper.frontend.GamePlatformMapper;
+import com.indo.game.pojo.dto.comm.ApiResponseData;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.game.pojo.dto.awc.AwcTransaction;
 import com.indo.game.pojo.dto.awc.AwcApiResponseData;
@@ -158,7 +159,9 @@ public class AwcServiceImpl implements AwcService {
             return Result.failed("g100104","网络繁忙，请稍后重试！");
         }
         if("0000".equals(awcApiResponseData.getStatus())){
-            return Result.success(awcApiResponseData);
+            ApiResponseData responseData = new ApiResponseData();
+            responseData.setPathUrl(awcApiResponseData.getUrl());
+            return Result.success(responseData);
         }else {
             return errorCode(awcApiResponseData.getStatus(),awcApiResponseData.getDesc());
         }
