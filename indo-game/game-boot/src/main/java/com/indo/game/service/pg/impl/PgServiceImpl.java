@@ -107,7 +107,7 @@ public class PgServiceImpl implements PgService {
             }
 
             StringBuilder builder = new StringBuilder();
-            builder.append(OpenAPIProperties.PG_API_URL).append("/web-lobby/games?");
+            builder.append(OpenAPIProperties.PG_API_URL).append("/web-lobby/games/?");
             builder.append("operator_token=").append(OpenAPIProperties.PG_API_TOKEN);
             builder.append("&operator_player_session=").append(cptOpenMember.getPassword());
             builder.append("&language=").append(platformGameParent.getCurrencyType());
