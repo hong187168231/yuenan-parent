@@ -65,6 +65,7 @@ public class PgCallbackServiceImpl implements PgCallbackService {
             pgCallBackRespFail.setData(dataJson);
             errorJson.put("code", "1034");
             errorJson.put("message", "无效请求");
+            pgCallBackRespFail.setData(null);
             pgCallBackRespFail.setError(errorJson);
             return pgCallBackRespFail;
         } else {
@@ -73,7 +74,7 @@ public class PgCallbackServiceImpl implements PgCallbackService {
             dataJson.put("balance_amount", memBaseinfo.getBalance());
             dataJson.put("currency_code", platformGameParent.getCurrencyType());
             pgCallBackRespFail.setData(dataJson);
-            pgCallBackRespFail.setError(errorJson);
+            pgCallBackRespFail.setError(null);
             return pgCallBackRespFail;
         }
     }
@@ -89,10 +90,11 @@ public class PgCallbackServiceImpl implements PgCallbackService {
         BigDecimal balance = memBaseinfo.getBalance();
         BigDecimal betAmount = pgVerifyCallBackReq.getTransfer_amount();
         if (memBaseinfo.getBalance().compareTo(betAmount) == -1) {
-            AeCallBackRespFail callBacekFail = new AeCallBackRespFail();
-            callBacekFail.setCode("1018");
-            callBacekFail.setMsg("Not Enough Balance");
-            return callBacekFail;
+            errorJson.put("code", "1018");
+            errorJson.put("message", "ot Enough Balance");
+            pgCallBackRespFail.setData(null);
+            pgCallBackRespFail.setError(errorJson);
+            return pgCallBackRespFail;
         }
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
         wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Adjust Bet"));
@@ -102,15 +104,16 @@ public class PgCallbackServiceImpl implements PgCallbackService {
         Txns oldTxns = txnsMapper.selectOne(wrapper);
         if (null != oldTxns) {
             if ("Cancel Bet".equals(oldTxns.getMethod())) {
-                pgCallBackRespFail.setData(dataJson);
                 errorJson.put("code", "1034");
                 errorJson.put("message", "无效请求");
+                pgCallBackRespFail.setData(null);
                 pgCallBackRespFail.setError(errorJson);
                 return pgCallBackRespFail;
             } else {
                 pgCallBackRespFail.setData(dataJson);
                 errorJson.put("code", "1034");
                 errorJson.put("message", "无效请求");
+                pgCallBackRespFail.setData(null);
                 pgCallBackRespFail.setError(errorJson);
                 return pgCallBackRespFail;
             }
@@ -125,6 +128,7 @@ public class PgCallbackServiceImpl implements PgCallbackService {
                 pgCallBackRespFail.setData(dataJson);
                 errorJson.put("code", "1034");
                 errorJson.put("message", "无效请求");
+                pgCallBackRespFail.setData(null);
                 pgCallBackRespFail.setError(errorJson);
                 return pgCallBackRespFail;
             }
@@ -200,6 +204,7 @@ public class PgCallbackServiceImpl implements PgCallbackService {
             pgCallBackRespFail.setData(dataJson);
             errorJson.put("code", "1034");
             errorJson.put("message", "无效请求");
+            pgCallBackRespFail.setData(null);
             pgCallBackRespFail.setError(errorJson);
             return pgCallBackRespFail;
         }
@@ -208,7 +213,7 @@ public class PgCallbackServiceImpl implements PgCallbackService {
         dataJson.put("balance_amount", balance);
         dataJson.put("updated_time", System.currentTimeMillis());
         pgCallBackRespFail.setData(dataJson);
-        pgCallBackRespFail.setError(errorJson);
+        pgCallBackRespFail.setError(null);
         return pgCallBackRespFail;
     }
 
@@ -222,11 +227,15 @@ public class PgCallbackServiceImpl implements PgCallbackService {
         wrapper.eq(Txns::getPlatformTxId, pgVerifyCallBackReq.getAdjustment_transaction_id());
         wrapper.eq(Txns::getUserId, memBaseinfo.getId());
         Txns oldTxns = txnsMapper.selectOne(wrapper);
+        PgCallBackResponse pgCallBackRespFail = new PgCallBackResponse();
+        JSONObject dataJson = new JSONObject();
+        JSONObject errorJson = new JSONObject();
         if (null != oldTxns) {
-            AeCallBackRespFail callBacekFail = new AeCallBackRespFail();
-            callBacekFail.setCode("2301");
-            callBacekFail.setMsg("订单编号参数错误");
-            return callBacekFail;
+            errorJson.put("code", "2301");
+            errorJson.put("message", "订单编号参数错误");
+            pgCallBackRespFail.setData(null);
+            pgCallBackRespFail.setError(errorJson);
+            return pgCallBackRespFail;
         }
 
         BigDecimal realWinAmount = pgVerifyCallBackReq.getTransfer_amount();
@@ -247,15 +256,13 @@ public class PgCallbackServiceImpl implements PgCallbackService {
         oldTxns.setUpdateTime(dateStr);
         txnsMapper.updateById(oldTxns);
 
-        PgCallBackResponse pgCallBackRespFail = new PgCallBackResponse();
-        JSONObject dataJson = new JSONObject();
-        JSONObject errorJson = new JSONObject();
+
         dataJson.put("adjust_amount", money);
         dataJson.put("balance_before", balance);
         dataJson.put("balance_after", balance);
         dataJson.put("updated_time", System.currentTimeMillis());
         pgCallBackRespFail.setData(dataJson);
-        pgCallBackRespFail.setError(errorJson);
+        pgCallBackRespFail.setError(null);
         return pgCallBackRespFail;
     }
 
@@ -290,7 +297,7 @@ public class PgCallbackServiceImpl implements PgCallbackService {
         dataJson.put("nickname", cptOpenMember.getUserName());
         dataJson.put("currency", platformGameParent.getCurrencyType());
         pgCallBackRespFail.setData(dataJson);
-        pgCallBackRespFail.setError(errorJson);
+        pgCallBackRespFail.setError(null);
         return pgCallBackRespFail;
     }
 

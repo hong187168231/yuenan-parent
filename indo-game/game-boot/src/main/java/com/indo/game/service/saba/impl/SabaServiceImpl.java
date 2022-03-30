@@ -133,10 +133,10 @@ public class SabaServiceImpl implements SabaService {
             Map<String, String> trr = new HashMap<>();
             trr.put("vendor_Member_ID", loginUser.getAccount());//厂商会员识别码（建议跟 Username 一样）, 支援 ASCII Table 33-126, 最大长度 = 30
             trr.put("username", loginUser.getAccount());
-            trr.put("oddsType", "4");//为此会员设置赔率类型。请参考附件"赔率类型表"
-            trr.put("currency", 20 + "");//为此会员设置币别。请参考附件中"币别表"
+            trr.put("oddsType", "0");//为此会员设置赔率类型。请参考附件"赔率类型表"
+            trr.put("currency", gameParentPlatform.getCurrencyType());//为此会员设置币别。请参考附件中"币别表"
             if (null != gamePlatform) {
-                trr.put("maxTransfer", String.valueOf(99999999));//于 Sportsbook 系统与厂商间的最大限制转帐金额
+                trr.put("maxTransfer", String.valueOf(gamePlatform.getMaxTransfer()));//于 Sportsbook 系统与厂商间的最大限制转帐金额
                 trr.put("minTransfer", String.valueOf(gamePlatform.getMinTransfer()));//于 Sportsbook 系统与厂商间的最小限制转帐金额
             }
             SabaApiResponseData sabaApiResponse = commonRequest(trr, OpenAPIProperties.SABA_API_URL + "/CreateMember", loginUser.getId().intValue(), ip, "restrictedPlayer");
@@ -148,7 +148,7 @@ public class SabaServiceImpl implements SabaService {
                 externalService.saveCptOpenMember(cptOpenMember);
                 return initGame(gameParentPlatform, loginUser, gamePlatform, ip);
             } else {
-                return Result.failed(sabaApiResponse.getError_code(), sabaApiResponse.getMessage());
+                return errorCode(sabaApiResponse.getError_code(), sabaApiResponse.getMessage());
             }
         } catch (Exception e) {
             logger.error("sabalog game error {} ", e);
@@ -173,7 +173,7 @@ public class SabaServiceImpl implements SabaService {
                 responseData.setPathUrl(jsonObject.getString("gameUrl"));
                 return Result.success(responseData);
             } else {
-                return Result.failed(sabaApiResponse.getError_code(), sabaApiResponse.getMessage());
+                return errorCode(sabaApiResponse.getError_code(), sabaApiResponse.getMessage());
             }
         } catch (Exception e) {
             logger.error("sabalog game error {} ", e);
@@ -230,6 +230,37 @@ public class SabaServiceImpl implements SabaService {
                     userId, type, null, url, sortParams.toString(), resultString, JSONObject.toJSONString(sabaApiResponse));
         }
         return sabaApiResponse;
+    }
+
+
+    public Result errorCode(String errorCode, String errorMessage) {
+        if ("1".equals(errorCode)) {
+            return Result.failed("g009999", errorMessage);
+        } else if ("2".equals(errorCode)) {
+            return Result.failed("g100003", errorMessage);
+        } else if ("3".equals(errorCode)) {
+            return Result.failed("g091147", errorMessage);
+        } else if ("4".equals(errorCode)) {
+            return Result.failed("g091148", errorMessage);
+        } else if ("5".equals(errorCode)) {
+            return Result.failed("g100005", errorMessage);
+        } else if ("6".equals(errorCode)) {
+            return Result.failed("g091149", errorMessage);
+        } else if ("7".equals(errorCode)) {
+            return Result.failed("g091150", errorMessage);
+        } else if ("8".equals(errorCode)) {
+            return Result.failed("g091151", errorMessage);
+        } else if ("9".equals(errorCode)) {
+            return Result.failed("g091152", errorMessage);
+        } else if ("10".equals(errorCode)) {
+            return Result.failed("g000001", errorMessage);
+        } else if ("12".equals(errorCode)) {
+            return Result.failed("g091153", errorMessage);
+        } else if ("13".equals(errorCode)) {
+            return Result.failed("g091154", errorMessage);
+        } else {
+            return Result.failed("g009999", errorMessage);
+        }
     }
 
 }
