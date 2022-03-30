@@ -48,7 +48,7 @@ public class KaCallbackServiceImpl implements KaCallbackService {
             GameParentPlatform platformGameParent = getGameParentPlatform();
 
             // 校验IP
-            if (!ip.equals(commonReq.getPlayerIp()) || checkIp(ip, platformGameParent)) {
+            if (checkIp(ip, platformGameParent)) {
                 return initFailureResponse(4, "玩家 IP 地址不匹配或玩家不存在");
             }
 
@@ -83,7 +83,7 @@ public class KaCallbackServiceImpl implements KaCallbackService {
             GameParentPlatform platformGameParent = getGameParentPlatform();
 
             // 校验IP
-            if (!ip.equals(kaCallbackPlayReq.getPlayerIp()) || checkIp(ip, platformGameParent)) {
+            if (checkIp(ip, platformGameParent)) {
                 return initFailureResponse(4, "玩家 IP 地址不匹配或玩家不存在");
             }
 
@@ -228,7 +228,7 @@ public class KaCallbackServiceImpl implements KaCallbackService {
             GameParentPlatform platformGameParent = getGameParentPlatform();
 
             // 校验IP
-            if (!ip.equals(kaCallbackCreditReq.getPlayerIp()) || checkIp(ip, platformGameParent)) {
+            if (checkIp(ip, platformGameParent)) {
                 return initFailureResponse(4, "玩家 IP 地址不匹配或玩家不存在");
             }
 
