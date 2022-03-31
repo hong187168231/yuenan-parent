@@ -33,6 +33,7 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -58,8 +59,9 @@ public class GameCommonServiceImpl implements GameCommonService {
     public List<GameParentPlatform> queryAllGameParentPlatform() {
         List<GameParentPlatform> categoryList = null;
         try{
-            Map<Object, Object> map = RedisUtils.hmget(RedisConstants.GAME_PARENT_PLATFORM_KEY);
-            categoryList = new ArrayList(map.values());
+            Map<Object, Object> map = RedisUtils.hmget(RedisConstants.GAME_PARENT_PLATFORM_KEY);;
+            categoryList = (List<GameParentPlatform>)map.get(RedisConstants.GAME_PARENT_PLATFORM_KEY);
+//            RedisUtils.hdel(RedisConstants.GAME_PARENT_PLATFORM_KEY);
         }catch (Exception e) {
             logger.error("queryAllGameParentPlatform.getcache.error "+e.getMessage(), e);
         }
@@ -67,6 +69,9 @@ public class GameCommonServiceImpl implements GameCommonService {
         if (CollectionUtil.isEmpty(categoryList)) {
             LambdaQueryWrapper<GameParentPlatform> wrapper = new LambdaQueryWrapper<>();
             categoryList = gameParentPlatformMapper.selectList(wrapper);
+            Map<String, Object> map = new HashMap<>();
+            map.put(RedisConstants.GAME_PARENT_PLATFORM_KEY, categoryList);
+            RedisUtils.hmset(RedisConstants.GAME_PARENT_PLATFORM_KEY, map);
         }
         categoryList.sort(Comparator.comparing(GameParentPlatform::getSortNumber));
         return categoryList;
@@ -98,14 +103,17 @@ public class GameCommonServiceImpl implements GameCommonService {
         List<GamePlatform> platformList = null;
         try{
             Map<Object, Object> map = RedisUtils.hmget(RedisConstants.GAME_PLATFORM_KEY);
-            platformList = new ArrayList(map.values());
-
+            platformList = (List<GamePlatform>)map.get(RedisConstants.GAME_PLATFORM_KEY);
+//            RedisUtils.hdel(RedisConstants.GAME_PLATFORM_KEY);
         }catch (Exception e) {
             logger.error("queryAllGamePlatform.getcache.error "+e.getMessage(), e);
         }
         if (CollectionUtil.isEmpty(platformList)) {
             LambdaQueryWrapper<GamePlatform> wrapper = new LambdaQueryWrapper<>();
             platformList = gamePlatformMapper.selectList(wrapper);
+            Map<String, Object> map = new HashMap<>();
+            map.put(RedisConstants.GAME_PLATFORM_KEY, platformList);
+            RedisUtils.hmset(RedisConstants.GAME_PLATFORM_KEY, map);
         }
         platformList.sort(Comparator.comparing(GamePlatform::getSortNumber));
         return platformList;

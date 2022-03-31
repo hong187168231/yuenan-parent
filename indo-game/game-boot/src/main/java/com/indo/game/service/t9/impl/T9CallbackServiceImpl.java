@@ -98,14 +98,15 @@ public class T9CallbackServiceImpl implements T9CallbackService {
             if (memBaseinfo.getBalance().compareTo(balance) < 0) {
                 return initFailureResponse(1, "玩家余额不足");
             }
-            // 更新余额
-            gameCommonService.updateUserBalance(memBaseinfo, pointAmount, GoldchangeEnum.DSFYXZZ, TradingEnum.SPENDING);
 
             // 查询订单
             Txns oldTxns = getTxns(platformGameParent, paySerialno, playerID);
             if (null != oldTxns) {
                 return initFailureResponse(70008, "游戏平台交易序号(paySerialno)已存在");
             }
+
+            // 更新余额
+            gameCommonService.updateUserBalance(memBaseinfo, pointAmount, GoldchangeEnum.DSFYXZZ, TradingEnum.SPENDING);
 
             // 生成订单数据
             Txns txns = getInitTxns(platformGameParent, paySerialno, playerID, pointAmount, balance, ip, "Place Bet");
