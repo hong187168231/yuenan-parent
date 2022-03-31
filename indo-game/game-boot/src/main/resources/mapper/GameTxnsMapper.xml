@@ -7,7 +7,7 @@
                SUM(t.winning_amount) AS winningAmount,t.platform
         FROM game_txns t
         WHERE
-         t.user_id = #{req.userAcct} and t.method = 'Settle' and t.status = 'Running'
+         t.user_id = #{req.userAcct} and ((t.method = 'Settle' and t.status = 'Running') or (t.method = 'Place Bet' and t.status = 'Running'))
         <if test='req.platform != null and req.platform.size()>0'>
              and t.platform IN
             <foreach collection='req.platform' item='role' open='(' separator=',' close=')'>
@@ -34,7 +34,7 @@
         t.bet_amount,t.winning_amount
         FROM game_txns t
         WHERE
-        t.user_id = #{req.userAcct} and t.method = 'Settle' and t.status = 'Running'
+        t.user_id = #{req.userAcct} and ((t.method = 'Settle' and t.status = 'Running') or (t.method = 'Place Bet' and t.status = 'Running'))
         <if test='req.platform != null and req.platform.size()>0'>
             and t.platform IN
             <foreach collection='req.platform' item='role' open='(' separator=',' close=')'>
