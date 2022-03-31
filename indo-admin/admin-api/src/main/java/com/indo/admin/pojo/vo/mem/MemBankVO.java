@@ -17,7 +17,7 @@ import java.util.Date;
 public class MemBankVO {
 
     @ApiModelProperty(value = "主键")
-    @TableId(value = "memBankId", type = IdType.AUTO)
+    @TableId(value = "mem_bank_id", type = IdType.AUTO)
     private Long memBankId;
 
     @ApiModelProperty(value = "用户id")
