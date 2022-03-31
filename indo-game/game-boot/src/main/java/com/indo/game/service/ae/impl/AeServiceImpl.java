@@ -108,6 +108,8 @@ public class AeServiceImpl implements AeService {
                 updateCptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(updateCptOpenMember);
             }
+            //先登出
+            logout(loginUser, platform, ip);
             //登录
             return initGame(platformGameParent, gamePlatform, cptOpenMember, isMobileLogin);
         } catch (Exception e) {
@@ -233,12 +235,12 @@ public class AeServiceImpl implements AeService {
             long currentTime = System.currentTimeMillis();
             StringBuilder builder = new StringBuilder();
             String name = OpenAPIProperties.AE_MERCHANT_ID + "_" + loginUser.getAccount();
-            builder.append(OpenAPIProperties.AE_MERCHANT_ID).append("VNDS").append(currentTime);
+            builder.append(OpenAPIProperties.AE_MERCHANT_ID).append(platformGameParent.getCurrencyType()).append(currentTime);
             builder.append(name).append(Base64.getEncoder().encodeToString(OpenAPIProperties.AE_MERCHANT_KEY.getBytes()));
             String sign = MD5.md5(builder.toString());
             Map<String, Object> params = new HashMap<String, Object>();
             params.put("merchantId", OpenAPIProperties.AE_MERCHANT_ID);
-            params.put("currency", "VNDS");  //币种必填项
+            params.put("currency", platformGameParent.getCurrencyType());  //币种必填项
             params.put("username", name);
             params.put("currentTime", currentTime);
             params.put("sign", sign);
