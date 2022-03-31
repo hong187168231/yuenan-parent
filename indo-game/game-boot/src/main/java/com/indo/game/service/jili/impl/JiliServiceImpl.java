@@ -84,15 +84,20 @@ public class JiliServiceImpl implements JiliService {
                 cptOpenMember.setLoginTime(new Date());
                 cptOpenMember.setType(parentName);
                 externalService.saveCptOpenMember(cptOpenMember);
+
+                // 第一次登录自动创建玩家, 后续登录返回登录游戏URL
+                return createMemberGame(cptOpenMember, platform, gameParentPlatform.getLanguageType());
             } else {
                 CptOpenMember updateCptOpenMember = new CptOpenMember();
                 updateCptOpenMember.setId(cptOpenMember.getId());
                 updateCptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(updateCptOpenMember);
+                // 请求URL
+                ApiResponseData responseData = new ApiResponseData();
+                responseData.setPathUrl(getStartGame(cptOpenMember, platform, gameParentPlatform.getLanguageType()));
+                return Result.success(responseData);
             }
 
-            // 第一次登录自动创建玩家, 后续登录返回登录游戏URL
-            return createMemberGame(cptOpenMember, platform, gameParentPlatform.getLanguageType());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -135,8 +140,7 @@ public class JiliServiceImpl implements JiliService {
         if (0 == jiliApiResponse.getErrorCode()) {
             // 请求URL
             ApiResponseData responseData = new ApiResponseData();
-            JSONObject urlJson = JSONObject.parseObject(getStartGame(cptOpenMember, platform, lang));
-            responseData.setPathUrl(urlJson.getString("url"));
+            responseData.setPathUrl(getStartGame(cptOpenMember, platform, lang));
             return Result.success(responseData);
         } else {
             return errorCode(jiliApiResponse.getErrorCode().toString(), jiliApiResponse.getMessage());
@@ -173,7 +177,7 @@ public class JiliServiceImpl implements JiliService {
     private String getStartGame(CptOpenMember cptOpenMember, String platform, String lang) {
 
         try {
-            String result = GameUtil.httpGetWithCookies(getLoginUrl(cptOpenMember.getPassword(), platform, lang), null, null);
+            String result = GameUtil.httpGetWithCookies(getStartGameUrl(cptOpenMember.getPassword(), platform, lang), null, null);
             JiliApiResponse jiliApiResponse = JSONObject.parseObject(result, JiliApiResponse.class);
             if (0 == jiliApiResponse.getErrorCode()) {
                 return jiliApiResponse.getData().toString();
