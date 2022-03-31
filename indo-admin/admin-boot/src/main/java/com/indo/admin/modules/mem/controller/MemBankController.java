@@ -46,4 +46,11 @@ public class MemBankController {
         memBankRelationService.switchStatus(req);
         return Result.success();
     }
+
+    @ApiOperation(value = "删除")
+    @PostMapping(value = "/delete")
+    public Result delete(@RequestBody MemBankSwitchReq req) {
+        memBankRelationService.removeById(req.getId());
+        return Result.success();
+    }
 }

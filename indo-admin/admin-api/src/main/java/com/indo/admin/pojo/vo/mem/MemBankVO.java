@@ -18,7 +18,7 @@ public class MemBankVO {
 
     @ApiModelProperty(value = "主键")
     @TableId(value = "id", type = IdType.AUTO)
-    private Long id;
+    private Long memBankId;
 
     @ApiModelProperty(value = "用户id")
     private Long memId;
