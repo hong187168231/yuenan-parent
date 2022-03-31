@@ -100,5 +100,9 @@ public class MemBaseinfoController {
         MemBaseDetailVO detailVO = memBaseinfoService.getMemBaseInfoByAccount(account);
         return Result.success(detailVO);
     }
-
+    @ApiOperation(value = "查询重复IP用户信息")
+    @PostMapping(value = "/findIpRepeatPage")
+    public Result findIpRepeatPage(@RequestBody MemBaseInfoReq baseInfoPageReq) {
+        return Result.success(memBaseinfoService.findIpRepeatPage(baseInfoPageReq));
+    }
 }

@@ -210,6 +210,21 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
                 CopyOptions.create().setIgnoreNullValue(true).setIgnoreError(true));
         BusinessRedisUtils.saveMemBaseInfo(memBaseInfoBO);
     }
+    /**
+     * 查询重复IP用户信息
+     * @param req
+     * @return
+     */
+    @Override
+    public Page findIpRepeatPage(MemBaseInfoReq req) {
+        Page<MemBaseInfoBO> page = new Page<>(req.getPage(), req.getLimit());
+        if(StringUtils.isEmpty(req.getAccount())){
+            page = baseMapper.findIpRepeatAll(page);
+        }else{
+            page =baseMapper.findIpRepeatByAccount(page,req);
+        }
+        return page;
+    }
 
     public MemBaseinfo checkMemIsExist(Long id) {
         MemBaseinfo memBaseinfo = this.baseMapper.selectById(id);

@@ -76,4 +76,11 @@ public interface IMemBaseinfoService extends SuperService<MemBaseinfo> {
 
     void refreshMemBaseInfo(MemBaseInfoDTO memBaseInfoDTO, String account);
 
+    /**
+     * 查询重复IP用户信息
+     * @param req
+     * @return
+     */
+    Page findIpRepeatPage(MemBaseInfoReq req);
+
 }
