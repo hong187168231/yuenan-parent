@@ -110,7 +110,7 @@ public class PgServiceImpl implements PgService {
             builder.append(OpenAPIProperties.PG_API_URL).append("/web-lobby/games/?");
             builder.append("operator_token=").append(OpenAPIProperties.PG_API_TOKEN);
             builder.append("&operator_player_session=").append(cptOpenMember.getPassword());
-            builder.append("&language=").append(platformGameParent.getCurrencyType());
+            builder.append("&language=").append(platformGameParent.getLanguageType());
             //登录
             ApiResponseData responseData = new ApiResponseData();
             responseData.setPathUrl(builder.toString());
