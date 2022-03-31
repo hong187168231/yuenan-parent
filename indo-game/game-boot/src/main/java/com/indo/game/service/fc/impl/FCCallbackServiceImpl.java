@@ -53,7 +53,7 @@ public class FCCallbackServiceImpl implements FCCallbackService {
 
             // 会员余额返回
             JSONObject jsonObject = initSuccessResponse();
-            jsonObject.put("MainPoint", memBaseinfo.getBalance());
+            jsonObject.put("MainPoints", memBaseinfo.getBalance());
             return jsonObject;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -188,7 +188,7 @@ public class FCCallbackServiceImpl implements FCCallbackService {
             }
 
             JSONObject jsonObject = initSuccessResponse();
-            jsonObject.put("MainPoint", balance);
+            jsonObject.put("MainPoints", balance);
             return jsonObject;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -254,7 +254,7 @@ public class FCCallbackServiceImpl implements FCCallbackService {
             txnsMapper.updateById(oldTxns);
 
             JSONObject jsonObject = initSuccessResponse();
-            jsonObject.put("MainPoint", balance);
+            jsonObject.put("MainPoints", balance);
             return jsonObject;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
