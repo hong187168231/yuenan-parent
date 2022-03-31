@@ -503,7 +503,7 @@ public class KaCallbackServiceImpl implements KaCallbackService {
     private JSONObject initSuccessResponse() {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("statusCode", 0);
-        jsonObject.put("status", "Success");
+        jsonObject.put("status", "success");
         return jsonObject;
     }
 

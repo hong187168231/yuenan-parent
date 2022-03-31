@@ -309,7 +309,6 @@ public class FCCallbackServiceImpl implements FCCallbackService {
     private JSONObject initSuccessResponse() {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("Result", 0);
-        jsonObject.put("ErrorText", "Success");
         return jsonObject;
     }
 
