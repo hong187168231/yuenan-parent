@@ -170,6 +170,7 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
     public void initMemAgent(MemBaseinfo memBaseinfo, MemInviteCode parentInviteCode) {
         AgentRelation agentRelation = new AgentRelation();
         agentRelation.setMemId(memBaseinfo.getId());
+        agentRelation.setAccount(memBaseinfo.getAccount());
         agentRelation.setStatus(0);
         agentRelation.setParentId(parentInviteCode.getMemId());
         agentRelation.setSuperior(parentInviteCode.getAccount());
