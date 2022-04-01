@@ -25,7 +25,6 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.LinkedHashMap;
 
 @Service
 public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
@@ -39,8 +38,8 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
 
 
     @Override
-    public Object check(LinkedHashMap<String, Object> map, String ip) {
-        logger.info("redtiger_check redtigerGame paramJson:{}, ip:{}", map, ip);
+    public Object check(JSONObject params, String ip) {
+        logger.info("redtiger_check redtigerGame paramJson:{}, ip:{}", params, ip);
         try {
             GameParentPlatform platformGameParent = getGameParentPlatform();
             // 校验IP
@@ -48,10 +47,10 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
                 return initFailureResponse(1100, "非信任來源IP");
             }
 
-            if (null == map.get("userId")) {
+            if (!params.containsKey("userId") || null == params.get("userId")) {
                 return initFailureResponse(1049, "会员不存在");
             }
-            String playerID = map.get("userId").toString();
+            String playerID = params.getString("userId");
 
             // 查询玩家是否存在
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(playerID);
@@ -60,7 +59,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             }
 
             JSONObject jsonObject1 = initSuccessResponse();
-            jsonObject1.put("sid", map.get("sid"));
+            jsonObject1.put("sid", params.get("sid"));
             return jsonObject1;
 
         } catch (Exception e) {
@@ -69,8 +68,8 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
     }
 
     @Override
-    public Object balance(LinkedHashMap<String, Object> map, String ip) {
-        logger.info("redtiger_balance redtigerGame paramJson:{}, ip:{}", map, ip);
+    public Object balance(JSONObject params, String ip) {
+        logger.info("redtiger_balance redtigerGame paramJson:{}, ip:{}", params, ip);
         try {
             GameParentPlatform platformGameParent = getGameParentPlatform();
             // 校验IP
@@ -78,10 +77,11 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
                 return initFailureResponse(1100, "非信任來源IP");
             }
 
-            if (null == map.get("userId")) {
+            if (!params.containsKey("userId") || null == params.get("userId")) {
                 return initFailureResponse(1049, "会员不存在");
             }
-            String playerID = map.get("userId").toString();
+            String playerID = params.getString("userId");
+
             // 查询玩家是否存在
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(playerID);
             if (null == memBaseinfo) {
@@ -98,8 +98,8 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
     }
 
     @Override
-    public Object debit(LinkedHashMap<String, Object> map, String ip) {
-        logger.info("redtiger_debit  redtigerGame paramJson:{}, ip:{}", JSONObject.toJSONString(map), ip);
+    public Object debit(JSONObject params, String ip) {
+        logger.info("redtiger_debit  redtigerGame paramJson:{}, ip:{}", params, ip);
 
         try {
             GameParentPlatform platformGameParent = getGameParentPlatform();
@@ -108,7 +108,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
                 return initFailureResponse(1100, "非信任來源IP");
             }
 
-            JSONObject params = JSONObject.parseObject(String.valueOf(map));
+//            JSONObject params = JSONObject.parseObject(String.valueOf(map));
             String playerID = params.getString("userId");
 
             JSONObject transaction = params.getJSONObject("transaction");
@@ -211,8 +211,8 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
     }
 
     @Override
-    public Object credit(LinkedHashMap<String, Object> map, String ip) {
-        logger.info("redtiger_credit redtigerGame paramJson:{}, ip:{}", JSONObject.toJSONString(map), ip);
+    public Object credit(JSONObject params, String ip) {
+        logger.info("redtiger_credit redtigerGame paramJson:{}, ip:{}", params, ip);
 
         try {
             GameParentPlatform platformGameParent = getGameParentPlatform();
@@ -220,11 +220,11 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             if (checkIp(ip, platformGameParent)) {
                 return initFailureResponse(1100, "非信任來源IP");
             }
-            if (null == map.get("userId")) {
+            if (!params.containsKey("userId") || null == params.get("userId")) {
                 return initFailureResponse(1049, "会员不存在");
             }
-            JSONObject params = JSONObject.parseObject(String.valueOf(map));
             String playerID = params.getString("userId");
+
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(playerID);
 
             JSONObject transaction = params.getJSONObject("transaction");
@@ -299,8 +299,8 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
     }
 
     @Override
-    public Object cancel(LinkedHashMap<String, Object> map, String ip) {
-        logger.info("redtiger_cancel redtigerGame paramJson:{}, ip:{}", JSONObject.toJSONString(map), ip);
+    public Object cancel(JSONObject params, String ip) {
+        logger.info("redtiger_cancel redtigerGame paramJson:{}, ip:{}", params, ip);
 
 
         try {
@@ -309,18 +309,17 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             if (checkIp(ip, platformGameParent)) {
                 return initFailureResponse(1100, "非信任來源IP");
             }
-            if (null == map.get("userId")) {
+            if (!params.containsKey("userId") || null == params.get("userId")) {
                 return initFailureResponse(1049, "会员不存在");
             }
-
-            JSONObject params = JSONObject.parseObject(String.valueOf(map));
             String playerID = params.getString("userId");
+
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(playerID);
 
             JSONObject transaction = params.getJSONObject("transaction");
             String platformTxId = transaction.getString("id");
-            JSONObject game = params.getJSONObject("game");
-            JSONObject table = game.getJSONObject("details").getJSONObject("table");
+//            JSONObject game = params.getJSONObject("game");
+//            JSONObject table = game.getJSONObject("details").getJSONObject("table");
 
 
             // 查询用户请求订单
@@ -362,8 +361,8 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
     }
 
     @Override
-    public Object promo_payout(LinkedHashMap<String, Object> map, String ip) {
-        logger.info("redtiger_promo_payout  redtigerGame paramJson:{}, ip:{}", JSONObject.toJSONString(map), ip);
+    public Object promo_payout(JSONObject params, String ip) {
+        logger.info("redtiger_promo_payout  redtigerGame paramJson:{}, ip:{}", params, ip);
 
         try {
             GameParentPlatform platformGameParent = getGameParentPlatform();
@@ -371,12 +370,11 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             if (checkIp(ip, platformGameParent)) {
                 return initFailureResponse(1100, "非信任來源IP");
             }
-            if (null == map.get("userId")) {
+            if (!params.containsKey("userId") || null == params.get("userId")) {
                 return initFailureResponse(1049, "会员不存在");
             }
-
-            JSONObject params = JSONObject.parseObject(String.valueOf(map));
             String playerID = params.getString("userId");
+
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(playerID);
 
             JSONObject promoTransaction = params.getJSONObject("promoTransaction");

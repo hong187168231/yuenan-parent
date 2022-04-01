@@ -31,11 +31,11 @@ public class RedTigerCallBackController {
     @RequestMapping(value = "/check", method = RequestMethod.POST)
     @ResponseBody
     @AllowAccess
-    public Object check(@RequestBody LinkedHashMap<String, Object> map, HttpServletRequest request) {
+    public Object check(@RequestBody JSONObject params, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("redtigerCallBack check 回调,params:{}", JSONObject.toJSONString(map));
-        Object object = redtigerCallbackService.check(map, ip);
+        logger.info("redtigerCallBack check 回调,params:{}", params);
+        Object object = redtigerCallbackService.check(params, ip);
         logger.info("redtigerCallBack check 回调权限验证返回数据 params:{}", object);
         return object;
     }
@@ -46,11 +46,11 @@ public class RedTigerCallBackController {
     @RequestMapping(value = "/balance", method = RequestMethod.POST)
     @ResponseBody
     @AllowAccess
-    public Object balance(@RequestBody LinkedHashMap<String, Object> map, HttpServletRequest request) {
+    public Object balance(@RequestBody JSONObject params, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("redtigerCallBack balance 回调,params:{}", JSONObject.toJSONString(map));
-        Object object = redtigerCallbackService.balance(map, ip);
+        logger.info("redtigerCallBack balance 回调,params:{}", params);
+        Object object = redtigerCallbackService.balance(params, ip);
         logger.info("redtigerCallBack balance 回调查询余额返回数据 params:{}", object);
         return object;
     }
@@ -62,11 +62,11 @@ public class RedTigerCallBackController {
     @RequestMapping(value = "/debit", method = RequestMethod.POST)
     @ResponseBody
     @AllowAccess
-    public Object debit(@RequestBody LinkedHashMap<String, Object> map, HttpServletRequest request) {
+    public Object debit(@RequestBody JSONObject params, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("redtigerCallBack debit 回调,params:{}", JSONObject.toJSONString(map));
-        Object object = redtigerCallbackService.debit(map, ip);
+        logger.info("redtigerCallBack debit 回调,params:{}", params);
+        Object object = redtigerCallbackService.debit(params, ip);
         logger.info("redtigerCallBack debit 回调下注返回数据 params:{}", object);
         return object;
     }
@@ -77,11 +77,11 @@ public class RedTigerCallBackController {
     @RequestMapping(value = "/credit", method = RequestMethod.POST)
     @ResponseBody
     @AllowAccess
-    public Object credit(@RequestBody LinkedHashMap<String, Object> map, HttpServletRequest request) {
+    public Object credit(@RequestBody JSONObject params, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("redtigerCallBack credit 回调,params:{}", JSONObject.toJSONString(map));
-        Object object = redtigerCallbackService.credit(map, ip);
+        logger.info("redtigerCallBack credit 回调,params:{}", params);
+        Object object = redtigerCallbackService.credit(params, ip);
         logger.info("redtigerCallBack credit 回调玩家中奖返回数据 params:{}", object);
         return object;
     }
@@ -92,11 +92,11 @@ public class RedTigerCallBackController {
     @RequestMapping(value = "/cancel", method = RequestMethod.POST)
     @ResponseBody
     @AllowAccess
-    public Object cancel(@RequestBody LinkedHashMap<String, Object> map, HttpServletRequest request) {
+    public Object cancel(@RequestBody JSONObject params, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("redtigerCallBack cancel 回调,params:{}", JSONObject.toJSONString(map));
-        Object object = redtigerCallbackService.cancel(map, ip);
+        logger.info("redtigerCallBack cancel 回调,params:{}", params);
+        Object object = redtigerCallbackService.cancel(params, ip);
         logger.info("redtigerCallBack cancel 回调退款返回数据 params:{}", object);
         return object;
     }
@@ -107,11 +107,11 @@ public class RedTigerCallBackController {
     @RequestMapping(value = "/promo_payout", method = RequestMethod.POST)
     @ResponseBody
     @AllowAccess
-    public Object promo_payout(@RequestBody LinkedHashMap<String, Object> map, HttpServletRequest request) {
+    public Object promo_payout(@RequestBody JSONObject params, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("redtigerCallBack promo_payout 回调,params:{}", JSONObject.toJSONString(map));
-        Object object = redtigerCallbackService.promo_payout(map, ip);
+        logger.info("redtigerCallBack promo_payout 回调,params:{}", params);
+        Object object = redtigerCallbackService.promo_payout(params, ip);
         logger.info("redtigerCallBack promo_payout 回调活动派奖返回数据 params:{}", object);
         return object;
     }
