@@ -1,11 +1,15 @@
 package com.indo.game.controller.app;
 
 import com.alibaba.fastjson.JSONObject;
+import com.indo.admin.api.SysIpLimitClient;
+import com.indo.admin.pojo.entity.SysIpLimit;
 import com.indo.common.annotation.LoginUser;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
 import com.indo.common.result.ResultCode;
 import com.indo.common.utils.IPAddressUtil;
+import com.indo.common.web.exception.BizException;
+import com.indo.common.web.util.IPUtils;
 import com.indo.game.service.ae.AeService;
 import com.indo.game.service.awc.AwcService;
 import com.indo.game.service.cq.CqService;
@@ -38,8 +42,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @RestController
@@ -85,7 +93,8 @@ public class GameController {
     private RedtigerService redtigerService;
     @Autowired
     private RedissonClient redissonClient;
-
+    @Resource
+    private SysIpLimitClient sysIpLimitClient;
     @ApiOperation(value = "登录平台或单一游戏登录", httpMethod = "POST")
     @PostMapping("/initGame")
     @ApiImplicitParams({
@@ -102,7 +111,21 @@ public class GameController {
             return Result.failed("g100103", "会员登录失效，请重新登录！");
         }
         log.info("登录平台或单一游戏登录 进入游戏。。。 platform:{},loginUser:{},parentName:{}", platform, loginUser, parentName);
-
+        //黑名单校验
+        List<SysIpLimit> list =sysIpLimitClient.findSysIpLimitByType(1).getData();
+        if(list!=null||list.size()>0){
+            // 获取请求信息
+            String clientIP = IPUtils.getIpAddr(request);
+            Boolean status = false;
+            for(SysIpLimit l :list){
+                if(l.getIp().equals(clientIP)){
+                    status=true;
+                }
+            }
+            if(status){
+                throw new BizException("非法的IP登录");
+            }
+        }
         RLock lock = redissonClient.getLock("INITGAME_" + loginUser.getId());
         boolean res = lock.tryLock(5, TimeUnit.SECONDS);
         try {

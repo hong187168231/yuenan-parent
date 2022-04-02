@@ -4,12 +4,15 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.indo.admin.api.SysIpLimitClient;
+import com.indo.admin.pojo.entity.SysIpLimit;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
 import com.indo.common.utils.DeviceInfoUtil;
 import com.indo.common.utils.StringUtils;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
+import com.indo.common.web.util.IPUtils;
 import com.indo.core.base.service.impl.SuperServiceImpl;
 import com.indo.core.pojo.bo.MemBaseInfoBO;
 import com.indo.core.pojo.dto.MemBaseInfoDTO;
@@ -34,8 +37,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -48,6 +56,9 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
     @Autowired
     private MemInviteCodeMapper memInviteCodeMapper;
 
+    @Resource
+    private SysIpLimitClient sysIpLimitClient;
+
     @Override
     public boolean checkAccount(String account) {
         LambdaQueryWrapper<MemBaseinfo> checkWrapper = new LambdaQueryWrapper<>();
@@ -59,6 +70,23 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
 
     @Override
     public Result<AppLoginVo> appLogin(LoginReq req) {
+        //黑名单校验
+        List<SysIpLimit> list =sysIpLimitClient.findSysIpLimitByType(1).getData();
+        if(list!=null||list.size()>0){
+            // 获取请求信息
+            ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+            HttpServletRequest request = attributes.getRequest();
+            String clientIP = IPUtils.getIpAddr(request);
+            Boolean status = false;
+            for(SysIpLimit l :list){
+                if(l.getIp().equals(clientIP)){
+                    status=true;
+                }
+            }
+            if(status){
+                throw new BizException("非法的IP登录");
+            }
+        }
         if (StringUtils.isBlank(req.getAccount())) {
             return Result.failed("请填写账号！");
         }

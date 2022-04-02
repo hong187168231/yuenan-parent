@@ -2,8 +2,12 @@ package com.indo.admin.modules.oauth;
 
 import cn.hutool.json.JSONObject;
 import com.indo.admin.common.enums.OAuthClientEnum;
+import com.indo.admin.modules.sys.service.ISysIpLimitService;
+import com.indo.admin.pojo.entity.SysIpLimit;
 import com.indo.common.constant.AuthConstants;
 import com.indo.common.result.Result;
+import com.indo.common.web.exception.BizException;
+import com.indo.common.web.util.IPUtils;
 import com.indo.common.web.util.JwtUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -15,9 +19,14 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.oauth2.provider.endpoint.TokenEndpoint;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import springfox.documentation.annotations.ApiIgnore;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -30,6 +39,8 @@ public class OAuthController {
 
     private TokenEndpoint tokenEndpoint;
     private RedisTemplate redisTemplate;
+    @Resource
+    private ISysIpLimitService sysIpLimitService;
 
     @ApiOperation(value = "OAuth2认证", notes = "login")
     @ApiImplicitParams({
@@ -45,6 +56,24 @@ public class OAuthController {
             @ApiIgnore Principal principal,
             @ApiIgnore @RequestParam Map<String,
                     String> parameters) throws HttpRequestMethodNotSupportedException {
+        //白名单校验
+        List<SysIpLimit> list =sysIpLimitService.findSysIpLimitByType(2);
+        if(list!=null||list.size()>0){
+            // 获取请求信息
+            ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+            HttpServletRequest request = attributes.getRequest();
+            String clientIP = IPUtils.getIpAddr(request);
+            Boolean status = false;
+            for(SysIpLimit l :list){
+                if(l.getIp().equals(clientIP)){
+                    status=true;
+                }
+            }
+            if(!status){
+                log.error("非法的IP企图登录后台管理系统:{}",clientIP);
+                throw new BizException("非法的IP登录");
+            }
+        }
         String clientId = JwtUtils.getOAuthClientId();
         log.info("=============================" + clientId);
         OAuthClientEnum client = OAuthClientEnum.getByClientId(clientId);
