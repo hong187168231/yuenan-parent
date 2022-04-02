@@ -1,4 +1,4 @@
-package com.indo.game.service.jili.impl;
+package com.indo.game.service.cmd.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.indo.common.config.OpenAPIProperties;
@@ -6,16 +6,13 @@ import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.redis.utils.GeneratorIdUtil;
 import com.indo.common.result.Result;
 import com.indo.common.utils.GameUtil;
-import com.indo.common.utils.StringUtils;
-import com.indo.game.common.util.JiliAESEncrypt;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
-import com.indo.game.pojo.dto.jili.JiliApiResponse;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.game.pojo.entity.manage.GameParentPlatform;
 import com.indo.game.pojo.entity.manage.GamePlatform;
+import com.indo.game.service.cmd.CmdService;
 import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
-import com.indo.game.service.jili.JiliService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -23,11 +20,10 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 @Service
-public class JiliServiceImpl implements JiliService {
+public class CmdServiceImpl implements CmdService {
+
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     @Resource
     private CptOpenMemberService externalService;
@@ -35,8 +31,8 @@ public class JiliServiceImpl implements JiliService {
     private GameCommonService gameCommonService;
 
     @Override
-    public Result jiliGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName) {
-        logger.info("jililog {} jiliGame account:{},jiliCodeId:{}", parentName, loginUser.getAccount(), platform);
+    public Result cmdGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName) {
+        logger.info("cmdlog {} cmdGame account:{},cmdCodeId:{}", parentName, loginUser.getAccount(), platform);
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
         if (null == gameParentPlatform) {
@@ -66,7 +62,7 @@ public class JiliServiceImpl implements JiliService {
         BigDecimal balance = loginUser.getBalance();
         //验证站点余额
         if (null == balance || balance.compareTo(BigDecimal.ZERO) == 0) {
-            logger.info("站点jili余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
+            logger.info("站点cmd余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
             //站点棋牌余额不足
             return Result.failed("g300004", "会员余额不足");
         }
@@ -86,7 +82,7 @@ public class JiliServiceImpl implements JiliService {
                 externalService.saveCptOpenMember(cptOpenMember);
 
                 // 第一次登录自动创建玩家, 后续登录返回登录游戏URL
-                return createMemberGame(cptOpenMember, platform, gameParentPlatform.getLanguageType());
+                return createMemberGame(cptOpenMember, gameParentPlatform, isMobileLogin);
             } else {
                 CptOpenMember updateCptOpenMember = new CptOpenMember();
                 updateCptOpenMember.setId(cptOpenMember.getId());
@@ -94,7 +90,8 @@ public class JiliServiceImpl implements JiliService {
                 externalService.updateCptOpenMember(updateCptOpenMember);
                 // 请求URL
                 ApiResponseData responseData = new ApiResponseData();
-                responseData.setPathUrl(getStartGame(cptOpenMember, platform, gameParentPlatform.getLanguageType()));
+                responseData.setPathUrl(getStartGame(cptOpenMember, gameParentPlatform.getCurrencyType(),
+                        gameParentPlatform.getLanguageType(), isMobileLogin));
                 return Result.success(responseData);
             }
 
@@ -107,16 +104,15 @@ public class JiliServiceImpl implements JiliService {
 
     @Override
     public Result logout(LoginInfo loginUser, String platform, String ip) {
-        logger.info("jililogout {} jiliGame account:{},jiliCodeId:{}", loginUser.getId(), loginUser.getAccount(), platform);
+        logger.info("cmdlogout {} cmdGame account:{},cmdCodeId:{}", ip, loginUser.getAccount(), platform);
         try {
-            Map<String, Object> params = new HashMap<>();
-            params.put("Account", loginUser.getAccount());
-            String json = GameUtil.postForm4PP(getLoginOutUrl(loginUser.getAccount()), params, null);
-            JiliApiResponse jiliApiResponse = JSONObject.parseObject(json, JiliApiResponse.class);
-            if (0 == jiliApiResponse.getErrorCode()) {
+            String returnResult = GameUtil.httpGetWithCookies(getLoginOutUrl(loginUser.getAccount()), null, null);
+            JSONObject result = JSONObject.parseObject(returnResult);
+
+            if (0 == result.getInteger("Code")) {
                 return Result.success();
             } else {
-                return errorCode(jiliApiResponse.getErrorCode().toString(), jiliApiResponse.getMessage());
+                return errorCode(result.getString("Code"), result.getString("Message"));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -130,144 +126,119 @@ public class JiliServiceImpl implements JiliService {
      * @param cptOpenMember cptOpenMember
      * @return Result
      */
-    private Result createMemberGame(CptOpenMember cptOpenMember, String platform, String lang) {
-        //
-        JiliApiResponse jiliApiResponse = createJiliMember(cptOpenMember, platform, lang);
-        if (null == jiliApiResponse) {
+    private Result createMemberGame(CptOpenMember cptOpenMember, GameParentPlatform gameParentPlatform, String isMobileLogin) {
+        String returnResult
+                = GameUtil.httpGetWithCookies(
+                getLoginUrl(cptOpenMember.getPassword(), gameParentPlatform.getCurrencyType()), null, null);
+        JSONObject result = JSONObject.parseObject(returnResult);
+        if (null == result) {
             return Result.failed("g091087", "第三方请求异常！");
         }
 
-        if (0 == jiliApiResponse.getErrorCode()) {
+        if (0 == result.getInteger("Code")) {
             // 请求URL
             ApiResponseData responseData = new ApiResponseData();
-            responseData.setPathUrl(getStartGame(cptOpenMember, platform, lang));
+            responseData.setPathUrl(
+                    getStartGame(cptOpenMember, gameParentPlatform.getCurrencyType(), gameParentPlatform.getLanguageType(), isMobileLogin));
             return Result.success(responseData);
         } else {
-            return errorCode(jiliApiResponse.getErrorCode().toString(), jiliApiResponse.getMessage());
+            return errorCode(result.getString("Code"), result.getString("Message"));
         }
     }
 
-    /**
-     * 创建jili 账号
-     * 、
-     *
-     * @param cptOpenMember、 cptOpenMember
-     * @return JiliApiResponse
-     */
-    private JiliApiResponse createJiliMember(CptOpenMember cptOpenMember, String platform, String lang) {
-
-        JiliApiResponse jiliApiResponse = null;
-        try {
-            String result = GameUtil.httpGetWithCookies(getLoginUrl(cptOpenMember.getPassword(), platform, lang), null, null);
-            jiliApiResponse = JSONObject.parseObject(result, JiliApiResponse.class);
-        } catch (Exception e) {
-            logger.error("jililog createJiliMember:{}", e);
-            e.printStackTrace();
-        }
-        return jiliApiResponse;
-    }
 
     /**
      * 获取登录URL 账号
      * 、
+     * https://<CustomizeEntry>/auth.aspx?lang=<LanguageCode>&user=<UserName>&token=<Tok
+     * en>&currency=<CurrencyCode>&templatename=<TemplateName>&view=<View>
      *
      * @param cptOpenMember、 cptOpenMember
      * @return url
      */
-    private String getStartGame(CptOpenMember cptOpenMember, String platform, String lang) {
+    private String getStartGame(CptOpenMember cptOpenMember, String currency, String lang, String isMobileLogin) {
 
-        try {
-            String result = GameUtil.httpGetWithCookies(getStartGameUrl(cptOpenMember.getPassword(), platform, lang), null, null);
-            JiliApiResponse jiliApiResponse = JSONObject.parseObject(result, JiliApiResponse.class);
-            if (0 == jiliApiResponse.getErrorCode()) {
-                return jiliApiResponse.getData().toString();
-            }
-        } catch (Exception e) {
-            logger.error("jililog getStartGame:{}", e);
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    /**
-     * 登录游戏，如果米有账号自动创建
-     *
-     * @return String
-     */
-    private String getLoginUrl(String userAccount, String gameId, String lang) {
-        lang = StringUtils.isEmpty(lang) ? "zh-CN" : lang;
         StringBuilder url = new StringBuilder();
-        url.append(OpenAPIProperties.JILI_API_URL).append("singleWallet/Login?");
-        StringBuilder urlParams = new StringBuilder();
-        urlParams.append("Token=").append(userAccount);
-        urlParams.append("&GameId=").append(gameId);
-        urlParams.append("&Lang=").append(lang);
-        urlParams.append("&AgentId=").append(OpenAPIProperties.JILI_AGENT_ID);
-        url.append(urlParams);
-        url.append("&Key=");
-        url.append(JiliAESEncrypt.encrypt(urlParams.toString(), OpenAPIProperties.JILI_AGENT_ID, OpenAPIProperties.JILI_AGENT_KEY));
+        if (isApp(isMobileLogin)) {
+            url.append(OpenAPIProperties.CMD_NEWMOBILE_URL);
+        } else {
+            url.append(OpenAPIProperties.CMD_WEBROOT_URL);
+        }
+        url.append("/auth.aspx?");
+        url.append("lang=").append(lang);
+        url.append("&user=").append(cptOpenMember.getUserName());
+        url.append("&token=").append(cptOpenMember.getPassword());
+        url.append("&currency=").append(currency);
+        url.append("&templatename=").append(OpenAPIProperties.CMD_TEMPLATE_NAME);
+        url.append("&view=").append(OpenAPIProperties.CMD_VIEW);
         return url.toString();
     }
 
     /**
-     * 启动游戏
+     * 創建用戶CMD請求地址
+     * /?Method=createmember&PartnerKey=<PartnerKey>&UserName=<UserName
+     * >&Currency=<CurrencyCode>
      *
-     * @param userAccount
-     * @param gameId
-     * @param lang
-     * @return
+     * @return String
      */
-    private String getStartGameUrl(String userAccount, String gameId, String lang) {
-        lang = StringUtils.isEmpty(lang) ? "zh-CN" : lang;
+    private String getLoginUrl(String userAccount, String currency) {
         StringBuilder url = new StringBuilder();
-        url.append(OpenAPIProperties.JILI_API_URL).append("singleWallet/LoginWithoutRedirect?");
-        StringBuilder urlParams = new StringBuilder();
-        urlParams.append("Token=").append(userAccount);
-        urlParams.append("&GameId=").append(gameId);
-        urlParams.append("&Lang=").append(lang);
-        urlParams.append("&AgentId=").append(OpenAPIProperties.JILI_AGENT_ID);
-        url.append(urlParams);
-        url.append("&Key=");
-        url.append(JiliAESEncrypt.encrypt(urlParams.toString(), OpenAPIProperties.JILI_AGENT_ID, OpenAPIProperties.JILI_AGENT_KEY));
+        url.append(OpenAPIProperties.CMD_API_URL).append("/?Method=createmember");
+        url.append("&PartnerKey=").append(OpenAPIProperties.CMD_PARTNER_KEY);
+        url.append("&UserName=").append(userAccount);
+        url.append("&Currency=").append(currency);
         return url.toString();
     }
 
     /**
      * 玩家退出游戏API地址
+     * kickuser&PartnerKey=<PartnerKey>&UserName=<UserName>
      *
-     * @param account account
+     * @param userAccount userAccount
      * @return String
      */
-    private String getLoginOutUrl(String account) {
+    private String getLoginOutUrl(String userAccount) {
         StringBuilder url = new StringBuilder();
-        url.append(OpenAPIProperties.JILI_API_URL).append("api1/KickMember");
-        StringBuilder urlParams = new StringBuilder();
-        urlParams.append("Account=").append(account);
-        urlParams.append("&AgentId=").append(OpenAPIProperties.JILI_AGENT_ID);
-        url.append(urlParams);
-        url.append("&Key=");
-        url.append(JiliAESEncrypt.encrypt(urlParams.toString(), OpenAPIProperties.JILI_AGENT_ID, OpenAPIProperties.JILI_AGENT_KEY));
+        url.append(OpenAPIProperties.CMD_API_URL).append("/?Method=kickuser");
+        url.append("&PartnerKey=").append(OpenAPIProperties.CMD_PARTNER_KEY);
+        url.append("&UserName=").append(userAccount);
         return url.toString();
     }
+
+    private boolean isApp(String isMobileLogin) {
+        return "1".equals(isMobileLogin);
+    }
+
 
     public Result errorCode(String errorCode, String errorMessage) {
 //        0 成功。                                                Succeed.
         switch (errorCode) {
 //        2 Key 验证失败
-            case "2":
-                return Result.failed("g100107", errorMessage);
+            case "-1000":
+                return Result.failed("g100104", errorMessage);
 //        9 AgentId 不存在 玩家账号与 AgentId 不匹配 (详见 Chapter             No authorized to access
-            case "9":
-                return Result.failed("g000007", errorMessage);
+            case "-999":
+                return Result.failed("g009999", errorMessage);
 
 //        104 執⾏营运商于 auth 回传错误或禁用的货币                            Domain is null or the length of domain less than 2.
-            case "104":
-                return Result.failed("g100001", errorMessage);
+            case "-103":
+                return Result.failed("g000002", errorMessage);
 
 //        101 会员账号不存在/不在在线                                   Failed to pass the domain validation.
-            case "101":
+            case "-102":
+                return Result.failed("g000008", errorMessage);
+            case "-101":
+                return Result.failed("g000001", errorMessage);
+            case "-100":
+                return Result.failed("g000007", errorMessage);
+            case "-98":
+                return Result.failed("g100003", errorMessage);
+            case "-97":
                 return Result.failed("g010001", errorMessage);
-
+            case "-96":
+                return Result.failed("g300003", errorMessage);
+            case "-95":
+                return Result.failed("g000008", errorMessage);
 //        9999 失败。                                                Failed.
             default:
                 return Result.failed("g009999", errorMessage);

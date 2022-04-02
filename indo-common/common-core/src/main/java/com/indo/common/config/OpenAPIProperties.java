@@ -276,6 +276,32 @@ public class OpenAPIProperties implements InitializingBean {
     @Value("${redtiger.platformCode:RT}")
     private String redtigerPlatformCode;
 
+    // CMD
+    public static String CMD_API_URL;
+    public static String CMD_PARTNER_KEY;
+    public static String CMD_WEBROOT_URL;
+    public static String CMD_MOBILE_URL;
+    public static String CMD_NEWMOBILE_URL;
+    public static String CMD_PLATFORM_CODE;
+    public static String CMD_TEMPLATE_NAME;
+    public static String CMD_VIEW;
+    @Value("${cmd.apiUrl}")
+    private String cmdApiurl;
+    @Value("${cmd.webrootUrl}")
+    private String cmdWebrooturl;
+    @Value("${cmd.mobileUrl}")
+    private String cmdMobileurl;
+    @Value("${cmd.newMobileUrl}")
+    private String cmdNewMobileurl;
+    @Value("${cmd.partnerKey}")
+    private String cmdPartnerKey;
+    @Value("${cmd.platformCode:CMD}")
+    private String cmdPlatformCode;
+    @Value("${cmd.templateName:green}")
+    private String cmdTemplateName;
+    @Value("${cmd.view:v1}")
+    private String cmdView;
+
     @Override
     public void afterPropertiesSet() {
 
@@ -375,5 +401,14 @@ public class OpenAPIProperties implements InitializingBean {
         REDTIGER_CASINO_KEY = redtigerCasinoKey;
         REDTIGER_API_TOKEN = redtigerApiToken;
         REDTIGER_PLATFORM_CODE = redtigerPlatformCode;
+
+        CMD_API_URL = cmdApiurl;
+        CMD_PARTNER_KEY = cmdPartnerKey;
+        CMD_PLATFORM_CODE = cmdPlatformCode;
+        CMD_WEBROOT_URL = cmdWebrooturl;
+        CMD_MOBILE_URL = cmdMobileurl;
+        CMD_NEWMOBILE_URL = cmdNewMobileurl;
+        CMD_TEMPLATE_NAME = cmdTemplateName;
+        CMD_VIEW = cmdView;
     }
 }

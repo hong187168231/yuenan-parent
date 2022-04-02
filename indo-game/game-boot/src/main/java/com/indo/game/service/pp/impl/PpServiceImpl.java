@@ -54,8 +54,8 @@ public class PpServiceImpl implements PpService {
         if (null == gameParentPlatform) {
             return Result.failed("(" + parentName + ")游戏平台不存在");
         }
-        if ("0".equals(gameParentPlatform.getIsStart())) {
-            return Result.failed("g" + "100101", "游戏平台未启用");
+        if (gameParentPlatform.getIsStart().equals(0)) {
+            return Result.failed("g100101", "游戏平台未启用");
         }
         if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
             return Result.failed("g000001", gameParentPlatform.getMaintenanceContent());
@@ -67,8 +67,8 @@ public class PpServiceImpl implements PpService {
             if (null == gamePlatform) {
                 return Result.failed("(" + platform + ")平台游戏不存在");
             }
-            if ("0".equals(gamePlatform.getIsStart())) {
-                return Result.failed("g" + "100102", "游戏未启用");
+            if (gamePlatform.getIsStart().equals(0)) {
+                return Result.failed("g100102", "游戏未启用");
             }
             if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
                 return Result.failed("g091047", gamePlatform.getMaintenanceContent());
@@ -77,7 +77,7 @@ public class PpServiceImpl implements PpService {
 
         BigDecimal balance = loginUser.getBalance();
         //验证站点余额
-        if (null == balance || BigDecimal.ZERO == balance) {
+        if (null == balance || balance.compareTo(BigDecimal.ZERO) == 0) {
             logger.info("站点pp余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
             //站点棋牌余额不足
             return Result.failed("g300004", "会员余额不足");
