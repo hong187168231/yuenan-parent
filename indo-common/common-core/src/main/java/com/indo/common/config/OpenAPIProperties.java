@@ -302,6 +302,20 @@ public class OpenAPIProperties implements InitializingBean {
     @Value("${cmd.view:v1}")
     private String cmdView;
 
+    // WM
+    public static String WM_API_URL;
+    public static String WM_VENDORID;
+    public static String WM_SIGNATURE;
+    public static String WM_PLATFORM_CODE;
+    @Value("${wm.apiUrl}")
+    private String wmApiurl;
+    @Value("${wm.vendorId}")
+    private String wmVendorId;
+    @Value("${wm.signature}")
+    private String wmSignature;
+    @Value("${wm.platformCode:WM}")
+    private String wmPlatformCode;
+
     @Override
     public void afterPropertiesSet() {
 
@@ -410,5 +424,10 @@ public class OpenAPIProperties implements InitializingBean {
         CMD_NEWMOBILE_URL = cmdNewMobileurl;
         CMD_TEMPLATE_NAME = cmdTemplateName;
         CMD_VIEW = cmdView;
+
+        WM_API_URL = wmApiurl;
+        WM_VENDORID = wmVendorId;
+        WM_SIGNATURE = wmSignature;
+        WM_PLATFORM_CODE = wmPlatformCode;
     }
 }

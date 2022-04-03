@@ -28,6 +28,7 @@ import com.indo.game.service.saba.SabaService;
 import com.indo.game.service.sbo.SboService;
 import com.indo.game.service.t9.T9Service;
 import com.indo.game.service.ug.UgService;
+import com.indo.game.service.wm.WmService;
 import com.indo.game.service.yl.YlService;
 
 import io.swagger.annotations.Api;
@@ -94,6 +95,8 @@ public class GameController {
     private RedtigerService redtigerService;
     @Autowired
     private CmdService cmdService;
+    @Autowired
+    private WmService wmService;
     @Autowired
     private RedissonClient redissonClient;
     @Resource
@@ -196,6 +199,9 @@ public class GameController {
                 if ("CMD".equals(parentName)) {
                     resultInfo = cmdService.cmdGame(loginUser, isMobileLogin, ip, platform, parentName);
                 }
+                if ("WM".equals(parentName)) {
+                    resultInfo = wmService.wmGame(loginUser, isMobileLogin, ip, platform, parentName);
+                }
 
                 if (resultInfo == null) {
                     log.info("登录平台或单一游戏登录log {} loginPlatform result is null. params:{},ip:{},parentName:{}", loginUser.getId(), params, ip, parentName);
@@ -286,6 +292,9 @@ public class GameController {
             }
             if ("CMD".equals(platform)) {
                 resultInfo = cmdService.logout(loginUser, platform, ip);
+            }
+            if ("WM".equals(platform)) {
+                resultInfo = wmService.logout(loginUser, platform, ip);
             }
             if (resultInfo == null) {
                 log.info("退出平台log {} loginPlatform result is null. params:{},ip:{}", loginUser.getId(), params, ip);
