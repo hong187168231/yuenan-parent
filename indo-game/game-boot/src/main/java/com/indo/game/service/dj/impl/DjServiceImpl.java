@@ -136,7 +136,7 @@ public class DjServiceImpl implements DjService {
         params.put("login_id", cptOpenMember.getUserId() + "");
         try {
             StringBuilder apiUrl = new StringBuilder();
-            apiUrl.append(OpenAPIProperties.AE_API_URL).append("/api/cash/auth");
+            apiUrl.append(OpenAPIProperties.DJ_API_URL).append("/api/cash/auth");
             String result = commonRequest(apiUrl.toString(), params, cptOpenMember.getUserId(), "gameLogin");
             if (!StringUtils.isEmpty(result)) {
                 Document doc = commonXml(result);
@@ -155,12 +155,12 @@ public class DjServiceImpl implements DjService {
     private String gameInit(CptOpenMember cptOpenMember, String isMobileLogin) {
         Map<String, String> params = new HashMap<String, String>();
         params.put("api_key", OpenAPIProperties.DJ_API_KEY);
-        params.put("agent_code", OpenAPIProperties.DJ_API_KEY);
+        params.put("agent_code", OpenAPIProperties.DJ_AGENT_CODE);
         params.put("login_id", cptOpenMember.getUserId() + "");
         params.put("name", cptOpenMember.getUserName());
         try {
             StringBuilder apiUrl = new StringBuilder();
-            apiUrl.append(OpenAPIProperties.AE_API_URL).append("/get_session_id.aspx");
+            apiUrl.append("https://api8745.cfb2.net").append("/get_session_id.aspx");
             String result = commonRequest(apiUrl.toString(), params, cptOpenMember.getUserId(), "gameLogin");
             if (!StringUtils.isEmpty(result)) {
                 Document doc = commonXml(result);
@@ -189,9 +189,9 @@ public class DjServiceImpl implements DjService {
             StringBuilder apiUrl = new StringBuilder();
             Map<String, String> params = new HashMap<String, String>();
             params.put("api_key", OpenAPIProperties.DJ_API_KEY);
-            params.put("agent_code", OpenAPIProperties.DJ_API_KEY);
+            params.put("agent_code", OpenAPIProperties.DJ_AGENT_CODE);
             params.put("login_id", loginUser.getId() + "");
-            apiUrl.append(OpenAPIProperties.AE_API_URL).append("/disable_player.aspx");
+            apiUrl.append(OpenAPIProperties.DJ_API_URL).append("/disable_player.aspx");
             String result = commonRequest(apiUrl.toString(), params, loginUser.getId().intValue(), "gameLogin");
             if (!StringUtils.isEmpty(result)) {
                 Document doc = commonXml(result);
@@ -213,14 +213,18 @@ public class DjServiceImpl implements DjService {
      * 公共请求
      */
     public String commonRequest(String apiUrl, Map<String, String> params, Integer userId, String type) throws Exception {
-        logger.info("djlog  {} commonRequest userId:{},paramsMap:{}", userId, params);
+        String resultString = GameUtil.doProxyPostJson(OpenAPIProperties.PROXY_HOST_NAME, OpenAPIProperties.PROXY_PORT, OpenAPIProperties.PROXY_TCP, apiUrl, params, type, userId);
+        logger.info("aelog {}:commonRequest type:{}, operateFlag:{}, hostName:{}, params:{}, result:{}, awcApiResponse:{}",
+                userId, type, null, resultString, resultString, resultString);
+
+      /*  logger.info("djlog  {} commonRequest userId:{},paramsMap:{}", userId, params);
         String repXML = HttpUtils.doGet(apiUrl, params);
         logger.info("djlog  apiResponse:" + repXML);
         if (StringUtils.isNotEmpty(repXML)) {
             logger.info("djlog  {}:commonRequest type:{}, operateFlag:{}, hostName:{}, params:{}, result:{}, awcApiResponse:{}",
                     userId, type, null, params, repXML, repXML);
-        }
-        return repXML;
+        }*/
+        return resultString;
     }
 
     public static Document commonXml(String repXML) {

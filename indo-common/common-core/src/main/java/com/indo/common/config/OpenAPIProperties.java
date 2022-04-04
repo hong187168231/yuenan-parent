@@ -316,6 +316,18 @@ public class OpenAPIProperties implements InitializingBean {
     @Value("${wm.platformCode:WM}")
     private String wmPlatformCode;
 
+
+    //MG
+    public static String MG_AGENT_CODE;
+    public static String MG_API_URL;
+    public static String MG_SESSION_URL;
+    @Value("${mg.apiUrl}")
+    private String mgApiurl;
+    @Value("${mg.sessionUrl}")
+    private String mgSessionUrl;
+    @Value("${mg.agentCode}")
+    private String mgAgentCode;
+
     @Override
     public void afterPropertiesSet() {
 
@@ -429,5 +441,10 @@ public class OpenAPIProperties implements InitializingBean {
         WM_VENDORID = wmVendorId;
         WM_SIGNATURE = wmSignature;
         WM_PLATFORM_CODE = wmPlatformCode;
+
+
+        MG_AGENT_CODE = mgAgentCode;
+        MG_API_URL = mgApiurl;
+        MG_SESSION_URL = mgSessionUrl;
     }
 }

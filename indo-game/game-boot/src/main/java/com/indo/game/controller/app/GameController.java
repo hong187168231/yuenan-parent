@@ -19,6 +19,7 @@ import com.indo.game.service.fc.FCService;
 import com.indo.game.service.jdb.JdbService;
 import com.indo.game.service.jili.JiliService;
 import com.indo.game.service.ka.KaService;
+import com.indo.game.service.mg.MgService;
 import com.indo.game.service.pg.PgService;
 import com.indo.game.service.pp.PpService;
 import com.indo.game.service.ps.PsService;
@@ -36,6 +37,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.lang3.StringUtils;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
@@ -50,6 +52,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+
 import java.util.concurrent.TimeUnit;
 
 @RestController
@@ -91,6 +94,8 @@ public class GameController {
     private FCService fcService;
     @Autowired
     private YlService ylService;
+    @Autowired
+    private MgService mgService;
     @Autowired
     private RedtigerService redtigerService;
     @Autowired
@@ -196,6 +201,9 @@ public class GameController {
                 if ("RT".equals(parentName)) {
                     resultInfo = redtigerService.redtigerGame(loginUser, isMobileLogin, ip, platform, parentName);
                 }
+                if ("MG".equals(parentName)) {
+                    resultInfo = mgService.mgGame(loginUser, isMobileLogin, ip, platform, parentName);
+                }
                 if ("CMD".equals(parentName)) {
                     resultInfo = cmdService.cmdGame(loginUser, isMobileLogin, ip, platform, parentName);
                 }
@@ -295,6 +303,9 @@ public class GameController {
             }
             if ("WM".equals(platform)) {
                 resultInfo = wmService.logout(loginUser, platform, ip);
+            }
+            if ("MG".equals(platform)) {
+                resultInfo = mgService.logout(loginUser, platform, ip);
             }
             if (resultInfo == null) {
                 log.info("退出平台log {} loginPlatform result is null. params:{},ip:{}", loginUser.getId(), params, ip);
