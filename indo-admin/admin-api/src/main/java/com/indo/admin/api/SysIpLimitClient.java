@@ -1,6 +1,6 @@
 package com.indo.admin.api;
 
-import com.indo.admin.api.fallback.MsgFeignFallback;
+import com.indo.admin.api.fallback.SysIpLimitFeignFallback;
 import com.indo.admin.pojo.entity.SysIpLimit;
 import com.indo.common.constant.ServiceIdConstant;
 import com.indo.common.result.Result;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@FeignClient(value = ServiceIdConstant.ADMIN_SERVICE_ID, fallback = MsgFeignFallback.class)
+@FeignClient(value = ServiceIdConstant.ADMIN_SERVICE_ID, fallback = SysIpLimitFeignFallback.class)
 public interface SysIpLimitClient {
     @GetMapping("/rpc/sysIpLimit/findSysIpLimitByType")
     Result<List<SysIpLimit>>findSysIpLimitByType(@RequestParam("types") Integer types);
