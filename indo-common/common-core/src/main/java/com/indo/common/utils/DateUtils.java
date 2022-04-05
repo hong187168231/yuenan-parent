@@ -12,7 +12,9 @@ import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -1447,8 +1449,15 @@ public class DateUtils {
         return 0;
     }
 
+    public static Long getUTC8TimeLength10() {
+        LocalDateTime utcNow = LocalDateTime.now(ZoneOffset.UTC);
+        LocalDateTime utc4Time = utcNow.plusHours(8);
+        return utc4Time.toInstant(ZoneOffset.ofHours(8)).toEpochMilli() / 1000;
+    }
+
     public static void main(String[] args) {
-        System.out.println(daysBetween("2022-01-25", "2022-01-28"));
+//        System.out.println(daysBetween("2022-01-25", "2022-01-28"));
+        System.out.println(getUTC8TimeLength10());
     }
 
 }

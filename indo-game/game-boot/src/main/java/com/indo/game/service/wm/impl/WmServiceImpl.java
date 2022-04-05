@@ -5,6 +5,7 @@ import com.indo.common.config.OpenAPIProperties;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.redis.utils.GeneratorIdUtil;
 import com.indo.common.result.Result;
+import com.indo.common.utils.DateUtils;
 import com.indo.common.utils.GameUtil;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
 import com.indo.game.pojo.entity.CptOpenMember;
@@ -81,16 +82,15 @@ public class WmServiceImpl implements WmService {
                 cptOpenMember.setCreateTime(new Date());
                 cptOpenMember.setLoginTime(new Date());
                 cptOpenMember.setType(parentName);
-                externalService.saveCptOpenMember(cptOpenMember);
 
                 // 第一次登录自动创建玩家, 后续登录返回登录游戏URL
-                return createMemberGame(cptOpenMember, gameParentPlatform);
+                return createMemberGame(cptOpenMember, gameParentPlatform, platform);
             } else {
                 CptOpenMember updateCptOpenMember = new CptOpenMember();
                 updateCptOpenMember.setId(cptOpenMember.getId());
                 updateCptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(updateCptOpenMember);
-                JSONObject jsonObject = getStartGame(cptOpenMember, gameParentPlatform.getLanguageType());
+                JSONObject jsonObject = getStartGame(cptOpenMember, gameParentPlatform.getLanguageType(), platform);
                 if (jsonObject.getInteger("errorCode").equals(0)) {
                     // 请求URL
                     ApiResponseData responseData = new ApiResponseData();
@@ -136,7 +136,7 @@ public class WmServiceImpl implements WmService {
      * @param cptOpenMember cptOpenMember
      * @return Result
      */
-    private Result createMemberGame(CptOpenMember cptOpenMember, GameParentPlatform gameParentPlatform) {
+    private Result createMemberGame(CptOpenMember cptOpenMember, GameParentPlatform gameParentPlatform, String platform) {
 
         // 用户注册
         JSONObject result = commonRequest(getLoginUrl(cptOpenMember, gameParentPlatform.getLanguageType()), null);
@@ -145,8 +145,9 @@ public class WmServiceImpl implements WmService {
         }
 
         if (0 == result.getInteger("errorCode")) {
+            externalService.saveCptOpenMember(cptOpenMember);
             // 启动游戏
-            JSONObject jsonObject = getStartGame(cptOpenMember, gameParentPlatform.getLanguageType());
+            JSONObject jsonObject = getStartGame(cptOpenMember, gameParentPlatform.getLanguageType(), platform);
             if (null == jsonObject) {
                 return Result.failed("g091087", "第三方请求异常！");
             }
@@ -180,11 +181,11 @@ public class WmServiceImpl implements WmService {
      * @param cptOpenMember、 cptOpenMember
      * @return url
      */
-    private JSONObject getStartGame(CptOpenMember cptOpenMember, String lang) {
+    private JSONObject getStartGame(CptOpenMember cptOpenMember, String lang, String platform) {
 
         StringBuilder url = new StringBuilder();
         url.append(OpenAPIProperties.WM_API_URL);
-        url.append("cmd=").append("SigninGame");
+        url.append("cmd=").append("LoginGame");
         url.append("&vendorId=").append(OpenAPIProperties.WM_VENDORID);
         url.append("&signature=").append(OpenAPIProperties.WM_SIGNATURE);
         url.append("&user=").append(cptOpenMember.getUserName());
@@ -192,7 +193,7 @@ public class WmServiceImpl implements WmService {
         url.append("&lang=").append(lang);
         url.append("&mode=").append(cptOpenMember.getUserName());
 //        url.append("&voice=").append(cptOpenMember.getUserName());
-        url.append("&timestamp=").append(System.currentTimeMillis());
+        url.append("&timestamp=").append(DateUtils.getUTC8TimeLength10());
 
         return commonRequest(url.toString(), null);
     }
@@ -211,7 +212,7 @@ public class WmServiceImpl implements WmService {
         url.append("&user=").append(cptOpenMember.getUserName());
         url.append("&password=").append(cptOpenMember.getPassword());
         url.append("&username=").append(cptOpenMember.getUserName());
-        url.append("&timestamp=").append(System.currentTimeMillis());
+        url.append("&timestamp=").append(DateUtils.getUTC8TimeLength10());
 //        url.append("&syslang=").append(lang);
         return url.toString();
     }
@@ -229,7 +230,7 @@ public class WmServiceImpl implements WmService {
         url.append("&vendorId=").append(OpenAPIProperties.WM_VENDORID);
         url.append("&signature=").append(OpenAPIProperties.WM_SIGNATURE);
         url.append("&user=").append(userAccount);
-        url.append("&timestamp=").append(System.currentTimeMillis());
+        url.append("&timestamp=").append(DateUtils.getUTC8TimeLength10());
 //        url.append("&syslang=").append(lang);
         return url.toString();
     }
