@@ -63,11 +63,12 @@ public class GameManageServiceImpl implements IGameManageService {
 
     @Override
     public List<GamePlatformRecord> queryHotGamePlatform() {
-        List<GamePlatformRecord> platformList = gamePlatformMapper.queryAllGamePlatform();
+        List<GamePlatformRecord> platformList = queryAllGamePlatform();
         if (CollectionUtil.isNotEmpty(platformList)) {
             platformList = platformList.stream()
-                    .filter(platform -> platform.getIsHotShow().equals("1"))
+                    .filter(platform -> platform.getIsHotShow().equals(1))
                     .collect(Collectors.toList());
+
         }
         return platformList;
     }
@@ -107,21 +108,24 @@ public class GameManageServiceImpl implements IGameManageService {
     public List<GameParentPlatform> queryAllGameParentPlatform() {
         List<GameParentPlatform> parentPlatformList;
         Map<Object, Object> map = RedisUtils.hmget(RedisConstants.GAME_PARENT_PLATFORM_KEY);
-        parentPlatformList = new ArrayList(map.values());
-        if (CollectionUtil.isEmpty(parentPlatformList)) {
+        List list = new ArrayList(map.values());
+
+        if (CollectionUtil.isEmpty(list)) {
             LambdaQueryWrapper<GameParentPlatform> wrapper = new LambdaQueryWrapper<>();
             parentPlatformList = gameParentPlatformMapper.selectList(wrapper);
+        }else {
+            parentPlatformList = (List<GameParentPlatform>)list.get(0);
         }
         if (CollectionUtil.isNotEmpty(parentPlatformList)) {
             parentPlatformList = parentPlatformList.stream()
-                    .filter(parentPlatform -> parentPlatform.getIsStart().equals("1"))
+                    .filter(parentPlatform -> parentPlatform.getIsStart().equals(1))
                     .collect(Collectors.toList());
         }
-        if (CollectionUtil.isNotEmpty(parentPlatformList)) {
-            parentPlatformList = parentPlatformList.stream()
-                    .filter(parentPlatform -> parentPlatform.getIsVirtual().equals("0"))
-                    .collect(Collectors.toList());
-        }
+//        if (CollectionUtil.isNotEmpty(parentPlatformList)) {
+//            parentPlatformList = parentPlatformList.stream()
+//                    .filter(parentPlatform -> parentPlatform.getIsVirtual().equals("0"))
+//                    .collect(Collectors.toList());
+//        }
         parentPlatformList.sort(Comparator.comparing(GameParentPlatform::getSortNumber));
         return parentPlatformList;
     }
@@ -131,7 +135,7 @@ public class GameManageServiceImpl implements IGameManageService {
         List<GameParentPlatform> platformList = this.queryAllGameParentPlatform();
         if (CollectionUtil.isNotEmpty(platformList)) {
             platformList = platformList.stream()
-                    .filter(platform -> platform.getIsHotShow().equals("1"))
+                    .filter(platform -> platform.getIsHotShow().equals(1))
                     .collect(Collectors.toList());
         }
         return platformList;
