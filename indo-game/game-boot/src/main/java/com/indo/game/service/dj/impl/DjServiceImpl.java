@@ -117,11 +117,11 @@ public class DjServiceImpl implements DjService {
             if (null == aeApiResponseData || "".equals(aeApiResponseData)) {
                 return Result.failed("g091087", "第三方请求异常！");
             }
-            String name = gameLogin(aeApiResponseData, platformGameParent, cptOpenMember, isMobileLogin);
+            String pathUrl = gameLogin(aeApiResponseData, platformGameParent, cptOpenMember, isMobileLogin);
 
             //登录
             ApiResponseData responseData = new ApiResponseData();
-            //  responseData.setPathUrl(builder.toString());
+            responseData.setPathUrl(pathUrl);
             return Result.success(responseData);
         } catch (Exception e) {
             e.printStackTrace();
@@ -130,23 +130,30 @@ public class DjServiceImpl implements DjService {
     }
 
     private String gameLogin(String aeApiResponseData, GameParentPlatform platformGameParent, CptOpenMember cptOpenMember, String isMobileLogin) {
+
         Map<String, String> params = new HashMap<String, String>();
         params.put("session_id", aeApiResponseData);
         params.put("lang", platformGameParent.getLanguageType());
         params.put("login_id", cptOpenMember.getUserId() + "");
         try {
+
             StringBuilder apiUrl = new StringBuilder();
-            apiUrl.append(OpenAPIProperties.DJ_API_URL).append("/api/cash/auth");
+            if ("1".equals(isMobileLogin)) {
+                apiUrl.append(OpenAPIProperties.DJ_MOBILE_URL).append("/api/cash/auth");
+            } else {
+                apiUrl.append(OpenAPIProperties.DJ_WEB_URL).append("/api/cash/auth");
+            }
+
             String result = commonRequest(apiUrl.toString(), params, cptOpenMember.getUserId(), "gameLogin");
             if (!StringUtils.isEmpty(result)) {
                 Document doc = commonXml(result);
                 String errorCode = doc.getElementsByTagName("status_code").item(0).getTextContent();
                 if (StringUtils.isEmpty(result) && errorCode.equals("00")) {
-                    return doc.getElementsByTagName("session_id").item(0).getTextContent();
+                    return doc.getElementsByTagName("url").item(0).getTextContent();
                 }
             }
         } catch (Exception e) {
-            logger.error("aelog aeGameLogin:{}", e);
+            logger.error("djLog aeGameLogin:{}", e);
             e.printStackTrace();
         }
         return "";
@@ -155,12 +162,12 @@ public class DjServiceImpl implements DjService {
     private String gameInit(CptOpenMember cptOpenMember, String isMobileLogin) {
         Map<String, String> params = new HashMap<String, String>();
         params.put("api_key", OpenAPIProperties.DJ_API_KEY);
-        params.put("agent_code", OpenAPIProperties.DJ_AGENT_CODE);
+        params.put("agent_code", "VRJ00101");
         params.put("login_id", cptOpenMember.getUserId() + "");
         params.put("name", cptOpenMember.getUserName());
         try {
             StringBuilder apiUrl = new StringBuilder();
-            apiUrl.append("https://api8745.cfb2.net").append("/get_session_id.aspx");
+            apiUrl.append(OpenAPIProperties.DJ_API_KEY).append("/get_session_id.aspx");
             String result = commonRequest(apiUrl.toString(), params, cptOpenMember.getUserId(), "gameLogin");
             if (!StringUtils.isEmpty(result)) {
                 Document doc = commonXml(result);
@@ -170,7 +177,7 @@ public class DjServiceImpl implements DjService {
                 }
             }
         } catch (Exception e) {
-            logger.error("aelog aeGameLogin:{}", e);
+            logger.error("djLog djGameLogin:{}", e);
             e.printStackTrace();
         }
         return "";
@@ -214,7 +221,7 @@ public class DjServiceImpl implements DjService {
      */
     public String commonRequest(String apiUrl, Map<String, String> params, Integer userId, String type) throws Exception {
         String resultString = GameUtil.doProxyPostJson(OpenAPIProperties.PROXY_HOST_NAME, OpenAPIProperties.PROXY_PORT, OpenAPIProperties.PROXY_TCP, apiUrl, params, type, userId);
-        logger.info("aelog {}:commonRequest type:{}, operateFlag:{}, hostName:{}, params:{}, result:{}, awcApiResponse:{}",
+        logger.info("djLog {}:commonRequest type:{}, operateFlag:{}, hostName:{}, params:{}, result:{}, awcApiResponse:{}",
                 userId, type, null, resultString, resultString, resultString);
 
       /*  logger.info("djlog  {} commonRequest userId:{},paramsMap:{}", userId, params);
