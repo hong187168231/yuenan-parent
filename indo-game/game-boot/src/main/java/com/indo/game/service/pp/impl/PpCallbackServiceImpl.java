@@ -128,6 +128,9 @@ public class PpCallbackServiceImpl implements PpCallbackService {
         try {
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(ppBetCallBackReq.getUserId());
             GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(ppBetCallBackReq.getGameId());
+            if (null == gamePlatform) {
+                return initFailureResponse(3, "游戏不存在");
+            }
             GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
 
             // 会员余额
@@ -330,6 +333,9 @@ public class PpCallbackServiceImpl implements PpCallbackService {
         try {
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(ppBonusWinCallBackReq.getUserId());
             GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(ppBonusWinCallBackReq.getGameId());
+            if (null == gamePlatform) {
+                return initFailureResponse(3, "游戏不存在");
+            }
             GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
 
             // 赢奖金额
@@ -449,6 +455,9 @@ public class PpCallbackServiceImpl implements PpCallbackService {
         try {
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(ppJackpotWinCallBackReq.getUserId());
             GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(ppJackpotWinCallBackReq.getGameId());
+            if (null == gamePlatform) {
+                return initFailureResponse(3, "游戏不存在");
+            }
             GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
 
             // 赢奖金额
