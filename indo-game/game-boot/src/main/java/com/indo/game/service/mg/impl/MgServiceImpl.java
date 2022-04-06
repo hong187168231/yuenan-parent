@@ -172,7 +172,7 @@ public class MgServiceImpl implements MgService {
             }
             params.put("langCode ", platformGameParent.getLanguageType());
             StringBuilder apiUrl = new StringBuilder();
-            apiUrl.append(OpenAPIProperties.MG_SESSION_URL).append("/agents").append(OpenAPIProperties.MG_AGENT_CODE);
+            apiUrl.append(OpenAPIProperties.MG_SESSION_URL).append("/agents/").append(OpenAPIProperties.MG_AGENT_CODE);
             apiUrl.append("/players/").append(cptOpenMemberm.getUserName()).append("/sessions");
             apiResponseData = commonRequest(apiUrl.toString(), params, cptOpenMemberm.getUserId(), "mgGameLogin");
         } catch (Exception e) {
