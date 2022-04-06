@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
-@RequestMapping("/wm/callBack")
+@RequestMapping("/wm")
 public class WmCallbackController {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -24,10 +24,29 @@ public class WmCallbackController {
     @Autowired
     private WmCallbackService wmCallbackService;
 
-
-    @RequestMapping(value = "/CallBalance", method = RequestMethod.GET)
+    @RequestMapping(value = "/callBack", method = RequestMethod.POST)
     @AllowAccess
-    public Object callBalance(@RequestBody JSONObject params, HttpServletRequest request) {
+    public Object callBack(@RequestBody JSONObject params, HttpServletRequest request) {
+        logger.info("wmCallback callBack 回调请求, params:{}", params);
+        // 查询余额
+        if ("CallBalance".equals(params.getString("cmd"))) {
+            return callBalance(params, request);
+        } else if ("PointInout".equals(params.getString("cmd"))) {
+            // 下注,回奖
+            return pointInout(params, request);
+        } else if ("TimeoutBetReturn".equals(params.getString("cmd"))) {
+            // 回滚
+            return timeoutBetReturn(params, request);
+        }
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("errorCode", 911);
+        jsonObject.put("errorMessage", "参数不正确");
+        return jsonObject;
+    }
+
+
+    private Object callBalance(JSONObject params, HttpServletRequest request) {
         String ip = IPAddressUtil.getIpAddress(request);
         logger.info("wmCallback getBalance 回调查询余额, params:{}", params);
         Object object = wmCallbackService.getBalance(params, ip);
@@ -35,9 +54,7 @@ public class WmCallbackController {
         return object;
     }
 
-    @RequestMapping(value = "/PointInout", method = RequestMethod.POST)
-    @AllowAccess
-    public Object pointInout(@RequestBody JSONObject params, HttpServletRequest request) {
+    private Object pointInout(JSONObject params, HttpServletRequest request) {
         String ip = IPAddressUtil.getIpAddress(request);
         logger.info("wmCallback pointInout 回调下注params:{}", params);
         Object object = wmCallbackService.pointInout(params, ip);
@@ -45,9 +62,7 @@ public class WmCallbackController {
         return object;
     }
 
-    @RequestMapping(value = "/TimeoutBetReturn", method = RequestMethod.POST)
-    @AllowAccess
-    public Object timeoutBetReturn(@RequestBody JSONObject params, HttpServletRequest request) {
+    private Object timeoutBetReturn(JSONObject params, HttpServletRequest request) {
         String ip = IPAddressUtil.getIpAddress(request);
         logger.info("wmCallback timeoutBetReturn 回调回退余额 params:{}", params);
         Object object = wmCallbackService.timeoutBetReturn(params, ip);
