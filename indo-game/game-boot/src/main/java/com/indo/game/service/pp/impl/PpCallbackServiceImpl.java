@@ -212,6 +212,7 @@ public class PpCallbackServiceImpl implements PpCallbackService {
             }
 
             JSONObject json = initSuccessResponse();
+            json.put("transactionId", ppBetCallBackReq.getReference());
             json.put("currency", platformGameParent.getCurrencyType());
             json.put("cash", balance);
             json.put("bonus", BigDecimal.ZERO);
@@ -300,6 +301,7 @@ public class PpCallbackServiceImpl implements PpCallbackService {
             }
 
             JSONObject json = initSuccessResponse();
+            json.put("transactionId", ppResultCallBackReq.getReference());
             json.put("currency", platformGameParent.getCurrencyType());
             json.put("cash", balance);
             json.put("bonus", BigDecimal.ZERO);

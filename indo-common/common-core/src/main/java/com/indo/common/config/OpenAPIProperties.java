@@ -210,9 +210,15 @@ public class OpenAPIProperties implements InitializingBean {
     private String kaPartnerName;
 
 
+    public static String DJ_WEB_URL;
+    public static String DJ_MOBILE_URL;
     public static String DJ_API_URL;
     public static String DJ_API_KEY;
     public static String DJ_AGENT_CODE;
+    @Value("${s128.apiWebUrl}")
+    private String djApiWebUrl;
+    @Value("${s128.apiMoblieUrl}")
+    private String djApiMoblieUrl;
     @Value("${s128.apiUrl}")
     private String djApiUrl;
     @Value("${s128.apiKey}")
@@ -406,7 +412,8 @@ public class OpenAPIProperties implements InitializingBean {
         DJ_API_URL = djApiUrl;
         DJ_API_KEY = djApiKey;
         DJ_AGENT_CODE = djAgentCode;
-
+        DJ_WEB_URL = djApiWebUrl;
+        DJ_MOBILE_URL = djApiMoblieUrl;
 
         FC_API_URL = fcApiUrl;
         FC_AGENT_CODE = fcAgentCode;
