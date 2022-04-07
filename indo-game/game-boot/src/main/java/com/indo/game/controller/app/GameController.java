@@ -286,7 +286,7 @@ public class GameController {
             if ("RICH".equals(platform)) {
                 resultInfo = rich88Service.logout(loginUser, platform, ip);
             }
-            if ("DJ".equals(platform)) {
+            if ("S128".equals(platform)) {
                 resultInfo = djService.logout(loginUser, platform, ip);
             }
             if ("JILI".equals(platform)) {

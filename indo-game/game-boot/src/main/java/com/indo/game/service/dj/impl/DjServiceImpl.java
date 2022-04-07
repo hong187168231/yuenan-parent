@@ -29,6 +29,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -101,11 +103,11 @@ public class DjServiceImpl implements DjService {
                 cptOpenMember.setUserName(loginUser.getAccount());
                 cptOpenMember.setPassword(SnowflakeId.generateId().toString());
                 cptOpenMember.setUserId(loginUser.getId().intValue());
-                cptOpenMember.setCreateTime(new Date());
                 cptOpenMember.setLoginTime(new Date());
+                cptOpenMember.setCreateTime(new Date());
                 cptOpenMember.setType(parentName);
                 //创建玩家
-                externalService.saveCptOpenMember(cptOpenMember);
+                createGameUser(cptOpenMember);
             } else {
                 CptOpenMember updateCptOpenMember = new CptOpenMember();
                 updateCptOpenMember.setPassword(SnowflakeId.generateId().toString());
@@ -119,9 +121,10 @@ public class DjServiceImpl implements DjService {
             }
             String pathUrl = gameLogin(aeApiResponseData, platformGameParent, cptOpenMember, isMobileLogin);
 
+            String apiUrl = replaceAllBlank(pathUrl);
             //登录
             ApiResponseData responseData = new ApiResponseData();
-            responseData.setPathUrl(pathUrl);
+            responseData.setPathUrl(apiUrl);
             return Result.success(responseData);
         } catch (Exception e) {
             e.printStackTrace();
@@ -138,20 +141,18 @@ public class DjServiceImpl implements DjService {
         try {
 
             StringBuilder apiUrl = new StringBuilder();
-            if ("1".equals(isMobileLogin)) {
-                apiUrl.append(OpenAPIProperties.DJ_MOBILE_URL).append("/api/cash/auth");
-            } else {
-                apiUrl.append(OpenAPIProperties.DJ_WEB_URL).append("/api/cash/auth");
-            }
+            apiUrl.append(OpenAPIProperties.DJ_MOBILE_URL).append("/api/cash/auth");
 
-            String result = commonRequest(apiUrl.toString(), params, cptOpenMember.getUserId(), "gameLogin");
-            if (!StringUtils.isEmpty(result)) {
-                Document doc = commonXml(result);
-                String errorCode = doc.getElementsByTagName("status_code").item(0).getTextContent();
-                if (StringUtils.isEmpty(result) && errorCode.equals("00")) {
-                    return doc.getElementsByTagName("url").item(0).getTextContent();
-                }
-            }
+            StringBuilder html = new StringBuilder();
+            html.append("<html><head></head><body>");
+            html.append("<form name=\"myform\" action=\"").append(apiUrl.toString()).append("\" method=\"post\" /> ");
+            html.append("<input type=\"hidden\" name=\"session_id\" value=\"").append(aeApiResponseData).append("\" /> ");
+            html.append("<input type=\"hidden\" name=\"lang\" value=\"").append(platformGameParent.getLanguageType()).append("\" /> ");
+            html.append("<input type=\"hidden\" name=\"login_id\" value=\"").append(cptOpenMember.getUserId()).append("\" /> ");
+            html.append("<input id=\"fingerprint\" name=\"fingerprint\" value=\"\" type=\"hidden\" />");
+            html.append("</form><script type=\"text/javascript\"> document.myform.submit(); </script> </body></html>");
+
+            return html.toString();
         } catch (Exception e) {
             logger.error("djLog aeGameLogin:{}", e);
             e.printStackTrace();
@@ -162,22 +163,46 @@ public class DjServiceImpl implements DjService {
     private String gameInit(CptOpenMember cptOpenMember, String isMobileLogin) {
         Map<String, String> params = new HashMap<String, String>();
         params.put("api_key", OpenAPIProperties.DJ_API_KEY);
-        params.put("agent_code", "VRJ00101");
+        params.put("agent_code", OpenAPIProperties.DJ_AGENT_CODE);
         params.put("login_id", cptOpenMember.getUserId() + "");
         params.put("name", cptOpenMember.getUserName());
         try {
             StringBuilder apiUrl = new StringBuilder();
-            apiUrl.append(OpenAPIProperties.DJ_API_KEY).append("/get_session_id.aspx");
+            apiUrl.append(OpenAPIProperties.DJ_API_URL).append("/get_session_id.aspx");
             String result = commonRequest(apiUrl.toString(), params, cptOpenMember.getUserId(), "gameLogin");
             if (!StringUtils.isEmpty(result)) {
                 Document doc = commonXml(result);
                 String errorCode = doc.getElementsByTagName("status_code").item(0).getTextContent();
-                if (StringUtils.isEmpty(result) && errorCode.equals("00")) {
+                if (StringUtils.isNotEmpty(result) && errorCode.equals("00")) {
                     return doc.getElementsByTagName("session_id").item(0).getTextContent();
                 }
             }
         } catch (Exception e) {
             logger.error("djLog djGameLogin:{}", e);
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+
+    private String createGameUser(CptOpenMember cptOpenMember) {
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("api_key", OpenAPIProperties.DJ_API_KEY);
+        params.put("agent_code", OpenAPIProperties.DJ_AGENT_CODE);
+        params.put("login_id", cptOpenMember.getUserId() + "");
+        try {
+            StringBuilder apiUrl = new StringBuilder();
+            apiUrl.append(OpenAPIProperties.DJ_API_URL).append("/active_player.aspx");
+            String result = commonRequest(apiUrl.toString(), params, cptOpenMember.getUserId(), "djCreateGameUser");
+            if (!StringUtils.isEmpty(result)) {
+                Document doc = commonXml(result);
+                String errorCode = doc.getElementsByTagName("status_code").item(0).getTextContent();
+                if (StringUtils.isNotEmpty(result) && errorCode.equals("00")) {
+                    externalService.saveCptOpenMember(cptOpenMember);
+                }
+            }
+        } catch (Exception e) {
+            logger.error("djLog createGameUser:{}", e);
             e.printStackTrace();
         }
         return "";
@@ -198,12 +223,12 @@ public class DjServiceImpl implements DjService {
             params.put("api_key", OpenAPIProperties.DJ_API_KEY);
             params.put("agent_code", OpenAPIProperties.DJ_AGENT_CODE);
             params.put("login_id", loginUser.getId() + "");
-            apiUrl.append(OpenAPIProperties.DJ_API_URL).append("/disable_player.aspx");
+            apiUrl.append(OpenAPIProperties.DJ_API_URL).append("/kickout_player.aspx");
             String result = commonRequest(apiUrl.toString(), params, loginUser.getId().intValue(), "gameLogin");
             if (!StringUtils.isEmpty(result)) {
                 Document doc = commonXml(result);
                 String errorCode = doc.getElementsByTagName("status_code").item(0).getTextContent();
-                if (StringUtils.isEmpty(result) && errorCode.equals("00")) {
+                if (StringUtils.isNotEmpty(result) && errorCode.equals("00")) {
                     return Result.success();
                 }
             }
@@ -223,14 +248,6 @@ public class DjServiceImpl implements DjService {
         String resultString = GameUtil.doProxyPostJson(OpenAPIProperties.PROXY_HOST_NAME, OpenAPIProperties.PROXY_PORT, OpenAPIProperties.PROXY_TCP, apiUrl, params, type, userId);
         logger.info("djLog {}:commonRequest type:{}, operateFlag:{}, hostName:{}, params:{}, result:{}, awcApiResponse:{}",
                 userId, type, null, resultString, resultString, resultString);
-
-      /*  logger.info("djlog  {} commonRequest userId:{},paramsMap:{}", userId, params);
-        String repXML = HttpUtils.doGet(apiUrl, params);
-        logger.info("djlog  apiResponse:" + repXML);
-        if (StringUtils.isNotEmpty(repXML)) {
-            logger.info("djlog  {}:commonRequest type:{}, operateFlag:{}, hostName:{}, params:{}, result:{}, awcApiResponse:{}",
-                    userId, type, null, params, repXML, repXML);
-        }*/
         return resultString;
     }
 
@@ -247,5 +264,19 @@ public class DjServiceImpl implements DjService {
             log.error("djlog commonXml error {}", e);
             return doc;
         }
+    }
+
+    public static String replaceAllBlank(String str) {
+        String s = "";
+        if (str != null) {
+            Pattern p = Pattern.compile("\\*|");
+            /*\n 回车(\u000a)
+            \t 水平制表符(\u0009)
+            \s 空格(\u0008)
+            \r 换行(\u000d)*/
+            Matcher m = p.matcher(str);
+            s = m.replaceAll("");
+        }
+        return s;
     }
 }

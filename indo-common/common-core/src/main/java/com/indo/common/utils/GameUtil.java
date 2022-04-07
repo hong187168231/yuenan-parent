@@ -1,6 +1,7 @@
 package com.indo.common.utils;
 
 import com.alibaba.fastjson.JSONObject;
+
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
@@ -26,6 +27,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -495,7 +497,9 @@ public class GameUtil extends HttpCommonUtils {
             //不复用TCP SOCKET
             httpPost.setHeader("connection", "close");
             httpPost.setHeader("Content-Type", "application/x-www-form-urlencoded");
-            httpPost.setHeader("Authorization", header);
+            if (!StringUtils.isEmpty(header)) {
+                httpPost.setHeader("Authorization", header);
+            }
             List<BasicNameValuePair> list = new ArrayList<>();
             for (String key : paramsMap.keySet()) {
                 list.add(new BasicNameValuePair(key, String.valueOf(paramsMap.get(key))));
@@ -527,11 +531,6 @@ public class GameUtil extends HttpCommonUtils {
 
     /**
      * T9电子API请求
-     *
-     * @param url
-     * @param body
-     * @param headers
-     * @return
      */
     public static String postJson(String url, Map<String, Object> body, Map<String, String> headers) {
         logger.info("POST请求 postJson url:{}", url);
@@ -586,10 +585,6 @@ public class GameUtil extends HttpCommonUtils {
 
     /**
      * PP电子 form表单请求
-     *
-     * @param url
-     * @param body
-     * @return
      */
     public static String postForm4PP(String url, Map<String, Object> body, String method) {
         logger.info("POST请求 postJson url:{}, method: {}", url, method);
