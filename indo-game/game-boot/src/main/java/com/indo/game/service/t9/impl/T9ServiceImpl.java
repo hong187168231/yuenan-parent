@@ -105,6 +105,14 @@ public class T9ServiceImpl implements T9Service {
                 updateCptOpenMember.setId(cptOpenMember.getId());
                 updateCptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(updateCptOpenMember);
+
+                Map<String, Object> params = new HashMap<>();
+                params.put("playerID", loginUser.getAccount());
+                params.put("actionType", "0");
+                params.put("checkValue", getCheckValue("0"));
+
+                // 退出游戏
+                commonRequest(getLogOutT9PlayerUrl(), params, loginUser.getId());
             }
 
             // 启动游戏
