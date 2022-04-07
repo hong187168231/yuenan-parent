@@ -90,6 +90,9 @@ public class WmServiceImpl implements WmService {
                 updateCptOpenMember.setId(cptOpenMember.getId());
                 updateCptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(updateCptOpenMember);
+                // 先退出
+                commonRequest(getLoginOutUrl(loginUser.getAccount()), null);
+
                 JSONObject jsonObject = getStartGame(cptOpenMember, gameParentPlatform.getLanguageType(), platform);
                 if (jsonObject.getInteger("errorCode").equals(0)) {
                     // 请求URL

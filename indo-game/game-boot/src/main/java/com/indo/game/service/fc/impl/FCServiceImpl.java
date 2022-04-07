@@ -88,6 +88,20 @@ public class FCServiceImpl implements FCService {
                 updateCptOpenMember.setId(cptOpenMember.getId());
                 updateCptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(updateCptOpenMember);
+
+                // 先退出
+                Map<String, Object> loginouotParam = new HashMap<>();
+                loginouotParam.put("MemberAccount", loginUser.getAccount());
+
+                Map<String, Object> param = new HashMap<>();
+                param.put("AgentCode", OpenAPIProperties.FC_AGENT_CODE);
+                param.put("Currency", gameParentPlatform.getCurrencyType());
+                param.put("Params", FCHashAESEncrypt.encrypt(JSONObject.toJSONString(loginouotParam), OpenAPIProperties.FC_AGENT_KEY));
+                param.put("Sign", FCHashAESEncrypt.encryptMd5(JSONObject.toJSONString(loginouotParam)));
+
+                String url = OpenAPIProperties.FC_API_URL + "/KickOut";
+                JSONObject.parseObject(GameUtil.postForm4PP(url, param, null), FCApiCommonResp.class);
+
             }
 
             return getPlayerGameUrl(cptOpenMember.getUserName(), platform, gameParentPlatform.getCurrencyType(), gameParentPlatform.getLanguageType());

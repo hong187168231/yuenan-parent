@@ -91,6 +91,8 @@ public class Rich88ServiceImpl implements Rich88Service {
                 updateCptOpenMember.setId(cptOpenMember.getId());
                 updateCptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(updateCptOpenMember);
+                // 先退出
+                commonRequest(getLoginOutUrl(loginUser.getAccount()), null, loginUser.getId());
             }
 
             // 第一次登录自动创建玩家, 后续登录返回登录游戏URL

@@ -88,11 +88,20 @@ public class CmdServiceImpl implements CmdService {
                 updateCptOpenMember.setId(cptOpenMember.getId());
                 updateCptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(updateCptOpenMember);
-                // 请求URL
-                ApiResponseData responseData = new ApiResponseData();
-                responseData.setPathUrl(getStartGame(cptOpenMember, gameParentPlatform.getCurrencyType(),
-                        gameParentPlatform.getLanguageType(), isMobileLogin));
-                return Result.success(responseData);
+
+                String returnResult = GameUtil.httpGetWithCookies(getLoginOutUrl(loginUser.getAccount()), null, null);
+                JSONObject result = JSONObject.parseObject(returnResult);
+
+                if (0 == result.getInteger("Code")) {
+                    // 请求URL
+                    ApiResponseData responseData = new ApiResponseData();
+                    responseData.setPathUrl(getStartGame(cptOpenMember, gameParentPlatform.getCurrencyType(),
+                            gameParentPlatform.getLanguageType(), isMobileLogin));
+                    return Result.success(responseData);
+                } else {
+                    return errorCode(result.getString("Code"), result.getString("Message"));
+                }
+
             }
 
 

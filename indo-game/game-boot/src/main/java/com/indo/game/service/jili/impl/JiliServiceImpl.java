@@ -92,6 +92,10 @@ public class JiliServiceImpl implements JiliService {
                 updateCptOpenMember.setId(cptOpenMember.getId());
                 updateCptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(updateCptOpenMember);
+
+                Map<String, Object> params = new HashMap<>();
+                params.put("Account", loginUser.getAccount());
+                GameUtil.postForm4PP(getLoginOutUrl(loginUser.getAccount()), params, null);
                 // 请求URL
                 ApiResponseData responseData = new ApiResponseData();
                 responseData.setPathUrl(getStartGame(cptOpenMember, platform, gameParentPlatform.getLanguageType()));

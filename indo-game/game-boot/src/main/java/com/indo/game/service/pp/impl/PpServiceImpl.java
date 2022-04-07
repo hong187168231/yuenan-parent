@@ -102,6 +102,9 @@ public class PpServiceImpl implements PpService {
                 updateCptOpenMember.setId(cptOpenMember.getId());
                 updateCptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(updateCptOpenMember);
+
+                // 退出游戏
+                loginOutPP(loginUser);
             }
 
             PpApiStartGameReq ppApiRequestData = new PpApiStartGameReq();
@@ -120,17 +123,8 @@ public class PpServiceImpl implements PpService {
     public Result logout(LoginInfo loginUser, String platform, String ip) {
         logger.info("pplogout ppGame account:{},t9CodeId:{}", loginUser.getId(), loginUser.getAccount(), platform);
         try {
-            PpApiRequestData ppApiRequestData = new PpApiRequestData();
-            ppApiRequestData.setSecureLogin(OpenAPIProperties.PP_SECURE_LOGIN);
-            ppApiRequestData.setExternalPlayerId(loginUser.getAccount());
-
-            // 获取请求参数
-            Map<String, Object> params = getPostParams(ppApiRequestData);
-
             // 退出游戏
-            PpApiResponseData ppCommonResp = commonRequest(
-                    getLogOutPpPlayerUrl(), params,
-                    loginUser.getId(), "loginoutPP");
+            PpApiResponseData ppCommonResp = loginOutPP(loginUser);
 
             if (0 == ppCommonResp.getError()) {
                 return Result.success(ppCommonResp);
@@ -141,6 +135,18 @@ public class PpServiceImpl implements PpService {
             e.printStackTrace();
             return Result.failed("g100104", "网络繁忙，请稍后重试！");
         }
+    }
+
+    private PpApiResponseData loginOutPP(LoginInfo loginUser) throws Exception {
+        PpApiRequestData ppApiRequestData = new PpApiRequestData();
+        ppApiRequestData.setSecureLogin(OpenAPIProperties.PP_SECURE_LOGIN);
+        ppApiRequestData.setExternalPlayerId(loginUser.getAccount());
+
+        // 获取请求参数
+        Map<String, Object> params = getPostParams(ppApiRequestData);
+
+        // 退出游戏
+        return commonRequest(getLogOutPpPlayerUrl(), params, loginUser.getId(), "loginoutPP");
     }
 
     @Override

@@ -116,7 +116,13 @@ public class SboServiceImpl implements SboService {
                 updateCptOpenMember.setId(cptOpenMember.getId());
                 updateCptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(updateCptOpenMember);
-                //登录
+
+                // 先退出
+                SboPlayerLogoutJsonDTO sboPlayerLogoutJsonDTO = new SboPlayerLogoutJsonDTO();
+                sboPlayerLogoutJsonDTO.setUsername(loginUser.getAccount());
+                commonRequest(sboPlayerLogoutJsonDTO, OpenAPIProperties.SBO_API_URL + "/web-root/restricted/player/logout.aspx", Integer.valueOf(loginUser.getId().intValue()), ip, "logout");
+
+                    //登录
                 return initGame(gameParentPlatform,loginUser, gamePlatform, ip);
             }
         } catch (Exception e) {
