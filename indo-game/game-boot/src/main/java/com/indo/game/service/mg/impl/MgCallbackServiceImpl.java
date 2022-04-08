@@ -121,7 +121,7 @@ public class MgCallbackServiceImpl implements MgCallbackService {
 
         if ("CREDIT".equals(mgCallBackReq.getTxnType())) {//赢
             balance = balance.add(mgCallBackReq.getAmount());
-            gameCommonService.updateUserBalance(memBaseinfo, mgCallBackReq.getAmount(), GoldchangeEnum.PLACE_BET, TradingEnum.INCOME);
+            gameCommonService.updateUserBalance(memBaseinfo, mgCallBackReq.getAmount(), GoldchangeEnum.DSFYXZZ, TradingEnum.INCOME);
         }
         if ("DEBIT".equals(mgCallBackReq.getTxnType())) {//输
             if (memBaseinfo.getBalance().compareTo(mgCallBackReq.getAmount()) == -1) {
@@ -130,7 +130,7 @@ public class MgCallbackServiceImpl implements MgCallbackService {
                 return dataJson;
             }
             balance = balance.subtract(mgCallBackReq.getAmount());
-            gameCommonService.updateUserBalance(memBaseinfo, mgCallBackReq.getAmount(), GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
+            gameCommonService.updateUserBalance(memBaseinfo, mgCallBackReq.getAmount(), GoldchangeEnum.DSFYXZZ, TradingEnum.SPENDING);
         }
 
 

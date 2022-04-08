@@ -126,11 +126,11 @@ public class MgServiceImpl implements MgService {
 
     private JSONObject gameToken(Integer userId) {
         Map<String, String> map = new HashMap<>();
-        map.put("client_id", "ZF168vndag");
-        map.put("client_secret", "9a6bb22edf2842cfa32ee01a2c34fd");
+        map.put("client_id", OpenAPIProperties.MG_CLIENT_ID);
+        map.put("client_secret", OpenAPIProperties.MG_CLIENT_SECRET);
         map.put("grant_type", "client_credentials");
         StringBuilder builder = new StringBuilder();
-        builder.append(OpenAPIProperties.MG_API_URL).append("/connect/token");
+        builder.append(OpenAPIProperties.MG_TOKEN_URL).append("/connect/token");
         JSONObject apiResponseData = null;
         try {
             apiResponseData = commonRequest(builder.toString(), map, userId, "", "createMgToken");

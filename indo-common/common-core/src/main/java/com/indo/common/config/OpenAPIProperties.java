@@ -325,14 +325,33 @@ public class OpenAPIProperties implements InitializingBean {
 
     //MG
     public static String MG_AGENT_CODE;
+    public static String MG_CLIENT_ID;
+    public static String MG_CLIENT_SECRET;
     public static String MG_API_URL;
+    public static String MG_TOKEN_URL;
     public static String MG_SESSION_URL;
     @Value("${mg.apiUrl}")
     private String mgApiurl;
+    @Value("${mg.tokenUrl}")
+    private String mgTokenUrl;
     @Value("${mg.sessionUrl}")
     private String mgSessionUrl;
     @Value("${mg.agentCode}")
     private String mgAgentCode;
+    @Value("${mg.clientId}")
+    private String mgClientId;
+    @Value("${mg.clientSecret}")
+    private String mgClientSecret;
+
+    public static String DG_API_URL;
+    public static String DG_AGENT_NAME;
+    public static String DG_API_KEY;
+    @Value("${dg.apiUrl}")
+    private String dgApiurl;
+    @Value("${dg.agentName}")
+    private String dgAgentName;
+    @Value("${dg.apiKey}")
+    private String dgApiKey;
 
     @Override
     public void afterPropertiesSet() {
@@ -452,6 +471,14 @@ public class OpenAPIProperties implements InitializingBean {
 
         MG_AGENT_CODE = mgAgentCode;
         MG_API_URL = mgApiurl;
+        MG_CLIENT_ID = mgClientId;
+        MG_CLIENT_SECRET = mgClientSecret;
+        MG_TOKEN_URL = mgTokenUrl;
         MG_SESSION_URL = mgSessionUrl;
+
+
+        DG_API_URL = djApiUrl;
+        DG_AGENT_NAME = dgAgentName;
+        DG_API_KEY = dgApiKey;
     }
 }

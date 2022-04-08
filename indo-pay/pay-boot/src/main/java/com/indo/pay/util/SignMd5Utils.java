@@ -379,4 +379,5 @@ public class SignMd5Utils {
         stringBuilder.append(encoded).append(code);
         return stringBuilder.toString();
     }
+
 }
