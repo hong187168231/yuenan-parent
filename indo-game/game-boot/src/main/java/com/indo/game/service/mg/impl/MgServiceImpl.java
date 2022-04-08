@@ -161,9 +161,7 @@ public class MgServiceImpl implements MgService {
 
     private JSONObject createMember(CptOpenMember cptOpenMember, String token) {
         Map<String, String> map = new HashMap<>();
-        map.put("grant_type", "client_credentials");
-        map.put("client_id", cptOpenMember.getUserName());
-        map.put("client_secret", cptOpenMember.getUserName());
+        map.put("playerId", cptOpenMember.getUserName());
         StringBuilder builder = new StringBuilder();
         builder.append(OpenAPIProperties.MG_API_URL).append("/agents/")
                 .append(OpenAPIProperties.MG_AGENT_CODE).append("/players");
