@@ -14,6 +14,7 @@ import com.indo.game.service.ae.AeService;
 import com.indo.game.service.awc.AwcService;
 import com.indo.game.service.cmd.CmdService;
 import com.indo.game.service.cq.CqService;
+import com.indo.game.service.dg.DgService;
 import com.indo.game.service.dj.DjService;
 import com.indo.game.service.fc.FCService;
 import com.indo.game.service.jdb.JdbService;
@@ -102,6 +103,8 @@ public class GameController {
     private CmdService cmdService;
     @Autowired
     private WmService wmService;
+    @Autowired
+    private DgService dgService;
     @Autowired
     private RedissonClient redissonClient;
     @Resource
@@ -210,6 +213,9 @@ public class GameController {
                 if ("WM".equals(parentName)) {
                     resultInfo = wmService.wmGame(loginUser, isMobileLogin, ip, platform, parentName);
                 }
+                if ("DG".equals(parentName)) {
+                    resultInfo = dgService.dgGame(loginUser, isMobileLogin, ip, platform, parentName);
+                }
 
                 if (resultInfo == null) {
                     log.info("登录平台或单一游戏登录log {} loginPlatform result is null. params:{},ip:{},parentName:{}", loginUser.getId(), params, ip, parentName);
@@ -306,6 +312,9 @@ public class GameController {
             }
             if ("MG".equals(platform)) {
                 resultInfo = mgService.logout(loginUser, platform, ip);
+            }
+            if ("DG".equals(platform)) {
+                resultInfo = dgService.logout(loginUser, platform, ip);
             }
             if (resultInfo == null) {
                 log.info("退出平台log {} loginPlatform result is null. params:{},ip:{}", loginUser.getId(), params, ip);
