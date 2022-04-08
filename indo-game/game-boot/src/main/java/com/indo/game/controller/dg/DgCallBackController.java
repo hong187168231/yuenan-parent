@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
-@RequestMapping("/cq")
+@RequestMapping("/dg/callBack")
 public class DgCallBackController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
