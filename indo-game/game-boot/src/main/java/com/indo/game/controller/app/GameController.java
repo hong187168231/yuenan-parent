@@ -12,6 +12,7 @@ import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.IPUtils;
 import com.indo.game.service.ae.AeService;
 import com.indo.game.service.awc.AwcService;
+import com.indo.game.service.bti.BtiService;
 import com.indo.game.service.cmd.CmdService;
 import com.indo.game.service.cq.CqService;
 import com.indo.game.service.dg.DgService;
@@ -105,6 +106,8 @@ public class GameController {
     private WmService wmService;
     @Autowired
     private DgService dgService;
+    @Autowired
+    private BtiService btiService;
     @Autowired
     private RedissonClient redissonClient;
     @Resource
@@ -216,6 +219,9 @@ public class GameController {
                 if ("DG".equals(parentName)) {
                     resultInfo = dgService.dgGame(loginUser, isMobileLogin, ip, platform, parentName);
                 }
+                if ("BTi".equals(parentName)) {
+                    resultInfo = btiService.btiGame(loginUser, isMobileLogin, ip, platform, parentName);
+                }
 
                 if (resultInfo == null) {
                     log.info("登录平台或单一游戏登录log {} loginPlatform result is null. params:{},ip:{},parentName:{}", loginUser.getId(), params, ip, parentName);
@@ -315,6 +321,9 @@ public class GameController {
             }
             if ("DG".equals(platform)) {
                 resultInfo = dgService.logout(loginUser, platform, ip);
+            }
+            if ("BTi".equals(platform)) {
+                resultInfo = btiService.logout(loginUser, platform, ip);
             }
             if (resultInfo == null) {
                 log.info("退出平台log {} loginPlatform result is null. params:{},ip:{}", loginUser.getId(), params, ip);
