@@ -353,6 +353,14 @@ public class OpenAPIProperties implements InitializingBean {
     @Value("${dg.apiKey}")
     private String dgApiKey;
 
+    // BTI
+    public static String BTI_API_URL;
+    public static String BTI_PLATFORM_CODE;
+    @Value("${bti.apiUrl}")
+    private String btiApiurl;
+    @Value("${bti.platformCode:BTI}")
+    private String btiPlatformCode;
+
     @Override
     public void afterPropertiesSet() {
 
@@ -480,5 +488,8 @@ public class OpenAPIProperties implements InitializingBean {
         DG_API_URL = dgApiurl;
         DG_AGENT_NAME = dgAgentName;
         DG_API_KEY = dgApiKey;
+
+        BTI_API_URL = btiApiurl;
+        BTI_PLATFORM_CODE = btiPlatformCode;
     }
 }
