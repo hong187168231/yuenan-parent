@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.indo.common.config.OpenAPIProperties;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
+import com.indo.common.result.ResultCode;
 import com.indo.common.utils.GameUtil;
 import com.indo.game.common.util.RandomGUID;
 import com.indo.game.common.util.SnowflakeId;
@@ -101,12 +102,16 @@ public class MgServiceImpl implements MgService {
                 cptOpenMember.setLoginTime(new Date());
                 cptOpenMember.setType(parentName);
                 //创建玩家
-                createMemberGame(cptOpenMember, tokenJson.getString("access_token"));
+                Result result = createMemberGame(cptOpenMember, tokenJson.getString("access_token"));
+                if (!ResultCode.SUCCESS.equals(result.getCode())) {
+                    return Result.failed("g091087", "第三方请求异常！");
+                }
             } else {
                 CptOpenMember updateCptOpenMember = new CptOpenMember();
                 updateCptOpenMember.setId(cptOpenMember.getId());
                 updateCptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(updateCptOpenMember);
+                logout(loginUser, platform, ip);
             }
 
             JSONObject jsonObject = gameLogin(platformGameParent, gamePlatform, cptOpenMember, isMobileLogin, tokenJson.getString("access_token"));

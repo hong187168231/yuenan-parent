@@ -112,6 +112,7 @@ public class DgServiceImpl implements DgService {
                 updateCptOpenMember.setId(cptOpenMember.getId());
                 updateCptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(updateCptOpenMember);
+                logout(loginUser, platform, ip);
             }
 
             JSONObject apiResponseData = gameLogin(platformGameParent, cptOpenMember);

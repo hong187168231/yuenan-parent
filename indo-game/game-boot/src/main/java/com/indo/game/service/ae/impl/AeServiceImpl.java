@@ -107,9 +107,9 @@ public class AeServiceImpl implements AeService {
                 updateCptOpenMember.setId(cptOpenMember.getId());
                 updateCptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(updateCptOpenMember);
+                //先登出
+                logout(loginUser, platform, ip);
             }
-            //先登出
-            logout(loginUser, platform, ip);
             //登录
             return initGame(platformGameParent, gamePlatform, cptOpenMember, isMobileLogin);
         } catch (Exception e) {

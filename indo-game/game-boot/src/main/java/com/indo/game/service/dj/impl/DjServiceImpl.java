@@ -107,13 +107,17 @@ public class DjServiceImpl implements DjService {
                 cptOpenMember.setCreateTime(new Date());
                 cptOpenMember.setType(parentName);
                 //创建玩家
-                createGameUser(cptOpenMember);
+                String name = createGameUser(cptOpenMember);
+                if (StringUtils.isEmpty(name)) {
+                    return Result.failed("g091087", "第三方请求异常！");
+                }
             } else {
                 CptOpenMember updateCptOpenMember = new CptOpenMember();
                 updateCptOpenMember.setPassword(SnowflakeId.generateId().toString());
                 updateCptOpenMember.setLoginTime(new Date());
                 updateCptOpenMember.setId(cptOpenMember.getId());
                 externalService.updateCptOpenMember(updateCptOpenMember);
+                logout(loginUser, platform, ip);
             }
             String aeApiResponseData = gameInit(cptOpenMember, isMobileLogin);
             if (null == aeApiResponseData || "".equals(aeApiResponseData)) {
@@ -199,6 +203,7 @@ public class DjServiceImpl implements DjService {
                 String errorCode = doc.getElementsByTagName("status_code").item(0).getTextContent();
                 if (StringUtils.isNotEmpty(result) && errorCode.equals("00")) {
                     externalService.saveCptOpenMember(cptOpenMember);
+                    return "ok";
                 }
             }
         } catch (Exception e) {

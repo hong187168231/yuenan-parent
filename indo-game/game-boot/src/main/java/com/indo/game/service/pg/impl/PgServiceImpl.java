@@ -104,9 +104,9 @@ public class PgServiceImpl implements PgService {
                 updateCptOpenMember.setId(cptOpenMember.getId());
                 updateCptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(updateCptOpenMember);
+                logout(loginUser, platform, ip);
             }
 
-            logout(loginUser, platform, ip);
             StringBuilder builder = new StringBuilder();
             builder.append(OpenAPIProperties.PG_LOGIN_URL).append("/web-lobby/games/?");
             builder.append("operator_token=").append(OpenAPIProperties.PG_API_TOKEN);
