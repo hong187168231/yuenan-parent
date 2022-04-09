@@ -102,6 +102,7 @@ public class YlServiceImpl implements YlService {
                 updateCptOpenMember.setId(cptOpenMember.getId());
                 updateCptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(updateCptOpenMember);
+                logout(loginUser, platform, ip);
             }
             //获取KEY
             String apiKey = initGame(platformGameParent, cptOpenMember);
