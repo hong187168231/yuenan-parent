@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.indo.common.config.OpenAPIProperties;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
+import com.indo.common.result.ResultCode;
 import com.indo.common.utils.GameUtil;
 import com.indo.common.utils.RandomUtil;
 import com.indo.game.common.util.RandomGUID;
@@ -102,7 +103,10 @@ public class DgServiceImpl implements DgService {
                 cptOpenMember.setLoginTime(new Date());
                 cptOpenMember.setType(parentName);
                 //创建玩家
-                createMemberGame(platformGameParent, cptOpenMember);
+                Result result = createMemberGame(platformGameParent, cptOpenMember);
+                if (!ResultCode.SUCCESS.equals(result.getCode())) {
+                    return Result.failed("g091087", "第三方请求异常！");
+                }
             } else {
                 CptOpenMember updateCptOpenMember = new CptOpenMember();
                 updateCptOpenMember.setId(cptOpenMember.getId());
@@ -160,6 +164,7 @@ public class DgServiceImpl implements DgService {
         String sign = DigestUtils.md5Hex(stringBuilder.toString());
         map.put("token", sign);
         map.put("random", random);
+        map.put("data", "J");
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("username", cptOpenMember.getUserName());
         jsonObject.put("password", cptOpenMember.getPassword());

@@ -477,7 +477,7 @@ public class OpenAPIProperties implements InitializingBean {
         MG_SESSION_URL = mgSessionUrl;
 
 
-        DG_API_URL = djApiUrl;
+        DG_API_URL = dgApiurl;
         DG_AGENT_NAME = dgAgentName;
         DG_API_KEY = dgApiKey;
     }
