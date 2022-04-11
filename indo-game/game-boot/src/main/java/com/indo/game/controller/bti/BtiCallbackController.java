@@ -59,6 +59,7 @@ public class BtiCallbackController {
     @AllowAccess
     public Object debitReserve(HttpServletRequest request) {
         String ip = IPAddressUtil.getIpAddress(request);
+        String reqId = request.getParameter("req_id");
         BtiReserveBetsRequest reserveBetsRequest = null;
         try {
             String params = PostRawParamsParseUtil.getRequestPostBytes(request);
@@ -67,7 +68,7 @@ public class BtiCallbackController {
             logger.error("BtiCallback debitReserve 转换失败", e);
         }
         logger.info("BtiCallback debitReserve 回调, params:{}", JSONObject.toJSONString(reserveBetsRequest));
-        Object object = btiCallbackService.debitReserve(reserveBetsRequest, ip);
+        Object object = btiCallbackService.debitReserve(reserveBetsRequest, ip, reqId);
         logger.info("BtiCallback debitReserve 回调返回数据 params:{}", object);
         return object;
     }
@@ -111,6 +112,7 @@ public class BtiCallbackController {
     @AllowAccess
     public Object debitCustomer(HttpServletRequest request) {
         String ip = IPAddressUtil.getIpAddress(request);
+        String reqId = request.getParameter("req_id");
         BtiCreditRequest btiCreditRequest = null;
         try {
             String params = PostRawParamsParseUtil.getRequestPostBytes(request);
@@ -119,7 +121,7 @@ public class BtiCallbackController {
             logger.error("BtiCallback debitCustomer 转换失败", e);
         }
         logger.info("BtiCallback debitCustomer 回调, params:{}", JSONObject.toJSONString(btiCreditRequest));
-        Object object = btiCallbackService.debitCustomer(btiCreditRequest, ip);
+        Object object = btiCallbackService.debitCustomer(btiCreditRequest, ip, reqId);
         logger.info("BtiCallback debitCustomer 回调返回数据 params:{}", object);
         return object;
 
@@ -129,6 +131,7 @@ public class BtiCallbackController {
     @AllowAccess
     public Object creditCustomer(HttpServletRequest request) {
         String ip = IPAddressUtil.getIpAddress(request);
+        String reqId = request.getParameter("req_id");
         BtiCreditRequest btiCreditRequest = null;
         try {
             String params = PostRawParamsParseUtil.getRequestPostBytes(request);
@@ -137,7 +140,7 @@ public class BtiCallbackController {
             logger.error("BtiCallback creditCustomer 转换失败", e);
         }
         logger.info("BtiCallback creditCustomer 回调, params:{}", JSONObject.toJSONString(btiCreditRequest));
-        Object object = btiCallbackService.creditCustomer(btiCreditRequest, ip);
+        Object object = btiCallbackService.creditCustomer(btiCreditRequest, ip, reqId);
         logger.info("BtiCallback creditCustomer 回调返回数据 params:{}", object);
         return object;
     }

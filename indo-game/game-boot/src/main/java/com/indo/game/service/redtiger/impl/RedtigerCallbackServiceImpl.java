@@ -332,7 +332,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             if ("Cancel Bet".equals(oldTxns.getMethod())) {
                 return initFailureResponse(2001, "订单已经取消");
             }
-            BigDecimal amount = oldTxns.getAmount();
+            BigDecimal amount = oldTxns.getBetAmount();
             BigDecimal balance = memBaseinfo.getBalance().add(amount);
             gameCommonService.updateUserBalance(memBaseinfo, amount, GoldchangeEnum.REFUND, TradingEnum.INCOME);
             String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);

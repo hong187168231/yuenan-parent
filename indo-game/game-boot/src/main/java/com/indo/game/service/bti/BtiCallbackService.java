@@ -29,7 +29,7 @@ public interface BtiCallbackService {
      * @param ip
      * @return
      */
-    Object debitReserve(BtiReserveBetsRequest reserveBetsRequest, String ip);
+    Object debitReserve(BtiReserveBetsRequest reserveBetsRequest, String ip, String reqId);
 
     /**
      * 取消预扣款
@@ -55,7 +55,7 @@ public interface BtiCallbackService {
      * @param ip
      * @return
      */
-    Object debitCustomer(BtiCreditRequest btiCreditRequest, String ip);
+    Object debitCustomer(BtiCreditRequest btiCreditRequest, String ip, String reqId);
 
     /**
      * 综合加款，一定时间内用户下注余额变动大于0, 需要加款
@@ -64,5 +64,5 @@ public interface BtiCallbackService {
      * @param ip
      * @return
      */
-    Object creditCustomer(BtiCreditRequest btiCreditRequest, String ip);
+    Object creditCustomer(BtiCreditRequest btiCreditRequest, String ip, String reqId);
 }

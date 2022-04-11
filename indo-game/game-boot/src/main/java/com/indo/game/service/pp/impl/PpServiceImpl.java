@@ -256,7 +256,7 @@ public class PpServiceImpl implements PpService {
             if (num <= 0) {
                 int count = 0;
                 // 失败重试
-                while (count > 2) {
+                while (count < 5) {
                     num = txnsMapper.insert(txns);
                     if (num > 0) break;
                     count++;
