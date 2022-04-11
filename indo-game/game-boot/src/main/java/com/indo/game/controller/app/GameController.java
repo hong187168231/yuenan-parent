@@ -22,6 +22,7 @@ import com.indo.game.service.jdb.JdbService;
 import com.indo.game.service.jili.JiliService;
 import com.indo.game.service.ka.KaService;
 import com.indo.game.service.mg.MgService;
+import com.indo.game.service.mt.MtService;
 import com.indo.game.service.pg.PgService;
 import com.indo.game.service.pp.PpService;
 import com.indo.game.service.ps.PsService;
@@ -108,6 +109,8 @@ public class GameController {
     private DgService dgService;
     @Autowired
     private BtiService btiService;
+    @Autowired
+    private MtService mtService;
     @Autowired
     private RedissonClient redissonClient;
     @Resource
@@ -222,6 +225,9 @@ public class GameController {
                 if ("BTi".equals(parentName)) {
                     resultInfo = btiService.btiGame(loginUser, isMobileLogin, ip, platform, parentName);
                 }
+                if ("MT".equals(parentName)) {
+                    resultInfo = mtService.mtGame(loginUser, isMobileLogin, ip, platform, parentName);
+                }
 
                 if (resultInfo == null) {
                     log.info("登录平台或单一游戏登录log {} loginPlatform result is null. params:{},ip:{},parentName:{}", loginUser.getId(), params, ip, parentName);
@@ -324,6 +330,9 @@ public class GameController {
             }
             if ("BTi".equals(platform)) {
                 resultInfo = btiService.logout(loginUser, platform, ip);
+            }
+            if ("MT".equals(platform)) {
+                resultInfo = mtService.logout(loginUser, platform, ip);
             }
             if (resultInfo == null) {
                 log.info("退出平台log {} loginPlatform result is null. params:{},ip:{}", loginUser.getId(), params, ip);

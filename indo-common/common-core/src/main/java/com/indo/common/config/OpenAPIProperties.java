@@ -361,6 +361,23 @@ public class OpenAPIProperties implements InitializingBean {
     @Value("${bti.platformCode:BTI}")
     private String btiPlatformCode;
 
+    // MT
+    public static String MT_API_URL;
+    public static String MT_KEY;
+    public static String MT_VENDOR_ID;
+    public static String MT_VENDOR_NAME;
+    public static String MT_PLATFORM_CODE;
+    @Value("${mt.apiUrl}")
+    private String mtApiurl;
+    @Value("${mt.key}")
+    private String mtKey;
+    @Value("${mt.vendorId}")
+    private String mtVendorId;
+    @Value("${mt.vendorName}")
+    private String mtVendorName;
+    @Value("${mt.platformCode:MT}")
+    private String mtPlatformCode;
+
     @Override
     public void afterPropertiesSet() {
 
@@ -491,5 +508,12 @@ public class OpenAPIProperties implements InitializingBean {
 
         BTI_API_URL = btiApiurl;
         BTI_PLATFORM_CODE = btiPlatformCode;
+
+        MT_API_URL = mtApiurl;
+        MT_KEY = mtKey;
+        MT_VENDOR_ID = mtVendorId;
+        MT_VENDOR_NAME = mtVendorName;
+        MT_PLATFORM_CODE = mtPlatformCode;
+
     }
 }
