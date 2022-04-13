@@ -103,9 +103,6 @@ public class MgServiceImpl implements MgService {
                 cptOpenMember.setType(parentName);
                 //创建玩家
                 Result result = createMemberGame(cptOpenMember, tokenJson.getString("access_token"));
-                if (!ResultCode.SUCCESS.equals(result.getCode())) {
-                    return Result.failed("g091087", "第三方请求异常！");
-                }
             } else {
                 CptOpenMember updateCptOpenMember = new CptOpenMember();
                 updateCptOpenMember.setId(cptOpenMember.getId());

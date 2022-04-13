@@ -104,9 +104,6 @@ public class DgServiceImpl implements DgService {
                 cptOpenMember.setType(parentName);
                 //创建玩家
                 Result result = createMemberGame(platformGameParent, cptOpenMember);
-                if (!ResultCode.SUCCESS.equals(result.getCode())) {
-                    return Result.failed("g091087", "第三方请求异常！");
-                }
             } else {
                 CptOpenMember updateCptOpenMember = new CptOpenMember();
                 updateCptOpenMember.setId(cptOpenMember.getId());
