@@ -127,6 +127,9 @@ public class PpCallbackServiceImpl implements PpCallbackService {
 
         try {
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(ppBetCallBackReq.getUserId());
+            if (null == memBaseinfo) {
+                return initFailureResponse(2, "玩家不存在");
+            }
             GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(ppBetCallBackReq.getGameId());
             if (null == gamePlatform) {
                 return initFailureResponse(3, "游戏不存在");
@@ -137,14 +140,15 @@ public class PpCallbackServiceImpl implements PpCallbackService {
             BigDecimal balance = memBaseinfo.getBalance();
             // 下注金额
             BigDecimal betAmount = ppBetCallBackReq.getAmount();
-            if (memBaseinfo.getBalance().compareTo(betAmount) < 0) {
-                return initFailureResponse(1, "玩家余额不足");
-            }
 
             // 查询用户请求订单
             Txns oldTxns = getTxns(ppBetCallBackReq.getReference(), memBaseinfo.getId());
             if (null != oldTxns) {
-                return initFailureResponse(3, "订单已经存在");
+                return initSuccessResponse(ppBetCallBackReq.getReference(), platformGameParent.getCurrencyType(), balance);
+            }
+
+            if (memBaseinfo.getBalance().compareTo(betAmount) < 0) {
+                return initFailureResponse(1, "玩家余额不足");
             }
 
             // 下注金额小于0
@@ -214,13 +218,7 @@ public class PpCallbackServiceImpl implements PpCallbackService {
                 return initFailureResponse(100, "订单入库请求失败");
             }
 
-            JSONObject json = initSuccessResponse();
-            json.put("transactionId", ppBetCallBackReq.getReference());
-            json.put("currency", platformGameParent.getCurrencyType());
-            json.put("cash", balance);
-            json.put("bonus", BigDecimal.ZERO);
-            json.put("usedPromo", BigDecimal.ZERO);
-            return json;
+            return initSuccessResponse(ppBetCallBackReq.getReference(), platformGameParent.getCurrencyType(), balance);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return initFailureResponse(100, e.getMessage());
@@ -243,11 +241,15 @@ public class PpCallbackServiceImpl implements PpCallbackService {
         }
         try {
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(ppResultCallBackReq.getUserId());
-
+            if (null == memBaseinfo) {
+                return initFailureResponse(2, "玩家不存在");
+            }
+            // 会员余额
+            BigDecimal balance = memBaseinfo.getBalance();
             // 查询用户请求订单
             Txns oldTxns = getTxns(ppResultCallBackReq.getReference(), memBaseinfo.getId());
-            if (null == oldTxns) {
-                return initFailureResponse(7, "订单不存在");
+            if (null != oldTxns) {
+                return initSuccessResponse(ppResultCallBackReq.getReference(), platformGameParent.getCurrencyType(), balance);
             }
 
             // 中奖金额
@@ -258,10 +260,11 @@ public class PpCallbackServiceImpl implements PpCallbackService {
             }
 
             // 会员余额
-            BigDecimal balance = memBaseinfo.getBalance().add(betAmount);
+            balance = balance.add(betAmount);
             // 更新玩家余额
             gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
 
+            oldTxns = new Txns();
             //游戏商注单号
             oldTxns.setPlatformTxId(ppResultCallBackReq.getReference());
             //玩家 ID
@@ -303,13 +306,7 @@ public class PpCallbackServiceImpl implements PpCallbackService {
                 return initFailureResponse(100, "订单派奖请求失败");
             }
 
-            JSONObject json = initSuccessResponse();
-            json.put("transactionId", ppResultCallBackReq.getReference());
-            json.put("currency", platformGameParent.getCurrencyType());
-            json.put("cash", balance);
-            json.put("bonus", BigDecimal.ZERO);
-            json.put("transactionId", ppResultCallBackReq.getReference());
-            return json;
+            return initSuccessResponse(ppResultCallBackReq.getReference(), platformGameParent.getCurrencyType(), balance);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return initFailureResponse(100, e.getMessage());
@@ -332,6 +329,10 @@ public class PpCallbackServiceImpl implements PpCallbackService {
         }
         try {
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(ppBonusWinCallBackReq.getUserId());
+            if (null == memBaseinfo) {
+                return initFailureResponse(2, "玩家不存在");
+            }// 会员余额
+            BigDecimal balance = memBaseinfo.getBalance();
             GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(ppBonusWinCallBackReq.getGameId());
             if (null == gamePlatform) {
                 return initFailureResponse(3, "游戏不存在");
@@ -349,12 +350,12 @@ public class PpCallbackServiceImpl implements PpCallbackService {
             // 查询用户请求订单
             Txns txns = getTxns(ppBonusWinCallBackReq.getReference(), memBaseinfo.getId());
             if (null != txns) {
-                return initFailureResponse(3, "订单已经存在");
+                return initSuccessResponse(ppBonusWinCallBackReq.getReference(), platformGameParent.getCurrencyType(), balance);
             }
             txns = new Txns();
 
             // 会员余额
-            BigDecimal balance = memBaseinfo.getBalance().add(betAmount);
+            balance = balance.add(betAmount);
             // 更新玩家余额
             gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.FREE_SPIN, TradingEnum.INCOME);
 
@@ -426,12 +427,7 @@ public class PpCallbackServiceImpl implements PpCallbackService {
                 return initFailureResponse(100, "订单入库请求失败");
             }
 
-            JSONObject json = initSuccessResponse();
-            json.put("currency", platformGameParent.getCurrencyType());
-            json.put("cash", balance);
-            json.put("bonus", BigDecimal.ZERO);
-            json.put("transactionId", ppBonusWinCallBackReq.getReference());
-            return json;
+            return initSuccessResponse(ppBonusWinCallBackReq.getReference(), platformGameParent.getCurrencyType(), balance);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return initFailureResponse(100, e.getMessage());
@@ -454,6 +450,11 @@ public class PpCallbackServiceImpl implements PpCallbackService {
         }
         try {
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(ppJackpotWinCallBackReq.getUserId());
+            if (null == memBaseinfo) {
+                return initFailureResponse(2, "玩家不存在");
+            }
+            // 会员余额
+            BigDecimal balance = memBaseinfo.getBalance();
             GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(ppJackpotWinCallBackReq.getGameId());
             if (null == gamePlatform) {
                 return initFailureResponse(3, "游戏不存在");
@@ -471,11 +472,11 @@ public class PpCallbackServiceImpl implements PpCallbackService {
             // 查询用户请求订单
             Txns txns = getTxns(ppJackpotWinCallBackReq.getReference(), memBaseinfo.getId());
             if (null != txns) {
-                return initFailureResponse(3, "订单已经存在");
+                return initSuccessResponse(ppJackpotWinCallBackReq.getReference(), platformGameParent.getCurrencyType(), balance);
             }
             txns = new Txns();
             // 会员余额
-            BigDecimal balance = memBaseinfo.getBalance().add(betAmount);
+            balance = balance.add(betAmount);
             // 更新玩家余额
             gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.reward, TradingEnum.INCOME);
 
@@ -549,12 +550,7 @@ public class PpCallbackServiceImpl implements PpCallbackService {
                 return initFailureResponse(100, "订单入库请求失败");
             }
 
-            JSONObject json = initSuccessResponse();
-            json.put("currency", platformGameParent.getCurrencyType());
-            json.put("cash", balance);
-            json.put("bonus", BigDecimal.ZERO);
-            json.put("transactionId", ppJackpotWinCallBackReq.getReference());
-            return json;
+            return initSuccessResponse(ppJackpotWinCallBackReq.getReference(), platformGameParent.getCurrencyType(), balance);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return initFailureResponse(100, e.getMessage());
@@ -577,6 +573,11 @@ public class PpCallbackServiceImpl implements PpCallbackService {
         }
         try {
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(ppPromoWinCallBackReq.getUserId());
+            if (null == memBaseinfo) {
+                return initFailureResponse(2, "玩家不存在");
+            }
+            // 会员余额
+            BigDecimal balance = memBaseinfo.getBalance();
             GamePlatform gamePlatform = gameCommonService.getGamePlatformByParentName(OpenAPIProperties.PP_PLATFORM_CODE).get(0);
             GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
 
@@ -591,11 +592,11 @@ public class PpCallbackServiceImpl implements PpCallbackService {
             // 查询用户请求订单
             Txns txns = getTxns(ppPromoWinCallBackReq.getReference(), memBaseinfo.getId());
             if (null != txns) {
-                return initFailureResponse(3, "订单已经存在");
+                return initSuccessResponse(ppPromoWinCallBackReq.getReference(), platformGameParent.getCurrencyType(), balance);
             }
             txns = new Txns();
             // 会员余额
-            BigDecimal balance = memBaseinfo.getBalance().add(betAmount);
+            balance = balance.add(betAmount);
             // 更新玩家余额
             gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.ACTIVITY_GIVE, TradingEnum.INCOME);
 
@@ -673,12 +674,7 @@ public class PpCallbackServiceImpl implements PpCallbackService {
                 return initFailureResponse(100, "活动派奖订单入库请求失败");
             }
 
-            JSONObject json = initSuccessResponse();
-            json.put("currency", platformGameParent.getCurrencyType());
-            json.put("cash", balance);
-            json.put("bonus", BigDecimal.ZERO);
-            json.put("transactionId", ppPromoWinCallBackReq.getReference());
-            return json;
+            return initSuccessResponse(ppPromoWinCallBackReq.getReference(), platformGameParent.getCurrencyType(), balance);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return initFailureResponse(100, e.getMessage());
@@ -702,7 +698,9 @@ public class PpCallbackServiceImpl implements PpCallbackService {
         try {
 
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(ppRefundWinCallBackReq.getUserId());
-
+            if (null == memBaseinfo) {
+                return initFailureResponse(2, "玩家不存在");
+            }
             // 构建返回
             JSONObject json = initSuccessResponse();
 
@@ -794,6 +792,22 @@ public class PpCallbackServiceImpl implements PpCallbackService {
     }
 
     /**
+     * 初始化成功json返回
+     *
+     * @return JSONObject
+     */
+    private JSONObject initSuccessResponse(String transactionId, String currency, BigDecimal balance) {
+        JSONObject json = initSuccessResponse();
+        json.put("transactionId", transactionId);
+        json.put("currency", currency);
+        json.put("cash", balance);
+        json.put("bonus", BigDecimal.ZERO);
+        json.put("usedPromo", BigDecimal.ZERO);
+        return json;
+    }
+
+
+    /**
      * 初始化交互失败返回
      *
      * @param error       错误码
@@ -823,7 +837,7 @@ public class PpCallbackServiceImpl implements PpCallbackService {
 
     }
 
-    private GameParentPlatform getGameParentPlatform(){
+    private GameParentPlatform getGameParentPlatform() {
         return gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.PP_PLATFORM_CODE);
     }
 }
