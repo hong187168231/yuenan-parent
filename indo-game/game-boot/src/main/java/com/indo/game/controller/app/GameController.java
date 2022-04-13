@@ -234,7 +234,7 @@ public class GameController {
                 if ("MT".equals(parentName)) {
                     resultInfo = mtService.mtGame(loginUser, isMobileLogin, ip, platform, parentName);
                 }
-                if ("KM".equals(parentName)) {
+                if ("KingMaker".equals(parentName)) {
                     resultInfo = kmService.kmGame(loginUser, isMobileLogin, ip, platform, parentName);
                 }
                 if ("V8".equals(parentName)) {
@@ -346,7 +346,7 @@ public class GameController {
             if ("MT".equals(platform)) {
                 resultInfo = mtService.logout(loginUser, platform, ip);
             }
-            if ("KM".equals(platform)) {
+            if ("KingMaker".equals(platform)) {
                 resultInfo = kmService.logout(loginUser, platform, ip);
             }
             if ("V8".equals(platform)) {

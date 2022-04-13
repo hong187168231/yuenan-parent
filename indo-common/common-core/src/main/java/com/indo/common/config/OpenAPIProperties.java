@@ -540,6 +540,11 @@ public class OpenAPIProperties implements InitializingBean {
         BTI_API_URL = btiApiurl;
         BTI_PLATFORM_CODE = btiPlatformCode;
 
+        KM_CLIENT_SECRET = kmClientSecret;
+        KM_API_URL = kmApiUrl;
+        KM_CLIENT_ID = kmClientId;
+        KM_GAME_URL = kmGameUrl;
+
         MT_API_URL = mtApiurl;
         MT_KEY = mtKey;
         MT_VENDOR_ID = mtVendorId;
