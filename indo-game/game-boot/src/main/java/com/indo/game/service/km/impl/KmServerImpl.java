@@ -1,23 +1,18 @@
-package com.indo.game.service.mg.impl;
+package com.indo.game.service.km.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.indo.common.config.OpenAPIProperties;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
-import com.indo.common.result.ResultCode;
 import com.indo.common.utils.GameUtil;
-import com.indo.game.common.util.RandomGUID;
 import com.indo.game.common.util.SnowflakeId;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
-import com.indo.game.pojo.dto.pg.PgApiResponseData;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.game.pojo.entity.manage.GameParentPlatform;
 import com.indo.game.pojo.entity.manage.GamePlatform;
 import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
-import com.indo.game.service.mg.MgService;
-import com.indo.game.service.pg.PgService;
+import com.indo.game.service.km.KmService;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -37,7 +32,7 @@ import java.util.Map;
  * @author
  */
 @Service
-public class MgServiceImpl implements MgService {
+public class KmServerImpl implements KmService {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
@@ -52,8 +47,8 @@ public class MgServiceImpl implements MgService {
      * @return loginUser 用户信息
      */
     @Override
-    public Result mgGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName) {
-        logger.info("mgLog  {} mgGame account:{}, pgCodeId:{}", loginUser.getId(), loginUser.getNickName(), platform);
+    public Result kmGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName) {
+        logger.info("kmLog  {} kmGame account:{}, pgCodeId:{}", loginUser.getId(), loginUser.getNickName(), platform);
         // 是否开售校验
         GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(parentName);
         if (null == platformGameParent) {
@@ -87,8 +82,9 @@ public class MgServiceImpl implements MgService {
             return Result.failed("g300004", "会员余额不足");
         }
         try {
-            JSONObject tokenJson = gameToken(loginUser.getId().intValue());
-            if (StringUtils.isEmpty(tokenJson.getString("access_token"))) {
+
+            JSONObject tokenJson = gameToken(loginUser, platformGameParent, ip);
+            if (StringUtils.isEmpty(tokenJson.getString("authtoken"))) {
                 return errorCode(tokenJson.getString("code"), tokenJson.getString("message"));
             }
             // 验证且绑定（AE-CPT第三方会员关系）
@@ -102,10 +98,7 @@ public class MgServiceImpl implements MgService {
                 cptOpenMember.setLoginTime(new Date());
                 cptOpenMember.setType(parentName);
                 //创建玩家
-                Result result = createMemberGame(cptOpenMember, tokenJson.getString("access_token"));
-                if (!ResultCode.SUCCESS.equals(result.getCode())) {
-                    return Result.failed("g091087", "第三方请求异常！");
-                }
+                externalService.saveCptOpenMember(cptOpenMember);
             } else {
                 CptOpenMember updateCptOpenMember = new CptOpenMember();
                 updateCptOpenMember.setId(cptOpenMember.getId());
@@ -114,14 +107,15 @@ public class MgServiceImpl implements MgService {
                 logout(loginUser, platform, ip);
             }
 
-            JSONObject jsonObject = gameLogin(platformGameParent, gamePlatform, cptOpenMember, isMobileLogin, tokenJson.getString("access_token"));
-            ;
-            if (StringUtils.isEmpty(jsonObject.getString("url"))) {
-                return errorCode(jsonObject.getString("code"), jsonObject.getString("message"));
-            }
+            StringBuilder builder = new StringBuilder();
+            builder.append(OpenAPIProperties.KM_API_URL).append("/gamelauncher?");
+            builder.append("gpcode=").append("KMQM");
+            builder.append("&gcode=").append(gamePlatform.getPlatformCode());
+            builder.append("&token=").append(tokenJson.getString("authtoken"));
+            builder.append("&lang=").append(platformGameParent.getLanguageType());
             //登录
             ApiResponseData responseData = new ApiResponseData();
-            responseData.setPathUrl(jsonObject.getString("url"));
+            responseData.setPathUrl(builder.toString());
             return Result.success(responseData);
         } catch (Exception e) {
             e.printStackTrace();
@@ -129,18 +123,23 @@ public class MgServiceImpl implements MgService {
         }
     }
 
-    private JSONObject gameToken(Integer userId) {
+    private JSONObject gameToken(LoginInfo loginUser, GameParentPlatform platformGameParent, String ip) {
         Map<String, String> map = new HashMap<>();
-        map.put("client_id", OpenAPIProperties.MG_CLIENT_ID);
-        map.put("client_secret", OpenAPIProperties.MG_CLIENT_SECRET);
-        map.put("grant_type", "client_credentials");
+        map.put("ipaddress", ip);
+        map.put("username", loginUser.getAccount());
+        map.put("userid", loginUser.getAccount());
+        map.put("lang", platformGameParent.getLanguageType());
+        map.put("cur", platformGameParent.getCurrencyType());
+        map.put("betlimitid", "5");
+        map.put("platformtype", "1");
+        map.put("istestplayer", "false");
         StringBuilder builder = new StringBuilder();
-        builder.append(OpenAPIProperties.MG_SESSION_URL).append("/connect/token");
+        builder.append(OpenAPIProperties.KM_API_URL).append("/api/player/authorize");
         JSONObject apiResponseData = null;
         try {
-            apiResponseData = commonRequest(builder.toString(), map, userId, "", "createMgToken");
+            apiResponseData = commonRequest(builder.toString(), map, loginUser.getId().intValue(), "createKmToken");
         } catch (Exception e) {
-            logger.error("mgLog pgCeateMember:{}", e);
+            logger.error("kmLog pgCeateMember:{}", e);
             e.printStackTrace();
         }
         return apiResponseData;
@@ -148,67 +147,8 @@ public class MgServiceImpl implements MgService {
     }
 
 
-    /**
-     * 创建账户并登录逻辑
-     */
-    private Result createMemberGame(CptOpenMember cptOpenMember, String token) {
-        JSONObject pgApiResponseData = createMember(cptOpenMember, token);
-        if (null == pgApiResponseData) {
-            return Result.failed("g091087", "第三方请求异常！");
-        }
-        if (!StringUtils.isEmpty(pgApiResponseData.getString("uri"))) {
-            externalService.saveCptOpenMember(cptOpenMember);
-            return Result.success();
-        } else {
-            return errorCode(pgApiResponseData.getString("code"), pgApiResponseData.getString("message"));
-        }
-    }
-
-    private JSONObject createMember(CptOpenMember cptOpenMember, String token) {
-        Map<String, String> map = new HashMap<>();
-        map.put("playerId", cptOpenMember.getUserName());
-        StringBuilder builder = new StringBuilder();
-        builder.append(OpenAPIProperties.MG_API_URL).append("/api/v1/agents/")
-                .append(OpenAPIProperties.MG_AGENT_CODE).append("/players");
-        JSONObject apiResponseData = null;
-        try {
-            apiResponseData = commonRequest(builder.toString(), map, cptOpenMember.getUserId(), token, "createMgMember");
-        } catch (Exception e) {
-            logger.error("mgLog pgCeateMember:{}", e);
-            e.printStackTrace();
-        }
-        return apiResponseData;
-
-    }
 
 
-    /**
-     * 调用API登录
-     */
-    private JSONObject gameLogin(GameParentPlatform platformGameParent, GamePlatform gamePlatform,
-                                 CptOpenMember cptOpenMemberm, String isMobileLogin, String token) {
-        JSONObject apiResponseData = null;
-        try {
-            Map<String, String> params = new HashMap<String, String>();
-            params.put("contentCode", gamePlatform.getPlatformCode());
-            if ("0".equals(isMobileLogin)) {
-                params.put("platform", "Desktop");
-            } else if ("1".equals(isMobileLogin)) {
-                params.put("platform", "Mobile");
-            } else {
-                params.put("platform", "Unknown");
-            }
-            params.put("langCode", platformGameParent.getLanguageType());
-            StringBuilder apiUrl = new StringBuilder();
-            apiUrl.append(OpenAPIProperties.MG_API_URL).append("/api/v1/agents/").append(OpenAPIProperties.MG_AGENT_CODE);
-            apiUrl.append("/players/").append(cptOpenMemberm.getUserName()).append("/sessions");
-            apiResponseData = commonRequest(apiUrl.toString(), params, cptOpenMemberm.getUserId(), token, "mgGameLogin");
-        } catch (Exception e) {
-            logger.error("mglog mgGameLogin:{}", e);
-            e.printStackTrace();
-        }
-        return apiResponseData;
-    }
 
     /**
      * 强迫登出玩家
@@ -217,7 +157,7 @@ public class MgServiceImpl implements MgService {
         try {
             return Result.success();
         } catch (Exception e) {
-            logger.error("mgLog  mgLog out:{}", e);
+            logger.error("kmLog  kmLog out:{}", e);
             e.printStackTrace();
             return Result.failed();
         }
@@ -228,15 +168,15 @@ public class MgServiceImpl implements MgService {
     /**
      * 公共请求
      */
-    public JSONObject commonRequest(String apiUrl, Map<String, String> params, Integer userId, String token, String type) throws Exception {
-        logger.info("mgLog  {} commonRequest userId:{},paramsMap:{}", userId, params);
+    public JSONObject commonRequest(String apiUrl, Map<String, String> params, Integer userId, String type) throws Exception {
+        logger.info("kmLog  {} commonRequest userId:{},paramsMap:{}", userId, params);
         JSONObject apiResponseData = null;
-         String resultString = GameUtil.doProxyPostHeaderJson(OpenAPIProperties.PROXY_HOST_NAME, OpenAPIProperties.PROXY_PORT, OpenAPIProperties.PROXY_TCP,
-                apiUrl, params, type, userId, token);
-        logger.info("mgLog  apiResponse:" + resultString);
+        String resultString = GameUtil.doProxyPostKmJson(OpenAPIProperties.PROXY_HOST_NAME, OpenAPIProperties.PROXY_PORT, OpenAPIProperties.PROXY_TCP,
+                apiUrl, params, type, userId, OpenAPIProperties.KM_CLIENT_ID, OpenAPIProperties.KM_CLIENT_SECRET);
+        logger.info("kmLog  apiResponse:" + resultString);
         if (StringUtils.isNotEmpty(resultString)) {
             apiResponseData = JSONObject.parseObject(resultString);
-            logger.info("mgLog  {}:commonRequest type:{}, operateFlag:{}, hostName:{}, params:{}, result:{}, awcApiResponse:{}",
+            logger.info("kmLog  {}:commonRequest type:{}, operateFlag:{}, hostName:{}, params:{}, result:{}, awcApiResponse:{}",
                     userId, type, null, params, resultString, JSONObject.toJSONString(apiResponseData));
         }
         return apiResponseData;

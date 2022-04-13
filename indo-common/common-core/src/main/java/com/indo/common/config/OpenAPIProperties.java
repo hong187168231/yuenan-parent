@@ -378,6 +378,20 @@ public class OpenAPIProperties implements InitializingBean {
     @Value("${mt.platformCode:MT}")
     private String mtPlatformCode;
 
+
+    public static String KM_API_URL;
+    public static String KM_GAME_URL;
+    public static String KM_CLIENT_ID;
+    public static String KM_CLIENT_SECRET;
+    @Value("${km.apiUrl}")
+    private String kmApiUrl;
+    @Value("${km.gameUrl}")
+    private String kmGameUrl;
+    @Value("${km.clientId}")
+    private String kmClientId;
+    @Value("${km.clientSecret}")
+    private String kmClientSecret;
+
     @Override
     public void afterPropertiesSet() {
 
@@ -508,12 +522,5 @@ public class OpenAPIProperties implements InitializingBean {
 
         BTI_API_URL = btiApiurl;
         BTI_PLATFORM_CODE = btiPlatformCode;
-
-        MT_API_URL = mtApiurl;
-        MT_KEY = mtKey;
-        MT_VENDOR_ID = mtVendorId;
-        MT_VENDOR_NAME = mtVendorName;
-        MT_PLATFORM_CODE = mtPlatformCode;
-
     }
 }

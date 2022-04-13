@@ -498,8 +498,80 @@ public class GameUtil extends HttpCommonUtils {
             httpPost.setHeader("connection", "close");
             httpPost.setHeader("Content-Type", "application/x-www-form-urlencoded");
             if (!StringUtils.isEmpty(header)) {
-                httpPost.setHeader("Authorization", header);
+                httpPost.setHeader("Authorization", "Bearer " + header);
             }
+            List<BasicNameValuePair> list = new ArrayList<>();
+            for (String key : paramsMap.keySet()) {
+                list.add(new BasicNameValuePair(key, String.valueOf(paramsMap.get(key))));
+            }
+            logger.info("POST请求 commonRequest userId:{},paramsMap:{}", userId, paramsMap);
+            // 创建请求内容
+            UrlEncodedFormEntity urlEncodedFormEntity = new UrlEncodedFormEntity(list, StandardCharsets.UTF_8);
+            httpPost.setEntity(urlEncodedFormEntity);
+
+            //log参数
+            paramsString = JSONObject.toJSONString(paramsMap);
+            logger.info("POST请求 commonRequest userId:{},paramsString:{}", userId, paramsString);
+            closeableHttpClient = httpClientBuilder.build();
+            // 执行http请求
+            response = closeableHttpClient.execute(httpPost);
+            HttpEntity entity = response.getEntity();
+            resultString = EntityUtils.toString(entity, StandardCharsets.UTF_8);
+            // 此句关闭了流
+            EntityUtils.consume(entity);
+        } catch (Exception e) {
+            logger.error("httplog {}:{} doProxyPostJson occur error:{}, url:{}, proxyHost:{}, proxyPort:{}, originParams:{}",
+                    userId, type, e.getMessage(), url, paramsString, e);
+            return resultString;
+        } finally {
+            HttpCommonUtils.closeHttpClientAndResponse(response, closeableHttpClient, url, paramsString);
+        }
+        return resultString;
+    }
+
+    /**
+     * kM
+     * @param proxyHostName
+     * @param proxyPort
+     * @param proxyTcp
+     * @param url
+     * @param paramsMap
+     * @param type
+     * @param userId
+     * @return
+     */
+    public static String doProxyPostKmJson(String proxyHostName, int proxyPort, String proxyTcp, String url, Map<String, String> paramsMap, String type, Integer userId, String clientId, String clientSecret) {
+        // 设置代理IP、端口、协议
+        // 创建HttpClientBuilder
+        HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+        // 依次是代理地址，代理端口号，协议类型
+//        HttpHost proxy = new HttpHost(proxyHostName, proxyPort, proxyTcp);
+
+        CloseableHttpClient closeableHttpClient = null;
+        CloseableHttpResponse response = null;
+        String resultString = "";
+        String paramsString = "";
+        try {
+            // 创建Http Post请求
+            HttpPost httpPost = new HttpPost(url);
+            // 设置请求超时 20+10+25=55s 配合业务设置
+            RequestConfig requestConfig = RequestConfig.custom()
+                    // 设置连接超时时间,单位毫秒。
+                    .setConnectTimeout(CONNECT_TIMEOUT)
+                    // 从连接池获取到连接的超时,单位毫秒。
+                    .setConnectionRequestTimeout(CONNECTION_REQUEST_TIMEOUT)
+                    // 请求获取数据的超时时间,单位毫秒;
+                    .setSocketTimeout(SOCKET_TIMEOUT)
+                    //设置代理
+//                    .setProxy(proxy)
+                    .build();
+            //如果访问一个接口,多少时间内无法返回数据,就直接放弃此次调用。
+            httpPost.setConfig(requestConfig);
+            //不复用TCP SOCKET
+            httpPost.setHeader("connection", "close");
+            httpPost.setHeader("Content-Type", "application/x-www-form-urlencoded");
+            httpPost.setHeader("X-QM-ClientId", clientId);
+            httpPost.setHeader("X-QM-ClientSecret", clientSecret);
             List<BasicNameValuePair> list = new ArrayList<>();
             for (String key : paramsMap.keySet()) {
                 list.add(new BasicNameValuePair(key, String.valueOf(paramsMap.get(key))));
