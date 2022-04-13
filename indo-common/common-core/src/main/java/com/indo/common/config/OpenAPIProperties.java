@@ -365,7 +365,6 @@ public class OpenAPIProperties implements InitializingBean {
     public static String MT_API_URL;
     public static String MT_KEY;
     public static String MT_VENDOR_ID;
-    public static String MT_VENDOR_NAME;
     public static String MT_PLATFORM_CODE;
     @Value("${mt.apiUrl}")
     private String mtApiurl;
@@ -373,8 +372,6 @@ public class OpenAPIProperties implements InitializingBean {
     private String mtKey;
     @Value("${mt.vendorId}")
     private String mtVendorId;
-    @Value("${mt.vendorName}")
-    private String mtVendorName;
     @Value("${mt.platformCode:MT}")
     private String mtPlatformCode;
 
@@ -391,6 +388,26 @@ public class OpenAPIProperties implements InitializingBean {
     private String kmClientId;
     @Value("${km.clientSecret}")
     private String kmClientSecret;
+
+    // V8
+    public static String V8_API_URL;
+    public static String V8_AGENT;
+    public static String V8_DESKEY;
+    public static String V8_MD5KEY;
+    public static String V8_LINE_CODE;
+    public static String V8_PLATFORM_CODE;
+    @Value("${v8.apiUrl}")
+    private String v8Apiurl;
+    @Value("${v8.agent}")
+    private String v8Agent;
+    @Value("${v8.desKey}")
+    private String v8DesKey;
+    @Value("${v8.md5Key}")
+    private String v8Md5Key;
+    @Value("${v8.lineCode}")
+    private String v8LineCode;
+    @Value("${v8.platformCode:V8}")
+    private String v8PlatformCode;
 
     @Override
     public void afterPropertiesSet() {
@@ -522,5 +539,17 @@ public class OpenAPIProperties implements InitializingBean {
 
         BTI_API_URL = btiApiurl;
         BTI_PLATFORM_CODE = btiPlatformCode;
+
+        MT_API_URL = mtApiurl;
+        MT_KEY = mtKey;
+        MT_VENDOR_ID = mtVendorId;
+        MT_PLATFORM_CODE = mtPlatformCode;
+
+        V8_API_URL = v8Apiurl;
+        V8_AGENT = v8Agent;
+        V8_DESKEY = v8DesKey;
+        V8_MD5KEY = v8Md5Key;
+        V8_LINE_CODE = v8LineCode;
+        V8_PLATFORM_CODE = v8PlatformCode;
     }
 }

@@ -33,6 +33,7 @@ import com.indo.game.service.saba.SabaService;
 import com.indo.game.service.sbo.SboService;
 import com.indo.game.service.t9.T9Service;
 import com.indo.game.service.ug.UgService;
+import com.indo.game.service.v8.V8Service;
 import com.indo.game.service.wm.WmService;
 import com.indo.game.service.yl.YlService;
 
@@ -114,6 +115,8 @@ public class GameController {
     private MtService mtService;
     @Autowired
     private KmService kmService;
+    @Autowired
+    private V8Service v8Service;
     @Autowired
     private RedissonClient redissonClient;
     @Resource
@@ -234,6 +237,9 @@ public class GameController {
                 if ("KM".equals(parentName)) {
                     resultInfo = kmService.kmGame(loginUser, isMobileLogin, ip, platform, parentName);
                 }
+                if ("V8".equals(parentName)) {
+                    resultInfo = v8Service.v8Game(loginUser, isMobileLogin, ip, platform, parentName);
+                }
 
                 if (resultInfo == null) {
                     log.info("登录平台或单一游戏登录log {} loginPlatform result is null. params:{},ip:{},parentName:{}", loginUser.getId(), params, ip, parentName);
@@ -342,6 +348,9 @@ public class GameController {
             }
             if ("KM".equals(platform)) {
                 resultInfo = kmService.logout(loginUser, platform, ip);
+            }
+            if ("V8".equals(platform)) {
+                resultInfo = v8Service.logout(loginUser, platform, ip);
             }
             if (resultInfo == null) {
                 log.info("退出平台log {} loginPlatform result is null. params:{},ip:{}", loginUser.getId(), params, ip);

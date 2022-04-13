@@ -35,6 +35,8 @@ public class DateUtils {
 
     public final static String longFormat = "yyyyMMddHHmmss";
 
+    public final static String longFormat1 = "yyyyMMddHHmmsss";
+
     public final static String webFormat = "yyyy-MM-dd";
 
     public final static String timeFormat = "HHmmss";

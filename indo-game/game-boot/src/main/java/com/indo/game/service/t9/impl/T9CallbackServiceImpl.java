@@ -109,7 +109,7 @@ public class T9CallbackServiceImpl implements T9CallbackService {
             gameCommonService.updateUserBalance(memBaseinfo, pointAmount, GoldchangeEnum.DSFYXZZ, TradingEnum.SPENDING);
 
             // 生成订单数据
-            Txns txns = getInitTxns(platformGameParent, paySerialno, playerID, pointAmount, balance, ip, "Place Bet");
+            Txns txns = getInitTxns(platformGameParent, paySerialno, playerID, pointAmount, balance, ip, "Settle");
             int num = txnsMapper.insert(txns);
             if (num <= 0) {
                 return initFailureResponse(70004, "会员余额不足");
