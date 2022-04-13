@@ -27,9 +27,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 
@@ -46,7 +48,7 @@ public class MtServiceImpl implements MtService {
 
     @Override
     public Result mtGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName) {
-        logger.info("mtlog mtGame account:{},mtCodeId:{}", loginUser.getId(), loginUser.getAccount(), platform);
+        logger.info("mtlog mtGame account:{},mtCodeId:{}", loginUser.getAccount(), platform);
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
         if (null == gameParentPlatform) {
@@ -59,9 +61,8 @@ public class MtServiceImpl implements MtService {
             return Result.failed("g000001", gameParentPlatform.getMaintenanceContent());
         }
         if (!platform.equals(parentName)) {
-            GamePlatform gamePlatform = new GamePlatform();
             // 是否开售校验
-            gamePlatform = gameCommonService.getGamePlatformByplatformCode(platform);
+            GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(platform);
             if (null == gamePlatform) {
                 return Result.failed("(" + platform + ")平台游戏不存在");
             }
@@ -94,7 +95,7 @@ public class MtServiceImpl implements MtService {
                 cptOpenMember.setLoginTime(new Date());
                 cptOpenMember.setType(parentName);
                 //创建玩家
-                createMemberGame(cptOpenMember, gameParentPlatform, platform);
+                return createMemberGame(cptOpenMember, gameParentPlatform, platform, loginUser);
             } else {
                 CptOpenMember updateCptOpenMember = new CptOpenMember();
                 updateCptOpenMember.setId(cptOpenMember.getId());
@@ -102,38 +103,34 @@ public class MtServiceImpl implements MtService {
                 externalService.updateCptOpenMember(updateCptOpenMember);
 
                 // 退出游戏
-                JSONObject jsonObject = commonRequest(getLoginOutUrl(loginUser.getAccount()));
+                commonRequest(getLoginOutUrl(loginUser.getAccount()));
+                // 启动游戏
+                String startUrl = getStartGame(cptOpenMember, gameParentPlatform.getLanguageType(), platform);
+                JSONObject jsonObject = commonRequest(startUrl);
                 if (null == jsonObject) {
                     return Result.failed("g091087", "第三方请求异常！");
                 }
-                if (!jsonObject.getInteger("resultCode").equals(1)) {
+                if (jsonObject.getInteger("resultCode").equals(1)) {
+                    // 请求URL
+                    ApiResponseData responseData = new ApiResponseData();
+                    responseData.setPathUrl(jsonObject.getString("url"));
+                    return Result.success(responseData);
+                } else {
                     return errorCode(jsonObject.getString("resultCode"));
                 }
             }
 
-            // 启动游戏
-            String startUrl = getStartGame(cptOpenMember, gameParentPlatform.getLanguageType(), platform);
-            JSONObject jsonObject = commonRequest(startUrl);
-            if (null == jsonObject) {
-                return Result.failed("g091087", "第三方请求异常！");
-            }
-            if (jsonObject.getInteger("resultCode").equals(1)) {
-                // 请求URL
-                ApiResponseData responseData = new ApiResponseData();
-                responseData.setPathUrl(jsonObject.getString("url"));
-                return Result.success(responseData);
-            } else {
-                return errorCode(jsonObject.getString("resultCode"));
-            }
+
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.failed("g100104", "网络繁忙，请稍后重试！");
         }
+        return Result.failed("g100104", "网络繁忙，请稍后重试！");
+
     }
 
     @Override
     public Result logout(LoginInfo loginUser, String platform, String ip) {
-        logger.info("mtlogout mtGame account:{},code:{}", loginUser.getId(), loginUser.getAccount(), platform);
+        logger.info("mtlogout mtGame account:{},code:{}", loginUser.getAccount(), platform);
         try {
             // 退出
             JSONObject jsonObject = commonRequest(getLoginOutUrl(loginUser.getAccount()));
@@ -153,7 +150,7 @@ public class MtServiceImpl implements MtService {
 
     @Override
     public Result allWithdraw(LoginInfo loginUser, String platform, String ip) {
-        logger.info("mt_allWithdraw mtGame account:{},code:{}", loginUser.getId(), loginUser.getAccount(), platform);
+        logger.info("mt_allWithdraw mtGame account:{},code:{}", loginUser.getAccount(), platform);
         try {
             String transactionId = GoldchangeEnum.DSFYXZZ.name() + GeneratorIdUtil.generateId();
             // 全部提取
@@ -253,7 +250,7 @@ public class MtServiceImpl implements MtService {
 
     @Override
     public Result getPlayerBalance(LoginInfo loginUser, String platform, String ip) {
-        logger.info("mt_getPlayerBalance mtGame account:{},code:{}", loginUser.getId(), loginUser.getAccount(), platform);
+        logger.info("mt_getPlayerBalance mtGame account:{},code:{}", loginUser.getAccount(), platform);
         try {
             // 余额查询
             JSONObject jsonObject = commonRequest(getBalanceUrl(loginUser.getAccount()));
@@ -263,7 +260,7 @@ public class MtServiceImpl implements MtService {
 
             if (jsonObject.getInteger("resultCode").equals(1)) {
                 JSONObject jsonObject1 = new JSONObject();
-                jsonObject1.put("balance", jsonObject1.getBigDecimal("coinBalance"));
+                jsonObject1.put("balance", jsonObject.getBigDecimal("coinBalance"));
                 return Result.success(jsonObject1);
             } else {
                 return errorCode(jsonObject.getString("resultCode"));
@@ -276,7 +273,7 @@ public class MtServiceImpl implements MtService {
 
     @Override
     public Result deposit(LoginInfo loginUser, String platform, String ip, BigDecimal coins) {
-        logger.info("mt_deposit mtGame account:{},code:{}", loginUser.getId(), loginUser.getAccount(), platform);
+        logger.info("mt_deposit mtGame account:{},code:{}", loginUser.getAccount(), platform);
         try {
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(loginUser.getAccount());
             if (memBaseinfo.getBalance().compareTo(coins) < 0) {
@@ -379,7 +376,7 @@ public class MtServiceImpl implements MtService {
 
     @Override
     public Result withdraw(LoginInfo loginUser, String platform, String ip, BigDecimal coins) {
-        logger.info("mt_withdraw mtGame account:{},code:{}", loginUser.getId(), loginUser.getAccount(), platform);
+        logger.info("mt_withdraw mtGame account:{},code:{}", loginUser.getAccount(), platform);
         try {
             String transactionId = GoldchangeEnum.DSFYXZZ.name() + GeneratorIdUtil.generateId();
             // 提取
@@ -481,10 +478,11 @@ public class MtServiceImpl implements MtService {
      * @param cptOpenMember cptOpenMember
      * @return Result
      */
-    private Result createMemberGame(CptOpenMember cptOpenMember, GameParentPlatform gameParentPlatform, String platform) {
+    private Result createMemberGame(CptOpenMember cptOpenMember, GameParentPlatform gameParentPlatform,
+                                    String platform, LoginInfo loginUser) {
 
         // 用户注册
-        JSONObject result = commonRequest(getLoginUrl(cptOpenMember));
+        JSONObject result = commonRequest(getCreateUrl(cptOpenMember, loginUser));
         if (null == result) {
             return Result.failed("g091087", "第三方请求异常！");
         }
@@ -515,8 +513,8 @@ public class MtServiceImpl implements MtService {
      */
     private JSONObject commonRequest(String apiUrl) {
         Map<String, String> header = new HashMap<>();
-        header.put("Content-Type", "amtlication/json");
-        header.put("accept", "amtlication/json");
+        header.put("Content-Type", "application/json");
+        header.put("accept", "application/json");
         Map<String, Object> params = new HashMap<>();
         String returnResult = GameUtil.postJson(apiUrl, params, header);
         return JSONObject.parseObject(returnResult);
@@ -531,7 +529,7 @@ public class MtServiceImpl implements MtService {
      */
     private String getStartGame(CptOpenMember cptOpenMember, String lang, String platform) {
 
-        JSONObject jsonObject = new JSONObject();
+        JSONObject jsonObject = new JSONObject(new LinkedHashMap<>());
         jsonObject.put("gameCode", platform);
         jsonObject.put("lang", lang);
         String data = jsonObject.toJSONString();
@@ -552,14 +550,19 @@ public class MtServiceImpl implements MtService {
      *
      * @return String
      */
-    private String getLoginUrl(CptOpenMember cptOpenMember) {
+    private String getCreateUrl(CptOpenMember cptOpenMember, LoginInfo loginUser) {
         StringBuilder url = new StringBuilder();
         url.append(OpenAPIProperties.MT_API_URL);
         url.append("/services/dg/player/playerCreate2/");
         url.append(cptOpenMember.getUserName()).append("/");
         url.append(OpenAPIProperties.MT_VENDOR_ID).append("/");
         url.append(MD5.md5(cptOpenMember.getPassword())).append("/");
-        url.append(MD5.md5(OpenAPIProperties.MT_KEY));
+
+        JSONObject jsonObject = new JSONObject(new LinkedHashMap<>());
+        jsonObject.put("nickname", loginUser.getNickName());
+        jsonObject.put("playerLevel", loginUser.getMemLevel());
+        url.append(MD5.md5(OpenAPIProperties.MT_KEY + jsonObject.toJSONString())).append("/");
+        url.append(getEncode(jsonObject.toJSONString()));
         return url.toString();
     }
 
@@ -603,7 +606,7 @@ public class MtServiceImpl implements MtService {
     private String getBalanceUrl(String userAccount) {
         StringBuilder url = new StringBuilder();
         url.append(OpenAPIProperties.MT_API_URL);
-        url.append("/services/dg/player/allWithdraw/");
+        url.append("/services/dg/player/getPlayerBalance/");
         url.append(userAccount).append("/");
         url.append(OpenAPIProperties.MT_VENDOR_ID);
         return url.toString();
@@ -622,9 +625,16 @@ public class MtServiceImpl implements MtService {
         url.append("/services/dg/player/deposit2/");
         url.append(OpenAPIProperties.MT_VENDOR_ID).append("/");
         url.append(userAccount).append("/");
-        url.append(coins).append("/");
+        url.append(coins.setScale(4, RoundingMode.HALF_UP)).append("/");
         url.append(extTransId).append("/");
-        url.append(MD5.md5(OpenAPIProperties.MT_KEY));
+        JSONObject jsonObject = new JSONObject(new LinkedHashMap<>());
+        jsonObject.put("merchantId", OpenAPIProperties.MT_VENDOR_ID);
+        jsonObject.put("playerName", userAccount);
+        jsonObject.put("extTransId", extTransId);
+        jsonObject.put("coins", coins.setScale(4, RoundingMode.HALF_UP).toString());
+        url.append(MD5.md5(OpenAPIProperties.MT_KEY+jsonObject.toJSONString())).append("/");
+        url.append(getEncode(jsonObject.toJSONString()));
+
         return url.toString();
     }
 
@@ -641,9 +651,17 @@ public class MtServiceImpl implements MtService {
         url.append("/services/dg/player/withdraw2/");
         url.append(OpenAPIProperties.MT_VENDOR_ID).append("/");
         url.append(userAccount).append("/");
-        url.append(coins).append("/");
+        url.append(coins.setScale(4, RoundingMode.HALF_UP)).append("/");
         url.append(extTransId).append("/");
-        url.append(MD5.md5(OpenAPIProperties.MT_KEY));
+
+        JSONObject jsonObject = new JSONObject(new LinkedHashMap<>());
+        jsonObject.put("merchantId", OpenAPIProperties.MT_VENDOR_ID);
+        jsonObject.put("playerName", userAccount);
+        jsonObject.put("extTransId", extTransId);
+        jsonObject.put("coins", coins.setScale(4, RoundingMode.HALF_UP).toString());
+
+        url.append(MD5.md5(OpenAPIProperties.MT_KEY+jsonObject.toJSONString())).append("/");
+        url.append(getEncode(jsonObject.toJSONString()));
         return url.toString();
     }
 
@@ -654,6 +672,7 @@ public class MtServiceImpl implements MtService {
      * @return String
      */
     private String getEncode(String data) {
+        logger.info("getEncode.data {}", data);
         java.util.Base64.Encoder encoder = java.util.Base64.getEncoder();
         return encoder.encodeToString(data.getBytes(StandardCharsets.UTF_8));
     }

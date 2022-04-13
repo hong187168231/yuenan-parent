@@ -26,7 +26,7 @@ public class MtController {
 
     @Autowired
     private MtService mtService;
-
+    // 全部提取
     @RequestMapping(value = "/allWithdraw", method = RequestMethod.POST)
     @AllowAccess
     public Object allWithdraw(@LoginUser LoginInfo loginUser,
@@ -38,7 +38,7 @@ public class MtController {
         logger.info("MtController allWithdraw 返回数据 params:{}", object);
         return object;
     }
-
+    // 查询余额
     @RequestMapping(value = "/getPlayerBalance", method = RequestMethod.POST)
     @AllowAccess
     private Object getPlayerBalance(@LoginUser LoginInfo loginUser,
@@ -50,7 +50,7 @@ public class MtController {
         logger.info("MtController getPlayerBalance 返回数据 params:{}", object);
         return object;
     }
-
+    // 充值
     @RequestMapping(value = "/deposit", method = RequestMethod.POST)
     @AllowAccess
     private Object deposit(@LoginUser LoginInfo loginUser,
@@ -63,7 +63,7 @@ public class MtController {
         logger.info("MtController deposit 返回数据 params:{}", object);
         return object;
     }
-
+    // 提取
     @RequestMapping(value = "/withdraw", method = RequestMethod.POST)
     @AllowAccess
     private Object withdraw(@LoginUser LoginInfo loginUser,
