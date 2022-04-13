@@ -108,7 +108,7 @@ public class KmServerImpl implements KmService {
             }
 
             StringBuilder builder = new StringBuilder();
-            builder.append(OpenAPIProperties.KM_API_URL).append("/gamelauncher?");
+            builder.append(OpenAPIProperties.KM_GAME_URL).append("/gamelauncher?");
             builder.append("gpcode=").append("KMQM");
             builder.append("&gcode=").append(gamePlatform.getPlatformCode());
             builder.append("&token=").append(tokenJson.getString("authtoken"));
@@ -125,12 +125,12 @@ public class KmServerImpl implements KmService {
 
     private JSONObject gameToken(LoginInfo loginUser, GameParentPlatform platformGameParent, String ip) {
         Map<String, String> map = new HashMap<>();
-        map.put("ipaddress", ip);
+        map.put("ipaddress", "116.204.208.100");
         map.put("username", loginUser.getAccount());
         map.put("userid", loginUser.getAccount());
         map.put("lang", platformGameParent.getLanguageType());
         map.put("cur", platformGameParent.getCurrencyType());
-        map.put("betlimitid", "5");
+        map.put("betlimitid", "1");
         map.put("platformtype", "1");
         map.put("istestplayer", "false");
         StringBuilder builder = new StringBuilder();
