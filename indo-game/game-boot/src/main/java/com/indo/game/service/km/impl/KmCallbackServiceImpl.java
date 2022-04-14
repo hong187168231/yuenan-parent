@@ -291,7 +291,7 @@ public class KmCallbackServiceImpl implements KmCallbackService {
 
                 txns.setRoundId(json.getString("roundid"));
                 //平台代码
-                txns.setPlatform("DG");
+                txns.setPlatform("KingMaker");
                 //下注金额
                 txns.setBetAmount(jsonObject.getBigDecimal("amt"));
                 //中奖金额（赢为正数，亏为负数，和为0）或者总输赢

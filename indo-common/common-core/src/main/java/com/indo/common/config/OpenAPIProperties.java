@@ -409,6 +409,19 @@ public class OpenAPIProperties implements InitializingBean {
     @Value("${v8.platformCode:V8}")
     private String v8PlatformCode;
 
+    public static String BL_API_URL;
+    public static String BL_KEY;
+    public static String BL_KEY_ID;
+    public static String BL_KEY_SECRET;
+    @Value("${bl.apiUrl}")
+    private String blApiUrl;
+    @Value("${bl.key}")
+    private String blKey;
+    @Value("${bl.keyId}")
+    private String blKeyId;
+    @Value("${bl.keySecret}")
+    private String blKeySecret;
+
     @Override
     public void afterPropertiesSet() {
 
@@ -556,5 +569,10 @@ public class OpenAPIProperties implements InitializingBean {
         V8_MD5KEY = v8Md5Key;
         V8_LINE_CODE = v8LineCode;
         V8_PLATFORM_CODE = v8PlatformCode;
+
+        BL_KEY = blKey;
+        BL_API_URL = blApiUrl;
+        BL_KEY_ID = blKeyId;
+        BL_KEY_SECRET = blKeySecret;
     }
 }

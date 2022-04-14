@@ -531,23 +531,14 @@ public class GameUtil extends HttpCommonUtils {
 
     /**
      * kM
-     * @param proxyHostName
-     * @param proxyPort
-     * @param proxyTcp
-     * @param url
-     * @param paramsMap
-     * @param type
-     * @param userId
-     * @return
      */
     public static String doProxyPostKmJson(String proxyHostName, int proxyPort, String proxyTcp, String url, Map<String, String> paramsMap, String type, Integer userId, String clientId, String clientSecret) {
         // 设置代理IP、端口、协议
         // 创建HttpClientBuilder
-        HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+        CloseableHttpClient httpClient = HttpClients.createDefault();
         // 依次是代理地址，代理端口号，协议类型
 //        HttpHost proxy = new HttpHost(proxyHostName, proxyPort, proxyTcp);
 
-        CloseableHttpClient closeableHttpClient = null;
         CloseableHttpResponse response = null;
         String resultString = "";
         String paramsString = "";
@@ -568,35 +559,28 @@ public class GameUtil extends HttpCommonUtils {
             //如果访问一个接口,多少时间内无法返回数据,就直接放弃此次调用。
             httpPost.setConfig(requestConfig);
             //不复用TCP SOCKET
-            httpPost.setHeader("connection", "close");
-            httpPost.setHeader("Content-Type", "application/x-www-form-urlencoded");
             httpPost.setHeader("X-QM-ClientId", clientId);
             httpPost.setHeader("X-QM-ClientSecret", clientSecret);
-            List<BasicNameValuePair> list = new ArrayList<>();
-            for (String key : paramsMap.keySet()) {
-                list.add(new BasicNameValuePair(key, String.valueOf(paramsMap.get(key))));
-            }
             logger.info("POST请求 commonRequest userId:{},paramsMap:{}", userId, paramsMap);
-            // 创建请求内容
-            UrlEncodedFormEntity urlEncodedFormEntity = new UrlEncodedFormEntity(list, StandardCharsets.UTF_8);
-            httpPost.setEntity(urlEncodedFormEntity);
 
-            //log参数
             paramsString = JSONObject.toJSONString(paramsMap);
+            StringEntity stringEntityentity = new StringEntity(paramsString, StandardCharsets.UTF_8);//解决中文乱码问题
+            stringEntityentity.setContentEncoding(StandardCharsets.UTF_8.toString());
+            stringEntityentity.setContentType("application/json");
+            httpPost.setEntity(stringEntityentity);
+            //log参数
             logger.info("POST请求 commonRequest userId:{},paramsString:{}", userId, paramsString);
-            closeableHttpClient = httpClientBuilder.build();
+
             // 执行http请求
-            response = closeableHttpClient.execute(httpPost);
-            HttpEntity entity = response.getEntity();
-            resultString = EntityUtils.toString(entity, StandardCharsets.UTF_8);
+            BasicResponseHandler handler = new BasicResponseHandler();
+            resultString = httpClient.execute(httpPost, handler);
             // 此句关闭了流
-            EntityUtils.consume(entity);
         } catch (Exception e) {
             logger.error("httplog {}:{} doProxyPostJson occur error:{}, url:{}, proxyHost:{}, proxyPort:{}, originParams:{}",
                     userId, type, e.getMessage(), url, paramsString, e);
             return resultString;
         } finally {
-            HttpCommonUtils.closeHttpClientAndResponse(response, closeableHttpClient, url, paramsString);
+            HttpCommonUtils.closeHttpClientAndResponse(response, httpClient, url, paramsString);
         }
         return resultString;
     }
