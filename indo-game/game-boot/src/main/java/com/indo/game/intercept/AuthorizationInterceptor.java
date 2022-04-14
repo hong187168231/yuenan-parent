@@ -112,6 +112,14 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
         set.add("/wm");
         set.add("/mg");
         set.add("/RT");
+        set.add("/mg");
+        set.add("/cmd");
+        set.add("/wm");
+        set.add("/dg");
+        set.add("/mt");
+        set.add("/kingmaker");
+        set.add("/v8");
+        set.add("/bl");
         List<String> result = set.stream().filter(a -> uri.contains(a)).collect(Collectors.toList());
         return !CollectionUtils.isEmpty(result);
     }
