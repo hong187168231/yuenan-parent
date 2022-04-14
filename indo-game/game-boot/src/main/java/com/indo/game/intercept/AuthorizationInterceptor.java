@@ -112,9 +112,7 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
         set.add("/wm");
         set.add("/mg");
         set.add("/RT");
-        set.add("/mg");
         set.add("/cmd");
-        set.add("/wm");
         set.add("/dg");
         set.add("/mt");
         set.add("/kingmaker");
