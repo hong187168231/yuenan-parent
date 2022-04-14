@@ -82,7 +82,7 @@ public class PgCallbackServiceImpl implements PgCallbackService {
     @Override
     public Object pgTransferInCallback(PgVerifyCallBackReq pgVerifyCallBackReq, String ip) {
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(pgVerifyCallBackReq.getPlayer_name());
-        GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode("PG");
+        GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(pgVerifyCallBackReq.getGame_id() + "");
         GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         PgCallBackResponse pgCallBackRespFail = new PgCallBackResponse();
         JSONObject dataJson = new JSONObject();

@@ -12,6 +12,7 @@ import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.IPUtils;
 import com.indo.game.service.ae.AeService;
 import com.indo.game.service.awc.AwcService;
+import com.indo.game.service.bl.BlService;
 import com.indo.game.service.bti.BtiService;
 import com.indo.game.service.cmd.CmdService;
 import com.indo.game.service.cq.CqService;
@@ -117,6 +118,8 @@ public class GameController {
     private KmService kmService;
     @Autowired
     private V8Service v8Service;
+    @Autowired
+    private BlService blService;
     @Autowired
     private RedissonClient redissonClient;
     @Resource
@@ -240,6 +243,9 @@ public class GameController {
                 if ("V8".equals(parentName)) {
                     resultInfo = v8Service.v8Game(loginUser, isMobileLogin, ip, platform, parentName);
                 }
+                if ("BOLE".equals(parentName)) {
+                    resultInfo = blService.blGame(loginUser, isMobileLogin, ip, platform, parentName);
+                }
 
                 if (resultInfo == null) {
                     log.info("登录平台或单一游戏登录log {} loginPlatform result is null. params:{},ip:{},parentName:{}", loginUser.getId(), params, ip, parentName);
@@ -351,6 +357,9 @@ public class GameController {
             }
             if ("V8".equals(platform)) {
                 resultInfo = v8Service.logout(loginUser, platform, ip);
+            }
+            if ("BOLE".equals(platform)) {
+                resultInfo = blService.logout(loginUser, platform, ip);
             }
             if (resultInfo == null) {
                 log.info("退出平台log {} loginPlatform result is null. params:{},ip:{}", loginUser.getId(), params, ip);
