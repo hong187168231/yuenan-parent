@@ -125,7 +125,7 @@ public class KmServerImpl implements KmService {
 
     private JSONObject gameToken(LoginInfo loginUser, GameParentPlatform platformGameParent, String ip) {
         Map<String, String> map = new HashMap<>();
-        map.put("ipaddress", "116.204.208.100");
+        map.put("ipaddress", ip);
         map.put("username", loginUser.getAccount());
         map.put("userid", loginUser.getAccount());
         map.put("lang", platformGameParent.getLanguageType());
@@ -145,9 +145,6 @@ public class KmServerImpl implements KmService {
         return apiResponseData;
 
     }
-
-
-
 
 
     /**

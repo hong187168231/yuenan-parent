@@ -41,7 +41,7 @@ public class KmCallbackServiceImpl implements KmCallbackService {
 
     @Override
     public Object kmBalanceCallback(JSONObject jsonObject, String ip) {
-        JSONArray array = JSONObject.parseArray(jsonObject.getString("users"));
+        JSONArray array =  jsonObject.getJSONArray("users");
         JSONArray jsonArray = new JSONArray();
         if (array.size() > 0) {
             for (int i = 0; i < array.size(); i++) {
@@ -67,12 +67,14 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                 }
             }
         }
-        return jsonArray;
+        JSONObject  json = new JSONObject();
+        json.put("users", jsonArray);
+        return json;
     }
 
     @Override
     public Object kmDebitCallback(JSONObject jsonObject, String ip) {
-        JSONArray array = JSONObject.parseArray(jsonObject.getString("transactions"));
+        JSONArray array = jsonObject.getJSONArray("transactions");
         JSONArray jsonArray = new JSONArray();
         if (array.size() > 0) {
             for (int i = 0; i < array.size(); i++) {
@@ -200,7 +202,7 @@ public class KmCallbackServiceImpl implements KmCallbackService {
 
     @Override
     public Object kmCreditCallback(JSONObject jsonObject, String ip) {
-        JSONArray array = JSONObject.parseArray(jsonObject.getString("transactions"));
+        JSONArray array = jsonObject.getJSONArray("transactions");
         JSONArray jsonArray = new JSONArray();
         if (array.size() > 0) {
             for (int i = 0; i < array.size(); i++) {
