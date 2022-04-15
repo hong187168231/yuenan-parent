@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
-@RequestMapping("/km/callBack")
+@RequestMapping("/kingmaker/callBack")
 public class KmCallBackController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
