@@ -59,7 +59,7 @@ public class GameCommonServiceImpl implements GameCommonService {
     public List<GameParentPlatform> queryAllGameParentPlatform() {
         List<GameParentPlatform> categoryList = null;
         try{
-            Map<Object, Object> map = RedisUtils.hmget(RedisConstants.GAME_PARENT_PLATFORM_KEY);;
+            Map<Object, Object> map = RedisUtils.hmget(RedisConstants.GAME_PARENT_PLATFORM_KEY);
             categoryList = (List<GameParentPlatform>)map.get(RedisConstants.GAME_PARENT_PLATFORM_KEY);
 //            RedisUtils.hdel(RedisConstants.GAME_PARENT_PLATFORM_KEY);
         }catch (Exception e) {

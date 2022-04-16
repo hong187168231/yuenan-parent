@@ -120,13 +120,14 @@ public class BlServiceImpl implements BlService {
 
     private JSONObject gameLogin(GameParentPlatform platformGameParent, CptOpenMember cptOpenMember) {
         Map<String, String> map = new HashMap<String, String>();
-        Integer random = RandomUtil.getRandomOne(6);
-        Long dataTime = System.currentTimeMillis();
+        Integer random = RandomUtil.getRandomOne(7);
+        Long dataTime = System.currentTimeMillis() / 1000;
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(OpenAPIProperties.BL_KEY_SECRET).append(random).append(dataTime);
-        String sign = SignMd5Utils.sign(stringBuilder.toString(), OpenAPIProperties.BL_KEY);
+        String sign = SignMd5Utils.getSha1(stringBuilder.toString()).toLowerCase();
         map.put("player_account", cptOpenMember.getUserName());
         map.put("lang", platformGameParent.getLanguageType());
+        map.put("ip", "116.204.208.100");
         map.put("country", platformGameParent.getLanguageType());
         map.put("AccessKeyId", OpenAPIProperties.BL_KEY_ID);
         map.put("Timestamp", dataTime + "");
@@ -151,15 +152,15 @@ public class BlServiceImpl implements BlService {
     public Result logout(LoginInfo loginUser, String platform, String ip) {
         try {
             Map<String, String> map = new HashMap<String, String>();
-            Long dataTime = System.currentTimeMillis();
-            Integer random = RandomUtil.getRandomOne(6);
+            Long dataTime =  System.currentTimeMillis() / 1000;
+            Integer random = RandomUtil.getRandomOne(7);
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append(OpenAPIProperties.BL_KEY_SECRET).append(random).append(dataTime);
-            String sign = SignMd5Utils.sign(stringBuilder.toString(), OpenAPIProperties.BL_KEY);
+            String sign = SignMd5Utils.getSha1(stringBuilder.toString()).toLowerCase();
             map.put("player_account", loginUser.getAccount());
             map.put("AccessKeyId", OpenAPIProperties.BL_KEY_ID);
             map.put("Nonce", random + "");
-            map.put("random", sign);
+            map.put("Sign", sign);
             StringBuilder apiUrl = new StringBuilder();
             apiUrl.append(OpenAPIProperties.BL_API_URL).append("/v1/player/logout");
             JSONObject apiResponseData = commonRequest(apiUrl.toString(), map, loginUser.getId().intValue(), "BLlogout");
