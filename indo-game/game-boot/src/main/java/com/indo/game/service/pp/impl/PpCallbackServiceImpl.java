@@ -1,6 +1,7 @@
 package com.indo.game.service.pp.impl;
 
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.indo.common.config.OpenAPIProperties;
@@ -144,7 +145,9 @@ public class PpCallbackServiceImpl implements PpCallbackService {
             // 查询用户请求订单
             Txns oldTxns = getTxns(ppBetCallBackReq.getReference(), memBaseinfo.getId());
             if (null != oldTxns) {
-                return initSuccessResponse(ppBetCallBackReq.getReference(), platformGameParent.getCurrencyType(), balance);
+                JSONObject json = initSuccessResponse(ppBetCallBackReq.getReference(), platformGameParent.getCurrencyType(), balance);
+                json.put("usedPromo", BigDecimal.ZERO);
+                return json;
             }
 
             if (memBaseinfo.getBalance().compareTo(betAmount) < 0) {
@@ -218,7 +221,9 @@ public class PpCallbackServiceImpl implements PpCallbackService {
                 return initFailureResponse(100, "订单入库请求失败");
             }
 
-            return initSuccessResponse(ppBetCallBackReq.getReference(), platformGameParent.getCurrencyType(), balance);
+            JSONObject json = initSuccessResponse(ppBetCallBackReq.getReference(), platformGameParent.getCurrencyType(), balance);
+            json.put("usedPromo", BigDecimal.ZERO);
+            return json;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return initFailureResponse(100, e.getMessage());
@@ -712,7 +717,6 @@ public class PpCallbackServiceImpl implements PpCallbackService {
 
             // 如果订单已经取消
             if ("Cancel Bet".equals(oldTxns.getMethod())) {
-                json.put("cash", memBaseinfo.getBalance());
                 json.put("transactionId", ppRefundWinCallBackReq.getReference());
                 return json;
             }
@@ -802,7 +806,6 @@ public class PpCallbackServiceImpl implements PpCallbackService {
         json.put("currency", currency);
         json.put("cash", balance);
         json.put("bonus", BigDecimal.ZERO);
-        json.put("usedPromo", BigDecimal.ZERO);
         return json;
     }
 
