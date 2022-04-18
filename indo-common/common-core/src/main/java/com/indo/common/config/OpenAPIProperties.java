@@ -358,7 +358,7 @@ public class OpenAPIProperties implements InitializingBean {
     public static String BTI_PLATFORM_CODE;
     @Value("${bti.apiUrl}")
     private String btiApiurl;
-    @Value("${bti.platformCode:BTI}")
+    @Value("${bti.platformCode:BTi}")
     private String btiPlatformCode;
 
     // MT

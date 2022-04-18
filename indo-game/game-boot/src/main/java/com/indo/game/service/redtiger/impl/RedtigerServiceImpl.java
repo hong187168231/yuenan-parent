@@ -102,7 +102,7 @@ public class RedtigerServiceImpl implements RedtigerService {
 
     @Override
     public Result logout(LoginInfo loginUser, String platform, String ip) {
-        return null;
+        return Result.success();
     }
 
 
