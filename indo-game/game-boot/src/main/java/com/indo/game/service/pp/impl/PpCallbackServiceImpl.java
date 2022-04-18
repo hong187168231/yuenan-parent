@@ -301,7 +301,7 @@ public class PpCallbackServiceImpl implements PpCallbackService {
             oldTxns.setUpdateTime(dateStr);
             //投注 IP
             oldTxns.setBetIp(ip);//  string 是 投注 IP
-            int num = txnsMapper.updateById(oldTxns);
+            int num = txnsMapper.insert(oldTxns);
             if (num <= 0) {
                 return initFailureResponse(100, "订单派奖请求失败");
             }
