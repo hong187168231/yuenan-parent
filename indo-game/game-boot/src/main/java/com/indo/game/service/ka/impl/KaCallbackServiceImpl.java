@@ -49,7 +49,7 @@ public class KaCallbackServiceImpl implements KaCallbackService {
 
             // 校验IP
             if (checkIp(ip, platformGameParent)) {
-                return initFailureResponse(4, "玩家 IP 地址不匹配或玩家不存在");
+                return initFailureResponse(4, "IP不在白名单");
             }
 
             // 查询玩家是否存在
@@ -84,7 +84,7 @@ public class KaCallbackServiceImpl implements KaCallbackService {
 
             // 校验IP
             if (checkIp(ip, platformGameParent)) {
-                return initFailureResponse(4, "玩家 IP 地址不匹配或玩家不存在");
+                return initFailureResponse(4, "IP不在白名单");
             }
 
             // 查询玩家是否存在
@@ -229,7 +229,7 @@ public class KaCallbackServiceImpl implements KaCallbackService {
 
             // 校验IP
             if (checkIp(ip, platformGameParent)) {
-                return initFailureResponse(4, "玩家 IP 地址不匹配或玩家不存在");
+                return initFailureResponse(4, "IP不在白名单");
             }
 
             // 查询玩家是否存在
@@ -338,7 +338,7 @@ public class KaCallbackServiceImpl implements KaCallbackService {
 
             // 校验IP
             if (!ip.equals(kaCallbackRevokeReq.getPlayerIp()) || checkIp(ip, platformGameParent)) {
-                return initFailureResponse(4, "玩家 IP 地址不匹配或玩家不存在");
+                return initFailureResponse(4, "IP不在白名单");
             }
 
             // 查询玩家是否存在
@@ -397,8 +397,8 @@ public class KaCallbackServiceImpl implements KaCallbackService {
         try {
             GameParentPlatform platformGameParent = getGameParentPlatform();
             // 校验IP
-            if (!ip.equals(kaCallbackCommonReq.getPlayerIp()) || checkIp(ip, platformGameParent)) {
-                return initFailureResponse(4, "玩家 IP 地址不匹配或玩家不存在");
+            if (checkIp(ip, platformGameParent)) {
+                return initFailureResponse(4, "IP不在白名单");
             }
 
             // 查询玩家是否存在
@@ -426,8 +426,8 @@ public class KaCallbackServiceImpl implements KaCallbackService {
         logger.info("ka_end kaGame paramJson:{}, ip:{}", JSONObject.toJSONString(kaCallbackCommonReq), ip);
         GameParentPlatform gameParentPlatform = getGameParentPlatform();
         // 校验IP
-        if (!ip.equals(kaCallbackCommonReq.getPlayerIp()) || checkIp(ip, gameParentPlatform)) {
-            return initFailureResponse(4, "玩家 IP 地址不匹配或玩家不存在");
+        if (checkIp(ip, gameParentPlatform)) {
+            return initFailureResponse(4, "IP不在白名单");
         }
 
         return initSuccessResponse();
