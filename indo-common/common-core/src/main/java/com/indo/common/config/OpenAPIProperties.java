@@ -422,6 +422,18 @@ public class OpenAPIProperties implements InitializingBean {
     @Value("${bl.keySecret}")
     private String blKeySecret;
 
+
+    //OB
+    public static String OB_MERCHANT_CODE;
+    public static String OB_API_URL;
+    public static String OB_MERCHANT_KEY;
+    @Value("${ob.obApiurl}")
+    private String obApiurl;
+    @Value("${ob.obMerchantCode}")
+    private String obMerchantCode;
+    @Value("${ob.obMerchantKey}")
+    private String obMerchantKey;
+
     @Override
     public void afterPropertiesSet() {
 
@@ -574,5 +586,10 @@ public class OpenAPIProperties implements InitializingBean {
         BL_API_URL = blApiUrl;
         BL_KEY_ID = blKeyId;
         BL_KEY_SECRET = blKeySecret;
+
+
+        OB_API_URL = obApiurl;
+        OB_MERCHANT_CODE = obMerchantCode;
+        OB_MERCHANT_KEY = obMerchantKey;
     }
 }

@@ -25,6 +25,7 @@ import com.indo.game.service.ka.KaService;
 import com.indo.game.service.km.KmService;
 import com.indo.game.service.mg.MgService;
 import com.indo.game.service.mt.MtService;
+import com.indo.game.service.ob.ObService;
 import com.indo.game.service.pg.PgService;
 import com.indo.game.service.pp.PpService;
 import com.indo.game.service.ps.PsService;
@@ -120,6 +121,8 @@ public class GameController {
     private V8Service v8Service;
     @Autowired
     private BlService blService;
+    @Autowired
+    private ObService obService;
     @Autowired
     private RedissonClient redissonClient;
     @Resource
@@ -246,6 +249,9 @@ public class GameController {
                 if ("BOLE".equals(parentName)) {
                     resultInfo = blService.blGame(loginUser, isMobileLogin, ip, platform, parentName);
                 }
+                if ("OB".equals(parentName)) {
+                    resultInfo = obService.obGame(loginUser, isMobileLogin, ip, platform, parentName);
+                }
 
                 if (resultInfo == null) {
                     log.info("登录平台或单一游戏登录log {} loginPlatform result is null. params:{},ip:{},parentName:{}", loginUser.getId(), params, ip, parentName);
@@ -361,6 +367,10 @@ public class GameController {
             if ("BOLE".equals(platform)) {
                 resultInfo = blService.logout(loginUser, platform, ip);
             }
+            if ("OB".equals(platform)) {
+                resultInfo = obService.logout(loginUser, platform, ip);
+            }
+
             if (resultInfo == null) {
                 log.info("退出平台log {} loginPlatform result is null. params:{},ip:{}", loginUser.getId(), params, ip);
                 return Result.failed("g100104", "网络繁忙，请稍后重试！");
