@@ -231,8 +231,8 @@ public class ObServiceImpl implements ObService {
             long currentTime = System.currentTimeMillis();
             StringBuilder builder = new StringBuilder();
             Map<String, String> params = new HashMap<String, String>();
-            params.put("userNme", loginUser.getAccount());
-            params.put("merchantCode", OpenAPIProperties.AE_MERCHANT_ID);
+            params.put("userName", loginUser.getAccount());
+            params.put("merchantCode", OpenAPIProperties.OB_MERCHANT_CODE);
             params.put("timestamp", currentTime + "");
             builder.append(OpenAPIProperties.OB_MERCHANT_CODE).append("&").append(loginUser.getAccount()).append("&").append(currentTime);
             String signKey = MD5.md5(builder.toString());
