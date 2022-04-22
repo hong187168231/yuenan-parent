@@ -127,8 +127,8 @@ public class ObServiceImpl implements ObService {
         }
         if (("0000").equals(aeApiResponseData.getCode())) {
             ApiResponseData responseData = new ApiResponseData();
-            JSONObject jsonObject = JSON.parseObject(aeApiResponseData.getData());
-            responseData.setPathUrl(jsonObject.getJSONObject("data").getString("url"));
+            JSONObject jsonObject = JSONObject.parseObject(aeApiResponseData.getData());
+            responseData.setPathUrl(jsonObject.getString("loginUrl"));
             return Result.success(responseData);
         } else {
             return errorCode(aeApiResponseData.getCode(), aeApiResponseData.getMsg());
@@ -153,7 +153,8 @@ public class ObServiceImpl implements ObService {
         params.put("timestamp", currentTime + "");
         // 加密
         StringBuilder builder = new StringBuilder();
-        builder.append(OpenAPIProperties.OB_MERCHANT_CODE).append("&").append(cptOpenMember.getUserName()).append("&").append(currentTime);
+        builder.append(OpenAPIProperties.OB_MERCHANT_CODE).append("&").append(cptOpenMember.getUserName());
+        builder.append("&").append(params.get("terminal")).append("&").append(currentTime);
         String signKey = MD5.md5(builder.toString());
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(signKey).append("&").append(OpenAPIProperties.OB_MERCHANT_KEY);
@@ -162,7 +163,7 @@ public class ObServiceImpl implements ObService {
         AeApiResponseData aeApiResponseData = null;
         try {
             StringBuilder apiUrl = new StringBuilder();
-            apiUrl.append(OpenAPIProperties.AE_API_URL).append("/api/user/login");
+            apiUrl.append(OpenAPIProperties.OB_API_URL).append("/api/user/login");
             aeApiResponseData = commonRequest(apiUrl.toString(), params, cptOpenMember.getUserId(), "gameLogin");
         } catch (Exception e) {
             logger.error("OBlog aeGameLogin:{}", e);
@@ -207,7 +208,7 @@ public class ObServiceImpl implements ObService {
         String sign = MD5.md5(stringBuilder.toString());
         params.put("signature", sign);
         StringBuilder apiUrl = new StringBuilder();
-        apiUrl.append(OpenAPIProperties.OB_API_URL).append("api/user/create");
+        apiUrl.append(OpenAPIProperties.OB_API_URL).append("/api/user/create");
         AeApiResponseData aeApiResponseData = null;
         try {
             aeApiResponseData = commonRequest(apiUrl.toString(), params, cptOpenMember.getUserId(), "obCreateMember");
@@ -356,4 +357,5 @@ public class ObServiceImpl implements ObService {
             return Result.failed("g009999", errorMessage);
         }
     }
+
 }
