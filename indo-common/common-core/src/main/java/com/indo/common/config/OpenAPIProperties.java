@@ -434,6 +434,32 @@ public class OpenAPIProperties implements InitializingBean {
     @Value("${ob.obMerchantKey}")
     private String obMerchantKey;
 
+    // SA
+    public static String SA_API_URL;
+    public static String SA_WEB_URL;
+    public static String SA_LOBBYCODE;
+    public static String SA_SECRET_KEY;
+    public static String SA_MD5KEY;
+    public static String SA_ENCRYPT_KEY;
+    public static String SA_APP_ENCRYPT_KEY;
+    public static String SA_PLATFORM_CODE;
+    @Value("${sa.apiUrl}")
+    private String saApiurl;
+    @Value("${sa.webUrl}")
+    private String saWebUrl;
+    @Value("${sa.lobby}")
+    private String saLobby;
+    @Value("${sa.secretKey}")
+    private String saSecretKey;
+    @Value("${sa.md5Key}")
+    private String saMd5Key;
+    @Value("${sa.encryptKey}")
+    private String saEncryptKey;
+    @Value("${sa.appEncryptKey}")
+    private String saAppEncryptKey;
+    @Value("${sa.platformCode:SA}")
+    private String saPlatformCode;
+
     @Override
     public void afterPropertiesSet() {
 
@@ -591,5 +617,14 @@ public class OpenAPIProperties implements InitializingBean {
         OB_API_URL = obApiurl;
         OB_MERCHANT_CODE = obMerchantCode;
         OB_MERCHANT_KEY = obMerchantKey;
+
+        SA_API_URL = saApiurl;
+        SA_WEB_URL = saWebUrl;
+        SA_SECRET_KEY = saSecretKey;
+        SA_MD5KEY = saMd5Key;
+        SA_ENCRYPT_KEY = saEncryptKey;
+        SA_APP_ENCRYPT_KEY = saAppEncryptKey;
+        SA_PLATFORM_CODE = saPlatformCode;
+        SA_LOBBYCODE = saLobby;
     }
 }
