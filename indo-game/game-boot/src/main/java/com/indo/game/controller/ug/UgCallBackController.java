@@ -2,10 +2,7 @@ package com.indo.game.controller.ug;
 
 import com.alibaba.fastjson.JSONObject;
 import com.indo.common.annotation.AllowAccess;
-import com.indo.game.pojo.dto.ug.UgCallBackCancelReq;
-import com.indo.game.pojo.dto.ug.UgCallBackGetBalanceReq;
-import com.indo.game.pojo.dto.ug.UgCallBackTransactionItemReq;
-import com.indo.game.pojo.dto.ug.UgCallBackTransferReq;
+import com.indo.game.pojo.dto.ug.*;
 import com.indo.game.service.ug.UgCallbackService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +14,7 @@ import java.util.Map;
 import java.util.Set;
 
 @RestController
-@RequestMapping("/ug")
+@RequestMapping("/ug/callBack")
 public class UgCallBackController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -25,9 +22,26 @@ public class UgCallBackController {
     private UgCallbackService ugCallbackService;
 
     /**
+     * 玩家登入验证URL
+     */
+    @RequestMapping(value="/checkLogin",method=RequestMethod.POST)
+    @ResponseBody
+    @AllowAccess
+    public Object checkLogin(@RequestParam Map<String, String> params) {
+        logger.info("ugCallBack {} callBack 回调,getBalance获取余额 params:{}",JSONObject.toJSONString(params));
+        Set<String> keySet = params.keySet();
+        UgCallBackCheckLoginReq ugCallBackCheckLoginReq = new UgCallBackCheckLoginReq();
+        for(String key : keySet){
+            ugCallBackCheckLoginReq = JSONObject.parseObject(key,ugCallBackCheckLoginReq.getClass());
+        }
+        Object getBalance = ugCallbackService.checkLogin(ugCallBackCheckLoginReq);
+        logger.info("ugCallBack {} callBack 回调返回数据,getBalance获取余额 params:{}",JSONObject.toJSONString(getBalance));
+        return getBalance;
+    }
+    /**
      * 获取余额
      */
-    @RequestMapping(value="/GetBalance",method=RequestMethod.POST)
+    @RequestMapping(value="/getBalance",method=RequestMethod.POST)
     @ResponseBody
     @AllowAccess
     public Object getBalance(@RequestParam Map<String, String> params) {
@@ -45,7 +59,7 @@ public class UgCallBackController {
     /**
      * 加余额/扣除余额
      */
-    @RequestMapping(value="/Transfer",method=RequestMethod.POST)
+    @RequestMapping(value="/changeBalance",method=RequestMethod.POST)
     @ResponseBody
     @AllowAccess
     public Object transfer(@RequestParam Map<String, String> params) {
@@ -63,7 +77,7 @@ public class UgCallBackController {
     /**
      * 取消交易
      */
-    @RequestMapping(value="/Cancel",method=RequestMethod.POST)
+    @RequestMapping(value="/cancelBet",method=RequestMethod.POST)
     @ResponseBody
     @AllowAccess
     public Object cancel(@RequestParam Map<String, String> params) {
@@ -81,17 +95,17 @@ public class UgCallBackController {
     /**
      * 检查交易结果
      */
-    @RequestMapping(value="/Check",method=RequestMethod.POST)
+    @RequestMapping(value="/checkTxn",method=RequestMethod.POST)
     @ResponseBody
     @AllowAccess
     public Object check(@RequestParam Map<String, String> params) {
         logger.info("ugCallBack {} callBack 回调,check检查交易结果 params:{}",JSONObject.toJSONString(params));
         Set<String> keySet = params.keySet();
-        UgCallBackCancelReq ugCallBackCancelReq = new UgCallBackCancelReq();
+        UgCallBackCheckTxnReq<UgCallBackCheckTxnItemReq> ugCallBackCheckTxnReq = new UgCallBackCheckTxnReq();
         for(String key : keySet){
-            ugCallBackCancelReq = JSONObject.parseObject(key,ugCallBackCancelReq.getClass());
+            ugCallBackCheckTxnReq = JSONObject.parseObject(key,ugCallBackCheckTxnReq.getClass());
         }
-        Object check = ugCallbackService.check(ugCallBackCancelReq);
+        Object check = ugCallbackService.check(ugCallBackCheckTxnReq);
         logger.info("ugCallBack {} callBack 回调返回数据,check检查交易结果 params:{}",JSONObject.toJSONString(check));
         return check;
     }

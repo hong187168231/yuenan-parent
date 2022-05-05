@@ -168,9 +168,9 @@ public class GameController {
                     resultInfo = awcService.awcGame(loginUser, isMobileLogin, ip, platform, parentName);
                 }
                 if ("UG".equals(parentName)) {
-                    String loginType = "Smart";
+                    String loginType = "mobile";
                     if (!"1".equals(isMobileLogin))
-                        loginType = "PC";
+                        loginType = "pc";
 
                     resultInfo = ugService.ugGame(loginUser, ip, platform, loginType, parentName);
                 }

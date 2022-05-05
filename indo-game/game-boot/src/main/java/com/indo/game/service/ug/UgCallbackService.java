@@ -1,11 +1,11 @@
 package com.indo.game.service.ug;
 
-import com.indo.game.pojo.dto.ug.UgCallBackCancelReq;
-import com.indo.game.pojo.dto.ug.UgCallBackGetBalanceReq;
-import com.indo.game.pojo.dto.ug.UgCallBackTransactionItemReq;
-import com.indo.game.pojo.dto.ug.UgCallBackTransferReq;
+import com.indo.game.pojo.dto.ug.*;
 
 public interface UgCallbackService {
+
+    //玩家登入验证URL
+    public Object checkLogin(UgCallBackCheckLoginReq ugCallBackCheckLoginReq);
 
     //取得用户的余额
     public Object getBalance(UgCallBackGetBalanceReq ugCallBackGetBalanceReq);
@@ -14,9 +14,9 @@ public interface UgCallbackService {
     public Object transfer(UgCallBackTransferReq<UgCallBackTransactionItemReq> ugCallBackTransactionItemReqUgCallBackTransferReq);
 
     // 取消交易
-    public Object cancel(UgCallBackCancelReq ugCallBackCancelReq);
+    public Object cancel(UgCallBackCancelReq<UgCallBackCancelItemReq> ugCallBackCancelReq);
 
     //检查交易结果
-    public Object check(UgCallBackCancelReq ugCallBackCancelReq);
+    public Object check(UgCallBackCheckTxnReq<UgCallBackCheckTxnItemReq> ugCallBackCheckTxnReq);
 
 }

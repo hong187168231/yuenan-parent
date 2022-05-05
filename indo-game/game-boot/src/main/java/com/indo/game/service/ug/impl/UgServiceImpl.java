@@ -12,8 +12,6 @@ import com.indo.game.mapper.TxnsMapper;
 import com.indo.game.mapper.frontend.GameCategoryMapper;
 import com.indo.game.mapper.frontend.GamePlatformMapper;
 import com.indo.game.mapper.frontend.GameTypeMapper;
-import com.indo.game.mapper.ug.UgInsBetMapper;
-import com.indo.game.mapper.ug.UgSubBetMapper;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
 import com.indo.game.pojo.dto.ug.*;
 import com.indo.game.pojo.entity.CptOpenMember;
@@ -21,8 +19,6 @@ import com.indo.game.pojo.entity.manage.GameCategory;
 import com.indo.game.pojo.entity.manage.GameParentPlatform;
 import com.indo.game.pojo.entity.manage.GamePlatform;
 import com.indo.game.pojo.entity.manage.Txns;
-import com.indo.game.pojo.entity.ug.InsBet;
-import com.indo.game.pojo.entity.ug.SubBet;
 import com.indo.game.pojo.vo.callback.ug.*;
 import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
@@ -61,10 +57,6 @@ public class UgServiceImpl implements UgService {
 
     @Autowired
     private TxnsMapper txnsMapper;
-    @Autowired
-    private UgInsBetMapper ugInsBetMapper;
-    @Autowired
-    private UgSubBetMapper ugSubBetMapper;
 
     /**
      * 登录游戏
@@ -148,28 +140,23 @@ public class UgServiceImpl implements UgService {
         logger.info("uglog restrictedPlayer {} ugGame account:{}, ugCodeId:{}", loginUser.getId(), loginUser.getNickName());
         try {
             UgRegisterPlayerJsonDTO ugRegisterPlayerJsonDTO = new UgRegisterPlayerJsonDTO();
-            ugRegisterPlayerJsonDTO.setMemberAccount(loginUser.getAccount());//账户名,长度需要小于 20,大小写不敏感
-            ugRegisterPlayerJsonDTO.setNickName(null==loginUser.getNickName()?"":loginUser.getNickName());//昵称,长度需要小于 50
-            ugRegisterPlayerJsonDTO.setCurrency(gameParentPlatform.getCurrencyType());//货币代码
-            String url = "";
+            ugRegisterPlayerJsonDTO.setUserId(loginUser.getAccount());//账户名,长度需要小于 20,大小写不敏感
+            ugRegisterPlayerJsonDTO.setLoginName(null==loginUser.getNickName()?"":loginUser.getNickName());//昵称,长度需要小于 50
+            ugRegisterPlayerJsonDTO.setCurrencyId(Integer.valueOf(gameParentPlatform.getCurrencyType()));//货币代码
             if(null!=OpenAPIProperties.UG_AGENT&&!"".equals(OpenAPIProperties.UG_AGENT)){
-                ugRegisterPlayerJsonDTO.setAgentID(OpenAPIProperties.UG_AGENT);//代理编号
-                url = OpenAPIProperties.UG_API_URL+"/SportApi/RegisterByAgent";
-
-            }else {
-                url = OpenAPIProperties.UG_API_URL+"/SportApi/Register";
+                ugRegisterPlayerJsonDTO.setAgentId(Integer.valueOf(OpenAPIProperties.UG_AGENT));//代理编号
             }
 
-            UgApiResponseData ugApiResponse = commonRequest(ugRegisterPlayerJsonDTO, url, loginUser.getId().intValue(), ip, "restrictedPlayer");
+            UgApiResponseData ugApiResponse = commonRequestPost(ugRegisterPlayerJsonDTO, OpenAPIProperties.UG_API_URL+"/api/single/register", loginUser.getId().intValue(), ip, "restrictedPlayer");
 
             if (null == ugApiResponse ) {
                 return Result.failed("g100104","网络繁忙，请稍后重试！");
             }
-            if("000000".equals(ugApiResponse.getErrorCode())){
+            if("000000".equals(ugApiResponse.getCode())){
                 externalService.saveCptOpenMember(cptOpenMember);
                 return initGame(gameParentPlatform,loginUser,gamePlatform, ip,WebType);
             }else {
-                return Result.failed("g"+ugApiResponse.getErrorCode(),ugApiResponse.getErrorMessage());
+                return Result.failed("g"+ugApiResponse.getCode(),ugApiResponse.getMsg());
             }
         } catch (Exception e) {
             logger.error("uglog restrictedPlayer game error {} ", e);
@@ -183,26 +170,28 @@ public class UgServiceImpl implements UgService {
     private Result initGame(GameParentPlatform gameParentPlatform,LoginInfo loginUser,GamePlatform gamePlatform, String ip,String WebType) throws Exception {
         logger.info("uglog initGame Login {} initGame ugGame account:{}, ugCodeId:{},ip:{}", loginUser.getId(), loginUser.getNickName(),ip);
         try {
-            UgLoginJsonDTO ugLoginJsonDTO = new UgLoginJsonDTO();
-            ugLoginJsonDTO.setMemberAccount(loginUser.getAccount());//账户名,长度需要小于 20,大小写不敏感
-            ugLoginJsonDTO.setWebType(null==WebType||"".equals(WebType)?"PC":WebType);//登录类型: PC \Smart \Wap；默认值：PC
-            System.out.println("请求ip:"+ip);
-            ugLoginJsonDTO.setLoginIP(ip);//登录 IP
-            ugLoginJsonDTO.setLanguage(gameParentPlatform.getLanguageType());// string 否 语言文字代码；默认值：EN
-//            ugLoginJsonDTO.setPageStyle("");// string 否 网站版面 SP1, SP2, SP3, SP4, SP5,SP6,SP7；默认值：SP1
-            ugLoginJsonDTO.setOddsStyle(gamePlatform.getPlatformCode());// string 否 赔率样式代码(OddsStyle) ；默认值：MY
-//            ugLoginJsonDTO.setHostUrl("");// string 否 对接商域名,如果有 cname 指向我们域名的可以传入该参数，指向的域名询问我们客服
-//            ugLoginJsonDTO.setPUrl("");// string 否 对接商的首页的链接，仅 Smart 版有效
-//            ugLoginJsonDTO.setBalance("");// decimal 否 用于登录后的余额展示，仅 H5 版有效
-//            ugLoginJsonDTO.setCashBalance("");// decimal 否 用于登录后的现金余额展示，仅 H5 版有效
+//            operatorId	string	16	Y	商户代码
+//            userId	string	50	Y	玩家帐号
+//            returnUrl	string	200	Y	登出后重定向网址
+//            oddsExpression	string	10	N	赔率样式代码
+//            如果没有输入，或是输入的值不在系统设定之内，会使用系统设定的第一个值
+//            language	string	5	N	语言，预设值：en
+//            webType	string	10	N	入口类型，预设值：mobile
+//            theme	string	6	N	版面，预设值：style
+//            sportId	number		N	偏好运动类型，预设值：1 (足球)，支援设定的运动有：1 (足球), 2 (篮球), 7 (网球), 11 (板球)
+            String param = "operatorId="+OpenAPIProperties.UG_COMPANY_KEY+"&userId="+loginUser.getAccount()
+                    +"&returnUrl="+OpenAPIProperties.UG_RETURN_URL+"&oddsExpression="+gamePlatform.getPlatformCode()
+                    +"&language="+gameParentPlatform.getLanguageType()
+                    +"&webType="+WebType+"&theme=style&sportId=1";
 
-            UgApiResponseData ugApiResponse = commonRequest(ugLoginJsonDTO, OpenAPIProperties.UG_API_URL+"/SportApi/Login", loginUser.getId().intValue(), ip, "Login");
-            if("000000".equals(ugApiResponse.getErrorCode())){
+
+            UgApiResponseData ugApiResponse = commonRequestGet(param, OpenAPIProperties.UG_API_URL+"/auth/single", loginUser.getId().intValue(), ip, "Login");
+            if("000000".equals(ugApiResponse.getCode())){
                 ApiResponseData responseData = new ApiResponseData();
-                responseData.setPathUrl(ugApiResponse.getData());
+                responseData.setPathUrl((String) ugApiResponse.getData());
                 return Result.success(responseData);
             }else {
-                return Result.failed("g"+ugApiResponse.getErrorCode(),ugApiResponse.getErrorMessage());
+                return Result.failed("g"+ugApiResponse.getCode(),ugApiResponse.getMsg());
             }
         } catch (Exception e) {
             logger.error("uglog initGame Login game error {} ", e);
@@ -216,15 +205,15 @@ public class UgServiceImpl implements UgService {
     public Result logout(LoginInfo loginUser,String ip){
         logger.info("uglog logout {} initGame ugGame account:{}, ugCodeId:{},ip:{}", loginUser.getId(), loginUser.getNickName(),ip);
         UgLogoutJsonDTO ugLogoutJsonDTO = new UgLogoutJsonDTO();
-        ugLogoutJsonDTO.setMemberAccount(loginUser.getAccount());
+        ugLogoutJsonDTO.setUserId(loginUser.getAccount());
 
         UgApiResponseData ugApiResponse = null;
         try {
-            ugApiResponse = commonRequest(ugLogoutJsonDTO, OpenAPIProperties.UG_API_URL+"/SportApi/Logout", Integer.valueOf(loginUser.getId().intValue()), ip, "logout");
-            if("000000".equals(ugApiResponse.getErrorCode())){
+            ugApiResponse = commonRequestPost(ugLogoutJsonDTO, OpenAPIProperties.UG_API_URL+"/api/single/logout", Integer.valueOf(loginUser.getId().intValue()), ip, "logout");
+            if("000000".equals(ugApiResponse.getCode())){
                 return Result.success(ugApiResponse);
             }else {
-                return Result.failed("g"+ugApiResponse.getErrorCode(),ugApiResponse.getErrorMessage());
+                return Result.failed("g"+ugApiResponse.getCode(),ugApiResponse.getMsg());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -237,7 +226,21 @@ public class UgServiceImpl implements UgService {
     /**
      * 公共请求
      */
-    public UgApiResponseData commonRequest(Object object, String url, Integer userId, String ip, String type) throws Exception {
+    public UgApiResponseData commonRequestGet(String param, String url, Integer userId, String ip, String type) throws Exception {
+
+        UgApiResponseData ugApiResponse = null;
+        logger.info("uglog {} commonRequest ,url:{},paramsMap:{}", userId, url, param);
+        String resultString = GameUtil.sendGet(url, param);
+        logger.info("ug_api_response:"+resultString);
+        if (StringUtils.isNotEmpty(resultString)) {
+            ugApiResponse = JSONObject.parseObject(resultString, UgApiResponseData.class);
+            logger.info("uglog {}:commonRequest type:{}, operateFlag:{}, url:{}, hostName:{}, params:{}, result:{}, ugApiResponse:{}",
+                    //userId, type, operateFlag, url,
+                    userId, type, null, url, JSONObject.toJSONString(param), resultString, JSONObject.toJSONString(ugApiResponse));
+        }
+        return ugApiResponse;
+    }
+    public UgApiResponseData commonRequestPost(Object object, String url, Integer userId, String ip, String type) throws Exception {
 
         UgApiResponseData ugApiResponse = null;
         logger.info("uglog {} commonRequest ,url:{},paramsMap:{}", userId, url, object);
@@ -342,17 +345,6 @@ public class UgServiceImpl implements UgService {
                     txns.setCategoryName(gameCategory.getGameName());
                     txnsMapper.insert(txns);
                     List<SubBetDto> subBets = sortBetDto.getSubBets();
-                    for(SubBetDto subBetDto:subBets){
-                        SubBet subBet = new SubBet();
-                        BeanUtils.copyProperties(subBetDto, subBet);
-                        ugSubBetMapper.insert(subBet);
-                    }
-                    List< InsBetDto > insBets = sortBetDto.getInsBets();
-                    for(InsBetDto insBetDto:insBets){
-                        InsBet insBet = new InsBet();
-                        BeanUtils.copyProperties(insBetDto, insBet);
-                        ugInsBetMapper.insert(insBet);
-                    }
                 }
             }
         } catch (Exception e) {
@@ -446,18 +438,6 @@ public class UgServiceImpl implements UgService {
                         txns.setCategoryId(gameCategory.getId());
                         txns.setCategoryName(gameCategory.getGameName());
                         txnsMapper.updateById(txns);
-                        List<SubBetDto> subBets = sortBetDto.getSubBets();
-                        for (SubBetDto subBetDto : subBets) {
-                            SubBet subBet = new SubBet();
-                            BeanUtils.copyProperties(subBetDto, subBet);
-                            ugSubBetMapper.updateById(subBet);
-                        }
-                        List<InsBetDto> insBets = sortBetDto.getInsBets();
-                        for (InsBetDto insBetDto : insBets) {
-                            InsBet insBet = new InsBet();
-                            BeanUtils.copyProperties(insBetDto, insBet);
-                            ugInsBetMapper.updateById(insBet);
-                        }
                     }
                 }
             } catch (Exception e) {
