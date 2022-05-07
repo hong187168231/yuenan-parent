@@ -337,7 +337,7 @@ public class KaCallbackServiceImpl implements KaCallbackService {
             GameParentPlatform platformGameParent = getGameParentPlatform();
 
             // 校验IP
-            if (!ip.equals(kaCallbackRevokeReq.getPlayerIp()) || checkIp(ip, platformGameParent)) {
+            if (checkIp(ip, platformGameParent)) {
                 return initFailureResponse(4, "IP不在白名单");
             }
 
@@ -354,7 +354,7 @@ public class KaCallbackServiceImpl implements KaCallbackService {
             }
 
             // 如果订单已经取消
-            if ("Cancel Bet".equals(oldTxns.getMethod())) {
+            if ("Cancel Bet".equals(oldTxns.getStatus())) {
                 return initFailureResponse(401, "该笔交易不能注销");
             }
 

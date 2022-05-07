@@ -1,11 +1,14 @@
 package com.indo.game.common.util;
 
+import com.indo.common.config.OpenAPIProperties;
+import com.indo.common.utils.DateUtils;
 import com.indo.common.utils.encrypt.MD5;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.Date;
 
 /**
  * FC 电子请求参数hash 加密
@@ -52,10 +55,16 @@ public class FCHashAESEncrypt {
     }
 
     public static void main(String[] args) {
-        String key = "SjnQIV3OlpqEvKiN"; // $ { KEY }
+//        String key = "SjnQIV3OlpqEvKiN"; // $ { KEY }
         // cf4e6c6b0e8c9dab74832204d5cef1ce
-        System.out.println(encryptMd5("{\"MemberAccount\":\"test032301\",\"GameID\":\"21003\"}"));
-        System.out.printf(encrypt("{\"MemberAccount\":\"test032301\",\"GameID\":\"21003\"}", key));
+//        System.out.println(encryptMd5("{\"MemberAccount\":\"test032301\",\"GameID\":\"21003\"}"));
+//        System.out.printf(encrypt("{\"MemberAccount\":\"test032301\",\"GameID\":\"21003\"}", key));
+        // 1 s = BuildMD5(QS + “YYYYYYYY” + “20140101123456” + “XXXXXXXXXXXXXXXXXXXXXXXXXX
+//        String time = "20140101123456";
+//        String key = "XXXXXXXXXXXXXXXXXXXXXXXXXX";
+//        String qs = "method=RegUserInfo&Key="+ key+"&Time="+time;
+//        System.out.println(FCHashAESEncrypt.encryptMd5(qs+"YYYYYYYY"+time+key));
+
     }
 
 }

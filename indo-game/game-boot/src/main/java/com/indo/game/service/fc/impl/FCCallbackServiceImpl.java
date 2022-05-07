@@ -221,7 +221,7 @@ public class FCCallbackServiceImpl implements FCCallbackService {
             }
 
             // 如果订单已经取消
-            if ("Cancel Bet".equals(oldTxns.getMethod())) {
+            if ("Cancel Bet".equals(oldTxns.getStatus())) {
                 return initFailureResponse(205, "该笔交易不能注销");
             }
 

@@ -236,7 +236,7 @@ public class JiliCallbackServiceImpl implements JiliCallbackService {
             }
 
             // 如果订单已经取消
-            if ("Cancel Bet".equals(oldTxns.getMethod())) {
+            if ("Cancel Bet".equals(oldTxns.getStatus())) {
                 return initFailureResponse(1, "该注单已取消");
             }
 
@@ -448,7 +448,7 @@ public class JiliCallbackServiceImpl implements JiliCallbackService {
             }
 
             // 如果订单已经取消
-            if ("Cancel Bet".equals(oldTxns.getMethod())) {
+            if ("Cancel Bet".equals(oldTxns.getStatus())) {
                 return initFailureResponse(1, "该注单已取消");
             }
 
