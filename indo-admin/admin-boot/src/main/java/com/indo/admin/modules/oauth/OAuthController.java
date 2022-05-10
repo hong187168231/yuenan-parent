@@ -72,7 +72,7 @@ public class OAuthController {
             }
             if(!status){
                 log.error("非法的IP企图登录后台管理系统:{}",clientIP);
-                throw new BizException("非法的IP登录");
+                throw new BizException("非法的IP登录:"+clientIP);
             }
         }
         String clientId = JwtUtils.getOAuthClientId();
