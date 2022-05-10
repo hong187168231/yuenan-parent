@@ -67,6 +67,7 @@ public class OAuthController {
             for(SysIpLimit l :list){
                 if(l.getIp().equals(clientIP)){
                     status=true;
+                    break;
                 }
             }
             if(!status){
