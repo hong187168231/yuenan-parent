@@ -58,7 +58,7 @@ public class OAuthController {
                     String> parameters) throws HttpRequestMethodNotSupportedException {
         //白名单校验
         List<SysIpLimit> list =sysIpLimitService.findSysIpLimitByType(2);
-        if(list!=null||list.size()>0){
+        if(list!=null&&list.size()>0){
             // 获取请求信息
             ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
             HttpServletRequest request = attributes.getRequest();
