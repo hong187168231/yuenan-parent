@@ -45,7 +45,7 @@ public class MemBankController {
     }
 
     @ApiOperation(value = "删除")
-    @DeleteMapping(value = "/delete")
+    @DeleteMapping(value = "/delete/{id}")
     public Result delete(@PathVariable Long id) {
         memBankRelationService.removeById(id);
         return Result.success();
