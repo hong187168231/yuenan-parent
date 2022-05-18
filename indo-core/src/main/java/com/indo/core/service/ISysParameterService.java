@@ -92,5 +92,20 @@ public interface ISysParameterService extends IService<SysParameter> {
      */
     void refreshSysParameterCache();
 
+    /**
+     * 新增程序切换时间(分钟)
+     * @param minute
+     */
+    void insertProgramSwitchTime(String minute);
 
+    /**
+     * 查询程序切换时间(分钟)
+     * @return
+     */
+    SysParameter findProgramSwitchTime();
+
+    /**
+     * 修改程序切换时间(分钟)
+     */
+    void updateProgramSwitchTime(String minute);
 }

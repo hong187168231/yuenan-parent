@@ -49,6 +49,10 @@ public class AppParamController {
         }
         return Result.success(parameterList);
     }
-
+    @ApiOperation(value = "查询AB程序切换时间(分钟)")
+    @GetMapping("/findProgramSwitchTime")
+    public Result<SysParameter> findProgramSwitchTime() {
+        return Result.success(iSysParameterService.findProgramSwitchTime());
+    }
 
 }
