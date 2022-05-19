@@ -80,6 +80,6 @@ public class ActivityTypeServiceImpl extends ServiceImpl<ActivityTypeMapper, Act
      */
     @Override
     public boolean updateActNum(Long actTypeId, Integer actNum) {
-      return SqlHelper.retBool(this.baseMapper.updateMaxActNum(actTypeId, actNum));
+      return SqlHelper.retBool(this.baseMapper.updateActNum(actTypeId, actNum));
     }
 }
