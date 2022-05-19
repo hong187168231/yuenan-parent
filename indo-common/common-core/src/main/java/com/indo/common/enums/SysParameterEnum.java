@@ -11,7 +11,10 @@ public enum SysParameterEnum {
     SMS_ONOFF("SMS_ONOFF", "短信开关"),
     SMS_REAL_SEND("SMS_REAL_SEND", "短信是否真实调用发送"),
     ACT_PAGE_SHUFFLING("ACT_PAGE_SHUFFLING", "活动页面轮播文案"),
-    WITHDRAWAL_AMOUNT("WITHDRAWAL_AMOUNT", "提现额度设置");
+    WITHDRAWAL_AMOUNT("WITHDRAWAL_AMOUNT", "提现额度设置"),
+    PROGRAM_SWITCH_TIME("PROGRAM_SWITCH_TIME", "AB包程序切换时间")
+
+    ;
 
     /**
      * 系统参数的代码

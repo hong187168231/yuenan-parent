@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -57,6 +58,40 @@ public class SysParameterServiceImpl extends ServiceImpl<SysParameterMapper, Sys
         List<SysParameter> parameterList = selectAll();
         for (SysParameter sysParameter : parameterList) {
             BusinessRedisUtils.addSysParameter(sysParameter);
+        }
+    }
+
+    @Override
+    public void insertProgramSwitchTime(String minute) {
+        SysParameter sysParameter =findProgramSwitchTime();
+        if(sysParameter!=null){
+            throw new BizException(ResultCode.DATA_DUPLICATION);
+        }
+        SysParameterReq parameter = new SysParameterReq();
+        parameter.setParamCode(SysParameterEnum.PROGRAM_SWITCH_TIME.getCode());
+        parameter.setParamName(SysParameterEnum.PROGRAM_SWITCH_TIME.getRemark());
+        parameter.setParamValue(minute);
+        parameter.setStatus(0);
+        saveSysParameter(parameter);
+    }
+
+    @Override
+    public SysParameter findProgramSwitchTime() {
+        return getByCode(SysParameterEnum.PROGRAM_SWITCH_TIME.getCode());
+    }
+
+    @Override
+    public void updateProgramSwitchTime(String minute) {
+        SysParameter parameter =findProgramSwitchTime();
+        if(parameter==null){
+            throw new BizException(ResultCode.DATA_NONENTITY);
+        }
+        parameter.setParamValue(minute);
+        parameter.setUpdateUser(JwtUtils.getUsername());
+        parameter.setUpdateTime(new Date());
+       int row = baseMapper.updateById(parameter);
+        if (row > 0) {
+            BusinessRedisUtils.deleteSysParameter(SysParameterEnum.PROGRAM_SWITCH_TIME.getCode());
         }
     }
 
