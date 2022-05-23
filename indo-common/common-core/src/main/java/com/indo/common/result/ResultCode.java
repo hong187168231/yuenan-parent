@@ -81,6 +81,8 @@ public enum ResultCode implements IResultCode, Serializable {
     DATABASE_COLUMN_NOT_EXIST("C0312", "列不存在"),
     DATABASE_DUPLICATE_COLUMN_NAME("C0321", "多表关联中存在多个相同名称的列"),
     DATABASE_DEADLOCK("C0331", "数据库死锁"),
+    DATA_DUPLICATION("C0332", "数据重复"),
+    DATA_NONENTITY("C0333", "数据不存在"),
     SYSTEM_MAINTENANCE_CODE("S9999", "系统维护状态"),
     DATABASE_PRIMARY_KEY_CONFLICT("C0341", "主键冲突"),
     SYSPARAMETER_NOT_EXIST("P00001", "系统参数不存在"),

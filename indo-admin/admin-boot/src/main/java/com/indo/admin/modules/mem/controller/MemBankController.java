@@ -10,10 +10,7 @@ import com.indo.common.result.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -48,9 +45,9 @@ public class MemBankController {
     }
 
     @ApiOperation(value = "删除")
-    @PostMapping(value = "/delete")
-    public Result delete(@RequestBody MemBankSwitchReq req) {
-        memBankRelationService.removeById(req.getId());
+    @DeleteMapping(value = "/delete/{id}")
+    public Result delete(@PathVariable Long id) {
+        memBankRelationService.removeById(id);
         return Result.success();
     }
 }

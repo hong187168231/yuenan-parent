@@ -71,6 +71,9 @@ public class VersionController {
                 stream().
                 sorted(Comparator.comparing(AppVersionVo::getUpdateTime).reversed())
                 .collect(Collectors.toList());
+        if(collect==null||collect.size()<=0){
+            return Result.success();
+        }
         return Result.success(collect.get(0));
     }
 

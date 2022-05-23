@@ -55,14 +55,18 @@ public class MemLevelServiceImpl extends SuperServiceImpl<MemLevelMapper, MemLev
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean updateOne(MemLevelUpdateReq req) {
-        if(req.getLevel()!=null||req.getLevel()>-1){
+        MemLevel memLevel = baseMapper.selectById(req.getId());
+        if (memLevel == null) {
+            throw new BizException("会员不存在");
+        }
+        if(!memLevel.getLevel().equals(req.getLevel())){
             throw new BizException("不可修改等级");
         }
-        MemLevel memLevel = new MemLevel();
-        BeanUtils.copyProperties(req, memLevel);
-        if (baseMapper.updateById(memLevel) > 0) {
+        MemLevel tempMemLevel = new MemLevel();
+        BeanUtils.copyProperties(req, tempMemLevel);
+        if (baseMapper.updateById(tempMemLevel) > 0) {
             refreshMemLevel();
             return true;
         } else {

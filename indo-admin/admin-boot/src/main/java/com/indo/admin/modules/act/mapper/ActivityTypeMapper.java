@@ -17,5 +17,5 @@ import org.springframework.stereotype.Repository;
 @Mapper
 @Repository
 public interface ActivityTypeMapper extends BaseMapper<ActivityType> {
-    int updateMaxActNum(@Param("actTypeId") Long actTypeId, @Param("actNum") Integer actNum);
+    int updateActNum(@Param("actTypeId") Long actTypeId, @Param("actNum") Integer actNum);
 }

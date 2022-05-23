@@ -16,6 +16,7 @@ import com.indo.pay.pojo.dto.RechargeDTO;
 import com.indo.pay.pojo.req.EasyPayReq;
 import com.indo.pay.pojo.req.HuaRenPayReq;
 import com.indo.pay.pojo.req.RechargeReq;
+import com.indo.pay.pojo.resp.BasePayResp;
 import com.indo.pay.pojo.resp.EasyPayResp;
 import com.indo.pay.pojo.resp.HuaRenPayResp;
 import com.indo.pay.service.IRechargeService;
@@ -99,7 +100,7 @@ public class PaymentService {
             req.setPayChannelId(payChannel.getPayChannelId());
             req.setPayWayId(payWay.getPayWayId());
             // 支付请求
-            HuaRenPayResp huarenPayResp = huaRenOnlinePaymentService.onlinePayment(req, HuaRenPayResp.class);
+            BasePayResp huarenPayResp = huaRenOnlinePaymentService.onlinePayment(req, HuaRenPayResp.class);
             // 请求结果 flag为false表示异常
             if (!huarenPayResp.getFlag()) {
                 return Result.failed("huaren支付失败：" + huarenPayResp.getMsg());

@@ -58,7 +58,7 @@ public class OAuthController {
                     String> parameters) throws HttpRequestMethodNotSupportedException {
         //白名单校验
         List<SysIpLimit> list =sysIpLimitService.findSysIpLimitByType(2);
-        if(list!=null||list.size()>0){
+        if(list!=null&&list.size()>0){
             // 获取请求信息
             ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
             HttpServletRequest request = attributes.getRequest();
@@ -67,11 +67,12 @@ public class OAuthController {
             for(SysIpLimit l :list){
                 if(l.getIp().equals(clientIP)){
                     status=true;
+                    break;
                 }
             }
             if(!status){
                 log.error("非法的IP企图登录后台管理系统:{}",clientIP);
-                throw new BizException("非法的IP登录");
+                throw new BizException("非法的IP登录:"+clientIP);
             }
         }
         String clientId = JwtUtils.getOAuthClientId();
