@@ -42,6 +42,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -165,6 +166,8 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
         if (StringUtils.isNotBlank(DeviceInfoUtil.getSource())) {
             userInfo.setRegisterSource(DeviceInfoUtil.getSource());
         }
+        //注册送30000越南盾注册金
+        userInfo.setBalance(new BigDecimal(30000));
         //保存注册信息
         initRegister(userInfo, memInviteCode);
         MemBaseInfoBO memBaseinfoBo = DozerUtil.map(userInfo, MemBaseInfoBO.class);
