@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.indo.game.mapper.lottery.GameLotteryWinningNumberMapper">
+    <select id="qeryMinGameLotteryWinningNumber" resultType="com.indo.core.pojo.entity.GameLotteryWinningNumber">
+        SELECT t.*
+        FROM game_lottery_win_num t
+        WHERE t.lottery_date=(select MIN(lottery_date) from game_lottery_win_num where is_status='0')
+    </select>
+</mapper>

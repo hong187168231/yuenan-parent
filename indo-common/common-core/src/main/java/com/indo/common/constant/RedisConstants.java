@@ -49,4 +49,6 @@ public interface RedisConstants {
 
     static final String GAME_PARENT_PLATFORM_KEY = "GAME_PARENT_PLATFORM_KEY";
 
+    static final String GAME_LOTTERY_WIN_NUM_KEY = "GAME_LOTTERY_WIN_NUM_KEY";
+
 }
