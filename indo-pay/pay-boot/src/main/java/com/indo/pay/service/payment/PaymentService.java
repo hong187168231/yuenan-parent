@@ -2,29 +2,33 @@ package com.indo.pay.service.payment;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.indo.common.enums.CountryEnum;
 import com.indo.common.enums.ThirdPayChannelEnum;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.redis.utils.GeneratorIdUtil;
+import com.indo.common.result.Result;
 import com.indo.common.web.exception.BizException;
 import com.indo.pay.common.constant.PayConstants;
 import com.indo.pay.factory.OnlinePaymentService;
-import com.indo.common.result.Result;
 import com.indo.pay.pojo.bo.PayChannel;
-import com.indo.pay.pojo.bo.RechargeBO;
 import com.indo.pay.pojo.bo.PayWay;
+import com.indo.pay.pojo.bo.RechargeBO;
 import com.indo.pay.pojo.dto.RechargeDTO;
 import com.indo.pay.pojo.req.EasyPayReq;
 import com.indo.pay.pojo.req.HuaRenPayReq;
 import com.indo.pay.pojo.req.RechargeReq;
+import com.indo.pay.pojo.req.SevenPayReq;
 import com.indo.pay.pojo.resp.BasePayResp;
 import com.indo.pay.pojo.resp.EasyPayResp;
 import com.indo.pay.pojo.resp.HuaRenPayResp;
+import com.indo.pay.pojo.resp.SevenPayResp;
 import com.indo.pay.service.IRechargeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 
 /**
@@ -40,23 +44,34 @@ public class PaymentService {
     private OnlinePaymentService huaRenOnlinePaymentService;
     @Resource(name = "easyOnlinePaymentService")
     private OnlinePaymentService easyOnlinePaymentService;
-
+    @Resource(name = "sevenOnlinePaymentService")
+    private OnlinePaymentService sevenOnlinePaymentService;
 
     @Autowired
     private IRechargeService rechargeService;
 
 
-    public Result paymentRequestByUser(LoginInfo loginInfo, RechargeReq rechargeReq) {
+    public Result paymentRequestByUser(LoginInfo loginInfo, RechargeReq rechargeReq, HttpServletRequest request) {
         Result result;
         // 业务逻辑校验
         RechargeBO rechargeBO = rechargeService.logicConditionCheck(rechargeReq, loginInfo);
-        ThirdPayChannelEnum payChannel = ThirdPayChannelEnum.valueOf(rechargeBO.getPayChannel().getChannelCode());
+        String countryCode = request.getHeader("countryCode");
+        ThirdPayChannelEnum payChannel;
+        if (CountryEnum.IN.getCode().equals(countryCode)) {
+          payChannel = ThirdPayChannelEnum.HUAREN;
+        } else {
+          payChannel = ThirdPayChannelEnum.SEVEN;
+        }
+        // ThirdPayChannelEnum payChannel = ThirdPayChannelEnum.valueOf(rechargeBO.getPayChannel().getChannelCode());
         switch (payChannel) {
             case HUAREN:
                 result = huarenPay(loginInfo, rechargeReq.getAmount(), rechargeBO.getPayChannel(), rechargeBO.getPayWay());
                 break;
             case EASY:
                 result = easyPay(loginInfo, rechargeReq.getAmount(), rechargeBO.getPayChannel(), rechargeBO.getPayWay());
+                break;
+            case SEVEN:
+                result = sevenPay(loginInfo, rechargeReq, rechargeBO.getPayChannel(), rechargeBO.getPayWay());
                 break;
             default:
                 throw new BizException("请选择正确的支付方式");
@@ -141,6 +156,38 @@ public class PaymentService {
             log.error("paylog easy支付 创建订单失败 {} easyPay {}", this.getClass().getName(), JSON.toJSONString(req), e);
         }
         return Result.failed("easy支付失败");
+    }
+
+
+    /**
+     * 777支付
+     */
+    private Result sevenPay(LoginInfo loginInfo, RechargeReq rechargeReq, PayChannel payChannel, PayWay payWay) {
+        SevenPayReq req = new SevenPayReq();
+        try {
+            log.info("paylog sevenPay支付 创建订单");
+            req.setMemId(loginInfo.getId());
+            req.setMerchantNo(payChannel.getMerchantNo());
+            req.setNotifyUrl(payChannel.getNotifyUrl());
+            req.setPageUrl(payChannel.getPageUrl());
+            req.setPayUrl(payChannel.getPayUrl());
+            req.setSecretKey(payChannel.getSecretKey());
+            req.setMerchantOrderNo(GeneratorIdUtil.generateId());
+            req.setPayChannelId(payChannel.getPayChannelId());
+            req.setPayWayId(payWay.getPayWayId());
+            req.setTradeAmount(rechargeReq.getAmount());
+            req.setType(rechargeReq.getPayBankCode());
+            // 支付请求
+            SevenPayResp sevenPayResp = sevenOnlinePaymentService.onlinePayment(req, SevenPayResp.class);
+            // 请求结果 flag为false表示异常
+            if (!sevenPayResp.getFlag()) {
+                return Result.failed("777支付失败：" + sevenPayResp.getMsg());
+            }
+            return createPaySuccess(PayConstants.PAY_RETURN_CODE_ZERO, sevenPayResp.getHtml());
+        } catch (Exception e) {
+            log.error("paylog 777支付 创建订单失败 {} 777Pay {}", this.getClass().getName(), JSON.toJSONString(req), e);
+        }
+        return Result.failed("777支付失败");
     }
 
 }
