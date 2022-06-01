@@ -57,7 +57,10 @@ public class MsgPushRecordServiceImpl extends ServiceImpl<MsgPushRecordMapper, M
     public List<MsgPushRecordVO> getSysMsg(MsgDTO msgDTO) {
         Page<MsgPushRecord> page = new Page<>(msgDTO.getPage(), msgDTO.getLimit());
         LambdaQueryWrapper<MsgPushRecord> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(MsgPushRecord::getDeviceType, msgDTO.getDeviceType());
+        // 等于0是全部设备类型
+        wrapper.eq(MsgPushRecord::getDeviceType, msgDTO.getDeviceType())
+               .or()
+               .eq(MsgPushRecord::getDeviceType, 0);
         wrapper.eq(MsgPushRecord::getIsDel,false);
         Page<MsgPushRecord> pageList = baseMapper.selectPage(page, wrapper);
         return DozerUtil.convert(pageList.getRecords(), MsgPushRecordVO.class);
