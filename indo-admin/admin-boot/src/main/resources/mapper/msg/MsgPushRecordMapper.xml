@@ -18,7 +18,7 @@
         FROM msg_push_record where 1=1
         <where>
             <if test="dto.deviceType !=null">
-                and device_type = #{dto.deviceType} and device_type = 0
+                and (device_type = #{dto.deviceType} or device_type = 0)
             </if>
             <if test="dto.beginTime != null and dto.beginTime != ''"><!-- 开始时间检索 -->
                 and date_format(create_time,'%y%m%d') &gt;= date_format(#{dto.beginTime},'%y%m%d')
