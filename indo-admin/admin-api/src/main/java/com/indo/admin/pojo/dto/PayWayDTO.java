@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 @ApiModel
 public class PayWayDTO {
 
-    @ApiModelProperty(value = "支付通道id")
+    @ApiModelProperty(value = "支付平台id")
     private Long payChannelId;
 
     @ApiModelProperty(value = "支付方式名称")
@@ -34,4 +34,8 @@ public class PayWayDTO {
 
     @ApiModelProperty(value = "状态 0关闭  1开启")
     private Integer status;
+
+    @ApiModelProperty(value = "支付通道id")
+    private Long payWayId;
+
 }
