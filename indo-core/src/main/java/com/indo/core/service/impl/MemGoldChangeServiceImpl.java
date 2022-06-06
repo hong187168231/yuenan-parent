@@ -179,9 +179,9 @@ public class MemGoldChangeServiceImpl extends SuperServiceImpl<MemGoldChangeMapp
                     log.error("{} updateUserBalance updateMemberAmount 更新余额失败. return:{}", userId, row);
                     throw new BizException("操作失败");
                 }
+                log.info("{} updateUserBalance updateMemberAmount 耗时 time, {}", userId, System.currentTimeMillis() - begin);
                 // 删除用户信息缓存
                 BusinessRedisUtils.deleteMemBaseInfoByAccount(memBaseinfo.getAccount());
-                log.info("{} updateUserBalance updateMemberAmount 耗时 time, {}", userId, System.currentTimeMillis() - begin);
                 return true;
             } else {
                 log.error("{} updateUserBalance 用户修改余额没拿到锁, 记录修改余额变动对象 {}", userId, change);
@@ -223,7 +223,6 @@ public class MemGoldChangeServiceImpl extends SuperServiceImpl<MemGoldChangeMapp
                                   BigDecimal cashAmount,
                                   Long userId) {
         int row = baseMapper.updateMemberAmount(amount, canAmount, betAmount, rechargeAmount, cashAmount, userId);
-        RedisUtils.del(RedisKeys.APP_MEMBER + userId);
         return row;
     }
 
