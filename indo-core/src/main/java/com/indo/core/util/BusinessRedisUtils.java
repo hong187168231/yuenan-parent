@@ -29,6 +29,10 @@ public class BusinessRedisUtils extends RedisUtils {
         return memBaseinfoBo;
     }
 
+    public static void deleteMemBaseInfoByAccount(String account) {
+        del(RedisKeys.MEM_BASE_INFO_KEY + account);
+    }
+
     /**
      * 删除系统参数
      *
