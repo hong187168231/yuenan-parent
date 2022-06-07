@@ -494,7 +494,7 @@ public class GameUtil extends HttpCommonUtils {
             httpPost.setHeader("connection", "close");
             httpPost.setHeader("Content-Type", "application/x-www-form-urlencoded");
             if (!StringUtils.isEmpty(header)) {
-                httpPost.setHeader("Authorization", "Bearer " + header);
+                httpPost.setHeader("Authorization", header);
             }
             List<BasicNameValuePair> list = new ArrayList<>();
             for (String key : paramsMap.keySet()) {
