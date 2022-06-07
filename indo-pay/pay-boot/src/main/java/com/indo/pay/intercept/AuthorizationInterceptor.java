@@ -32,9 +32,6 @@ import java.util.stream.Collectors;
 @Component
 public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
 
-    @Resource
-    private RedisUtils redisUtils;
-
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         //获取用户凭证
@@ -63,26 +60,26 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
             BaseUtil.writer401Response(response, ResultCode.LIVE_ERROR_401);
             return false;
         }
-        Object userObj = redisUtils.get(AppConstants.USER_LOGIN_ACCTOKEN + token);
+        Object userObj = RedisUtils.get(AppConstants.USER_LOGIN_ACCTOKEN + token);
         if (null == userObj) {
             BaseUtil.writer401Response(response, ResultCode.LIVE_ERROR_401);
             return false;
         } else {
             LoginInfo loginInfo = JSONObject.parseObject((String) userObj, LoginInfo.class);
             if (loginInfo != null) {
-                String newToken = redisUtils.get(AppConstants.USER_LOGIN_INFO_KEY + loginInfo.getAccount());
+                String newToken = RedisUtils.get(AppConstants.USER_LOGIN_INFO_KEY + loginInfo.getAccount());
                 if (StringUtils.isEmpty(newToken)) {
                     BaseUtil.writer401Response(response, ResultCode.LIVE_ERROR_401);
                     return false;
                 }
                 if (!token.equals(newToken)) {
                     BaseUtil.writer401Response(response, ResultCode.RESOURCE_NOT_FOUND2);
-                    redisUtils.del(token);
+                    RedisUtils.del(token);
                     return false;
                 }
                 String today = DateUtils.format(new Date(), DateUtils.shortFormat);
-                redisUtils.sSetAndTime(AppConstants.USER_DAILY_VISIT_LOG + today, 24 * 2 * 60 * 60, loginInfo.getId());
-                redisUtils.hset(AppConstants.USER_ACTIVE_KEY , loginInfo.getAccount(), today, 60 * 60 * 24 * 7);
+                RedisUtils.sSetAndTime(AppConstants.USER_DAILY_VISIT_LOG + today, 24 * 2 * 60 * 60, loginInfo.getId());
+                RedisUtils.hset(AppConstants.USER_ACTIVE_KEY , loginInfo.getAccount(), today, 60 * 60 * 24 * 7);
                 return super.preHandle(request, response, handler);
             }
         }

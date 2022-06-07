@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 支付渠道配置返回
@@ -42,4 +43,6 @@ public class PayChannelVO extends BaseEntity {
     @ApiModelProperty(value = "备注")
     private String remark;
 
+    @ApiModelProperty(value = "银行编码")
+    private List<PayWayBankVO> payWayBankVOList;
 }

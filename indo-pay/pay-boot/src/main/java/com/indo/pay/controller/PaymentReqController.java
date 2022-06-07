@@ -1,5 +1,6 @@
 package com.indo.pay.controller;
 
+import cn.hutool.http.HttpRequest;
 import com.indo.common.annotation.LoginUser;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
@@ -10,6 +11,8 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @创建人 puff
@@ -27,8 +30,9 @@ public class PaymentReqController {
 
     @ApiOperation(value = "发起支付")
     @PostMapping("/v1/onlineRecharge")
-    public Result onlineRecharge(@RequestBody RechargeReq rechargeReq, @LoginUser LoginInfo loginInfo) {
-        return paymentService.paymentRequestByUser(loginInfo, rechargeReq);
+    public Result onlineRecharge(@RequestBody RechargeReq rechargeReq, @LoginUser LoginInfo loginInfo,
+                                 HttpServletRequest request) {
+        return paymentService.paymentRequestByUser(loginInfo, rechargeReq, request);
     }
 
 

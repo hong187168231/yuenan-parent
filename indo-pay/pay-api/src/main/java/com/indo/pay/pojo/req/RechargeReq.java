@@ -19,5 +19,6 @@ public class RechargeReq {
     @ApiModelProperty(value = "支付方式id", required = true)
     private Long payWayId;
 
-
+    @ApiModelProperty(value = "支付银行编码", required = true)
+    private String payBankCode;
 }

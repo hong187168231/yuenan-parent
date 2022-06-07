@@ -8,17 +8,19 @@ import com.indo.common.constant.RedisConstants;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.redis.utils.RedisUtils;
 import com.indo.common.utils.CollectionUtil;
-import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
-import com.indo.core.pojo.entity.Activity;
 import com.indo.core.pojo.entity.PayChannelConfig;
+import com.indo.core.pojo.entity.PayWayBankConfig;
 import com.indo.pay.mapper.PayChannelMapper;
 import com.indo.pay.pojo.vo.PayChannelVO;
+import com.indo.pay.pojo.vo.PayWayBankVO;
 import com.indo.pay.service.IPayChannelService;
+import com.indo.pay.service.IPayWayBankConfigService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
-import javax.annotation.Resource;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +37,8 @@ import java.util.stream.Collectors;
 @Service
 public class PayChannelServiceImpl extends ServiceImpl<PayChannelMapper, PayChannelConfig> implements IPayChannelService {
 
+    @Autowired
+    IPayWayBankConfigService payWayBankConfigService;
 
     @Override
     public List<PayChannelVO> channelList(LoginInfo loginInfo) {
@@ -50,7 +54,16 @@ public class PayChannelServiceImpl extends ServiceImpl<PayChannelMapper, PayChan
                     .filter(channelConfig -> channelConfig.getStatus().equals(1))
                     .collect(Collectors.toList());
         }
-        return DozerUtil.convert(configList, PayChannelVO.class);
+        List<PayChannelVO> payChannelVOList = DozerUtil.convert(configList, PayChannelVO.class);
+        if (CollectionUtils.isEmpty(payChannelVOList)) {
+            return Collections.emptyList();
+        }
+
+        for (PayChannelVO payChannelVO : payChannelVOList) {
+            List<PayWayBankConfig> payWayBankConfigList = payWayBankConfigService.getPayChannelId(payChannelVO.getPayChannelId());
+            payChannelVO.setPayWayBankVOList(DozerUtil.convert(payWayBankConfigList, PayWayBankVO.class));
+        }
+        return payChannelVOList;
     }
 
     @Override

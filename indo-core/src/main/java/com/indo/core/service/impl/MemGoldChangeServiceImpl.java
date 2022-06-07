@@ -15,6 +15,7 @@ import com.indo.core.pojo.bo.MemGoldInfoBO;
 import com.indo.core.pojo.dto.MemGoldChangeDTO;
 import com.indo.core.pojo.entity.MemGoldChange;
 import com.indo.core.service.IMemGoldChangeService;
+import com.indo.core.util.BusinessRedisUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.redisson.api.RReadWriteLock;
@@ -179,6 +180,8 @@ public class MemGoldChangeServiceImpl extends SuperServiceImpl<MemGoldChangeMapp
                     throw new BizException("操作失败");
                 }
                 log.info("{} updateUserBalance updateMemberAmount 耗时 time, {}", userId, System.currentTimeMillis() - begin);
+                // 删除用户信息缓存
+                BusinessRedisUtils.deleteMemBaseInfoByAccount(memBaseinfo.getAccount());
                 return true;
             } else {
                 log.error("{} updateUserBalance 用户修改余额没拿到锁, 记录修改余额变动对象 {}", userId, change);
@@ -220,7 +223,6 @@ public class MemGoldChangeServiceImpl extends SuperServiceImpl<MemGoldChangeMapp
                                   BigDecimal cashAmount,
                                   Long userId) {
         int row = baseMapper.updateMemberAmount(amount, canAmount, betAmount, rechargeAmount, cashAmount, userId);
-        RedisUtils.del(RedisKeys.APP_MEMBER + userId);
         return row;
     }
 
