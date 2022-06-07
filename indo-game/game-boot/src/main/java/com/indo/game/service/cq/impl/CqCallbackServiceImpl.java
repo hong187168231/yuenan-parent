@@ -423,7 +423,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         dataResp.setCurrency(gameParentPlatform.getCurrencyType());
         getBalanceSuccess.setData(dataResp);
         getBalanceSuccess.setStatus(statusResp);
-        return JSONObject.toJSONString(getBalanceSuccess);
+        return getBalanceSuccess;
     }
 
     private Object commonReturnFail() {
@@ -437,7 +437,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         CqDataResp dataResp = new CqDataResp();
         getBalanceSuccess.setData(dataResp);
         getBalanceSuccess.setStatus(statusResp);
-        return JSONObject.toJSONString(getBalanceSuccess);
+        return getBalanceSuccess;
     }
 }
 
