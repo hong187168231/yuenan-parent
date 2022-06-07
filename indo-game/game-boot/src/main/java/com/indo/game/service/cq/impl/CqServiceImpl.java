@@ -79,7 +79,7 @@ public class CqServiceImpl implements CqService {
         BigDecimal balance = loginUser.getBalance();
         //验证站点棋牌余额
         if (null == balance || BigDecimal.ZERO == balance) {
-            logger.info("站点AE余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
+            logger.info("站点CQ9游戏余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
             //站点棋牌余额不足
             return Result.failed("g300004", "会员余额不足");
         }
