@@ -189,7 +189,7 @@ public class GameController {
                 if ("AE".equals(parentName)) {
                     resultInfo = aeService.aeGame(loginUser, isMobileLogin, ip, platform, parentName);
                 }
-                if ("CQ".equals(parentName)) {
+                if ("CQ9".equals(parentName)) {
                     resultInfo = cqService.cqGame(loginUser, isMobileLogin, ip, platform, parentName);
                 }
                 if ("PG".equals(parentName)) {

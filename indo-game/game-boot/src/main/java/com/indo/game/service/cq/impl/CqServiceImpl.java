@@ -65,7 +65,7 @@ public class CqServiceImpl implements CqService {
         GamePlatform gamePlatform = new GamePlatform();
         if (!platform.equals(parentName)) {
             // 是否开售校验
-            gamePlatform = gameCommonService.getGamePlatformByplatformCode(platform);
+            gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
             if (null == gamePlatform) {
                 return Result.failed("(" + platform + ")平台游戏不存在");
             }
@@ -137,13 +137,26 @@ public class CqServiceImpl implements CqService {
      */
     private CqApiResponseData gameLogin(GameParentPlatform platformGameParent, GamePlatform gamePlatform, CptOpenMember cptOpenMemberm, String isMobileLogin) {
         Map<String, String> params = new HashMap<String, String>();
-        params.put("account", cptOpenMemberm.getUserName());
-        params.put("lang", platformGameParent.getLanguageType());
-        params.put("session", "");
+//        params.put("account", cptOpenMemberm.getUserName());
+//        params.put("lang", platformGameParent.getLanguageType());
+//        params.put("session", "");
+        params.put("account", cptOpenMemberm.getUserName());//	必填	玩家帳號 ※字串長度限制36個字元
+        params.put("gamehall", gamePlatform.getParentName());//gamehall	string	必填	遊戲廠商
+        params.put("gamecode", gamePlatform.getPlatformCode());//gamecode	string	必填	遊戲代碼
+        //gameplat	string	必填	遊戲平台，請填入 web 或 mobile ※若 gameplat 不為該遊戲平台時，將帶入預設值，預設值為 web
+        if("0".equals(isMobileLogin)){
+            params.put("gameplat", "web");
+        }else {
+            params.put("gameplat", "mobile");
+        }
+        params.put("lang", platformGameParent.getLanguageType());//lang	string	必填	語言代碼，全數支援 zh-cn ,en ，部份遊戲支援 th, zh-tw，確切支援程度請調用遊戲列表 API 回傳資訊
+        params.put("session", "");//session	string	選填	SessionID，貴司提供後，我司會帶入此參數去呼叫貴司錢包 Bet, Rollout 或 TakeAll API
+        params.put("app", "Y");//app	string	選填	是否是透過app 執行遊戲，Y=是，N=否，預設為N
+        params.put("detect", "");//detect	string	選填	是否開啟阻擋不合遊戲規格瀏覽器提示， Y=是，N=否，預設為N
         CqApiResponseData cqApiResponseData = null;
         try {
             StringBuilder apiUrl = new StringBuilder();
-            apiUrl.append(OpenAPIProperties.CQ_API_URL).append("/gameboy/player/sw/lobbylink");
+            apiUrl.append(OpenAPIProperties.CQ_API_URL).append("/gameboy/player/sw/gamelink");
             cqApiResponseData = commonRequest(apiUrl.toString(), params, cptOpenMemberm.getUserId(), "cqGameLogin");
         } catch (Exception e) {
             logger.error("cqlog aeGameLogin:{}", e);

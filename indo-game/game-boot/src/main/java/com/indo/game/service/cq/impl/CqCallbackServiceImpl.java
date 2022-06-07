@@ -398,7 +398,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
 
 
     private boolean checkIp(String ip) {
-        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode("CQ");
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode("CQ9");
         if (null == gameParentPlatform) {
             return false;
         } else if (null == gameParentPlatform.getIpAddr() || "".equals(gameParentPlatform.getIpAddr())) {

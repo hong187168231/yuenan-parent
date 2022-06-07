@@ -41,6 +41,14 @@ public interface GameCommonService {
     GamePlatform getGamePlatformByplatformCode(String platformCode);
 
     /**
+     * 依据平台代码和游戏代码查询游戏
+     * @param platformCode
+     * @param parentName
+     * @return
+     */
+    public GamePlatform getGamePlatformByplatformCodeAndParentName(String platformCode,String parentName);
+
+    /**
      * 依据总平台查询平台
      *
      * @param parentName
