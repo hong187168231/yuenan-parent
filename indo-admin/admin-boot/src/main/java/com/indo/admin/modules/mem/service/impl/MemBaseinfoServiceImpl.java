@@ -10,6 +10,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.common.util.AdminBusinessRedisUtils;
 import com.indo.admin.modules.agent.mapper.AgentRelationMapper;
 import com.indo.admin.modules.mem.mapper.MemBaseinfoMapper;
+import com.indo.admin.modules.mem.mapper.MemLevelMapper;
 import com.indo.admin.modules.mem.service.IMemBaseinfoService;
 import com.indo.common.constant.AppConstants;
 import com.indo.common.utils.DateUtils;
@@ -28,6 +29,7 @@ import com.indo.core.pojo.bo.MemBaseInfoBO;
 import com.indo.core.pojo.dto.MemBaseInfoDTO;
 import com.indo.core.pojo.entity.AgentRelation;
 import com.indo.core.pojo.entity.MemBaseinfo;
+import com.indo.core.pojo.entity.MemLevel;
 import com.indo.core.util.BusinessRedisUtils;
 import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +38,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
@@ -56,6 +59,8 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
     private MemBaseinfoMapper memBaseInfoMapper;
     @Autowired
     private AgentRelationMapper agentRelationMapper;
+    @Resource
+    private MemLevelMapper memLevelMapper;
 
     @Override
     public Page<MemBaseInfoVo> queryList(MemBaseInfoReq req) {
@@ -68,6 +73,12 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
                 item.setLeaveDays(DateUtils.daysBetween(lastActive, DateUtils.getDateString(now)));
             } else {
                 item.setLeaveDays(DateUtils.daysBetween(item.getLastLoginTime(), now));
+            }
+            if(StringUtils.isNotEmpty(item.getMemLevel())){
+               MemLevel memLevel = memLevelMapper.selectById(Long.valueOf(item.getMemLevel()));
+               if(memLevel!=null){
+                   item.setLevel(memLevel.getLevel());
+               }
             }
         });
 
