@@ -26,8 +26,11 @@ public class MemTradingBO {
     @ApiModelProperty(value = "昵称")
     private String nickName;
 
-    @ApiModelProperty(value = "会员等级")
+    @ApiModelProperty(value = "会员等级Id")
     private Integer memLevel;
+
+    @ApiModelProperty(value = "会员等级")
+    private Integer level;
 
     @ApiModelProperty(value = "余额")
     private BigDecimal balance;
