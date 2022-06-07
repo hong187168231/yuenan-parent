@@ -419,7 +419,8 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         statusResp.setDatetime(dataStr);
         CqDataResp dataResp = new CqDataResp();
         dataResp.setBalance(balance);
-        dataResp.setCurrency("CNY");
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode("CQ9");
+        dataResp.setCurrency(gameParentPlatform.getCurrencyType());
         getBalanceSuccess.setData(dataResp);
         getBalanceSuccess.setStatus(statusResp);
         return JSONObject.toJSONString(getBalanceSuccess);
