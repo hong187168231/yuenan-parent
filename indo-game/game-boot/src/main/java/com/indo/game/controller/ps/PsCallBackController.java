@@ -37,9 +37,9 @@ public class PsCallBackController {
     public Object verifySession(PsCallBackParentReq psVerifyCallBackReq, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("psCallBack {} verifyToken回调,params:{}", JSONObject.toJSONString(psVerifyCallBackReq));
+        logger.info("psCallBack verifyToken回调,params:{}", JSONObject.toJSONString(psVerifyCallBackReq));
         Object psCallBackResponse = psCallbackService.psVerifyCallback(psVerifyCallBackReq, ip);
-        logger.info("psCallBack {} verifyToken回调返回数据 params:{}", psCallBackResponse);
+        logger.info("psCallBack verifyToken回调返回数据 params:{}", psCallBackResponse);
         return psCallBackResponse;
     }
 
@@ -53,9 +53,9 @@ public class PsCallBackController {
     public Object bet(PsCallBackParentReq psbetCallBackReq, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("psCallBack {} psBet回调,params:{}", JSONObject.toJSONString(psbetCallBackReq));
+        logger.info("psCallBack psBet回调,params:{}", JSONObject.toJSONString(psbetCallBackReq));
         Object object = psCallbackService.psBetCallback(psbetCallBackReq, ip);
-        logger.info("psCallBack {} psBet回调返回数据 params:{}", object);
+        logger.info("psCallBack psBet回调返回数据 params:{}", object);
         return object;
     }
 
@@ -69,9 +69,9 @@ public class PsCallBackController {
     public Object result(PsCallBackParentReq psbetCallBackReq, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("psCallBack {} psResult回调,params:{}", JSONObject.toJSONString(psbetCallBackReq));
+        logger.info("psCallBack psResult回调,params:{}", JSONObject.toJSONString(psbetCallBackReq));
         Object object = psCallbackService.psResultCallback(psbetCallBackReq, ip);
-        logger.info("psCallBack {} psResult回调返回数据 params:{}", object);
+        logger.info("psCallBack psResult回调返回数据 params:{}", object);
         return object;
     }
 
@@ -85,9 +85,9 @@ public class PsCallBackController {
     public Object refund(PsCallBackParentReq psbetCallBackReq, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("psCallBack {} psRefundt回调,params:{}", JSONObject.toJSONString(psbetCallBackReq));
+        logger.info("psCallBack psRefundt回调,params:{}", JSONObject.toJSONString(psbetCallBackReq));
         Object object = psCallbackService.psRefundtCallback(psbetCallBackReq, ip);
-        logger.info("psCallBack {} psRefundt回调返回数据 params:{}", object);
+        logger.info("psCallBack psRefundt回调返回数据 params:{}", object);
         return object;
     }
 
@@ -101,9 +101,9 @@ public class PsCallBackController {
     public Object bonus(PsCallBackParentReq psbetCallBackReq, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("psCallBack {} psBonus回调,params:{}", JSONObject.toJSONString(psbetCallBackReq));
+        logger.info("psCallBack psBonus回调,params:{}", JSONObject.toJSONString(psbetCallBackReq));
         Object object = psCallbackService.psBonusCallback(psbetCallBackReq, ip);
-        logger.info("psCallBack {} psBonus回调返回数据 params:{}", object);
+        logger.info("psCallBack psBonus回调返回数据 params:{}", object);
         return object;
     }
 
@@ -116,9 +116,9 @@ public class PsCallBackController {
     public Object getBalance(PsCallBackParentReq psbetCallBackReq, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("psCallBack {} psGetBalance回调,params:{}", JSONObject.toJSONString(psbetCallBackReq));
+        logger.info("psCallBack psGetBalance回调,params:{}", JSONObject.toJSONString(psbetCallBackReq));
         Object object = psCallbackService.psGetBalanceCallback(psbetCallBackReq, ip);
-        logger.info("psCallBack {} psGetBalance回调返回数据 params:{}", object);
+        logger.info("psCallBack psGetBalance回调返回数据 params:{}", object);
         return object;
     }
 }
