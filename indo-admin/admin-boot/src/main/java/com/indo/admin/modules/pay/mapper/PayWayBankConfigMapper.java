@@ -1,6 +1,9 @@
 package com.indo.admin.modules.pay.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.indo.admin.pojo.dto.PayWayQueryDTO;
+import com.indo.admin.pojo.vo.pay.PayWayConfigVO;
 import com.indo.core.pojo.entity.PayWayBankConfig;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -24,4 +27,6 @@ public interface PayWayBankConfigMapper extends BaseMapper<PayWayBankConfig> {
 
 	@Select("select * from pay_way_bank_config where `pay_channel_id` = #{payChannelId} and status=1")
 	List<PayWayBankConfig> selectPayChannelId(@Param("payChannelId") Long payChannelId);
+
+	List<PayWayConfigVO> queryAll(@Param("page") Page<PayWayConfigVO> page, @Param("dto") PayWayQueryDTO dto);
 }
