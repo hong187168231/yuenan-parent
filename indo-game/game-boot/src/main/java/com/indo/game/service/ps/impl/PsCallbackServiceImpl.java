@@ -188,7 +188,8 @@ public class PsCallbackServiceImpl implements PsCallbackService {
             dataJson.put("message", "单号无效");
             return dataJson;
         }
-        BigDecimal money = new BigDecimal(psbetCallBackReq.getTotal_bet()).subtract(new BigDecimal(psbetCallBackReq.getBonus_win()));
+//        BigDecimal money = new BigDecimal(psbetCallBackReq.getTotal_win()).subtract(new BigDecimal(psbetCallBackReq.getBonus_win()));
+        BigDecimal money = new BigDecimal(psbetCallBackReq.getTotal_win());
         BigDecimal winAmount = money.divide(new BigDecimal(100));
         BigDecimal balance = memBaseinfo.getBalance();
         balance = balance.add(winAmount);
