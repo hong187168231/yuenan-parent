@@ -161,7 +161,11 @@ public class RedtigerServiceImpl implements RedtigerService {
 
         if (returnJson.containsKey("entry")) {
             ApiResponseData responseData = new ApiResponseData();
-            responseData.setPathUrl(OpenAPIProperties.REDTIGER_API_URL + returnJson.getString("entry"));
+            String url = returnJson.getString("entry");
+            if (url.indexOf("/") == 0) {
+                url = url.substring(1);
+            }
+            responseData.setPathUrl(OpenAPIProperties.REDTIGER_API_URL + url);
             return Result.success(responseData);
         } else {
             JSONObject errors = returnJson.getJSONArray("errors").getJSONObject(0);

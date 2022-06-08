@@ -2,19 +2,10 @@ package com.indo.game.pojo.vo.callback.ug;
 
 
 import com.alibaba.fastjson.annotation.JSONField;
+import lombok.Data;
 
 import java.math.BigDecimal;
-
+@Data
 public class UgCallBackGetBalanceResp extends UgCallBackParentResp {
-    private BigDecimal Balance;
-
-    @JSONField(name="Balance")
-    public BigDecimal getBalance() {
-        return Balance;
-    }
-
-    @JSONField(name="Balance")
-    public void setBalance(BigDecimal balance) {
-        Balance = balance;
-    }
+    private BigDecimal data;
 }

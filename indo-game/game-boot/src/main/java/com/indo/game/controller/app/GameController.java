@@ -171,9 +171,9 @@ public class GameController {
                     resultInfo = awcService.awcGame(loginUser, isMobileLogin, ip, platform, parentName);
                 }
                 if ("UG".equals(parentName)) {
-                    String loginType = "Smart";
+                    String loginType = "mobile";
                     if (!"1".equals(isMobileLogin))
-                        loginType = "PC";
+                        loginType = "pc";
 
                     resultInfo = ugService.ugGame(loginUser, ip, platform, loginType, parentName);
                 }
@@ -189,7 +189,7 @@ public class GameController {
                 if ("AE".equals(parentName)) {
                     resultInfo = aeService.aeGame(loginUser, isMobileLogin, ip, platform, parentName);
                 }
-                if ("CQ".equals(parentName)) {
+                if ("CQ9".equals(parentName)) {
                     resultInfo = cqService.cqGame(loginUser, isMobileLogin, ip, platform, parentName);
                 }
                 if ("PG".equals(parentName)) {

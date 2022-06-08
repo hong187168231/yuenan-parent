@@ -2,9 +2,10 @@ package com.indo.game.pojo.vo.callback.ug;
 
 
 import com.alibaba.fastjson.annotation.JSONField;
+import lombok.Data;
 
 import java.util.List;
-
+@Data
 public class UgApiTasksResponseData<T> {
     private String ErrorCode;
     private String ErrorMessage;

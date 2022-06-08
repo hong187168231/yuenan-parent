@@ -58,10 +58,11 @@ public class OpenAPIProperties implements InitializingBean {
     private String sabaApiUrl;
 
     //UG
-    public static String UG_KEY;
-    public static String UG_API_PASSWORD;
+    public static String UG_COMPANY_KEY;
+    public static String UG_API_KEY;
     public static String UG_AGENT;
     public static String UG_API_URL;
+    public static String UG_RETURN_URL;
     @Value("${ug.CompanyKey}")
     private String ugCompanyKey;
     @Value("${ug.APIPassword}")
@@ -70,6 +71,9 @@ public class OpenAPIProperties implements InitializingBean {
     private String ugAgentID;
     @Value("${ug.ugApiUrl}")
     private String ugApiUrl;
+    @Value("${ug.ugReturnUrl}")
+    private String ugReturnUrl;
+
 
     //JDB
     public static String JDB_DC;
@@ -480,10 +484,11 @@ public class OpenAPIProperties implements InitializingBean {
         SABA_VENDORID = vendorId;
         SABA_API_URL = sabaApiUrl;
 
-        UG_KEY = ugCompanyKey;
-        UG_API_PASSWORD = ugApiPasword;
+        UG_COMPANY_KEY = ugCompanyKey;
+        UG_API_KEY = ugApiPasword;
         UG_AGENT = ugAgentID;
         UG_API_URL = ugApiUrl;
+        UG_RETURN_URL = ugReturnUrl;
 
         JDB_DC = jdbdc;
         JDB_KEY = jdbkey;

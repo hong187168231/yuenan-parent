@@ -40,8 +40,10 @@ public class MemBaseInfoVo {
     private BigDecimal balance;
 
     /*********************等级&团队*****************************/
-    @ApiModelProperty(value = "会员等级")
+    @ApiModelProperty(value = "会员等级id")
     private String memLevel;
+    @ApiModelProperty(value = "会员等级")
+    private Integer level;
     @ApiModelProperty(value = "注册来源:1-苹果,2-安卓,3-h5")
     private String registerSource;
     @ApiModelProperty(value = "账户类型:0-普通会员 1-代理会员")

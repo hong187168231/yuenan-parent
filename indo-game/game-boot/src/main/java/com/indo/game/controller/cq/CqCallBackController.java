@@ -31,6 +31,7 @@ public class CqCallBackController {
      * 查询余额
      */
     @RequestMapping(value = "/callBack/transaction/balance/{account}", method = RequestMethod.GET)
+    @ResponseBody
     @AllowAccess
     public Object getBalance(@PathVariable(name = "account") String account, HttpServletRequest request) {
 
@@ -46,6 +47,7 @@ public class CqCallBackController {
      * 验证用户
      */
     @RequestMapping(value = "/callBack/player/check/{account}", method = RequestMethod.GET)
+    @ResponseBody
     @AllowAccess
     public Object checkPlayer(@PathVariable(name = "account") String account, HttpServletRequest request) {
 

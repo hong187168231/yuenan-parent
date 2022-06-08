@@ -27,6 +27,7 @@ import java.math.BigDecimal;
 import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 
@@ -207,7 +208,7 @@ public class AeServiceImpl implements AeService {
         params.put("merchantId", OpenAPIProperties.AE_MERCHANT_ID);
         params.put("currentTime", currentTime);
         params.put("currency", platformGameParent.getCurrencyType());
-        params.put("username", cptOpenMember.getUserName());
+        params.put("username", cptOpenMember.getUserName().toUpperCase(Locale.ROOT));
         params.put("sign", sign);
         params.put("language", platformGameParent.getLanguageType());
         String jsonStr = JSON.toJSONString(params);

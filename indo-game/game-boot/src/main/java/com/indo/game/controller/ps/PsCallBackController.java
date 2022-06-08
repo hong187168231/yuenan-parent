@@ -47,7 +47,7 @@ public class PsCallBackController {
     /**
      * 投注
      */
-    @RequestMapping(value = "/api/bet", method = RequestMethod.GET)
+    @RequestMapping(value = "/bet", method = RequestMethod.GET)
     @ResponseBody
     @AllowAccess
     public Object bet(PsCallBackParentReq psbetCallBackReq, HttpServletRequest request) {
@@ -63,7 +63,7 @@ public class PsCallBackController {
     /**
      * 结算
      */
-    @RequestMapping(value = "/api/result", method = RequestMethod.GET)
+    @RequestMapping(value = "/result", method = RequestMethod.GET)
     @ResponseBody
     @AllowAccess
     public Object result(PsCallBackParentReq psbetCallBackReq, HttpServletRequest request) {
@@ -79,7 +79,7 @@ public class PsCallBackController {
     /**
      * 返还押注
      */
-    @RequestMapping(value = "/api/refund", method = RequestMethod.GET)
+    @RequestMapping(value = "/refund", method = RequestMethod.GET)
     @ResponseBody
     @AllowAccess
     public Object refund(PsCallBackParentReq psbetCallBackReq, HttpServletRequest request) {
@@ -95,7 +95,7 @@ public class PsCallBackController {
     /**
      * 红利
      */
-    @RequestMapping(value = "/api/bonusaward", method = RequestMethod.GET)
+    @RequestMapping(value = "/bonusaward", method = RequestMethod.GET)
     @ResponseBody
     @AllowAccess
     public Object bonus(PsCallBackParentReq psbetCallBackReq, HttpServletRequest request) {
@@ -110,7 +110,7 @@ public class PsCallBackController {
     /**
      * 余额
      */
-    @RequestMapping(value = "/api/getbalance", method = RequestMethod.GET)
+    @RequestMapping(value = "/getbalance", method = RequestMethod.GET)
     @ResponseBody
     @AllowAccess
     public Object getBalance(PsCallBackParentReq psbetCallBackReq, HttpServletRequest request) {

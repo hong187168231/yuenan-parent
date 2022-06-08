@@ -1,29 +1,10 @@
 package com.indo.game.pojo.vo.callback.ug;
 
 
-import com.alibaba.fastjson.annotation.JSONField;
+import lombok.Data;
 
+@Data
 public class UgCallBackParentResp {
-    private int ErrorCode;
-    private String ErrorMessage;
-
-    @JSONField(name="ErrorCode")
-    public void setErrorCode(int errorCode) {
-        ErrorCode = errorCode;
-    }
-
-    @JSONField(name="ErrorCode")
-    public int getErrorCode() {
-        return ErrorCode;
-    }
-
-    @JSONField(name="ErrorMessage")
-    public String getErrorMessage() {
-        return ErrorMessage;
-    }
-
-    @JSONField(name="ErrorMessage")
-    public void setErrorMessage(String errorMessage) {
-        ErrorMessage = errorMessage;
-    }
+    private String code;//	string	錯誤代碼
+    private String msg;//	string	訊息
 }

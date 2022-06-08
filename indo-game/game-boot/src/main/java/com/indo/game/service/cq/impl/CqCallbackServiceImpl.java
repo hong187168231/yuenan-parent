@@ -398,7 +398,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
 
 
     private boolean checkIp(String ip) {
-        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode("CQ");
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode("CQ9");
         if (null == gameParentPlatform) {
             return false;
         } else if (null == gameParentPlatform.getIpAddr() || "".equals(gameParentPlatform.getIpAddr())) {
@@ -419,10 +419,11 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         statusResp.setDatetime(dataStr);
         CqDataResp dataResp = new CqDataResp();
         dataResp.setBalance(balance);
-        dataResp.setCurrency("CNY");
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode("CQ9");
+        dataResp.setCurrency(gameParentPlatform.getCurrencyType());
         getBalanceSuccess.setData(dataResp);
         getBalanceSuccess.setStatus(statusResp);
-        return JSONObject.toJSONString(getBalanceSuccess);
+        return getBalanceSuccess;
     }
 
     private Object commonReturnFail() {
@@ -436,7 +437,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         CqDataResp dataResp = new CqDataResp();
         getBalanceSuccess.setData(dataResp);
         getBalanceSuccess.setStatus(statusResp);
-        return JSONObject.toJSONString(getBalanceSuccess);
+        return getBalanceSuccess;
     }
 }
 

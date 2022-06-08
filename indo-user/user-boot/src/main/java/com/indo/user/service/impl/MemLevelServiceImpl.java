@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -44,6 +45,9 @@ public class MemLevelServiceImpl extends ServiceImpl<MemLevelMapper, MemLevel> i
 
     @Autowired
     private IMemGiftReceiveService iMemGiftReceiveService;
+
+    @Resource
+    private MemLevelMapper memLevelMapper;
 
     @Override
     public MemLevelVo findInfo(LoginInfo loginInfo) {
@@ -141,6 +145,12 @@ public class MemLevelServiceImpl extends ServiceImpl<MemLevelMapper, MemLevel> i
         }
 
         memLevelVo.setLevelList(levelInfoList);
+        if(memLevelVo.getTradingVo().getMemLevel()!=null||memLevelVo.getTradingVo().getMemLevel()>0){
+           MemLevel memLevel = memLevelMapper.selectById(memLevelVo.getTradingVo().getMemLevel());
+           if(memLevel!=null){
+               memLevelVo.getTradingVo().setLevel(memLevel.getLevel());
+           }
+        }
         return memLevelVo;
     }
 
