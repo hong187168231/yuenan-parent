@@ -148,7 +148,7 @@ public class GameController {
         log.info("登录平台或单一游戏登录 进入游戏。。。 platform:{},loginUser:{},parentName:{}", platform, loginUser, parentName);
         //黑名单校验
         List<SysIpLimit> list =sysIpLimitClient.findSysIpLimitByType(1).getData();
-        if(list!=null||list.size()>0){
+        if(list!=null&&list.size()>0){
             // 获取请求信息
             String clientIP = IPUtils.getIpAddr(request);
             Boolean status = false;
