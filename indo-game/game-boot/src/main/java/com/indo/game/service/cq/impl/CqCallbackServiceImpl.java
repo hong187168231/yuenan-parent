@@ -61,7 +61,8 @@ public class CqCallbackServiceImpl implements CqCallbackService {
             return commonReturnFail();
         }
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cqApiRequestData.getAccount());
-        GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(cqApiRequestData.getGamehall());
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode("CQ9");
+        GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(cqApiRequestData.getGamehall(),gameParentPlatform.getPlatformCode());
         GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         BigDecimal balance = memBaseinfo.getBalance();
         BigDecimal betAmount = new BigDecimal(cqApiRequestData.getAmount());
@@ -94,9 +95,14 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         //此交易是否是投注 true是投注 false 否
         //玩家 ID
         txns.setUserId(memBaseinfo.getId().toString());
+        //玩家货币代码
+        txns.setCurrency(gameParentPlatform.getCurrencyType());
         //平台代码
-        txns.setPlatform(cqApiRequestData.getPlatform());
+        txns.setPlatform(gameParentPlatform.getPlatformCode());
         //平台英文名称
+        txns.setPlatformEnName(gameParentPlatform.getPlatformEnName());
+        //平台中文名称
+        txns.setPlatformCnName(gameParentPlatform.getPlatformCnName());
         //平台游戏类型
         txns.setGameType(gameCategory.getGameType());
         //游戏分类ID
@@ -104,7 +110,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         //游戏分类名称
         txns.setCategoryName(gameCategory.getGameName());
         //平台游戏代码
-        txns.setGameCode(cqApiRequestData.getGamecode());
+        txns.setGameCode(gamePlatform.getPlatformCode());
         //游戏名称
         txns.setGameName(gamePlatform.getPlatformEnName());
         //下注金额
@@ -226,8 +232,6 @@ public class CqCallbackServiceImpl implements CqCallbackService {
             return commonReturnFail();
         }
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cqApiRequestData.getAccount());
-        GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(cqApiRequestData.getPlatform());
-        GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Txns::getStatus, "Running");
         wrapper.eq(Txns::getPromotionTxId, cqApiRequestData.getMtcode());
@@ -251,11 +255,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         txns.setId(null);
         txns.setMethod("Refund");
         txns.setStatus("Running");
-        txns.setPlatformCnName(gamePlatform.getPlatformCnName());
         txns.setCreateTime(dateStr);
-        txns.setPlatformEnName(gamePlatform.getPlatformEnName());
-        txns.setCategoryId(gameCategory.getId());
-        txns.setCategoryName(gameCategory.getGameName());
         txnsMapper.insert(txns);
 
         return commonReturnSuccess(balance);
@@ -267,8 +267,6 @@ public class CqCallbackServiceImpl implements CqCallbackService {
             return commonReturnFail();
         }
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cqApiRequestData.getAccount());
-        GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(cqApiRequestData.getPlatform());
-        GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
         wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Adjust Bet"));
         wrapper.eq(Txns::getStatus, "Running");
@@ -293,11 +291,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         txns.setId(null);
         txns.setMethod("Refund");
         txns.setStatus("Running");
-        txns.setPlatformCnName(gamePlatform.getPlatformCnName());
         txns.setCreateTime(dateStr);
-        txns.setPlatformEnName(gamePlatform.getPlatformEnName());
-        txns.setCategoryId(gameCategory.getId());
-        txns.setCategoryName(gameCategory.getGameName());
         txnsMapper.insert(txns);
 
         return commonReturnSuccess(balance);
