@@ -4,6 +4,7 @@
 
     <select id="beforeDayBetList" resultType="com.indo.job.pojo.dto.BeforeDayBetDTO">
         SELECT
+            ar.parent_id as parentId,
             mb.mem_level as memLevel,
             mb.real_name as realName,
             ar.superior as superior,
@@ -14,12 +15,13 @@
         game_txns gt
         LEFT JOIN agent_relation ar ON gt.user_id = ar.account
         INNER JOIN  mem_baseinfo mb on  gt.user_id = mb.account
-        and TO_DAYS(NOW()) - TO_DAYS(gt.create_time) &lt; 1
-        GROUP BY account,memLevel,realName,superior,teamNum
+        and gt.create_time &gt;= #{startTime}
+        and gt.create_time &lt;= #{endTime}
+        GROUP BY account,memLevel,realName,superior,teamNum,parentId
     </select>
 
 
-    <select id="teamSumBet" parameterType="String">
+    <select id="teamSumBet" parameterType="String" resultType="java.math.BigDecimal">
         SELECT
         SUM(gt.real_bet_amount) AS realBetAmount
         FROM

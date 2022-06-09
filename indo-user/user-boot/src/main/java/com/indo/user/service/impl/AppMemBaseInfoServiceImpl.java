@@ -11,6 +11,8 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.indo.admin.api.SysIpLimitClient;
 import com.indo.admin.pojo.entity.SysIpLimit;
+import com.indo.common.enums.GoldchangeEnum;
+import com.indo.common.enums.TradingEnum;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
 import com.indo.common.utils.DeviceInfoUtil;
@@ -21,9 +23,11 @@ import com.indo.common.web.util.IPUtils;
 import com.indo.core.base.service.impl.SuperServiceImpl;
 import com.indo.core.pojo.bo.MemBaseInfoBO;
 import com.indo.core.pojo.dto.MemBaseInfoDTO;
+import com.indo.core.pojo.dto.MemGoldChangeDTO;
 import com.indo.core.pojo.entity.AgentRelation;
 import com.indo.core.pojo.entity.MemBaseinfo;
 import com.indo.core.pojo.entity.MemInviteCode;
+import com.indo.core.service.IMemGoldChangeService;
 import com.indo.core.util.BusinessRedisUtils;
 import com.indo.user.common.util.UserBusinessRedisUtils;
 import com.indo.user.mapper.AgentRelationMapper;
@@ -69,6 +73,9 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
 
     @Resource
     private SysIpLimitClient sysIpLimitClient;
+
+    @Resource
+    private IMemGoldChangeService iMemGoldChangeService;
 
     @Value("${google.client_id}")
     private String googleClientId;
@@ -207,12 +214,17 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
         if (StringUtils.isNotBlank(DeviceInfoUtil.getSource())) {
             userInfo.setRegisterSource(DeviceInfoUtil.getSource());
         }
-        //注册送30000越南盾注册金
-        userInfo.setBalance(new BigDecimal(30000));
         //保存注册信息
         initRegister(userInfo, memInviteCode);
         MemBaseInfoBO memBaseinfoBo = DozerUtil.map(userInfo, MemBaseInfoBO.class);
         String accToken = UserBusinessRedisUtils.createMemAccToken(memBaseinfoBo);
+        //注册送30000越南盾注册金
+        MemGoldChangeDTO agentRebateChange = new MemGoldChangeDTO();
+        agentRebateChange.setChangeAmount(new BigDecimal(30000));
+        agentRebateChange.setTradingEnum(TradingEnum.INCOME);
+        agentRebateChange.setGoldchangeEnum(GoldchangeEnum.register);
+        agentRebateChange.setUserId(memBaseinfoBo.getId());
+        iMemGoldChangeService.updateMemGoldChange(agentRebateChange);
         //返回登录信息
         AppLoginVo appLoginVo = this.getAppLoginVo(accToken, memBaseinfoBo);
         return Result.success(appLoginVo);
