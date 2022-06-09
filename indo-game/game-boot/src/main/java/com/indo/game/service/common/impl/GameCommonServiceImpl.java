@@ -59,8 +59,8 @@ public class GameCommonServiceImpl implements GameCommonService {
     public List<GameParentPlatform> queryAllGameParentPlatform() {
         List<GameParentPlatform> categoryList = null;
         try{
-//            Map<Object, Object> map = RedisUtils.hmget(RedisConstants.GAME_PARENT_PLATFORM_KEY);
-//            categoryList = (List<GameParentPlatform>)map.get(RedisConstants.GAME_PARENT_PLATFORM_KEY);
+            Map<Object, Object> map = RedisUtils.hmget(RedisConstants.GAME_PARENT_PLATFORM_KEY);
+            categoryList = (List<GameParentPlatform>)map.get(RedisConstants.GAME_PARENT_PLATFORM_KEY);
 //            RedisUtils.hdel(RedisConstants.GAME_PARENT_PLATFORM_KEY);
         }catch (Exception e) {
             logger.error("queryAllGameParentPlatform.getcache.error "+e.getMessage(), e);
@@ -115,8 +115,8 @@ public class GameCommonServiceImpl implements GameCommonService {
     public List<GamePlatform> queryAllGamePlatform() {
         List<GamePlatform> platformList = null;
         try{
-//            Map<Object, Object> map = RedisUtils.hmget(RedisConstants.GAME_PLATFORM_KEY);
-//            platformList = (List<GamePlatform>)map.get(RedisConstants.GAME_PLATFORM_KEY);
+            Map<Object, Object> map = RedisUtils.hmget(RedisConstants.GAME_PLATFORM_KEY);
+            platformList = (List<GamePlatform>)map.get(RedisConstants.GAME_PLATFORM_KEY);
 //            RedisUtils.hdel(RedisConstants.GAME_PLATFORM_KEY);
         }catch (Exception e) {
             logger.error("queryAllGamePlatform.getcache.error "+e.getMessage(), e);
