@@ -1,11 +1,9 @@
 package com.indo.admin.modules.pay.controller;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.modules.pay.service.IPayWayBankConfigService;
-import com.indo.admin.modules.pay.service.IPayWayConfigService;
+import com.indo.admin.pojo.dto.PayWayBankQueryDTO;
 import com.indo.admin.pojo.dto.PayWayDTO;
-import com.indo.admin.pojo.dto.PayWayQueryDTO;
-import com.indo.admin.pojo.vo.pay.PayWayConfigVO;
+import com.indo.admin.pojo.vo.pay.PayWayBankConfigVO;
 import com.indo.common.result.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -28,9 +26,8 @@ public class PayWayBankConfigController {
 
 	@ApiOperation(value = "支付方式列表")
 	@GetMapping(value = "/list")
-	public Result<List<PayWayConfigVO>> applyList(PayWayQueryDTO payWayQueryDTO) {
-		Page<PayWayConfigVO> result = payWayBankConfigService.queryAll(payWayQueryDTO);
-		return Result.success(result.getRecords(), result.getTotal());
+	public Result<List<PayWayBankConfigVO>> list(PayWayBankQueryDTO payWayBankQueryDTO) {
+		return payWayBankConfigService.queryAll(payWayBankQueryDTO);
 	}
 
 	@ApiOperation(value = "新增支付方式")
