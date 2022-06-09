@@ -9,7 +9,7 @@
             ar.superior as superior,
             ar.team_num as teamNum,
             gt.user_id AS account,
-            SUM(gt.real_bet_amount) AS realBetAmount,
+            SUM(gt.real_bet_amount) AS realBetAmount
         FROM
         game_txns gt
         LEFT JOIN agent_relation ar ON gt.user_id = ar.account
