@@ -125,7 +125,7 @@ public class CqServiceImpl implements CqService {
         if (("0").equals(jsonStatusObject.getString("code"))) {
             ApiResponseData responseData = new ApiResponseData();
             JSONObject jsonDataObject = JSON.parseObject(cqApiResponseData.getData());
-            responseData.setPath(jsonDataObject.getString("url"));
+            responseData.setPathUrl(jsonDataObject.getString("url"));
             return Result.success(responseData);
         } else {
             return errorCode(jsonStatusObject.getString("code"), jsonStatusObject.getString("message"));
