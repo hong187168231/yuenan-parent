@@ -6,6 +6,7 @@ import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.redis.utils.GeneratorIdUtil;
 import com.indo.common.result.Result;
 import com.indo.common.utils.GameUtil;
+import com.indo.common.utils.StringUtils;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.game.pojo.entity.manage.GameParentPlatform;
@@ -131,7 +132,7 @@ public class RedtigerServiceImpl implements RedtigerService {
 
         player.put("id", loginUser.getAccount());
         player.put("update", true);
-        player.put("nickname", loginUser.getNickName());
+        player.put("nickname", StringUtils.isEmpty(loginUser.getNickName()) ? loginUser.getAccount() : loginUser.getNickName());
         player.put("country", "CN");
         player.put("language", gameParentPlatform.getLanguageType());
         player.put("currency", gameParentPlatform.getCurrencyType());
