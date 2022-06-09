@@ -183,12 +183,13 @@ public class PsCallbackServiceImpl implements PsCallbackService {
         wrapper.eq(Txns::getPromotionTxId, psbetCallBackReq.getTxn_id());
         wrapper.eq(Txns::getUserId, memBaseinfo.getId());
         Txns oldTxns = txnsMapper.selectOne(wrapper);
-        if (null != oldTxns) {
+        if (null == oldTxns) {
             dataJson.put("status_code", "2");
             dataJson.put("message", "单号无效");
             return dataJson;
         }
-        BigDecimal money = new BigDecimal(psbetCallBackReq.getTotal_bet()).subtract(new BigDecimal(psbetCallBackReq.getBonus_win()));
+//        BigDecimal money = new BigDecimal(psbetCallBackReq.getTotal_win()).subtract(new BigDecimal(psbetCallBackReq.getBonus_win()));
+        BigDecimal money = new BigDecimal(psbetCallBackReq.getTotal_win());
         BigDecimal winAmount = money.divide(new BigDecimal(100));
         BigDecimal balance = memBaseinfo.getBalance();
         balance = balance.add(winAmount);
@@ -234,7 +235,7 @@ public class PsCallbackServiceImpl implements PsCallbackService {
         wrapper.eq(Txns::getPromotionTxId, psbetCallBackReq.getTxn_id());
         wrapper.eq(Txns::getUserId, memBaseinfo.getId());
         Txns oldTxns = txnsMapper.selectOne(wrapper);
-        if (null != oldTxns) {
+        if (null == oldTxns) {
             dataJson.put("status_code", "2");
             dataJson.put("message", "单号无效");
             return dataJson;
@@ -276,7 +277,7 @@ public class PsCallbackServiceImpl implements PsCallbackService {
         wrapper.eq(Txns::getPromotionTxId, psbetCallBackReq.getTxn_id());
         wrapper.eq(Txns::getUserId, memBaseinfo.getId());
         Txns oldTxns = txnsMapper.selectOne(wrapper);
-        if (null != oldTxns) {
+        if (null == oldTxns) {
             dataJson.put("status_code", "2");
             dataJson.put("message", "单号无效");
             return dataJson;

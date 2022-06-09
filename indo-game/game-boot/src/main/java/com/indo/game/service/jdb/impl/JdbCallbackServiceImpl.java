@@ -100,8 +100,8 @@ public class JdbCallbackServiceImpl implements JdbCallbackService {
 
         BigDecimal balance = BigDecimal.ZERO;
         String userId = apiRequestData.getUid();
-        GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(apiRequestData.getMType().toString());
-        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(gamePlatform.getParentName());
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode("JDB");
+        GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(apiRequestData.getMType().toString(),gameParentPlatform.getPlatformCode());
         GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(userId);
         balance = memBaseinfo.getBalance();

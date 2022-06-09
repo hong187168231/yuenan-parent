@@ -117,7 +117,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             JSONObject table = game.getJSONObject("details").getJSONObject("table");
 
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(playerID);
-            GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(game.getString("id"));
+            GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(game.getString("type"));
             GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
 
             // 会员余额
@@ -152,7 +152,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             //玩家货币代码
             txns.setCurrency(platformGameParent.getCurrencyType());
             txns.setGameInfo(game.getString("type"));
-            txns.setRoundId(game.getString("id"));
+            txns.setRoundId(game.getString("type"));
             //平台代码
             txns.setPlatform(platformGameParent.getPlatformCode());
             //平台名称
@@ -255,7 +255,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             //玩家货币代码
             oldTxns.setCurrency(platformGameParent.getCurrencyType());
             oldTxns.setGameInfo(game.getString("type"));
-            oldTxns.setRoundId(game.getString("id"));
+            oldTxns.setRoundId(game.getString("type"));
             //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
             oldTxns.setWinningAmount(betAmount);
             oldTxns.setWinAmount(betAmount);
@@ -391,7 +391,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
                 roundId = promoTransaction.getString("voucherId");
             } else if ("JackpotWin".equals(promoType)) {
                 // 免费回合头奖
-                gamePlatform = gameCommonService.getGamePlatformByplatformCode(game.getString("id"));
+                gamePlatform = gameCommonService.getGamePlatformByplatformCode(game.getString("type"));
                 roundId = game.getJSONObject("details").getJSONObject("table").getString("id");
                 promotionId = roundId;
                 JSONArray jsonArray = promoTransaction.getJSONArray("jackpots");
@@ -420,7 +420,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
 
                 // 因在游戏回合中获胜而发放促销奖金。
                 betAmount = promoTransaction.getBigDecimal("amount");
-                gamePlatform = gameCommonService.getGamePlatformByplatformCode(game.getString("id"));
+                gamePlatform = gameCommonService.getGamePlatformByplatformCode(game.getString("type"));
                 roundId = game.getJSONObject("details").getJSONObject("table").getString("id");
                 promotionId = roundId;
             }

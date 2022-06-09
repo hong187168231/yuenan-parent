@@ -114,10 +114,8 @@ public class JdbServiceImpl implements JdbService {
                 //创建玩家
                 externalService.saveCptOpenMember(cptOpenMember);
             } else {
-                CptOpenMember updateCptOpenMember = new CptOpenMember();
-                updateCptOpenMember.setId(cptOpenMember.getId());
-                updateCptOpenMember.setLoginTime(new Date());
-                externalService.updateCptOpenMember(updateCptOpenMember);
+                cptOpenMember.setLoginTime(new Date());
+                externalService.updateCptOpenMember(cptOpenMember);
             }
             if(b) {
                 JdbApiIsGameingRequestBack<JdbApiIsGameingInfoRequestBack> jdbApiIsGameingRequestBack = getIsGameing(loginUser, ip);
