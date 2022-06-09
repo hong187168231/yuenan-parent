@@ -183,7 +183,7 @@ public class PsCallbackServiceImpl implements PsCallbackService {
         wrapper.eq(Txns::getPromotionTxId, psbetCallBackReq.getTxn_id());
         wrapper.eq(Txns::getUserId, memBaseinfo.getId());
         Txns oldTxns = txnsMapper.selectOne(wrapper);
-        if (null != oldTxns) {
+        if (null == oldTxns) {
             dataJson.put("status_code", "2");
             dataJson.put("message", "单号无效");
             return dataJson;
@@ -235,7 +235,7 @@ public class PsCallbackServiceImpl implements PsCallbackService {
         wrapper.eq(Txns::getPromotionTxId, psbetCallBackReq.getTxn_id());
         wrapper.eq(Txns::getUserId, memBaseinfo.getId());
         Txns oldTxns = txnsMapper.selectOne(wrapper);
-        if (null != oldTxns) {
+        if (null == oldTxns) {
             dataJson.put("status_code", "2");
             dataJson.put("message", "单号无效");
             return dataJson;
@@ -277,7 +277,7 @@ public class PsCallbackServiceImpl implements PsCallbackService {
         wrapper.eq(Txns::getPromotionTxId, psbetCallBackReq.getTxn_id());
         wrapper.eq(Txns::getUserId, memBaseinfo.getId());
         Txns oldTxns = txnsMapper.selectOne(wrapper);
-        if (null != oldTxns) {
+        if (null == oldTxns) {
             dataJson.put("status_code", "2");
             dataJson.put("message", "单号无效");
             return dataJson;
