@@ -6,6 +6,6 @@ import lombok.Data;
 public class ApiResponseData {
 
     //游戏路径
-    private String pathUrl;
+    private String path;
 
 }
