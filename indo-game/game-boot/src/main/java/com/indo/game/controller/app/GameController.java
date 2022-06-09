@@ -316,7 +316,7 @@ public class GameController {
             if ("AE".equals(platform)) {
                 resultInfo = aeService.logout(loginUser, platform, ip);
             }
-            if ("CQ".equals(platform)) {
+            if ("CQ9".equals(platform)) {
                 resultInfo = cqService.logout(loginUser, platform, ip);
             }
             if ("PG".equals(platform)) {

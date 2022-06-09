@@ -87,7 +87,9 @@ public class CqServiceImpl implements CqService {
 
             // 验证且绑定（AE-CPT第三方会员关系）
             CptOpenMember cptOpenMember = externalService.getCptOpenMember(loginUser.getId().intValue(), parentName);
+            boolean b = true;
             if (cptOpenMember == null) {
+                b = false;
                 cptOpenMember = new CptOpenMember();
                 cptOpenMember.setUserName(loginUser.getAccount());
                 cptOpenMember.setUserId(loginUser.getId().intValue());
@@ -99,10 +101,11 @@ public class CqServiceImpl implements CqService {
                 //创建玩家
                 externalService.saveCptOpenMember(cptOpenMember);
             } else {
-                CptOpenMember updateCptOpenMember = new CptOpenMember();
-                updateCptOpenMember.setId(cptOpenMember.getId());
-                updateCptOpenMember.setLoginTime(new Date());
-                externalService.updateCptOpenMember(updateCptOpenMember);
+                cptOpenMember.setLoginTime(new Date());
+                externalService.updateCptOpenMember(cptOpenMember);
+            }
+            if(b){
+                this.logout(loginUser,parentName,ip);
             }
             //登录
             return initGame(platformGameParent, gamePlatform, cptOpenMember, isMobileLogin);
