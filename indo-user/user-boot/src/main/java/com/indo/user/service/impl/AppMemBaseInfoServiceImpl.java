@@ -4,6 +4,11 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.jackson2.JacksonFactory;
 import com.indo.admin.api.SysIpLimitClient;
 import com.indo.admin.pojo.entity.SysIpLimit;
 import com.indo.common.pojo.bo.LoginInfo;
@@ -34,7 +39,9 @@ import com.indo.user.pojo.vo.AppLoginVo;
 import com.indo.user.pojo.vo.mem.MemBaseInfoVo;
 import com.indo.user.service.AppMemBaseInfoService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -42,10 +49,13 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.security.GeneralSecurityException;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, MemBaseinfo> implements AppMemBaseInfoService {
@@ -59,6 +69,9 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
 
     @Resource
     private SysIpLimitClient sysIpLimitClient;
+
+    @Value("${google.client_id}")
+    private String googleClientId;
 
     @Override
     public boolean checkAccount(String account) {
@@ -111,6 +124,34 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
         //返回登录信息
         AppLoginVo appLoginVo = this.getAppLoginVo(accToken, userInfo);
         return Result.success(appLoginVo);
+    }
+
+    /**
+     * 谷歌登录
+     * @return
+     */
+    private AppLoginVo googleLogin(String token) throws GeneralSecurityException, IOException {
+        final NetHttpTransport transport = GoogleNetHttpTransport.newTrustedTransport();
+        final JacksonFactory jsonFactory = JacksonFactory.getDefaultInstance();
+        GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(transport, jsonFactory)
+                .setAudience(Collections.singletonList(googleClientId))
+                .build();
+        GoogleIdToken idToken = verifier.verify(token);
+        if (idToken != null) {
+            GoogleIdToken.Payload payload = idToken.getPayload();
+            String userId = payload.getSubject();
+            log.info("google Login User ID: " + userId);
+            String email = payload.getEmail();
+            String name = (String) payload.get("name");
+            String pictureUrl = (String) payload.get("picture");
+            String locale = (String) payload.get("locale");
+            String familyName = (String) payload.get("family_name");
+            String givenName = (String) payload.get("given_name");
+        } else {
+            log.info("Invalid ID token.");
+            throw new BizException("Invalid ID token");
+        }
+        return null;
     }
 
 
