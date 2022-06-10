@@ -56,7 +56,7 @@ public class MemGoldChangeServiceImpl extends SuperServiceImpl<MemGoldChangeMapp
 
     static {
         enumList.add(GoldchangeEnum.CANCEL_BET);
-
+        enumList.add(GoldchangeEnum.DLFY);
     }
 
 
