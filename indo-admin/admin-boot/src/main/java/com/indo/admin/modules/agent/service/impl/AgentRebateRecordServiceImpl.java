@@ -51,7 +51,7 @@ public class AgentRebateRecordServiceImpl extends ServiceImpl<AgentRebateRecordM
         if (baseMapper.updateById(memPendingRebate) > 0) {
             AgentRebateRecord agentRebateRecord = new AgentRebateRecord();
             agentRebateRecord.setMemId(memPendingRebate.getMemId());
-            agentRebateRecord.setRebateAmount(memPendingRebate.getRebateAmount());
+            agentRebateRecord.setRebateAmout(memPendingRebate.getRebateAmout());
             agentRebateRecord.setTodayRemain(memPendingRebate.getTodayRemain());
             agentRebateRecord.setCreateUser(JwtUtils.getUsername());
             int row = agentRebateRecordMapper.insert(agentRebateRecord);
@@ -60,10 +60,10 @@ public class AgentRebateRecordServiceImpl extends ServiceImpl<AgentRebateRecordM
                 if (ObjectUtil.isNull(agentRebate)) {
                     agentRebate = new AgentRebate();
                     agentRebate.setMemId(agentRebateRecord.getMemId());
-                    agentRebate.setRebateAmount(agentRebateRecord.getRebateAmount());
+                    agentRebate.setRebateAmount(agentRebateRecord.getRebateAmout());
                     agentRebate.setCreateUser(JwtUtils.getUsername());
                 } else {
-                    agentRebateMapper.modifyRebateAmount(agentRebateRecord.getMemId(), agentRebateRecord.getRebateAmount());
+                    agentRebateMapper.modifyRebateAmount(agentRebateRecord.getMemId(), agentRebateRecord.getRebateAmout());
                 }
                 return true;
             }
