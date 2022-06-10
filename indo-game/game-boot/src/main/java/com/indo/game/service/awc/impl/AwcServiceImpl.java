@@ -69,7 +69,7 @@ public class AwcServiceImpl implements AwcService {
         if(!platform.equals(parentName)) {
             gamePlatform = new GamePlatform();
             // 是否开售校验
-            gamePlatform = gameCommonService.getGamePlatformByplatformCode(platform);
+            gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
             if (null == gamePlatform) {
                 return Result.failed("("+platform+")平台游戏不存在");
             }
@@ -110,10 +110,8 @@ public class AwcServiceImpl implements AwcService {
             } else {
                 Result result = this.logout(loginUser,ip);
                 if(null!=result&&"00000".equals(result.getCode())) {
-                    CptOpenMember updateCptOpenMember = new CptOpenMember();
-                    updateCptOpenMember.setId(cptOpenMember.getId());
-                    updateCptOpenMember.setLoginTime(new Date());
-                    externalService.updateCptOpenMember(updateCptOpenMember);
+                    cptOpenMember.setLoginTime(new Date());
+                    externalService.updateCptOpenMember(cptOpenMember);
                     //登录
                     return initGame(gameParentPlatform,gamePlatform, ip, cptOpenMember, isMobileLogin);
                 }

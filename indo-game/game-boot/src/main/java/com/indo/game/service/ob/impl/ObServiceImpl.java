@@ -67,7 +67,7 @@ public class ObServiceImpl implements ObService {
         GamePlatform gamePlatform = new GamePlatform();
         if (!platform.equals(parentName)) {
             // 是否开售校验
-            gamePlatform = gameCommonService.getGamePlatformByplatformCode(platform);
+            gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
             if (null == gamePlatform) {
                 return Result.failed("(" + platform + ")平台游戏不存在");
             }
@@ -101,10 +101,8 @@ public class ObServiceImpl implements ObService {
                 //创建玩家
                 return createMemberGame(platformGameParent, gamePlatform, ip, cptOpenMember, isMobileLogin);
             } else {
-                CptOpenMember updateCptOpenMember = new CptOpenMember();
-                updateCptOpenMember.setId(cptOpenMember.getId());
-                updateCptOpenMember.setLoginTime(new Date());
-                externalService.updateCptOpenMember(updateCptOpenMember);
+                cptOpenMember.setLoginTime(new Date());
+                externalService.updateCptOpenMember(cptOpenMember);
                 //先登出
                 logout(loginUser, platform, ip);
             }

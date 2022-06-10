@@ -51,7 +51,7 @@ public class JiliServiceImpl implements JiliService {
         if (!platform.equals(parentName)) {
             GamePlatform gamePlatform;
             // 是否开售校验
-            gamePlatform = gameCommonService.getGamePlatformByplatformCode(platform);
+            gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
             if (null == gamePlatform) {
                 return Result.failed("(" + platform + ")平台游戏不存在");
             }
@@ -88,10 +88,8 @@ public class JiliServiceImpl implements JiliService {
                 // 第一次登录自动创建玩家, 后续登录返回登录游戏URL
                 return createMemberGame(cptOpenMember, platform, gameParentPlatform.getLanguageType());
             } else {
-                CptOpenMember updateCptOpenMember = new CptOpenMember();
-                updateCptOpenMember.setId(cptOpenMember.getId());
-                updateCptOpenMember.setLoginTime(new Date());
-                externalService.updateCptOpenMember(updateCptOpenMember);
+                cptOpenMember.setLoginTime(new Date());
+                externalService.updateCptOpenMember(cptOpenMember);
 
                 Map<String, Object> params = new HashMap<>();
                 params.put("Account", loginUser.getAccount());

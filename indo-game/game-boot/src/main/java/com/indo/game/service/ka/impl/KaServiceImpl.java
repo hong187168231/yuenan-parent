@@ -47,7 +47,7 @@ public class KaServiceImpl implements KaService {
         if (!platform.equals(parentName)) {
             GamePlatform gamePlatform;
             // 是否开售校验
-            gamePlatform = gameCommonService.getGamePlatformByplatformCode(platform);
+            gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
             if (null == gamePlatform) {
                 return Result.failed("(" + platform + ")平台游戏不存在");
             }
@@ -80,10 +80,8 @@ public class KaServiceImpl implements KaService {
                 cptOpenMember.setLoginTime(new Date());
                 cptOpenMember.setType(parentName);
             } else {
-                CptOpenMember updateCptOpenMember = new CptOpenMember();
-                updateCptOpenMember.setId(cptOpenMember.getId());
-                updateCptOpenMember.setLoginTime(new Date());
-                externalService.updateCptOpenMember(updateCptOpenMember);
+                cptOpenMember.setLoginTime(new Date());
+                externalService.updateCptOpenMember(cptOpenMember);
             }
 
             ApiResponseData responseData = new ApiResponseData();

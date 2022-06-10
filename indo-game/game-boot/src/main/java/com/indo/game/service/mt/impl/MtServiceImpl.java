@@ -62,7 +62,7 @@ public class MtServiceImpl implements MtService {
         }
         if (!platform.equals(parentName)) {
             // 是否开售校验
-            GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(platform);
+            GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
             if (null == gamePlatform) {
                 return Result.failed("(" + platform + ")平台游戏不存在");
             }
@@ -97,10 +97,8 @@ public class MtServiceImpl implements MtService {
                 //创建玩家
                 return createMemberGame(cptOpenMember, gameParentPlatform, platform, loginUser);
             } else {
-                CptOpenMember updateCptOpenMember = new CptOpenMember();
-                updateCptOpenMember.setId(cptOpenMember.getId());
-                updateCptOpenMember.setLoginTime(new Date());
-                externalService.updateCptOpenMember(updateCptOpenMember);
+                cptOpenMember.setLoginTime(new Date());
+                externalService.updateCptOpenMember(cptOpenMember);
 
                 // 退出游戏
                 commonRequest(getLoginOutUrl(loginUser.getAccount()));

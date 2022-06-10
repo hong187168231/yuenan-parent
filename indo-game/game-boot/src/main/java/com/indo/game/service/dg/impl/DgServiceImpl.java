@@ -71,7 +71,7 @@ public class DgServiceImpl implements DgService {
         GamePlatform gamePlatform = new GamePlatform();
         if (!platform.equals(parentName)) {
             // 是否开售校验
-            gamePlatform = gameCommonService.getGamePlatformByplatformCode(platform);
+            gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
             if (null == gamePlatform) {
                 return Result.failed("(" + platform + ")平台游戏不存在");
             }
@@ -105,10 +105,8 @@ public class DgServiceImpl implements DgService {
                 //创建玩家
                 Result result = createMemberGame(platformGameParent, cptOpenMember);
             } else {
-                CptOpenMember updateCptOpenMember = new CptOpenMember();
-                updateCptOpenMember.setId(cptOpenMember.getId());
-                updateCptOpenMember.setLoginTime(new Date());
-                externalService.updateCptOpenMember(updateCptOpenMember);
+                cptOpenMember.setLoginTime(new Date());
+                externalService.updateCptOpenMember(cptOpenMember);
                 logout(loginUser, platform, ip);
             }
 

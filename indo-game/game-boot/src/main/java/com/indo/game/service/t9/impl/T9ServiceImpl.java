@@ -66,7 +66,7 @@ public class T9ServiceImpl implements T9Service {
         if (!platform.equals(parentName)) {
             GamePlatform gamePlatform;
             // 是否开售校验
-            gamePlatform = gameCommonService.getGamePlatformByplatformCode(platform);
+            gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
             if (null == gamePlatform) {
                 return Result.failed("(" + platform + ")平台游戏不存在");
             }
@@ -101,10 +101,8 @@ public class T9ServiceImpl implements T9Service {
                 //创建玩家
                 createMemberGame(cptOpenMember);
             } else {
-                CptOpenMember updateCptOpenMember = new CptOpenMember();
-                updateCptOpenMember.setId(cptOpenMember.getId());
-                updateCptOpenMember.setLoginTime(new Date());
-                externalService.updateCptOpenMember(updateCptOpenMember);
+                cptOpenMember.setLoginTime(new Date());
+                externalService.updateCptOpenMember(cptOpenMember);
 
                 Map<String, Object> params = new HashMap<>();
                 params.put("playerID", loginUser.getAccount());

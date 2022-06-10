@@ -64,7 +64,7 @@ public class YlServiceImpl implements YlService {
         GamePlatform gamePlatform = new GamePlatform();
         if (!platform.equals(parentName)) {
             // 是否开售校验
-            gamePlatform = gameCommonService.getGamePlatformByplatformCode(platform);
+            gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
             if (null == gamePlatform) {
                 return Result.failed("(" + platform + ")平台游戏不存在");
             }
@@ -97,11 +97,9 @@ public class YlServiceImpl implements YlService {
                 //创建玩家
                 externalService.saveCptOpenMember(cptOpenMember);
             } else {
-                CptOpenMember updateCptOpenMember = new CptOpenMember();
-                updateCptOpenMember.setPassword(SnowflakeId.generateId().toString());
-                updateCptOpenMember.setId(cptOpenMember.getId());
-                updateCptOpenMember.setLoginTime(new Date());
-                externalService.updateCptOpenMember(updateCptOpenMember);
+                cptOpenMember.setPassword(SnowflakeId.generateId().toString());
+                cptOpenMember.setLoginTime(new Date());
+                externalService.updateCptOpenMember(cptOpenMember);
                 logout(loginUser, platform, ip);
             }
             //获取KEY

@@ -76,7 +76,7 @@ public class SboServiceImpl implements SboService {
         if(!platform.equals(parentName)) {
             gamePlatform = new GamePlatform();
             // 是否开售校验
-            gamePlatform = gameCommonService.getGamePlatformByplatformCode(platform);
+            gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
             if (null == gamePlatform) {
                 return Result.failed("("+platform+")平台游戏不存在");
             }
@@ -112,10 +112,8 @@ public class SboServiceImpl implements SboService {
                 //创建玩家
                 return restrictedPlayer(gameParentPlatform,loginUser, gamePlatform, ip, cptOpenMember);
             } else {
-                CptOpenMember updateCptOpenMember = new CptOpenMember();
-                updateCptOpenMember.setId(cptOpenMember.getId());
-                updateCptOpenMember.setLoginTime(new Date());
-                externalService.updateCptOpenMember(updateCptOpenMember);
+                cptOpenMember.setLoginTime(new Date());
+                externalService.updateCptOpenMember(cptOpenMember);
 
                 // 先退出
                 SboPlayerLogoutJsonDTO sboPlayerLogoutJsonDTO = new SboPlayerLogoutJsonDTO();

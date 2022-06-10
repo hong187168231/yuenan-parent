@@ -56,7 +56,7 @@ public class V8ServiceImpl implements V8Service {
         if (!platform.equals(parentName)) {
             GamePlatform gamePlatform;
             // 是否开售校验
-            gamePlatform = gameCommonService.getGamePlatformByplatformCode(platform);
+            gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
             if (null == gamePlatform) {
                 return Result.failed("(" + platform + ")平台游戏不存在");
             }
@@ -93,10 +93,8 @@ public class V8ServiceImpl implements V8Service {
                 // 第一次登录自动创建玩家, 后续登录返回登录游戏URL
                 return createMemberGame(cptOpenMember, platform, ip, true);
             } else {
-                CptOpenMember updateCptOpenMember = new CptOpenMember();
-                updateCptOpenMember.setId(cptOpenMember.getId());
-                updateCptOpenMember.setLoginTime(new Date());
-                externalService.updateCptOpenMember(updateCptOpenMember);
+                cptOpenMember.setLoginTime(new Date());
+                externalService.updateCptOpenMember(cptOpenMember);
                 // 先退出游戏
                 GameUtil.httpGetWithCookies(getLoginOutUrl(loginUser.getAccount()), null, null);
 

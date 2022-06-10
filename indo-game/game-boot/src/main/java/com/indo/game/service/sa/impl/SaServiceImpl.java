@@ -56,7 +56,7 @@ public class SaServiceImpl implements SaService {
         if (!platform.equals(parentName)) {
             GamePlatform gamePlatform;
             // 是否开售校验
-            gamePlatform = gameCommonService.getGamePlatformByplatformCode(platform);
+            gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
             if (null == gamePlatform) {
                 return Result.failed("(" + platform + ")平台游戏不存在");
             }
@@ -97,6 +97,8 @@ public class SaServiceImpl implements SaService {
                 updateCptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(updateCptOpenMember);
 
+                //先退出
+                this.logout(loginUser,platform,ip);
 
                 String time = DateUtils.getLongDateString(new Date());
                 String qs = "method=KickUser&Key=" + OpenAPIProperties.SA_SECRET_KEY + "&Time=" + time + "&Username=" + cptOpenMember.getUserName();

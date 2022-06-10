@@ -73,7 +73,7 @@ public class JdbServiceImpl implements JdbService {
         if(!platform.equals(parentName)) {
             gamePlatform = new GamePlatform();
             // 是否开售校验
-            gamePlatform = gameCommonService.getGamePlatformByplatformCode(platform);
+            gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
             if (null == gamePlatform) {
                 return Result.failed("("+platform+")平台游戏不存在");
             }
