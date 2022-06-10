@@ -1,5 +1,7 @@
 package com.indo.core.pojo.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.indo.common.pojo.entity.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -21,6 +23,7 @@ public class MemGiftReceive extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
+    @TableId(value = "receive_id", type = IdType.AUTO)
     private Long receiveId;
 
     private Long memId;
