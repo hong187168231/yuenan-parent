@@ -62,7 +62,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         }
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cqApiRequestData.getAccount());
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode("CQ9");
-        GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(cqApiRequestData.getGamehall(),gameParentPlatform.getPlatformCode());
+        GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(cqApiRequestData.getGamecode(),gameParentPlatform.getPlatformCode());
         GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         BigDecimal balance = memBaseinfo.getBalance();
         BigDecimal betAmount = new BigDecimal(cqApiRequestData.getAmount());

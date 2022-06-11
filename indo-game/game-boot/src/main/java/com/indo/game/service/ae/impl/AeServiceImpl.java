@@ -148,12 +148,12 @@ public class AeServiceImpl implements AeService {
         params.put("username", cptOpenMemberm.getUserName());
         params.put("playmode", "0"); //游玩模式。0: 正式
         //设备。0: 行动装置 1: 网页
-        if ("1".equals(isMobileLogin)) {
-            params.put("device", "0");
-        } else {
+//        if ("1".equals(isMobileLogin)) {
+//            params.put("device", "0");
+//        } else {
 //            false 桌面设备登入
             params.put("device", "1");
-        }
+//        }
         // 加密
         StringBuilder builder = new StringBuilder();
         builder.append(OpenAPIProperties.AE_MERCHANT_ID).append(platformGameParent.getCurrencyType()).append(currentTime);
