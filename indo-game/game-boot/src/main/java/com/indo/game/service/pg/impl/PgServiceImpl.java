@@ -46,7 +46,7 @@ public class PgServiceImpl implements PgService {
 
 
     /**
-     * 登录游戏CQ9游戏
+     * 登录游戏PG游戏
      *
      * @return loginUser 用户信息
      */
@@ -105,11 +105,22 @@ public class PgServiceImpl implements PgService {
                 logout(loginUser, platform, ip);
             }
 
+//            StringBuilder builder = new StringBuilder();
+//            builder.append(OpenAPIProperties.PG_API_URL).append("/Login/ v1/LoginGame/?");
+//            builder.append("operator_token=").append(OpenAPIProperties.PG_API_TOKEN);
+//            builder.append("&operator_player_session=").append(cptOpenMember.getPassword());
+//            builder.append("&language=").append(platformGameParent.getLanguageType());
+
+            Map<String, String> map = new HashMap<>();
+            map.put("operator_token", OpenAPIProperties.PG_API_TOKEN);
+            map.put("secret_key", OpenAPIProperties.PG_SECRET_KEY);
+            map.put("operator_player_session", cptOpenMember.getPassword());
+            map.put("player_name", cptOpenMember.getUserName());
+            map.put("currency", platformGameParent.getCurrencyType());
+            RandomGUID myGUID = new RandomGUID();
             StringBuilder builder = new StringBuilder();
-            builder.append(OpenAPIProperties.PG_LOGIN_URL).append("/web-lobby/games/?");
-            builder.append("operator_token=").append(OpenAPIProperties.PG_API_TOKEN);
-            builder.append("&operator_player_session=").append(cptOpenMember.getPassword());
-            builder.append("&language=").append(platformGameParent.getLanguageType());
+            builder.append(OpenAPIProperties.PG_API_URL).append("/Login/ v1/LoginGame")
+                    .append("?trace_id=").append(myGUID.toString());
             //登录
             ApiResponseData responseData = new ApiResponseData();
             responseData.setPathUrl(builder.toString());

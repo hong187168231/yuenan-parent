@@ -82,7 +82,8 @@ public class PgCallbackServiceImpl implements PgCallbackService {
     @Override
     public Object pgTransferInCallback(PgVerifyCallBackReq pgVerifyCallBackReq, String ip) {
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(pgVerifyCallBackReq.getPlayer_name());
-        GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(pgVerifyCallBackReq.getGame_id() + "");
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode("PG");
+        GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(String.valueOf(pgVerifyCallBackReq.getGame_id()),gameParentPlatform.getPlatformCode());
         GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         PgCallBackResponse pgCallBackRespFail = new PgCallBackResponse();
         JSONObject dataJson = new JSONObject();
@@ -146,10 +147,13 @@ public class PgCallbackServiceImpl implements PgCallbackService {
         //玩家 ID
         txns.setUserId(memBaseinfo.getId().toString());
         //玩家货币代码
-        txns.setCurrency(pgVerifyCallBackReq.getCurrency_code());
+        txns.setCurrency(gameParentPlatform.getCurrencyType());
         //平台代码
-        txns.setPlatform("PG");
+        txns.setPlatform(gameParentPlatform.getPlatformCode());
         //平台英文名称
+        txns.setPlatformEnName(gameParentPlatform.getPlatformEnName());
+        //平台中文名称
+        txns.setPlatformCnName(gameParentPlatform.getPlatformCnName());
         //平台游戏类型
         txns.setGameType(gameCategory.getGameType());
         //游戏分类ID
