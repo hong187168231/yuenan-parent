@@ -93,7 +93,7 @@ public class PsCallbackServiceImpl implements PsCallbackService {
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
         wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Adjust Bet"));
         wrapper.eq(Txns::getStatus, "Running");
-        wrapper.eq(Txns::getPromotionTxId, psbetCallBackReq.getTxn_id());
+        wrapper.eq(Txns::getPlatformTxId, psbetCallBackReq.getTxn_id());
         wrapper.eq(Txns::getUserId, memBaseinfo.getId());
         Txns oldTxns = txnsMapper.selectOne(wrapper);
         if (null != oldTxns) {
@@ -180,7 +180,7 @@ public class PsCallbackServiceImpl implements PsCallbackService {
         }
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cptOpenMember.getUserName());
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Txns::getPromotionTxId, psbetCallBackReq.getTxn_id());
+        wrapper.eq(Txns::getPlatformTxId, psbetCallBackReq.getTxn_id());
         wrapper.eq(Txns::getUserId, memBaseinfo.getId());
         Txns oldTxns = txnsMapper.selectOne(wrapper);
         if (null == oldTxns) {
@@ -232,7 +232,7 @@ public class PsCallbackServiceImpl implements PsCallbackService {
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cptOpenMember.getUserName());
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Txns::getStatus, "Running");
-        wrapper.eq(Txns::getPromotionTxId, psbetCallBackReq.getTxn_id());
+        wrapper.eq(Txns::getPlatformTxId, psbetCallBackReq.getTxn_id());
         wrapper.eq(Txns::getUserId, memBaseinfo.getId());
         Txns oldTxns = txnsMapper.selectOne(wrapper);
         if (null == oldTxns) {
@@ -274,7 +274,7 @@ public class PsCallbackServiceImpl implements PsCallbackService {
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Txns::getMethod, "Give");
         wrapper.eq(Txns::getStatus, "Running");
-        wrapper.eq(Txns::getPromotionTxId, psbetCallBackReq.getTxn_id());
+        wrapper.eq(Txns::getPlatformTxId, psbetCallBackReq.getTxn_id());
         wrapper.eq(Txns::getUserId, memBaseinfo.getId());
         Txns oldTxns = txnsMapper.selectOne(wrapper);
         if (null == oldTxns) {
