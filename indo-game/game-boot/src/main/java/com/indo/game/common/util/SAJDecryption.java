@@ -19,6 +19,7 @@ public class SAJDecryption {
         try{
             String decodedstr = java.net.URLDecoder.decode(data, "UTF-8");
             System.out.println("URLDecoded: " + decodedstr + agentKey);
+            log.info("SAJDecryption.URLDecoded {}, {}, {}", data, decodedstr, agentKey);
             byte[] encryptKey = agentKey.getBytes(StandardCharsets.UTF_8);
             KeySpec keySpec = new DESKeySpec(encryptKey);
             SecretKey myDesKey = SecretKeyFactory.getInstance("DES").generateSecret(keySpec);
@@ -32,7 +33,6 @@ public class SAJDecryption {
             byte[] text = Base64.getDecoder().decode(decodedstr.getBytes());
             System.out.println("Text [Byte Format] : " + text);
             String t = Base64.getEncoder().encodeToString(text);
-            System.out.println("Text : " + t );
 
             // Initialize the same cipher for decryption
             desCipher.init(Cipher.DECRYPT_MODE, myDesKey, iv);
