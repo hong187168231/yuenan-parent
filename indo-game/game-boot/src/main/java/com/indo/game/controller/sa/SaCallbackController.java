@@ -29,6 +29,13 @@ public class SaCallbackController {
     @Autowired
     private SaCallbackService saCallbackService;
 
+    public static void main(String[] args) {
+        String params = "MDQGx7yYdmaDC%2fTiWN3FLg3A%2f%2b62ku%2fw%2bvUWdWb5XpE%3d";
+        String xxx = "g9G16nTs";
+        System.out.println(URLDecoder.decode(params));
+        System.out.println(SAJDecryption.decrypt(params, xxx));
+    }
+
     // 获取用户余额
     @RequestMapping(value = "/GetUserBalance.aspx", method = RequestMethod.POST)
     @AllowAccess
