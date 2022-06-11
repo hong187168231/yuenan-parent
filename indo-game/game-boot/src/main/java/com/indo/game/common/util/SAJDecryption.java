@@ -18,7 +18,6 @@ public class SAJDecryption {
 
         try{
             String decodedstr = java.net.URLDecoder.decode(data, "UTF-8");
-            System.out.println("URLDecoded: " + decodedstr + agentKey);
             log.info("SAJDecryption.URLDecoded {}, {}, {}", data, decodedstr, agentKey);
             byte[] encryptKey = agentKey.getBytes(StandardCharsets.UTF_8);
             KeySpec keySpec = new DESKeySpec(encryptKey);

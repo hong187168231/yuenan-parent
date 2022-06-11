@@ -1,12 +1,9 @@
 package com.indo.game.controller.sa;
 
 
-import com.alibaba.fastjson.JSONObject;
 import com.indo.common.annotation.AllowAccess;
 import com.indo.common.config.OpenAPIProperties;
 import com.indo.common.utils.IPAddressUtil;
-import com.indo.common.web.util.http.HttpUtils;
-import com.indo.game.common.util.FCHashAESDecrypt;
 import com.indo.game.common.util.PostRawParamsParseUtil;
 import com.indo.game.common.util.SAJDecryption;
 import com.indo.game.service.sa.SaCallbackService;
@@ -18,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.net.URLDecoder;
 
 @RestController
 @RequestMapping("/sa/callBack")
@@ -35,11 +31,11 @@ public class SaCallbackController {
     @AllowAccess
     private Object getUserBalance(HttpServletRequest request) {
         String params = null;
-        try{
+        try {
             params = PostRawParamsParseUtil.getRequestPostBytes(request);
             logger.info("SaCallbackController getUserBalance 回调查询余额, params:{}", params);
-            params = SAJDecryption.decrypt(URLDecoder.decode(params), OpenAPIProperties.SA_ENCRYPT_KEY);
-        }catch (Exception e) {
+            params = SAJDecryption.decrypt(params, OpenAPIProperties.SA_ENCRYPT_KEY);
+        } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
         String ip = IPAddressUtil.getIpAddress(request);
@@ -53,11 +49,11 @@ public class SaCallbackController {
     @AllowAccess
     private Object placeBet(HttpServletRequest request) {
         String params = null;
-        try{
+        try {
             params = PostRawParamsParseUtil.getRequestPostBytes(request);
             logger.info("SaCallbackController placeBet 回调下注, params:{}", params);
-            params = SAJDecryption.decrypt(URLDecoder.decode(params), OpenAPIProperties.SA_ENCRYPT_KEY);
-        }catch (Exception e) {
+            params = SAJDecryption.decrypt(params, OpenAPIProperties.SA_ENCRYPT_KEY);
+        } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
         String ip = IPAddressUtil.getIpAddress(request);
@@ -71,11 +67,11 @@ public class SaCallbackController {
     @AllowAccess
     private Object playerWin(HttpServletRequest request) {
         String params = null;
-        try{
+        try {
             params = PostRawParamsParseUtil.getRequestPostBytes(request);
             logger.info("SaCallbackController playerWin 回调中奖开奖, params:{}", params);
-            params = SAJDecryption.decrypt(URLDecoder.decode(params), OpenAPIProperties.SA_ENCRYPT_KEY);
-        }catch (Exception e) {
+            params = SAJDecryption.decrypt(params, OpenAPIProperties.SA_ENCRYPT_KEY);
+        } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
         String ip = IPAddressUtil.getIpAddress(request);
@@ -89,11 +85,11 @@ public class SaCallbackController {
     @AllowAccess
     private Object playerLost(HttpServletRequest request) {
         String params = null;
-        try{
+        try {
             params = PostRawParamsParseUtil.getRequestPostBytes(request);
             logger.info("SaCallbackController playerLost 回调开奖, params:{}", params);
-            params = SAJDecryption.decrypt(URLDecoder.decode(params), OpenAPIProperties.SA_ENCRYPT_KEY);
-        }catch (Exception e) {
+            params = SAJDecryption.decrypt(params, OpenAPIProperties.SA_ENCRYPT_KEY);
+        } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
         String ip = IPAddressUtil.getIpAddress(request);
@@ -106,11 +102,11 @@ public class SaCallbackController {
     @AllowAccess
     private Object placeBetCancel(HttpServletRequest request) {
         String params = null;
-        try{
+        try {
             params = PostRawParamsParseUtil.getRequestPostBytes(request);
             logger.info("SaCallbackController placeBetCancel 回调取消下注 params:{}", params);
-            params = SAJDecryption.decrypt(URLDecoder.decode(params), OpenAPIProperties.SA_ENCRYPT_KEY);
-        }catch (Exception e) {
+            params = SAJDecryption.decrypt(params, OpenAPIProperties.SA_ENCRYPT_KEY);
+        } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
         String ip = IPAddressUtil.getIpAddress(request);
