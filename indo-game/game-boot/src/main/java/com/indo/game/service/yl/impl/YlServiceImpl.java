@@ -103,11 +103,11 @@ public class YlServiceImpl implements YlService {
                 logout(loginUser, platform, ip);
             }
             //获取KEY
-            String apiKey = initGame(platformGameParent, cptOpenMember);
+            String apiKey = initGame(gameParentPlatform, cptOpenMember);
             if (StringUtils.isEmpty(apiKey)) {
                 return Result.failed("g091087", "第三方请求异常！");
             }
-            String path = gameLogin(apiKey, platform, platformGameParent, cptOpenMember);
+            String path = gameLogin(apiKey, platform, gameParentPlatform, cptOpenMember);
             if (StringUtils.isEmpty(path)) {
                 return Result.failed("g091087", "第三方请求异常！");
             }
