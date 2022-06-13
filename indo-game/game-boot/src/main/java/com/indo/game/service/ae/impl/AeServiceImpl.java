@@ -65,8 +65,9 @@ public class AeServiceImpl implements AeService {
         if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
             return Result.failed("g000001", gameParentPlatform.getMaintenanceContent());
         }
+        GamePlatform gamePlatform = new GamePlatform();
         if (!platform.equals(parentName)) {
-            GamePlatform gamePlatform;
+
             // 是否开售校验
             gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
             if (null == gamePlatform) {
@@ -102,7 +103,7 @@ public class AeServiceImpl implements AeService {
                 cptOpenMember.setLoginTime(new Date());
                 cptOpenMember.setType(parentName);
                 //创建玩家
-                return createMemberGame(platformGameParent, gamePlatform, ip, cptOpenMember, isMobileLogin);
+                return createMemberGame(gameParentPlatform, gamePlatform, ip, cptOpenMember, isMobileLogin);
             } else {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
@@ -110,7 +111,7 @@ public class AeServiceImpl implements AeService {
                 logout(loginUser, platform, ip);
             }
             //登录
-            return initGame(platformGameParent, gamePlatform, cptOpenMember, isMobileLogin);
+            return initGame(gameParentPlatform, gamePlatform, cptOpenMember, isMobileLogin);
         } catch (Exception e) {
             e.printStackTrace();
             return Result.failed("g100104", "网络繁忙，请稍后重试！");
