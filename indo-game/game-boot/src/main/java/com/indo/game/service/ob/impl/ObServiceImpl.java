@@ -54,15 +54,15 @@ public class ObServiceImpl implements ObService {
     public Result obGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName) {
         logger.info("OBlog {} obGame account:{}, aeCodeId:{}", loginUser.getId(), loginUser.getNickName(), platform);
         // 是否开售校验
-        GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(parentName);
-        if (null == platformGameParent) {
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
+        if (null == gameParentPlatform) {
             return Result.failed("(" + parentName + ")游戏平台不存在");
         }
-        if ("0".equals(platformGameParent.getIsStart())) {
-            return Result.failed("g" + "100101", "游戏平台未启用");
+        if (0==gameParentPlatform.getIsStart()) {
+            return Result.failed("g100101", "游戏平台未启用");
         }
-        if ("1".equals(platformGameParent.getIsOpenMaintenance())) {
-            return Result.failed("g000001", platformGameParent.getMaintenanceContent());
+        if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
+            return Result.failed("g000001", gameParentPlatform.getMaintenanceContent());
         }
         GamePlatform gamePlatform = new GamePlatform();
         if (!platform.equals(parentName)) {
@@ -71,8 +71,8 @@ public class ObServiceImpl implements ObService {
             if (null == gamePlatform) {
                 return Result.failed("(" + platform + ")平台游戏不存在");
             }
-            if ("0".equals(gamePlatform.getIsStart())) {
-                return Result.failed("g" + "100102", "游戏未启用");
+            if (0==gamePlatform.getIsStart()) {
+                return Result.failed("g100102", "游戏未启用");
             }
             if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
                 return Result.failed("g091047", gamePlatform.getMaintenanceContent());
@@ -99,7 +99,7 @@ public class ObServiceImpl implements ObService {
                 cptOpenMember.setLoginTime(new Date());
                 cptOpenMember.setType(parentName);
                 //创建玩家
-                return createMemberGame(platformGameParent, gamePlatform, ip, cptOpenMember, isMobileLogin);
+                return createMemberGame(gameParentPlatform, gamePlatform, ip, cptOpenMember, isMobileLogin);
             } else {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
@@ -107,7 +107,7 @@ public class ObServiceImpl implements ObService {
                 logout(loginUser, platform, ip);
             }
             //登录
-            return initGame(platformGameParent, gamePlatform, cptOpenMember, isMobileLogin);
+            return initGame(gameParentPlatform, gamePlatform, cptOpenMember, isMobileLogin);
         } catch (Exception e) {
             e.printStackTrace();
             return Result.failed("g100104", "网络繁忙，请稍后重试！");

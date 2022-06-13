@@ -54,20 +54,20 @@ public class PpServiceImpl implements PpService {
         if (null == gameParentPlatform) {
             return Result.failed("(" + parentName + ")游戏平台不存在");
         }
-        if (gameParentPlatform.getIsStart().equals(0)) {
+        if (0==gameParentPlatform.getIsStart()) {
             return Result.failed("g100101", "游戏平台未启用");
         }
         if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
             return Result.failed("g000001", gameParentPlatform.getMaintenanceContent());
         }
         if (!platform.equals(parentName)) {
-            GamePlatform gamePlatform = new GamePlatform();
+            GamePlatform gamePlatform;
             // 是否开售校验
             gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
             if (null == gamePlatform) {
                 return Result.failed("(" + platform + ")平台游戏不存在");
             }
-            if (gamePlatform.getIsStart().equals(0)) {
+            if (0==gamePlatform.getIsStart()) {
                 return Result.failed("g100102", "游戏未启用");
             }
             if ("1".equals(gamePlatform.getIsOpenMaintenance())) {

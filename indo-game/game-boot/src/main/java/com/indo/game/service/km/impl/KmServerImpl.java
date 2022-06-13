@@ -50,15 +50,15 @@ public class KmServerImpl implements KmService {
     public Result kmGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName) {
         logger.info("kmLog  {} kmGame account:{}, pgCodeId:{}", loginUser.getId(), loginUser.getNickName(), platform);
         // 是否开售校验
-        GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(parentName);
-        if (null == platformGameParent) {
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
+        if (null == gameParentPlatform) {
             return Result.failed("(" + parentName + ")游戏平台不存在");
         }
-        if ("0".equals(platformGameParent.getIsStart())) {
-            return Result.failed("g" + "100101", "游戏平台未启用");
+        if (0==gameParentPlatform.getIsStart()) {
+            return Result.failed("g100101", "游戏平台未启用");
         }
-        if ("1".equals(platformGameParent.getIsOpenMaintenance())) {
-            return Result.failed("g000001", platformGameParent.getMaintenanceContent());
+        if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
+            return Result.failed("g000001", gameParentPlatform.getMaintenanceContent());
         }
         GamePlatform gamePlatform = new GamePlatform();
         if (!platform.equals(parentName)) {
@@ -67,8 +67,8 @@ public class KmServerImpl implements KmService {
             if (null == gamePlatform) {
                 return Result.failed("(" + platform + ")平台游戏不存在");
             }
-            if ("0".equals(gamePlatform.getIsStart())) {
-                return Result.failed("g" + "100102", "游戏未启用");
+            if (0==gamePlatform.getIsStart()) {
+                return Result.failed("g100102", "游戏未启用");
             }
             if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
                 return Result.failed("g091047", gamePlatform.getMaintenanceContent());
@@ -83,7 +83,7 @@ public class KmServerImpl implements KmService {
         }
         try {
 
-            JSONObject tokenJson = gameToken(loginUser, platformGameParent, ip);
+            JSONObject tokenJson = gameToken(loginUser, gameParentPlatform, ip);
             if (StringUtils.isEmpty(tokenJson.getString("authtoken"))) {
                 return errorCode(tokenJson.getString("code"), tokenJson.getString("message"));
             }
@@ -110,7 +110,7 @@ public class KmServerImpl implements KmService {
             builder.append("gpcode=").append("KMQM");
             builder.append("&gcode=").append(gamePlatform.getPlatformCode());
             builder.append("&token=").append(tokenJson.getString("authtoken"));
-            builder.append("&lang=").append(platformGameParent.getLanguageType());
+            builder.append("&lang=").append(gameParentPlatform.getLanguageType());
             //登录
             ApiResponseData responseData = new ApiResponseData();
             responseData.setPathUrl(builder.toString());

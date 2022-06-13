@@ -62,29 +62,29 @@ public class SboServiceImpl implements SboService {
     @Override
     public Result sboGame(LoginInfo loginUser, String ip, String platform,String parentName) {
         logger.info("sbolog {} aeGame account:{}, aeCodeId:{}", loginUser.getId(), loginUser.getNickName());
+        // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
-        if(null==gameParentPlatform){
-            return Result.failed("("+parentName+")游戏平台不存在");
+        if (null == gameParentPlatform) {
+            return Result.failed("(" + parentName + ")游戏平台不存在");
         }
-        if (gameParentPlatform.getIsStart().equals(0)) {
-            return Result.failed("g"+"100101","游戏平台未启用");
+        if (0==gameParentPlatform.getIsStart()) {
+            return Result.failed("g100101", "游戏平台未启用");
         }
         if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
-            return Result.failed("g000001",gameParentPlatform.getMaintenanceContent());
+            return Result.failed("g000001", gameParentPlatform.getMaintenanceContent());
         }
-        GamePlatform gamePlatform = null;
-        if(!platform.equals(parentName)) {
-            gamePlatform = new GamePlatform();
+        if (!platform.equals(parentName)) {
+            GamePlatform gamePlatform;
             // 是否开售校验
             gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
             if (null == gamePlatform) {
-                return Result.failed("("+platform+")平台游戏不存在");
+                return Result.failed("(" + platform + ")平台游戏不存在");
             }
-            if (gamePlatform.getIsStart().equals(0)) {
-                return Result.failed("g"+"100102","游戏未启用");
+            if (0==gamePlatform.getIsStart()) {
+                return Result.failed("g100102", "游戏未启用");
             }
             if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
-                return Result.failed("g091047",gamePlatform.getMaintenanceContent());
+                return Result.failed("g091047", gamePlatform.getMaintenanceContent());
             }
         }
         //初次判断站点棋牌余额是否够该用户
