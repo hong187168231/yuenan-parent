@@ -73,8 +73,8 @@ public class SboServiceImpl implements SboService {
         if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
             return Result.failed("g000001", gameParentPlatform.getMaintenanceContent());
         }
+        GamePlatform gamePlatform = new GamePlatform();
         if (!platform.equals(parentName)) {
-            GamePlatform gamePlatform;
             // 是否开售校验
             gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
             if (null == gamePlatform) {

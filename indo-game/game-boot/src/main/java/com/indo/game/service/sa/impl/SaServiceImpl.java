@@ -107,14 +107,13 @@ public class SaServiceImpl implements SaService {
                 // 第一次登录自动创建玩家, 后续登录返回登录游戏URL
                 return createMemberGame(cptOpenMember, gameParentPlatform, isMobileLogin);
             } else {
-                CptOpenMember updateCptOpenMember = new CptOpenMember();
-                updateCptOpenMember.setId(cptOpenMember.getId());
-                updateCptOpenMember.setLoginTime(new Date());
-                externalService.updateCptOpenMember(updateCptOpenMember);
+                cptOpenMember.setLoginTime(new Date());
+                externalService.updateCptOpenMember(cptOpenMember);
 
                 //先退出
                 this.logout(loginUser,platform,ip);
 
+                logger.info("salogin ip{} saGame account:{},platform:{},parentName:{}", ip, loginUser.getAccount(), platform,parentName);
                 String time = DateUtils.getLongDateString(new Date());
                 String qs = "method=KickUser&Key=" + OpenAPIProperties.SA_SECRET_KEY + "&Time=" + time + "&Username=" + cptOpenMember.getUserName();
                 Map<String, Object> param = new HashMap<>();
@@ -176,7 +175,7 @@ public class SaServiceImpl implements SaService {
 
     @Override
     public Result logout(LoginInfo loginUser, String platform, String ip) {
-        logger.info("salogout {} saGame account:{},saCodeId:{}", ip, loginUser.getAccount(), platform);
+        logger.info("salogout ip{} saGame account:{},platform:{},parentName:{}", ip, loginUser.getAccount(), platform);
         try {
             String time = DateUtils.getLongDateString(new Date());
             String qs = "method=KickUser&Key=" + OpenAPIProperties.SA_SECRET_KEY + "&Time=" + time;

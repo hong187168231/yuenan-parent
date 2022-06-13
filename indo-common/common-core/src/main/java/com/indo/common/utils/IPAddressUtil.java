@@ -180,7 +180,7 @@ public class IPAddressUtil {
         String deviceStr = null;
         try {
             UserAgent ua = UserAgentUtil.parse(userAgentStr);
-            deviceStr = null!=ua.getOs()?ua.getOs().toString():"";
+            deviceStr = (null!=ua.getOs()&&!"".equals(ua.getOs()))?ua.getOs().toString():"";
         } catch (Exception e) {
             log.error("获取手机设备型号出错", e);
         }
