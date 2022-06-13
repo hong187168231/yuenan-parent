@@ -1,5 +1,6 @@
 package com.indo.game.common.util;
 
+import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +29,7 @@ public class XmlUtil {
             Unmarshaller unmarshaller = context.createUnmarshaller();
             StringReader sr = new StringReader(xmlStr);
             xmlObject = unmarshaller.unmarshal(sr);
-            logger.info("convertXmlStrToObject输出 {} ", xmlObject);
+            logger.info("convertXmlStrToObject输出 {} ", JSONObject.toJSONString(xmlObject));
         } catch (JAXBException e) {
             e.printStackTrace();
         }
@@ -46,7 +47,7 @@ public class XmlUtil {
         String result = null;
         StringWriter writer = null;
         try {
-            logger.info("convertToXml输入 {} ", obj);
+            logger.info("convertToXml输入 {} ", JSONObject.toJSONString(obj));
             JAXBContext context = JAXBContext.newInstance(obj.getClass());
             Marshaller marshaller = context.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, format);
