@@ -1,6 +1,7 @@
 package com.indo.game.common.util;
 
-import com.indo.game.pojo.dto.sa.SaCallbackResp;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -9,9 +10,9 @@ import javax.xml.bind.Unmarshaller;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.math.BigDecimal;
 
 public class XmlUtil {
+    private static final Logger logger = LoggerFactory.getLogger(new XmlUtil().getClass());
     /**
      * xml 转 对象
      * @param clazz 输出对象
@@ -19,6 +20,7 @@ public class XmlUtil {
      * @return object
      */
     public static Object convertXmlStrToObject(Class clazz, String xmlStr) {
+        logger.info("convertXmlStrToObject输入 {} ", xmlStr);
         Object xmlObject = null;
         try {
             JAXBContext context = JAXBContext.newInstance(clazz);
@@ -26,6 +28,7 @@ public class XmlUtil {
             Unmarshaller unmarshaller = context.createUnmarshaller();
             StringReader sr = new StringReader(xmlStr);
             xmlObject = unmarshaller.unmarshal(sr);
+            logger.info("convertXmlStrToObject输出 {} ", xmlObject);
         } catch (JAXBException e) {
             e.printStackTrace();
         }
@@ -43,6 +46,7 @@ public class XmlUtil {
         String result = null;
         StringWriter writer = null;
         try {
+            logger.info("convertToXml输入 {} ", obj);
             JAXBContext context = JAXBContext.newInstance(obj.getClass());
             Marshaller marshaller = context.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, format);
@@ -50,6 +54,7 @@ public class XmlUtil {
             writer = new StringWriter();
             marshaller.marshal(obj, writer);
             result = writer.toString();
+            logger.info("convertToXml输出 {} ", result);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

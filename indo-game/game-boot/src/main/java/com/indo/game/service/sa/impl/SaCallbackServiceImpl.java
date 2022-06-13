@@ -460,7 +460,6 @@ public class SaCallbackServiceImpl implements SaCallbackService {
         saLoginResp.setUsername(username);
         saLoginResp.setAmount(amount);
         saLoginResp.setCurrency(currency);
-
         return XmlUtil.convertToXml(saLoginResp, "UTF-8", false);
     }
 
