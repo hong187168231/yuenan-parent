@@ -44,8 +44,6 @@ public class SaServiceImpl implements SaService {
         logger.info("salog {} saGame account:{},saCodeId:{}", parentName, loginUser.getAccount(), platform);
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
-        if(null=// 是否开售校验
-                GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
         if (null == gameParentPlatform) {
             return Result.failed("(" + parentName + ")游戏平台不存在");
         }
@@ -68,14 +66,6 @@ public class SaServiceImpl implements SaService {
             if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
                 return Result.failed("g091047", gamePlatform.getMaintenanceContent());
             }
-        }=gameParentPlatform){
-            return Result.failed("("+parentName+")游戏平台不存在");
-        }
-        if ("0".equals(gameParentPlatform.getIsStart())) {
-            return Result.failed("g"+"100101","游戏平台未启用");
-        }
-        if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
-            return Result.failed("g000001",gameParentPlatform.getMaintenanceContent());
         }
         GamePlatform gamePlatform = null;
         if(!platform.equals(parentName)) {
