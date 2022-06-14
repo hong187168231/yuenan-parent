@@ -43,8 +43,7 @@ public class XmlUtil {
      * @param encoding encoding
      * @return String
      */
-    public static String convertToXml(Object obj, String encoding, boolean format) {
-        String result = null;
+    public static Object convertToXml(Object obj, String encoding, boolean format) {
         StringWriter writer = null;
         try {
             logger.info("convertToXml输入 {} ", JSONObject.toJSONString(obj));
@@ -56,8 +55,7 @@ public class XmlUtil {
             writer = new StringWriter();
             writer.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
             marshaller.marshal(obj, writer);
-            result = writer.toString();
-            logger.info("convertToXml输出 {} ", result);
+            logger.info("convertToXml输出 {} ", writer.toString());
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -69,7 +67,7 @@ public class XmlUtil {
                 }
             }
         }
-        return result;
+        return writer;
     }
 
 //    public static void main(String[] args) {
