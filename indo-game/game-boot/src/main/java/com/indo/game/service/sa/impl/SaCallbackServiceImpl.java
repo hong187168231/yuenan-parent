@@ -131,9 +131,9 @@ public class SaCallbackServiceImpl implements SaCallbackService {
             Date timestamp = jsonObject.getDate("timestamp");
             String gametype = jsonObject.getString("gametype");
 
-            GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(gametype);
+            GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode("SA");
+            GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(gametype,gameParentPlatform.getPlatformCode());
             GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
-
             Txns txns = new Txns();
             //游戏商注单号
             txns.setPlatformTxId(txnid);
@@ -146,10 +146,11 @@ public class SaCallbackServiceImpl implements SaCallbackService {
             txns.setRoundId(jsonObject.getString("gameid"));
             txns.setGameInfo(jsonObject.getString("betdetails"));
             //平台代码
-            txns.setPlatform(platformGameParent.getPlatformCode());
-            //平台名称
-            txns.setPlatformEnName(platformGameParent.getPlatformEnName());
-            txns.setPlatformCnName(platformGameParent.getPlatformCnName());
+            txns.setPlatform(gameParentPlatform.getPlatformCode());
+            //平台英文名称
+            txns.setPlatformEnName(gameParentPlatform.getPlatformEnName());
+            //平台中文名称
+            txns.setPlatformCnName(gameParentPlatform.getPlatformCnName());
             //平台游戏类型
             txns.setGameType(gameCategory.getGameType());
             //游戏分类ID
@@ -460,7 +461,7 @@ public class SaCallbackServiceImpl implements SaCallbackService {
         saLoginResp.setUsername(username);
         saLoginResp.setAmount(amount);
         saLoginResp.setCurrency(currency);
-        return XmlUtil.convertToXml(saLoginResp, "UTF-8", false);
+        return XmlUtil.convertToXml(saLoginResp, "UTF-8", true);
     }
 
     /**
@@ -474,7 +475,7 @@ public class SaCallbackServiceImpl implements SaCallbackService {
         SaCallbackResp saLoginResp = new SaCallbackResp();
         saLoginResp.setError(error);
 
-        return XmlUtil.convertToXml(saLoginResp, "UTF-8", false);
+        return XmlUtil.convertToXml(saLoginResp, "UTF-8", true);
     }
 
     private GameParentPlatform getGameParentPlatform() {
