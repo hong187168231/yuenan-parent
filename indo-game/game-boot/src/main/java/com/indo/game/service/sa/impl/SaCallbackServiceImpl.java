@@ -455,13 +455,14 @@ public class SaCallbackServiceImpl implements SaCallbackService {
      *
      * @return JSONObject
      */
-    private String initSuccessResponse(String username, String currency, BigDecimal amount) {
+    private Object initSuccessResponse(String username, String currency, BigDecimal amount) {
         SaCallbackResp saLoginResp = new SaCallbackResp();
         saLoginResp.setError(0);
         saLoginResp.setUsername(username);
         saLoginResp.setAmount(amount);
         saLoginResp.setCurrency(currency);
-        return XmlUtil.convertToXml(saLoginResp, "UTF-8", false);
+//        return XmlUtil.convertToXml(saLoginResp, "UTF-8", false);
+        return saLoginResp;
     }
 
     /**
@@ -471,11 +472,12 @@ public class SaCallbackServiceImpl implements SaCallbackService {
      * @param description 错误描述
      * @return JSONObject
      */
-    private String initFailureResponse(Integer error, String description) {
+    private Object initFailureResponse(Integer error, String description) {
         SaCallbackResp saLoginResp = new SaCallbackResp();
         saLoginResp.setError(error);
 
-        return XmlUtil.convertToXml(saLoginResp, "UTF-8", false);
+//        return XmlUtil.convertToXml(saLoginResp, "UTF-8", false);
+        return saLoginResp;
     }
 
     private GameParentPlatform getGameParentPlatform() {
