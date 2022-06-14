@@ -21,35 +21,36 @@ public class SaCallbackResp {
 
     // 0正常
     private Integer error;
-
+    @XmlElement(name = "username")
     public String getUsername() {
         return username;
     }
-    @XmlElement(name = "username")
+
     public void setUsername(String username) {
         this.username = username;
     }
 
+    @XmlElement(name = "currency")
     public String getCurrency() {
         return currency;
     }
-    @XmlElement(name = "currency")
+
     public void setCurrency(String currency) {
         this.currency = currency;
     }
-
+    @XmlElement(name = "amount")
     public BigDecimal getAmount() {
         return amount;
     }
-    @XmlElement(name = "amount")
+
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
-
+    @XmlElement(name = "error")
     public Integer getError() {
         return error;
     }
-    @XmlElement(name = "error")
+
     public void setError(Integer error) {
         this.error = error;
     }
