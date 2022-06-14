@@ -29,7 +29,8 @@ public class SaCallbackController {
 
 
     // 获取用户余额
-    @RequestMapping(value = "/GetUserBalance.aspx", method = RequestMethod.POST,produces = MediaType.APPLICATION_ATOM_XML)
+    @RequestMapping(value = "/GetUserBalance.aspx", method = RequestMethod.POST,produces = {"application/xml;charset=UTF-8"})
+    @ResponseBody
     @AllowAccess
     private Object getUserBalance(HttpServletRequest request) {
         String params = null;
