@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,6 +29,7 @@ public class SaCallbackController {
 
     // 获取用户余额
     @RequestMapping(value = "/GetUserBalance.aspx", method = RequestMethod.POST)
+    @ResponseBody
     @AllowAccess
     private Object getUserBalance(HttpServletRequest request) {
         String params = null;
@@ -46,6 +48,7 @@ public class SaCallbackController {
 
     // 下注
     @RequestMapping(value = "/PlaceBet.aspx", method = RequestMethod.POST)
+    @ResponseBody
     @AllowAccess
     private Object placeBet(HttpServletRequest request) {
         String params = null;
@@ -64,6 +67,7 @@ public class SaCallbackController {
 
     // 派奖中奖
     @RequestMapping(value = "/PlayerWin.aspx", method = RequestMethod.POST)
+    @ResponseBody
     @AllowAccess
     private Object playerWin(HttpServletRequest request) {
         String params = null;
@@ -82,6 +86,7 @@ public class SaCallbackController {
 
     // 更新下注结果没有余额变动
     @RequestMapping(value = "/PlayerLost.aspx", method = RequestMethod.POST)
+    @ResponseBody
     @AllowAccess
     private Object playerLost(HttpServletRequest request) {
         String params = null;
@@ -99,6 +104,7 @@ public class SaCallbackController {
     }
 
     @RequestMapping(value = "/PlaceBetCancel.aspx", method = RequestMethod.POST)
+    @ResponseBody
     @AllowAccess
     private Object placeBetCancel(HttpServletRequest request) {
         String params = null;
