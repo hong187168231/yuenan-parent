@@ -55,6 +55,7 @@ public class XmlUtil {
             writer = new StringWriter();
             marshaller.marshal(obj, writer);
             result = writer.toString();
+            System.out.println(format);
             logger.info("convertToXml输出 {} ", result);
         } catch (Exception e) {
             e.printStackTrace();
