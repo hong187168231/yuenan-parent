@@ -1,6 +1,7 @@
 package com.indo.game.controller.sa;
 
 
+import com.alibaba.nacos.common.http.param.MediaType;
 import com.indo.common.annotation.AllowAccess;
 import com.indo.common.config.OpenAPIProperties;
 import com.indo.common.utils.IPAddressUtil;
@@ -28,7 +29,7 @@ public class SaCallbackController {
 
 
     // 获取用户余额
-    @RequestMapping(value = "/GetUserBalance.aspx", method = RequestMethod.POST)
+    @RequestMapping(value = "/GetUserBalance.aspx", method = RequestMethod.POST,produces = MediaType.APPLICATION_ATOM_XML)
     @AllowAccess
     private Object getUserBalance(HttpServletRequest request) {
         String params = null;
