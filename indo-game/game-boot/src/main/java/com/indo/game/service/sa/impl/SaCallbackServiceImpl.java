@@ -455,7 +455,7 @@ public class SaCallbackServiceImpl implements SaCallbackService {
      *
      * @return JSONObject
      */
-    private Object initSuccessResponse(String username, String currency, BigDecimal amount) {
+    private String initSuccessResponse(String username, String currency, BigDecimal amount) {
         SaCallbackResp saLoginResp = new SaCallbackResp();
         saLoginResp.setError(0);
         saLoginResp.setUsername(username);
@@ -471,7 +471,7 @@ public class SaCallbackServiceImpl implements SaCallbackService {
      * @param description 错误描述
      * @return JSONObject
      */
-    private Object initFailureResponse(Integer error, String description) {
+    private String initFailureResponse(Integer error, String description) {
         SaCallbackResp saLoginResp = new SaCallbackResp();
         saLoginResp.setError(error);
 
