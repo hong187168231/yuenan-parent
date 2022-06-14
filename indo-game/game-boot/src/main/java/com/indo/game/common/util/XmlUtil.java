@@ -51,11 +51,12 @@ public class XmlUtil {
             JAXBContext context = JAXBContext.newInstance(obj.getClass());
             Marshaller marshaller = context.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, format);
-            marshaller.setProperty(Marshaller.JAXB_ENCODING, encoding);
+//            marshaller.setProperty(Marshaller.JAXB_ENCODING, encoding);
+            marshaller.setProperty(Marshaller.JAXB_FRAGMENT,true);
             writer = new StringWriter();
+            writer.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
             marshaller.marshal(obj, writer);
             result = writer.toString();
-            System.out.println(format);
             logger.info("convertToXml输出 {} ", result);
         } catch (Exception e) {
             e.printStackTrace();
