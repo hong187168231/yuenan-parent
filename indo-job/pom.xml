@@ -102,6 +102,11 @@
             <version>${indo.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.indo</groupId>
+            <artifactId>common-web</artifactId>
+            <version>${indo.version}</version>
+        </dependency>
     </dependencies>
 
 
