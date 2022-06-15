@@ -139,7 +139,7 @@ public class AeCallbackServiceImpl implements AeCallbackService {
         wrapper.eq(Txns::getMethod, "Give");
         wrapper.eq(Txns::getStatus, "Running");
         wrapper.eq(Txns::getPromotionTxId, aeApiRequestData.getTxnId());
-        wrapper.eq(Txns::getUserId, memBaseinfo.getId());
+        wrapper.eq(Txns::getUserId, memBaseinfo.getAccount());
         Txns oldTxns = txnsMapper.selectOne(wrapper);
         if (null != oldTxns) {
             AeCallBackRespFail callBacekFail = new AeCallBackRespFail();
@@ -229,7 +229,8 @@ public class AeCallbackServiceImpl implements AeCallbackService {
      */
     private Object bet(AeCallBackTransferReq aeApiRequestData, MemTradingBO memBaseinfo, String ip) {
         String userId = aeApiRequestData.getAccountId().substring(aeApiRequestData.getAccountId().indexOf("_") + 1);
-        GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(aeApiRequestData.getGameId());
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode("AE");
+        GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(aeApiRequestData.getGameId(),gameParentPlatform.getPlatformCode());
         GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         BigDecimal balance = memBaseinfo.getBalance();
         BigDecimal betAmount = new BigDecimal(aeApiRequestData.getBetAmount());
@@ -280,10 +281,13 @@ public class AeCallbackServiceImpl implements AeCallbackService {
         //玩家 ID
         txns.setUserId(userId);
         //玩家货币代码
-        txns.setCurrency(aeApiRequestData.getCurrency());
+        txns.setCurrency(gameParentPlatform.getCurrencyType());
         //平台代码
-        txns.setPlatform(aeApiRequestData.getMerchantId());
+        txns.setPlatform(gameParentPlatform.getPlatformCode());
         //平台英文名称
+        txns.setPlatformEnName(gameParentPlatform.getPlatformEnName());
+        //平台中文名称
+        txns.setPlatformCnName(gameParentPlatform.getPlatformCnName());
         //平台游戏类型
         txns.setGameType(gameCategory.getGameType());
         //游戏分类ID

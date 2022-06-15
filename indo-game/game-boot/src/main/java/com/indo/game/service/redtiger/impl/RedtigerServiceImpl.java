@@ -37,7 +37,7 @@ public class RedtigerServiceImpl implements RedtigerService {
 
     @Override
     public Result redtigerGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName) {
-        logger.info("t9log {} t9Game account:{},t9CodeId:{}", loginUser.getId(), loginUser.getAccount(), platform);
+        logger.info("RTlog RTGame   userId:{},account:{},platform:{},parentName:{}", loginUser.getId(), loginUser.getAccount(), platform,parentName);
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
         if (null == gameParentPlatform) {

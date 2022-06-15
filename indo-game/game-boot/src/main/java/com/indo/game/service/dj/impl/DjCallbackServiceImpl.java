@@ -67,7 +67,7 @@ public class DjCallbackServiceImpl implements DjCallbackService {
 
     @Override
     public Object getBalance(DjCallBackParentReq djCallBackParentReq, String ip) {
-        CptOpenMember cptOpenMember = externalService.getCptOpenMember(Integer.parseInt(djCallBackParentReq.getLogin_id()), "DJ");
+        CptOpenMember cptOpenMember = externalService.getCptOpenMember(Integer.parseInt(djCallBackParentReq.getLogin_id()), "S128");
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("<?xml version=\"1.0\" ?>").append("<get_balance>").append("<status_code>");
         if (cptOpenMember == null) {
@@ -83,13 +83,16 @@ public class DjCallbackServiceImpl implements DjCallbackService {
 
     @Override
     public Object djBetCallback(DjCallBackParentReq djCallBackParentReq, String ip) {
-        CptOpenMember cptOpenMember = externalService.getCptOpenMember(Integer.parseInt(djCallBackParentReq.getLogin_id()), "DJ");
+        CptOpenMember cptOpenMember = externalService.getCptOpenMember(Integer.parseInt(djCallBackParentReq.getLogin_id()), "S128");
         JSONObject dataJson = new JSONObject();
         if (cptOpenMember == null) {
             dataJson.put("status_code", "1");
             dataJson.put("message", "Token 无效");
             return dataJson;
         }
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode("S128");
+        GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName("S128",gameParentPlatform.getPlatformCode());
+        GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cptOpenMember.getUserName());
         BigDecimal balance = memBaseinfo.getBalance();
         BigDecimal betAmount = djCallBackParentReq.getStake_money();
@@ -102,7 +105,7 @@ public class DjCallbackServiceImpl implements DjCallbackService {
         wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Adjust Bet"));
         wrapper.eq(Txns::getStatus, "Running");
         wrapper.eq(Txns::getPromotionTxId, djCallBackParentReq.getTicket_id());
-        wrapper.eq(Txns::getUserId, memBaseinfo.getId());
+
         Txns oldTxns = txnsMapper.selectOne(wrapper);
         if (null != oldTxns) {
             if ("Cancel Bet".equals(oldTxns.getMethod())) {
@@ -126,13 +129,25 @@ public class DjCallbackServiceImpl implements DjCallbackService {
         txns.setRoundId(djCallBackParentReq.getTicket_id());
         //此交易是否是投注 true是投注 false 否
         //玩家 ID
-        txns.setUserId(memBaseinfo.getId().toString());
+        txns.setUserId(memBaseinfo.getAccount());
+        //玩家货币代码
+        txns.setCurrency(gameParentPlatform.getCurrencyType());
         //平台代码
+        txns.setPlatform(gameParentPlatform.getPlatformCode());
+        //平台英文名称
+        txns.setPlatformEnName(gameParentPlatform.getPlatformEnName());
+        //平台中文名称
+        txns.setPlatformCnName(gameParentPlatform.getPlatformCnName());
         //平台游戏类型
+        txns.setGameType(gameCategory.getGameType());
         //游戏分类ID
+        txns.setCategoryId(gameCategory.getId());
         //游戏分类名称
+        txns.setCategoryName(gameCategory.getGameName());
         //平台游戏代码
+        txns.setGameCode(gamePlatform.getPlatformCode());
         //游戏名称
+        txns.setGameName(gamePlatform.getPlatformEnName());
         //下注金额
         txns.setBetAmount(betAmount);
         //玩家下注时间
@@ -175,7 +190,7 @@ public class DjCallbackServiceImpl implements DjCallbackService {
 
     @Override
     public Object djRefundtCallback(DjCallBackParentReq djCallBackParentReq, String ip) {
-        CptOpenMember cptOpenMember = externalService.getCptOpenMember(Integer.parseInt(djCallBackParentReq.getLogin_id()), "DJ");
+        CptOpenMember cptOpenMember = externalService.getCptOpenMember(Integer.parseInt(djCallBackParentReq.getLogin_id()), "S128");
         if (cptOpenMember == null) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("<?xml version=\"1.0\" ?>").append("<cancel_bet>>").append("<status_code>");
@@ -188,7 +203,7 @@ public class DjCallbackServiceImpl implements DjCallbackService {
         wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Settle"));
         wrapper.eq(Txns::getStatus, "Running");
         wrapper.eq(Txns::getPromotionTxId, djCallBackParentReq.getTicket_id());
-        wrapper.eq(Txns::getUserId, memBaseinfo.getId());
+        
         Txns oldTxns = txnsMapper.selectOne(wrapper);
         if (null == oldTxns) {
             StringBuilder stringBuilder = new StringBuilder();
