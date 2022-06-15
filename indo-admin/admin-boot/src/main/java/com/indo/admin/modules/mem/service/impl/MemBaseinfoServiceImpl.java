@@ -55,9 +55,9 @@ import java.util.List;
 @Slf4j
 public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, MemBaseinfo> implements IMemBaseinfoService {
 
-    @Autowired
+    @Resource
     private MemBaseinfoMapper memBaseInfoMapper;
-    @Autowired
+    @Resource
     private AgentRelationMapper agentRelationMapper;
     @Resource
     private MemLevelMapper memLevelMapper;
@@ -105,6 +105,7 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
         AgentRelation memAgent = new AgentRelation();
         BeanUtils.copyProperties(req, memBaseinfo);
         memBaseinfo.setPasswordMd5(MD5.md5(req.getPassword()));
+        memBaseinfo.setAccType(2);
         if (baseMapper.insert(memBaseinfo) > 0) {
             memAgent.setMemId(memBaseinfo.getId());
             memAgent.setAccount(memBaseinfo.getAccount());
