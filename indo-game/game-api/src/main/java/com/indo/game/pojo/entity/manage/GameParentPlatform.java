@@ -61,6 +61,9 @@ public class GameParentPlatform {
     @ApiModelProperty(value = "是否虚拟平台 0否  1是")
     private String isVirtual;
 
+    @ApiModelProperty(value = "所属类型名称")
+    private String categoryName;
+
     private String createTime;
 
     private String updateTime;
