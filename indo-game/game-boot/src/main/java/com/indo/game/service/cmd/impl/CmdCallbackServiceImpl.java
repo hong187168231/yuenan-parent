@@ -160,7 +160,7 @@ public class CmdCallbackServiceImpl implements CmdCallbackService {
             txns.setPlatformTxId(paySerialno);
 
             //玩家 ID
-            txns.setUserId(memBaseinfo.getId().toString());
+            txns.setUserId(memBaseinfo.getAccount());
             //玩家货币代码
             txns.setCurrency(gameParentPlatform.getCurrencyType());
 //            txns.setOdds(kaCallbackPlayReq.getBetPerSelection());
@@ -293,7 +293,7 @@ public class CmdCallbackServiceImpl implements CmdCallbackService {
                 txns.setPlatformTxId(paySerialno);
 
                 //玩家 ID
-                txns.setUserId(memBaseinfo.getId().toString());
+                txns.setUserId(memBaseinfo.getAccount());;
                 //玩家货币代码
                 txns.setCurrency(platformGameParent.getCurrencyType());
 //            txns.setOdds(kaCallbackPlayReq.getBetPerSelection());

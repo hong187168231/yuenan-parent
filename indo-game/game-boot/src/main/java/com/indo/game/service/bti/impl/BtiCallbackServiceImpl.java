@@ -111,7 +111,7 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             if (null != oldTxns) {
                 return initFailureResponse(-10, "该注单已承认");
             }
-            GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(reserveBetsRequest.getPlatform());
+            GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(reserveBetsRequest.getPlatform(),gameParentPlatform.getPlatformCode());
             if (null == gamePlatform) {
                 return initFailureResponse(-10, "游戏不存在");
             }
@@ -135,7 +135,7 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             txns.setPlatformTxId(paySerialno);
 
             //玩家 ID
-            txns.setUserId(memBaseinfo.getId().toString());
+            txns.setUserId(memBaseinfo.getAccount());
             //玩家货币代码
             txns.setCurrency(gameParentPlatform.getCurrencyType());
             txns.setOdds(odds);
@@ -432,7 +432,7 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             txns.setPlatformTxId(reqId);
 
             //玩家 ID
-            txns.setUserId(memBaseinfo.getId().toString());
+            txns.setUserId(memBaseinfo.getAccount());
             //玩家货币代码
             txns.setCurrency(gameParentPlatform.getCurrencyType());
 //            txns.setOdds(kaCallbackPlayReq.getBetPerSelection());
@@ -539,7 +539,7 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             txns.setPlatformTxId(reqId);
 
             //玩家 ID
-            txns.setUserId(memBaseinfo.getId().toString());
+            txns.setUserId(memBaseinfo.getAccount());
             //玩家货币代码
             txns.setCurrency(gameParentPlatform.getCurrencyType());
 //            txns.setOdds(kaCallbackPlayReq.getBetPerSelection());

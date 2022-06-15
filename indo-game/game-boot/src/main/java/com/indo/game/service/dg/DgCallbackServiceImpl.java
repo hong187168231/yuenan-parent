@@ -8,6 +8,9 @@ import com.indo.common.enums.TradingEnum;
 import com.indo.common.utils.DateUtils;
 import com.indo.game.mapper.TxnsMapper;
 import com.indo.game.pojo.dto.dg.DgCallBackReq;
+import com.indo.game.pojo.entity.manage.GameCategory;
+import com.indo.game.pojo.entity.manage.GameParentPlatform;
+import com.indo.game.pojo.entity.manage.GamePlatform;
 import com.indo.game.pojo.entity.manage.Txns;
 import com.indo.game.service.common.GameCommonService;
 import com.indo.user.pojo.bo.MemTradingBO;
@@ -64,6 +67,9 @@ public class DgCallbackServiceImpl implements DgCallbackService {
     @Override
     public Object dgTransferCallback(DgCallBackReq dgCallBackReq, String ip, String agentName) {
         JSONObject jsonObject = JSONObject.parseObject(dgCallBackReq.getMember());
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode("DG");
+        GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(dgCallBackReq.getGametype(),gameParentPlatform.getPlatformCode());
+        GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(jsonObject.getString("username"));
         JSONObject dataJson = new JSONObject();
         BigDecimal balance = memBaseinfo.getBalance();
@@ -71,7 +77,7 @@ public class DgCallbackServiceImpl implements DgCallbackService {
         wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Adjust Bet"));
         wrapper.eq(Txns::getStatus, "Running");
         wrapper.eq(Txns::getPlatformTxId, dgCallBackReq.getData());
-        wrapper.eq(Txns::getUserId, memBaseinfo.getId());
+        
         Txns oldTxns = txnsMapper.selectOne(wrapper);
         if (null != oldTxns) {
             dataJson.put("codeId", "98");
@@ -98,11 +104,27 @@ public class DgCallbackServiceImpl implements DgCallbackService {
         //游戏商注单号
         txns.setPlatformTxId(dgCallBackReq.getData());
         //玩家 ID
-        txns.setUserId(memBaseinfo.getId().toString());
+        txns.setUserId(memBaseinfo.getAccount());
 
         txns.setRoundId(dgCallBackReq.getTicketId());
+        //玩家货币代码
+        txns.setCurrency(gameParentPlatform.getCurrencyType());
         //平台代码
-        txns.setPlatform("DG");
+        txns.setPlatform(gameParentPlatform.getPlatformCode());
+        //平台英文名称
+        txns.setPlatformEnName(gameParentPlatform.getPlatformEnName());
+        //平台中文名称
+        txns.setPlatformCnName(gameParentPlatform.getPlatformCnName());
+        //平台游戏类型
+        txns.setGameType(gameCategory.getGameType());
+        //游戏分类ID
+        txns.setCategoryId(gameCategory.getId());
+        //游戏分类名称
+        txns.setCategoryName(gameCategory.getGameName());
+        //平台游戏代码
+        txns.setGameCode(gamePlatform.getPlatformCode());
+        //游戏名称
+        txns.setGameName(gamePlatform.getPlatformEnName());
         //下注金额
         txns.setBetAmount(jsonObject.getBigDecimal("amount"));
         //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
@@ -175,7 +197,7 @@ public class DgCallbackServiceImpl implements DgCallbackService {
         wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Adjust Bet"));
         wrapper.eq(Txns::getStatus, "Running");
         wrapper.eq(Txns::getPlatformTxId, dgCallBackReq.getData());
-        wrapper.eq(Txns::getUserId, memBaseinfo.getId());
+        
         Txns oldTxns = txnsMapper.selectOne(wrapper);
         if (jsonObject.getBigDecimal("amount").compareTo(BigDecimal.ZERO) == -1) {
             if (null != oldTxns) {
@@ -234,7 +256,7 @@ public class DgCallbackServiceImpl implements DgCallbackService {
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(jsonObject.getString("username"));
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Txns::getRoundId, dgCallBackReq.getTicketId());
-        wrapper.eq(Txns::getUserId, memBaseinfo.getId());
+        
         List<Txns> oldTxns = txnsMapper.selectList(wrapper);
         JSONArray jsonArray = new JSONArray();
         if (oldTxns.size() > 0) {

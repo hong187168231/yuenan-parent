@@ -148,7 +148,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             //此交易是否是投注 true是投注 false 否
             txns.setBet(true);
             //玩家 ID
-            txns.setUserId(memBaseinfo.getId().toString());
+            txns.setUserId(memBaseinfo.getAccount());
             //玩家货币代码
             txns.setCurrency(platformGameParent.getCurrencyType());
             txns.setGameInfo(game.getString("type"));
@@ -251,7 +251,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             //游戏商注单号
             oldTxns.setPlatformTxId(platformTxId);
             //玩家 ID
-            oldTxns.setUserId(memBaseinfo.getId().toString());
+            oldTxns.setUserId(memBaseinfo.getAccount());
             //玩家货币代码
             oldTxns.setCurrency(platformGameParent.getCurrencyType());
             oldTxns.setGameInfo(game.getString("type"));
@@ -451,7 +451,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             //此交易是否是投注 true是投注 false 否
             txns.setBet(false);
             //玩家 ID
-            txns.setUserId(memBaseinfo.getId().toString());
+            txns.setUserId(memBaseinfo.getAccount());
             //玩家货币代码
             txns.setCurrency(params.getString("currency"));
             //游戏平台的下注项目

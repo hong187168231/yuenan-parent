@@ -74,7 +74,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         wrapper.eq(Txns::getStatus, "Running");
         wrapper.eq(Txns::getPromotionTxId, cqApiRequestData.getMtcode());
         wrapper.eq(Txns::getPlatform, cqApiRequestData.getPlatform());
-        wrapper.eq(Txns::getUserId, memBaseinfo.getId());
+        wrapper.eq(Txns::getUserId, memBaseinfo.getAccount());
         Txns oldTxns = txnsMapper.selectOne(wrapper);
         if (null != oldTxns) {
             if ("Cancel Bet".equals(oldTxns.getMethod())) {
@@ -94,7 +94,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         txns.setRoundId(cqApiRequestData.getRoundid());
         //此交易是否是投注 true是投注 false 否
         //玩家 ID
-        txns.setUserId(memBaseinfo.getId().toString());
+        txns.setUserId(memBaseinfo.getAccount());
         //玩家货币代码
         txns.setCurrency(gameParentPlatform.getCurrencyType());
         //平台代码
@@ -156,7 +156,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Txns::getStatus, "Running");
         wrapper.eq(Txns::getMethod, "Give");
-        wrapper.eq(Txns::getUserId, memBaseinfo.getId());
+        ;
         wrapper.eq(Txns::getPromotionTxId, cqApiRequestData.getMtcode());
         Txns oldTxns = txnsMapper.selectOne(wrapper);
         if (null != oldTxns) {
@@ -198,7 +198,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         wrapper.eq(Txns::getMethod, "Give");
         wrapper.eq(Txns::getStatus, "Running");
         wrapper.eq(Txns::getPromotionTxId, cqApiRequestData.getMtcode());
-        wrapper.eq(Txns::getUserId, memBaseinfo.getId());
+        ;
         Txns oldTxns = txnsMapper.selectOne(wrapper);
         if (null != oldTxns) {
             return commonReturnFail();
@@ -235,7 +235,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Txns::getStatus, "Running");
         wrapper.eq(Txns::getPromotionTxId, cqApiRequestData.getMtcode());
-        wrapper.eq(Txns::getUserId, memBaseinfo.getId());
+        ;
         Txns oldTxns = txnsMapper.selectOne(wrapper);
         if (null != oldTxns) {
             return commonReturnFail();
@@ -271,7 +271,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Adjust Bet"));
         wrapper.eq(Txns::getStatus, "Running");
         wrapper.eq(Txns::getPromotionTxId, cqApiRequestData.getMtcode());
-        wrapper.eq(Txns::getUserId, memBaseinfo.getId());
+        ;
         Txns oldTxns = txnsMapper.selectOne(wrapper);
         if (null != oldTxns) {
             return commonReturnFail();
@@ -307,7 +307,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         wrapper.eq(Txns::getMethod, "Place Bet");
         wrapper.eq(Txns::getStatus, "Running");
         wrapper.eq(Txns::getPlatformTxId, cqApiRequestData.getMtcode());
-        wrapper.eq(Txns::getUserId, memBaseinfo.getId());
+        ;
         Txns oldTxns = txnsMapper.selectOne(wrapper);
 
         BigDecimal betAmount = oldTxns.getBetAmount();
