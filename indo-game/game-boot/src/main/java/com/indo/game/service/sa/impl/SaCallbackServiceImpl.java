@@ -461,8 +461,8 @@ public class SaCallbackServiceImpl implements SaCallbackService {
         saLoginResp.setUsername(username);
         saLoginResp.setAmount(amount);
         saLoginResp.setCurrency(currency);
-//        return XmlUtil.convertToXml(saLoginResp, "UTF-8", false);
-        return saLoginResp;
+        return XmlUtil.convertToXml(saLoginResp, "UTF-8", false);
+//        return saLoginResp;
     }
 
     /**
@@ -476,8 +476,8 @@ public class SaCallbackServiceImpl implements SaCallbackService {
         SaCallbackResp saLoginResp = new SaCallbackResp();
         saLoginResp.setError(error);
 
-//        return XmlUtil.convertToXml(saLoginResp, "UTF-8", false);
-        return saLoginResp;
+        return XmlUtil.convertToXml(saLoginResp, "UTF-8", false);
+//        return saLoginResp;
     }
 
     private GameParentPlatform getGameParentPlatform() {
