@@ -39,6 +39,9 @@
         <if test='req.startTime != null and req.startTime.trim() neq ""'>
             and t.create_time &gt;= #{req.startTime}
         </if>
+        <if test='req.platformCnName != null and req.platformCnName.trim() neq ""'>
+            and t.platform_cn_name &gt;= #{req.platformCnName}
+        </if>
         <choose>
             <when test="req.orderBy">
                 order by t.sort_number asc
