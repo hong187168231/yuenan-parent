@@ -43,6 +43,9 @@ public class ActTask extends BaseEntity {
     @ApiModelProperty(value = "任务详情")
     private String content;
 
+    @ApiModelProperty(value = "任务奖励")
+    private String reward;
+
     @ApiModelProperty(value = "是否永久任务 0否 1 是")
     private Integer isPer;
 

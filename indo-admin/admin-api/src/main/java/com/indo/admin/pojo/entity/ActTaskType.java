@@ -1,5 +1,6 @@
 package com.indo.admin.pojo.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.indo.common.pojo.entity.BaseEntity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -38,6 +39,10 @@ public class ActTaskType extends BaseEntity {
 
     @ApiModelProperty(value = "备注")
     private String remark;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "任务数量")
+    private Integer taskNum;
 
 
 }
