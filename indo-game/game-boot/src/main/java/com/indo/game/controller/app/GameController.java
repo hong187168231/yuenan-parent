@@ -50,10 +50,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -130,6 +127,7 @@ public class GameController {
     private RedissonClient redissonClient;
     @Resource
     private SysIpLimitClient sysIpLimitClient;
+
     @ApiOperation(value = "登录平台或单一游戏登录", httpMethod = "POST")
     @PostMapping("/initGame")
     @ApiImplicitParams({
@@ -137,6 +135,7 @@ public class GameController {
             @ApiImplicitParam(name = "platform", value = "登录平台请输入平台代码parentName， 单一游戏登录请输入游戏代码", paramType = "query", dataType = "string", required = true),
             @ApiImplicitParam(name = "parentName", value = "第三方平台代码（AWC,UG,SBO,SABA,JDB,AE,CQ） ", paramType = "query", dataType = "string", required = true)
     })
+    @ResponseBody
     public Result initGame(@LoginUser LoginInfo loginUser, @RequestParam("isMobileLogin") String isMobileLogin, @RequestParam("platform") String platform,
                            @RequestParam("parentName") String parentName,
                            HttpServletRequest request) throws InterruptedException {
@@ -287,6 +286,7 @@ public class GameController {
             @ApiImplicitParam(name = "platform", value = "第三方游戏平台代码 ", paramType = "query", dataType = "string", required = true)
     })
     @PostMapping("/logoutPlatform")
+    @ResponseBody
     public Result logout(@LoginUser LoginInfo loginUser, @RequestParam("platform") String platform, HttpServletRequest request) throws InterruptedException {
 
         String params = "";

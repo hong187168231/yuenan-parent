@@ -41,6 +41,7 @@ public class GameManageController {
     @ApiOperation(value = "查询所有游戏类别", httpMethod = "GET")
     @GetMapping(value = "/allGameCategory")
     @AllowAccess
+    @ResponseBody
     public Result<List<GameCategory>> queryAllGameCategory() {
         return Result.success(iGameManageService.queryAllGameCategory());
     }
@@ -48,6 +49,7 @@ public class GameManageController {
     @ApiOperation(value = "查询所有平台游戏", httpMethod = "GET")
     @GetMapping(value = "/queryAllGamePlatform")
     @AllowAccess
+    @ResponseBody
     public Result<List<GamePlatformRecord>> queryAllGamePlatform() {
         return Result.success(iGameManageService.queryAllGamePlatform());
     }
@@ -55,6 +57,7 @@ public class GameManageController {
     @ApiOperation(value = "查询热门游戏", httpMethod = "GET")
     @GetMapping(value = "/queryHotGamePlatform")
     @AllowAccess
+    @ResponseBody
     public Result<List<GamePlatformRecord>> queryHotGamePlatform() {
         return Result.success(iGameManageService.queryHotGamePlatform());
     }
@@ -65,12 +68,14 @@ public class GameManageController {
             @ApiImplicitParam(name = "categoryId", value = "游戏类别ID ", paramType = "query", dataType = "int", required = true)
     })
     @AllowAccess
+    @ResponseBody
     public Result<List<GamePlatformRecord>> queryGamePlatformByCategory(@RequestParam("categoryId") Long categoryId) {
         return Result.success(iGameManageService.queryGamePlatformByCategory(categoryId));
     }
 
     @ApiOperation(value = "查询所有平台记录", httpMethod = "POST")
     @PostMapping(value = "/allGameInfoCount")
+    @ResponseBody
     public Result<List<GameStatiRecord>> queryAllGameInfoCount(@LoginUser LoginInfo loginUser, GameInfoPageReq req) {
         if (loginUser == null || StringUtils.isBlank(loginUser.getAccount())) {
             return Result.failed(MessageUtils.get("youarenotloggedin"));
@@ -83,6 +88,7 @@ public class GameManageController {
 
     @ApiOperation(value = "查询所有游戏记录", httpMethod = "POST")
     @PostMapping(value = "/allGameInfo")
+    @ResponseBody
     public Result<List<GameInfoRecord>> queryAllGameInfo(@LoginUser LoginInfo loginUser, GameInfoPageReq req) {
         if (loginUser == null || StringUtils.isBlank(loginUser.getAccount())) {
             return Result.failed(MessageUtils.get("youarenotloggedin"));
@@ -95,6 +101,7 @@ public class GameManageController {
 
     @ApiOperation(value = "查询代理游戏记录", httpMethod = "POST")
     @PostMapping(value = "/allAgentGameInfo")
+    @ResponseBody
     public Result<List<GameInfoAgentRecord>> queryAllAgentGameInfo(@LoginUser LoginInfo loginUser, GameInfoPageReq req) {
         if (loginUser == null || StringUtils.isBlank(loginUser.getAccount())) {
             return Result.failed(MessageUtils.get("youarenotloggedin"));
@@ -108,6 +115,7 @@ public class GameManageController {
     @ApiOperation(value = "查询所有平台", httpMethod = "GET")
     @GetMapping(value = "/queryAllGameParentPlatform")
     @AllowAccess
+    @ResponseBody
     public Result<List<GameParentPlatform>> queryAllGameParentPlatform() {
         return Result.success(iGameManageService.queryAllGameParentPlatform());
     }
@@ -115,6 +123,7 @@ public class GameManageController {
     @ApiOperation(value = "查询热门平台", httpMethod = "GET")
     @GetMapping(value = "/queryHotGameParentPlatform")
     @AllowAccess
+    @ResponseBody
     public Result<List<GameParentPlatform>> queryHotGameParentPlatform() {
         return Result.success(iGameManageService.queryHotGameParentPlatform());
     }
