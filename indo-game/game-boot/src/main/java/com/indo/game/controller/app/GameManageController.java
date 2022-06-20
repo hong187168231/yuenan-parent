@@ -39,7 +39,7 @@ public class GameManageController {
     private IGameManageService iGameManageService;
 
     @ApiOperation(value = "查询所有游戏类别", httpMethod = "GET")
-    @GetMapping(value = "/allGameCategory")
+    @GetMapping(value = "/allGameCategory",produces = "application/json;charset=UTF-8")
     @AllowAccess
     @ResponseBody
     public Result<List<GameCategory>> queryAllGameCategory() {
