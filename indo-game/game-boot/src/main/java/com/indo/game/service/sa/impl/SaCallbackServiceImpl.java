@@ -121,7 +121,7 @@ public class SaCallbackServiceImpl implements SaCallbackService {
             gameCommonService.updateUserBalance(memBaseinfo, betAmount.subtract(betAmount),
                     GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
 
-            String txnid = jsonObject.getString("txnid");
+            String txnid = jsonObject.getString("gameid");
             // 查询用户请求订单
             Txns oldTxns = getTxns(platformGameParent, txnid);
             if (null != oldTxns) {
@@ -139,7 +139,7 @@ public class SaCallbackServiceImpl implements SaCallbackService {
             txns.setPlatformTxId(txnid);
 
             //玩家 ID
-            txns.setUserId(memBaseinfo.getId().toString());
+            txns.setUserId(memBaseinfo.getAccount());
             //玩家货币代码
             txns.setCurrency(platformGameParent.getCurrencyType());
 //            txns.setOdds(kaCallbackPlayReq.getBetPerSelection());
@@ -238,32 +238,46 @@ public class SaCallbackServiceImpl implements SaCallbackService {
                 return initFailureResponse(1005, "派彩金额不能小0");
             }
 
-            String txnid = jsonObject.getString("txnid");
+            String gameid = jsonObject.getString("gameid");
             // 查询用户请求订单
-            Txns oldTxns = getTxns(platformGameParent, txnid);
+            Txns oldTxns = getTxnsByRounId(platformGameParent, gameid);
             if (null == oldTxns) {
                 return initFailureResponse(152, "交易不存在");
             }
 
             balance = balance.add(amount);
             gameCommonService.updateUserBalance(memBaseinfo, amount, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
-
+            Txns txns = new Txns();
+            BeanUtils.copyProperties(oldTxns, txns);
             //赌注的结果 : 赢:0,输:1,平手:2
             int resultTyep = 0;
-            oldTxns.setResultType(resultTyep);
+            if (oldTxns.getBetAmount().compareTo(amount) == 0) {//和
+                resultTyep = 2;
+                //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
+                txns.setWinningAmount(BigDecimal.ZERO);
+            }else {//赢
+                //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
+                txns.setWinningAmount(amount);
+            }
+            txns.setResultType(resultTyep);
+
             //真实返还金额,游戏赢分
-            oldTxns.setRealWinAmount(amount);
+            txns.setRealWinAmount(amount);
             //返还金额 (包含下注金额)
-            oldTxns.setWinAmount(amount);
-            //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
-            oldTxns.setWinningAmount(amount);
+            txns.setWinAmount(amount);
+
+            txns.setBalance(balance);
+            txns.setMethod("Settle");
+            txns.setStatus("Running");
             oldTxns.setStatus("Settle");
-            String dateStr = DateUtils.format(jsonObject.getDate("timestamp"), DateUtils.newFormat);
-            oldTxns.setUpdateTime(dateStr);
+            String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
+            txns.setCreateTime(dateStr);
+            oldTxns.setUpdateTime(DateUtils.format(jsonObject.getDate("timestamp"), DateUtils.newFormat));
             int num = txnsMapper.updateById(oldTxns);
             if (num <= 0) {
                 return initFailureResponse(1, "订单写入失败");
             }
+            txnsMapper.insert(txns);
             return initSuccessResponse(memBaseinfo.getAccount(), platformGameParent.getCurrencyType(), balance);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -301,29 +315,35 @@ public class SaCallbackServiceImpl implements SaCallbackService {
 
             // 会员余额
             BigDecimal balance = memBaseinfo.getBalance();
-            String txnid = jsonObject.getString("txnid");
+            String gameid = jsonObject.getString("gameid");
             // 查询用户请求订单
-            Txns oldTxns = getTxns(platformGameParent, txnid);
+            Txns oldTxns = getTxnsByRounId(platformGameParent, gameid);
             if (null == oldTxns) {
                 return initFailureResponse(152, "交易不存在");
             }
-
+            Txns txns = new Txns();
+            BeanUtils.copyProperties(oldTxns, txns);
             //赌注的结果 : 赢:0,输:1,平手:2
-            int resultTyep = 2;
+            int resultTyep = 1;
             oldTxns.setResultType(resultTyep);
             //真实返还金额,游戏赢分
-            oldTxns.setRealWinAmount(BigDecimal.ZERO);
+            txns.setRealWinAmount(BigDecimal.ZERO);
             //返还金额 (包含下注金额)
-            oldTxns.setWinAmount(BigDecimal.ZERO);
+            txns.setWinAmount(BigDecimal.ZERO);
             //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
-            oldTxns.setWinningAmount(BigDecimal.ZERO);
+            txns.setWinningAmount(oldTxns.getBetAmount().negate());
+            txns.setBalance(balance);
+            txns.setMethod("Settle");
+            txns.setStatus("Running");
             oldTxns.setStatus("Settle");
-            String dateStr = DateUtils.format(jsonObject.getDate("timestamp"), DateUtils.newFormat);
-            oldTxns.setUpdateTime(dateStr);
+            String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
+            txns.setCreateTime(dateStr);
+            oldTxns.setUpdateTime(DateUtils.format(jsonObject.getDate("timestamp"), DateUtils.newFormat));
             int num = txnsMapper.updateById(oldTxns);
             if (num <= 0) {
                 return initFailureResponse(1, "订单写入失败");
             }
+            txnsMapper.insert(txns);
             return initSuccessResponse(memBaseinfo.getAccount(), platformGameParent.getCurrencyType(), balance);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -375,20 +395,22 @@ public class SaCallbackServiceImpl implements SaCallbackService {
             BigDecimal balance = memBaseinfo.getBalance().add(oldTxns.getBetAmount());
             gameCommonService.updateUserBalance(memBaseinfo, memBaseinfo.getBalance(), GoldchangeEnum.CANCEL_BET, TradingEnum.INCOME);
 
-            String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
             Txns txns = new Txns();
             BeanUtils.copyProperties(oldTxns, txns);
-            txns.setBalance(balance);
-            txns.setId(null);
-            txns.setStatus("Running");
-            txns.setRealWinAmount(memBaseinfo.getBalance());//真实返还金额
-            txns.setMethod("Adjust Bet");
-            txns.setCreateTime(dateStr);
-            txnsMapper.insert(txns);
 
+            //返还金额 (包含下注金额)
+            txns.setBalance(balance);
+            txns.setMethod("Cancel Bet");
+            txns.setStatus("Running");
             oldTxns.setStatus("Cancel Bet");
-            oldTxns.setUpdateTime(dateStr);
-            txnsMapper.updateById(oldTxns);
+            String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
+            txns.setCreateTime(dateStr);
+            oldTxns.setUpdateTime(DateUtils.format(jsonObject.getDate("timestamp"), DateUtils.newFormat));
+            int num = txnsMapper.updateById(oldTxns);
+            if (num <= 0) {
+                return initFailureResponse(1, "取消注单订单写入失败");
+            }
+            txnsMapper.insert(txns);
 
             return initSuccessResponse(memBaseinfo.getAccount(), platformGameParent.getCurrencyType(), balance);
         } catch (Exception e) {
@@ -426,10 +448,19 @@ public class SaCallbackServiceImpl implements SaCallbackService {
     private Txns getTxns(GameParentPlatform gameParentPlatform, String paySerialno) {
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
         wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet")
-                .or().eq(Txns::getMethod, "Cancel Bet")
-                .or().eq(Txns::getMethod, "Adjust Bet"));
+                .or().eq(Txns::getMethod, "Cancel Bet"));
         wrapper.eq(Txns::getStatus, "Running");
         wrapper.eq(Txns::getPlatformTxId, paySerialno);
+        wrapper.eq(Txns::getPlatform, gameParentPlatform.getPlatformCode());
+        return txnsMapper.selectOne(wrapper);
+    }
+
+    private Txns getTxnsByRounId(GameParentPlatform gameParentPlatform, String rounId) {
+        LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+        wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet")
+                .or().eq(Txns::getMethod, "Cancel Bet"));
+        wrapper.eq(Txns::getStatus, "Running");
+        wrapper.eq(Txns::getRoundId, rounId);
         wrapper.eq(Txns::getPlatform, gameParentPlatform.getPlatformCode());
         return txnsMapper.selectOne(wrapper);
     }
