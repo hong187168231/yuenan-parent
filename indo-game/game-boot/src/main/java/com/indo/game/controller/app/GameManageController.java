@@ -47,7 +47,7 @@ public class GameManageController {
     }
 
     @ApiOperation(value = "查询所有平台游戏", httpMethod = "GET")
-    @GetMapping(value = "/queryAllGamePlatform")
+    @GetMapping(value = "/queryAllGamePlatform",produces = "application/json;charset=UTF-8")
     @AllowAccess
     @ResponseBody
     public Result<List<GamePlatformRecord>> queryAllGamePlatform() {
@@ -55,7 +55,7 @@ public class GameManageController {
     }
 
     @ApiOperation(value = "查询热门游戏", httpMethod = "GET")
-    @GetMapping(value = "/queryHotGamePlatform")
+    @GetMapping(value = "/queryHotGamePlatform",produces = "application/json;charset=UTF-8")
     @AllowAccess
     @ResponseBody
     public Result<List<GamePlatformRecord>> queryHotGamePlatform() {
@@ -63,7 +63,7 @@ public class GameManageController {
     }
 
     @ApiOperation(value = "依据类别查询平台游戏", httpMethod = "GET")
-    @GetMapping(value = "/queryGamePlatformByCategory")
+    @GetMapping(value = "/queryGamePlatformByCategory",produces = "application/json;charset=UTF-8")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "categoryId", value = "游戏类别ID ", paramType = "query", dataType = "int", required = true)
     })
@@ -74,7 +74,7 @@ public class GameManageController {
     }
 
     @ApiOperation(value = "查询所有平台记录", httpMethod = "POST")
-    @PostMapping(value = "/allGameInfoCount")
+    @PostMapping(value = "/allGameInfoCount",produces = "application/json;charset=UTF-8")
     @ResponseBody
     public Result<List<GameStatiRecord>> queryAllGameInfoCount(@LoginUser LoginInfo loginUser, GameInfoPageReq req) {
         if (loginUser == null || StringUtils.isBlank(loginUser.getAccount())) {
@@ -87,7 +87,7 @@ public class GameManageController {
     }
 
     @ApiOperation(value = "查询所有游戏记录", httpMethod = "POST")
-    @PostMapping(value = "/allGameInfo")
+    @PostMapping(value = "/allGameInfo",produces = "application/json;charset=UTF-8")
     @ResponseBody
     public Result<List<GameInfoRecord>> queryAllGameInfo(@LoginUser LoginInfo loginUser, GameInfoPageReq req) {
         if (loginUser == null || StringUtils.isBlank(loginUser.getAccount())) {
@@ -100,7 +100,7 @@ public class GameManageController {
     }
 
     @ApiOperation(value = "查询代理游戏记录", httpMethod = "POST")
-    @PostMapping(value = "/allAgentGameInfo")
+    @PostMapping(value = "/allAgentGameInfo",produces = "application/json;charset=UTF-8")
     @ResponseBody
     public Result<List<GameInfoAgentRecord>> queryAllAgentGameInfo(@LoginUser LoginInfo loginUser, GameInfoPageReq req) {
         if (loginUser == null || StringUtils.isBlank(loginUser.getAccount())) {
@@ -113,7 +113,7 @@ public class GameManageController {
     }
 
     @ApiOperation(value = "查询所有平台", httpMethod = "GET")
-    @GetMapping(value = "/queryAllGameParentPlatform")
+    @GetMapping(value = "/queryAllGameParentPlatform",produces = "application/json;charset=UTF-8")
     @AllowAccess
     @ResponseBody
     public Result<List<GameParentPlatform>> queryAllGameParentPlatform() {
@@ -121,7 +121,7 @@ public class GameManageController {
     }
 
     @ApiOperation(value = "查询热门平台", httpMethod = "GET")
-    @GetMapping(value = "/queryHotGameParentPlatform")
+    @GetMapping(value = "/queryHotGameParentPlatform",produces = "application/json;charset=UTF-8")
     @AllowAccess
     @ResponseBody
     public Result<List<GameParentPlatform>> queryHotGameParentPlatform() {

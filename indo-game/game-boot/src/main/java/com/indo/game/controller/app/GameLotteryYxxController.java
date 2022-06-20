@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,7 +25,8 @@ public class GameLotteryYxxController {
     private YxxService yxxService;
 
     @ApiOperation(value = "鱼虾蟹下注", httpMethod = "POST")
-    @PostMapping("/lotteryYxx")
+    @PostMapping(value = "/lotteryYxx",produces = "application/json;charset=UTF-8")
+    @ResponseBody
     public Result lotteryYxx(@LoginUser LoginInfo loginUser, GameLotteryOrderDto gameLotteryOrderDto,
                            HttpServletRequest request) throws InterruptedException {
         return yxxService.yxxOrder(loginUser,gameLotteryOrderDto);

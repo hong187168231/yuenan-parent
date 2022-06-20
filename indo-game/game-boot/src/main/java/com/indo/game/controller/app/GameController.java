@@ -129,7 +129,7 @@ public class GameController {
     private SysIpLimitClient sysIpLimitClient;
 
     @ApiOperation(value = "登录平台或单一游戏登录", httpMethod = "POST")
-    @PostMapping("/initGame")
+    @PostMapping(value ="/initGame",produces = "application/json;charset=UTF-8")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "isMobileLogin", value = "是否手机登录1：手机 0:PC", paramType = "query", dataType = "string", required = true),
             @ApiImplicitParam(name = "platform", value = "登录平台请输入平台代码parentName， 单一游戏登录请输入游戏代码", paramType = "query", dataType = "string", required = true),
@@ -285,7 +285,7 @@ public class GameController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "platform", value = "第三方游戏平台代码 ", paramType = "query", dataType = "string", required = true)
     })
-    @PostMapping("/logoutPlatform")
+    @PostMapping(value ="/logoutPlatform",produces = "application/json;charset=UTF-8")
     @ResponseBody
     public Result logout(@LoginUser LoginInfo loginUser, @RequestParam("platform") String platform, HttpServletRequest request) throws InterruptedException {
 

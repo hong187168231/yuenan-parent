@@ -63,35 +63,35 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         super.configureMessageConverters(converters);
-//        final MappingJackson2HttpMessageConverter jackson2HttpMessageConverter = new MappingJackson2HttpMessageConverter();
-//        ObjectMapper objectMapper = jackson2HttpMessageConverter.getObjectMapper();
-//
-//        // long 转换为字符串
-//        SimpleModule simpleModule = new SimpleModule();
-////        simpleModule.addSerializer(BigInteger.class, ToStringSerializer.instance);
-////        simpleModule.addSerializer(Long.class, ToStringSerializer.instance);
-////        simpleModule.addSerializer(Long.TYPE, ToStringSerializer.instance);
-////        simpleModule.addSerializer(Integer.TYPE, ToStringSerializer.instance);
-////        simpleModule.addSerializer(Integer.class, ToStringSerializer.instance);
-////        simpleModule.addSerializer(int.class, ToStringSerializer.instance);
-//
-//        // 浮点型使用字符串
-////        simpleModule.addSerializer(Double.class, ToStringSerializer.instance);
-////        simpleModule.addSerializer(Double.TYPE, ToStringSerializer.instance);
-////        simpleModule.addSerializer(BigDecimal.class, ToStringSerializer.instance);
-//
-//        //  时间格式化
-//        simpleModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(DATETIME_FORMAT));
-//        simpleModule.addSerializer(LocalDate.class, new LocalDateSerializer(DATE_FORMAT));
-//        simpleModule.addSerializer(LocalTime.class, new LocalTimeSerializer(TIME_FORMAT));
-//
-//        objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
-//        objectMapper.setTimeZone(TimeZone.getTimeZone("GMT+8"));
-//        objectMapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
-//        objectMapper.registerModule(simpleModule);
-//
-//        jackson2HttpMessageConverter.setObjectMapper(objectMapper);
-//        converters.add(0, jackson2HttpMessageConverter);
+        final MappingJackson2HttpMessageConverter jackson2HttpMessageConverter = new MappingJackson2HttpMessageConverter();
+        ObjectMapper objectMapper = jackson2HttpMessageConverter.getObjectMapper();
+
+        // long 转换为字符串
+        SimpleModule simpleModule = new SimpleModule();
+//        simpleModule.addSerializer(BigInteger.class, ToStringSerializer.instance);
+//        simpleModule.addSerializer(Long.class, ToStringSerializer.instance);
+//        simpleModule.addSerializer(Long.TYPE, ToStringSerializer.instance);
+//        simpleModule.addSerializer(Integer.TYPE, ToStringSerializer.instance);
+//        simpleModule.addSerializer(Integer.class, ToStringSerializer.instance);
+//        simpleModule.addSerializer(int.class, ToStringSerializer.instance);
+
+        // 浮点型使用字符串
+//        simpleModule.addSerializer(Double.class, ToStringSerializer.instance);
+//        simpleModule.addSerializer(Double.TYPE, ToStringSerializer.instance);
+//        simpleModule.addSerializer(BigDecimal.class, ToStringSerializer.instance);
+
+        //  时间格式化
+        simpleModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(DATETIME_FORMAT));
+        simpleModule.addSerializer(LocalDate.class, new LocalDateSerializer(DATE_FORMAT));
+        simpleModule.addSerializer(LocalTime.class, new LocalTimeSerializer(TIME_FORMAT));
+
+        objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
+        objectMapper.setTimeZone(TimeZone.getTimeZone("GMT+8"));
+        objectMapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+        objectMapper.registerModule(simpleModule);
+
+        jackson2HttpMessageConverter.setObjectMapper(objectMapper);
+        converters.add(0, jackson2HttpMessageConverter);
     }
 
     @Bean

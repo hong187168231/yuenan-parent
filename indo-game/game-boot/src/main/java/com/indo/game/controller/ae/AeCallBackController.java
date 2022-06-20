@@ -29,7 +29,7 @@ public class AeCallBackController {
     /**
      * 回调 余额查询
      */
-    @RequestMapping(value = "/callBack/single/wallet/balance", method = RequestMethod.POST)
+    @RequestMapping(value = "/callBack/single/wallet/balance", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object getBalance(@RequestBody AeCallBackParentReq aeApiRequestData, HttpServletRequest request) {
@@ -45,7 +45,7 @@ public class AeCallBackController {
     /**
      * 回调 单一钱包 额度转换
      */
-    @RequestMapping(value = "/callBack/single/wallet/fund/transfer", method = RequestMethod.POST)
+    @RequestMapping(value = "/callBack/single/wallet/fund/transfer", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object transfer(@RequestBody AeCallBackTransferReq aeApiRequestData, HttpServletRequest request) {
@@ -60,7 +60,7 @@ public class AeCallBackController {
     /**
      * 回调 单一钱包 额度转换查询
      */
-    @RequestMapping(value = "/callBack/single/wallet/fund/query", method = RequestMethod.POST)
+    @RequestMapping(value = "/callBack/single/wallet/fund/query", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object query(@RequestBody AeCallBackTransferReq aeApiRequestData, HttpServletRequest request) {
