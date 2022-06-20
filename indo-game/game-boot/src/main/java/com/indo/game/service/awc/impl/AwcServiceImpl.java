@@ -254,7 +254,12 @@ public class AwcServiceImpl implements AwcService {
 
             trr.put("language", gameParentPlatform.getLanguageType());
             String url = "/wallet/login";
-            if(null!=gamePlatform) {
+            if(!gameParentPlatform.getPlatformCode().equals(gamePlatform.getParentName())) {
+                url = "/wallet/doLoginAndLaunchGame";
+                trr.put("gameCode", gamePlatform.getPlatformCode());//平台游戏代码
+            }else {
+                trr.put("gameForbidden", "");//指定对玩家隐藏游戏平台，您仅能透过 API 执行这个动作
+            }
 //                String str[] = gamePlatform.getPlatformCode().split("_");
 //                trr.put("platform", str[0]);//游戏平台名称
                 trr.put("platform", "SEXYBCRT");//游戏平台名称
@@ -262,7 +267,7 @@ public class AwcServiceImpl implements AwcService {
 //            GameCategory gameCategory = gameCategoryMapper.selectById(gamePlatform.getCategoryId());
 //                trr.put("gameType", str[1]);//平台游戏类型
                 trr.put("gameType", "LIVE");//平台游戏类型
-                trr.put("gameCode", gamePlatform.getPlatformCode());//平台游戏代码
+
 //                List<GamePlatform> gamePlatformList = gameCommonService.getGamePlatformByParentName(gameParentPlatform.getPlatformCode());
 //                List<String> codeList = new ArrayList<>();
 //                Map<String, List<String>> gameForbiddenMap = new HashMap<>();
@@ -287,8 +292,7 @@ public class AwcServiceImpl implements AwcService {
 //                }
 //                JSONObject gameForbiddenStr = GameUtil.getJsonMap(gameForbiddenMap);
 //                trr.put("gameForbidden", gameForbiddenStr.toString());//指定对玩家隐藏游戏平台，您仅能透过 API 执行这个动作
-                url = "/wallet/doLoginAndLaunchGame";
-            }
+
 //           platform: SEXYBCRT
 //                   - gameType: LIVE
 //                   - value (ID): {"limitId":[IDs]}
