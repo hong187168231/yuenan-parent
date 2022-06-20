@@ -90,25 +90,8 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
         objectMapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
         objectMapper.registerModule(simpleModule);
 
-        jackson2HttpMessageConverter.setObjectMapper(objectMapper);
+//        jackson2HttpMessageConverter.setObjectMapper(objectMapper);
         converters.add(0, jackson2HttpMessageConverter);
-
-        FastJsonHttpMessageConverter fastJsonConverter = new FastJsonHttpMessageConverter();
-        FastJsonConfig config = new FastJsonConfig();
-        config.setCharset(StandardCharsets.UTF_8);
-        //设置允许返回为null的属性
-        config.setSerializerFeatures(SerializerFeature.WriteMapNullValue);
-
-        fastJsonConverter.setFastJsonConfig(config);
-        List<MediaType> list = new ArrayList<>();
-        list.add(MediaType.APPLICATION_JSON);
-        fastJsonConverter.setSupportedMediaTypes(list);
-
-        StringHttpMessageConverter stringHttpMessageConverter = new StringHttpMessageConverter();
-        stringHttpMessageConverter.setSupportedMediaTypes(list);
-        converters.add(stringHttpMessageConverter);
-
-        converters.add(fastJsonConverter);
     }
 
     @Bean
