@@ -29,7 +29,7 @@ public class SaCallbackController {
 
 
     // 获取用户余额
-    @RequestMapping(value = "/GetUserBalance.aspx", method = RequestMethod.POST,produces = "text/plain;charset=utf-8")
+    @RequestMapping(value = "/GetUserBalance.aspx", method = RequestMethod.POST)
     @AllowAccess
     private Object getUserBalance(HttpServletRequest request) {
         String params = null;
