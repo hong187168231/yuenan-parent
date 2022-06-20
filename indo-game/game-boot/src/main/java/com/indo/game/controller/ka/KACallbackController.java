@@ -45,7 +45,7 @@ public class KACallbackController {
     /**
      * 启动游戏权限验证
      */
-    @RequestMapping(value = "/start", method = RequestMethod.POST)
+    @RequestMapping(value = "/start", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object startGame(@RequestBody LinkedHashMap<String, Object> map, HttpServletRequest request) {
@@ -66,7 +66,7 @@ public class KACallbackController {
     /**
      * KA 游戏下注
      */
-    @RequestMapping(value = "/play", method = RequestMethod.POST)
+    @RequestMapping(value = "/play", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object palyGame(@RequestBody LinkedHashMap<String, Object> map, HttpServletRequest request) {
@@ -88,7 +88,7 @@ public class KACallbackController {
     /**
      * 游戏派彩
      */
-    @RequestMapping(value = "/credit", method = RequestMethod.POST)
+    @RequestMapping(value = "/credit", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object credit(@RequestBody LinkedHashMap<String, Object> map, HttpServletRequest request) {
@@ -115,7 +115,7 @@ public class KACallbackController {
     /**
      * 取消交易
      */
-    @RequestMapping(value = "/revoke", method = RequestMethod.POST)
+    @RequestMapping(value = "/revoke", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object revoke(@RequestBody LinkedHashMap<String, Object> map, HttpServletRequest request) {
@@ -138,7 +138,7 @@ public class KACallbackController {
     /**
      * 查询玩家余额
      */
-    @RequestMapping(value = "/balance", method = RequestMethod.POST)
+    @RequestMapping(value = "/balance", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object balance(@RequestBody LinkedHashMap<String, Object> map, HttpServletRequest request) {
@@ -160,7 +160,7 @@ public class KACallbackController {
     /**
      * 玩家退出
      */
-    @RequestMapping(value = "/end", method = RequestMethod.POST)
+    @RequestMapping(value = "/end", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object end(@RequestBody LinkedHashMap<String, Object> map, HttpServletRequest request) {

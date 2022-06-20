@@ -31,7 +31,7 @@ public class PgCallBackController {
     /**
      * 查询余额
      */
-    @RequestMapping(value = "/Cash/Get", method = RequestMethod.POST)
+    @RequestMapping(value = "/Cash/Get", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object getBalance(PgVerifyCallBackReq pgVerifyCallBackReq,HttpServletRequest request) {
@@ -46,7 +46,7 @@ public class PgCallBackController {
     /**
      * 令牌验证
      */
-    @RequestMapping(value = "/VerifySession", method = RequestMethod.POST)
+    @RequestMapping(value = "/VerifySession", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object verifySession(PgVerifyCallBackReq pgVerifyCallBackReq,HttpServletRequest request) {
@@ -62,7 +62,7 @@ public class PgCallBackController {
     /**
      * 投付
      */
-    @RequestMapping(value = "/Cash/TransferIn", method = RequestMethod.POST)
+    @RequestMapping(value = "/Cash/TransferIn", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object transferIn(PgVerifyCallBackReq pgVerifyCallBackReq,HttpServletRequest request) {
@@ -77,7 +77,7 @@ public class PgCallBackController {
     /**
      * 投付
      */
-    @RequestMapping(value = "/Cash/Adjustment", method = RequestMethod.POST)
+    @RequestMapping(value = "/Cash/Adjustment", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object adjustment(PgVerifyCallBackReq pgVerifyCallBackReq,HttpServletRequest request) {

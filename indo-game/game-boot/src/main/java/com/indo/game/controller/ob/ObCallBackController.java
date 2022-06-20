@@ -31,7 +31,7 @@ public class ObCallBackController {
     /**
      * 回调 余额查询
      */
-    @RequestMapping(value = "/balance", method = RequestMethod.POST)
+    @RequestMapping(value = "/balance", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object getBalance(@RequestBody ObCallBackParentReq obCallBackParentReq, HttpServletRequest request) {
@@ -47,7 +47,7 @@ public class ObCallBackController {
     /**
      * 回调 单一钱包 额度转换
      */
-    @RequestMapping(value = "/transfer", method = RequestMethod.POST)
+    @RequestMapping(value = "/transfer", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object transfer(@RequestBody ObCallBackParentReq obCallBackParentReq, HttpServletRequest request) {
@@ -62,7 +62,7 @@ public class ObCallBackController {
     /**
      * 回调 单一钱包 额度转换查询
      */
-    @RequestMapping(value = "/transferstatus", method = RequestMethod.POST)
+    @RequestMapping(value = "/transferstatus", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object transferStatus(@RequestBody ObCallBackParentReq obCallBackParentReq, HttpServletRequest request) {

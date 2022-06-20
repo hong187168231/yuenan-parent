@@ -31,7 +31,7 @@ public class T9CallbackController {
     /**
      * T9回调查询玩家余额
      */
-    @RequestMapping(value = "/querypoint", method = RequestMethod.POST)
+    @RequestMapping(value = "/querypoint", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object callBackQuerypoint(HttpServletRequest request) {
@@ -55,7 +55,7 @@ public class T9CallbackController {
     /**
      * T9回调提取点数
      */
-    @RequestMapping(value = "/withdrawal", method = RequestMethod.POST)
+    @RequestMapping(value = "/withdrawal", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object callBackWithdrawal(HttpServletRequest request) {
@@ -79,7 +79,7 @@ public class T9CallbackController {
     /**
      * T9回调存入点数
      */
-    @RequestMapping(value = "/deposit", method = RequestMethod.POST)
+    @RequestMapping(value = "/deposit", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object callBackDeposit(HttpServletRequest request) {
@@ -103,7 +103,7 @@ public class T9CallbackController {
     /**
      * T9回调取消交易
      */
-    @RequestMapping(value = "/canceltransfer", method = RequestMethod.POST)
+    @RequestMapping(value = "/canceltransfer", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object callBackCanceltransfer(HttpServletRequest request) {

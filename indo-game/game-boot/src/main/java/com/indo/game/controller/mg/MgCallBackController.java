@@ -30,7 +30,7 @@ public class MgCallBackController {
     /**
      * 查询余额
      */
-    @RequestMapping(value = "/getbalance", method = RequestMethod.POST)
+    @RequestMapping(value = "/getbalance", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object getBalance(MgCallBackReq mgCallBackReq, HttpServletRequest request) {
@@ -45,7 +45,7 @@ public class MgCallBackController {
     /**
      * 令牌验证
      */
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    @RequestMapping(value = "/login", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object verifySession(MgCallBackReq mgCallBackReq,HttpServletRequest request) {
@@ -61,7 +61,7 @@ public class MgCallBackController {
     /**
      * 投付
      */
-    @RequestMapping(value = "/updatebalance", method = RequestMethod.POST)
+    @RequestMapping(value = "/updatebalance", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object adjustment(MgCallBackReq mgCallBackReq,HttpServletRequest request) {

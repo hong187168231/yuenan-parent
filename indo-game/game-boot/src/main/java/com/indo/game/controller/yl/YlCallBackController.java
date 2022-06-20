@@ -32,7 +32,7 @@ public class YlCallBackController {
     /**
      * 下注及结算
      */
-    @RequestMapping(value = "/settleFishBet", method = RequestMethod.GET)
+    @RequestMapping(value = "/settleFishBet", method = RequestMethod.GET,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object bet(YlCallBackReq ylCallBackReq, HttpServletRequest request) {
@@ -49,7 +49,7 @@ public class YlCallBackController {
     /**
      * 返还押注
      */
-    @RequestMapping(value = "/voidFishBet", method = RequestMethod.POST)
+    @RequestMapping(value = "/voidFishBet", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object voidFishBet(YlCallBackReq ylCallBackReq, HttpServletRequest request) {
@@ -66,7 +66,7 @@ public class YlCallBackController {
     /**
      * 获取余额
      */
-    @RequestMapping(value = "/GetBalance", method = RequestMethod.POST)
+    @RequestMapping(value = "/GetBalance", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object getBalance(YlCallBackReq ylCallBackReq, HttpServletRequest request) {

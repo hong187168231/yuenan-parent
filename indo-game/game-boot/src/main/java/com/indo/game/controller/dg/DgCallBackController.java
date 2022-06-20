@@ -32,8 +32,9 @@ public class DgCallBackController {
     /**
      * 查询余额
      */
-    @RequestMapping(value = "/user/getBalance/{agentName}", method = RequestMethod.POST)
+    @RequestMapping(value = "/user/getBalance/{agentName}", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @AllowAccess
+    @ResponseBody
     public Object getBalance(@PathVariable(name = "agentName") String agentName, @RequestBody DgCallBackReq dgCallBackReq,
                              HttpServletRequest request) {
 
@@ -47,8 +48,9 @@ public class DgCallBackController {
     /**
      * 存取款接口
      */
-    @RequestMapping(value = "/account/transfer/{agentName}", method = RequestMethod.POST)
+    @RequestMapping(value = "/account/transfer/{agentName}", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @AllowAccess
+    @ResponseBody
     public Object transfer(@PathVariable(name = "agentName") String agentName, @RequestBody DgCallBackReq dgCallBackReq,
                               HttpServletRequest request) {
 
@@ -62,7 +64,7 @@ public class DgCallBackController {
     /**
      * 确认存取款结果接口
      */
-    @RequestMapping(value = "/account/checkTransfer/{agentName} ", method = RequestMethod.POST)
+    @RequestMapping(value = "/account/checkTransfer/{agentName} ", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object checkTransfer(@PathVariable(name = "agentName") String agentName, @RequestBody DgCallBackReq dgCallBackReq,
@@ -78,7 +80,7 @@ public class DgCallBackController {
     /**
      * 请求回滚转账事务
      */
-    @RequestMapping(value = "/account/inform/{agentName} ", method = RequestMethod.POST)
+    @RequestMapping(value = "/account/inform/{agentName} ", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object inform(@PathVariable(name = "agentName") String agentName, @RequestBody DgCallBackReq dgCallBackReq,
@@ -94,7 +96,7 @@ public class DgCallBackController {
     /**
      * 遊戲紅利
      */
-    @RequestMapping(value = "/account/order/{agentName}", method = RequestMethod.POST)
+    @RequestMapping(value = "/account/order/{agentName}", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object order(@PathVariable(name = "agentName") String agentName, @RequestBody DgCallBackReq dgCallBackReq,
@@ -111,7 +113,7 @@ public class DgCallBackController {
     /**
      * 針對完成的訂單做補款
      */
-    @RequestMapping(value = "/account/unsettle/{agentName} ", method = RequestMethod.POST)
+    @RequestMapping(value = "/account/unsettle/{agentName} ", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object unsettle(@PathVariable(name = "agentName") String agentName, @RequestBody DgCallBackReq dgCallBackReq,

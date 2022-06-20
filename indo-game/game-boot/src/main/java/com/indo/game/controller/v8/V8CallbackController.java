@@ -13,10 +13,7 @@ import com.indo.game.service.v8.V8Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
@@ -33,7 +30,8 @@ public class V8CallbackController {
     @Autowired
     private V8Service v8Service;
 
-    @RequestMapping(value = "/crebit", method = RequestMethod.POST)
+    @RequestMapping(value = "/crebit", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
+    @ResponseBody
     @AllowAccess
     public Object crebit(@LoginUser LoginInfo loginUser,
                          @RequestBody JSONObject params, HttpServletRequest request){
@@ -43,7 +41,8 @@ public class V8CallbackController {
         return v8Service.crebit(loginUser, platform, money, ip);
     }
 
-    @RequestMapping(value = "/balance", method = RequestMethod.POST)
+    @RequestMapping(value = "/balance", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
+    @ResponseBody
     @AllowAccess
     public Object balance4V8(@LoginUser LoginInfo loginUser,
                          @RequestBody JSONObject params, HttpServletRequest request){
@@ -52,7 +51,8 @@ public class V8CallbackController {
         return v8Service.balance(loginUser, platform, ip);
     }
 
-    @RequestMapping(value = "/callBack", method = RequestMethod.GET)
+    @RequestMapping(value = "/callBack", method = RequestMethod.GET,produces = "application/json;charset=UTF-8")
+    @ResponseBody
     @AllowAccess
     public Object callBack(HttpServletRequest request) {
         String ip = IPAddressUtil.getIpAddress(request);

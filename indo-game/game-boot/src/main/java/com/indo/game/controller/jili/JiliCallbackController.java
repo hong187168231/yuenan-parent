@@ -33,7 +33,7 @@ public class JiliCallbackController {
     /**
      * 权限验证
      */
-    @RequestMapping(value = "/auth", method = RequestMethod.POST)
+    @RequestMapping(value = "/auth", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object auth(@RequestBody JiliCallbackBetReq jiliCallbackBetReq, HttpServletRequest request) {
@@ -47,7 +47,7 @@ public class JiliCallbackController {
     /**
      * 下注
      */
-    @RequestMapping(value = "/bet", method = RequestMethod.POST)
+    @RequestMapping(value = "/bet", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object bet(@RequestBody JiliCallbackBetReq jiliCallbackBetReq, HttpServletRequest request) {
@@ -61,7 +61,7 @@ public class JiliCallbackController {
     /**
      * 取消订单
      */
-    @RequestMapping(value = "/cancelBet", method = RequestMethod.POST)
+    @RequestMapping(value = "/cancelBet", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object cancelBet(@RequestBody JiliCallbackBetReq jiliCallbackBetReq, HttpServletRequest request) {
@@ -75,7 +75,7 @@ public class JiliCallbackController {
     /**
      * 牌局下注
      */
-    @RequestMapping(value = "/sessionBet", method = RequestMethod.POST)
+    @RequestMapping(value = "/sessionBet", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object sessionBet(@RequestBody JiliCallbackSessionBetReq jiliCallbackSessionBetReq, HttpServletRequest request) {
@@ -89,7 +89,7 @@ public class JiliCallbackController {
     /**
      * 取消订单
      */
-    @RequestMapping(value = "/cancelSessionBet", method = RequestMethod.POST)
+    @RequestMapping(value = "/cancelSessionBet", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object cancelSessionBet(@RequestBody JiliCallbackSessionBetReq jiliCallbackSessionBetReq, HttpServletRequest request) {

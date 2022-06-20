@@ -37,7 +37,7 @@ public class FCCallbackController {
     /**
      * 查询玩家余额
      */
-    @RequestMapping(value = "/GetBalance", method = RequestMethod.POST)
+    @RequestMapping(value = "/GetBalance", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object balance(String Params, HttpServletRequest request) {
@@ -57,7 +57,7 @@ public class FCCallbackController {
     /**
      * FC 游戏下注
      */
-    @RequestMapping(value = "/BettingAndPayout", method = RequestMethod.POST)
+    @RequestMapping(value = "/BettingAndPayout", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object bet(String Params, HttpServletRequest request) {
@@ -77,7 +77,7 @@ public class FCCallbackController {
     /**
      * 取消交易
      */
-    @RequestMapping(value = "/CancelBet", method = RequestMethod.POST)
+    @RequestMapping(value = "/CancelBet", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object cancel(String Params, HttpServletRequest request) {

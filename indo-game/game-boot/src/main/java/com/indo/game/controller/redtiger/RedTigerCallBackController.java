@@ -28,7 +28,7 @@ public class RedTigerCallBackController {
     /**
      * 令牌验证
      */
-    @RequestMapping(value = "/check", method = RequestMethod.POST)
+    @RequestMapping(value = "/check", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object check(@RequestBody JSONObject params, HttpServletRequest request) {
@@ -43,7 +43,7 @@ public class RedTigerCallBackController {
     /**
      * 查询余额
      */
-    @RequestMapping(value = "/balance", method = RequestMethod.POST)
+    @RequestMapping(value = "/balance", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object balance(@RequestBody JSONObject params, HttpServletRequest request) {
@@ -59,7 +59,7 @@ public class RedTigerCallBackController {
     /**
      * 下注
      */
-    @RequestMapping(value = "/debit", method = RequestMethod.POST)
+    @RequestMapping(value = "/debit", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object debit(@RequestBody JSONObject params, HttpServletRequest request) {
@@ -74,7 +74,7 @@ public class RedTigerCallBackController {
     /**
      * 派奖
      */
-    @RequestMapping(value = "/credit", method = RequestMethod.POST)
+    @RequestMapping(value = "/credit", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object credit(@RequestBody JSONObject params, HttpServletRequest request) {
@@ -89,7 +89,7 @@ public class RedTigerCallBackController {
     /**
      * 撤销
      */
-    @RequestMapping(value = "/cancel", method = RequestMethod.POST)
+    @RequestMapping(value = "/cancel", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object cancel(@RequestBody JSONObject params, HttpServletRequest request) {
@@ -104,7 +104,7 @@ public class RedTigerCallBackController {
     /**
      * 活动派奖
      */
-    @RequestMapping(value = "/promo_payout", method = RequestMethod.POST)
+    @RequestMapping(value = "/promo_payout", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object promo_payout(@RequestBody JSONObject params, HttpServletRequest request) {

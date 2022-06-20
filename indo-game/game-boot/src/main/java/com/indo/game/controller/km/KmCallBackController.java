@@ -30,7 +30,8 @@ public class KmCallBackController {
     /**
      * 查询余额
      */
-    @RequestMapping(value = "/wallet/balance", method = RequestMethod.POST)
+    @RequestMapping(value = "/wallet/balance", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
+    @ResponseBody
     @AllowAccess
     public Object getBalance(@RequestBody JSONObject jsonObject,
                              HttpServletRequest request) {
@@ -45,7 +46,8 @@ public class KmCallBackController {
     /**
      * 扣款接口
      */
-    @RequestMapping(value = "/wallet/debit", method = RequestMethod.POST)
+    @RequestMapping(value = "/wallet/debit", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
+    @ResponseBody
     @AllowAccess
     public Object debit(@RequestBody JSONObject jsonObject,
                            HttpServletRequest request) {
@@ -59,7 +61,8 @@ public class KmCallBackController {
     /**
      * 扣款接口
      */
-    @RequestMapping(value = "/wallet/credit", method = RequestMethod.POST)
+    @RequestMapping(value = "/wallet/credit", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
+    @ResponseBody
     @AllowAccess
     public Object credit(@RequestBody JSONObject jsonObject,
                         HttpServletRequest request) {

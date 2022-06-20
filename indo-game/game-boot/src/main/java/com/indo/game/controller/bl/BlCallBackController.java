@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -27,8 +28,9 @@ public class BlCallBackController {
     /**
      * 查询余额
      */
-    @RequestMapping(value = "/player/balance", method = RequestMethod.POST)
+    @RequestMapping(value = "/player/balance", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @AllowAccess
+    @ResponseBody
     public Object balance(BlCallBackReq blCallBackReq,
                           HttpServletRequest request) {
 
@@ -42,8 +44,9 @@ public class BlCallBackController {
     /**
      * 扣款接口
      */
-    @RequestMapping(value = "/player/cost", method = RequestMethod.POST)
+    @RequestMapping(value = "/player/cost", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @AllowAccess
+    @ResponseBody
     public Object player(BlCallBackReq blCallBackReq,
                          HttpServletRequest request) {
         String ip = IPAddressUtil.getIpAddress(request);

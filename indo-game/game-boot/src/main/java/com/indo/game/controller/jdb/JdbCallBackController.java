@@ -25,7 +25,7 @@ public class JdbCallBackController {
     /**
      * 回调
      */
-    @RequestMapping(value="/callBack",method=RequestMethod.POST)
+    @RequestMapping(value="/callBack",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object callBack(String x, HttpServletRequest request) {

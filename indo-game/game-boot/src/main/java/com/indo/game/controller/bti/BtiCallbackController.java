@@ -12,10 +12,7 @@ import com.indo.game.service.bti.BtiCallbackService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -28,7 +25,8 @@ public class BtiCallbackController {
     @Autowired
     private BtiCallbackService btiCallbackService;
 
-    @RequestMapping(value = "/ValidateToken", method = RequestMethod.GET)
+    @RequestMapping(value = "/ValidateToken", method = RequestMethod.GET,produces = "application/json;charset=UTF-8")
+    @ResponseBody
     @AllowAccess
     public Object validateToken(@RequestParam("auth_token") String authToken, HttpServletRequest request) {
         String ip = IPAddressUtil.getIpAddress(request);
@@ -38,8 +36,9 @@ public class BtiCallbackController {
         return object;
     }
 
-    @RequestMapping(value = "/Reserve", method = RequestMethod.POST)
+    @RequestMapping(value = "/Reserve", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @AllowAccess
+    @ResponseBody
     public Object reserve(HttpServletRequest request) {
         String ip = IPAddressUtil.getIpAddress(request);
         BtiReserveBetsRequest reserveBetsRequest = null;
@@ -55,8 +54,9 @@ public class BtiCallbackController {
         return object;
     }
 
-    @RequestMapping(value = "/DebitReserve", method = RequestMethod.POST)
+    @RequestMapping(value = "/DebitReserve", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @AllowAccess
+    @ResponseBody
     public Object debitReserve(HttpServletRequest request) {
         String ip = IPAddressUtil.getIpAddress(request);
         String reqId = request.getParameter("req_id");
@@ -74,8 +74,9 @@ public class BtiCallbackController {
     }
 
 
-    @RequestMapping(value = "/CancelReserve", method = RequestMethod.GET)
+    @RequestMapping(value = "/CancelReserve", method = RequestMethod.GET,produces = "application/json;charset=UTF-8")
     @AllowAccess
+    @ResponseBody
     public Object cancelReserve(HttpServletRequest request) {
         String ip = IPAddressUtil.getIpAddress(request);
         BtiReserveBetsRequest reserveBetsRequest = null;
@@ -91,8 +92,9 @@ public class BtiCallbackController {
         return object;
     }
 
-    @RequestMapping(value = "/CommitReserve", method = RequestMethod.GET)
+    @RequestMapping(value = "/CommitReserve", method = RequestMethod.GET,produces = "application/json;charset=UTF-8")
     @AllowAccess
+    @ResponseBody
     public Object commitReserve(HttpServletRequest request) {
         String ip = IPAddressUtil.getIpAddress(request);
         BtiReserveBetsRequest reserveBetsRequest = null;
@@ -108,8 +110,9 @@ public class BtiCallbackController {
         return object;
     }
 
-    @RequestMapping(value = "/DebitCustomer", method = RequestMethod.POST)
+    @RequestMapping(value = "/DebitCustomer", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @AllowAccess
+    @ResponseBody
     public Object debitCustomer(HttpServletRequest request) {
         String ip = IPAddressUtil.getIpAddress(request);
         String reqId = request.getParameter("req_id");
@@ -127,8 +130,9 @@ public class BtiCallbackController {
 
     }
 
-    @RequestMapping(value = "/CreditCustomer", method = RequestMethod.POST)
+    @RequestMapping(value = "/CreditCustomer", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @AllowAccess
+    @ResponseBody
     public Object creditCustomer(HttpServletRequest request) {
         String ip = IPAddressUtil.getIpAddress(request);
         String reqId = request.getParameter("req_id");

@@ -24,7 +24,7 @@ public class UgCallBackController {
     /**
      * 玩家登入验证URL
      */
-    @RequestMapping(value="/checkLogin",method=RequestMethod.POST)
+    @RequestMapping(value="/checkLogin",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object checkLogin(@RequestParam Map<String, String> params) {
@@ -41,7 +41,7 @@ public class UgCallBackController {
     /**
      * 获取余额
      */
-    @RequestMapping(value="/getBalance",method=RequestMethod.POST)
+    @RequestMapping(value="/getBalance",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object getBalance(@RequestParam Map<String, String> params) {
@@ -59,7 +59,7 @@ public class UgCallBackController {
     /**
      * 加余额/扣除余额
      */
-    @RequestMapping(value="/changeBalance",method=RequestMethod.POST)
+    @RequestMapping(value="/changeBalance",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object transfer(@RequestParam Map<String, String> params) {
@@ -77,7 +77,7 @@ public class UgCallBackController {
     /**
      * 取消交易
      */
-    @RequestMapping(value="/cancelBet",method=RequestMethod.POST)
+    @RequestMapping(value="/cancelBet",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object cancel(@RequestParam Map<String, String> params) {
@@ -95,7 +95,7 @@ public class UgCallBackController {
     /**
      * 检查交易结果
      */
-    @RequestMapping(value="/checkTxn",method=RequestMethod.POST)
+    @RequestMapping(value="/checkTxn",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object check(@RequestParam Map<String, String> params) {

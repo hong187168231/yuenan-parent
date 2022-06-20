@@ -33,7 +33,7 @@ public class PpController {
     /**
      * 余额存转
      */
-    @RequestMapping(value = "/transfer", method = RequestMethod.POST)
+    @RequestMapping(value = "/transfer", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object transfer(PpApiTransferReq ppApiTransferReq, HttpServletRequest request) {
@@ -48,7 +48,7 @@ public class PpController {
     /**
      * 获取PP电子余额
      */
-    @RequestMapping(value = "/getBalance", method = RequestMethod.POST)
+    @RequestMapping(value = "/getBalance", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object getBalance(PpApiGetBalanceReq ppApiGetBalanceReq, HttpServletRequest request) {
@@ -63,7 +63,7 @@ public class PpController {
     /**
      * 启动游戏
      */
-    @RequestMapping(value = "/startGame", method = RequestMethod.POST)
+    @RequestMapping(value = "/startGame", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object startGame(PpApiStartGameReq ppApiStartGameReq, HttpServletRequest request) {
