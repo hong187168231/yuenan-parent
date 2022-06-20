@@ -107,14 +107,11 @@ public class AwcServiceImpl implements AwcService {
                 //创建玩家
                 return createMemberGame(gameParentPlatform,gamePlatform, ip, cptOpenMember,isMobileLogin);
             } else {
-                Result result = this.logout(loginUser,ip);
-                if(null!=result&&"00000".equals(result.getCode())) {
-                    cptOpenMember.setLoginTime(new Date());
-                    externalService.updateCptOpenMember(cptOpenMember);
-                    //登录
-                    return initGame(gameParentPlatform,gamePlatform, ip, cptOpenMember, isMobileLogin);
-                }
-                return result;
+                this.logout(loginUser,ip);
+                cptOpenMember.setLoginTime(new Date());
+                externalService.updateCptOpenMember(cptOpenMember);
+                //登录
+                return initGame(gameParentPlatform,gamePlatform, ip, cptOpenMember, isMobileLogin);
             }
         } catch (Exception e) {
             e.printStackTrace();
