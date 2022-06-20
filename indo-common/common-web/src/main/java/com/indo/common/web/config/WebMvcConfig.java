@@ -33,6 +33,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
+import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.alibaba.fastjson.support.config.FastJsonConfig;
+import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
+import org.springframework.http.MediaType;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 
 @Configuration
 @Slf4j
@@ -85,6 +91,18 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
 
         jackson2HttpMessageConverter.setObjectMapper(objectMapper);
         converters.add(0, jackson2HttpMessageConverter);
+
+        FastJsonHttpMessageConverter fastJsonConverter = new FastJsonHttpMessageConverter();
+        FastJsonConfig config = new FastJsonConfig();
+        config.setCharset(StandardCharsets.UTF_8);
+        //设置允许返回为null的属性
+        config.setSerializerFeatures(SerializerFeature.WriteMapNullValue);
+
+        fastJsonConverter.setFastJsonConfig(config);
+        List<MediaType> list = new ArrayList<>();
+        list.add(MediaType.APPLICATION_JSON);
+        fastJsonConverter.setSupportedMediaTypes(list);
+        converters.add(fastJsonConverter);
     }
 
     @Bean
