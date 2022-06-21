@@ -118,12 +118,13 @@ public class SaCallbackServiceImpl implements SaCallbackService {
             balance = balance.subtract(betAmount);
 
             // 更新玩家余额
-            gameCommonService.updateUserBalance(memBaseinfo, betAmount.subtract(betAmount),
+            gameCommonService.updateUserBalance(memBaseinfo, betAmount,
                     GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
 
-            String txnid = jsonObject.getString("gameid");
+            String gameId = jsonObject.getString("gameid");
+            String txnId = jsonObject.getString("txnid");
             // 查询用户请求订单
-            Txns oldTxns = getTxns(platformGameParent, txnid);
+            Txns oldTxns = getTxnsByRounId(platformGameParent, gameId);
             if (null != oldTxns) {
                 return initFailureResponse(122, "交易已存在");
             }
@@ -136,14 +137,14 @@ public class SaCallbackServiceImpl implements SaCallbackService {
             GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
             Txns txns = new Txns();
             //游戏商注单号
-            txns.setPlatformTxId(txnid);
+            txns.setPlatformTxId(txnId);
 
             //玩家 ID
             txns.setUserId(memBaseinfo.getAccount());
             //玩家货币代码
             txns.setCurrency(platformGameParent.getCurrencyType());
 //            txns.setOdds(kaCallbackPlayReq.getBetPerSelection());
-            txns.setRoundId(jsonObject.getString("gameid"));
+            txns.setRoundId(gameId);
             txns.setGameInfo(jsonObject.getString("betdetails"));
             //平台代码
             txns.setPlatform(gameParentPlatform.getPlatformCode());
@@ -247,6 +248,7 @@ public class SaCallbackServiceImpl implements SaCallbackService {
 
             balance = balance.add(amount);
             gameCommonService.updateUserBalance(memBaseinfo, amount, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
+            String txnId = jsonObject.getString("txnid");
             Txns txns = new Txns();
             BeanUtils.copyProperties(oldTxns, txns);
             //赌注的结果 : 赢:0,输:1,平手:2
@@ -263,6 +265,7 @@ public class SaCallbackServiceImpl implements SaCallbackService {
 
             //真实返还金额,游戏赢分
             txns.setRealWinAmount(amount);
+            txns.setPlatformTxId(txnId);
             //返还金额 (包含下注金额)
             txns.setWinAmount(amount);
 
@@ -316,6 +319,7 @@ public class SaCallbackServiceImpl implements SaCallbackService {
             // 会员余额
             BigDecimal balance = memBaseinfo.getBalance();
             String gameid = jsonObject.getString("gameid");
+            String txnId = jsonObject.getString("txnid");
             // 查询用户请求订单
             Txns oldTxns = getTxnsByRounId(platformGameParent, gameid);
             if (null == oldTxns) {
@@ -323,6 +327,7 @@ public class SaCallbackServiceImpl implements SaCallbackService {
             }
             Txns txns = new Txns();
             BeanUtils.copyProperties(oldTxns, txns);
+            txns.setPlatformTxId(txnId);
             //赌注的结果 : 赢:0,输:1,平手:2
             int resultTyep = 1;
             oldTxns.setResultType(resultTyep);
