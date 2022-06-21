@@ -9,10 +9,7 @@ import com.indo.game.service.bl.BlCallbackService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -31,13 +28,13 @@ public class BlCallBackController {
     @RequestMapping(value = "/player/balance", method = RequestMethod.POST,produces = "text/json;charset=UTF-8")
     @AllowAccess
     @ResponseBody
-    public Object balance(BlCallBackReq blCallBackReq,
-                          HttpServletRequest request) {
+    public Object balance(@RequestBody BlCallBackReq blCallBackReq,
+                          @RequestBody HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("blCallBack {} getBalance 回调,下注params:{}", JSON.toJSON(blCallBackReq));
+        logger.info("blCallBack  getBalance 回调下注params:{},ip{}", JSON.toJSON(blCallBackReq),ip);
         Object object = blCallbackService.blBlanceCallback(blCallBackReq, ip);
-        logger.info("blCallBack {} getBalance 回调下注返回数据,取得用户的余额 params:{}", object);
+        logger.info("blCallBack getBalance 回调下注返回数据 取得用户的余额 params:{}", object);
         return object;
     }
 
@@ -47,12 +44,12 @@ public class BlCallBackController {
     @RequestMapping(value = "/player/cost", method = RequestMethod.POST,produces = "text/json;charset=UTF-8")
     @AllowAccess
     @ResponseBody
-    public Object player(BlCallBackReq blCallBackReq,
-                         HttpServletRequest request) {
+    public Object player(@RequestBody BlCallBackReq blCallBackReq,
+                         @RequestBody HttpServletRequest request) {
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("blCallBack {} player回调,params:{}", JSON.toJSON(blCallBackReq));
+        logger.info("blCallBack  player回调 params:{},ip{}", JSON.toJSON(blCallBackReq),ip);
         Object object = blCallbackService.blPlayerCallback(blCallBackReq, ip);
-        logger.info("blCallBack {} player回调返回数据, params:{}", object);
+        logger.info("blCallBack  player回调返回数据  params:{}", object);
         return object;
     }
 

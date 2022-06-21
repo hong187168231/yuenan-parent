@@ -60,8 +60,8 @@ public class MtServiceImpl implements MtService {
         if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
             return Result.failed("g000001", gameParentPlatform.getMaintenanceContent());
         }
+        GamePlatform gamePlatform = new GamePlatform();
         if (!platform.equals(parentName)) {
-            GamePlatform gamePlatform;
             // 是否开售校验
             gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
             if (null == gamePlatform) {
@@ -96,7 +96,7 @@ public class MtServiceImpl implements MtService {
                 cptOpenMember.setLoginTime(new Date());
                 cptOpenMember.setType(parentName);
                 //创建玩家
-                return createMemberGame(cptOpenMember, gameParentPlatform, platform, loginUser);
+                return createMemberGame(cptOpenMember, gameParentPlatform, gamePlatform, loginUser);
             } else {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
@@ -104,7 +104,7 @@ public class MtServiceImpl implements MtService {
                 // 退出游戏
                 commonRequest(getLoginOutUrl(loginUser.getAccount()));
                 // 启动游戏
-                String startUrl = getStartGame(cptOpenMember, gameParentPlatform.getLanguageType(), platform);
+                String startUrl = getStartGame(cptOpenMember, gameParentPlatform,gamePlatform);
                 JSONObject jsonObject = commonRequest(startUrl);
                 if (null == jsonObject) {
                     return Result.failed("g091087", "第三方请求异常！");
@@ -177,7 +177,7 @@ public class MtServiceImpl implements MtService {
                 //此交易是否是投注 true是投注 false 否
                 txns.setBet(false);
                 //玩家 ID
-                txns.setUserId(memBaseinfo.getId().toString());
+                txns.setUserId(memBaseinfo.getAccount());
                 //玩家货币代码
                 txns.setCurrency(platformGameParent.getCurrencyType());
                 //平台代码
@@ -478,7 +478,7 @@ public class MtServiceImpl implements MtService {
      * @return Result
      */
     private Result createMemberGame(CptOpenMember cptOpenMember, GameParentPlatform gameParentPlatform,
-                                    String platform, LoginInfo loginUser) {
+                                    GamePlatform gamePlatform, LoginInfo loginUser) {
 
         // 用户注册
         JSONObject result = commonRequest(getCreateUrl(cptOpenMember, loginUser));
@@ -489,7 +489,7 @@ public class MtServiceImpl implements MtService {
         if (1 == result.getInteger("resultCode")) {
             externalService.saveCptOpenMember(cptOpenMember);
             // 启动游戏
-            String startUrl = getStartGame(cptOpenMember, gameParentPlatform.getLanguageType(), platform);
+            String startUrl = getStartGame(cptOpenMember, gameParentPlatform,gamePlatform);
             JSONObject jsonObject = commonRequest(startUrl);
             if (null == jsonObject) {
                 return Result.failed("g091087", "第三方请求异常！");
@@ -526,11 +526,14 @@ public class MtServiceImpl implements MtService {
      * @param cptOpenMember、 cptOpenMember
      * @return url
      */
-    private String getStartGame(CptOpenMember cptOpenMember, String lang, String platform) {
+    private String getStartGame(CptOpenMember cptOpenMember, GameParentPlatform gameParentPlatform, GamePlatform gamePlatform) {
 
         JSONObject jsonObject = new JSONObject(new LinkedHashMap<>());
-        jsonObject.put("gameCode", platform);
-        jsonObject.put("lang", lang);
+        if(!gamePlatform.getPlatformCode().equals(gameParentPlatform.getPlatformCode())){
+            jsonObject.put("gameCode", gamePlatform.getPlatformCode());
+        }
+
+        jsonObject.put("lang", gameParentPlatform.getLanguageType());
         String data = jsonObject.toJSONString();
         StringBuilder url = new StringBuilder();
         url.append(OpenAPIProperties.MT_API_URL);
