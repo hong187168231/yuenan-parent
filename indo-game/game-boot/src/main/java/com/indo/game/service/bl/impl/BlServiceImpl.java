@@ -161,6 +161,7 @@ public class BlServiceImpl implements BlService {
             String sign = SignMd5Utils.getSha1(stringBuilder.toString()).toLowerCase();
             map.put("player_account", loginUser.getAccount());
             map.put("AccessKeyId", OpenAPIProperties.BL_KEY_ID);
+            map.put("Timestamp", dataTime + "");
             map.put("Nonce", random + "");
             map.put("Sign", sign);
             StringBuilder apiUrl = new StringBuilder();
