@@ -11,6 +11,7 @@ import com.indo.game.pojo.dto.comm.ApiResponseData;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.game.pojo.entity.manage.GameParentPlatform;
 import com.indo.game.pojo.entity.manage.GamePlatform;
+import com.indo.game.pojo.vo.callback.bl.BlResponseParentData;
 import com.indo.game.service.bl.BlService;
 import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
@@ -103,11 +104,11 @@ public class BlServiceImpl implements BlService {
                 logout(loginUser, platform, ip);
             }
 
-            JSONObject apiResponseData = gameLogin(gameParentPlatform, gamePlatform,cptOpenMember);
-            if (null != apiResponseData && "0".equals(apiResponseData.getJSONObject("resp_msg").getString("code"))) {
+            BlResponseParentData apiResponseData = gameLogin(gameParentPlatform, gamePlatform,cptOpenMember);
+            if (null != apiResponseData && "0".equals(apiResponseData.getResp_msg().getCode())) {
                 //登录
                 ApiResponseData responseData = new ApiResponseData();
-                responseData.setPathUrl(apiResponseData.getJSONObject("resp_data").getString("url"));
+                responseData.setPathUrl(apiResponseData.getResp_data().getUrl());
                 return Result.success(responseData);
             }else {
                 return Result.failed("g091087", "第三方请求异常！");
@@ -118,7 +119,7 @@ public class BlServiceImpl implements BlService {
         }
     }
 
-    private JSONObject gameLogin(GameParentPlatform platformGameParent,GamePlatform gamePlatform, CptOpenMember cptOpenMember) {
+    private BlResponseParentData gameLogin(GameParentPlatform platformGameParent,GamePlatform gamePlatform, CptOpenMember cptOpenMember) {
         Map<String, String> map = new HashMap<String, String>();
         Integer random = RandomUtil.getRandomOne(7);
         Long dataTime = System.currentTimeMillis() / 1000;
@@ -138,7 +139,7 @@ public class BlServiceImpl implements BlService {
         map.put("Sign", sign);
         StringBuilder apiUrl = new StringBuilder();
         apiUrl.append(OpenAPIProperties.BL_API_URL).append("/v1/player/login");
-        JSONObject dgApiResponseData = null;
+        BlResponseParentData dgApiResponseData = null;
         try {
             dgApiResponseData = commonRequest(apiUrl.toString(), map, cptOpenMember.getUserId(), "createBLlogin");
         } catch (Exception e) {
@@ -167,8 +168,8 @@ public class BlServiceImpl implements BlService {
             map.put("Sign", sign);
             StringBuilder apiUrl = new StringBuilder();
             apiUrl.append(OpenAPIProperties.BL_API_URL).append("/v1/player/logout");
-            JSONObject apiResponseData = commonRequest(apiUrl.toString(), map, loginUser.getId().intValue(), "BLlogout");
-            if (null != apiResponseData && "0".equals(apiResponseData.getJSONObject("resp_msg").getString("code"))) {
+            BlResponseParentData apiResponseData = commonRequest(apiUrl.toString(), map, loginUser.getId().intValue(), "BLlogout");
+            if (null != apiResponseData && "0".equals(apiResponseData.getResp_msg().getCode())) {
                 return Result.failed("g091087", "第三方请求异常！");
             }else {
                 return Result.success();
@@ -184,16 +185,16 @@ public class BlServiceImpl implements BlService {
     /**
      * 公共请求
      */
-    public JSONObject commonRequest(String apiUrl, Map<String, String> params, Integer userId, String type) throws Exception {
-        logger.info("BLlog commonRequest userId:{},paramsMap:{}", userId, params);
-        JSONObject apiResponseData = null;
+    public BlResponseParentData commonRequest(String apiUrl, Map<String, String> params, Integer userId, String type) throws Exception {
+        logger.info("BLlog commonRequest userId:{},type:{},paramsMap:{}", userId, type,params);
+        BlResponseParentData apiResponseData = null;
         String resultString = GameUtil.doProxyPostJson(OpenAPIProperties.PROXY_HOST_NAME, OpenAPIProperties.PROXY_PORT, OpenAPIProperties.PROXY_TCP,
                 apiUrl, params, type, userId);
         logger.info("BLlog  apiResponse:" + resultString);
         if (StringUtils.isNotEmpty(resultString)) {
-            apiResponseData = JSONObject.parseObject(resultString);
-            logger.info("BLlog  {}:commonRequest type:{}, operateFlag:{}, hostName:{}, params:{}, result:{}, awcApiResponse:{}",
-                    userId, type, null, params, resultString, JSONObject.toJSONString(apiResponseData));
+            apiResponseData = JSONObject.parseObject(resultString,BlResponseParentData.class);
+            logger.info("BLlog  commonRequest userId:{}, type:{}, awcApiResponse:{}",
+                    userId, type,JSONObject.toJSONString(apiResponseData));
         }
         return apiResponseData;
     }
