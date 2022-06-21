@@ -62,8 +62,9 @@ public class BlServiceImpl implements BlService {
         if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
             return Result.failed("g000001", gameParentPlatform.getMaintenanceContent());
         }
+        GamePlatform gamePlatform = new GamePlatform();
         if (!platform.equals(parentName)) {
-            GamePlatform gamePlatform;
+
             // 是否开售校验
             gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
             if (null == gamePlatform) {
@@ -102,7 +103,7 @@ public class BlServiceImpl implements BlService {
                 logout(loginUser, platform, ip);
             }
 
-            JSONObject apiResponseData = gameLogin(gameParentPlatform, cptOpenMember);
+            JSONObject apiResponseData = gameLogin(gameParentPlatform, gamePlatform,cptOpenMember);
             if (null == apiResponseData || !"200".equals(apiResponseData.getJSONObject("resp_msg").getString("code"))) {
                 return Result.failed("g091087", "第三方请求异常！");
             }
@@ -116,13 +117,16 @@ public class BlServiceImpl implements BlService {
         }
     }
 
-    private JSONObject gameLogin(GameParentPlatform platformGameParent, CptOpenMember cptOpenMember) {
+    private JSONObject gameLogin(GameParentPlatform platformGameParent,GamePlatform gamePlatform, CptOpenMember cptOpenMember) {
         Map<String, String> map = new HashMap<String, String>();
         Integer random = RandomUtil.getRandomOne(7);
         Long dataTime = System.currentTimeMillis() / 1000;
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(OpenAPIProperties.BL_KEY_SECRET).append(random).append(dataTime);
         String sign = SignMd5Utils.getSha1(stringBuilder.toString()).toLowerCase();
+        if(!gamePlatform.getPlatformCode().equals(platformGameParent.getPlatformCode())){
+            map.put("game_code", gamePlatform.getPlatformCode());
+        }
         map.put("player_account", cptOpenMember.getUserName());
         map.put("lang", platformGameParent.getLanguageType());
         map.put("ip", "116.204.208.100");
