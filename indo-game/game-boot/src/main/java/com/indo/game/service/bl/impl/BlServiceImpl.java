@@ -104,13 +104,14 @@ public class BlServiceImpl implements BlService {
             }
 
             JSONObject apiResponseData = gameLogin(gameParentPlatform, gamePlatform,cptOpenMember);
-            if (null == apiResponseData || !"200".equals(apiResponseData.getJSONObject("resp_msg").getString("code"))) {
+            if (null != apiResponseData && "0".equals(apiResponseData.getJSONObject("resp_msg").getString("code"))) {
+                //登录
+                ApiResponseData responseData = new ApiResponseData();
+                responseData.setPathUrl(apiResponseData.getJSONObject("resp_data").getString("url"));
+                return Result.success(responseData);
+            }else {
                 return Result.failed("g091087", "第三方请求异常！");
             }
-            //登录
-            ApiResponseData responseData = new ApiResponseData();
-            responseData.setPathUrl(apiResponseData.getJSONObject("resp_data").getString("url"));
-            return Result.success(responseData);
         } catch (Exception e) {
             e.printStackTrace();
             return Result.failed("g100104", "网络繁忙，请稍后重试！");
@@ -167,10 +168,9 @@ public class BlServiceImpl implements BlService {
             StringBuilder apiUrl = new StringBuilder();
             apiUrl.append(OpenAPIProperties.BL_API_URL).append("/v1/player/logout");
             JSONObject apiResponseData = commonRequest(apiUrl.toString(), map, loginUser.getId().intValue(), "BLlogout");
-            if (null == apiResponseData || !"200".equals(apiResponseData.getJSONObject("resp_msg").getString("code"))) {
+            if (null != apiResponseData && "0".equals(apiResponseData.getJSONObject("resp_msg").getString("code"))) {
                 return Result.failed("g091087", "第三方请求异常！");
-            }
-            if ("200".equals(apiResponseData.getJSONObject("resp_msg").getString("code"))) {
+            }else {
                 return Result.success();
             }
         } catch (Exception e) {
@@ -178,7 +178,6 @@ public class BlServiceImpl implements BlService {
             e.printStackTrace();
             return Result.failed();
         }
-        return Result.failed();
     }
 
 
@@ -186,7 +185,7 @@ public class BlServiceImpl implements BlService {
      * 公共请求
      */
     public JSONObject commonRequest(String apiUrl, Map<String, String> params, Integer userId, String type) throws Exception {
-        logger.info("BLlog  {} commonRequest userId:{},paramsMap:{}", userId, params);
+        logger.info("BLlog commonRequest userId:{},paramsMap:{}", userId, params);
         JSONObject apiResponseData = null;
         String resultString = GameUtil.doProxyPostJson(OpenAPIProperties.PROXY_HOST_NAME, OpenAPIProperties.PROXY_PORT, OpenAPIProperties.PROXY_TCP,
                 apiUrl, params, type, userId);
