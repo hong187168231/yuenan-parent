@@ -109,6 +109,7 @@ public class MtServiceImpl implements MtService {
                 if (null == jsonObject) {
                     return Result.failed("g091087", "第三方请求异常！");
                 }
+                logger.info("天美log getStartGameparamsMap:{}", jsonObject.toJSONString());
                 if (jsonObject.getInteger("resultCode").equals(1)) {
                     // 请求URL
                     ApiResponseData responseData = new ApiResponseData();
