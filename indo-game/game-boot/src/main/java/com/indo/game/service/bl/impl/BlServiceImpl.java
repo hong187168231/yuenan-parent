@@ -143,7 +143,7 @@ public class BlServiceImpl implements BlService {
         try {
             dgApiResponseData = commonRequest(apiUrl.toString(), map, cptOpenMember.getUserId(), "createBLlogin");
         } catch (Exception e) {
-            logger.error("BLlog dgGameLoginr:{}", e);
+            logger.error("BLlog createBLlogin:{}", e);
             e.printStackTrace();
         }
         return dgApiResponseData;
@@ -170,11 +170,12 @@ public class BlServiceImpl implements BlService {
             apiUrl.append(OpenAPIProperties.BL_API_URL).append("/v1/player/logout");
             BlResponseParentData apiResponseData = commonRequest(apiUrl.toString(), map, loginUser.getId().intValue(), "BLlogout");
             if (null != apiResponseData && "0".equals(apiResponseData.getResp_msg().getCode())) {
-                return Result.failed("g091087", "第三方请求异常！");
-            }else {
                 return Result.success();
+            }else {
+                return Result.failed("g091087", "第三方请求异常！");
             }
         } catch (Exception e) {
+            e.printStackTrace();
             logger.error("BLlog  BLlogout:{}", e);
             e.printStackTrace();
             return Result.failed();
@@ -186,11 +187,11 @@ public class BlServiceImpl implements BlService {
      * 公共请求
      */
     public BlResponseParentData commonRequest(String apiUrl, Map<String, String> params, Integer userId, String type) throws Exception {
-        logger.info("BLlog commonRequest userId:{},type:{},paramsMap:{}", userId, type,params);
+        logger.info("BLlog commonRequest userId:{},type:{},paramsMap:{},apiUrl:{}", userId, type,params,apiUrl);
         BlResponseParentData apiResponseData = null;
         String resultString = GameUtil.doProxyPostJson(OpenAPIProperties.PROXY_HOST_NAME, OpenAPIProperties.PROXY_PORT, OpenAPIProperties.PROXY_TCP,
                 apiUrl, params, type, userId);
-        logger.info("BLlog  apiResponse:" + resultString);
+        logger.info("BLlog  apiResponse:apiResponseParamsMap:{},apiUrl:{}",resultString,apiUrl);
         if (StringUtils.isNotEmpty(resultString)) {
             apiResponseData = JSONObject.parseObject(resultString,BlResponseParentData.class);
             logger.info("BLlog  commonRequest apiResponse userId:{}, type:{}, awcApiResponse:{}",
