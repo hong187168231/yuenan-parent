@@ -110,13 +110,15 @@ public class MtServiceImpl implements MtService {
                 if (null == jsonObject) {
                     return Result.failed("g091087", "第三方请求异常！");
                 }
-                logger.info("天美log getStartGameparamsMap:{}", jsonObject.toJSONString());
-                if (jsonObject.getInteger("resultCode").equals(1)) {
+                logger.info("天美log getStartGame启动游戏返回paramsMap:{}", jsonObject.toJSONString());
+                if (jsonObject.getInteger("resultCode")==1) {
                     // 请求URL
                     ApiResponseData responseData = new ApiResponseData();
                     responseData.setPathUrl(jsonObject.getString("url"));
+                    logger.info("天美log getStartGame启动游戏返回成功:resultCode:{},PathUrl:{}",jsonObject.getInteger("resultCode"),jsonObject.getString("url"));
                     return Result.success(responseData);
                 } else {
+                    logger.info("天美log getStartGame启动游戏返回失败:resultCode:{}}",jsonObject.getInteger("resultCode"));
                     return errorCode(jsonObject.getString("resultCode"));
                 }
             }
@@ -487,21 +489,25 @@ public class MtServiceImpl implements MtService {
         if (null == result) {
             return Result.failed("g091087", "第三方请求异常！");
         }
-
+        logger.info("createMemberGame 用户注册返回JSONObject:{}", result.toJSONString());
         if (1 == result.getInteger("resultCode")||5==result.getInteger("resultCode")) {
             externalService.saveCptOpenMember(cptOpenMember);
             // 启动游戏
             String startUrl = getStartGame(cptOpenMember, gameParentPlatform,gamePlatform);
+            logger.info("createMemberGame 启动游戏startUrl:{}", startUrl);
             JSONObject jsonObject = commonRequest(startUrl);
             if (null == jsonObject) {
                 return Result.failed("g091087", "第三方请求异常！");
             }
-            if (jsonObject.getInteger("resultCode").equals(1)) {
+            logger.info("createMemberGame 启动游戏返回JSONObject:{}", jsonObject.toJSONString());
+            if (jsonObject.getInteger("resultCode")==1) {
                 // 请求URL
                 ApiResponseData responseData = new ApiResponseData();
                 responseData.setPathUrl(jsonObject.getString("url"));
+                logger.info("天美log createMemberGame启动游戏返回成功:resultCode:{},PathUrl:{}",jsonObject.getInteger("resultCode"),jsonObject.getString("url"));
                 return Result.success(responseData);
             } else {
+                logger.info("天美log createMemberGame启动游戏返回失败:resultCode:{}",jsonObject.getInteger("resultCode"));
                 return errorCode(jsonObject.getString("resultCode"));
             }
         } else {
