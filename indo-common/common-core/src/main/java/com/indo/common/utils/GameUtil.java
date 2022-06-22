@@ -50,17 +50,17 @@ public class GameUtil extends HttpCommonUtils {
     /**
      * 设置连接超时时间,单位毫秒
      */
-    private static final int CONNECT_TIMEOUT = 10000;
+    private static final int CONNECT_TIMEOUT = 180000;
     /*
      * 从连接池获取到连接的超时,单位毫秒
      * */
-    private static final int CONNECTION_REQUEST_TIMEOUT = 3000;
+    private static final int CONNECTION_REQUEST_TIMEOUT = 180000;
     /*
      * 请求获取数据的超时时间,单位毫秒
      * */
-    private static final int SOCKET_TIMEOUT = 7000;
+    private static final int SOCKET_TIMEOUT = 180000;
     // 连接主机超时（30s）
-    public static final int HTTP_CONNECT_TIMEOUT_30S = 30 * 1000;
+    public static final int HTTP_CONNECT_TIMEOUT_30S = 180 * 1000;
     // 从主机读取数据超时（3min）
     public static final int HTTP_READ_TIMEOUT_3MIN = 180 * 1000;
     public static final String DEFAULT_CHARSET = "utf-8";
@@ -600,8 +600,12 @@ public class GameUtil extends HttpCommonUtils {
 
                 // 设置连接超时,设置读取超时
                 RequestConfig requestConfig = RequestConfig.custom()
-                        .setConnectTimeout(10000)
-                        .setSocketTimeout(10000)
+                        // 设置连接超时时间,单位毫秒。
+                        .setConnectTimeout(CONNECT_TIMEOUT)
+                        // 从连接池获取到连接的超时,单位毫秒。
+                        .setConnectionRequestTimeout(CONNECTION_REQUEST_TIMEOUT)
+                        // 请求获取数据的超时时间,单位毫秒;
+                        .setSocketTimeout(SOCKET_TIMEOUT)
                         .build();
                 httpPost.setConfig(requestConfig);
 
@@ -653,8 +657,12 @@ public class GameUtil extends HttpCommonUtils {
 
                 // 设置连接超时,设置读取超时
                 RequestConfig requestConfig = RequestConfig.custom()
-                        .setConnectTimeout(10000)
-                        .setSocketTimeout(10000)
+                        // 设置连接超时时间,单位毫秒。
+                        .setConnectTimeout(CONNECT_TIMEOUT)
+                        // 从连接池获取到连接的超时,单位毫秒。
+                        .setConnectionRequestTimeout(CONNECTION_REQUEST_TIMEOUT)
+                        // 请求获取数据的超时时间,单位毫秒;
+                        .setSocketTimeout(SOCKET_TIMEOUT)
                         .build();
                 httpPost.setConfig(requestConfig);
 
@@ -695,9 +703,9 @@ public class GameUtil extends HttpCommonUtils {
         logger.info("GET请求 httpGetWithCookies headers:{}, proxy: {}", headers, proxy);
         logger.info("GET请求 httpGetWithCookies url:{}", url);
         PoolingHttpClientConnectionManager connManager = new PoolingHttpClientConnectionManager();
-        connManager.setMaxTotal(150);
+        connManager.setMaxTotal(1000);
         connManager.setDefaultConnectionConfig(ConnectionConfig.custom().setCharset(Charset.forName("utf-8")).build());
-        SocketConfig socketConfig = SocketConfig.custom().setSoTimeout(30000).setSoReuseAddress(true).build();
+        SocketConfig socketConfig = SocketConfig.custom().setSoTimeout(CONNECT_TIMEOUT).setSoReuseAddress(true).build();
         connManager.setDefaultSocketConfig(socketConfig);
         CloseableHttpClient httpClient = HttpClients.custom().setConnectionManager(connManager).setConnectionManagerShared(true).build();
 
