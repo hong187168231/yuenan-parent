@@ -103,7 +103,7 @@ public class BlServiceImpl implements BlService {
                 externalService.updateCptOpenMember(cptOpenMember);
                 Result result = logout(loginUser, platform, ip);
             }
-
+            logger.info("BL启动游戏 gameLogin");
             BlResponseParentData apiResponseData = gameLogin(gameParentPlatform, gamePlatform,cptOpenMember);
             if (null != apiResponseData && "0".equals(apiResponseData.getResp_msg().getCode())) {
                 //登录

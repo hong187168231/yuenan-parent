@@ -105,6 +105,7 @@ public class MtServiceImpl implements MtService {
                 commonRequest(getLoginOutUrl(loginUser.getAccount()));
                 // 启动游戏
                 String startUrl = getStartGame(cptOpenMember, gameParentPlatform,gamePlatform);
+                logger.info("天美log启动游戏 startUrl:{}", startUrl);
                 JSONObject jsonObject = commonRequest(startUrl);
                 if (null == jsonObject) {
                     return Result.failed("g091087", "第三方请求异常！");
