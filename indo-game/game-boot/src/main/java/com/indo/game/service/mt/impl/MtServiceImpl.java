@@ -488,7 +488,7 @@ public class MtServiceImpl implements MtService {
             return Result.failed("g091087", "第三方请求异常！");
         }
 
-        if (1 == result.getInteger("resultCode")) {
+        if (1 == result.getInteger("resultCode")||5==result.getInteger("resultCode")) {
             externalService.saveCptOpenMember(cptOpenMember);
             // 启动游戏
             String startUrl = getStartGame(cptOpenMember, gameParentPlatform,gamePlatform);
