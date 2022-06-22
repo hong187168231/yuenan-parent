@@ -100,16 +100,10 @@ public class GameCommonServiceImpl implements GameCommonService {
     }
     @Override
     public GamePlatform getGamePlatformByplatformCodeAndParentName(String platformCode,String parentName) {
-        List<GamePlatform> platformList = queryAllGamePlatform();
-        if (CollectionUtil.isNotEmpty(platformList)) {
-            platformList = platformList.stream()
-                    .filter(platform -> platform.getPlatformCode().equals(platformCode))
-                    .collect(Collectors.toList());
-            platformList = platformList.stream()
-                    .filter(platform -> platform.getParentName().equals(parentName))
-                    .collect(Collectors.toList());
-        }
-        return CollectionUtil.isEmpty(platformList) ? null : platformList.get(0);
+        LambdaQueryWrapper<GamePlatform> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(GamePlatform::getPlatformCode, platformCode);
+        wrapper.eq(GamePlatform::getParentName, parentName);
+        return gamePlatformMapper.selectOne(wrapper);
     }
 
     public List<GamePlatform> queryAllGamePlatform() {
