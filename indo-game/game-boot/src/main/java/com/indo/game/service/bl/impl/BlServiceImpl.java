@@ -101,7 +101,7 @@ public class BlServiceImpl implements BlService {
             } else {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
-                logout(loginUser, platform, ip);
+                Result result = logout(loginUser, platform, ip);
             }
 
             BlResponseParentData apiResponseData = gameLogin(gameParentPlatform, gamePlatform,cptOpenMember);
@@ -193,7 +193,7 @@ public class BlServiceImpl implements BlService {
         logger.info("BLlog  apiResponse:" + resultString);
         if (StringUtils.isNotEmpty(resultString)) {
             apiResponseData = JSONObject.parseObject(resultString,BlResponseParentData.class);
-            logger.info("BLlog  commonRequest userId:{}, type:{}, awcApiResponse:{}",
+            logger.info("BLlog  commonRequest apiResponse userId:{}, type:{}, awcApiResponse:{}",
                     userId, type,JSONObject.toJSONString(apiResponseData));
         }
         return apiResponseData;
