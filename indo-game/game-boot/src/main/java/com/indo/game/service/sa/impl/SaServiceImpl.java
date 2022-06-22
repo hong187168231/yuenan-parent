@@ -53,34 +53,16 @@ public class SaServiceImpl implements SaService {
         if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
             return Result.failed("g000001", gameParentPlatform.getMaintenanceContent());
         }
-        if (!platform.equals(parentName)) {
-            GamePlatform gamePlatform;
-            // 是否开售校验
-            gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
-            if (null == gamePlatform) {
-                return Result.failed("(" + platform + ")平台游戏不存在");
-            }
-            if (0==gamePlatform.getIsStart()) {
-                return Result.failed("g100102", "游戏未启用");
-            }
-            if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
-                return Result.failed("g091047", gamePlatform.getMaintenanceContent());
-            }
+        // 是否开售校验
+        GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
+        if (null == gamePlatform) {
+            return Result.failed("(" + platform + ")平台游戏不存在");
         }
-        GamePlatform gamePlatform = null;
-        if(!platform.equals(parentName)) {
-            gamePlatform = new GamePlatform();
-            // 是否开售校验
-            gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
-            if (null == gamePlatform) {
-                return Result.failed("("+platform+")平台游戏不存在");
-            }
-            if ("0".equals(gamePlatform.getIsStart())) {
-                return Result.failed("g"+"100102","游戏未启用");
-            }
-            if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
-                return Result.failed("g091047",gamePlatform.getMaintenanceContent());
-            }
+        if (0==gamePlatform.getIsStart()) {
+            return Result.failed("g100102", "游戏未启用");
+        }
+        if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
+            return Result.failed("g091047", gamePlatform.getMaintenanceContent());
         }
 
         BigDecimal balance = loginUser.getBalance();

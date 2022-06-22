@@ -60,19 +60,16 @@ public class MtServiceImpl implements MtService {
         if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
             return Result.failed("g000001", gameParentPlatform.getMaintenanceContent());
         }
-        GamePlatform gamePlatform = new GamePlatform();
-        if (!platform.equals(parentName)) {
             // 是否开售校验
-            gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
-            if (null == gamePlatform) {
-                return Result.failed("(" + platform + ")平台游戏不存在");
-            }
-            if (0==gamePlatform.getIsStart()) {
-                return Result.failed("g100102", "游戏未启用");
-            }
-            if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
-                return Result.failed("g091047", gamePlatform.getMaintenanceContent());
-            }
+        GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
+        if (null == gamePlatform) {
+            return Result.failed("(" + platform + ")平台游戏不存在");
+        }
+        if (0==gamePlatform.getIsStart()) {
+            return Result.failed("g100102", "游戏未启用");
+        }
+        if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
+            return Result.failed("g091047", gamePlatform.getMaintenanceContent());
         }
 
         BigDecimal balance = loginUser.getBalance();
@@ -137,12 +134,15 @@ public class MtServiceImpl implements MtService {
         try {
             // 退出
             JSONObject jsonObject = commonRequest(getLoginOutUrl(loginUser.getAccount()));
+            logger.info("天美log logout退出游戏返回:JSONObject:{}}",jsonObject.toJSONString());
             if (null == jsonObject) {
                 return Result.failed("g091087", "第三方请求异常！");
             }
-            if (jsonObject.getInteger("resultCode").equals(1)) {
+            if (jsonObject.getInteger("resultCode")==1) {
+                logger.info("天美log logout退出游戏返回成功:resultCode:{}}",jsonObject.getInteger("resultCode"));
                 return Result.success();
             } else {
+                logger.info("天美log logout退出游戏返回失败:resultCode:{}}",jsonObject.getInteger("resultCode"));
                 return errorCode(jsonObject.getString("resultCode"));
             }
         } catch (Exception e) {
