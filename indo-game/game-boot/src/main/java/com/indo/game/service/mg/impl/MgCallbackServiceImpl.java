@@ -97,7 +97,13 @@ public class MgCallbackServiceImpl implements MgCallbackService {
     @Override
     public Object mgUpdatebalanceCallback(MgCallBackReq mgCallBackReq, String ip) {
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(mgCallBackReq.getPlayerId());
-        GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(OpenAPIProperties.MG_PLATFORM_CODE);
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.MG_PLATFORM_CODE);
+        GamePlatform gamePlatform ;
+        if(OpenAPIProperties.MG_IS_PLATFORM_LOGIN.equals("Y")){//平台登录Y 游戏登录N
+            gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.MG_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
+        }else {
+            gamePlatform = gameCommonService.getGamePlatformByplatformCode("");
+        }
         GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         PgCallBackResponse pgCallBackRespFail = new PgCallBackResponse();
         JSONObject dataJson = new JSONObject();
@@ -140,12 +146,12 @@ public class MgCallbackServiceImpl implements MgCallbackService {
         txns.setPlatformTxId(mgCallBackReq.getTxnId());
         //此交易是否是投注 true是投注 false 否
         //玩家 ID
-        txns.setUserId(memBaseinfo.getId().toString());
-        //玩家货币代码
-        txns.setCurrency(mgCallBackReq.getCurrency());
+        txns.setUserId(memBaseinfo.getAccount());
         //平台代码
-        txns.setPlatform(OpenAPIProperties.MG_PLATFORM_CODE);
-        //平台英文名称
+        txns.setPlatform(gameParentPlatform.getPlatformCode());
+        //平台名称
+        txns.setPlatformEnName(gameParentPlatform.getPlatformEnName());
+        txns.setPlatformCnName(gameParentPlatform.getPlatformCnName());
         //平台游戏类型
         txns.setGameType(gameCategory.getGameType());
         //游戏分类ID
@@ -154,8 +160,6 @@ public class MgCallbackServiceImpl implements MgCallbackService {
         txns.setCategoryName(gameCategory.getGameName());
         //平台游戏代码
         txns.setGameCode(gamePlatform.getPlatformCode());
-        //游戏名称
-        txns.setGameName(gamePlatform.getPlatformEnName());
         //下注金额
         txns.setBetAmount(mgCallBackReq.getAmount());
         //中奖金额（赢为正数，亏为负数，和为0）或者总输赢

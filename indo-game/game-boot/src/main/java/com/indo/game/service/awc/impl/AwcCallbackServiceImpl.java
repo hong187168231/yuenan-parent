@@ -164,6 +164,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
             MemTradingBO memBaseinfo = new MemTradingBO();
             GameCategory gameCategory = new GameCategory();
             GamePlatform gamePlatform = new GamePlatform();
+            GameParentPlatform gameParentPlatform = new GameParentPlatform();
             for (int i = 0; i < placeBetTxnsList.size(); i++) {
                 PlaceBetTxns placeBetTxns = placeBetTxnsList.get(i);
                 String platformCode = placeBetTxns.getGameCode();
@@ -175,7 +176,12 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 }
                 if (i == 0) {
                     String userId = placeBetTxns.getUserId();
-                    gamePlatform = gameCommonService.getGamePlatformByplatformCode(platformCode);
+                    gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.AWC_PLATFORM_CODE);
+                    if(OpenAPIProperties.AWC_IS_PLATFORM_LOGIN.equals("Y")){//平台登录Y 游戏登录N
+                        gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.AWC_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
+                    }else {
+                        gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platformCode,gameParentPlatform.getPlatformCode());
+                    }
                     gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
                     memBaseinfo = gameCommonService.getMemTradingInfo(userId);
                     balance = memBaseinfo.getBalance();
@@ -197,9 +203,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Adjust Bet"));
                 wrapper.eq(Txns::getStatus, "Running");
                 wrapper.eq(Txns::getPlatformTxId, placeBetTxns.getPlatformTxId());
-                wrapper.eq(Txns::getPlatform, placeBetTxns.getPlatform());
-                wrapper.eq(Txns::getGameType, placeBetTxns.getGameType());
-                wrapper.eq(Txns::getUserId, placeBetTxns.getUserId());
+                wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
                 Txns oldTxns = txnsMapper.selectOne(wrapper);
                 if (null != oldTxns) {
                     if ("Cancel Bet".equals(oldTxns.getMethod())) {
@@ -226,10 +230,24 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 txns.setStatus("Running");
                 String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
                 txns.setCreateTime(dateStr);
-                txns.setPlatformCnName(gamePlatform.getPlatformCnName());
-                txns.setPlatformEnName(gamePlatform.getPlatformEnName());
+                //玩家货币代码
+                txns.setCurrency(gameParentPlatform.getCurrencyType());
+                //平台代码
+                txns.setPlatform(gameParentPlatform.getPlatformCode());
+                //平台英文名称
+                txns.setPlatformEnName(gameParentPlatform.getPlatformEnName());
+                //平台中文名称
+                txns.setPlatformCnName(gameParentPlatform.getPlatformCnName());
+                //平台游戏类型
+                txns.setGameType(gameCategory.getGameType());
+                //游戏分类ID
                 txns.setCategoryId(gameCategory.getId());
+                //游戏分类名称
                 txns.setCategoryName(gameCategory.getGameName());
+                //平台游戏代码
+                txns.setGameCode(gamePlatform.getPlatformCode());
+                //游戏名称
+                txns.setGameName(gamePlatform.getPlatformEnName());
                 txnsMapper.insert(txns);
 
             }
@@ -279,9 +297,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Adjust Bet"));
                 wrapper.eq(Txns::getStatus, "Running");
                 wrapper.eq(Txns::getPlatformTxId, cancelBetTxns.getPlatformTxId());
-                wrapper.eq(Txns::getPlatform, cancelBetTxns.getPlatform());
-                wrapper.eq(Txns::getGameType, cancelBetTxns.getGameType());
-                wrapper.eq(Txns::getUserId, cancelBetTxns.getUserId());
+                wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
                 Txns oldTxns = txnsMapper.selectOne(wrapper);
                 if (null == oldTxns) {
                     AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
@@ -360,9 +376,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet"));
                 wrapper.eq(Txns::getStatus, "Running");
                 wrapper.eq(Txns::getPlatformTxId, adjustBetTxns.getPlatformTxId());
-                wrapper.eq(Txns::getPlatform, adjustBetTxns.getPlatform());
-                wrapper.eq(Txns::getGameType, adjustBetTxns.getGameType());
-                wrapper.eq(Txns::getUserId, adjustBetTxns.getUserId());
+                wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
                 Txns oldTxns = txnsMapper.selectOne(wrapper);
                 if (null == oldTxns) {
                     AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
@@ -440,9 +454,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Adjust Bet"));
                     wrapper.eq(Txns::getStatus, "Running");
                     wrapper.eq(Txns::getPlatformTxId, voidBetTxns.getPlatformTxId());
-                    wrapper.eq(Txns::getPlatform, voidBetTxns.getPlatform());
-                    wrapper.eq(Txns::getGameType, voidBetTxns.getGameType());
-                    wrapper.eq(Txns::getUserId, voidBetTxns.getUserId());
+                    wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
                     Txns oldTxns = txnsMapper.selectOne(wrapper);
                     if (null == oldTxns) {
                         AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
@@ -512,9 +524,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
                     wrapper.eq(Txns::getMethod, "Void Bet");
                     wrapper.eq(Txns::getPlatformTxId, unvoidBetTxns.getPlatformTxId());
-                    wrapper.eq(Txns::getPlatform, unvoidBetTxns.getPlatform());
-                    wrapper.eq(Txns::getGameType, unvoidBetTxns.getGameType());
-                    wrapper.eq(Txns::getUserId, unvoidBetTxns.getUserId());
+                    wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
                     Txns oldTxns = txnsMapper.selectOne(wrapper);
                     if (null == oldTxns) {
                         AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
@@ -558,6 +568,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
         if (null != refundTxnsList && refundTxnsList.size() > 0) {
             GameCategory gameCategory = new GameCategory();
             GamePlatform gamePlatform = new GamePlatform();
+            GameParentPlatform gameParentPlatform = new GameParentPlatform();
             for (RefundTxns refundTxns : refundTxnsList) {
                 String platformCode = refundTxns.getGameCode();
                 if (!checkIp(ip)) {
@@ -566,7 +577,12 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     callBacekFail.setDesc("invalid IP address.");
                     return callBacekFail;
                 }
-                gamePlatform = gameCommonService.getGamePlatformByplatformCode(platformCode);
+                gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.AWC_PLATFORM_CODE);
+                if(OpenAPIProperties.AWC_IS_PLATFORM_LOGIN.equals("Y")){//平台登录Y 游戏登录N
+                    gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.AWC_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
+                }else {
+                    gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platformCode,gameParentPlatform.getPlatformCode());
+                }
                 gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
                 String userId = refundTxns.getUserId();
                 MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(userId);
@@ -589,10 +605,24 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     txns.setMethod("Refund");
                     txns.setStatus("Running");
                     txns.setCreateTime(dateStr);
-                    txns.setPlatformCnName(gamePlatform.getPlatformCnName());
-                    txns.setPlatformEnName(gamePlatform.getPlatformEnName());
+                    //玩家货币代码
+                    txns.setCurrency(gameParentPlatform.getCurrencyType());
+                    //平台代码
+                    txns.setPlatform(gameParentPlatform.getPlatformCode());
+                    //平台英文名称
+                    txns.setPlatformEnName(gameParentPlatform.getPlatformEnName());
+                    //平台中文名称
+                    txns.setPlatformCnName(gameParentPlatform.getPlatformCnName());
+                    //平台游戏类型
+                    txns.setGameType(gameCategory.getGameType());
+                    //游戏分类ID
                     txns.setCategoryId(gameCategory.getId());
+                    //游戏分类名称
                     txns.setCategoryName(gameCategory.getGameName());
+                    //平台游戏代码
+                    txns.setGameCode(gamePlatform.getPlatformCode());
+                    //游戏名称
+                    txns.setGameName(gamePlatform.getPlatformEnName());
                     txnsMapper.insert(txns);
                 }
             }
@@ -613,8 +643,6 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
         });
         List<SettleTxns> settleTxnsList = apiRequestData.getTxns();
         if (null != settleTxnsList && settleTxnsList.size() > 0) {
-            GameCategory gameCategory = new GameCategory();
-            GamePlatform gamePlatform = new GamePlatform();
             for (SettleTxns settleTxns : settleTxnsList) {
                 String platformCode = settleTxns.getGameCode();
                 if (!checkIp(ip)) {
@@ -623,8 +651,6 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     callBacekFail.setDesc("invalid IP address.");
                     return callBacekFail;
                 }
-                gamePlatform = gameCommonService.getGamePlatformByplatformCode(platformCode);
-                gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
                 String userId = settleTxns.getUserId();
                 MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(userId);
                 if (null == memBaseinfo) {
@@ -637,9 +663,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Unsettle").or().eq(Txns::getMethod, "Adjust Bet"));
                     wrapper.eq(Txns::getStatus, "Running");
                     wrapper.eq(Txns::getPlatformTxId, settleTxns.getPlatformTxId());
-                    wrapper.eq(Txns::getPlatform, settleTxns.getPlatform());
-                    wrapper.eq(Txns::getGameType, settleTxns.getGameType());
-                    wrapper.eq(Txns::getUserId, settleTxns.getUserId());
+                    wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
                     Txns oldTxns = txnsMapper.selectOne(wrapper);
                     if (null == oldTxns) {
                         AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
@@ -654,6 +678,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                         String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
 
                         Txns txns = new Txns();
+                        BeanUtils.copyProperties(oldTxns, txns);
                         BeanUtils.copyProperties(settleTxns, txns);
                         txns.setId(null);
                         txns.setBalance(balance);
@@ -661,10 +686,6 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                         txns.setMethod("Settle");
                         txns.setStatus("Running");
                         txns.setCreateTime(dateStr);
-                        txns.setPlatformCnName(gamePlatform.getPlatformCnName());
-                        txns.setPlatformEnName(gamePlatform.getPlatformEnName());
-                        txns.setCategoryId(gameCategory.getId());
-                        txns.setCategoryName(gameCategory.getGameName());
                         txnsMapper.insert(txns);
                         oldTxns.setStatus("Settle");
                         txnsMapper.updateById(oldTxns);
@@ -708,9 +729,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     wrapper.eq(Txns::getMethod, "Settle");
                     wrapper.eq(Txns::getStatus, "Running");
                     wrapper.eq(Txns::getPlatformTxId, unsettleTxns.getPlatformTxId());
-                    wrapper.eq(Txns::getPlatform, unsettleTxns.getPlatform());
-                    wrapper.eq(Txns::getGameType, unsettleTxns.getGameType());
-                    wrapper.eq(Txns::getUserId, unsettleTxns.getUserId());
+                    wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
                     Txns oldTxns = txnsMapper.selectOne(wrapper);
                     if (null == oldTxns) {
                         AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
@@ -773,9 +792,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     wrapper.eq(Txns::getMethod, "Settle");
                     wrapper.eq(Txns::getStatus, "Running");
                     wrapper.eq(Txns::getPlatformTxId, voidSettleTxns.getPlatformTxId());
-                    wrapper.eq(Txns::getPlatform, voidSettleTxns.getPlatform());
-                    wrapper.eq(Txns::getGameType, voidSettleTxns.getGameType());
-                    wrapper.eq(Txns::getUserId, voidSettleTxns.getUserId());
+                    wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
                     Txns oldTxns = txnsMapper.selectOne(wrapper);
                     if (null == oldTxns) {
                         AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
@@ -845,9 +862,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 wrapper.eq(Txns::getMethod, "Void Settle");
                 wrapper.eq(Txns::getStatus, "Running");
                 wrapper.eq(Txns::getPlatformTxId, unvoidSettleTxns.getPlatformTxId());
-                wrapper.eq(Txns::getPlatform, unvoidSettleTxns.getPlatform());
-                wrapper.eq(Txns::getGameType, unvoidSettleTxns.getGameType());
-                wrapper.eq(Txns::getUserId, unvoidSettleTxns.getUserId());
+                wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
                 Txns oldTxns = txnsMapper.selectOne(wrapper);
                 if (null == oldTxns) {
                     AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
@@ -896,6 +911,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
             MemTradingBO memBaseinfo = new MemTradingBO();
             GameCategory gameCategory = new GameCategory();
             GamePlatform gamePlatform = new GamePlatform();
+            GameParentPlatform gameParentPlatform = new GameParentPlatform();
             for (int i = 0; i < betNSettleTxnsList.size(); i++) {
                 BetNSettleTxns betNSettleTxns = betNSettleTxnsList.get(i);
                 String platformCode = betNSettleTxns.getGameCode();
@@ -906,7 +922,12 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     return callBacekFail;
                 }
                 if (i == 0) {
-                    gamePlatform = gameCommonService.getGamePlatformByplatformCode(platformCode);
+                    gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.AWC_PLATFORM_CODE);
+                    if(OpenAPIProperties.AWC_IS_PLATFORM_LOGIN.equals("Y")){//平台登录Y 游戏登录N
+                        gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.AWC_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
+                    }else {
+                        gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platformCode,gameParentPlatform.getPlatformCode());
+                    }
                     gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
                     String userId = betNSettleTxns.getUserId();
                     memBaseinfo = gameCommonService.getMemTradingInfo(userId);
@@ -929,9 +950,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 wrapper.and(c -> c.eq(Txns::getMethod, "BetNSettle").or().eq(Txns::getMethod, "Cancel BetNSettle"));
                 wrapper.eq(Txns::getStatus, "Running");
                 wrapper.eq(Txns::getPlatformTxId, betNSettleTxns.getPlatformTxId());
-                wrapper.eq(Txns::getPlatform, betNSettleTxns.getPlatform());
-                wrapper.eq(Txns::getGameType, betNSettleTxns.getGameType());
-                wrapper.eq(Txns::getUserId, betNSettleTxns.getUserId());
+                wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
                 Txns oldTxns = txnsMapper.selectOne(wrapper);
                 if (null != oldTxns) {
                     if ("Cancel BetNSettle".equals(oldTxns.getMethod())) {
@@ -957,10 +976,24 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 txns.setMethod("BetNSettle");
                 txns.setStatus("Running");
                 txns.setCreateTime(dateStr);
-                txns.setPlatformCnName(gamePlatform.getPlatformCnName());
-                txns.setPlatformEnName(gamePlatform.getPlatformEnName());
+                //玩家货币代码
+                txns.setCurrency(gameParentPlatform.getCurrencyType());
+                //平台代码
+                txns.setPlatform(gameParentPlatform.getPlatformCode());
+                //平台英文名称
+                txns.setPlatformEnName(gameParentPlatform.getPlatformEnName());
+                //平台中文名称
+                txns.setPlatformCnName(gameParentPlatform.getPlatformCnName());
+                //平台游戏类型
+                txns.setGameType(gameCategory.getGameType());
+                //游戏分类ID
                 txns.setCategoryId(gameCategory.getId());
+                //游戏分类名称
                 txns.setCategoryName(gameCategory.getGameName());
+                //平台游戏代码
+                txns.setGameCode(gamePlatform.getPlatformCode());
+                //游戏名称
+                txns.setGameName(gamePlatform.getPlatformEnName());
                 txnsMapper.insert(txns);
             }
             AwcCallBackRespSuccess placeBetSuccess = new AwcCallBackRespSuccess();
@@ -1007,9 +1040,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 wrapper.eq(Txns::getMethod, "BetNSettle");
                 wrapper.eq(Txns::getStatus, "Running");
                 wrapper.eq(Txns::getPlatformTxId, cancelBetNSettleTxns.getPlatformTxId());
-                wrapper.eq(Txns::getPlatform, cancelBetNSettleTxns.getPlatform());
-                wrapper.eq(Txns::getGameType, cancelBetNSettleTxns.getGameType());
-                wrapper.eq(Txns::getUserId, cancelBetNSettleTxns.getUserId());
+                wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
                 Txns oldTxns = txnsMapper.selectOne(wrapper);
                 if (null == oldTxns) {
                     AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
@@ -1080,9 +1111,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     wrapper.eq(Txns::getMethod, "Free Spin");
                     wrapper.eq(Txns::getStatus, "Running");
                     wrapper.eq(Txns::getPlatformTxId, freeSpinTxns.getPlatformTxId());
-                    wrapper.eq(Txns::getPlatform, freeSpinTxns.getPlatform());
-                    wrapper.eq(Txns::getGameType, freeSpinTxns.getGameType());
-                    wrapper.eq(Txns::getUserId, freeSpinTxns.getUserId());
+                    wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
                     Txns oldTxns = txnsMapper.selectOne(wrapper);
                     if (null != oldTxns) {
                         AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
@@ -1152,9 +1181,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 wrapper.eq(Txns::getMethod, "Give");
                 wrapper.eq(Txns::getStatus, "Running");
                 wrapper.eq(Txns::getPromotionTxId, giveTxns.getPromotionTxId());
-                wrapper.eq(Txns::getPlatform, giveTxns.getPlatform());
-                wrapper.eq(Txns::getPromotionId, giveTxns.getPromotionId());
-                wrapper.eq(Txns::getUserId, giveTxns.getUserId());
+                wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
                 Txns oldTxns = txnsMapper.selectOne(wrapper);
                 if (null != oldTxns) {
                     AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
@@ -1231,9 +1258,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 wrapper.and(c -> c.eq(Txns::getMethod, "Tip").or().eq(Txns::getMethod, "Cancel Tip"));
                 wrapper.eq(Txns::getStatus, "Running");
                 wrapper.eq(Txns::getPlatformTxId, tipTxns.getPlatformTxId());
-                wrapper.eq(Txns::getPlatform, tipTxns.getPlatform());
-                wrapper.eq(Txns::getGameType, tipTxns.getGameType());
-                wrapper.eq(Txns::getUserId, tipTxns.getUserId());
+                wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
                 Txns oldTxns = txnsMapper.selectOne(wrapper);
                 if (null != oldTxns) {
                     if ("Cancel Tip".equals(oldTxns.getMethod())) {
@@ -1305,9 +1330,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 wrapper.and(c -> c.eq(Txns::getMethod, "Tip").or().eq(Txns::getMethod, "Cancel Tip"));
                 wrapper.eq(Txns::getStatus, "Running");
                 wrapper.eq(Txns::getPlatformTxId, cancelTipTxns.getPlatformTxId());
-                wrapper.eq(Txns::getPlatform, cancelTipTxns.getPlatform());
-                wrapper.eq(Txns::getGameType, cancelTipTxns.getGameType());
-                wrapper.eq(Txns::getUserId, cancelTipTxns.getUserId());
+                wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
                 Txns oldTxns = txnsMapper.selectOne(wrapper);
                 if (null == oldTxns) {
                     AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();

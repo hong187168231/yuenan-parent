@@ -81,10 +81,10 @@ public class SaCallbackServiceImpl implements SaCallbackService {
         logger.info("sa_placeBet saGame paramJson:{}, ip:{}", params, ip);
         try {
 
-            GameParentPlatform platformGameParent = getGameParentPlatform();
+            GameParentPlatform gameParentPlatform = getGameParentPlatform();
 
             // 校验IP
-            if (checkIp(ip, platformGameParent)) {
+            if (checkIp(ip, gameParentPlatform)) {
                 return initFailureResponse(1005, "非信任來源IP");
             }
 
@@ -124,7 +124,7 @@ public class SaCallbackServiceImpl implements SaCallbackService {
             String gameId = jsonObject.getString("gameid");
             String txnId = jsonObject.getString("txnid");
             // 查询用户请求订单
-            Txns oldTxns = getTxnsByRounId(platformGameParent, gameId);
+            Txns oldTxns = getTxnsByRounId(gameParentPlatform, gameId);
             if (null != oldTxns) {
                 return initFailureResponse(122, "交易已存在");
             }
@@ -132,8 +132,12 @@ public class SaCallbackServiceImpl implements SaCallbackService {
             Date timestamp = jsonObject.getDate("timestamp");
             String gametype = jsonObject.getString("gametype");
 
-            GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.SA_PLATFORM_CODE);
-            GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(gametype,gameParentPlatform.getPlatformCode());
+            GamePlatform gamePlatform;
+            if(OpenAPIProperties.SA_IS_PLATFORM_LOGIN.equals("Y")){//平台登录Y 游戏登录N
+                gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.SA_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
+            }else {
+                gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(gametype,gameParentPlatform.getPlatformCode());
+            }
             GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
             Txns txns = new Txns();
             //游戏商注单号
@@ -142,7 +146,7 @@ public class SaCallbackServiceImpl implements SaCallbackService {
             //玩家 ID
             txns.setUserId(memBaseinfo.getAccount());
             //玩家货币代码
-            txns.setCurrency(platformGameParent.getCurrencyType());
+            txns.setCurrency(gameParentPlatform.getCurrencyType());
 //            txns.setOdds(kaCallbackPlayReq.getBetPerSelection());
             txns.setRoundId(gameId);
             txns.setGameInfo(jsonObject.getString("betdetails"));
@@ -195,7 +199,7 @@ public class SaCallbackServiceImpl implements SaCallbackService {
                 return initFailureResponse(9999, "订单写入失败");
             }
 
-            return initSuccessResponse(memBaseinfo.getAccount(), platformGameParent.getCurrencyType(), memBaseinfo.getBalance());
+            return initSuccessResponse(memBaseinfo.getAccount(), gameParentPlatform.getCurrencyType(), memBaseinfo.getBalance());
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return initFailureResponse(9999, e.getMessage());

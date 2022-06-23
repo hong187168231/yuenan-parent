@@ -69,7 +69,12 @@ public class DgCallbackServiceImpl implements DgCallbackService {
     public Object dgTransferCallback(DgCallBackReq dgCallBackReq, String ip, String agentName) {
         JSONObject jsonObject = JSONObject.parseObject(dgCallBackReq.getMember());
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.DG_PLATFORM_CODE);
-        GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(dgCallBackReq.getGametype(),gameParentPlatform.getPlatformCode());
+        GamePlatform gamePlatform ;
+        if(OpenAPIProperties.DG_IS_PLATFORM_LOGIN.equals("Y")){//平台登录Y 游戏登录N
+            gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.DG_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
+        }else {
+            gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(dgCallBackReq.getGametype(),gameParentPlatform.getPlatformCode());
+        }
         GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(jsonObject.getString("username"));
         JSONObject dataJson = new JSONObject();
@@ -235,6 +240,9 @@ public class DgCallbackServiceImpl implements DgCallbackService {
         txns.setBalance(balance);
         String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
         txns.setCreateTime(dateStr);
+        //操作名称
+        txns.setMethod("Cancel Bet");
+        txns.setStatus("Running");
         txnsMapper.insert(txns);
         oldTxns.setStatus("Cancel");
         oldTxns.setUpdateTime(dateStr);

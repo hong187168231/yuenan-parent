@@ -115,9 +115,12 @@ public class WmCallbackServiceImpl implements WmCallbackService {
             GoldchangeEnum goldchangeEnum = GoldchangeEnum.PLACE_BET;
             TradingEnum tradingEnum = TradingEnum.SPENDING;
             String method = "Place Bet";
-
-
-            GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(gtype);
+            GamePlatform gamePlatform;
+            if(OpenAPIProperties.WM_IS_PLATFORM_LOGIN.equals("Y")){//平台登录Y 游戏登录N
+                gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.WM_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
+            }else {
+                gamePlatform = gameCommonService.getGamePlatformByplatformCode(gtype);
+            }
             GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
             Txns oldTxns = getTxns(gameParentPlatform, paySerialno);
             BigDecimal balance = memBaseinfo.getBalance();
@@ -137,7 +140,7 @@ public class WmCallbackServiceImpl implements WmCallbackService {
                 txns.setPlatformTxId(paySerialno);
 
                 //玩家 ID
-                txns.setUserId(memBaseinfo.getId().toString());
+                txns.setUserId(memBaseinfo.getAccount());
                 //玩家货币代码
                 txns.setCurrency(gameParentPlatform.getCurrencyType());
 //            txns.setOdds(kaCallbackPlayReq.getBetPerSelection());
@@ -316,7 +319,12 @@ public class WmCallbackServiceImpl implements WmCallbackService {
                 }
                 goldchangeEnum = GoldchangeEnum.SETTLE;
 
-                GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(gtype);
+                GamePlatform gamePlatform;
+                if(OpenAPIProperties.WM_IS_PLATFORM_LOGIN.equals("Y")){//平台登录Y 游戏登录N
+                    gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.WM_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
+                }else {
+                    gamePlatform = gameCommonService.getGamePlatformByplatformCode(gtype);
+                }
                 GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
 
                 Txns txns = new Txns();
