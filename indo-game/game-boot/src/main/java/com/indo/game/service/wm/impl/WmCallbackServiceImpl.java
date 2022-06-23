@@ -165,7 +165,7 @@ public class WmCallbackServiceImpl implements WmCallbackService {
                 //游戏平台的下注项目
                 txns.setBetType(type);
                 //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
-//            txns.setWinningAmount(winloseAmount);
+            txns.setWinningAmount(betAmount);
                 //玩家下注时间
                 txns.setBetTime(DateUtils.formatByString(dateSent, DateUtils.newFormat));
                 //真实下注金额,需增加在玩家的金额

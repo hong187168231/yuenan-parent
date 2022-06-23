@@ -53,7 +53,7 @@ public class MgServiceImpl implements MgService {
      */
     @Override
     public Result mgGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName) {
-        logger.info("mgLog  {} mgGame account:{}, pgCodeId:{}", loginUser.getId(), loginUser.getNickName(), platform);
+        logger.info("mgLog登录游戏Mg游戏 mgGame userId:{}, account:{}, platform:{}, parentName:{}", loginUser.getId(), loginUser.getAccount(), platform, parentName);
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
         if (null == gameParentPlatform) {
@@ -129,10 +129,12 @@ public class MgServiceImpl implements MgService {
         StringBuilder builder = new StringBuilder();
         builder.append(OpenAPIProperties.MG_SESSION_URL).append("/connect/token");
         JSONObject apiResponseData = null;
+        logger.info("mgLog登录游戏Mg游戏gameToken输入 builder:{}, params:{}, userId:{}", builder.toString(), map, userId);
         try {
             apiResponseData = commonRequest(builder.toString(), map, userId, "", "createMgToken");
+            logger.info("mgLog登录游戏Mg游戏gameToken返回 JSONObject:{}", apiResponseData.toJSONString());
         } catch (Exception e) {
-            logger.error("mgLog pgCeateMember:{}", e);
+            logger.error("mgLog gameToken:{}", e);
             e.printStackTrace();
         }
         return apiResponseData;
@@ -162,9 +164,11 @@ public class MgServiceImpl implements MgService {
         StringBuilder builder = new StringBuilder();
         builder.append(OpenAPIProperties.MG_API_URL).append("/api/v1/agents/")
                 .append(OpenAPIProperties.MG_AGENT_CODE).append("/players");
+        logger.info("mgLog登录游戏Mg游戏创建用户createMember输入 builder:{}, params:{}, userId:{}", builder.toString(), map, cptOpenMember.getUserId());
         JSONObject apiResponseData = null;
         try {
             apiResponseData = commonRequest(builder.toString(), map, cptOpenMember.getUserId(), token, "createMgMember");
+            logger.info("mgLog登录游戏Mg游戏创建用户createMember返回 JSONObject:{}", apiResponseData.toJSONString());
         } catch (Exception e) {
             logger.error("mgLog pgCeateMember:{}", e);
             e.printStackTrace();
@@ -194,7 +198,9 @@ public class MgServiceImpl implements MgService {
             StringBuilder apiUrl = new StringBuilder();
             apiUrl.append(OpenAPIProperties.MG_API_URL).append("/api/v1/agents/").append(OpenAPIProperties.MG_AGENT_CODE);
             apiUrl.append("/players/").append(cptOpenMemberm.getUserName()).append("/sessions");
+            logger.info("mgLog登录游戏Mg游戏登录用户gameLogin输入 builder:{}, params:{}, userId:{}, token:{}", apiUrl.toString(), params, cptOpenMemberm.getUserId(), token);
             apiResponseData = commonRequest(apiUrl.toString(), params, cptOpenMemberm.getUserId(), token, "mgGameLogin");
+            logger.info("mgLog登录游戏Mg游戏登录用户gameLogin返回JSONObject:{}", apiResponseData.toJSONString());
         } catch (Exception e) {
             logger.error("mglog mgGameLogin:{}", e);
             e.printStackTrace();
@@ -221,11 +227,11 @@ public class MgServiceImpl implements MgService {
      * 公共请求
      */
     public JSONObject commonRequest(String apiUrl, Map<String, String> params, Integer userId, String token, String type) throws Exception {
-        logger.info("mgLog  {} commonRequest userId:{},paramsMap:{}", userId, params);
+        logger.info("mgLog  公共请求输入 commonRequest userId:{},paramsMap:{}", userId, params);
         JSONObject apiResponseData = null;
          String resultString = GameUtil.doProxyPostHeaderJson(OpenAPIProperties.PROXY_HOST_NAME, OpenAPIProperties.PROXY_PORT, OpenAPIProperties.PROXY_TCP,
                 apiUrl, params, type, userId, token);
-        logger.info("mgLog  apiResponse:" + resultString);
+        logger.info("mgLog 公共请求返回  apiResponse:" + resultString);
         if (StringUtils.isNotEmpty(resultString)) {
             apiResponseData = JSONObject.parseObject(resultString);
             logger.info("mgLog  {}:commonRequest type:{}, operateFlag:{}, hostName:{}, params:{}, result:{}, awcApiResponse:{}",
