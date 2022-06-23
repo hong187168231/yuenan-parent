@@ -109,7 +109,7 @@ public class SaCallbackServiceImpl implements SaCallbackService {
             BigDecimal betAmount = jsonObject.getBigDecimal("amount");
             // 下注金额小于0
             if (betAmount.compareTo(BigDecimal.ZERO) < 0) {
-                return initFailureResponse(1005, "下注金额不能小0");
+                return initFailureResponse(1002, "下注金额不能小0");
             }
 
             if (balance.compareTo(betAmount) < 0) {
@@ -388,12 +388,12 @@ public class SaCallbackServiceImpl implements SaCallbackService {
             // 查询用户请求订单
             Txns oldTxns = getTxns(platformGameParent, txnid);
             if (null == oldTxns) {
-                return initFailureResponse(1005, "该笔交易不存在");
+                return initSuccessResponse(memBaseinfo.getAccount(), platformGameParent.getCurrencyType(), memBaseinfo.getBalance());
             }
 
             // 如果订单已经取消
             if ("Cancel Bet".equals(oldTxns.getStatus())) {
-                return initFailureResponse(1005, "该笔交易不能注销");
+                return initSuccessResponse(memBaseinfo.getAccount(), platformGameParent.getCurrencyType(), memBaseinfo.getBalance());
             }
 
             // 会员余额
@@ -511,7 +511,7 @@ public class SaCallbackServiceImpl implements SaCallbackService {
     private Object initFailureResponse(Integer error, String description) {
         SaCallbackResp saLoginResp = new SaCallbackResp();
         saLoginResp.setError(error);
-
+        logger.info("initFailureResponse error:{}, description:{}",error, description);
         return XmlUtil.convertToXml(saLoginResp, "UTF-8", false);
 //        return saLoginResp;
     }
