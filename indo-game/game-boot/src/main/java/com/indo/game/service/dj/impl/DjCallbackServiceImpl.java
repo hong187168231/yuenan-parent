@@ -67,7 +67,7 @@ public class DjCallbackServiceImpl implements DjCallbackService {
 
     @Override
     public Object getBalance(DjCallBackParentReq djCallBackParentReq, String ip) {
-        CptOpenMember cptOpenMember = externalService.getCptOpenMember(Integer.parseInt(djCallBackParentReq.getLogin_id()), "S128");
+        CptOpenMember cptOpenMember = externalService.getCptOpenMember(Integer.parseInt(djCallBackParentReq.getLogin_id()), OpenAPIProperties.DJ_PLATFORM_CODE);
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("<?xml version=\"1.0\" ?>").append("<get_balance>").append("<status_code>");
         if (cptOpenMember == null) {
@@ -83,15 +83,15 @@ public class DjCallbackServiceImpl implements DjCallbackService {
 
     @Override
     public Object djBetCallback(DjCallBackParentReq djCallBackParentReq, String ip) {
-        CptOpenMember cptOpenMember = externalService.getCptOpenMember(Integer.parseInt(djCallBackParentReq.getLogin_id()), "S128");
+        CptOpenMember cptOpenMember = externalService.getCptOpenMember(Integer.parseInt(djCallBackParentReq.getLogin_id()), OpenAPIProperties.DJ_PLATFORM_CODE);
         JSONObject dataJson = new JSONObject();
         if (cptOpenMember == null) {
             dataJson.put("status_code", "1");
             dataJson.put("message", "Token 无效");
             return dataJson;
         }
-        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode("S128");
-        GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName("S128",gameParentPlatform.getPlatformCode());
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.DJ_PLATFORM_CODE);
+        GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.DJ_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
         GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cptOpenMember.getUserName());
         BigDecimal balance = memBaseinfo.getBalance();
@@ -190,7 +190,7 @@ public class DjCallbackServiceImpl implements DjCallbackService {
 
     @Override
     public Object djRefundtCallback(DjCallBackParentReq djCallBackParentReq, String ip) {
-        CptOpenMember cptOpenMember = externalService.getCptOpenMember(Integer.parseInt(djCallBackParentReq.getLogin_id()), "S128");
+        CptOpenMember cptOpenMember = externalService.getCptOpenMember(Integer.parseInt(djCallBackParentReq.getLogin_id()), OpenAPIProperties.DJ_PLATFORM_CODE);
         if (cptOpenMember == null) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("<?xml version=\"1.0\" ?>").append("<cancel_bet>>").append("<status_code>");

@@ -2,6 +2,7 @@ package com.indo.game.service.mg.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.indo.common.config.OpenAPIProperties;
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.common.utils.DateUtils;
@@ -48,7 +49,7 @@ public class MgCallbackServiceImpl implements MgCallbackService {
 
     @Override
     public Object mgBalanceCallback(MgCallBackReq mgCallBackReq, String ip) {
-        GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode("MG");
+        GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.MG_PLATFORM_CODE);
         //进行秘钥
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(mgCallBackReq.getPlayerId());
         JSONObject dataJson = new JSONObject();
@@ -65,7 +66,7 @@ public class MgCallbackServiceImpl implements MgCallbackService {
 
 
     private boolean checkIp(String ip) {
-        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode("MG");
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.MG_PLATFORM_CODE);
         if (null == gameParentPlatform) {
             return false;
         } else if (null == gameParentPlatform.getIpAddr() || "".equals(gameParentPlatform.getIpAddr())) {
@@ -79,7 +80,7 @@ public class MgCallbackServiceImpl implements MgCallbackService {
     @Override
     public Object mgVerifyCallback(MgCallBackReq mgCallBackReq, String ip) {
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(mgCallBackReq.getPlayerId());
-        GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode("MG");
+        GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.MG_PLATFORM_CODE);
         JSONObject dataJson = new JSONObject();
         if (memBaseinfo == null) {
             dataJson.put("code", "401");
@@ -96,7 +97,7 @@ public class MgCallbackServiceImpl implements MgCallbackService {
     @Override
     public Object mgUpdatebalanceCallback(MgCallBackReq mgCallBackReq, String ip) {
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(mgCallBackReq.getPlayerId());
-        GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode("MG");
+        GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(OpenAPIProperties.MG_PLATFORM_CODE);
         GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         PgCallBackResponse pgCallBackRespFail = new PgCallBackResponse();
         JSONObject dataJson = new JSONObject();
@@ -143,7 +144,7 @@ public class MgCallbackServiceImpl implements MgCallbackService {
         //玩家货币代码
         txns.setCurrency(mgCallBackReq.getCurrency());
         //平台代码
-        txns.setPlatform("MG");
+        txns.setPlatform(OpenAPIProperties.MG_PLATFORM_CODE);
         //平台英文名称
         //平台游戏类型
         txns.setGameType(gameCategory.getGameType());

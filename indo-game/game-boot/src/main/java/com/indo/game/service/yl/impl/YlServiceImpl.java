@@ -127,7 +127,7 @@ public class YlServiceImpl implements YlService {
             map.put("extension1", OpenAPIProperties.YL_EXTENSION);
             map.put("userName", cptOpenMember.getUserName());
             map.put("language", platformGameParent.getLanguageType());
-            if (!"YL".equals(platform)) {
+            if (!OpenAPIProperties.YL_PLATFORM_CODE.equals(platform)) {
                 map.put("gameId", platform);
             }
             StringBuilder builder = new StringBuilder();

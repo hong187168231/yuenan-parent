@@ -132,7 +132,7 @@ public class SaCallbackServiceImpl implements SaCallbackService {
             Date timestamp = jsonObject.getDate("timestamp");
             String gametype = jsonObject.getString("gametype");
 
-            GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode("SA");
+            GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.SA_PLATFORM_CODE);
             GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(gametype,gameParentPlatform.getPlatformCode());
             GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
             Txns txns = new Txns();

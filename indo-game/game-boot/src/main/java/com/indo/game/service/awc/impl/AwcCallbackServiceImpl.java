@@ -1353,7 +1353,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
     }
 
     private boolean checkIp(String ip) {
-        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode("AWC");
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.AWC_PLATFORM_CODE);
         if (null == gameParentPlatform) {
             return false;
         } else if (null == gameParentPlatform.getIpAddr() || "".equals(gameParentPlatform.getIpAddr())) {

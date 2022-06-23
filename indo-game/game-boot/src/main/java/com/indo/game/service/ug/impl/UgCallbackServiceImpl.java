@@ -106,8 +106,8 @@ public class UgCallbackServiceImpl implements UgCallbackService {
             UgCallBackTransactionItemReq ugCallBackTransactionItemReq = JSONObject.parseObject(JSONObject.toJSONString(ugCallBackTransactionItemReqList.get(i)),UgCallBackTransactionItemReq.class);;
             UgCallBackSubBalanceResp ugCallBackSubBalanceResp = new UgCallBackSubBalanceResp();
             if(i==0) {
-                gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode("UG");
-                gamePlatformList = gameCommonService.getGamePlatformByParentName("UG");
+                gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.UG_PLATFORM_CODE);
+                gamePlatformList = gameCommonService.getGamePlatformByParentName(OpenAPIProperties.UG_PLATFORM_CODE);
                 gamePlatform = gamePlatformList.get(0);
                 gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
             }

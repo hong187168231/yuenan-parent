@@ -55,7 +55,7 @@ public class PgCallbackServiceImpl implements PgCallbackService {
 
     @Override
     public Object pgBalanceCallback(PgVerifyCallBackReq pgVerifyCallBackReq, String ip) {
-        GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode("PG");
+        GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.PG_PLATFORM_CODE);
         //进行秘钥
         PgCallBackResponse pgCallBackRespFail = new PgCallBackResponse();
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(pgVerifyCallBackReq.getPlayer_name());
@@ -82,7 +82,7 @@ public class PgCallbackServiceImpl implements PgCallbackService {
     @Override
     public Object pgTransferInCallback(PgVerifyCallBackReq pgVerifyCallBackReq, String ip) {
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(pgVerifyCallBackReq.getPlayer_name());
-        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode("PG");
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.PG_PLATFORM_CODE);
         GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(String.valueOf(pgVerifyCallBackReq.getGame_id()),gameParentPlatform.getPlatformCode());
         GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         PgCallBackResponse pgCallBackRespFail = new PgCallBackResponse();
@@ -272,7 +272,7 @@ public class PgCallbackServiceImpl implements PgCallbackService {
 
 
     private boolean checkIp(String ip) {
-        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode("PG");
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.PG_PLATFORM_CODE);
         if (null == gameParentPlatform) {
             return false;
         } else if (null == gameParentPlatform.getIpAddr() || "".equals(gameParentPlatform.getIpAddr())) {
@@ -285,8 +285,8 @@ public class PgCallbackServiceImpl implements PgCallbackService {
 
     @Override
     public Object pgVerifyCallback(PgVerifyCallBackReq pgVerifyCallBackReq, String ip) {
-        CptOpenMember cptOpenMember = externalService.quertCptOpenMember(pgVerifyCallBackReq.getOperator_player_session(), "PG");
-        GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode("PG");
+        CptOpenMember cptOpenMember = externalService.quertCptOpenMember(pgVerifyCallBackReq.getOperator_player_session(), OpenAPIProperties.PG_PLATFORM_CODE);
+        GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.PG_PLATFORM_CODE);
         PgCallBackResponse pgCallBackRespFail = new PgCallBackResponse();
         JSONObject dataJson = new JSONObject();
         JSONObject errorJson = new JSONObject();

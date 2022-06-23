@@ -3,6 +3,7 @@ package com.indo.game.service.bl.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.indo.common.config.OpenAPIProperties;
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.common.utils.DateUtils;
@@ -44,7 +45,7 @@ public class BlCallbackServiceImpl implements BlCallbackService {
     @Override
     public Object blBlanceCallback(BlCallBackReq blCallBackReq, String ip) {
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(blCallBackReq.getPlayer_account());
-        GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode("BOLE");
+        GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.BL_PLATFORM_CODE);
         JSONObject dataJson = new JSONObject();
         JSONObject statusJson = new JSONObject();
         if (null == memBaseinfo) {
@@ -72,7 +73,7 @@ public class BlCallbackServiceImpl implements BlCallbackService {
         JSONObject dataJson = new JSONObject();
         JSONObject statusJson = new JSONObject();
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(blCallBackReq.getPlayer_account());
-        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode("BOLE");
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.BL_PLATFORM_CODE);
         GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(blCallBackReq.getGame_code(),gameParentPlatform.getPlatformCode());
         GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         BigDecimal balance = memBaseinfo.getBalance();

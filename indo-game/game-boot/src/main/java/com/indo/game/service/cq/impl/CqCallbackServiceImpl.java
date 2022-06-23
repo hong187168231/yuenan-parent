@@ -61,7 +61,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
             return commonReturnFail();
         }
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cqApiRequestData.getAccount());
-        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode("CQ9");
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.CQ_PLATFORM_CODE);
         GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(cqApiRequestData.getGamecode(),gameParentPlatform.getPlatformCode());
         GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         BigDecimal balance = memBaseinfo.getBalance();
@@ -392,7 +392,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
 
 
     private boolean checkIp(String ip) {
-        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode("CQ9");
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.CQ_PLATFORM_CODE);
         if (null == gameParentPlatform) {
             return false;
         } else if (null == gameParentPlatform.getIpAddr() || "".equals(gameParentPlatform.getIpAddr())) {
@@ -413,7 +413,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         statusResp.setDatetime(dataStr);
         CqDataResp dataResp = new CqDataResp();
         dataResp.setBalance(balance);
-        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode("CQ9");
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.CQ_PLATFORM_CODE);
         dataResp.setCurrency(gameParentPlatform.getCurrencyType());
         getBalanceSuccess.setData(dataResp);
         getBalanceSuccess.setStatus(statusResp);

@@ -229,7 +229,7 @@ public class AeCallbackServiceImpl implements AeCallbackService {
      */
     private Object bet(AeCallBackTransferReq aeApiRequestData, MemTradingBO memBaseinfo, String ip) {
         String userId = aeApiRequestData.getAccountId().substring(aeApiRequestData.getAccountId().indexOf("_") + 1);
-        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode("AE");
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.AE_PLATFORM_CODE);
         GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(aeApiRequestData.getGameId(),gameParentPlatform.getPlatformCode());
         GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         BigDecimal balance = memBaseinfo.getBalance();
@@ -411,7 +411,7 @@ public class AeCallbackServiceImpl implements AeCallbackService {
 
 
     private boolean checkIp(String ip) {
-        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode("AE");
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.AE_PLATFORM_CODE);
         if (null == gameParentPlatform) {
             return false;
         } else if (null == gameParentPlatform.getIpAddr() || "".equals(gameParentPlatform.getIpAddr())) {

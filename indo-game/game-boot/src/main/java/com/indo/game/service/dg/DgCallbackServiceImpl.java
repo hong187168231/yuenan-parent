@@ -3,6 +3,7 @@ package com.indo.game.service.dg;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.indo.common.config.OpenAPIProperties;
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.common.utils.DateUtils;
@@ -67,7 +68,7 @@ public class DgCallbackServiceImpl implements DgCallbackService {
     @Override
     public Object dgTransferCallback(DgCallBackReq dgCallBackReq, String ip, String agentName) {
         JSONObject jsonObject = JSONObject.parseObject(dgCallBackReq.getMember());
-        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode("DG");
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.DG_PLATFORM_CODE);
         GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(dgCallBackReq.getGametype(),gameParentPlatform.getPlatformCode());
         GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(jsonObject.getString("username"));
