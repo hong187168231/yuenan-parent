@@ -132,7 +132,7 @@ public class MgServiceImpl implements MgService {
         logger.info("mgLog登录游戏Mg游戏gameToken输入 builder:{}, params:{}, userId:{}", builder.toString(), map, userId);
         try {
             apiResponseData = commonRequest(builder.toString(), map, userId, "", "createMgToken");
-            logger.info("mgLog登录游戏Mg游戏gameToken返回 JSONObject:{}", apiResponseData.toJSONString());
+            logger.info("mgLog登录游戏Mg游戏gameToken返回 JSONObject:{}", null!=apiResponseData?apiResponseData.toJSONString():"");
         } catch (Exception e) {
             logger.error("mgLog gameToken:{}", e);
             e.printStackTrace();
@@ -168,7 +168,7 @@ public class MgServiceImpl implements MgService {
         JSONObject apiResponseData = null;
         try {
             apiResponseData = commonRequest(builder.toString(), map, cptOpenMember.getUserId(), token, "createMgMember");
-            logger.info("mgLog登录游戏Mg游戏创建用户createMember返回 JSONObject:{}", apiResponseData.toJSONString());
+            logger.info("mgLog登录游戏Mg游戏创建用户createMember返回 JSONObject:{}", null!=apiResponseData?apiResponseData.toJSONString():"");
         } catch (Exception e) {
             logger.error("mgLog pgCeateMember:{}", e);
             e.printStackTrace();
@@ -200,7 +200,7 @@ public class MgServiceImpl implements MgService {
             apiUrl.append("/players/").append(cptOpenMemberm.getUserName()).append("/sessions");
             logger.info("mgLog登录游戏Mg游戏登录用户gameLogin输入 builder:{}, params:{}, userId:{}, token:{}", apiUrl.toString(), params, cptOpenMemberm.getUserId(), token);
             apiResponseData = commonRequest(apiUrl.toString(), params, cptOpenMemberm.getUserId(), token, "mgGameLogin");
-            logger.info("mgLog登录游戏Mg游戏登录用户gameLogin返回JSONObject:{}", apiResponseData.toJSONString());
+            logger.info("mgLog登录游戏Mg游戏登录用户gameLogin返回JSONObject:{}", null!=apiResponseData?apiResponseData.toJSONString():"");
         } catch (Exception e) {
             logger.error("mglog mgGameLogin:{}", e);
             e.printStackTrace();
