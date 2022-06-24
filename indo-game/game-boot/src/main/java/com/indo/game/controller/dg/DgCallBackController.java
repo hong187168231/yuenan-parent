@@ -5,6 +5,7 @@ import com.indo.common.annotation.AllowAccess;
 import com.indo.common.utils.IPAddressUtil;
 import com.indo.game.pojo.dto.cq.CqBetCallBackReq;
 import com.indo.game.pojo.dto.dg.DgCallBackReq;
+import com.indo.game.pojo.dto.dg.DgMemberCallBackReq;
 import com.indo.game.service.cq.CqCallbackService;
 import com.indo.game.service.dg.DgCallbackService;
 
@@ -35,7 +36,7 @@ public class DgCallBackController {
     @RequestMapping(value = "/user/getBalance/{agentName}", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @AllowAccess
     @ResponseBody
-    public Object getBalance(@PathVariable(name = "agentName") String agentName, @RequestBody DgCallBackReq dgCallBackReq,
+    public Object getBalance(@PathVariable(name = "agentName") String agentName, @RequestBody DgCallBackReq<DgMemberCallBackReq> dgCallBackReq,
                              HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
@@ -51,7 +52,7 @@ public class DgCallBackController {
     @RequestMapping(value = "/account/transfer/{agentName}", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @AllowAccess
     @ResponseBody
-    public Object transfer(@PathVariable(name = "agentName") String agentName, @RequestBody DgCallBackReq dgCallBackReq,
+    public Object transfer(@PathVariable(name = "agentName") String agentName, @RequestBody DgCallBackReq<DgMemberCallBackReq> dgCallBackReq,
                               HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
@@ -67,7 +68,7 @@ public class DgCallBackController {
     @RequestMapping(value = "/account/checkTransfer/{agentName} ", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object checkTransfer(@PathVariable(name = "agentName") String agentName, @RequestBody DgCallBackReq dgCallBackReq,
+    public Object checkTransfer(@PathVariable(name = "agentName") String agentName, @RequestBody DgCallBackReq<DgMemberCallBackReq> dgCallBackReq,
                       HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
@@ -83,7 +84,7 @@ public class DgCallBackController {
     @RequestMapping(value = "/account/inform/{agentName} ", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object inform(@PathVariable(name = "agentName") String agentName, @RequestBody DgCallBackReq dgCallBackReq,
+    public Object inform(@PathVariable(name = "agentName") String agentName, @RequestBody DgCallBackReq<DgMemberCallBackReq> dgCallBackReq,
                          HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
@@ -99,7 +100,7 @@ public class DgCallBackController {
     @RequestMapping(value = "/account/order/{agentName}", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object order(@PathVariable(name = "agentName") String agentName, @RequestBody DgCallBackReq dgCallBackReq,
+    public Object order(@PathVariable(name = "agentName") String agentName, @RequestBody DgCallBackReq<DgMemberCallBackReq> dgCallBackReq,
                          HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
@@ -116,7 +117,7 @@ public class DgCallBackController {
     @RequestMapping(value = "/account/unsettle/{agentName} ", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object unsettle(@PathVariable(name = "agentName") String agentName, @RequestBody DgCallBackReq dgCallBackReq,
+    public Object unsettle(@PathVariable(name = "agentName") String agentName, @RequestBody DgCallBackReq<DgMemberCallBackReq> dgCallBackReq,
                         HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);

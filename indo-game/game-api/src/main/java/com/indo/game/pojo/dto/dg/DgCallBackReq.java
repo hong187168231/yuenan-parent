@@ -5,7 +5,7 @@ import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
 
 @Data
-public class DgCallBackReq {
+public class DgCallBackReq<T> {
 
 
     /**
@@ -18,7 +18,7 @@ public class DgCallBackReq {
      *
      */
     @JSONField(name = "member")
-    private DgMemberCallBackReq member;
+    private T member;
 
     /**
      * 注单ID
