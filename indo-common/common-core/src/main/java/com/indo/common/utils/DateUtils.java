@@ -15,10 +15,7 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.TimeZone;
+import java.util.*;
 
 @Slf4j
 public class DateUtils {
@@ -1455,6 +1452,32 @@ public class DateUtils {
         LocalDateTime utcNow = LocalDateTime.now(ZoneOffset.UTC);
         LocalDateTime utc4Time = utcNow.plusHours(8);
         return utc4Time.toInstant(ZoneOffset.ofHours(8)).toEpochMilli() / 1000;
+    }
+
+    /**
+     * 获取北京时间 unix时间戳
+     * @return
+     */
+    public static long getGMT8TimeLength10(){
+        long epoch = 0;
+        try {
+            Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"), Locale.CHINESE);
+            Calendar day = Calendar.getInstance();
+            day.set(Calendar.YEAR, cal.get(Calendar.YEAR));
+            day.set(Calendar.MONTH, cal.get(Calendar.MONTH));
+            day.set(Calendar.DATE, cal.get(Calendar.DATE));
+            day.set(Calendar.HOUR_OF_DAY, cal.get(Calendar.HOUR_OF_DAY));
+            day.set(Calendar.MINUTE, cal.get(Calendar.MINUTE));
+            day.set(Calendar.SECOND, cal.get(Calendar.SECOND));
+            Date gmt8 = day.getTime();
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String t = df.format(gmt8);
+            epoch = df.parse(t).getTime() / 1000;
+        } catch (Exception e) {
+            System.out.println("获取GMT8时间 getGMT8Time() error !");
+            e.printStackTrace();
+        }
+        return  epoch;
     }
 
     public static void main(String[] args) {

@@ -189,9 +189,9 @@ public class WmServiceImpl implements WmService {
         url.append("&user=").append(cptOpenMember.getUserName());
         url.append("&password=").append(cptOpenMember.getPassword());
         url.append("&lang=").append(lang);
-        url.append("&mode=").append(cptOpenMember.getUserName());
+//        url.append("&mode=").append(cptOpenMember.getUserName());
 //        url.append("&voice=").append(cptOpenMember.getUserName());
-        url.append("&timestamp=").append(DateUtils.getUTC8TimeLength10());
+        url.append("&timestamp=").append(DateUtils.getGMT8TimeLength10());
 
         return commonRequest(url.toString(), null);
     }
@@ -210,7 +210,7 @@ public class WmServiceImpl implements WmService {
         url.append("&user=").append(cptOpenMember.getUserName());
         url.append("&password=").append(cptOpenMember.getPassword());
         url.append("&username=").append(cptOpenMember.getUserName());
-        url.append("&timestamp=").append(DateUtils.getUTC8TimeLength10());
+        url.append("&timestamp=").append(DateUtils.getGMT8TimeLength10());
 //        url.append("&syslang=").append(lang);
         return url.toString();
     }
@@ -228,7 +228,7 @@ public class WmServiceImpl implements WmService {
         url.append("&vendorId=").append(OpenAPIProperties.WM_VENDORID);
         url.append("&signature=").append(OpenAPIProperties.WM_SIGNATURE);
         url.append("&user=").append(userAccount);
-        url.append("&timestamp=").append(DateUtils.getUTC8TimeLength10());
+        url.append("&timestamp=").append(DateUtils.getGMT8TimeLength10());
 //        url.append("&syslang=").append(lang);
         return url.toString();
     }
