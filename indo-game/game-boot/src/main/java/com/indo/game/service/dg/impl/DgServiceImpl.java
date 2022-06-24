@@ -229,15 +229,15 @@ public class DgServiceImpl implements DgService {
      * 公共请求
      */
     public JSONObject commonRequest(String apiUrl, JSONObject params, Integer userId, String type) throws Exception {
-        logger.info("Dglog  {} commonRequest userId:{},paramsMap:{}", userId, params);
+        logger.info("Dglog  commonRequest userId:{},type:{},paramsMap:{}", userId,type,params);
         JSONObject apiResponseData = null;
         String resultString = GameUtil.doProxyPostJson(OpenAPIProperties.PROXY_HOST_NAME, OpenAPIProperties.PROXY_PORT, OpenAPIProperties.PROXY_TCP,
                 apiUrl, params.toJSONString(), type, userId);
         logger.info("Dglog  apiResponse:" + resultString);
         if (StringUtils.isNotEmpty(resultString)) {
             apiResponseData = JSONObject.parseObject(resultString);
-            logger.info("Dglog  {}:commonRequest type:{}, operateFlag:{}, hostName:{}, params:{}, result:{}, awcApiResponse:{}",
-                    userId, type, null, params, resultString, JSONObject.toJSONString(apiResponseData));
+            logger.info("Dglog  commonRequest userId:{},type:{},  params:{}, result:{}, awcApiResponse:{}",
+                    userId, type, params, resultString, JSONObject.toJSONString(apiResponseData));
         }
         return apiResponseData;
     }

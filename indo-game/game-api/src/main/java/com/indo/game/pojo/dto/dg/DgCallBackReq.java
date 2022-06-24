@@ -18,7 +18,7 @@ public class DgCallBackReq {
      *
      */
     @JSONField(name = "member")
-    private String member;
+    private DgMemberCallBackReq member;
 
     /**
      * 注单ID
