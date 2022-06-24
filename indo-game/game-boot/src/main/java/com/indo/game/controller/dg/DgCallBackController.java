@@ -40,9 +40,9 @@ public class DgCallBackController {
                              HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("dgCallBack {} getBalance 回调,下注params:{}", JSONObject.toJSONString(dgCallBackReq));
+        logger.info("dgCallBack getBalance 回调,下注params:{},agentName:{}", JSONObject.toJSONString(dgCallBackReq), agentName);
         Object object = dgCallbackService.dgBalanceCallback(agentName, dgCallBackReq, ip);
-        logger.info("dgCallBack {} getBalance 回调下注返回数据,取得用户的余额 params:{}", object);
+        logger.info("dgCallBack getBalance 回调下注返回数据,取得用户的余额 params:{}", object);
         return object;
     }
 
@@ -56,9 +56,9 @@ public class DgCallBackController {
                               HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("dgCallBack {} transfer回调,params:{}", JSONObject.toJSONString(dgCallBackReq), agentName);
+        logger.info("dgCallBack transfer回调 params:{},agentName:{}", JSONObject.toJSONString(dgCallBackReq), agentName);
         Object object = dgCallbackService.dgTransferCallback(dgCallBackReq, ip, agentName);
-        logger.info("dgCallBack {} transfer回调返回数据, params:{}", object);
+        logger.info("dgCallBack transfer回调返回数据, params:{}", object);
         return object;
     }
 
@@ -72,9 +72,9 @@ public class DgCallBackController {
                       HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("dgCallBack {} checkTransfer回调params:{}", JSONObject.toJSONString(dgCallBackReq), agentName);
+        logger.info("dgCallBack checkTransfer回调params:{},agentName:{}", JSONObject.toJSONString(dgCallBackReq), agentName);
         Object object = dgCallbackService.dgCheckTransferCallback(dgCallBackReq, ip, agentName);
-        logger.info("dgCallBack {} checkTransfer回调返回数据,取得用户的余额 params:{}", object);
+        logger.info("dgCallBack checkTransfer回调返回数据,取得用户的余额 params:{}", object);
         return object;
     }
 
@@ -88,9 +88,9 @@ public class DgCallBackController {
                          HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("dgCallBack {} inform回调,params:{}", JSONObject.toJSONString(dgCallBackReq), agentName);
+        logger.info("dgCallBack inform回调,params:{},agentName:{}", JSONObject.toJSONString(dgCallBackReq), agentName);
         Object object = dgCallbackService.djInformCallback(dgCallBackReq, ip, agentName);
-        logger.info("dgCallBack {} inform回调返回数据,取得用户的余额 params:{}", object);
+        logger.info("dgCallBack inform回调返回数据,取得用户的余额 params:{}", object);
         return object;
     }
 
@@ -104,9 +104,9 @@ public class DgCallBackController {
                          HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("cqCallBack {} bonus回调,params:{}", JSONObject.toJSONString(dgCallBackReq), agentName);
+        logger.info("cqCallBack  bonus回调,params:{},agentName:{}", JSONObject.toJSONString(dgCallBackReq), agentName);
         Object object = dgCallbackService.mgOrderCallback(dgCallBackReq, ip, agentName);
-        logger.info("cqCallBack {} bonus回调返回数据 params:{}", object);
+        logger.info("cqCallBack   bonus回调返回数据 params:{}", object);
         return object;
     }
 
@@ -121,9 +121,9 @@ public class DgCallBackController {
                         HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("cqCallBack {} credit回调,params:{}", JSONObject.toJSONString(dgCallBackReq), agentName);
+        logger.info("cqCallBack   credit回调,params:{},agentName:{}", JSONObject.toJSONString(dgCallBackReq), agentName);
         Object object = dgCallbackService.mgUnsettleCallback(dgCallBackReq, ip, agentName);
-        logger.info("cqCallBack {} credit回调返回数据 params:{}", object);
+        logger.info("cqCallBack   credit回调返回数据 params:{}", object);
         return object;
     }
 

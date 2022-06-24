@@ -25,7 +25,7 @@ public class BlCallBackController {
     /**
      * 查询余额
      */
-    @RequestMapping(value = "/player/balance", method = RequestMethod.POST,produces = "text/json;charset=UTF-8")
+    @RequestMapping(value = "/player/balance", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @AllowAccess
     @ResponseBody
     public Object balance(@RequestBody BlCallBackReq blCallBackReq,
@@ -41,7 +41,7 @@ public class BlCallBackController {
     /**
      * 扣款接口
      */
-    @RequestMapping(value = "/player/cost", method = RequestMethod.POST,produces = "text/json;charset=UTF-8")
+    @RequestMapping(value = "/player/cost", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @AllowAccess
     @ResponseBody
     public Object player(@RequestBody BlCallBackReq blCallBackReq,
