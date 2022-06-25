@@ -426,15 +426,12 @@ public class OpenAPIProperties implements InitializingBean {
     public static String MG_CLIENT_SECRET;
     public static String MG_API_URL;
     public static String MG_TOKEN_URL;
-    public static String MG_SESSION_URL;
     public static String MG_PLATFORM_CODE;
     public static String MG_IS_PLATFORM_LOGIN;
     @Value("${mg.apiUrl}")
     private String mgApiurl;
     @Value("${mg.tokenUrl}")
     private String mgTokenUrl;
-    @Value("${mg.sessionUrl}")
-    private String mgSessionUrl;
     @Value("${mg.agentCode}")
     private String mgAgentCode;
     @Value("${mg.clientId}")
@@ -753,7 +750,6 @@ public class OpenAPIProperties implements InitializingBean {
         MG_CLIENT_ID = mgClientId;
         MG_CLIENT_SECRET = mgClientSecret;
         MG_TOKEN_URL = mgTokenUrl;
-        MG_SESSION_URL = mgSessionUrl;
         MG_PLATFORM_CODE = mgPlatformCode;
         MG_IS_PLATFORM_LOGIN = mgIsPlatformLogin;
 

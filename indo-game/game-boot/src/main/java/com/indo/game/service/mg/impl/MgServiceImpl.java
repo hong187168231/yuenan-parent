@@ -127,7 +127,7 @@ public class MgServiceImpl implements MgService {
         map.put("client_secret", OpenAPIProperties.MG_CLIENT_SECRET);
         map.put("grant_type", "client_credentials");
         StringBuilder builder = new StringBuilder();
-        builder.append(OpenAPIProperties.MG_SESSION_URL).append("/connect/token");
+        builder.append(OpenAPIProperties.MG_TOKEN_URL).append("/connect/token");
         JSONObject apiResponseData = null;
         logger.info("mgLog登录游戏Mg游戏gameToken输入 builder:{}, params:{}, userId:{}", builder.toString(), map, userId);
         try {
@@ -234,8 +234,8 @@ public class MgServiceImpl implements MgService {
         logger.info("mgLog 公共请求返回  apiResponse:" + resultString);
         if (StringUtils.isNotEmpty(resultString)) {
             apiResponseData = JSONObject.parseObject(resultString);
-            logger.info("mgLog  {}:commonRequest type:{}, operateFlag:{}, hostName:{}, params:{}, result:{}, awcApiResponse:{}",
-                    userId, type, null, params, resultString, JSONObject.toJSONString(apiResponseData));
+            logger.info("mgLog 公共请求返回:commonRequest userId:{},type:{}, params:{},  awcApiResponse:{}",
+                    userId, type, params, JSONObject.toJSONString(apiResponseData));
         }
         return apiResponseData;
     }
