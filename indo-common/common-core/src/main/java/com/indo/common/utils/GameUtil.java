@@ -518,6 +518,7 @@ public class GameUtil extends HttpCommonUtils {
         } catch (Exception e) {
             logger.error("httplog {}:{} doProxyPostJson occur error:{}, url:{}, proxyHost:{}, proxyPort:{}, originParams:{}",
                     userId, type, e.getMessage(), url, paramsString, e);
+            e.printStackTrace();
             return resultString;
         } finally {
             HttpCommonUtils.closeHttpClientAndResponse(response, closeableHttpClient, url, paramsString);
