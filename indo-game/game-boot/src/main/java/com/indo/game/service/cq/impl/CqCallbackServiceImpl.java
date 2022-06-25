@@ -8,6 +8,7 @@ import com.indo.common.enums.TradingEnum;
 import com.indo.common.utils.DateUtils;
 import com.indo.common.utils.encrypt.Base64;
 import com.indo.common.utils.encrypt.MD5;
+import com.indo.game.common.util.SnowflakeId;
 import com.indo.game.mapper.TxnsMapper;
 import com.indo.game.pojo.dto.ae.AeCallBackTransferReq;
 import com.indo.game.pojo.dto.cq.CqBetCallBackReq;
@@ -19,9 +20,7 @@ import com.indo.game.pojo.entity.manage.Txns;
 import com.indo.game.pojo.vo.callback.ae.AeCallBackRespFail;
 import com.indo.game.pojo.vo.callback.ae.AeGetBalanceResp;
 import com.indo.game.pojo.vo.callback.ae.AeGetBalanceRespSuccess;
-import com.indo.game.pojo.vo.callback.cq.CqDataResp;
-import com.indo.game.pojo.vo.callback.cq.CqRespSuccess;
-import com.indo.game.pojo.vo.callback.cq.CqStatusResp;
+import com.indo.game.pojo.vo.callback.cq.*;
 import com.indo.game.service.ae.AeCallbackService;
 import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.cq.CqCallbackService;
@@ -34,7 +33,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -73,7 +74,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Adjust Bet"));
         wrapper.eq(Txns::getStatus, "Running");
         wrapper.eq(Txns::getPromotionTxId, cqApiRequestData.getMtcode());
-        wrapper.eq(Txns::getPlatform, cqApiRequestData.getPlatform());
+        wrapper.eq(Txns::getPlatform, gameParentPlatform.getPlatformCode());
         wrapper.eq(Txns::getUserId, memBaseinfo.getAccount());
         Txns oldTxns = txnsMapper.selectOne(wrapper);
         if (null != oldTxns) {
@@ -88,9 +89,9 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
 
         Txns txns = new Txns();
-        //游戏商注单号
-        txns.setPlatformTxId(cqApiRequestData.getMtcode());
         //混合码
+        txns.setPlatformTxId(cqApiRequestData.getMtcode());
+        //游戏商注单号
         txns.setRoundId(cqApiRequestData.getRoundid());
         //此交易是否是投注 true是投注 false 否
         //玩家 ID
@@ -129,15 +130,16 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         txns.setStatus("Running");
         //余额
         txns.setBalance(balance);
+        txns.setGameMethod("bet");
         //创建时间
         String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
         txns.setCreateTime(dateStr);
         //投注 IP
         txns.setBetIp(ip);//  string 是 投注 IP
-        if (oldTxns != null) {
-            txns.setStatus("Settle");
-            txnsMapper.updateById(oldTxns);
-        }
+//        if (oldTxns != null) {
+//            txns.setStatus("Settle");
+//            txnsMapper.updateById(oldTxns);
+//        }
         int num = txnsMapper.insert(txns);
         if (num <= 0) {
             return commonReturnFail();
@@ -177,6 +179,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         txns.setMethod("Give");
         txns.setStatus("Running");
         txns.setCreateTime(dateStr);
+        txns.setGameMethod("payoff");
         int number = txnsMapper.insert(txns);
         if (number <= 0) {
             AeCallBackRespFail callBacekFail = new AeCallBackRespFail();
@@ -219,6 +222,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         txns.setMethod("Bonus");
         txns.setStatus("Running");
         txns.setCreateTime(dateStr);
+        txns.setGameMethod("bonus");
         int number = txnsMapper.insert(txns);
         if (number <= 0) {
             return commonReturnFail();
@@ -253,10 +257,14 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         txns.setRoundId(cqApiRequestData.getRoundid());
         txns.setBalance(balance);
         txns.setId(null);
-        txns.setMethod("Refund");
+        txns.setMethod("Settle");
         txns.setStatus("Running");
         txns.setCreateTime(dateStr);
+        txns.setGameMethod("credit");
         txnsMapper.insert(txns);
+        oldTxns.setStatus("Settle");
+        oldTxns.setUpdateTime(dateStr);
+        txnsMapper.updateById(oldTxns);
 
         return commonReturnSuccess(balance);
     }
@@ -289,10 +297,14 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         txns.setRoundId(cqApiRequestData.getRoundid());
         txns.setBalance(balance);
         txns.setId(null);
-        txns.setMethod("Refund");
+        txns.setMethod("Settle");
         txns.setStatus("Running");
         txns.setCreateTime(dateStr);
+        txns.setGameMethod("debit");
         txnsMapper.insert(txns);
+        oldTxns.setStatus("Settle");
+        oldTxns.setUpdateTime(dateStr);
+        txnsMapper.updateById(oldTxns);
 
         return commonReturnSuccess(balance);
     }
@@ -348,6 +360,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         txns.setMethod("Settle");
         String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
         txns.setCreateTime(dateStr);
+        txns.setGameMethod("rollin");
         txnsMapper.insert(txns);
         oldTxns.setStatus("Settle");
         oldTxns.setUpdateTime(dateStr);
@@ -390,6 +403,60 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         }
     }
 
+    @Override
+    public Object cqRecordCallback(String mtcode, String ip, String wtoken) {
+        if (!checkIp(ip) && !OpenAPIProperties.CQ_API_TOKEN.equals(wtoken)) {
+            return commonReturnFail();
+        }
+        LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Txns::getPlatformTxId, mtcode);
+        List<Txns> oldTxnsList = txnsMapper.selectList(wrapper);
+        CqRecordRespSuccess cqRecordRespSuccess = new CqRecordRespSuccess();
+        CqStatusResp cqStatusResp = new CqStatusResp();
+        cqStatusResp.setCode("0");
+        cqStatusResp.setMessage("Success");
+        String dataStr = DateUtils.format(new Date(), DateUtils.RFC3339_DATE_FORMAT);
+        cqStatusResp.setDatetime(dataStr);
+        CqRecordDataResp cqRecordDataResp = new CqRecordDataResp();
+        if(null!=oldTxnsList&&oldTxnsList.size()>0){
+            for(Txns oldTxns:oldTxnsList){
+                cqRecordDataResp.set_id(SnowflakeId.generateId().toString());
+                cqRecordDataResp.setAction(oldTxns.getGameMethod());
+                CqTargetResp target = new CqTargetResp();
+                target.setAccount(oldTxns.getUserId());
+                cqRecordDataResp.setTarget(target);
+                CqStatusResp statusResp = new CqStatusResp();
+                statusResp.setCode("0");
+                statusResp.setMessage("Success");
+                cqStatusResp.setDatetime(oldTxns.getCreateTime());
+                cqRecordDataResp.setStatus(statusResp);
+                cqRecordDataResp.setBefore(oldTxns.getBalance().subtract(oldTxns.getAmount()));
+                cqRecordDataResp.setBalance(oldTxns.getBalance());
+                List<CqEventDataResp> event = new ArrayList<>();
+                CqEventDataResp cqEventDataResp = new CqEventDataResp();
+                //bet:老虎機下注
+                //endround:結束回合並統整該回合贏分
+                //debit:針對完成的訂單做扣款
+                // credit:針對完成的訂單做補款
+                // payoff:活動派彩
+                cqEventDataResp.setMtcode(oldTxns.getPromotionTxId());
+                if("bet".equals(oldTxns.getGameMethod())||"payoff".equals(oldTxns.getGameMethod())){
+                    cqEventDataResp.setAmount(oldTxns.getBetAmount());
+                }else {
+                    cqEventDataResp.setAmount(oldTxns.getWinningAmount());
+                }
+                cqEventDataResp.setEventtime(oldTxns.getCreateTime());
+                event.add(cqEventDataResp);
+                cqRecordDataResp.setEvent(event);
+            }
+        }else {
+            cqStatusResp.setCode("1014");
+            cqStatusResp.setMessage("record not found");
+        }
+        cqRecordRespSuccess.setData(cqRecordDataResp);
+        cqRecordRespSuccess.setStatus(cqStatusResp);
+        return cqRecordRespSuccess;
+    }
 
     private boolean checkIp(String ip) {
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.CQ_PLATFORM_CODE);

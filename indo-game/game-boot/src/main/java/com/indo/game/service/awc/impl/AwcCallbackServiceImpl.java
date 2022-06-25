@@ -688,6 +688,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                         txns.setCreateTime(dateStr);
                         txnsMapper.insert(txns);
                         oldTxns.setStatus("Settle");
+                        oldTxns.setUpdateTime(dateStr);
                         txnsMapper.updateById(oldTxns);
 
                     }

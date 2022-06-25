@@ -9,4 +9,5 @@ public class CqStatusResp {
     private String code;
     private String message;
     private String datetime;
+    private String status;
 }

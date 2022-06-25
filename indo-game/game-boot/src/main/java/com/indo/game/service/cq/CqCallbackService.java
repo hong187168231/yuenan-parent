@@ -21,4 +21,6 @@ public interface CqCallbackService {
     Object cqBalanceCallback(String account, String ip, String wtoken);
 
     Object cqCheckPlayerCallback(String account, String ip, String wtoken);
+
+    Object cqRecordCallback(String mtcode, String ip, String wtoken);
 }

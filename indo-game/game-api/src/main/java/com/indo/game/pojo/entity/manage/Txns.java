@@ -136,6 +136,10 @@ public class Txns {
     @NotNull(message = "操作名称")
     private String method;
 
+    @ApiModelProperty(value = "游戏回调方法名称")
+    @NotNull(message = "游戏回调方法名称")
+    private String gameMethod;
+
     @ApiModelProperty(value = "余额")
     @NotNull(message = "余额")
     private BigDecimal balance;
