@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.indo.common.annotation.AllowAccess;
 import com.indo.common.utils.IPAddressUtil;
 import com.indo.game.pojo.dto.cq.CqBetCallBackReq;
+import com.indo.game.pojo.dto.cq.CqEndroundCallBackReq;
+import com.indo.game.pojo.dto.cq.CqEndroundDataCallBackReq;
 import com.indo.game.service.cq.CqCallbackService;
 
 import org.slf4j.Logger;
@@ -71,7 +73,23 @@ public class CqCallBackController {
         String wtoken = request.getHeader("wtoken");
         logger.info("cqCallBack  老虎機下注bet回调params:{}", JSONObject.toJSONString(cqApiRequestData), wtoken);
         Object object = cqCallbackService.cqBetCallback(cqApiRequestData, ip, wtoken);
-        logger.info("cqCallBack  老虎機下注bet回调返回数据,取得用户的余额 params:{}", object);
+        logger.info("cqCallBack  老虎機下注bet回调返回数据 params:{}", object);
+        return object;
+    }
+
+    /**
+     * 結束回合並統整該回合贏分
+     */
+    @RequestMapping(value = "/callBack/transaction/game/endround", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    @AllowAccess
+    public Object endround(CqEndroundCallBackReq<CqEndroundDataCallBackReq> endroundDataCallBackReq, HttpServletRequest request) {
+
+        String ip = IPAddressUtil.getIpAddress(request);
+        String wtoken = request.getHeader("wtoken");
+        logger.info("cqCallBack  結束回合並統整該回合贏分endround回调params:{}", JSONObject.toJSONString(endroundDataCallBackReq), wtoken);
+        Object object = cqCallbackService.endround(endroundDataCallBackReq, ip, wtoken);
+        logger.info("cqCallBack  結束回合並統整該回合贏分endround回调返回数据 params:{}", object);
         return object;
     }
 
@@ -87,7 +105,7 @@ public class CqCallBackController {
         String wtoken = request.getHeader("wtoken");
         logger.info("cqCallBack  payOff回调,params:{}", JSONObject.toJSONString(cqApiRequestData), wtoken);
         Object object = cqCallbackService.cqPayOffCallback(cqApiRequestData, ip, wtoken);
-        logger.info("cqCallBack  payOff回调返回数据,取得用户的余额 params:{}", object);
+        logger.info("cqCallBack  payOff回调返回数据 params:{}", object);
         return object;
     }
 

@@ -13,6 +13,8 @@ import com.indo.game.mapper.TxnsMapper;
 import com.indo.game.pojo.dto.ae.AeCallBackTransferReq;
 import com.indo.game.pojo.dto.cq.CqBetCallBackReq;
 import com.indo.game.pojo.dto.cq.CqCallBackParentReq;
+import com.indo.game.pojo.dto.cq.CqEndroundCallBackReq;
+import com.indo.game.pojo.dto.cq.CqEndroundDataCallBackReq;
 import com.indo.game.pojo.entity.manage.GameCategory;
 import com.indo.game.pojo.entity.manage.GameParentPlatform;
 import com.indo.game.pojo.entity.manage.GamePlatform;
@@ -63,7 +65,12 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         }
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cqApiRequestData.getAccount());
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.CQ_PLATFORM_CODE);
-        GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(cqApiRequestData.getGamecode(),gameParentPlatform.getPlatformCode());
+        GamePlatform gamePlatform = new GamePlatform();
+        if(OpenAPIProperties.V8_IS_PLATFORM_LOGIN.equals("Y")){
+            gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.CQ_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
+        }else {
+            gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(cqApiRequestData.getGamecode(), gameParentPlatform.getPlatformCode());
+        }
         GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         BigDecimal balance = memBaseinfo.getBalance();
         BigDecimal betAmount = new BigDecimal(cqApiRequestData.getAmount());
@@ -145,8 +152,57 @@ public class CqCallbackServiceImpl implements CqCallbackService {
             return commonReturnFail();
         }
 
-        return commonReturnSuccess(balance);
+        return commonReturnSuccess(balance,gameParentPlatform.getCurrencyType());
 
+    }
+
+    @Override
+    public Object endround(CqEndroundCallBackReq<CqEndroundDataCallBackReq> endroundDataCallBackReq, String ip, String wtoken){
+        if (!checkIp(ip) && !OpenAPIProperties.CQ_API_TOKEN.equals(wtoken)) {
+            return commonReturnFail();
+        }
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.CQ_PLATFORM_CODE);
+        GamePlatform gamePlatform = new GamePlatform();
+        if(OpenAPIProperties.V8_IS_PLATFORM_LOGIN.equals("Y")){
+            gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.CQ_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
+        }else {
+            gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(endroundDataCallBackReq.getGamecode(), gameParentPlatform.getPlatformCode());
+        }
+        GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
+        BigDecimal balance = BigDecimal.ZERO;
+        for(CqEndroundDataCallBackReq cq:endroundDataCallBackReq.getData()) {
+            MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(endroundDataCallBackReq.getAccount());
+            LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+            wrapper.eq(Txns::getPromotionTxId, cq.getMtcode());
+            wrapper.eq(Txns::getRoundId, endroundDataCallBackReq.getRoundid());
+            Txns oldTxns = txnsMapper.selectOne(wrapper);
+            if (null != oldTxns) {
+                return commonReturnFail();
+            }
+
+            balance = memBaseinfo.getBalance().add(cq.getAmount());
+            gameCommonService.updateUserBalance(memBaseinfo, cq.getAmount(), GoldchangeEnum.REFUND, TradingEnum.INCOME);
+            String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
+
+            Txns txns = new Txns();
+            BeanUtils.copyProperties(oldTxns, txns);
+            //游戏商注单号
+            txns.setPlatformTxId(cq.getMtcode());
+            //混合码
+            txns.setRoundId(endroundDataCallBackReq.getRoundid());
+            txns.setBalance(balance);
+            txns.setId(null);
+            txns.setMethod("Settle");
+            txns.setStatus("Running");
+            txns.setCreateTime(dateStr);
+            txns.setGameMethod("endround");
+            txnsMapper.insert(txns);
+            oldTxns.setStatus("Settle");
+            oldTxns.setUpdateTime(dateStr);
+            txnsMapper.updateById(oldTxns);
+        }
+
+        return commonReturnSuccess(balance, gameParentPlatform.getCurrencyType());
     }
 
     @Override
@@ -154,11 +210,18 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         if (!checkIp(ip) && !OpenAPIProperties.CQ_API_TOKEN.equals(wtoken)) {
             return commonReturnFail();
         }
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.CQ_PLATFORM_CODE);
+        GamePlatform gamePlatform = new GamePlatform();
+        if(OpenAPIProperties.V8_IS_PLATFORM_LOGIN.equals("Y")){
+            gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.CQ_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
+        }else {
+            gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(cqApiRequestData.getGamecode(), gameParentPlatform.getPlatformCode());
+        }
+        GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cqApiRequestData.getAccount());
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Txns::getStatus, "Running");
         wrapper.eq(Txns::getMethod, "Give");
-        ;
         wrapper.eq(Txns::getPromotionTxId, cqApiRequestData.getMtcode());
         Txns oldTxns = txnsMapper.selectOne(wrapper);
         if (null != oldTxns) {
@@ -187,7 +250,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
             callBacekFail.setMsg("钱包余额过低");
             return JSONObject.toJSONString(callBacekFail);
         }
-        return commonReturnSuccess(balance);
+        return commonReturnSuccess(balance, gameParentPlatform.getCurrencyType());
 
     }
 
@@ -196,12 +259,19 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         if (!checkIp(ip) && !OpenAPIProperties.CQ_API_TOKEN.equals(wtoken)) {
             return commonReturnFail();
         }
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.CQ_PLATFORM_CODE);
+        GamePlatform gamePlatform = new GamePlatform();
+        if(OpenAPIProperties.V8_IS_PLATFORM_LOGIN.equals("Y")){
+            gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.CQ_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
+        }else {
+            gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(cqApiRequestData.getGamecode(), gameParentPlatform.getPlatformCode());
+        }
+        GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cqApiRequestData.getAccount());
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Txns::getMethod, "Give");
         wrapper.eq(Txns::getStatus, "Running");
         wrapper.eq(Txns::getPromotionTxId, cqApiRequestData.getMtcode());
-        ;
         Txns oldTxns = txnsMapper.selectOne(wrapper);
         if (null != oldTxns) {
             return commonReturnFail();
@@ -227,7 +297,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         if (number <= 0) {
             return commonReturnFail();
         }
-        return commonReturnSuccess(balance);
+        return commonReturnSuccess(balance, gameParentPlatform.getCurrencyType());
     }
 
     @Override
@@ -235,11 +305,18 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         if (!checkIp(ip) && !OpenAPIProperties.CQ_API_TOKEN.equals(wtoken)) {
             return commonReturnFail();
         }
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.CQ_PLATFORM_CODE);
+        GamePlatform gamePlatform = new GamePlatform();
+        if(OpenAPIProperties.V8_IS_PLATFORM_LOGIN.equals("Y")){
+            gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.CQ_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
+        }else {
+            gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(cqApiRequestData.getGamecode(), gameParentPlatform.getPlatformCode());
+        }
+        GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cqApiRequestData.getAccount());
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Txns::getStatus, "Running");
         wrapper.eq(Txns::getPromotionTxId, cqApiRequestData.getMtcode());
-        ;
         Txns oldTxns = txnsMapper.selectOne(wrapper);
         if (null != oldTxns) {
             return commonReturnFail();
@@ -266,7 +343,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         oldTxns.setUpdateTime(dateStr);
         txnsMapper.updateById(oldTxns);
 
-        return commonReturnSuccess(balance);
+        return commonReturnSuccess(balance, gameParentPlatform.getCurrencyType());
     }
 
     @Override
@@ -274,12 +351,19 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         if (!checkIp(ip) && !OpenAPIProperties.CQ_API_TOKEN.equals(wtoken)) {
             return commonReturnFail();
         }
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.CQ_PLATFORM_CODE);
+        GamePlatform gamePlatform = new GamePlatform();
+        if(OpenAPIProperties.V8_IS_PLATFORM_LOGIN.equals("Y")){
+            gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.CQ_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
+        }else {
+            gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(cqApiRequestData.getGamecode(), gameParentPlatform.getPlatformCode());
+        }
+        GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cqApiRequestData.getAccount());
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
         wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Adjust Bet"));
         wrapper.eq(Txns::getStatus, "Running");
         wrapper.eq(Txns::getPromotionTxId, cqApiRequestData.getMtcode());
-        ;
         Txns oldTxns = txnsMapper.selectOne(wrapper);
         if (null != oldTxns) {
             return commonReturnFail();
@@ -306,7 +390,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         oldTxns.setUpdateTime(dateStr);
         txnsMapper.updateById(oldTxns);
 
-        return commonReturnSuccess(balance);
+        return commonReturnSuccess(balance, gameParentPlatform.getCurrencyType());
     }
 
     @Override
@@ -314,12 +398,19 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         if (!checkIp(ip) && !OpenAPIProperties.CQ_API_TOKEN.equals(wtoken)) {
             return commonReturnFail();
         }
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.CQ_PLATFORM_CODE);
+        GamePlatform gamePlatform = new GamePlatform();
+        if(OpenAPIProperties.V8_IS_PLATFORM_LOGIN.equals("Y")){
+            gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.CQ_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
+        }else {
+            gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(cqApiRequestData.getGamecode(), gameParentPlatform.getPlatformCode());
+        }
+        GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cqApiRequestData.getAccount());
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Txns::getMethod, "Place Bet");
         wrapper.eq(Txns::getStatus, "Running");
         wrapper.eq(Txns::getPlatformTxId, cqApiRequestData.getMtcode());
-        ;
         Txns oldTxns = txnsMapper.selectOne(wrapper);
 
         BigDecimal betAmount = oldTxns.getBetAmount();
@@ -365,7 +456,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         oldTxns.setStatus("Settle");
         oldTxns.setUpdateTime(dateStr);
         txnsMapper.updateById(oldTxns);
-        return commonReturnSuccess(balance);
+        return commonReturnSuccess(balance, gameParentPlatform.getCurrencyType());
     }
 
     @Override
@@ -373,11 +464,12 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         if (!checkIp(ip) && !OpenAPIProperties.CQ_API_TOKEN.equals(wtoken)) {
             return commonReturnFail();
         }
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.CQ_PLATFORM_CODE);
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(account);
         if (null == memBaseinfo) {
             return commonReturnFail();
         } else {
-            return commonReturnSuccess(memBaseinfo.getBalance());
+            return commonReturnSuccess(memBaseinfo.getBalance(), gameParentPlatform.getCurrencyType());
         }
     }
 
@@ -470,7 +562,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         return false;
     }
 
-    private Object commonReturnSuccess(BigDecimal balance) {
+    private Object commonReturnSuccess(BigDecimal balance,String currencyType) {
         //返回
         CqRespSuccess getBalanceSuccess = new CqRespSuccess();
         CqStatusResp statusResp = new CqStatusResp();
@@ -480,8 +572,8 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         statusResp.setDatetime(dataStr);
         CqDataResp dataResp = new CqDataResp();
         dataResp.setBalance(balance);
-        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.CQ_PLATFORM_CODE);
-        dataResp.setCurrency(gameParentPlatform.getCurrencyType());
+
+        dataResp.setCurrency(currencyType);
         getBalanceSuccess.setData(dataResp);
         getBalanceSuccess.setStatus(statusResp);
         return getBalanceSuccess;
