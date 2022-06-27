@@ -419,7 +419,6 @@ public class OpenAPIProperties implements InitializingBean {
     @Value("${wm.isPlatformLogin}")
     private String wmIsPlatformLogin;
 
-
     //MG
     public static String MG_AGENT_CODE;
     public static String MG_CLIENT_ID;

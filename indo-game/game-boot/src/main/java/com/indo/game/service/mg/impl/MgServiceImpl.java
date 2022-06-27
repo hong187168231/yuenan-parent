@@ -164,7 +164,7 @@ public class MgServiceImpl implements MgService {
         StringBuilder builder = new StringBuilder();
         builder.append(OpenAPIProperties.MG_API_URL).append("/api/v1/agents/")
                 .append(OpenAPIProperties.MG_AGENT_CODE).append("/players");
-        logger.info("mgLog登录游戏Mg游戏创建用户createMember输入 builder:{}, params:{}, userId:{}", builder.toString(), map, cptOpenMember.getUserId());
+        logger.info("mgLog登录游戏Mg游戏创建用户createMember输入 url:{}, params:{}, userId:{}", builder.toString(), map, cptOpenMember.getUserId());
         JSONObject apiResponseData = null;
         try {
             apiResponseData = commonRequest(builder.toString(), map, cptOpenMember.getUserId(), token, "createMgMember");
@@ -198,7 +198,7 @@ public class MgServiceImpl implements MgService {
             StringBuilder apiUrl = new StringBuilder();
             apiUrl.append(OpenAPIProperties.MG_API_URL).append("/api/v1/agents/").append(OpenAPIProperties.MG_AGENT_CODE);
             apiUrl.append("/players/").append(cptOpenMemberm.getUserName()).append("/sessions");
-            logger.info("mgLog登录游戏Mg游戏登录用户gameLogin输入 builder:{}, params:{}, userId:{}, token:{}", apiUrl.toString(), params, cptOpenMemberm.getUserId(), token);
+            logger.info("mgLog登录游戏Mg游戏登录用户gameLogin输入 apiUrl:{}, params:{}, userId:{}, token:{}", apiUrl.toString(), params, cptOpenMemberm.getUserId(), token);
             apiResponseData = commonRequest(apiUrl.toString(), params, cptOpenMemberm.getUserId(), token, "mgGameLogin");
             logger.info("mgLog登录游戏Mg游戏登录用户gameLogin返回JSONObject:{}", null!=apiResponseData?apiResponseData.toJSONString():"");
         } catch (Exception e) {
@@ -227,7 +227,7 @@ public class MgServiceImpl implements MgService {
      * 公共请求
      */
     public JSONObject commonRequest(String apiUrl, Map<String, String> params, Integer userId, String token, String type) throws Exception {
-        logger.info("mgLog  公共请求输入 commonRequest userId:{},paramsMap:{}", userId, params);
+        logger.info("mgLog  公共请求输入 commonRequest userId:{},userId:{},paramsMap:{}",apiUrl, userId, params);
         JSONObject apiResponseData = null;
          String resultString = GameUtil.doProxyPostHeaderJson(OpenAPIProperties.PROXY_HOST_NAME, OpenAPIProperties.PROXY_PORT, OpenAPIProperties.PROXY_TCP,
                 apiUrl, params, type, userId, token);
