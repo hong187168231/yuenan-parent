@@ -728,7 +728,7 @@ public class GameUtil extends HttpCommonUtils {
             HttpEntity entity = response.getEntity();
             String result = EntityUtils.toString(entity, DEFAULT_CHARSET);
             EntityUtils.consume(entity); // 此句关闭了流
-            logger.info("GET请求 httpGetWithCookies result:{}", result);
+            logger.info("GET请求返回 httpGetWithCookies result:{}", result);
             return result;
         } catch (Exception e) {
             logger.error("请求的接口为:[{}], 发生异常原因: {}", url, e.getMessage(), e);

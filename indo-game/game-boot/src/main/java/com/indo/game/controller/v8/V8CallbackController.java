@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/v8")
@@ -51,16 +52,16 @@ public class V8CallbackController {
         return v8Service.balance(loginUser, platform, ip);
     }
 
-    @RequestMapping(value = "/callBack", method = RequestMethod.GET,produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/callBack", method = RequestMethod.GET)
     @ResponseBody
     @AllowAccess
-    public Object callBack(HttpServletRequest request) {
+    public Object callBack(@RequestParam Map<String,String> paramMap, HttpServletRequest request) {
         String ip = IPAddressUtil.getIpAddress(request);
-        String agent = request.getParameter("agent");
-        String timestamp = request.getParameter("timestamp");
-        String param = request.getParameter("param");
-        String key = request.getParameter("key");
-        logger.info("V8Callback callBack 回调, params:{}, {}, {}, {}", agent, timestamp, param, key);
+        String agent = paramMap.get("agent");
+        String timestamp = paramMap.get("timestamp");
+        String param = paramMap.get("param");
+        String key = paramMap.get("key");
+        logger.info("V8Callback callBack 回调, agent:{}, timestamp{}, param{}, key{}, ip{}", agent, timestamp, param, key,ip);
         int method = 0;
         String account = null;
         BigDecimal money = BigDecimal.ZERO;

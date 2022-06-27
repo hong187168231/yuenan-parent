@@ -272,6 +272,7 @@ public class V8ServiceImpl implements V8Service {
         url.append("&param=").append(GameUtil.encrypt(urlParams.toString(), OpenAPIProperties.V8_DESKEY));
         url.append("&key=");
         url.append(getKey(timestamp));
+        logger.info("v8Game getLoginUrl登录请求:userAccount{},gameId:{},ip:{},url:{}", userAccount, gameId, ip, url.toString());
         return url.toString();
     }
 
@@ -294,6 +295,7 @@ public class V8ServiceImpl implements V8Service {
         url.append("&param=").append(GameUtil.encrypt(urlParams.toString(), OpenAPIProperties.V8_DESKEY));
         url.append("&key=");
         url.append(getKey(timestamp));
+        logger.info("v8Game getLoginUrl玩家退出游戏:userAccount{},url:{}", account,  url.toString());
         return url.toString();
     }
 
@@ -317,6 +319,7 @@ public class V8ServiceImpl implements V8Service {
         url.append("&param=").append(GameUtil.encrypt(urlParams.toString(), OpenAPIProperties.V8_DESKEY));
         url.append("&key=");
         url.append(getKey(timestamp));
+        logger.info("v8Game getLoginUrl玩家下分请求:userAccount{},money:{},orderid:{},url:{}", account, money, orderid, url.toString());
         return url.toString();
     }
 
@@ -338,6 +341,7 @@ public class V8ServiceImpl implements V8Service {
         url.append("&param=").append(GameUtil.encrypt(urlParams.toString(), OpenAPIProperties.V8_DESKEY));
         url.append("&key=");
         url.append(getKey(timestamp));
+        logger.info("v8Game getLoginUrl玩家游戏余额和在线状态地址请求:userAccount{},url:{}", account, url.toString());
         return url.toString();
     }
 
@@ -359,6 +363,7 @@ public class V8ServiceImpl implements V8Service {
         url.append("&param=").append(GameUtil.encrypt(urlParams.toString(), OpenAPIProperties.V8_DESKEY));
         url.append("&key=");
         url.append(getKey(timestamp));
+        logger.info("v8Game getLoginUrl玩家上下分订单查询请求:orderid{},url:{}", orderid, url.toString());
         return url.toString();
     }
 
