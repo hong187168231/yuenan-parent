@@ -180,8 +180,8 @@ public class CqCallbackServiceImpl implements CqCallbackService {
                 return commonReturnFail();
             }
 
-            balance = memBaseinfo.getBalance().add(cq.getAmount());
-            gameCommonService.updateUserBalance(memBaseinfo, cq.getAmount(), GoldchangeEnum.REFUND, TradingEnum.INCOME);
+            balance = memBaseinfo.getBalance().add(BigDecimal.valueOf(cq.getAmount()));
+            gameCommonService.updateUserBalance(memBaseinfo, BigDecimal.valueOf(cq.getAmount()), GoldchangeEnum.REFUND, TradingEnum.INCOME);
             String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
 
             Txns txns = new Txns();
