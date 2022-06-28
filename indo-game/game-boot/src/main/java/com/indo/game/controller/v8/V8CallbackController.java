@@ -62,12 +62,13 @@ public class V8CallbackController {
         String timestamp = paramMap.get("timestamp");
         String param = paramMap.get("param");
         String key = paramMap.get("key");
-        logger.info("V8Callback callBack 回调, agent:{}, timestamp{}, param{}, key{}, ip{}", agent, timestamp, param, key,ip);
+        logger.info("V8Callback callBack 回调, agent:{}, timestamp:{}, param:{}, key:{}, ip:{}", agent, timestamp, param, key,ip);
         int method = 0;
         String account = null;
         BigDecimal money = BigDecimal.ZERO;
         try {
             param = V8Encrypt.AESEncrypt(param, OpenAPIProperties.V8_DESKEY);
+            logger.info("V8Callback 回调 加密后数据, param[]:{}", param);
             String[] params = param.split("&");
             for (String temp : params) {
                 if (temp.indexOf("s=") == 0) {
