@@ -179,9 +179,9 @@ public class CqCallbackServiceImpl implements CqCallbackService {
             if (null != oldTxns) {
                 return commonReturnFail();
             }
-
-            balance = memBaseinfo.getBalance().add(BigDecimal.valueOf(cq.getAmount()));
-            gameCommonService.updateUserBalance(memBaseinfo, BigDecimal.valueOf(cq.getAmount()), GoldchangeEnum.REFUND, TradingEnum.INCOME);
+            Double amount = Double.valueOf(cq.getAmount());
+            balance = memBaseinfo.getBalance().add(BigDecimal.valueOf(amount));
+            gameCommonService.updateUserBalance(memBaseinfo, BigDecimal.valueOf(amount), GoldchangeEnum.REFUND, TradingEnum.INCOME);
             String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
 
             Txns txns = new Txns();
