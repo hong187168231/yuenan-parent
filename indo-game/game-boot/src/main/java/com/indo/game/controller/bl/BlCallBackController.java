@@ -28,8 +28,7 @@ public class BlCallBackController {
     @RequestMapping(value = "/player/balance", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @AllowAccess
     @ResponseBody
-    public Object balance(@RequestBody BlCallBackReq blCallBackReq,
-                          @RequestBody HttpServletRequest request) {
+    public Object balance(BlCallBackReq blCallBackReq,HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
         logger.info("blCallBack  getBalance 回调下注params:{},ip{}", JSON.toJSON(blCallBackReq),ip);
@@ -44,8 +43,7 @@ public class BlCallBackController {
     @RequestMapping(value = "/player/cost", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @AllowAccess
     @ResponseBody
-    public Object player(@RequestBody BlCallBackReq blCallBackReq,
-                         @RequestBody HttpServletRequest request) {
+    public Object player(BlCallBackReq blCallBackReq,HttpServletRequest request) {
         String ip = IPAddressUtil.getIpAddress(request);
         logger.info("blCallBack  player回调 params:{},ip{}", JSON.toJSON(blCallBackReq),ip);
         Object object = blCallbackService.blPlayerCallback(blCallBackReq, ip);
