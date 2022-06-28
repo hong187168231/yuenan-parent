@@ -2,6 +2,9 @@ package com.indo.admin.modules.report.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.modules.mem.service.IMemBaseinfoService;
+import com.indo.admin.modules.report.service.DataReportService;
+import com.indo.admin.pojo.dto.AgentReportDTO;
+import com.indo.admin.pojo.vo.agent.AgentReportVO;
 import com.indo.common.result.PageResult;
 import com.indo.common.result.Result;
 import com.indo.user.pojo.req.agent.AgentReportReq;
@@ -26,7 +29,8 @@ import java.util.List;
 @RequestMapping("/api/v1/dataReport")
 public class DataReportController {
 
-
+    @Resource
+    private DataReportService dataReportService;
     @Resource
     private IMemBaseinfoService iMemBaseInfoService;
 
@@ -54,24 +58,9 @@ public class DataReportController {
     }
 
     @ApiOperation(value = "查询代理报表")
-    @GetMapping(value = "/agentReportList")
-    public Result<PageResult<AgentReportVo>> agentReportList(AgentReportReq dto) {
-        Integer pageNum = 1;
-        Integer pageSize = 10;
-        if (null != dto.getPage() && null != dto.getLimit()) {
-            pageNum = dto.getPage();
-            pageSize = dto.getLimit();
-        }
-        Page<AgentReportVo> page = new Page<>(pageNum, pageSize);
-//        List<AgentReportVo> list = iMemBaseInfoService.agentReportList(page, dto);
-//        page.setRecords(list);
-        return Result.success(PageResult.getPageResult(page));
+    @GetMapping(value = "/agentReportPage")
+    public Result<Page<AgentReportVO>> agentReportList(AgentReportDTO agentReportDTO) {
+        return Result.success(dataReportService.findAgentReport(agentReportDTO));
     }
 
-    @ApiOperation(value = "导出代理报表")
-    @ApiImplicitParam(name = "ids", value = "用户ID，逗号拼接(1,2)")
-    @GetMapping(value = "/agentReportExport")
-    public void agentReportExport(HttpServletResponse response, @RequestParam(required = false) List<Long> ids) throws IOException {
-//        iMemBaseInfoService.agentReportExport(response, ids);
-    }
 }

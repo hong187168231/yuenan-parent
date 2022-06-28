@@ -63,4 +63,20 @@
         ORDER BY
         ar.create_time DESC
     </select>
+    <select id="findAgentReport" resultType="com.indo.admin.pojo.vo.agent.AgentReportVO">
+        SELECT
+        c.datelist as dataTime,
+        (SELECT COUNT(1) FROM agent_relation) as agentTotalQuantity,
+        COUNT(ar.agent_id) as agentNewQuantity,
+        SUM(arr.team_amout) as teamAmout,
+        SUM(arr.rebate_amout) as totalRebateAmount,
+        (SELECT SUM(acr.remit_amount)FROM agent_cash_record acr WHERE DATE_FORMAT(acr.create_time,'%Y-%m-%d')=c.datelist )as totalWithdrawalAmount
+        from calendar c
+        LEFT JOIN agent_relation  ar on c.datelist=ar.create_time
+        LEFT JOIN agent_rebate_record arr on DATE_FORMAT(arr.create_time,'%Y-%m-%d')=c.datelist
+        where 1=1
+        and c.datelist &gt;=#{beginTime}
+        and c.datelist &lt;=#{endTime}
+        GROUP BY c.datelist
+    </select>
 </mapper>
