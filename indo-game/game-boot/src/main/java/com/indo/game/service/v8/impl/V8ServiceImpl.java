@@ -264,16 +264,18 @@ public class V8ServiceImpl implements V8Service {
         url.append("&timestamp=").append(timestamp);
 
         StringBuilder urlParams = new StringBuilder();
-        urlParams.append("s=").append(balance);
-        urlParams.append("&account=").append(userAccount);
-        urlParams.append("&money=0&orderid=").append(getOrderid(userAccount));
+        urlParams.append("s=0&account=").append(userAccount);
+        urlParams.append("&money=").append(balance);
+        urlParams.append("&orderid=").append(getOrderid(userAccount));
         urlParams.append("&ip=").append(ip);
         urlParams.append("&lineCode=").append(OpenAPIProperties.V8_LINE_CODE);
+        logger.info("v8Game getLoginUrl登录请求:lineCode{},isPlatformLogin:{}",OpenAPIProperties.V8_LINE_CODE, OpenAPIProperties.V8_IS_PLATFORM_LOGIN);
         if(OpenAPIProperties.V8_IS_PLATFORM_LOGIN.equals("Y")){
             urlParams.append("&KindID=");
         }else {
             urlParams.append("&KindID=").append(gameId);
         }
+        logger.info("v8Game getLoginUrl登录请求加密前:urlParams:{}", urlParams.toString());
         url.append("&param=").append(V8Encrypt.AESEncrypt(urlParams.toString(), OpenAPIProperties.V8_DESKEY));
         url.append("&key=");
         url.append(getKey(timestamp));
