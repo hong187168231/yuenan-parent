@@ -170,6 +170,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         }
         GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         BigDecimal balance = BigDecimal.ZERO;
+        logger.info("CQ9Game 回调endround:List<CqEndroundDataCallBackReq>:{}", endroundDataCallBackReq.getData());
         List<CqEndroundDataCallBackReq> cqList = endroundDataCallBackReq.getData();
         for(CqEndroundDataCallBackReq cq:cqList) {
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(endroundDataCallBackReq.getAccount());
