@@ -29,11 +29,12 @@ public class BlCallBackController {
     @RequestMapping(value = "/player/balance", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @AllowAccess
     @ResponseBody
-    public Object balance(@RequestParam BlCallBackReq blCallBackReq, HttpServletRequest request, @RequestParam Map<String,String> paramMap) {
+    public Object balance( HttpServletRequest request, @RequestParam Map<String,String> paramMap) {
         logger.info("blCallBack  getBalance 回调下注paramMap:{}", paramMap);
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("blCallBack  getBalance 回调下注params:{},ip:{}", JSON.toJSON(blCallBackReq),ip);
-        Object object = blCallbackService.blBlanceCallback(blCallBackReq, ip);
+//        logger.info("blCallBack  getBalance 回调下注params:{},ip:{}", JSON.toJSON(blCallBackReq),ip);
+        Object object = new Object();
+//        Object object = blCallbackService.blBlanceCallback(blCallBackReq, ip);
         logger.info("blCallBack getBalance 回调下注返回数据 取得用户的余额 params:{}", object);
         return object;
     }
