@@ -164,7 +164,7 @@ public class MgServiceImpl implements MgService {
         StringBuilder builder = new StringBuilder();
         builder.append(OpenAPIProperties.MG_API_URL).append("/api/v1/agents/")
                 .append(OpenAPIProperties.MG_AGENT_CODE).append("/players");
-        logger.info("mgLog登录游戏Mg游戏创建用户createMember输入 url:{}, params:{}, userId:{}", builder.toString(), map, cptOpenMember.getUserId());
+        logger.info("mgLog登录游戏Mg游戏创建用户createMember输入 url:{}, params:{}, userId:{}, token:{}", builder.toString(), map, cptOpenMember.getUserId(),token);
         JSONObject apiResponseData = null;
         try {
             apiResponseData = commonRequest(builder.toString(), map, cptOpenMember.getUserId(), token, "createMgMember");

@@ -123,39 +123,39 @@ public class GameUtil extends HttpCommonUtils {
         return jsonObject;
     }
 
-    /**
-     * 加密
-     */
-    public static String encrypt(String sSrc, String aeskey) throws Exception {
-        Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-        byte[] raw = aeskey.getBytes();
-        SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
-        cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
-        byte[] encrypted = cipher.doFinal(sSrc.getBytes(StandardCharsets.UTF_8));
-        //此处使用BASE64做转码。
-        return URLEncoder.encode(Base64.getEncoder().encodeToString(encrypted), StandardCharsets.UTF_8.toString());
-    }
-
-    /**
-     * 解密
-     */
-    public static String decrypt(String sSrc, String aeskey) {
-        try {
-            sSrc = sSrc.replaceAll(" ", "+");
-            byte[] raw = aeskey.getBytes("ASCII");
-            SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
-            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-            cipher.init(Cipher.DECRYPT_MODE, skeySpec);
-            //先用base64解密
-            byte[] encrypted1 = Base64.getDecoder().decode(sSrc);
-            byte[] original = cipher.doFinal(encrypted1);
-            String originalString = new String(original, StandardCharsets.UTF_8);
-            return originalString;
-        } catch (Exception ex) {
-            logger.error("decrypt error", ex);
-            return null;
-        }
-    }
+//    /**
+//     * 加密
+//     */
+//    public static String encrypt(String sSrc, String aeskey) throws Exception {
+//        Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+//        byte[] raw = aeskey.getBytes();
+//        SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
+//        cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
+//        byte[] encrypted = cipher.doFinal(sSrc.getBytes(StandardCharsets.UTF_8));
+//        //此处使用BASE64做转码。
+//        return URLEncoder.encode(Base64.getEncoder().encodeToString(encrypted), StandardCharsets.UTF_8.toString());
+//    }
+//
+//    /**
+//     * 解密
+//     */
+//    public static String decrypt(String sSrc, String aeskey) {
+//        try {
+//            sSrc = sSrc.replaceAll(" ", "+");
+//            byte[] raw = aeskey.getBytes("ASCII");
+//            SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
+//            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+//            cipher.init(Cipher.DECRYPT_MODE, skeySpec);
+//            //先用base64解密
+//            byte[] encrypted1 = Base64.getDecoder().decode(sSrc);
+//            byte[] original = cipher.doFinal(encrypted1);
+//            String originalString = new String(original, StandardCharsets.UTF_8);
+//            return originalString;
+//        } catch (Exception ex) {
+//            logger.error("decrypt error", ex);
+//            return null;
+//        }
+//    }
 
 
     /**

@@ -8,6 +8,7 @@ import com.indo.common.result.Result;
 import com.indo.common.utils.DateUtils;
 import com.indo.common.utils.GameUtil;
 import com.indo.common.utils.encrypt.MD5Encoder;
+import com.indo.game.common.util.V8Encrypt;
 import com.indo.game.mapper.TxnsMapper;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
 import com.indo.game.pojo.entity.CptOpenMember;
@@ -88,7 +89,7 @@ public class V8ServiceImpl implements V8Service {
                 externalService.saveCptOpenMember(cptOpenMember);
 
                 // 第一次登录自动创建玩家, 后续登录返回登录游戏URL
-                return createMemberGame(cptOpenMember, platform, ip, true);
+                return createMemberGame(cptOpenMember, platform, ip, true,balance);
             } else {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
@@ -96,7 +97,7 @@ public class V8ServiceImpl implements V8Service {
                 GameUtil.httpGetWithCookies(getLoginOutUrl(loginUser.getAccount()), null, null);
 
                 // 请求地址
-                return createMemberGame(cptOpenMember, platform, ip, false);
+                return createMemberGame(cptOpenMember, platform, ip, false,balance);
             }
 
 
@@ -217,10 +218,10 @@ public class V8ServiceImpl implements V8Service {
      * @param cptOpenMember cptOpenMember
      * @return Result
      */
-    private Result createMemberGame(CptOpenMember cptOpenMember, String platform, String ip, boolean isCreateUser) {
+    private Result createMemberGame(CptOpenMember cptOpenMember, String platform, String ip, boolean isCreateUser,BigDecimal balance) {
         try {
             //
-            String result = GameUtil.httpGetWithCookies(getLoginUrl(cptOpenMember.getUserName(), platform, ip), null, null);
+            String result = GameUtil.httpGetWithCookies(getLoginUrl(cptOpenMember.getUserName(), platform, ip,balance), null, null);
             JSONObject jsonObject = JSONObject.parseObject(result);
 
             if (null == jsonObject || null == jsonObject.getJSONObject("d")) {
@@ -255,7 +256,7 @@ public class V8ServiceImpl implements V8Service {
      *
      * @return String
      */
-    private String getLoginUrl(String userAccount, String gameId, String ip) throws Exception {
+    private String getLoginUrl(String userAccount, String gameId, String ip,BigDecimal balance) throws Exception {
         long timestamp = System.currentTimeMillis();
         StringBuilder url = new StringBuilder();
         url.append(OpenAPIProperties.V8_API_URL);
@@ -263,13 +264,17 @@ public class V8ServiceImpl implements V8Service {
         url.append("&timestamp=").append(timestamp);
 
         StringBuilder urlParams = new StringBuilder();
-        urlParams.append("s=0&account=").append(userAccount);
+        urlParams.append("s=").append(balance);
+        urlParams.append("&account=").append(userAccount);
         urlParams.append("&money=0&orderid=").append(getOrderid(userAccount));
         urlParams.append("&ip=").append(ip);
         urlParams.append("&lineCode=").append(OpenAPIProperties.V8_LINE_CODE);
-        urlParams.append("&KindID=").append(gameId);
-
-        url.append("&param=").append(GameUtil.encrypt(urlParams.toString(), OpenAPIProperties.V8_DESKEY));
+        if(OpenAPIProperties.V8_IS_PLATFORM_LOGIN.equals("Y")){
+            urlParams.append("&KindID=");
+        }else {
+            urlParams.append("&KindID=").append(gameId);
+        }
+        url.append("&param=").append(V8Encrypt.AESEncrypt(urlParams.toString(), OpenAPIProperties.V8_DESKEY));
         url.append("&key=");
         url.append(getKey(timestamp));
         logger.info("v8Game getLoginUrl登录请求:userAccount{},gameId:{},ip:{},url:{}", userAccount, gameId, ip, url.toString());
@@ -292,7 +297,7 @@ public class V8ServiceImpl implements V8Service {
         StringBuilder urlParams = new StringBuilder();
         urlParams.append("s=8&account=").append(account);
 
-        url.append("&param=").append(GameUtil.encrypt(urlParams.toString(), OpenAPIProperties.V8_DESKEY));
+        url.append("&param=").append(V8Encrypt.AESEncrypt(urlParams.toString(), OpenAPIProperties.V8_DESKEY));
         url.append("&key=");
         url.append(getKey(timestamp));
         logger.info("v8Game getLoginUrl玩家退出游戏:userAccount{},url:{}", account,  url.toString());
@@ -316,7 +321,7 @@ public class V8ServiceImpl implements V8Service {
         urlParams.append("s=3&account=").append(account);
         urlParams.append("&money=").append(money);
         urlParams.append("&orderid=").append(orderid);
-        url.append("&param=").append(GameUtil.encrypt(urlParams.toString(), OpenAPIProperties.V8_DESKEY));
+        url.append("&param=").append(V8Encrypt.AESEncrypt(urlParams.toString(), OpenAPIProperties.V8_DESKEY));
         url.append("&key=");
         url.append(getKey(timestamp));
         logger.info("v8Game getLoginUrl玩家下分请求:userAccount{},money:{},orderid:{},url:{}", account, money, orderid, url.toString());
@@ -338,7 +343,7 @@ public class V8ServiceImpl implements V8Service {
 
         StringBuilder urlParams = new StringBuilder();
         urlParams.append("s=7&account=").append(account);
-        url.append("&param=").append(GameUtil.encrypt(urlParams.toString(), OpenAPIProperties.V8_DESKEY));
+        url.append("&param=").append(V8Encrypt.AESEncrypt(urlParams.toString(), OpenAPIProperties.V8_DESKEY));
         url.append("&key=");
         url.append(getKey(timestamp));
         logger.info("v8Game getLoginUrl玩家游戏余额和在线状态地址请求:userAccount{},url:{}", account, url.toString());
@@ -360,7 +365,7 @@ public class V8ServiceImpl implements V8Service {
 
         StringBuilder urlParams = new StringBuilder();
         urlParams.append("s=4&orderid=").append(orderid);
-        url.append("&param=").append(GameUtil.encrypt(urlParams.toString(), OpenAPIProperties.V8_DESKEY));
+        url.append("&param=").append(V8Encrypt.AESEncrypt(urlParams.toString(), OpenAPIProperties.V8_DESKEY));
         url.append("&key=");
         url.append(getKey(timestamp));
         logger.info("v8Game getLoginUrl玩家上下分订单查询请求:orderid{},url:{}", orderid, url.toString());

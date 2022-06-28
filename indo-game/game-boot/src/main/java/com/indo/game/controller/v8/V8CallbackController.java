@@ -8,6 +8,7 @@ import com.indo.common.config.OpenAPIProperties;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.utils.GameUtil;
 import com.indo.common.utils.IPAddressUtil;
+import com.indo.game.common.util.V8Encrypt;
 import com.indo.game.service.v8.V8CallbackService;
 import com.indo.game.service.v8.V8Service;
 import org.slf4j.Logger;
@@ -66,7 +67,7 @@ public class V8CallbackController {
         String account = null;
         BigDecimal money = BigDecimal.ZERO;
         try {
-            param = GameUtil.decrypt(param, OpenAPIProperties.V8_DESKEY);
+            param = V8Encrypt.AESEncrypt(param, OpenAPIProperties.V8_DESKEY);
             String[] params = param.split("&");
             for (String temp : params) {
                 if (temp.indexOf("s=") == 0) {
@@ -77,6 +78,8 @@ public class V8CallbackController {
                     money = BigDecimal.valueOf(Double.valueOf(temp.replace("money=", "")));
                 }
             }
+            logger.info("V8Callback 回调 加密后数据, params[]:{}", params);
+            logger.info("V8Callback 回调 解密后数据, params[]:{}", V8Encrypt.AESDecrypt(param, OpenAPIProperties.V8_DESKEY,true));
             // 查询余额
             if (12 == method) {
                 return getBalance(agent, timestamp, account, key, ip);
