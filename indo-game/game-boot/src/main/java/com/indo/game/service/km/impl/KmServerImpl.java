@@ -105,7 +105,11 @@ public class KmServerImpl implements KmService {
             StringBuilder builder = new StringBuilder();
             builder.append(OpenAPIProperties.KM_GAME_URL).append("/gamelauncher?");
             builder.append("gpcode=").append("KMQM");
-            builder.append("&gcode=").append(gamePlatform.getPlatformCode());
+            if(OpenAPIProperties.KM_IS_PLATFORM_LOGIN.equals("Y")) {
+                builder.append("&gcode=");
+            }else {
+                builder.append("&gcode=").append(gamePlatform.getPlatformCode());
+            }
             builder.append("&token=").append(tokenJson.getString("authtoken"));
             builder.append("&lang=").append(gameParentPlatform.getLanguageType());
             //登录

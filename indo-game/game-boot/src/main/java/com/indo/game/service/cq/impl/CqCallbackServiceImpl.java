@@ -170,7 +170,8 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         }
         GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         BigDecimal balance = BigDecimal.ZERO;
-        for(CqEndroundDataCallBackReq cq:endroundDataCallBackReq.getData()) {
+        List<CqEndroundDataCallBackReq> cqList = endroundDataCallBackReq.getData();
+        for(CqEndroundDataCallBackReq cq:cqList) {
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(endroundDataCallBackReq.getAccount());
             LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
             wrapper.eq(Txns::getPromotionTxId, cq.getMtcode());
