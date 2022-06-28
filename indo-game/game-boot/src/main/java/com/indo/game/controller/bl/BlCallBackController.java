@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/bl/callBack")
@@ -28,8 +29,8 @@ public class BlCallBackController {
     @RequestMapping(value = "/player/balance", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @AllowAccess
     @ResponseBody
-    public Object balance(BlCallBackReq blCallBackReq,HttpServletRequest request) {
-        logger.info("blCallBack  getBalance 回调下注request:{}", request);
+    public Object balance(@RequestParam BlCallBackReq blCallBackReq, HttpServletRequest request, @RequestParam Map<String,String> paramMap) {
+        logger.info("blCallBack  getBalance 回调下注paramMap:{}", paramMap);
         String ip = IPAddressUtil.getIpAddress(request);
         logger.info("blCallBack  getBalance 回调下注params:{},ip:{}", JSON.toJSON(blCallBackReq),ip);
         Object object = blCallbackService.blBlanceCallback(blCallBackReq, ip);
