@@ -100,8 +100,7 @@ public class BlServiceImpl implements BlService {
                 externalService.updateCptOpenMember(cptOpenMember);
                 Result result = logout(loginUser, platform, ip);
             }
-            logger.info("BL启动游戏 gameLogin");
-            BlResponseParentData apiResponseData = gameLogin(gameParentPlatform, gamePlatform,cptOpenMember);
+            BlResponseParentData apiResponseData = gameLogin(gameParentPlatform, gamePlatform,cptOpenMember,ip);
             if (null != apiResponseData && "0".equals(apiResponseData.getResp_msg().getCode())) {
                 //登录
                 ApiResponseData responseData = new ApiResponseData();
@@ -116,19 +115,21 @@ public class BlServiceImpl implements BlService {
         }
     }
 
-    private BlResponseParentData gameLogin(GameParentPlatform platformGameParent,GamePlatform gamePlatform, CptOpenMember cptOpenMember) {
+    private BlResponseParentData gameLogin(GameParentPlatform platformGameParent,GamePlatform gamePlatform, CptOpenMember cptOpenMember,String ip) {
         Map<String, String> map = new HashMap<String, String>();
         Integer random = RandomUtil.getRandomOne(7);
         Long dataTime = System.currentTimeMillis() / 1000;
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(OpenAPIProperties.BL_KEY_SECRET).append(random).append(dataTime);
         String sign = SignMd5Utils.getSha1(stringBuilder.toString()).toLowerCase();
-        if(!gamePlatform.getPlatformCode().equals(platformGameParent.getPlatformCode())){
+        if(OpenAPIProperties.BTI_IS_PLATFORM_LOGIN.equals("Y")){
+            map.put("game_code", "");
+        }else {
             map.put("game_code", gamePlatform.getPlatformCode());
         }
         map.put("player_account", cptOpenMember.getUserName());
         map.put("lang", platformGameParent.getLanguageType());
-        map.put("ip", "116.204.208.100");
+        map.put("ip", ip);
         map.put("country", platformGameParent.getLanguageType());
         map.put("AccessKeyId", OpenAPIProperties.BL_KEY_ID);
         map.put("Timestamp", dataTime + "");
@@ -138,7 +139,9 @@ public class BlServiceImpl implements BlService {
         apiUrl.append(OpenAPIProperties.BL_API_URL).append("/v1/player/login");
         BlResponseParentData dgApiResponseData = null;
         try {
+            logger.info("BL启动游戏 gameLogin apiUrl:{},map:{}",apiUrl.toString(), map);
             dgApiResponseData = commonRequest(apiUrl.toString(), map, cptOpenMember.getUserId(), "createBLlogin");
+            logger.info("BL启动游戏 gameLogin apiResponseData:{}",dgApiResponseData);
         } catch (Exception e) {
             logger.error("BLlog createBLlogin:{}", e);
             e.printStackTrace();
@@ -165,7 +168,9 @@ public class BlServiceImpl implements BlService {
             map.put("Sign", sign);
             StringBuilder apiUrl = new StringBuilder();
             apiUrl.append(OpenAPIProperties.BL_API_URL).append("/v1/player/logout");
+            logger.info("BL强迫登出玩家 logout apiUrl:{},map:{}",apiUrl.toString(), map);
             BlResponseParentData apiResponseData = commonRequest(apiUrl.toString(), map, loginUser.getId().intValue(), "BLlogout");
+            logger.info("BL强迫登出玩家 logout apiResponseData:{}",apiResponseData);
             if (null != apiResponseData && "0".equals(apiResponseData.getResp_msg().getCode())) {
                 return Result.success();
             }else {
@@ -188,10 +193,10 @@ public class BlServiceImpl implements BlService {
         BlResponseParentData apiResponseData = null;
         String resultString = GameUtil.doProxyPostJson(OpenAPIProperties.PROXY_HOST_NAME, OpenAPIProperties.PROXY_PORT, OpenAPIProperties.PROXY_TCP,
                 apiUrl, params, type, userId);
-        logger.info("BLlog  apiResponse:apiResponseParamsMap:{},apiUrl:{}",resultString,apiUrl);
+        logger.info("BLlog  apiResponse apiResponseParamsMap:{},apiUrl:{}",resultString,apiUrl);
         if (StringUtils.isNotEmpty(resultString)) {
             apiResponseData = JSONObject.parseObject(resultString,BlResponseParentData.class);
-            logger.info("BLlog  commonRequest apiResponse userId:{}, type:{}, awcApiResponse:{}",
+            logger.info("BLlog  commonRequest apiResponse userId:{}, type:{}, apiResponse:{}",
                     userId, type,JSONObject.toJSONString(apiResponseData));
         }
         return apiResponseData;

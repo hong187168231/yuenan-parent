@@ -74,7 +74,13 @@ public class BlCallbackServiceImpl implements BlCallbackService {
         JSONObject statusJson = new JSONObject();
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(blCallBackReq.getPlayer_account());
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.BL_PLATFORM_CODE);
-        GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(blCallBackReq.getGame_code(),gameParentPlatform.getPlatformCode());
+        GamePlatform gamePlatform;
+        if(OpenAPIProperties.BL_IS_PLATFORM_LOGIN.equals("Y")){
+            gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(gameParentPlatform.getPlatformCode(),gameParentPlatform.getPlatformCode());
+        }else {
+            gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(blCallBackReq.getGame_code(), gameParentPlatform.getPlatformCode());
+
+        }
         GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         BigDecimal balance = memBaseinfo.getBalance();
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
@@ -134,7 +140,7 @@ public class BlCallbackServiceImpl implements BlCallbackService {
         txns.setCategoryId(gameCategory.getId());
         //游戏分类名称
         txns.setCategoryName(gameCategory.getGameName());
-        //平台游戏代码
+        //游戏代码
         txns.setGameCode(gamePlatform.getPlatformCode());
         //游戏名称
         txns.setGameName(gamePlatform.getPlatformEnName());

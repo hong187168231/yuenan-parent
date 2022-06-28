@@ -191,7 +191,7 @@ public class GameUtil extends HttpCommonUtils {
             //如果访问一个接口,多少时间内无法返回数据,就直接放弃此次调用。
             httpPost.setConfig(requestConfig);
             //不复用TCP SOCKET
-            httpPost.setHeader("connection", "close");
+//            httpPost.setHeader("connection", "close");
             httpPost.setHeader("Content-Type", "application/x-www-form-urlencoded");
             List<BasicNameValuePair> list = new ArrayList<>();
             for (String key : paramsMap.keySet()) {
