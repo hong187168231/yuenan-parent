@@ -101,7 +101,7 @@ public class BlServiceImpl implements BlService {
                 Result result = logout(loginUser, platform, ip);
             }
             BlResponseParentData apiResponseData = gameLogin(gameParentPlatform, gamePlatform,cptOpenMember,ip);
-            if (null != apiResponseData && "0".equals(apiResponseData.getResp_msg().getCode())) {
+            if (null != apiResponseData && "200".equals(apiResponseData.getResp_msg().getCode())) {
                 //登录
                 ApiResponseData responseData = new ApiResponseData();
                 responseData.setPathUrl(apiResponseData.getResp_data().getUrl());
