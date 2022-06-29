@@ -1,6 +1,7 @@
 package com.indo.game.controller.bl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.indo.common.annotation.AllowAccess;
 import com.indo.common.utils.IPAddressUtil;
 import com.indo.game.pojo.dto.bl.BlCallBackReq;
@@ -29,8 +30,9 @@ public class BlCallBackController {
     @RequestMapping(value = "/player/balance", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @AllowAccess
     @ResponseBody
-    public Object balance(BlCallBackReq blCallBackReq, HttpServletRequest request) {
+    public Object balance(BlCallBackReq blCallBackReq, HttpServletRequest request, @RequestBody JSONObject jsonObject) {
         String ip = IPAddressUtil.getIpAddress(request);
+        logger.info("blCallBack  getBalance 回调下注jsonObject:{},ip:{}", jsonObject,ip);
         logger.info("blCallBack  getBalance 回调下注params:{},ip:{}", JSON.toJSON(blCallBackReq),ip);
         Object object = blCallbackService.blBlanceCallback(blCallBackReq, ip);
         logger.info("blCallBack getBalance 回调下注返回数据 取得用户的余额 params:{}", object);
