@@ -104,7 +104,7 @@ public class KmServerImpl implements KmService {
             StringBuilder builder = new StringBuilder();
             if(OpenAPIProperties.KM_IS_PLATFORM_LOGIN.equals("Y")) {
                 builder.append(OpenAPIProperties.KM_GAME_URL).append("/"+OpenAPIProperties.KM_GAMEHome_URL+"?");
-                builder.append("?token=").append(tokenJson.getString("authtoken"));
+                builder.append("token=").append(tokenJson.getString("authtoken"));
             }else {
                 builder.append(OpenAPIProperties.KM_GAME_URL).append("/gamelauncher?");
                 builder.append("gpcode=").append("KMQM");
@@ -165,7 +165,7 @@ public class KmServerImpl implements KmService {
             logger.error("kmLog  logout请求 url:{},params:{},", builder.toString(),map);
             apiResponseData = commonRequest(builder.toString(), map, loginUser.getId().intValue(), "logout");
             logger.error("kmLog  logout返回 apiResponseData:{},", JSONObject.toJSONString(apiResponseData));
-            if (apiResponseData.getBoolean("Success")) {
+            if (apiResponseData.getBoolean("success")) {
                 return Result.success();
             }else {
                 return Result.failed(apiResponseData.getString("desc"));

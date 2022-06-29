@@ -173,6 +173,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         logger.info("CQ9Game 回调endround:List<CqEndroundDataCallBackReq>:{}", endroundDataCallBackReq.getData());
         List list = endroundDataCallBackReq.getData();
         for(int i=0;i<list.size();i++) {
+            logger.info("CQ9Game 回调endround:list.get(i):{}", list.get(i));
             List<CqEndroundDataCallBackReq> cqList = (List<CqEndroundDataCallBackReq>)list.get(i);
             for (CqEndroundDataCallBackReq cq : cqList) {
                 MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(endroundDataCallBackReq.getAccount());

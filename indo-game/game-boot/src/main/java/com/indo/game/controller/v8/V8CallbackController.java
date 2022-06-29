@@ -67,8 +67,8 @@ public class V8CallbackController {
         String account = null;
         BigDecimal money = BigDecimal.ZERO;
         try {
-            param = V8Encrypt.AESEncrypt(param, OpenAPIProperties.V8_DESKEY);
-            logger.info("V8Callback 回调 加密后数据, param[]:{}", param);
+            param = V8Encrypt.AESDecrypt(param, OpenAPIProperties.V8_DESKEY,true);
+            logger.info("V8Callback 回调 解密后数据, param[]:{}", param);
             String[] params = param.split("&");
             for (String temp : params) {
                 if (temp.indexOf("s=") == 0) {
@@ -79,14 +79,14 @@ public class V8CallbackController {
                     money = BigDecimal.valueOf(Double.valueOf(temp.replace("money=", "")));
                 }
             }
-            logger.info("V8Callback 回调 加密后数据, params[]:{}", params);
-            logger.info("V8Callback 回调 解密后数据, params[]:{}", V8Encrypt.AESDecrypt(param, OpenAPIProperties.V8_DESKEY,true));
             // 查询余额
             if (12 == method) {
                 return getBalance(agent, timestamp, account, key, ip);
             } else if (13 == method) {
                 // 上分
                 return debit(agent, timestamp, account, key, money, ip);
+            } else if (11 == method) {//通知下分
+
             }
         } catch (Exception e) {
             e.printStackTrace();

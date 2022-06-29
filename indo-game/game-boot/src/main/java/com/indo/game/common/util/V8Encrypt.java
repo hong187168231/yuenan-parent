@@ -97,4 +97,9 @@ public class V8Encrypt {
 			return null;
 		}
 	}
+	public static void main(String[] args) throws Exception {
+		System.out.println(V8Encrypt.AESEncrypt("jI11wfffPw1nlNQ9aTbeW1yrPHEWLgbkG0DR6jiEZ0s=","D939447DB8B048FC"));
+
+		System.out.println(V8Encrypt.AESDecrypt("jI11wfffPw1nlNQ9aTbeW1yrPHEWLgbkG0DR6jiEZ0s=","D939447DB8B048FC",false));
+	}
 }
