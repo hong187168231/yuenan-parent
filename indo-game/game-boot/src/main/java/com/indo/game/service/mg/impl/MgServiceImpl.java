@@ -84,13 +84,14 @@ public class MgServiceImpl implements MgService {
             return Result.failed("g300004", "会员余额不足");
         }
         try {
-            JSONObject tokenJson = gameToken(loginUser.getId().intValue());
-            if (StringUtils.isEmpty(tokenJson.getString("access_token"))) {
-                return errorCode(tokenJson.getString("code"), tokenJson.getString("message"));
-            }
+            JSONObject tokenJson;
             // 验证且绑定（AE-CPT第三方会员关系）
             CptOpenMember cptOpenMember = externalService.getCptOpenMember(loginUser.getId().intValue(), parentName);
             if (cptOpenMember == null) {
+                tokenJson = gameToken(loginUser.getId().intValue());
+                if (StringUtils.isEmpty(tokenJson.getString("access_token"))) {
+                    return errorCode(tokenJson.getString("code"), tokenJson.getString("message"));
+                }
                 cptOpenMember = new CptOpenMember();
                 cptOpenMember.setUserName(loginUser.getAccount());
                 cptOpenMember.setPassword(SnowflakeId.generateId().toString());
@@ -104,10 +105,13 @@ public class MgServiceImpl implements MgService {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
                 logout(loginUser, platform, ip);
+                tokenJson = gameToken(loginUser.getId().intValue());
+                if (StringUtils.isEmpty(tokenJson.getString("access_token"))) {
+                    return errorCode(tokenJson.getString("code"), tokenJson.getString("message"));
+                }
             }
 
             JSONObject jsonObject = gameLogin(gameParentPlatform, gamePlatform, cptOpenMember, isMobileLogin, tokenJson.getString("access_token"));
-            ;
             if (StringUtils.isEmpty(jsonObject.getString("url"))) {
                 return errorCode(jsonObject.getString("code"), jsonObject.getString("message"));
             }
