@@ -2,8 +2,10 @@ package com.indo.admin.modules.agent.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.indo.admin.pojo.dto.AgentReportDTO;
 import com.indo.admin.pojo.req.agnet.MemAgentReq;
 import com.indo.admin.pojo.req.agnet.SubordinateReq;
+import com.indo.admin.pojo.vo.agent.AgentReportVO;
 import com.indo.admin.pojo.vo.agent.AgentSubVO;
 import com.indo.admin.pojo.vo.agent.AgentVo;
 import com.indo.core.pojo.entity.AgentRelation;
@@ -26,4 +28,12 @@ public interface AgentRelationMapper extends BaseMapper<AgentRelation> {
     List<AgentVo> queryList(@Param("page") Page<AgentVo> page, @Param("req") MemAgentReq req);
 
     List<AgentSubVO> subordinateList(@Param("page")Page<AgentSubVO> page,  @Param("req") SubordinateReq req);
+
+    /**
+     *  查询代理报表
+     * @param page
+     * @param agentReportDTO
+     * @return
+     */
+    Page<AgentReportVO> findAgentReport(Page<AgentReportVO> page, AgentReportDTO agentReportDTO);
 }
