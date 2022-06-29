@@ -170,12 +170,11 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         }
         GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         BigDecimal balance = BigDecimal.ZERO;
-        JSONObject tokenJson = (JSONObject)endroundDataCallBackReq.getData();
-        logger.info("CQ9Game 回调endround:List<CqEndroundDataCallBackReq>:{}", JSONObject.toJSONString(tokenJson));
-//        List list = endroundDataCallBackReq.getData();
-//        for(int i=0;i<list.size();i++) {
-//            logger.info("CQ9Game 回调endround:list.get(i):{}", list.get(i));
-//            JSONObject tokenJson = (JSONObject)list.get(i);
+        List list = endroundDataCallBackReq.getData();
+        for(int i=0;i<list.size();i++) {
+            logger.info("CQ9Game 回调endround:list.get(i):{}", list.get(i));
+            JSONObject tokenJson = (JSONObject)list.get(i);
+            logger.info("CQ9Game 回调endround:tokenJson:{}", JSONObject.toJSONString(tokenJson));
 //            MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(endroundDataCallBackReq.getAccount());
 //            LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
 //            wrapper.eq(Txns::getPromotionTxId, cq.getMtcode());
@@ -205,7 +204,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
 //            oldTxns.setStatus("Settle");
 //            oldTxns.setUpdateTime(dateStr);
 //            txnsMapper.updateById(oldTxns);
-//        }
+        }
 
         return commonReturnSuccess(balance, gameParentPlatform.getCurrencyType());
     }

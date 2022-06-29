@@ -39,13 +39,7 @@ public class BlCallBackController {
         blCallBackReq.setPlayer_account(jsonObject.getString("player_account"));
         blCallBackReq.setOperator_id(jsonObject.getString("operator_id"));
         blCallBackReq.setOperator_sub_id(jsonObject.getString("operator_sub_id"));
-        blCallBackReq.setGame_code(jsonObject.getString("game_code"));
-        blCallBackReq.setReport_id(jsonObject.getString("report_id"));
-        blCallBackReq.setAmount(BigDecimal.valueOf(jsonObject.getDouble("amount")));
-        blCallBackReq.setType(jsonObject.getInteger("type"));
-        blCallBackReq.setTime(jsonObject.getString("time"));
         blCallBackReq.setApp_id(jsonObject.getString("app_id"));
-        blCallBackReq.setCost_info(jsonObject.getString("cost_info"));
         blCallBackReq.setSha1(jsonObject.getString("sha1"));
         Object object = blCallbackService.blBlanceCallback(blCallBackReq, ip);
         logger.info("blCallBack getBalance 回调下注返回数据 取得用户的余额 params:{}", object);
