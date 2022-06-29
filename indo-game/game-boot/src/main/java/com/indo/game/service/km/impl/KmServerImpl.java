@@ -80,10 +80,6 @@ public class KmServerImpl implements KmService {
         }
         try {
 
-            JSONObject tokenJson = gameToken(loginUser, gameParentPlatform, ip);
-            if (StringUtils.isEmpty(tokenJson.getString("authtoken"))) {
-                return errorCode(tokenJson.getString("code"), tokenJson.getString("message"));
-            }
             // 验证且绑定（AE-CPT第三方会员关系）
             CptOpenMember cptOpenMember = externalService.getCptOpenMember(loginUser.getId().intValue(), parentName);
             if (cptOpenMember == null) {
@@ -101,11 +97,15 @@ public class KmServerImpl implements KmService {
                 externalService.updateCptOpenMember(cptOpenMember);
                 logout(loginUser, platform, ip);
             }
+            JSONObject tokenJson = gameToken(loginUser, gameParentPlatform, ip);
+            if (StringUtils.isEmpty(tokenJson.getString("authtoken"))) {
+                return errorCode(tokenJson.getString("code"), tokenJson.getString("message"));
+            }
             StringBuilder builder = new StringBuilder();
             if(OpenAPIProperties.KM_IS_PLATFORM_LOGIN.equals("Y")) {
 //                1：手机 0:PC
                 builder.append(OpenAPIProperties.KM_GAME_URL);
-                if("1".equals(isMobileLogin)){
+                if("0".equals(isMobileLogin)){
                     builder.append("/"+OpenAPIProperties.KM_DESKTOP+"?");
                 }else {
                     builder.append("/"+OpenAPIProperties.KM_MOBILE+"?");
