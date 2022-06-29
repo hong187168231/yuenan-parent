@@ -489,7 +489,8 @@ public class OpenAPIProperties implements InitializingBean {
 
     public static String KM_API_URL;
     public static String KM_GAME_URL;
-    public static String KM_GAMEHome_URL;
+    public static String KM_DESKTOP;
+    public static String KM_MOBILE;
     public static String KM_CLIENT_ID;
     public static String KM_CLIENT_SECRET;
     public static String KM_PLATFORM_CODE;
@@ -498,8 +499,10 @@ public class OpenAPIProperties implements InitializingBean {
     private String kmApiUrl;
     @Value("${km.gameUrl}")
     private String kmGameUrl;
-    @Value("${km.kmGameHomeUrl}")
-    private String kmGameHomeUrl;
+    @Value("${km.kmDesktop}")
+    private String kmDesktop;
+    @Value("${km.kmMobile}")
+    private String kmMobile;
     @Value("${km.clientId}")
     private String kmClientId;
     @Value("${km.clientSecret}")
@@ -768,9 +771,10 @@ public class OpenAPIProperties implements InitializingBean {
 
         KM_CLIENT_SECRET = kmClientSecret;
         KM_API_URL = kmApiUrl;
-        KM_GAMEHome_URL = kmGameHomeUrl;
         KM_CLIENT_ID = kmClientId;
         KM_GAME_URL = kmGameUrl;
+        KM_DESKTOP = kmDesktop;
+        KM_MOBILE = kmMobile;
         KM_PLATFORM_CODE = kmPlatformCode;
         KM_IS_PLATFORM_LOGIN = kmIsPlatformLogin;
 

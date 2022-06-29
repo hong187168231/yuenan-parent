@@ -103,7 +103,13 @@ public class KmServerImpl implements KmService {
             }
             StringBuilder builder = new StringBuilder();
             if(OpenAPIProperties.KM_IS_PLATFORM_LOGIN.equals("Y")) {
-                builder.append(OpenAPIProperties.KM_GAME_URL).append("/"+OpenAPIProperties.KM_GAMEHome_URL+"?");
+//                1：手机 0:PC
+                builder.append(OpenAPIProperties.KM_GAME_URL);
+                if("1".equals(isMobileLogin)){
+                    builder.append("/"+OpenAPIProperties.KM_DESKTOP+"?");
+                }else {
+                    builder.append("/"+OpenAPIProperties.KM_MOBILE+"?");
+                }
                 builder.append("token=").append(tokenJson.getString("authtoken"));
             }else {
                 builder.append(OpenAPIProperties.KM_GAME_URL).append("/gamelauncher?");
