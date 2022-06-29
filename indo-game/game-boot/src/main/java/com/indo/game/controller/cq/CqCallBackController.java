@@ -83,7 +83,7 @@ public class CqCallBackController {
     @RequestMapping(value = "/callBack/transaction/game/endround", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object endround(CqEndroundCallBackReq<CqEndroundDataCallBackReq> endroundDataCallBackReq, HttpServletRequest request) {
+    public Object endround(CqEndroundCallBackReq endroundDataCallBackReq, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
         String wtoken = request.getHeader("wtoken");

@@ -10,7 +10,7 @@ public interface CqCallbackService {
 
     Object cqBetCallback(CqBetCallBackReq cqApiRequestData, String ip, String wtoken);
 
-    public Object endround(CqEndroundCallBackReq<CqEndroundDataCallBackReq> endroundDataCallBackReq, String ip, String wtoken);
+    public Object endround(CqEndroundCallBackReq endroundDataCallBackReq, String ip, String wtoken);
 
     Object cqPayOffCallback(CqBetCallBackReq cqApiRequestData, String ip, String wtoken);
 
