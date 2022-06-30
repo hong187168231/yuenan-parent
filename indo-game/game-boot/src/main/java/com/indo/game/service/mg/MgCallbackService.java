@@ -12,4 +12,6 @@ public interface MgCallbackService {
 
 
     Object mgUpdatebalanceCallback(MgCallBackReq mgCallBackReq, String ip);
+
+    Object rollback(MgCallBackReq mgCallBackReq, String ip);
 }

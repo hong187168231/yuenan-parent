@@ -35,7 +35,7 @@ public class MgCallBackController {
     public Object getBalance(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("cqCallBack {} getBalance 回调,params:{}", JSONObject.toJSONString(jsonObject));
+        logger.info("cqCallBack getBalance 回调,params:{}", JSONObject.toJSONString(jsonObject));
         MgCallBackReq mgCallBackReq = new MgCallBackReq();
         mgCallBackReq.setPlayerId(jsonObject.getString("playerId"));
 //        mgCallBackReq.setTxnType(jsonObject.getString("txnType"));
@@ -48,7 +48,7 @@ public class MgCallBackController {
 //        mgCallBackReq.setRoundId(jsonObject.getString("roundId"));
 //        mgCallBackReq.setCompleted(jsonObject.getBoolean("completed"));
         Object object = mgCallbackService.mgBalanceCallback(mgCallBackReq, ip);
-        logger.info("cqCallBack {} getBalance 回调下注返回数据 params:{}", object);
+        logger.info("cqCallBack  getBalance 回调下注返回数据 params:{}", object);
         return object;
     }
 
@@ -61,7 +61,7 @@ public class MgCallBackController {
     public Object verifySession(@RequestBody JSONObject jsonObject,HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("pgCallBack {} verifySession回调,params:{}", JSONObject.toJSONString(jsonObject));
+        logger.info("cqCallBack  verifySession回调,params:{}", JSONObject.toJSONString(jsonObject));
         MgCallBackReq mgCallBackReq = new MgCallBackReq();
         mgCallBackReq.setPlayerId(jsonObject.getString("playerId"));
 //        mgCallBackReq.setTxnType(jsonObject.getString("txnType"));
@@ -74,7 +74,7 @@ public class MgCallBackController {
 //        mgCallBackReq.setRoundId(jsonObject.getString("roundId"));
 //        mgCallBackReq.setCompleted(jsonObject.getBoolean("completed"));
         Object object = mgCallbackService.mgVerifyCallback(mgCallBackReq, ip);
-        logger.info("pgCallBack {} verifySession回调返回数据 params:{}", object);
+        logger.info("cqCallBack verifySession回调返回数据 params:{}", object);
         return object;
     }
 
@@ -88,7 +88,7 @@ public class MgCallBackController {
     public Object adjustment(@RequestBody JSONObject jsonObject,HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("pgCallBack {} adjustment回调,params:{}", JSONObject.toJSONString(jsonObject));
+        logger.info("cqCallBack adjustment回调,params:{}", JSONObject.toJSONString(jsonObject));
         MgCallBackReq mgCallBackReq = new MgCallBackReq();
         mgCallBackReq.setPlayerId(jsonObject.getString("playerId"));
         mgCallBackReq.setTxnType(jsonObject.getString("txnType"));
@@ -101,7 +101,26 @@ public class MgCallBackController {
         mgCallBackReq.setRoundId(jsonObject.getString("roundId"));
         mgCallBackReq.setCompleted(jsonObject.getBoolean("completed"));
         Object object = mgCallbackService.mgUpdatebalanceCallback(mgCallBackReq, ip);
-        logger.info("pgCallBack {} adjustment回调返回数据 params:{}", object);
+        logger.info("cqCallBack adjustment回调返回数据 params:{}", object);
+        return object;
+    }
+
+    /**
+     * 當需要返回到上一筆交易結果時使用。使用回復交易時，該筆回復交易的交易金額
+     *  須與待回復交易的交易金額相同，不支援回復部分的交易紀錄
+     */
+    @RequestMapping(value = "/rollback", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    @AllowAccess
+    public Object rollback(@RequestBody JSONObject jsonObject,HttpServletRequest request) {
+
+        String ip = IPAddressUtil.getIpAddress(request);
+        logger.info("cqCallBack adjustment回调,params:{}", JSONObject.toJSONString(jsonObject));
+        MgCallBackReq mgCallBackReq = new MgCallBackReq();
+        mgCallBackReq.setPlayerId(jsonObject.getString("playerId"));
+        mgCallBackReq.setTxnId(jsonObject.getString("txnId"));
+        Object object = mgCallbackService.rollback(mgCallBackReq, ip);
+        logger.info("cqCallBack adjustment回调返回数据 params:{}", object);
         return object;
     }
 }
