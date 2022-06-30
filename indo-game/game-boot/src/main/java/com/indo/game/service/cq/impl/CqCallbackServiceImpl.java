@@ -170,10 +170,10 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         }
         GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         BigDecimal balance = BigDecimal.ZERO;
-        String dataStr[] = endroundDataCallBackReq.getData();
-        for(int i=0;i<dataStr.length;i++) {
-            logger.info("CQ9Game 回调endround:list.get(i):{}", dataStr);
-            JSONObject tokenJson = JSONObject.parseObject(dataStr[i]);
+        String dataStr = endroundDataCallBackReq.getData();
+//        for(int i=0;i<dataStr.length;i++) {
+            logger.info("CQ9Game 回调endround:list.get(i):{}", dataStr.replace("[","").replace("[","]"));
+            JSONObject tokenJson = JSONObject.parseObject(dataStr.replace("[","").replace("[","]"));
             logger.info("CQ9Game 回调endround:tokenJson:{}", tokenJson);
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(endroundDataCallBackReq.getAccount());
             LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
@@ -205,7 +205,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
             oldTxns.setStatus("Settle");
             oldTxns.setUpdateTime(dateStr);
             txnsMapper.updateById(oldTxns);
-        }
+//        }
 
         return commonReturnSuccess(balance, gameParentPlatform.getCurrencyType());
     }

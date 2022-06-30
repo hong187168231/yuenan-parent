@@ -199,7 +199,8 @@ public class MgServiceImpl implements MgService {
 //                7	Lottery	彩票
                 String contentCode = "Live Dealer";
                 if(gamePlatform.getCategoryId()==1){
-                    contentCode = "Live Dealer";
+//                    contentCode = "Live Dealer";
+                    contentCode = "SMG_titaniumLiveGames_Baccarat_VIP";
                 }else if(gamePlatform.getCategoryId()==2){
                     contentCode = "Slot";
                 }else if(gamePlatform.getCategoryId()==5){
