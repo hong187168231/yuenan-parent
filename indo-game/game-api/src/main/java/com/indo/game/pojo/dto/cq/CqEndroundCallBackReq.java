@@ -18,7 +18,7 @@ public class CqEndroundCallBackReq extends CqCallBackParentReq {
     @JSONField(name = "roundid")
     private String roundid;//	string最大長度為50字元	必填	注單號
     @JSONField(name = "data")
-    private String data;//	text array長度不限，但每筆win最大長度為158字元	必填	事件資料列表用JSON包起來
+    private String[] data;//	text array長度不限，但每筆win最大長度為158字元	必填	事件資料列表用JSON包起來
     @JSONField(name = "createTime")
     private String createTime;//	string最大長度為35字元	必填	事件時間 格式為 RFC3339如 2017-01-19T22:56:30-04:00此時間可與注單的createtime對應
     @JSONField(name = "freegame")

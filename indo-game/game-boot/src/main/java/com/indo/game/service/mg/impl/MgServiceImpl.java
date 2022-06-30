@@ -100,7 +100,7 @@ public class MgServiceImpl implements MgService {
                 cptOpenMember.setLoginTime(new Date());
                 cptOpenMember.setType(parentName);
                 //创建玩家
-                Result result = createMemberGame(cptOpenMember, "Bearer "+tokenJson.getString("access_token"));
+                return createMemberGame(gameParentPlatform , gamePlatform,cptOpenMember, isMobileLogin, "Bearer "+tokenJson.getString("access_token"));
             } else {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
@@ -111,14 +111,8 @@ public class MgServiceImpl implements MgService {
                 }
             }
 
-            JSONObject jsonObject = gameLogin(gameParentPlatform, gamePlatform, cptOpenMember, isMobileLogin, "Bearer "+tokenJson.getString("access_token"));
-            if (StringUtils.isEmpty(jsonObject.getString("url"))) {
-                return errorCode(jsonObject.getString("code"), jsonObject.getString("message"));
-            }
-            //登录
-            ApiResponseData responseData = new ApiResponseData();
-            responseData.setPathUrl(jsonObject.getString("url"));
-            return Result.success(responseData);
+            return gameLogin(gameParentPlatform, gamePlatform, cptOpenMember, isMobileLogin, "Bearer "+tokenJson.getString("access_token"));
+
         } catch (Exception e) {
             e.printStackTrace();
             return Result.failed("g100104", "网络繁忙，请稍后重试！");
@@ -149,16 +143,21 @@ public class MgServiceImpl implements MgService {
     /**
      * 创建账户并登录逻辑
      */
-    private Result createMemberGame(CptOpenMember cptOpenMember, String token) {
+    private Result createMemberGame(GameParentPlatform platformGameParent, GamePlatform gamePlatform,CptOpenMember cptOpenMember, String isMobileLogin, String token) {
         JSONObject pgApiResponseData = createMember(cptOpenMember, token);
         if (null == pgApiResponseData) {
             return Result.failed("g091087", "第三方请求异常！");
         }
         if (!StringUtils.isEmpty(pgApiResponseData.getString("uri"))) {
             externalService.saveCptOpenMember(cptOpenMember);
-            return Result.success();
+            return gameLogin(platformGameParent, gamePlatform, cptOpenMember, isMobileLogin, "Bearer "+token);
         } else {
-            return errorCode(pgApiResponseData.getString("code"), pgApiResponseData.getString("message"));
+            if (!StringUtils.isEmpty(pgApiResponseData.getString("error"))) {
+                JSONObject errorJ = (JSONObject)pgApiResponseData.get("error");
+                return errorCode(errorJ.getString("code"), errorJ.getString("message"));
+            }else {
+                return errorCode(pgApiResponseData.getString("code"), pgApiResponseData.getString("message"));
+            }
         }
     }
 
@@ -185,7 +184,7 @@ public class MgServiceImpl implements MgService {
     /**
      * 调用API登录
      */
-    private JSONObject gameLogin(GameParentPlatform platformGameParent, GamePlatform gamePlatform,
+    private Result gameLogin(GameParentPlatform platformGameParent, GamePlatform gamePlatform,
                                  CptOpenMember cptOpenMemberm, String isMobileLogin, String token) {
         JSONObject apiResponseData = null;
         try {
@@ -227,11 +226,27 @@ public class MgServiceImpl implements MgService {
             logger.info("mgLog登录游戏Mg游戏登录用户gameLogin输入 apiUrl:{}, params:{}, userId:{}, token:{}", apiUrl.toString(), params, cptOpenMemberm.getUserId(), token);
             apiResponseData = commonRequest(apiUrl.toString(), params, cptOpenMemberm.getUserId(), token, "mgGameLogin");
             logger.info("mgLog登录游戏Mg游戏登录用户gameLogin返回JSONObject:{}", null!=apiResponseData?apiResponseData.toJSONString():"");
+            if (null != apiResponseData && null != apiResponseData.getString("url") && !"".equals(apiResponseData.getString("url"))) {
+                //登录
+                ApiResponseData responseData = new ApiResponseData();
+                responseData.setPathUrl(apiResponseData.getString("url"));
+                return Result.success(responseData);
+            }else if(null == apiResponseData){
+                return Result.failed();
+            }else {
+                if (!StringUtils.isEmpty(apiResponseData.getString("error"))) {
+                    JSONObject errorJ = (JSONObject)apiResponseData.get("error");
+                    return errorCode(errorJ.getString("code"), errorJ.getString("message"));
+                }else {
+                    return errorCode(apiResponseData.getString("code"), apiResponseData.getString("message"));
+                }
+            }
+
         } catch (Exception e) {
             logger.error("mglog mgGameLogin:{}", e);
             e.printStackTrace();
+            return Result.failed();
         }
-        return apiResponseData;
     }
 
     /**
@@ -264,18 +279,22 @@ public class MgServiceImpl implements MgService {
 
 
     public Result errorCode(String errorCode, String errorMessage) {
-        if ("401".equals(errorCode)) {
-            return Result.failed("g000002", errorMessage);
-        } else if ("404".equals(errorCode)) {
-            return Result.failed("g009999", errorMessage);
-        } else if ("409".equals(errorCode)) {
-            return Result.failed("g009999", errorMessage);
-        } else if ("400".equals(errorCode)) {
-            return Result.failed("g000007", errorMessage);
-        } else if ("500".equals(errorCode)) {
-            return Result.failed("g091145", errorMessage);
-        } else {
-            return Result.failed("g009999", errorMessage);
+        switch (errorCode) {
+            case "InputValidationError":
+                return Result.failed("g091118", errorMessage);
+            case "GeneralError":
+                return Result.failed("g091145", errorMessage);
+            case "PlayerDoesNotExist":
+                return Result.failed("g010001", errorMessage);
+            case "ContentNotFoundForPlayer":
+                return Result.failed("g091068", errorMessage);
+            case "PlayerIsLocked":
+                return Result.failed("g200003", errorMessage);
+            case "GameDoesNotExist":
+                return Result.failed("g091158", errorMessage);
+            //        9999 失败。                                                Failed.
+            default:
+                return Result.failed("g009999", errorMessage);
         }
     }
 }

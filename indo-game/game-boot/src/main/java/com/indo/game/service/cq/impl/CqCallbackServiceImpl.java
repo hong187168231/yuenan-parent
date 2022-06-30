@@ -170,41 +170,42 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         }
         GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         BigDecimal balance = BigDecimal.ZERO;
-        String dataStr = endroundDataCallBackReq.getData();
-//        for(int i=0;i<list.size();i++) {
+        String dataStr[] = endroundDataCallBackReq.getData();
+        for(int i=0;i<dataStr.length;i++) {
             logger.info("CQ9Game 回调endround:list.get(i):{}", dataStr);
-            JSONObject tokenJson = JSONObject.parseObject(dataStr);
+            JSONObject tokenJson = JSONObject.parseObject(dataStr[i]);
             logger.info("CQ9Game 回调endround:tokenJson:{}", tokenJson);
-//            MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(endroundDataCallBackReq.getAccount());
-//            LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
-//            wrapper.eq(Txns::getPromotionTxId, cq.getMtcode());
-//            wrapper.eq(Txns::getRoundId, endroundDataCallBackReq.getRoundid());
-//            Txns oldTxns = txnsMapper.selectOne(wrapper);
-//            if (null != oldTxns) {
-//                return commonReturnFail();
-//            }
-//            Double amount = Double.valueOf(tokenJson.getString());
-//            balance = memBaseinfo.getBalance().add(BigDecimal.valueOf(amount));
-//            gameCommonService.updateUserBalance(memBaseinfo, BigDecimal.valueOf(amount), GoldchangeEnum.REFUND, TradingEnum.INCOME);
-//            String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
-//
-//            Txns txns = new Txns();
-//            BeanUtils.copyProperties(oldTxns, txns);
-//            //游戏商注单号
-//            txns.setPlatformTxId(cq.getMtcode());
-//            //混合码
-//            txns.setRoundId(endroundDataCallBackReq.getRoundid());
-//            txns.setBalance(balance);
-//            txns.setId(null);
-//            txns.setMethod("Settle");
-//            txns.setStatus("Running");
-//            txns.setCreateTime(dateStr);
-//            txns.setGameMethod("endround");
-//            txnsMapper.insert(txns);
-//            oldTxns.setStatus("Settle");
-//            oldTxns.setUpdateTime(dateStr);
-//            txnsMapper.updateById(oldTxns);
-//        }
+            MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(endroundDataCallBackReq.getAccount());
+            LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+            String mtcode = tokenJson.getString("mtcode");
+            wrapper.eq(Txns::getPromotionTxId, mtcode);
+            wrapper.eq(Txns::getRoundId, endroundDataCallBackReq.getRoundid());
+            Txns oldTxns = txnsMapper.selectOne(wrapper);
+            if (null != oldTxns) {
+                return commonReturnFail();
+            }
+            Double amount = tokenJson.getDouble("amount");
+            balance = memBaseinfo.getBalance().add(BigDecimal.valueOf(amount));
+            gameCommonService.updateUserBalance(memBaseinfo, BigDecimal.valueOf(amount), GoldchangeEnum.REFUND, TradingEnum.INCOME);
+            String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
+
+            Txns txns = new Txns();
+            BeanUtils.copyProperties(oldTxns, txns);
+            //游戏商注单号
+            txns.setPlatformTxId(mtcode);
+            //混合码
+            txns.setRoundId(endroundDataCallBackReq.getRoundid());
+            txns.setBalance(balance);
+            txns.setId(null);
+            txns.setMethod("Settle");
+            txns.setStatus("Running");
+            txns.setCreateTime(dateStr);
+            txns.setGameMethod("endround");
+            txnsMapper.insert(txns);
+            oldTxns.setStatus("Settle");
+            oldTxns.setUpdateTime(dateStr);
+            txnsMapper.updateById(oldTxns);
+        }
 
         return commonReturnSuccess(balance, gameParentPlatform.getCurrencyType());
     }
