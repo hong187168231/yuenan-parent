@@ -172,8 +172,10 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         BigDecimal balance = BigDecimal.ZERO;
         String dataStr = endroundDataCallBackReq.getData();
 //        for(int i=0;i<dataStr.length;i++) {
-            logger.info("CQ9Game 回调endround:list.get(i):{}", dataStr.replace("[","").replace("[","]"));
-            JSONObject tokenJson = JSONObject.parseObject(dataStr.replace("[","").replace("[","]"));
+        logger.info("CQ9Game 回调endround:ddataStr:{}", dataStr);
+        String replaceStr = dataStr.replace("[","").replace("]","");
+            logger.info("CQ9Game 回调endround:dataStr.replace:{}", replaceStr);
+            JSONObject tokenJson = JSONObject.parseObject(replaceStr);
             logger.info("CQ9Game 回调endround:tokenJson:{}", tokenJson);
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(endroundDataCallBackReq.getAccount());
             LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
