@@ -99,26 +99,14 @@ public class YlServiceImpl implements YlService {
                 externalService.updateCptOpenMember(cptOpenMember);
                 logout(loginUser, platform, ip);
             }
-            //获取KEY
-            String apiKey = initGame(gameParentPlatform, cptOpenMember);
-            if (StringUtils.isEmpty(apiKey)) {
-                return Result.failed("g091087", "第三方请求异常！");
-            }
-            String path = gameLogin(apiKey, platform, gameParentPlatform, cptOpenMember);
-            if (StringUtils.isEmpty(path)) {
-                return Result.failed("g091087", "第三方请求异常！");
-            }
-            //登录
-            ApiResponseData responseData = new ApiResponseData();
-            responseData.setPathUrl(path);
-            return Result.success(responseData);
+            return initGame(gamePlatform,gameParentPlatform, cptOpenMember);
         } catch (Exception e) {
             e.printStackTrace();
             return Result.failed("g100104", "网络繁忙，请稍后重试！");
         }
     }
 
-    private String gameLogin(String apiKey, String platform, GameParentPlatform platformGameParent, CptOpenMember cptOpenMember) {
+    private Result gameLogin(String apiKey, String platform, GameParentPlatform platformGameParent, CptOpenMember cptOpenMember) {
         String pathUrl = "";
         try {
             Map<String, String> map = new HashMap<>();
@@ -137,15 +125,23 @@ public class YlServiceImpl implements YlService {
             logger.error("YL捕鱼登录请求返回：JSONObject{}", jsonObject);
             if (null != jsonObject && "1".equals(jsonObject.getString("status"))) {
                 pathUrl = jsonObject.getString("url");
+                //登录
+                ApiResponseData responseData = new ApiResponseData();
+                responseData.setPathUrl(pathUrl);
+                return Result.success(responseData);
+            }else if(null == jsonObject){
+                return Result.failed();
+            }else {
+                return errorCode(jsonObject.getString("status"),jsonObject.getString("desc"));
             }
         } catch (Exception e) {
             logger.error("YL捕鱼登录获取异常：", e);
             e.printStackTrace();
+            return Result.failed();
         }
-        return pathUrl;
     }
 
-    private String initGame(GameParentPlatform platformGameParent, CptOpenMember cptOpenMember) {
+    private Result initGame(GamePlatform gamePlatform,GameParentPlatform platformGameParent, CptOpenMember cptOpenMember) {
         String apiKey = "";
         try {
             Map<String, String> map = new HashMap<>();
@@ -161,12 +157,17 @@ public class YlServiceImpl implements YlService {
             logger.info("YL捕鱼获取KEY请求返回：", jsonObject);
             if (null != jsonObject && "1".equals(jsonObject.getString("status"))) {
                 apiKey = jsonObject.getString("key");
+                return gameLogin(apiKey, gamePlatform.getPlatformCode(), platformGameParent, cptOpenMember);
+            }else if(null == jsonObject){
+                return Result.failed();
+            }else {
+                return errorCode(jsonObject.getString("status"),jsonObject.getString("desc"));
             }
         } catch (Exception e) {
             logger.error("YL捕鱼获取KEY异常：", e);
             e.printStackTrace();
+            return Result.failed();
         }
-        return apiKey;
     }
 
 
@@ -183,10 +184,14 @@ public class YlServiceImpl implements YlService {
             logger.error("YL捕鱼强迫登出玩家请求：url{},params{},userAcct{}", builder,map,loginUser.getAccount());
             JSONObject jsonObject = commonRequest(builder.toString(), map, loginUser.getId().intValue(), "yLLogOut");
             logger.info("YL捕鱼强迫登出玩家请求返回：", jsonObject);
-            if (null != jsonObject && "1".equals(jsonObject.getString("status"))) {
+            if (null != jsonObject && "1".equals(jsonObject.getString("desc"))) {
                 return Result.success();
+            }else if(null == jsonObject){
+                return Result.failed();
+            }else {
+                return errorCode(jsonObject.getString("status"),jsonObject.getString("desc"));
             }
-            return Result.failed();
+
         } catch (Exception e) {
             logger.error("yllog 强迫登出玩家异常:{}", e);
             e.printStackTrace();
@@ -209,4 +214,50 @@ public class YlServiceImpl implements YlService {
         return psApiResponseData;
     }
 
+    public Result  errorCode(String errorCode,String errorMessage){
+//        0000 成功。                                                Succeed.
+        switch (errorCode){
+            case "0":
+                return Result.failed("g009999",errorMessage);
+            case "500":
+                return Result.failed("g009999",errorMessage);
+            case "1001":
+                return Result.failed("g000002",errorMessage);
+            case "1002":
+                return Result.failed("g300007",errorMessage);
+            case "1003":
+                return Result.failed("g091068",errorMessage);
+            case "1004":
+                return Result.failed("g091084",errorMessage);
+            case "1006":
+                return Result.failed("g091075",errorMessage);
+            case "1007":
+                return Result.failed("g091155",errorMessage);
+            case "1008":
+                return Result.failed("g091156",errorMessage);
+            case "1009":
+                return Result.failed("g300004",errorMessage);
+            case "1011":
+                return Result.failed("g091033",errorMessage);
+            case "1012":
+                return Result.failed("g091158",errorMessage);
+            case "1014":
+                return Result.failed("g091157",errorMessage);
+            case "1015":
+                return Result.failed("g091159",errorMessage);
+            case "1016":
+                return Result.failed("g091035",errorMessage);
+            case "1018":
+                return Result.failed("g200003",errorMessage);
+            case "1023":
+                return Result.failed("g091159",errorMessage);
+            case "1024":
+                return Result.failed("g100001",errorMessage);
+            case "1030":
+                return Result.failed("g091035",errorMessage);
+            //        9999 失败。                                                Failed.
+            default:
+                return Result.failed("g009999",errorMessage);
+        }
+    }
 }

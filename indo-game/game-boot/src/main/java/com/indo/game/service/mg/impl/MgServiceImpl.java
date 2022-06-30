@@ -100,7 +100,7 @@ public class MgServiceImpl implements MgService {
                 cptOpenMember.setLoginTime(new Date());
                 cptOpenMember.setType(parentName);
                 //创建玩家
-                Result result = createMemberGame(cptOpenMember, tokenJson.getString("access_token"));
+                Result result = createMemberGame(cptOpenMember, "Bearer "+tokenJson.getString("access_token"));
             } else {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
@@ -111,7 +111,7 @@ public class MgServiceImpl implements MgService {
                 }
             }
 
-            JSONObject jsonObject = gameLogin(gameParentPlatform, gamePlatform, cptOpenMember, isMobileLogin, tokenJson.getString("access_token"));
+            JSONObject jsonObject = gameLogin(gameParentPlatform, gamePlatform, cptOpenMember, isMobileLogin, "Bearer "+tokenJson.getString("access_token"));
             if (StringUtils.isEmpty(jsonObject.getString("url"))) {
                 return errorCode(jsonObject.getString("code"), jsonObject.getString("message"));
             }
