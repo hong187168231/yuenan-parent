@@ -11,10 +11,7 @@ import com.indo.game.service.pg.PgCallbackService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -33,7 +30,7 @@ public class MgCallBackController {
     @RequestMapping(value = "/getbalance", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object getBalance(MgCallBackReq mgCallBackReq, HttpServletRequest request) {
+    public Object getBalance(@RequestBody MgCallBackReq mgCallBackReq, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
         logger.info("cqCallBack {} getBalance 回调,params:{}", JSONObject.toJSONString(mgCallBackReq));
@@ -48,7 +45,7 @@ public class MgCallBackController {
     @RequestMapping(value = "/login", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object verifySession(MgCallBackReq mgCallBackReq,HttpServletRequest request) {
+    public Object verifySession(@RequestBody MgCallBackReq mgCallBackReq,HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
         logger.info("pgCallBack {} verifySession回调,params:{}", JSONObject.toJSONString(mgCallBackReq));
@@ -64,7 +61,7 @@ public class MgCallBackController {
     @RequestMapping(value = "/updatebalance", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object adjustment(MgCallBackReq mgCallBackReq,HttpServletRequest request) {
+    public Object adjustment(@RequestBody MgCallBackReq mgCallBackReq,HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
         logger.info("pgCallBack {} adjustment回调,params:{}", JSONObject.toJSONString(mgCallBackReq));
