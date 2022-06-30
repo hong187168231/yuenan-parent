@@ -3,11 +3,13 @@ package com.indo.admin.modules.agent.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.pojo.dto.AgentReportDTO;
+import com.indo.admin.pojo.dto.MemReportDTO;
 import com.indo.admin.pojo.req.agnet.MemAgentReq;
 import com.indo.admin.pojo.req.agnet.SubordinateReq;
-import com.indo.admin.pojo.vo.agent.AgentReportVO;
+import com.indo.admin.pojo.vo.agent.AgentReportVo;
 import com.indo.admin.pojo.vo.agent.AgentSubVO;
 import com.indo.admin.pojo.vo.agent.AgentVo;
+import com.indo.admin.pojo.vo.mem.MemReportVo;
 import com.indo.core.pojo.entity.AgentRelation;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -35,5 +37,13 @@ public interface AgentRelationMapper extends BaseMapper<AgentRelation> {
      * @param agentReportDTO
      * @return
      */
-    Page<AgentReportVO> findAgentReport(Page<AgentReportVO> page, AgentReportDTO agentReportDTO);
+    Page<AgentReportVo> findAgentReport(Page<AgentReportVo> page, AgentReportDTO agentReportDTO);
+
+    /**
+     * 查询会员报表
+     * @param page
+     * @param memReportDTO
+     * @return
+     */
+    Page<MemReportVo> findMemberReport(Page<MemReportVo> page, MemReportDTO memReportDTO);
 }

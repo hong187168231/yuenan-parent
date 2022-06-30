@@ -2,7 +2,9 @@ package com.indo.admin.modules.report.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.pojo.dto.AgentReportDTO;
-import com.indo.admin.pojo.vo.agent.AgentReportVO;
+import com.indo.admin.pojo.dto.MemReportDTO;
+import com.indo.admin.pojo.vo.agent.AgentReportVo;
+import com.indo.admin.pojo.vo.mem.MemReportVo;
 
 public interface DataReportService {
     /**
@@ -10,5 +12,12 @@ public interface DataReportService {
      * @param agentReportDTO
      * @return
      */
-    Page<AgentReportVO> findAgentReport(AgentReportDTO agentReportDTO);
+    Page<AgentReportVo> findAgentReport(AgentReportDTO agentReportDTO);
+
+    /**
+     * 查询会员报表
+     * @param memReportDTO
+     * @return
+     */
+    Page<MemReportVo> findMemberReport(MemReportDTO memReportDTO);
 }

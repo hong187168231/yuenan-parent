@@ -12,8 +12,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
-public class AgentReportVO {
-
+public class AgentReportVo {
+    @ApiModelProperty(value = "日期")
     private String dataTime;
 
     @ApiModelProperty(value = "代理总人数")
