@@ -122,18 +122,19 @@ public class YlServiceImpl implements YlService {
         String pathUrl = "";
         try {
             Map<String, String> map = new HashMap<>();
-            map.put("user", cptOpenMember.getUserId() + "");
+            map.put("user", cptOpenMember.getUserName());
             map.put("key", apiKey);
             map.put("extension1", OpenAPIProperties.YL_EXTENSION);
             map.put("userName", cptOpenMember.getUserName());
             map.put("language", platformGameParent.getLanguageType());
-            if (!OpenAPIProperties.YL_PLATFORM_CODE.equals(platform)) {
+            if (!OpenAPIProperties.YL_IS_PLATFORM_LOGIN.equals("Y")) {
                 map.put("gameId", platform);
             }
             StringBuilder builder = new StringBuilder();
             builder.append(OpenAPIProperties.YL_API_URL).append("/api/").append(OpenAPIProperties.YL_WEB_SITE).append("/login");
+            logger.error("YL捕鱼登录请求：url{},params{},userAcct{}", builder,map,cptOpenMember.getUserName());
             JSONObject jsonObject = commonRequest(builder.toString(), map, cptOpenMember.getUserId().intValue(), "yLGameLogin");
-            logger.error("YL捕鱼登录请求返回：", jsonObject);
+            logger.error("YL捕鱼登录请求返回：JSONObject{}", jsonObject);
             if (null != jsonObject && "1".equals(jsonObject.getString("status"))) {
                 pathUrl = jsonObject.getString("url");
             }
@@ -149,12 +150,13 @@ public class YlServiceImpl implements YlService {
         try {
             Map<String, String> map = new HashMap<>();
             map.put("cert", OpenAPIProperties.YL_CERT);
-            map.put("user", cptOpenMember.getUserId() + "");
+            map.put("user", cptOpenMember.getUserName());
             map.put("userName", cptOpenMember.getUserName());
             map.put("extension1", OpenAPIProperties.YL_EXTENSION);
             map.put("currency", platformGameParent.getCurrencyType());
             StringBuilder builder = new StringBuilder();
             builder.append(OpenAPIProperties.YL_API_URL).append("/api/").append(OpenAPIProperties.YL_WEB_SITE).append("/getKey");
+            logger.error("YL捕鱼获取KEY请求：url{},params{},userAcct{}", builder,map,cptOpenMember.getUserName());
             JSONObject jsonObject = commonRequest(builder.toString(), map, cptOpenMember.getUserId().intValue(), "yLInitGame");
             logger.info("YL捕鱼获取KEY请求返回：", jsonObject);
             if (null != jsonObject && "1".equals(jsonObject.getString("status"))) {
@@ -175,9 +177,10 @@ public class YlServiceImpl implements YlService {
         try {
             Map<String, String> map = new HashMap<>();
             map.put("cert", OpenAPIProperties.YL_CERT);
-            map.put("user", loginUser.getId() + "");
+            map.put("user", loginUser.getAccount());
             StringBuilder builder = new StringBuilder();
             builder.append(OpenAPIProperties.YL_API_URL).append("/api/").append(OpenAPIProperties.YL_WEB_SITE).append("/logout");
+            logger.error("YL捕鱼强迫登出玩家请求：url{},params{},userAcct{}", builder,map,loginUser.getAccount());
             JSONObject jsonObject = commonRequest(builder.toString(), map, loginUser.getId().intValue(), "yLLogOut");
             logger.info("YL捕鱼强迫登出玩家请求返回：", jsonObject);
             if (null != jsonObject && "1".equals(jsonObject.getString("status"))) {
@@ -197,15 +200,11 @@ public class YlServiceImpl implements YlService {
      * 公共请求
      */
     public JSONObject commonRequest(String apiUrl, Map<String, String> params, Integer userId, String type) throws Exception {
-        logger.info("yllog  {} commonRequest userId:{},paramsMap:{}", userId, params);
         JSONObject psApiResponseData = null;
         String resultString = GameUtil.doProxyPostJson(OpenAPIProperties.PROXY_HOST_NAME, OpenAPIProperties.PROXY_PORT, OpenAPIProperties.PROXY_TCP,
                 apiUrl, params, type, userId);
-        logger.info("yllog  apiResponse:" + resultString);
         if (StringUtils.isNotEmpty(resultString)) {
             psApiResponseData = JSONObject.parseObject(resultString);
-            logger.info("yllog  {}:commonRequest type:{}, operateFlag:{}, hostName:{}, params:{}, result:{}, awcApiResponse:{}",
-                    userId, type, null, params, resultString, JSONObject.toJSONString(psApiResponseData));
         }
         return psApiResponseData;
     }
