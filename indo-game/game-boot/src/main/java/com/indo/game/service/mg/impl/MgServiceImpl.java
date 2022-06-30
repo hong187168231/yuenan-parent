@@ -190,7 +190,29 @@ public class MgServiceImpl implements MgService {
         JSONObject apiResponseData = null;
         try {
             Map<String, String> params = new HashMap<String, String>();
-            params.put("contentCode", gamePlatform.getPlatformCode());
+            if(OpenAPIProperties.MG_IS_PLATFORM_LOGIN.equals("Y")){
+//                1	Live	真人视讯
+//                2	Slots	老虎机
+//                3	Sports	体育
+//                4	Animal	斗鸡
+//                5	Poker	棋牌游戏
+//                6	Fishing	捕鱼
+//                7	Lottery	彩票
+                String contentCode = "Live Dealer";
+                if(gamePlatform.getCategoryId()==1){
+                    contentCode = "Live Dealer";
+                }else if(gamePlatform.getCategoryId()==2){
+                    contentCode = "Slot";
+                }else if(gamePlatform.getCategoryId()==5){
+                    contentCode = "QiPai";
+                }else if(gamePlatform.getCategoryId()==6){
+                    contentCode = "Fishing";
+                }
+                params.put("contentCode", contentCode);
+            }else {
+                params.put("contentCode", gamePlatform.getPlatformCode());
+            }
+
             if ("0".equals(isMobileLogin)) {
                 params.put("platform", "Desktop");
             } else if ("1".equals(isMobileLogin)) {
@@ -231,15 +253,11 @@ public class MgServiceImpl implements MgService {
      * 公共请求
      */
     public JSONObject commonRequest(String apiUrl, Map<String, String> params, Integer userId, String token, String type) throws Exception {
-        logger.info("mgLog  公共请求输入 commonRequest userId:{},userId:{},paramsMap:{}",apiUrl, userId, params);
         JSONObject apiResponseData = null;
          String resultString = GameUtil.doProxyPostHeaderJson(OpenAPIProperties.PROXY_HOST_NAME, OpenAPIProperties.PROXY_PORT, OpenAPIProperties.PROXY_TCP,
                 apiUrl, params, type, userId, token);
-        logger.info("mgLog 公共请求返回  apiResponse:" + resultString);
         if (StringUtils.isNotEmpty(resultString)) {
             apiResponseData = JSONObject.parseObject(resultString);
-            logger.info("mgLog 公共请求返回:commonRequest userId:{},type:{}, params:{},  awcApiResponse:{}",
-                    userId, type, params, JSONObject.toJSONString(apiResponseData));
         }
         return apiResponseData;
     }
