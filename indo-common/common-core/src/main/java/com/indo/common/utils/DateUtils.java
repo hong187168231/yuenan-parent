@@ -1580,8 +1580,10 @@ public class DateUtils {
 
     public static void main(String[] args) {
 //        System.out.println(daysBetween("2022-01-25", "2022-01-28"));
-//        DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        System.out.println(getUTCTimeStr(DateUtils.newFormat));
+        DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//        System.out.println(getUTCTimeStr(DateUtils.newFormat));
+        System.out.println(getLocalTimeFromUTC("637922749635693535",format));
+
     }
 
 }
