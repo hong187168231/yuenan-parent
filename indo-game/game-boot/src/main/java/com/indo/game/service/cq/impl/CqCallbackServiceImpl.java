@@ -157,56 +157,81 @@ public class CqCallbackServiceImpl implements CqCallbackService {
     }
 
     @Override
-    public Object endround(CqEndroundCallBackReq endroundDataCallBackReq, String ip, String wtoken){
+    public Object endround(CqEndroundCallBackReq endroundDataCallBackReq, String ip, String wtoken) {
         if (!checkIp(ip) && !OpenAPIProperties.CQ_API_TOKEN.equals(wtoken)) {
             return commonReturnFail();
         }
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.CQ_PLATFORM_CODE);
         GamePlatform gamePlatform = new GamePlatform();
-        if(OpenAPIProperties.V8_IS_PLATFORM_LOGIN.equals("Y")){
-            gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.CQ_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
-        }else {
+        if (OpenAPIProperties.V8_IS_PLATFORM_LOGIN.equals("Y")) {
+            gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.CQ_PLATFORM_CODE, gameParentPlatform.getPlatformCode());
+        } else {
             gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(endroundDataCallBackReq.getGamecode(), gameParentPlatform.getPlatformCode());
         }
         GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         BigDecimal balance = BigDecimal.ZERO;
         String dataStr = endroundDataCallBackReq.getData();
 //        for(int i=0;i<dataStr.length;i++) {
-        logger.info("CQ9Game 回调endround:ddataStr:{}", dataStr);
-        String replaceStr = dataStr.replace("[","").replace("]","");
-            logger.info("CQ9Game 回调endround:dataStr.replace:{}", replaceStr);
-            JSONObject tokenJson = JSONObject.parseObject(replaceStr);
-            logger.info("CQ9Game 回调endround:tokenJson:{}", tokenJson);
-            MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(endroundDataCallBackReq.getAccount());
-            LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
-            String mtcode = tokenJson.getString("mtcode");
-            wrapper.eq(Txns::getPromotionTxId, mtcode);
-            wrapper.eq(Txns::getRoundId, endroundDataCallBackReq.getRoundid());
-            Txns oldTxns = txnsMapper.selectOne(wrapper);
-            if (null != oldTxns) {
-                return commonReturnFail();
-            }
-            Double amount = tokenJson.getDouble("amount");
-            balance = memBaseinfo.getBalance().add(BigDecimal.valueOf(amount));
-            gameCommonService.updateUserBalance(memBaseinfo, BigDecimal.valueOf(amount), GoldchangeEnum.REFUND, TradingEnum.INCOME);
-            String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
+        String replaceStr = dataStr.replace("[", "").replace("]", "");
+        JSONObject tokenJson = JSONObject.parseObject(replaceStr);
+        logger.info("CQ9Game 回调endround:tokenJson:{}", tokenJson);
+        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(endroundDataCallBackReq.getAccount());
+        LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+        String mtcode = tokenJson.getString("mtcode");
+        wrapper.eq(Txns::getPromotionTxId, mtcode);
+        wrapper.eq(Txns::getRoundId, endroundDataCallBackReq.getRoundid());
+        Txns oldTxns = txnsMapper.selectOne(wrapper);
+        Double amount = tokenJson.getDouble("amount");
+        balance = memBaseinfo.getBalance().add(BigDecimal.valueOf(amount));
+        gameCommonService.updateUserBalance(memBaseinfo, BigDecimal.valueOf(amount), GoldchangeEnum.REFUND, TradingEnum.INCOME);
+        String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
 
-            Txns txns = new Txns();
+        Txns txns = new Txns();
+        if (null != oldTxns) {
             BeanUtils.copyProperties(oldTxns, txns);
-            //游戏商注单号
+        } else{ //混合码
             txns.setPlatformTxId(mtcode);
-            //混合码
+            //游戏商注单号
             txns.setRoundId(endroundDataCallBackReq.getRoundid());
-            txns.setBalance(balance);
-            txns.setId(null);
-            txns.setMethod("Settle");
-            txns.setStatus("Running");
-            txns.setCreateTime(dateStr);
-            txns.setGameMethod("endround");
-            txnsMapper.insert(txns);
+            //此交易是否是投注 true是投注 false 否
+            //玩家 ID
+            txns.setUserId(memBaseinfo.getAccount());
+            //玩家货币代码
+            txns.setCurrency(gameParentPlatform.getCurrencyType());
+            //平台代码
+            txns.setPlatform(gameParentPlatform.getPlatformCode());
+            //平台英文名称
+            txns.setPlatformEnName(gameParentPlatform.getPlatformEnName());
+            //平台中文名称
+            txns.setPlatformCnName(gameParentPlatform.getPlatformCnName());
+            //平台游戏类型
+            txns.setGameType(gameCategory.getGameType());
+            //游戏分类ID
+            txns.setCategoryId(gameCategory.getId());
+            //游戏分类名称
+            txns.setCategoryName(gameCategory.getGameName());
+            //平台游戏代码
+            txns.setGameCode(gamePlatform.getPlatformCode());
+            //游戏名称
+            txns.setGameName(gamePlatform.getPlatformEnName());
+            txns.setBetAmount(BigDecimal.valueOf(amount));
+        }
+        //游戏商注单号
+        txns.setPlatformTxId(mtcode);
+        //混合码
+        txns.setRoundId(endroundDataCallBackReq.getRoundid());
+        txns.setBalance(balance);
+        txns.setId(null);
+        txns.setMethod("Settle");
+        txns.setStatus("Running");
+        txns.setCreateTime(dateStr);
+        txns.setGameMethod("endround");
+        txnsMapper.insert(txns);
+        if (null != oldTxns) {
             oldTxns.setStatus("Settle");
             oldTxns.setUpdateTime(dateStr);
             txnsMapper.updateById(oldTxns);
+        }
 //        }
 
         return commonReturnSuccess(balance, gameParentPlatform.getCurrencyType());

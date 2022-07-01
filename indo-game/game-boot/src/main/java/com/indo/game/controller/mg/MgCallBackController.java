@@ -56,7 +56,8 @@ public class MgCallBackController {
 //        mgCallBackReq.setCompleted(jsonObject.getBoolean("completed"));
         Object object = mgCallbackService.mgBalanceCallback(mgCallBackReq, ip);
         response.setHeader("X-MGP-REQ-ID",reqId);
-        Long time = Long.valueOf(reqTime)- DateUtils.getGMT8TimeLength10();
+        Long nowTime = DateUtils.getUTCTimeStr(DateUtils.newFormat);
+        Long time = nowTime-Long.valueOf(reqTime);
         response.setHeader("X-MGP-RESPONSE-TIME",String.valueOf(time));
         logger.info("mgCallBack 回调返回数据/getBalance params:{},X-MGP-REQ-ID:{},X-MGP-RESPONSE-TIME:{}", object,reqId,time);
         return object;
@@ -90,7 +91,7 @@ public class MgCallBackController {
 //        mgCallBackReq.setCompleted(jsonObject.getBoolean("completed"));
         Object object = mgCallbackService.mgVerifyCallback(mgCallBackReq, ip);
         response.setHeader("X-MGP-REQ-ID",reqId);
-        Long nowTime = DateUtils.getGMT8TimeLength10();
+        Long nowTime = DateUtils.getUTCTimeStr(DateUtils.newFormat);
         logger.info("mgCallBack verifySession当前处理时间/login nowTime:{}",nowTime);
         Long time = nowTime-Long.valueOf(reqTime);
         response.setHeader("X-MGP-RESPONSE-TIME",String.valueOf(time));
@@ -127,7 +128,8 @@ public class MgCallBackController {
         mgCallBackReq.setCompleted(jsonObject.getBoolean("completed"));
         Object object = mgCallbackService.mgUpdatebalanceCallback(mgCallBackReq, ip);
         response.setHeader("X-MGP-REQ-ID",reqId);
-        Long time = Long.valueOf(reqTime)- DateUtils.getGMT8TimeLength10();
+        Long nowTime = DateUtils.getUTCTimeStr(DateUtils.newFormat);
+        Long time = nowTime-Long.valueOf(reqTime);
         response.setHeader("X-MGP-RESPONSE-TIME",String.valueOf(time));
         logger.info("mgCallBack adjustment()回调返回数据/updatebalance params:{},X-MGP-REQ-ID:{},X-MGP-RESPONSE-TIME:{}", object,reqId,time);
         return object;
@@ -154,7 +156,8 @@ public class MgCallBackController {
         mgCallBackReq.setTxnId(jsonObject.getString("txnId"));
         Object object = mgCallbackService.rollback(mgCallBackReq, ip);
         response.setHeader("X-MGP-REQ-ID",reqId);
-        Long time = Long.valueOf(reqTime)- DateUtils.getGMT8TimeLength10();
+        Long nowTime = DateUtils.getUTCTimeStr(DateUtils.newFormat);
+        Long time = nowTime-Long.valueOf(reqTime);
         response.setHeader("X-MGP-RESPONSE-TIME",String.valueOf(time));
         logger.info("mgCallBack 回调返回数据/rollback params:{},X-MGP-REQ-ID:{},X-MGP-RESPONSE-TIME:{}", object,reqId,time);
         return object;
