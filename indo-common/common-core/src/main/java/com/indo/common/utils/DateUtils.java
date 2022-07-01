@@ -1528,7 +1528,7 @@ public class DateUtils {
 
         try{
 
-            return format.parse(UTCTimeBuffer.toString()).getTime();
+            return format.parse(UTCTimeBuffer.toString()).getTime()/1000;
 
 //            return UTCTimeBuffer.toString() ;
 
