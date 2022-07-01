@@ -141,7 +141,7 @@ public class UgServiceImpl implements UgService {
             logger.info("UG体育注册会员restrictedPlayer输入 apiUrl:{}, params:{}, userId:{}, ip:{}", OpenAPIProperties.UG_API_URL+"/api/single/register", ugRegisterPlayerJsonDTO, loginUser.getId(), ip);
             UgApiResponseData ugApiResponse = commonRequestPost(ugRegisterPlayerJsonDTO, OpenAPIProperties.UG_API_URL+"/api/single/register", loginUser.getId().intValue(), ip, "restrictedPlayer");
             logger.info("UG体育注册会员返回参数: ugApiResponse:{}"+ugApiResponse);
-            if("000000".equals(ugApiResponse.getCode())){
+            if(null!=ugApiResponse&&"000000".equals(ugApiResponse.getCode())){
                 externalService.saveCptOpenMember(cptOpenMember);
                 return initGame(gameParentPlatform,loginUser,gamePlatform, ip,WebType);
             }else if(null==ugApiResponse){
@@ -180,7 +180,7 @@ public class UgServiceImpl implements UgService {
 
             UgApiResponseData ugApiResponse = commonRequestGet(param, OpenAPIProperties.UG_API_URL+"/auth/single", loginUser.getId().intValue(), ip, "Login");
             logger.info("UG体育登录返回参数: ugApiResponse:{}"+ugApiResponse);
-            if("000000".equals(ugApiResponse.getCode())){
+            if(null!=ugApiResponse&&"000000".equals(ugApiResponse.getCode())){
                 ApiResponseData responseData = new ApiResponseData();
                 responseData.setPathUrl((String) ugApiResponse.getData());
                 return Result.success(responseData);
@@ -475,8 +475,98 @@ public class UgServiceImpl implements UgService {
     }
         public Result errorCode(String errorCode, String errorMessage) {
             switch (errorCode) {
-                case "InputValidationError":
-                    return Result.failed("g091118", errorMessage);
+                case "000001"://	系统维护	SYSTEM MAINTENANCE
+                    return Result.failed("g000001", errorMessage);
+                case "000002"://	授权已取消	AUTHORIZATION HAS BEEN CANCELED
+                    return Result.failed("g000002", errorMessage);
+                case "000003"://	IP 不在白名单中	IP NOT IN THE WHITELIST
+                    return Result.failed("g000003", errorMessage);
+                case "000004"://	API 密钥错误	API KEY ERROR
+                    return Result.failed("g091160", errorMessage);
+                case "000005"://	系统忙碌	SYSTEM BUSY
+                    return Result.failed("g000005", errorMessage);
+                case "000006"://	超出查询时间范围	OVER INQUIRY TIME RANGE
+                    return Result.failed("g000006", errorMessage);
+                case "000007"://	参数错误	ENTER PARAMETER ERROR
+                    return Result.failed("g000007", errorMessage);
+                case "000008"://	频繁请求	REQUEST TOO MUCH FREQUENTLY
+                    return Result.failed("g000008", errorMessage);
+                case "000009"://	无效的网址	INVALID URL
+                    return Result.failed("g091159", errorMessage);
+                case "000010"://	API password 错误	API PASSWORD ERROR
+                    return Result.failed("g000004", errorMessage);
+//                case "000011"://	不允许的请求方法	METHOD NOT ALLOWED
+//                    return Result.failed("g009999", errorMessage);
+//                case "000012"://	operatorId 错误	OPERATOR ID ERROR
+//                    return Result.failed("g009999", errorMessage);
+//                case "000013"://	商户不存在	OPERATOR NOT EXIST
+//                    return Result.failed("g009999", errorMessage);
+//                case "000014"://	session 不存在	SESSION NOT EXIST
+//                    return Result.failed("g009999", errorMessage);
+//                case "000015"://	转帐 key 错误	TRANSFER KEY ERROR
+//                    return Result.failed("g009999", errorMessage);
+//                case "000016"://	不被接受的请求	REQUEST NOT ACCEPTED
+//                    return Result.failed("g009999", errorMessage);
+//                case "000017"://	商户未启用	OPERATOR IS NOT ENABLE
+//                    return Result.failed("g009999", errorMessage);
+//                case "100001"://	会员帐号不存在	MEMBER ACCOUNT IS NOT EXIST
+//                    return Result.failed("g009999", errorMessage);
+//                case "100002"://	不允许的货币	NOT ALLOWED CURRENCY
+//                    return Result.failed("g009999", errorMessage);
+//                case "100003"://	无效的帐号	INVALID ACCOUNT
+//                    return Result.failed("g009999", errorMessage);
+//                case "100004"://	会员帐号已存在	MEMBER ACCOUNT ALREADY EXIST
+//                    return Result.failed("g009999", errorMessage);
+//                case "100005"://	建立帐号失败	CREATE ACCOUNT FAIL
+//                    return Result.failed("g009999", errorMessage);
+//                case "100006"://	错误的货币	CURRENCY ERROR
+//                    return Result.failed("g009999", errorMessage);
+//                case "100007"://	钱包不存在	WALLET NOT EXIST
+//                    return Result.failed("g009999", errorMessage);
+//                case "100008"://	钱包更新失败	WALLET UPDATE FAIL
+//                    return Result.failed("g009999", errorMessage);
+//                case "100009"://	管理帐号不存在	MANAGER ACCOUNT NOT EXIST
+//                    return Result.failed("g009999", errorMessage);
+//                case "100010"://	userId 只限英数	USER ID ALPHANUMERIC ONLY
+//                    return Result.failed("g009999", errorMessage);
+//                case "100011"://	不支援的货币	CURRENCY NOT SUPPORT
+//                    return Result.failed("g009999", errorMessage);
+//                case "100012"://	商户不存在	COMPANY ACCOUNT IS NOT EXIST
+//                    return Result.failed("g009999", errorMessage);
+//                case "200001"://	登入失败	LOGIN FAILED
+//                    return Result.failed("g009999", errorMessage);
+//                case "200002"://	帐户已关闭	ACCOUNT CLOSED
+//                    return Result.failed("g009999", errorMessage);
+//                case "200003"://	帐户已锁定	ACCOUNT LOCKED
+//                    return Result.failed("g009999", errorMessage);
+//                case "300001"://	输入的存款 / 提款金额少于或等于0	ENTER DEPOSIT/WITHDRAWAL AMOUNT LESS THAN OR EQUAL TO 0
+//                    return Result.failed("g009999", errorMessage);
+//                case "300002"://	存款 / 提款失败	DEPOSIT/WITHDRAWAL FAILED
+//                    return Result.failed("g009999", errorMessage);
+//                case "300003"://	存款 / 提款序号已存在	DEPOSIT/WITHDRAWAL SEQ ALREADY EXIST
+//                    return Result.failed("g009999", errorMessage);
+//                case "300004"://	余额不足	INSUFFICIENT BALANCE
+//                    return Result.failed("g009999", errorMessage);
+//                case "300005"://	存款 / 提款金钥不正确	DEPOSIT/WITHDRAWAL KEY INCORRECT
+//                    return Result.failed("g009999", errorMessage);
+//                case "400001"://	存款 / 提款序号不存在	DEPOSIT/WITHDRAWAL SEQ NOT EXIST
+//                    return Result.failed("g009999", errorMessage);
+//                case "400002"://	存款 / 提款存在，但帐户不匹配	DEPOSIT/WITHDRAWAL TURNOVER EXISTS, BUT ACCOUNT NOT MATCH
+//                    return Result.failed("g009999", errorMessage);
+//                case "500001"://	投注限制无效	BET LIMIT INVALID
+//                    return Result.failed("g009999", errorMessage);
+//                case "500002"://	佣金组别不存在	COMM GROUP NOT EXIST
+//                    return Result.failed("g009999", errorMessage);
+//                case "500003"://	赔率表达不存在	ODDS STYLE NOT EXIST
+//                    return Result.failed("g009999", errorMessage);
+//                case "600001"://	投注限制不存在	BET LIMIT NOT EXIST
+//                    return Result.failed("g009999", errorMessage);
+//                case "800001"://	更新会员状态失败	UPDATE MEMBER STATUS ERROR
+//                    return Result.failed("g009999", errorMessage);
+//                case "800002"://	更新会员限额失败	UPDATE MEMBER LIMIT ERROR
+//                    return Result.failed("g009999", errorMessage);
+//                case "900001"://	非内部请求	NOT INTERNAL REQUEST
+//                    return Result.failed("g091145", errorMessage);
                 //        9999 失败。                                                Failed.
                 default:
                     return Result.failed("g009999", errorMessage);
