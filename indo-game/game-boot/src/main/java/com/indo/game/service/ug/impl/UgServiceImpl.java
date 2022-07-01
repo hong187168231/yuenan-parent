@@ -112,14 +112,11 @@ public class UgServiceImpl implements UgService {
                 //创建玩家
                 return restrictedPlayer(gameParentPlatform,loginUser,gamePlatform, ip, cptOpenMember,WebType);
             } else {
-                Result result = this.logout(loginUser,ip);
-                if(null!=result&&"00000".equals(result.getCode())) {
-                    cptOpenMember.setLoginTime(new Date());
-                    externalService.updateCptOpenMember(cptOpenMember);
-                    //登录
-                    return initGame(gameParentPlatform,loginUser, gamePlatform, ip, WebType);
-                }
-                return result;
+                this.logout(loginUser,ip);
+                cptOpenMember.setLoginTime(new Date());
+                externalService.updateCptOpenMember(cptOpenMember);
+                //登录
+                return initGame(gameParentPlatform,loginUser, gamePlatform, ip, WebType);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -141,17 +138,18 @@ public class UgServiceImpl implements UgService {
             if(null!=OpenAPIProperties.UG_AGENT&&!"".equals(OpenAPIProperties.UG_AGENT)){
                 ugRegisterPlayerJsonDTO.setAgentId(Integer.valueOf(OpenAPIProperties.UG_AGENT));//代理编号
             }
-
+            logger.info("UG体育注册会员restrictedPlayer输入 apiUrl:{}, params:{}, userId:{}, ip:{}", OpenAPIProperties.UG_API_URL+"/api/single/register", ugRegisterPlayerJsonDTO, loginUser.getId(), ip);
             UgApiResponseData ugApiResponse = commonRequestPost(ugRegisterPlayerJsonDTO, OpenAPIProperties.UG_API_URL+"/api/single/register", loginUser.getId().intValue(), ip, "restrictedPlayer");
-
-            if (null == ugApiResponse ) {
-                return Result.failed("g100104","网络繁忙，请稍后重试！");
-            }
+            logger.info("UG体育注册会员返回参数: ugApiResponse:{}"+ugApiResponse);
             if("000000".equals(ugApiResponse.getCode())){
                 externalService.saveCptOpenMember(cptOpenMember);
                 return initGame(gameParentPlatform,loginUser,gamePlatform, ip,WebType);
+            }else if(null==ugApiResponse){
+                return Result.failed();
             }else {
-                return Result.failed("g"+ugApiResponse.getCode(),ugApiResponse.getMsg());
+                {
+                    return this.errorCode(ugApiResponse.getCode(),ugApiResponse.getMsg());
+                }
             }
         } catch (Exception e) {
             logger.error("uglog restrictedPlayer game error {} ", e);
@@ -178,15 +176,20 @@ public class UgServiceImpl implements UgService {
                     +"&returnUrl="+OpenAPIProperties.UG_RETURN_URL+"&oddsExpression="+gamePlatform.getPlatformCode()
                     +"&language="+gameParentPlatform.getLanguageType()
                     +"&webType="+WebType+"&theme=style&sportId=1";
-
+            logger.info("UG体育登录initGame输入 apiUrl:{}, params:{}, userId:{}, ip:{}", OpenAPIProperties.UG_API_URL+"/auth/single", param, loginUser.getId(), ip);
 
             UgApiResponseData ugApiResponse = commonRequestGet(param, OpenAPIProperties.UG_API_URL+"/auth/single", loginUser.getId().intValue(), ip, "Login");
+            logger.info("UG体育登录返回参数: ugApiResponse:{}"+ugApiResponse);
             if("000000".equals(ugApiResponse.getCode())){
                 ApiResponseData responseData = new ApiResponseData();
                 responseData.setPathUrl((String) ugApiResponse.getData());
                 return Result.success(responseData);
+            }else if(null==ugApiResponse){
+                return Result.failed();
             }else {
-                return Result.failed("g"+ugApiResponse.getCode(),ugApiResponse.getMsg());
+                {
+                    return this.errorCode(ugApiResponse.getCode(),ugApiResponse.getMsg());
+                }
             }
         } catch (Exception e) {
             logger.error("uglog initGame Login game error {} ", e);
@@ -201,14 +204,19 @@ public class UgServiceImpl implements UgService {
         logger.info("uglog logout {} initGame ugGame account:{}, ugCodeId:{},ip:{}", loginUser.getId(), loginUser.getNickName(),ip);
         UgLogoutJsonDTO ugLogoutJsonDTO = new UgLogoutJsonDTO();
         ugLogoutJsonDTO.setUserId(loginUser.getAccount());
-
+        logger.info("UG体育登出玩家initGame输入 apiUrl:{}, params:{}, userId:{}, ip:{}", OpenAPIProperties.UG_API_URL+"/api/single/logout", ugLogoutJsonDTO, loginUser.getId(), ip);
         UgApiResponseData ugApiResponse = null;
         try {
             ugApiResponse = commonRequestPost(ugLogoutJsonDTO, OpenAPIProperties.UG_API_URL+"/api/single/logout", Integer.valueOf(loginUser.getId().intValue()), ip, "logout");
-            if("000000".equals(ugApiResponse.getCode())){
+            logger.info("UG体育登出玩家返回参数: ugApiResponse:{}"+ugApiResponse);
+            if(null!=ugApiResponse&&"000000".equals(ugApiResponse.getCode())){
                 return Result.success(ugApiResponse);
+            }else if(null==ugApiResponse){
+                return Result.failed();
             }else {
-                return Result.failed("g"+ugApiResponse.getCode(),ugApiResponse.getMsg());
+                {
+                    return this.errorCode(ugApiResponse.getCode(),ugApiResponse.getMsg());
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -224,7 +232,6 @@ public class UgServiceImpl implements UgService {
     public UgApiResponseData commonRequestGet(String param, String url, Integer userId, String ip, String type) throws Exception {
 
         UgApiResponseData ugApiResponse = null;
-        logger.info("uglog {} commonRequest ,url:{},paramsMap:{}", userId, url, param);
         String resultString = GameUtil.sendGet(url, param);
         logger.info("ug_api_response:"+resultString);
         if (StringUtils.isNotEmpty(resultString)) {
@@ -466,5 +473,13 @@ public class UgServiceImpl implements UgService {
         }
         return ugApiResponse;
     }
-
+        public Result errorCode(String errorCode, String errorMessage) {
+            switch (errorCode) {
+                case "InputValidationError":
+                    return Result.failed("g091118", errorMessage);
+                //        9999 失败。                                                Failed.
+                default:
+                    return Result.failed("g009999", errorMessage);
+            }
+        }
 }
