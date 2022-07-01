@@ -35,7 +35,7 @@ public class MgCallBackController {
     public Object getBalance(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("cqCallBack getBalance 回调,params:{}", JSONObject.toJSONString(jsonObject));
+        logger.info("mgCallBack getBalance 回调,params:{}", JSONObject.toJSONString(jsonObject));
         MgCallBackReq mgCallBackReq = new MgCallBackReq();
         mgCallBackReq.setPlayerId(jsonObject.getString("playerId"));
 //        mgCallBackReq.setTxnType(jsonObject.getString("txnType"));
@@ -48,7 +48,7 @@ public class MgCallBackController {
 //        mgCallBackReq.setRoundId(jsonObject.getString("roundId"));
 //        mgCallBackReq.setCompleted(jsonObject.getBoolean("completed"));
         Object object = mgCallbackService.mgBalanceCallback(mgCallBackReq, ip);
-        logger.info("cqCallBack  getBalance 回调下注返回数据 params:{}", object);
+        logger.info("mgCallBack  getBalance 回调下注返回数据 params:{}", object);
         return object;
     }
 
@@ -61,7 +61,7 @@ public class MgCallBackController {
     public Object verifySession(@RequestBody JSONObject jsonObject,HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("cqCallBack  verifySession回调,params:{}", JSONObject.toJSONString(jsonObject));
+        logger.info("mgCallBack  verifySession回调/login,params:{}", JSONObject.toJSONString(jsonObject));
         MgCallBackReq mgCallBackReq = new MgCallBackReq();
         mgCallBackReq.setPlayerId(jsonObject.getString("playerId"));
 //        mgCallBackReq.setTxnType(jsonObject.getString("txnType"));
@@ -74,7 +74,7 @@ public class MgCallBackController {
 //        mgCallBackReq.setRoundId(jsonObject.getString("roundId"));
 //        mgCallBackReq.setCompleted(jsonObject.getBoolean("completed"));
         Object object = mgCallbackService.mgVerifyCallback(mgCallBackReq, ip);
-        logger.info("cqCallBack verifySession回调返回数据 params:{}", object);
+        logger.info("mgCallBack verifySession回调返回数据/login params:{}", object);
         return object;
     }
 
@@ -88,7 +88,7 @@ public class MgCallBackController {
     public Object adjustment(@RequestBody JSONObject jsonObject,HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("cqCallBack adjustment回调,params:{}", JSONObject.toJSONString(jsonObject));
+        logger.info("mgCallBack adjustment回调,params:{}", JSONObject.toJSONString(jsonObject));
         MgCallBackReq mgCallBackReq = new MgCallBackReq();
         mgCallBackReq.setPlayerId(jsonObject.getString("playerId"));
         mgCallBackReq.setTxnType(jsonObject.getString("txnType"));
@@ -101,7 +101,7 @@ public class MgCallBackController {
         mgCallBackReq.setRoundId(jsonObject.getString("roundId"));
         mgCallBackReq.setCompleted(jsonObject.getBoolean("completed"));
         Object object = mgCallbackService.mgUpdatebalanceCallback(mgCallBackReq, ip);
-        logger.info("cqCallBack adjustment回调返回数据 params:{}", object);
+        logger.info("mgCallBack adjustment回调返回数据 params:{}", object);
         return object;
     }
 
@@ -115,12 +115,12 @@ public class MgCallBackController {
     public Object rollback(@RequestBody JSONObject jsonObject,HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("cqCallBack adjustment回调,params:{}", JSONObject.toJSONString(jsonObject));
+        logger.info("mgCallBack adjustment回调,params:{}", JSONObject.toJSONString(jsonObject));
         MgCallBackReq mgCallBackReq = new MgCallBackReq();
         mgCallBackReq.setPlayerId(jsonObject.getString("playerId"));
         mgCallBackReq.setTxnId(jsonObject.getString("txnId"));
         Object object = mgCallbackService.rollback(mgCallBackReq, ip);
-        logger.info("cqCallBack adjustment回调返回数据 params:{}", object);
+        logger.info("mgCallBack adjustment回调返回数据 params:{}", object);
         return object;
     }
 }

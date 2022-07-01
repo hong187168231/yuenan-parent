@@ -200,7 +200,7 @@ public class MgServiceImpl implements MgService {
                 String contentCode = "Live Dealer";
                 if(gamePlatform.getCategoryId()==1){
 //                    contentCode = "Live Dealer";
-                    contentCode = "SMG_titaniumLiveGames_Baccarat_VIP";
+                    contentCode = "SMG_titaniumLiveGames_BaccaratNC";
                 }else if(gamePlatform.getCategoryId()==2){
 //                    contentCode = "Slot";
                     contentCode = "Slot";
