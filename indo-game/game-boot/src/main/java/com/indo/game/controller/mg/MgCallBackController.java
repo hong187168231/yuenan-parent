@@ -40,9 +40,9 @@ public class MgCallBackController {
 //      API 令牌，用以認證 API 的存取（請參照上述 “ 共享 API 令牌或自定義 API 令牌”）
         String reqToken = request.getHeader("X-MGP-TOKEN");
 //        請求的時間戳（數字格式，當前 UTC 時間，以 毫秒為單位）
-        String reqTime = request.getHeader("X-MGP-REQUEST-TIMES");
+        String reqTime = request.getHeader("X-MGP-REQUEST-TIMEMS");
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("mgCallBack getBalance 回调,params:{},X-MGP-REQ-ID:{},X-MGP-TOKEN:{},X-MGP-REQUEST-TIMES:{},IP:{}", JSONObject.toJSONString(jsonObject),reqId ,reqToken, reqTime,ip);
+        logger.info("mgCallBack getBalance 回调,params:{},X-MGP-REQ-ID:{},X-MGP-TOKEN:{},X-MGP-REQUEST-TIMEMS:{},IP:{}", JSONObject.toJSONString(jsonObject),reqId ,reqToken, reqTime,ip);
         MgCallBackReq mgCallBackReq = new MgCallBackReq();
         mgCallBackReq.setPlayerId(jsonObject.getString("playerId"));
 //        mgCallBackReq.setTxnType(jsonObject.getString("txnType"));
@@ -75,9 +75,9 @@ public class MgCallBackController {
 //      API 令牌，用以認證 API 的存取（請參照上述 “ 共享 API 令牌或自定義 API 令牌”）
         String reqToken = request.getHeader("X-MGP-TOKEN");
 //        請求的時間戳（數字格式，當前 UTC 時間，以 毫秒為單位）
-        String reqTime = request.getHeader("X-MGP-REQUEST-TIMES");
+        String reqTime = request.getHeader("X-MGP-REQUEST-TIMEMS");
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("mgCallBack verifySession回调/login,params:{},X-MGP-REQ-ID:{},X-MGP-TOKEN:{},X-MGP-REQUEST-TIMES:{},IP:{}", JSONObject.toJSONString(jsonObject),reqId ,reqToken, reqTime,ip);
+        logger.info("mgCallBack verifySession回调/login,params:{},X-MGP-REQ-ID:{},X-MGP-TOKEN:{},X-MGP-REQUEST-TIMEMS:{},IP:{}", JSONObject.toJSONString(jsonObject),reqId ,reqToken, reqTime,ip);
         MgCallBackReq mgCallBackReq = new MgCallBackReq();
         mgCallBackReq.setPlayerId(jsonObject.getString("playerId"));
 //        mgCallBackReq.setTxnType(jsonObject.getString("txnType"));
@@ -112,9 +112,9 @@ public class MgCallBackController {
 //      API 令牌，用以認證 API 的存取（請參照上述 “ 共享 API 令牌或自定義 API 令牌”）
         String reqToken = request.getHeader("X-MGP-TOKEN");
 //        請求的時間戳（數字格式，當前 UTC 時間，以 毫秒為單位）
-        String reqTime = request.getHeader("X-MGP-REQUEST-TIMES");
+        String reqTime = request.getHeader("X-MGP-REQUEST-TIMEMS");
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("mgCallBack adjustment回调/updatebalance,params:{},X-MGP-REQ-ID:{},X-MGP-TOKEN:{},X-MGP-REQUEST-TIMES:{},IP:{}", JSONObject.toJSONString(jsonObject),reqId ,reqToken, reqTime,ip);
+        logger.info("mgCallBack adjustment回调/updatebalance,params:{},X-MGP-REQ-ID:{},X-MGP-TOKEN:{},X-MGP-REQUEST-TIMEMS:{},IP:{}", JSONObject.toJSONString(jsonObject),reqId ,reqToken, reqTime,ip);
         MgCallBackReq mgCallBackReq = new MgCallBackReq();
         mgCallBackReq.setPlayerId(jsonObject.getString("playerId"));
         mgCallBackReq.setTxnType(jsonObject.getString("txnType"));
@@ -148,9 +148,9 @@ public class MgCallBackController {
 //      API 令牌，用以認證 API 的存取（請參照上述 “ 共享 API 令牌或自定義 API 令牌”）
         String reqToken = request.getHeader("X-MGP-TOKEN");
 //        請求的時間戳（數字格式，當前 UTC 時間，以 毫秒為單位）
-        String reqTime = request.getHeader("X-MGP-REQUEST-TIMES");
+        String reqTime = request.getHeader("X-MGP-REQUEST-TIMEMS");
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("mgCallBack rollback回调/rollback,params:{},X-MGP-REQ-ID:{},X-MGP-TOKEN:{},X-MGP-REQUEST-TIMES:{},IP:{}", JSONObject.toJSONString(jsonObject),reqId ,reqToken, reqTime,ip);
+        logger.info("mgCallBack rollback回调/rollback,params:{},X-MGP-REQ-ID:{},X-MGP-TOKEN:{},X-MGP-REQUEST-TIMEMS:{},IP:{}", JSONObject.toJSONString(jsonObject),reqId ,reqToken, reqTime,ip);
         MgCallBackReq mgCallBackReq = new MgCallBackReq();
         mgCallBackReq.setPlayerId(jsonObject.getString("playerId"));
         mgCallBackReq.setTxnId(jsonObject.getString("txnId"));
