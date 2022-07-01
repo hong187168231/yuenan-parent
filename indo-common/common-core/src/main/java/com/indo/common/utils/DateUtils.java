@@ -1520,9 +1520,11 @@ public class DateUtils {
 
         int minute = cal.get(Calendar.MINUTE);
 
+        int millisecond = cal.get(Calendar.MILLISECOND);
+
         UTCTimeBuffer.append(year).append("-").append(month).append("-").append(day) ;
 
-        UTCTimeBuffer.append(" ").append(hour).append(":").append(minute) ;
+        UTCTimeBuffer.append(" ").append(hour).append(":").append(minute).append(":").append(millisecond);
 
         try{
 
@@ -1578,8 +1580,8 @@ public class DateUtils {
 
     public static void main(String[] args) {
 //        System.out.println(daysBetween("2022-01-25", "2022-01-28"));
-//        DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-//        System.out.println(getUTCTimeStr(format));
+//        DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        System.out.println(getUTCTimeStr(DateUtils.newFormat));
     }
 
 }
