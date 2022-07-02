@@ -52,8 +52,6 @@ public class UgServiceImpl implements UgService {
     GameTypeMapper gameTypeMapper;
     @Autowired
     GameCategoryMapper gameCategoryMapper;
-    @Autowired
-    private GamePlatformMapper gamePlatformMapper;
 
     @Autowired
     private TxnsMapper txnsMapper;
@@ -64,7 +62,7 @@ public class UgServiceImpl implements UgService {
      */
     @Override
     public Result ugGame(LoginInfo loginUser, String ip,String platform,String WebType,String parentName) {
-        logger.info("uglog ugGame {} aeGame account:{}, aeCodeId:{}", loginUser.getId(), loginUser.getNickName());
+        logger.info("uglog ugGame loginUser:{}, ip:{}, platform:{}, WebType:{}, parentName:{}", loginUser, platform, WebType, parentName);
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
         if (null == gameParentPlatform) {
@@ -138,6 +136,8 @@ public class UgServiceImpl implements UgService {
             if(null!=OpenAPIProperties.UG_AGENT&&!"".equals(OpenAPIProperties.UG_AGENT)){
                 ugRegisterPlayerJsonDTO.setAgentId(Integer.valueOf(OpenAPIProperties.UG_AGENT));//代理编号
             }
+            ugRegisterPlayerJsonDTO.setApiKey(OpenAPIProperties.UG_COMPANY_KEY);
+            ugRegisterPlayerJsonDTO.setOperatorId(OpenAPIProperties.UG_API_KEY);
             logger.info("UG体育注册会员restrictedPlayer输入 apiUrl:{}, params:{}, userId:{}, ip:{}", OpenAPIProperties.UG_API_URL+"/api/single/register", ugRegisterPlayerJsonDTO, loginUser.getId(), ip);
             UgApiResponseData ugApiResponse = commonRequestPost(ugRegisterPlayerJsonDTO, OpenAPIProperties.UG_API_URL+"/api/single/register", loginUser.getId().intValue(), ip, "restrictedPlayer");
             logger.info("UG体育注册会员返回参数: ugApiResponse:{}"+ugApiResponse);
@@ -201,10 +201,11 @@ public class UgServiceImpl implements UgService {
      * 强迫登出玩家
      */
     public Result logout(LoginInfo loginUser,String ip){
-        logger.info("uglog logout {} initGame ugGame account:{}, ugCodeId:{},ip:{}", loginUser.getId(), loginUser.getNickName(),ip);
         UgLogoutJsonDTO ugLogoutJsonDTO = new UgLogoutJsonDTO();
         ugLogoutJsonDTO.setUserId(loginUser.getAccount());
-        logger.info("UG体育登出玩家initGame输入 apiUrl:{}, params:{}, userId:{}, ip:{}", OpenAPIProperties.UG_API_URL+"/api/single/logout", ugLogoutJsonDTO, loginUser.getId(), ip);
+        ugLogoutJsonDTO.setApiKey(OpenAPIProperties.UG_COMPANY_KEY);
+        ugLogoutJsonDTO.setOperatorId(OpenAPIProperties.UG_API_KEY);
+        logger.info("UG体育登出玩家输入 apiUrl:{}, params:{}, userId:{}, ip:{}", OpenAPIProperties.UG_API_URL+"/api/single/logout", ugLogoutJsonDTO, loginUser.getId(), ip);
         UgApiResponseData ugApiResponse = null;
         try {
             ugApiResponse = commonRequestPost(ugLogoutJsonDTO, OpenAPIProperties.UG_API_URL+"/api/single/logout", Integer.valueOf(loginUser.getId().intValue()), ip, "logout");
@@ -269,12 +270,13 @@ public class UgServiceImpl implements UgService {
 
         UgApiTasksResponseData ugApiResponse = null;
         UgTasksJsonDTO ugTasksJsonDTO = new UgTasksJsonDTO();
-        String sortNo = txnsMapper.getMaxSortNo("UG Sports");
+        String sortNo = txnsMapper.getMaxSortNo(OpenAPIProperties.UG_PLATFORM_CODE);
         ugTasksJsonDTO.setSortNo(Long.valueOf(null!=sortNo&&!"".equals(sortNo)?sortNo:"0"));//排序编号 返回大于该排序编号的注单
         try {
             ugApiResponse = commonTasksRequest(ugTasksJsonDTO, OpenAPIProperties.UG_API_URL+"/SportApi/GetBetSheetBySort",  "ugPullOrder");
             if("000000".equals(ugApiResponse.getErrorCode())){
-                GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode("UG Sports");
+                GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.UG_PLATFORM_CODE);
+                GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.UG_PLATFORM_CODE,OpenAPIProperties.UG_PLATFORM_CODE);
                 GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
                 List<SortBetDto> subBetDtoList = ugApiResponse.getData();
                 for (SortBetDto sortBetDto:subBetDtoList){
@@ -363,14 +365,14 @@ public class UgServiceImpl implements UgService {
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
         wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Waiting").or().eq(Txns::getMethod, "Cancel Bet"));
         wrapper.eq(Txns::getStatus, "Running");
-        wrapper.eq(Txns::getPlatform, "UG Sports");
+        wrapper.eq(Txns::getPlatform, OpenAPIProperties.UG_PLATFORM_CODE);
         List<Txns> txnsList = txnsMapper.selectList(wrapper);
         for (Txns txns:txnsList) {
         ugTasksJsonBetIdDTO.setBetID(txns.getPlatformTxId());
             try {
                 ugApiResponse = commonTasksRequest(ugTasksJsonBetIdDTO, OpenAPIProperties.UG_API_URL + "/SportApi/GetBetSheetByBetID", "ugPullOrderByBetID");
                 if ("000000".equals(ugApiResponse.getErrorCode())) {
-                    GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode("UG Sports");
+                    GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(OpenAPIProperties.UG_PLATFORM_CODE);
                     GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
                     List<SortBetDto> subBetDtoList = ugApiResponse.getData();
                     for (SortBetDto sortBetDto : subBetDtoList) {

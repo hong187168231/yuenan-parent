@@ -58,7 +58,7 @@ public class SabaServiceImpl implements SabaService {
      */
     @Override
     public Result sabaGame(LoginInfo loginUser, String ip, String platform, String parentName) {
-        logger.info("sabalog {} aeGame account:{}, aeCodeId:{}", loginUser.getId(), loginUser.getNickName());
+        logger.info("saba体育log  sabaGame loginUser:{}, ip:{}, platform:{}, parentName:{}", loginUser,ip,platform,parentName);
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
         if (null == gameParentPlatform) {
@@ -108,6 +108,8 @@ public class SabaServiceImpl implements SabaService {
             } else {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
+                //登出
+                this.logout(loginUser,ip);
                 //登录
                 return initGame(gameParentPlatform, loginUser, gamePlatform, ip);
             }
@@ -130,12 +132,13 @@ public class SabaServiceImpl implements SabaService {
             trr.put("username", loginUser.getAccount());
             trr.put("oddsType", "0");//为此会员设置赔率类型。请参考附件"赔率类型表"
             trr.put("currency", gameParentPlatform.getCurrencyType());//为此会员设置币别。请参考附件中"币别表"
-            if (null != gamePlatform) {
+            if (!OpenAPIProperties.SABA_IS_PLATFORM_LOGIN.equals("Y")) {
                 trr.put("maxTransfer", String.valueOf(gamePlatform.getMaxTransfer()));//于 Sportsbook 系统与厂商间的最大限制转帐金额
                 trr.put("minTransfer", String.valueOf(gamePlatform.getMinTransfer()));//于 Sportsbook 系统与厂商间的最小限制转帐金额
             }
+            logger.info("saba体育log  注册会员restrictedPlayer输入 loginUser:{}, ip:{}, params:{}, urlapi:{}", loginUser,ip,trr,OpenAPIProperties.SABA_API_URL + "/CreateMember");
             SabaApiResponseData sabaApiResponse = commonRequest(trr, OpenAPIProperties.SABA_API_URL + "/CreateMember", loginUser.getId().intValue(), ip, "restrictedPlayer");
-
+            logger.info("saba体育log  注册会员restrictedPlayer返回 sabaApiResponse:{}", sabaApiResponse);
             if (null == sabaApiResponse) {
                 return Result.failed("g100104", "网络繁忙，请稍后重试！");
             }
@@ -160,8 +163,12 @@ public class SabaServiceImpl implements SabaService {
             Map<String, String> trr = new HashMap<>();
             trr.put("vendor_member_id", loginUser.getAccount());
             trr.put("platform", "2");  //投注平台. 输入要登录的平台码。 1:桌机, 2:手机 h5, 3:手机纯文字.
-
+            logger.info("saba体育log  登录initGame输入 loginUser:{}, ip:{}, params:{}, urlapi:{}", loginUser,ip,trr,OpenAPIProperties.SABA_API_URL + "/GetSabaUrl");
             SabaApiResponseData sabaApiResponse = commonRequest(trr, OpenAPIProperties.SABA_API_URL + "/GetSabaUrl", loginUser.getId().intValue(), ip, "restrictedPlayer");
+            logger.info("saba体育log  登录initGame返回 sabaApiResponse:{}", sabaApiResponse);
+            if (null == sabaApiResponse) {
+                return Result.failed("g100104", "网络繁忙，请稍后重试！");
+            }
             if ("0".equals(sabaApiResponse.getError_code())) {
                 ApiResponseData responseData = new ApiResponseData();
                 JSONObject jsonObject = JSON.parseObject(sabaApiResponse.getData());
@@ -185,7 +192,9 @@ public class SabaServiceImpl implements SabaService {
 
         SabaApiResponseData sabaApiResponse = null;
         try {
+            logger.info("saba体育log  登出玩家logout输入 loginUser:{}, ip:{}, params:{}, urlapi:{}", loginUser,ip,trr,OpenAPIProperties.SABA_API_URL + "/KickUser");
             sabaApiResponse = commonRequest(trr, OpenAPIProperties.SABA_API_URL + "/KickUser", Integer.valueOf(loginUser.getId().intValue()), ip, "logout");
+            logger.info("saba体育log  登出玩家logout返回 sabaApiResponse:{}", sabaApiResponse);
             if (null == sabaApiResponse) {
                 return Result.failed("g100104", "网络繁忙，请稍后重试！");
             }
@@ -206,7 +215,6 @@ public class SabaServiceImpl implements SabaService {
      */
     @Override
     public SabaApiResponseData commonRequest(Map<String, String> paramsMap, String url, Integer userId, String ip, String type) throws Exception {
-        logger.info("sabalog {} commonRequest ,url:{},paramsMap:{}", userId, url, paramsMap);
 
         SabaApiResponseData sabaApiResponse = null;
         paramsMap.put("vendor_id", OpenAPIProperties.SABA_VENDORID);
@@ -214,15 +222,10 @@ public class SabaServiceImpl implements SabaService {
         JSONObject sortParams = GameUtil.sortMap(paramsMap);
         Map<String, String> trr = new HashMap<>();
         trr.put("param", sortParams.toString());
-        logger.info("ug_api_request:" + sortParams);
+        logger.info("公共请求commonRequest ug_api_request:" + sortParams);
         String resultString = GameUtil.doProxyPostJson(OpenAPIProperties.PROXY_HOST_NAME, OpenAPIProperties.PROXY_PORT, OpenAPIProperties.PROXY_TCP, url, paramsMap, type, userId);
-        logger.info("saba_api_response:" + resultString);
         if (StringUtils.isNotEmpty(resultString)) {
             sabaApiResponse = JSONObject.parseObject(resultString, SabaApiResponseData.class);
-            //String operateFlag = (String) redisTemplate.opsForValue().get(Constants.AE_GAME_OPERATE_FLAG + userId);
-            logger.info("sabalog {}:commonRequest type:{}, operateFlag:{}, url:{}, hostName:{}, params:{}, result:{}, sabaApiResponse:{}",
-                    //userId, type, operateFlag, url,
-                    userId, type, null, url, sortParams.toString(), resultString, JSONObject.toJSONString(sabaApiResponse));
         }
         return sabaApiResponse;
     }

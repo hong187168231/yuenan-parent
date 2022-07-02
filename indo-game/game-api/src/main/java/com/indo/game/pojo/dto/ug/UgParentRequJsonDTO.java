@@ -7,8 +7,8 @@ import lombok.Data;
 @Data
 public class UgParentRequJsonDTO {
 
-    private String apiKey = OpenAPIProperties.UG_COMPANY_KEY;
+    private String apiKey;
 
-    private String operatorId = OpenAPIProperties.UG_API_KEY;
+    private String operatorId;
 
 }

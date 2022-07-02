@@ -30,7 +30,7 @@ public class BtiServiceImpl implements BtiService {
 
     @Override
     public Result btiGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName) {
-        logger.info("btilog {} btiGame account:{},btiCodeId:{}", parentName, loginUser.getAccount(), platform);
+        logger.info("bti体育log  btiGame loginUser:{}, ip:{}, platform:{}, parentName:{}, isMobileLogin:{}", loginUser,ip,platform,parentName,isMobileLogin);
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
         if (null == gameParentPlatform) {
