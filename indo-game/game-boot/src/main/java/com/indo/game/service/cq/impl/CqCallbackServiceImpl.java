@@ -66,7 +66,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cqApiRequestData.getAccount());
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.CQ_PLATFORM_CODE);
         GamePlatform gamePlatform = new GamePlatform();
-        if(OpenAPIProperties.V8_IS_PLATFORM_LOGIN.equals("Y")){
+        if(OpenAPIProperties.CQ_IS_PLATFORM_LOGIN.equals("Y")){
             gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.CQ_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
         }else {
             gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(cqApiRequestData.getGamecode(), gameParentPlatform.getPlatformCode());
@@ -163,7 +163,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         }
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.CQ_PLATFORM_CODE);
         GamePlatform gamePlatform = new GamePlatform();
-        if (OpenAPIProperties.V8_IS_PLATFORM_LOGIN.equals("Y")) {
+        if (OpenAPIProperties.CQ_IS_PLATFORM_LOGIN.equals("Y")) {
             gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.CQ_PLATFORM_CODE, gameParentPlatform.getPlatformCode());
         } else {
             gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(endroundDataCallBackReq.getGamecode(), gameParentPlatform.getPlatformCode());
@@ -244,7 +244,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         }
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.CQ_PLATFORM_CODE);
         GamePlatform gamePlatform = new GamePlatform();
-        if(OpenAPIProperties.V8_IS_PLATFORM_LOGIN.equals("Y")){
+        if(OpenAPIProperties.CQ_IS_PLATFORM_LOGIN.equals("Y")){
             gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.CQ_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
         }else {
             gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(cqApiRequestData.getGamecode(), gameParentPlatform.getPlatformCode());
@@ -293,7 +293,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         }
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.CQ_PLATFORM_CODE);
         GamePlatform gamePlatform = new GamePlatform();
-        if(OpenAPIProperties.V8_IS_PLATFORM_LOGIN.equals("Y")){
+        if(OpenAPIProperties.CQ_IS_PLATFORM_LOGIN.equals("Y")){
             gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.CQ_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
         }else {
             gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(cqApiRequestData.getGamecode(), gameParentPlatform.getPlatformCode());
@@ -339,7 +339,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         }
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.CQ_PLATFORM_CODE);
         GamePlatform gamePlatform = new GamePlatform();
-        if(OpenAPIProperties.V8_IS_PLATFORM_LOGIN.equals("Y")){
+        if(OpenAPIProperties.CQ_IS_PLATFORM_LOGIN.equals("Y")){
             gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.CQ_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
         }else {
             gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(cqApiRequestData.getGamecode(), gameParentPlatform.getPlatformCode());
@@ -385,7 +385,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         }
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.CQ_PLATFORM_CODE);
         GamePlatform gamePlatform = new GamePlatform();
-        if(OpenAPIProperties.V8_IS_PLATFORM_LOGIN.equals("Y")){
+        if(OpenAPIProperties.CQ_IS_PLATFORM_LOGIN.equals("Y")){
             gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.CQ_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
         }else {
             gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(cqApiRequestData.getGamecode(), gameParentPlatform.getPlatformCode());
@@ -432,7 +432,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         }
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.CQ_PLATFORM_CODE);
         GamePlatform gamePlatform = new GamePlatform();
-        if(OpenAPIProperties.V8_IS_PLATFORM_LOGIN.equals("Y")){
+        if(OpenAPIProperties.CQ_IS_PLATFORM_LOGIN.equals("Y")){
             gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.CQ_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
         }else {
             gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(cqApiRequestData.getGamecode(), gameParentPlatform.getPlatformCode());
