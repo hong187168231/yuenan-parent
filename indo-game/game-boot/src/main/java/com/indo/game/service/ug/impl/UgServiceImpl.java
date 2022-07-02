@@ -246,7 +246,7 @@ public class UgServiceImpl implements UgService {
     public UgApiResponseData commonRequestPost(Object object, String url, Integer userId, String ip, String type) throws Exception {
 
         UgApiResponseData ugApiResponse = null;
-        logger.info("uglog {} commonRequest ,url:{},paramsMap:{}", userId, url, object);
+        logger.info("uglog {} commonRequest ,url:{},paramsMap:{}", userId, url, JSONObject.toJSONString(object));
 //        Map<String, String> trr = new HashMap<>();
 //        trr.put("MemberAccount", "swuserid");
 //        trr.put("CompanyKey", "y6RbXQyRr4");
@@ -257,10 +257,6 @@ public class UgServiceImpl implements UgService {
         logger.info("ug_api_response:"+resultString);
         if (StringUtils.isNotEmpty(resultString)) {
             ugApiResponse = JSONObject.parseObject(resultString, UgApiResponseData.class);
-            //String operateFlag = (String) redisTemplate.opsForValue().get(Constants.AE_GAME_OPERATE_FLAG + userId);
-            logger.info("uglog {}:commonRequest type:{}, operateFlag:{}, url:{}, hostName:{}, params:{}, result:{}, ugApiResponse:{}",
-                    //userId, type, operateFlag, url,
-                    userId, type, null, url, JSONObject.toJSONString(object), resultString, JSONObject.toJSONString(ugApiResponse));
         }
         return ugApiResponse;
     }
