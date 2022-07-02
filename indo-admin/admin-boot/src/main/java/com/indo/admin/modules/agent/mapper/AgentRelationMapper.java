@@ -39,11 +39,4 @@ public interface AgentRelationMapper extends BaseMapper<AgentRelation> {
      */
     Page<AgentReportVo> findAgentReport(Page<AgentReportVo> page, AgentReportDTO agentReportDTO);
 
-    /**
-     * 查询会员报表
-     * @param page
-     * @param memReportDTO
-     * @return
-     */
-    Page<MemReportVo> findMemberReport(Page<MemReportVo> page, MemReportDTO memReportDTO);
 }

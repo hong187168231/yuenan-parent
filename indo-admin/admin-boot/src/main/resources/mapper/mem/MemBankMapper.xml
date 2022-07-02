@@ -29,4 +29,28 @@
 
         ORDER BY mb.create_time desc
     </select>
+    <select id="findMemberReport" resultType="com.indo.admin.pojo.vo.mem.MemReportVo">
+        SELECT
+        c.datelist as dataTime,
+        (SELECT COUNT(1) FROM mem_baseinfo WHERE acc_type=1 )as memTotalNum,
+        COUNT(mb.id)as memNewlyNum,
+        COUNT(pfr.first_recharge_id)as memRechargeNum,
+        COUNT(pr.recharge_id)as depositPersons,
+        SUM(pr.real_amount)as depositAmount,
+        SUM(ptc.actual_amount)as withdrawalAmount,
+        SUM(gt.bet_amount)as bettingAmount,
+        SUM(gt.winning_amount)as prizeAmount,
+        SUM(mgc.amount) as activityAmount
+        FROM calendar c
+        LEFT JOIN mem_baseinfo mb on DATE_FORMAT(mb.create_time,'%Y-%m-%d')=c.datelist and mb.acc_type=1
+        LEFT JOIN pay_first_recharge pfr on DATE_FORMAT(pfr.create_time,'%Y-%m-%d')=c.datelist
+        LEFT JOIN pay_recharge pr on DATE_FORMAT(pr.create_time,'%Y-%m-%d')=c.datelist and pr.order_status=2
+        LEFT JOIN pay_take_cash ptc on  DATE_FORMAT(ptc.create_time,'%Y-%m-%d')=c.datelist
+        LEFT JOIN game_txns gt on DATE_FORMAT(gt.create_time,'%Y-%m-%d')=c.datelist
+        LEFT JOIN mem_gold_change mgc on DATE_FORMAT(mgc.create_time,'%Y-%m-%d')=c.datelist and mgc.change_type>300 and mgc.change_type &lt;400
+        WHERE 1=1
+        and c.datelist &gt;=#{beginTime}
+        and c.datelist &lt;=#{endTime}
+        GROUP BY c.datelist
+    </select>
 </mapper>

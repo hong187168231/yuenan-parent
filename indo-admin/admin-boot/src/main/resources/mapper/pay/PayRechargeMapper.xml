@@ -96,6 +96,20 @@
         </if>
 
     </select>
-
+    <select id="findPayRechargeReport" resultType="com.indo.admin.pojo.vo.pay.PayRechargeReportVo">
+        SELECT
+        c.datelist as dataTime,
+        (SELECT COUNT(DISTINCT pr.mem_id) FROM pay_recharge pr WHERE DATE_FORMAT(pr.create_time,'%Y-%m-%d')=c.datelist and pr.order_status=2   HAVING count(pr.mem_id) =1) as firstNum,
+        (SELECT SUM(pr.real_amount) FROM pay_recharge pr WHERE DATE_FORMAT(pr.create_time,'%Y-%m-%d')=c.datelist and pr.order_status=2   HAVING count(pr.mem_id) =1) as firstMoney,
+        (SELECT COUNT(DISTINCT pr.mem_id) FROM pay_recharge pr WHERE DATE_FORMAT(pr.create_time,'%Y-%m-%d')=c.datelist and pr.order_status=2   HAVING count(pr.mem_id) =2) as secondNum,
+        (SELECT SUM(pr.real_amount) FROM pay_recharge pr WHERE DATE_FORMAT(pr.create_time,'%Y-%m-%d')=c.datelist and pr.order_status=2   HAVING count(pr.mem_id) =2) as secondMoney,
+        (SELECT COUNT(DISTINCT pr.mem_id) FROM pay_recharge pr WHERE DATE_FORMAT(pr.create_time,'%Y-%m-%d')=c.datelist and pr.order_status=2   HAVING count(pr.mem_id) =3) as thirdNum,
+        (SELECT SUM(pr.real_amount) FROM pay_recharge pr WHERE DATE_FORMAT(pr.create_time,'%Y-%m-%d')=c.datelist and pr.order_status=2   HAVING count(pr.mem_id) =3) as thirdMoney
+        FROM calendar c
+        WHERE 1=1
+        and c.datelist &gt;=#{beginTime}
+        and c.datelist &lt;=#{endTime}
+        GROUP BY c.datelist
+    </select>
 
 </mapper>
