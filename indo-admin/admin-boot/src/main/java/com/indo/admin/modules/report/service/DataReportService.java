@@ -3,8 +3,10 @@ package com.indo.admin.modules.report.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.pojo.dto.AgentReportDTO;
 import com.indo.admin.pojo.dto.MemReportDTO;
+import com.indo.admin.pojo.dto.PayRechargeReportDTO;
 import com.indo.admin.pojo.vo.agent.AgentReportVo;
 import com.indo.admin.pojo.vo.mem.MemReportVo;
+import com.indo.admin.pojo.vo.pay.PayRechargeReportVo;
 
 public interface DataReportService {
     /**
@@ -20,4 +22,11 @@ public interface DataReportService {
      * @return
      */
     Page<MemReportVo> findMemberReport(MemReportDTO memReportDTO);
+
+    /**
+     *  查询充值报表
+     * @param payRechargeReportDTO
+     * @return
+     */
+    Page<PayRechargeReportVo> findPayRechargeReport(PayRechargeReportDTO payRechargeReportDTO);
 }

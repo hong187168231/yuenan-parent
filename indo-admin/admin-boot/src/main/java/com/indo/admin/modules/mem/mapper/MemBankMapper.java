@@ -2,8 +2,10 @@ package com.indo.admin.modules.mem.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.indo.admin.pojo.dto.MemReportDTO;
 import com.indo.admin.pojo.req.mem.MemBankPageReq;
 import com.indo.admin.pojo.vo.mem.MemBankVO;
+import com.indo.admin.pojo.vo.mem.MemReportVo;
 import com.indo.core.pojo.entity.MemBank;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -28,4 +30,12 @@ public interface MemBankMapper extends BaseMapper<MemBank> {
      * @return
      */
     List<MemBankVO> queryList(@Param("page") Page<MemBankVO> page, @Param("req") MemBankPageReq req);
+
+    /**
+     * 查询会员报表
+     * @param page
+     * @param memReportDTO
+     * @return
+     */
+    Page<MemReportVo> findMemberReport(Page<MemReportVo> page, MemReportDTO memReportDTO);
 }

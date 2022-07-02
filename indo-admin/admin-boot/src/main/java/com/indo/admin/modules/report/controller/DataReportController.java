@@ -5,8 +5,10 @@ import com.indo.admin.modules.mem.service.IMemBaseinfoService;
 import com.indo.admin.modules.report.service.DataReportService;
 import com.indo.admin.pojo.dto.AgentReportDTO;
 import com.indo.admin.pojo.dto.MemReportDTO;
+import com.indo.admin.pojo.dto.PayRechargeReportDTO;
 import com.indo.admin.pojo.vo.agent.AgentReportVo;
 import com.indo.admin.pojo.vo.mem.MemReportVo;
+import com.indo.admin.pojo.vo.pay.PayRechargeReportVo;
 import com.indo.common.result.PageResult;
 import com.indo.common.result.Result;
 import io.swagger.annotations.Api;
@@ -25,8 +27,6 @@ public class DataReportController {
 
     @Resource
     private DataReportService dataReportService;
-    @Resource
-    private IMemBaseinfoService iMemBaseInfoService;
 
 
     @ApiOperation(value = "查询会员报表")
@@ -41,4 +41,9 @@ public class DataReportController {
         return Result.success(dataReportService.findAgentReport(agentReportDTO));
     }
 
+    @ApiOperation(value = "查询充值报表")
+    @GetMapping(value = "/findPayRechargeReport")
+    public Result<Page<PayRechargeReportVo>> findPayRechargeReport(PayRechargeReportDTO payRechargeReportDTO) {
+        return Result.success(dataReportService.findPayRechargeReport(payRechargeReportDTO));
+    }
 }
