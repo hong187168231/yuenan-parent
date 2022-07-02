@@ -136,8 +136,8 @@ public class UgServiceImpl implements UgService {
             if(null!=OpenAPIProperties.UG_AGENT&&!"".equals(OpenAPIProperties.UG_AGENT)){
                 ugRegisterPlayerJsonDTO.setAgentId(Integer.valueOf(OpenAPIProperties.UG_AGENT));//代理编号
             }
-            ugRegisterPlayerJsonDTO.setApiKey(OpenAPIProperties.UG_COMPANY_KEY);
-            ugRegisterPlayerJsonDTO.setOperatorId(OpenAPIProperties.UG_API_KEY);
+            ugRegisterPlayerJsonDTO.setApiKey(OpenAPIProperties.UG_API_KEY);
+            ugRegisterPlayerJsonDTO.setOperatorId(OpenAPIProperties.UG_COMPANY_KEY);
             logger.info("UG体育注册会员restrictedPlayer输入 apiUrl:{}, params:{}, userId:{}, ip:{}", OpenAPIProperties.UG_API_URL+"/api/single/register", ugRegisterPlayerJsonDTO, loginUser.getId(), ip);
             UgApiResponseData ugApiResponse = commonRequestPost(ugRegisterPlayerJsonDTO, OpenAPIProperties.UG_API_URL+"/api/single/register", loginUser.getId().intValue(), ip, "restrictedPlayer");
             logger.info("UG体育注册会员返回参数: ugApiResponse:{}"+ugApiResponse);
@@ -203,8 +203,8 @@ public class UgServiceImpl implements UgService {
     public Result logout(LoginInfo loginUser,String ip){
         UgLogoutJsonDTO ugLogoutJsonDTO = new UgLogoutJsonDTO();
         ugLogoutJsonDTO.setUserId(loginUser.getAccount());
-        ugLogoutJsonDTO.setApiKey(OpenAPIProperties.UG_COMPANY_KEY);
-        ugLogoutJsonDTO.setOperatorId(OpenAPIProperties.UG_API_KEY);
+        ugLogoutJsonDTO.setApiKey(OpenAPIProperties.UG_API_KEY);
+        ugLogoutJsonDTO.setOperatorId(OpenAPIProperties.UG_COMPANY_KEY);
         logger.info("UG体育登出玩家输入 apiUrl:{}, params:{}, userId:{}, ip:{}", OpenAPIProperties.UG_API_URL+"/api/single/logout", ugLogoutJsonDTO, loginUser.getId(), ip);
         UgApiResponseData ugApiResponse = null;
         try {
