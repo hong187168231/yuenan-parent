@@ -28,13 +28,13 @@ public class UgCallBackController {
     @ResponseBody
     @AllowAccess
     public Object checkLogin(@RequestBody JSONObject jsonObject) {
-        logger.info("ugCallBack {} callBack 回调,getBalance获取余额 params:{}",JSONObject.toJSONString(jsonObject));
+        logger.info("ugCallBack callBack 回调玩家登入验证URL,checkLogin params:{}",JSONObject.toJSONString(jsonObject));
         UgCallBackCheckLoginReq ugCallBackCheckLoginReq = new UgCallBackCheckLoginReq();
         ugCallBackCheckLoginReq.setApiPassword(jsonObject.getString("apiPassword"));
         ugCallBackCheckLoginReq.setUserId(jsonObject.getString("userId"));
         ugCallBackCheckLoginReq.setToken(jsonObject.getString("token"));
         Object getBalance = ugCallbackService.checkLogin(ugCallBackCheckLoginReq);
-        logger.info("ugCallBack {} callBack 回调返回数据,getBalance获取余额 params:{}",JSONObject.toJSONString(getBalance));
+        logger.info("ugCallBackcallBack 回调玩家登入验证URL返回数据,checkLogin params:{}",JSONObject.toJSONString(getBalance));
         return getBalance;
     }
     /**

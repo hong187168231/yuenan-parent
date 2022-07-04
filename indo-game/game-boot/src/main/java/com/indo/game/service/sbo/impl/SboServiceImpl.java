@@ -143,7 +143,7 @@ public class SboServiceImpl implements SboService {
             sboRegisterPlayerJsonDTO.setUsername(loginUser.getAccount());
             sboRegisterPlayerJsonDTO.setAgent(gameAgent.getUsername());//代理
 
-            logger.info("SBO体育注册会员restrictedPlayer输入 apiUrl:{}, params:{}, loginUser:{}, ip:{}", OpenAPIProperties.SBO_API_URL + "/web-root/restricted/player/register-player.aspx", sboRegisterPlayerJsonDTO,loginUser,ip);
+            logger.info("SBO体育注册会员restrictedPlayer输入 apiUrl:{}, params:{}, loginUser:{}, ip:{}", OpenAPIProperties.SBO_API_URL + "/web-root/restricted/player/register-player.aspx", JSONObject.toJSONString(sboRegisterPlayerJsonDTO),loginUser,ip);
 
             SboApiResponseData sboApiResponse = commonRequest(sboRegisterPlayerJsonDTO, OpenAPIProperties.SBO_API_URL + "/web-root/restricted/player/register-player.aspx", loginUser.getId().intValue(), ip, "restrictedPlayer");
             logger.info("SBO体育注册会员返回 sboApiResponse:{}", sboApiResponse);
@@ -169,11 +169,11 @@ public class SboServiceImpl implements SboService {
         try {
             SboPlayerLoginJsonDTO sboPlayerLoginJsonDTO = new SboPlayerLoginJsonDTO();
             sboPlayerLoginJsonDTO.setUsername(loginUser.getAccount());
-            if(null!=gamePlatform) {
+            if(!OpenAPIProperties.SBO_IS_PLATFORM_LOGIN.equals("Y")) {
                 sboPlayerLoginJsonDTO.setPortfolio(gamePlatform.getPlatformCode());
             }
             sboPlayerLoginJsonDTO.setIsWapSports(false);
-            logger.info("SBO登录initGamer输入 apiUrl:{}, params:{}, loginUser:{}, ip:{}", OpenAPIProperties.SBO_API_URL + "/web-root/restricted/player/login.aspx", sboPlayerLoginJsonDTO,loginUser,ip);
+            logger.info("SBO登录initGamer输入 apiUrl:{}, params:{}, loginUser:{}, ip:{}", OpenAPIProperties.SBO_API_URL + "/web-root/restricted/player/login.aspx", JSONObject.toJSONString(sboPlayerLoginJsonDTO),loginUser,ip);
             SboApiResponseData sboApiResponse = commonRequest(sboPlayerLoginJsonDTO, OpenAPIProperties.SBO_API_URL + "/web-root/restricted/player/login.aspx", loginUser.getId().intValue(), ip, "PlayerLogin");
             logger.info("SBO登录initGamer返回 sboApiResponse:{}", sboApiResponse);
             if (null == sboApiResponse) {
@@ -199,7 +199,7 @@ public class SboServiceImpl implements SboService {
 
         SboApiResponseData sboApiResponse = null;
         try {
-            logger.info("SBO登出玩家输入 apiUrl:{}, params:{}, loginUser:{}, ip:{}", OpenAPIProperties.SBO_API_URL + "/web-root/restricted/player/logout.aspx", sboPlayerLogoutJsonDTO,loginUser,ip);
+            logger.info("SBO登出玩家输入 apiUrl:{}, params:{}, loginUser:{}, ip:{}", OpenAPIProperties.SBO_API_URL + "/web-root/restricted/player/logout.aspx", JSONObject.toJSONString(sboPlayerLogoutJsonDTO),loginUser,ip);
             sboApiResponse = commonRequest(sboPlayerLogoutJsonDTO, OpenAPIProperties.SBO_API_URL + "/web-root/restricted/player/logout.aspx", Integer.valueOf(loginUser.getId().intValue()), ip, "logout");
             logger.info("SBO登出玩家返回 sboApiResponse:{}", sboApiResponse);
             if (null == sboApiResponse) {
