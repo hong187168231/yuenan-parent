@@ -75,7 +75,7 @@ public class UgCallBackController {
     @AllowAccess
     public Object cancel(@RequestBody JSONObject jsonObject) {
         logger.info("ugCallBack  callBack 回调,cancel取消交易 params:{}",JSONObject.toJSONString(jsonObject));
-        UgCallBackCancelReq ugCallBackCancelReq = JSONObject.toJavaObject(jsonObject,UgCallBackCancelReq.class);
+        UgCallBackCancelReq<UgCallBackCancelItemReq> ugCallBackCancelReq = JSONObject.toJavaObject(jsonObject,UgCallBackCancelReq.class);
 
         Object cancel = ugCallbackService.cancel(ugCallBackCancelReq);
         logger.info("ugCallBack   callBack 回调返回数据,cancel取消交易 params:{}",JSONObject.toJSONString(cancel));
