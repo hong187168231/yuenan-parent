@@ -173,7 +173,7 @@ public class UgServiceImpl implements UgService {
 //            theme	string	6	N	版面，预设值：style
 //            sportId	number		N	偏好运动类型，预设值：1 (足球)，支援设定的运动有：1 (足球), 2 (篮球), 7 (网球), 11 (板球)
             String param = "operatorId="+OpenAPIProperties.UG_COMPANY_KEY+"&userId="+loginUser.getAccount()
-                    +"&returnUrl="+OpenAPIProperties.UG_RETURN_URL+"&oddsExpression="+gamePlatform.getPlatformCode()
+                    +"&returnUrl="+OpenAPIProperties.UG_RETURN_URL+"&oddsExpression=EU"
                     +"&language="+gameParentPlatform.getLanguageType()
                     +"&webType="+WebType+"&theme=style&sportId=1";
             logger.info("UG体育登录initGame输入 apiUrl:{}, params:{}, userId:{}, ip:{}", OpenAPIProperties.UG_API_URL+"/auth/single", param, loginUser.getId(), ip);
