@@ -176,9 +176,9 @@ public class UgServiceImpl implements UgService {
                     +"&returnUrl="+OpenAPIProperties.UG_RETURN_URL+"&oddsExpression=decimal"
                     +"&language="+gameParentPlatform.getLanguageType()
                     +"&webType="+WebType+"&theme=style&sportId=1";
-            logger.info("UG体育登录initGame输入 apiUrl:{}, params:{}, userId:{}, ip:{}", OpenAPIProperties.UG_API_URL+"/auth/single", param, loginUser.getId(), ip);
+            logger.info("UG体育登录initGame输入 apiUrl:{}, params:{}, userId:{}, ip:{}", OpenAPIProperties.UG_LOGIN_URL+"/auth/single", param, loginUser.getId(), ip);
 
-            UgApiResponseData ugApiResponse = commonRequestGet(param, OpenAPIProperties.UG_API_URL+"/auth/single", loginUser.getId().intValue(), ip, "Login");
+            UgApiResponseData ugApiResponse = commonRequestGet(param, OpenAPIProperties.UG_LOGIN_URL+"/auth/single", loginUser.getId().intValue(), ip, "Login");
             logger.info("UG体育登录返回参数: ugApiResponse:{}"+ugApiResponse);
             if(null!=ugApiResponse&&"000000".equals(ugApiResponse.getCode())){
                 ApiResponseData responseData = new ApiResponseData();

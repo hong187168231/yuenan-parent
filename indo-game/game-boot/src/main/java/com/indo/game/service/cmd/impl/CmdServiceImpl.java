@@ -185,6 +185,7 @@ public class CmdServiceImpl implements CmdService {
         url.append("&currency=").append(currency);
         url.append("&templatename=").append(OpenAPIProperties.CMD_TEMPLATE_NAME);
         url.append("&view=").append(OpenAPIProperties.CMD_VIEW);
+        logger.info("getStartGame玩家登录地址输入, url:{}", url);
         return url.toString();
     }
 
@@ -201,6 +202,7 @@ public class CmdServiceImpl implements CmdService {
         url.append("&PartnerKey=").append(OpenAPIProperties.CMD_PARTNER_KEY);
         url.append("&UserName=").append(userAccount);
         url.append("&Currency=").append(currency);
+        logger.info("getLoginUrl創建用戶CMD請求地址输入, url:{}", url);
         return url.toString();
     }
 
@@ -216,6 +218,7 @@ public class CmdServiceImpl implements CmdService {
         url.append(OpenAPIProperties.CMD_API_URL).append("/?Method=kickuser");
         url.append("&PartnerKey=").append(OpenAPIProperties.CMD_PARTNER_KEY);
         url.append("&UserName=").append(userAccount);
+        logger.info("getLoginUrl玩家退出游戏API地址输入, url:{}", url);
         return url.toString();
     }
 

@@ -80,6 +80,7 @@ public class OpenAPIProperties implements InitializingBean {
     public static String UG_API_KEY;
     public static String UG_AGENT;
     public static String UG_API_URL;
+    public static String UG_LOGIN_URL;
     public static String UG_RETURN_URL;
     public static String UG_PLATFORM_CODE;
     public static String UG_IS_PLATFORM_LOGIN;
@@ -91,6 +92,8 @@ public class OpenAPIProperties implements InitializingBean {
     private String ugAgentID;
     @Value("${ug.ugApiUrl}")
     private String ugApiUrl;
+    @Value("${ug.ugLoginUrl}")
+    private String ugLoginUrl;
     @Value("${ug.ugReturnUrl}")
     private String ugReturnUrl;
     @Value("${ug.platformCode}")
@@ -631,6 +634,7 @@ public class OpenAPIProperties implements InitializingBean {
         UG_API_KEY = ugApiPasword;
         UG_AGENT = ugAgentID;
         UG_API_URL = ugApiUrl;
+        UG_LOGIN_URL = ugLoginUrl;
         UG_RETURN_URL = ugReturnUrl;
         UG_PLATFORM_CODE = ugPlatformCode;
         UG_IS_PLATFORM_LOGIN = ugIsPlatformLogin;
