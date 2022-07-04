@@ -178,7 +178,10 @@ public class GameController {
                     resultInfo = ugService.ugGame(loginUser, ip, platform, loginType, parentName);
                 }
                 if (OpenAPIProperties.SBO_PLATFORM_CODE.equals(parentName)) {
-                    resultInfo = sboSportsService.sboGame(loginUser, ip, platform, parentName);
+                    String loginType = "m";//mobile
+                    if (!"1".equals(isMobileLogin))
+                        loginType = "d";//desktop
+                    resultInfo = sboSportsService.sboGame(loginUser, ip, platform, parentName,loginType);
                 }
                 if (OpenAPIProperties.SABA_PLATFORM_CODE.equals(parentName)) {
                     resultInfo = sabaService.sabaGame(loginUser, ip, platform, parentName);
