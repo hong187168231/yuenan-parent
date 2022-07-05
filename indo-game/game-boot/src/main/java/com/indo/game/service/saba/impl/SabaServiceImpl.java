@@ -168,8 +168,7 @@ public class SabaServiceImpl implements SabaService {
             }
             if ("0".equals(sabaApiResponse.getError_code())) {
                 ApiResponseData responseData = new ApiResponseData();
-                JSONObject jsonObject = JSON.parseObject(sabaApiResponse.getData());
-                responseData.setPathUrl(jsonObject.getString("gameUrl"));
+                responseData.setPathUrl(sabaApiResponse.getData());
                 return Result.success(responseData);
             } else {
                 return errorCode(sabaApiResponse.getError_code(), sabaApiResponse.getMessage());
