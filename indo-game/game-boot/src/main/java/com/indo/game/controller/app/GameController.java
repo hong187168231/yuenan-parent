@@ -145,7 +145,7 @@ public class GameController {
         if (loginUser == null || StringUtils.isBlank(loginUser.getAccount())) {
             return Result.failed("g100103", "会员登录失效，请重新登录！");
         }
-        log.info("登录平台或单一游戏登录 进入游戏。。。 platform:{},loginUser:{},parentName:{}", platform, loginUser, parentName);
+        log.info("登录平台或单一游戏登录 进入游戏。。。 platform:{},loginUser:{},parentName:{},isMobileLogin:{}", platform, loginUser, parentName,isMobileLogin);
         //黑名单校验
         List<SysIpLimit> list =sysIpLimitClient.findSysIpLimitByType(1).getData();
         if(list!=null&&list.size()>0){
@@ -184,7 +184,10 @@ public class GameController {
                     resultInfo = sboSportsService.sboGame(loginUser, ip, platform, parentName,loginType);
                 }
                 if (OpenAPIProperties.SABA_PLATFORM_CODE.equals(parentName)) {
-                    resultInfo = sabaService.sabaGame(loginUser, ip, platform, parentName);
+                    String loginType = "2";//mobile
+                    if (!"1".equals(isMobileLogin))
+                        loginType = "1";//desktop
+                    resultInfo = sabaService.sabaGame(loginUser, ip, platform, parentName,loginType);
                 }
                 if (OpenAPIProperties.JDB_PLATFORM_CODE.equals(parentName)) {
                     resultInfo = jdbService.jdbGame(loginUser, isMobileLogin, ip, platform, parentName);

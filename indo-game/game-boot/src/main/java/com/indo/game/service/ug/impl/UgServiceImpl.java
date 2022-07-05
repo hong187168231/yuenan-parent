@@ -460,7 +460,7 @@ public class UgServiceImpl implements UgService {
 //        trr.put("APIPassword", "RTJdTw36imErhpDm7p2ePb3Da3h6WT3S");
 //        logger.info("ug_api_request:"+JSONObject.toJSONString(object));
 //        String resultString1 = GameUtil.doProxyPostJson(OpenAPIProperties.PROXY_HOST_NAME, OpenAPIProperties.PROXY_PORT, OpenAPIProperties.PROXY_TCP,url, trr, type, userId);
-        String resultString = GameUtil.doProxyPostJson(OpenAPIProperties.PROXY_HOST_NAME, OpenAPIProperties.PROXY_PORT, OpenAPIProperties.PROXY_TCP,url, JSONObject.toJSONString(object), type);
+        String resultString = GameUtil.doProxyPostJson(OpenAPIProperties.PROXY_HOST_NAME, OpenAPIProperties.PROXY_PORT, OpenAPIProperties.PROXY_TCP,url, JSONObject.toJSONString(object), type,0);
         logger.info("ug_api_response:"+resultString);
         if (StringUtils.isNotEmpty(resultString)) {
             ugApiResponse = JSONObject.parseObject(resultString, UgApiTasksResponseData.class);

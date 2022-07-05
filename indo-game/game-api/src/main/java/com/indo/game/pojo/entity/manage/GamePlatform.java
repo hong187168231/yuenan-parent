@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
@@ -65,10 +66,10 @@ public class GamePlatform {
     private int sortNumber;
 
     @ApiModelProperty(value = "系统与厂商间的最大限制转帐金额")
-    private double maxTransfer;
+    private BigDecimal maxTransfer;
 
     @ApiModelProperty(value = "系统与厂商间的最小限制转帐金额")
-    private double minTransfer;
+    private BigDecimal minTransfer;
 
     private String createTime;
 
