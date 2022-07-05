@@ -130,12 +130,10 @@ public class SabaServiceImpl implements SabaService {
             Map<String, String> trr = new HashMap<>();
             trr.put("vendor_Member_ID", loginUser.getAccount());//厂商会员识别码（建议跟 Username 一样）, 支援 ASCII Table 33-126, 最大长度 = 30
             trr.put("username", loginUser.getAccount());
-            trr.put("oddsType", "0");//为此会员设置赔率类型。请参考附件"赔率类型表"
+            trr.put("oddsType", "3");//为此会员设置赔率类型。请参考附件"赔率类型表"
             trr.put("currency", gameParentPlatform.getCurrencyType());//为此会员设置币别。请参考附件中"币别表"
-            if (!OpenAPIProperties.SABA_IS_PLATFORM_LOGIN.equals("Y")) {
-                trr.put("maxTransfer", String.valueOf(gamePlatform.getMaxTransfer()));//于 Sportsbook 系统与厂商间的最大限制转帐金额
-                trr.put("minTransfer", String.valueOf(gamePlatform.getMinTransfer()));//于 Sportsbook 系统与厂商间的最小限制转帐金额
-            }
+            trr.put("maxTransfer", String.valueOf(gamePlatform.getMaxTransfer()));//于 Sportsbook 系统与厂商间的最大限制转帐金额
+            trr.put("minTransfer", String.valueOf(gamePlatform.getMinTransfer()));//于 Sportsbook 系统与厂商间的最小限制转帐金额
             logger.info("saba体育log  注册会员restrictedPlayer输入 loginUser:{}, ip:{}, params:{}, urlapi:{}", loginUser,ip,trr,OpenAPIProperties.SABA_API_URL + "/CreateMember");
             SabaApiResponseData sabaApiResponse = commonRequest(trr, OpenAPIProperties.SABA_API_URL + "/CreateMember", loginUser.getId().intValue(), ip, "restrictedPlayer");
             logger.info("saba体育log  注册会员restrictedPlayer返回 sabaApiResponse:{}", sabaApiResponse);
