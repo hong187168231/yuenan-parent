@@ -259,9 +259,9 @@ public class PpCallbackServiceImpl implements PpCallbackService {
             BigDecimal balance = memBaseinfo.getBalance();
             // 查询用户请求订单
             Txns oldTxns = getTxns(ppResultCallBackReq.getReference(), memBaseinfo.getId());
-            if (null != oldTxns) {
-                return initSuccessResponse(ppResultCallBackReq.getReference(), platformGameParent.getCurrencyType(), balance);
-            }
+//            if (null != oldTxns) {
+//                return initSuccessResponse(ppResultCallBackReq.getReference(), platformGameParent.getCurrencyType(), balance);
+//            }
 
             // 中奖金额
             BigDecimal betAmount = ppResultCallBackReq.getAmount();
