@@ -3,6 +3,8 @@ package com.indo.admin.pojo.vo.pay;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @Data
 public class PayRechargeReportVo {
     @ApiModelProperty(value = "日期")
@@ -12,17 +14,17 @@ public class PayRechargeReportVo {
     private Integer firstNum;
 
     @ApiModelProperty(value = "首充金额")
-    private Integer firstMoney;
+    private BigDecimal firstMoney;
 
     @ApiModelProperty(value = "二次充值人数")
     private Integer secondNum;
 
     @ApiModelProperty(value = "二次充值金额")
-    private Integer secondMoney;
+    private BigDecimal secondMoney;
 
     @ApiModelProperty(value = " 三次充值人数")
     private Integer thirdNum;
 
     @ApiModelProperty(value = " 三次充值金额")
-    private Integer thirdMoney;
+    private BigDecimal thirdMoney;
 }

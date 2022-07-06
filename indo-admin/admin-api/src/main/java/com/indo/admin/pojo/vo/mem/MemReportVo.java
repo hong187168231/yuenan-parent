@@ -3,6 +3,8 @@ package com.indo.admin.pojo.vo.mem;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @Data
 public class MemReportVo {
     @ApiModelProperty(value = "日期")
@@ -21,18 +23,18 @@ public class MemReportVo {
     private Integer depositPersons;
 
     @ApiModelProperty(value = "存款金额")
-    private Integer depositAmount;
+    private BigDecimal depositAmount;
 
     @ApiModelProperty(value = "取款金额")
-    private Integer withdrawalAmount;
+    private BigDecimal withdrawalAmount;
 
     @ApiModelProperty(value = "投注金额")
-    private Integer bettingAmount;
+    private BigDecimal bettingAmount;
 
     @ApiModelProperty(value = "中奖金额")
-    private Integer prizeAmount;
+    private BigDecimal prizeAmount;
 
     @ApiModelProperty(value = "活动礼金")
-    private Integer activityAmount;
+    private BigDecimal activityAmount;
 
 }
