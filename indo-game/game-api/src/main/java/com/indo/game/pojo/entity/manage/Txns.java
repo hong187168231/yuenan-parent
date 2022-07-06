@@ -25,7 +25,7 @@ public class Txns {
     @ApiModelProperty(value = "此交易是否是投注")
     private Boolean bet;
 
-    @ApiModelProperty(value = "玩家 ID")
+    @ApiModelProperty(value = "玩家 账号")
     private String userId;
 
     @ApiModelProperty(value = "玩家货币代码")

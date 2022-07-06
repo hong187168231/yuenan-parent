@@ -154,6 +154,8 @@ public class MgCallbackServiceImpl implements MgCallbackService {
         //此交易是否是投注 true是投注 false 否
         //玩家 ID
         txns.setUserId(memBaseinfo.getAccount());
+        //玩家货币代码
+        txns.setCurrency(gameParentPlatform.getCurrencyType());
         //平台代码
         txns.setPlatform(gameParentPlatform.getPlatformCode());
         //平台名称
@@ -220,14 +222,14 @@ public class MgCallbackServiceImpl implements MgCallbackService {
     public Object rollback(MgCallBackReq mgCallBackReq, String ip) {
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(mgCallBackReq.getPlayerId());
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.MG_PLATFORM_CODE);
-        GamePlatform gamePlatform ;
-        if(OpenAPIProperties.MG_IS_PLATFORM_LOGIN.equals("Y")){//平台登录Y 游戏登录N
-            gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.MG_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
-        }else {
-            gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.MG_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
-        }
-        GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
-        PgCallBackResponse pgCallBackRespFail = new PgCallBackResponse();
+//        GamePlatform gamePlatform ;
+//        if(OpenAPIProperties.MG_IS_PLATFORM_LOGIN.equals("Y")){//平台登录Y 游戏登录N
+//            gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.MG_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
+//        }else {
+//            gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.MG_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
+//        }
+//        GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
+//        PgCallBackResponse pgCallBackRespFail = new PgCallBackResponse();
         JSONObject dataJson = new JSONObject();
         BigDecimal balance = memBaseinfo.getBalance();
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
