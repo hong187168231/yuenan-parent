@@ -117,7 +117,13 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             JSONObject table = game.getJSONObject("details").getJSONObject("table");
 
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(playerID);
-            GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(table.getString("id"));
+            GamePlatform gamePlatform;
+            if("Y".equals(OpenAPIProperties.REDTIGER_IS_PLATFORM_LOGIN)){
+                gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platformGameParent.getPlatformCode(),platformGameParent.getPlatformCode());
+            }else {
+                gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(table.getString("id"), platformGameParent.getPlatformCode());
+
+            }
             GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
 
             // 会员余额
@@ -384,14 +390,20 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             // 赢奖金额
             BigDecimal betAmount = BigDecimal.ZERO;
             String roundId = null, promotionId = null, promoType = promoTransaction.getString("type");
-            GamePlatform gamePlatform = null;
+            GamePlatform gamePlatform;
+            if("Y".equals(OpenAPIProperties.REDTIGER_IS_PLATFORM_LOGIN)){
+                gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platformGameParent.getPlatformCode(),platformGameParent.getPlatformCode());
+            }else {
+                gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(table.getString("id"), platformGameParent.getPlatformCode());
+
+            }
+            GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
             // 免费回合游戏
             if ("FreeRoundPlayableSpent".equals(promoType)) {
                 betAmount = promoTransaction.getBigDecimal("amount");
                 roundId = promoTransaction.getString("voucherId");
             } else if ("JackpotWin".equals(promoType)) {
                 // 免费回合头奖
-                gamePlatform = gameCommonService.getGamePlatformByplatformCode(table.getString("id"));
                 roundId = game.getJSONObject("details").getJSONObject("table").getString("id");
                 promotionId = roundId;
                 JSONArray jsonArray = promoTransaction.getJSONArray("jackpots");
@@ -420,7 +432,6 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
 
                 // 因在游戏回合中获胜而发放促销奖金。
                 betAmount = promoTransaction.getBigDecimal("amount");
-                gamePlatform = gameCommonService.getGamePlatformByplatformCode(table.getString("id"));
                 roundId = game.getJSONObject("details").getJSONObject("table").getString("id");
                 promotionId = roundId;
             }
@@ -428,7 +439,6 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             if (null == gamePlatform) {
                 gamePlatform = gameCommonService.getGamePlatformByParentName(OpenAPIProperties.REDTIGER_PLATFORM_CODE).get(0);
             }
-            GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
 
             // 赢奖金额小于0
             if (betAmount.compareTo(BigDecimal.ZERO) < 0) {

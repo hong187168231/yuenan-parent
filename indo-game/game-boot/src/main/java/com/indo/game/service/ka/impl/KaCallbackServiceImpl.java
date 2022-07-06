@@ -129,9 +129,13 @@ public class KaCallbackServiceImpl implements KaCallbackService {
             if (null != oldTxns) {
                 return initFailureResponse(201, "交易已存在");
             }
+            GamePlatform gamePlatform;
+            if("Y".equals(OpenAPIProperties.KA_IS_PLATFORM_LOGIN)){
+                gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platformGameParent.getPlatformCode(),platformGameParent.getPlatformCode());
+            }else {
+                gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(kaCallbackPlayReq.getGameId(), platformGameParent.getPlatformCode());
 
-
-            GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(kaCallbackPlayReq.getGameId());
+            }
             GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
 
             Txns txns = new Txns();
@@ -139,7 +143,7 @@ public class KaCallbackServiceImpl implements KaCallbackService {
             txns.setPlatformTxId(kaCallbackPlayReq.getTransactionId());
 
             //玩家 ID
-            txns.setUserId(memBaseinfo.getId().toString());
+            txns.setUserId(memBaseinfo.getAccount());
             //玩家货币代码
             txns.setCurrency(platformGameParent.getCurrencyType());
 //            txns.setOdds(kaCallbackPlayReq.getBetPerSelection());
@@ -253,7 +257,13 @@ public class KaCallbackServiceImpl implements KaCallbackService {
                 return initFailureResponse(201, "交易已存在");
             }
 
-            GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(kaCallbackCreditReq.getGameId());
+            GamePlatform gamePlatform;
+            if("Y".equals(OpenAPIProperties.KA_IS_PLATFORM_LOGIN)){
+                gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platformGameParent.getPlatformCode(),platformGameParent.getPlatformCode());
+            }else {
+                gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(kaCallbackCreditReq.getGameId(), platformGameParent.getPlatformCode());
+
+            }
             GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
 
             balance = balance.add(amount);
@@ -264,7 +274,7 @@ public class KaCallbackServiceImpl implements KaCallbackService {
             txns.setPlatformTxId(kaCallbackCreditReq.getTransactionId());
 
             //玩家 ID
-            txns.setUserId(memBaseinfo.getId().toString());
+            txns.setUserId(memBaseinfo.getAccount());
             //玩家货币代码
             txns.setCurrency(platformGameParent.getCurrencyType());
 //            txns.setOdds(kaCallbackPlayReq.getBetPerSelection());

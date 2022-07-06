@@ -332,7 +332,7 @@ public class WmCallbackServiceImpl implements WmCallbackService {
                 txns.setPlatformTxId(paySerialno);
 
                 //玩家 ID
-                txns.setUserId(memBaseinfo.getId().toString());
+                txns.setUserId(memBaseinfo.getAccount());
                 //玩家货币代码
                 txns.setCurrency(gameParentPlatform.getCurrencyType());
 //            txns.setOdds(kaCallbackPlayReq.getBetPerSelection());
