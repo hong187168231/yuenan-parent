@@ -41,6 +41,8 @@ public class MemLevelController {
     @AllowAccess
     @GetMapping(value = "/upRule")
     public Result<MemLevelVo> upRule(@LoginUser LoginInfo loginInfo) {
-        return Result.success(memLevelService.findInfo(loginInfo));
+        MemLevelVo mv =  memLevelService.findInfo(loginInfo);
+        mv.setTradingVo(null);
+        return Result.success(mv);
     }
 }
