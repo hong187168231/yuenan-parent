@@ -6,7 +6,9 @@ import com.indo.admin.modules.report.service.DataReportService;
 import com.indo.admin.pojo.dto.AgentReportDTO;
 import com.indo.admin.pojo.dto.MemReportDTO;
 import com.indo.admin.pojo.dto.PayRechargeReportDTO;
+import com.indo.admin.pojo.dto.PlatformReportDTO;
 import com.indo.admin.pojo.vo.agent.AgentReportVo;
+import com.indo.admin.pojo.vo.game.PlatformReportVo;
 import com.indo.admin.pojo.vo.mem.MemReportVo;
 import com.indo.admin.pojo.vo.pay.PayRechargeReportVo;
 import com.indo.common.result.PageResult;
@@ -30,20 +32,26 @@ public class DataReportController {
 
 
     @ApiOperation(value = "查询会员报表")
-    @GetMapping(value = "/memReportList")
-    public Result<Page<MemReportVo>> memReportList(MemReportDTO memReportDTO) {
-        return Result.success(dataReportService.findMemberReport(memReportDTO));
+    @GetMapping(value = "/findMemReportPaghe")
+    public Result<Page<MemReportVo>> findMemReportPaghe(MemReportDTO memReportDTO) {
+        return Result.success(dataReportService.findMemberReportPage(memReportDTO));
     }
 
     @ApiOperation(value = "查询代理报表")
-    @GetMapping(value = "/agentReportPage")
-    public Result<Page<AgentReportVo>> agentReportList(AgentReportDTO agentReportDTO) {
-        return Result.success(dataReportService.findAgentReport(agentReportDTO));
+    @GetMapping(value = "/findAgentReportPage")
+    public Result<Page<AgentReportVo>> findAgentReportPage(AgentReportDTO agentReportDTO) {
+        return Result.success(dataReportService.findAgentReportPage(agentReportDTO));
     }
 
     @ApiOperation(value = "查询充值报表")
-    @GetMapping(value = "/findPayRechargeReport")
-    public Result<Page<PayRechargeReportVo>> findPayRechargeReport(PayRechargeReportDTO payRechargeReportDTO) {
-        return Result.success(dataReportService.findPayRechargeReport(payRechargeReportDTO));
+    @GetMapping(value = "/findPayRechargeReportPage")
+    public Result<Page<PayRechargeReportVo>> findPayRechargeReportPage(PayRechargeReportDTO payRechargeReportDTO) {
+        return Result.success(dataReportService.findPayRechargeReportPage(payRechargeReportDTO));
+    }
+
+    @ApiOperation(value = "查询平台报表")
+    @GetMapping(value = "/findPlatformReportPage")
+    public Result<Page<PlatformReportVo>> findPlatformReportPage(PlatformReportDTO platformReportDT) {
+        return Result.success(dataReportService.findPlatformReportPage(platformReportDT));
     }
 }

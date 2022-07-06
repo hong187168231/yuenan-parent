@@ -26,8 +26,8 @@ public class AgentReportVo {
     private BigDecimal teamAmout;
 
     @ApiModelProperty(value = "代理返点总金额")
-    private Integer totalRebateAmount;
+    private BigDecimal totalRebateAmount;
 
     @ApiModelProperty(value = "代理返点提现总金额")
-    private Integer totalWithdrawalAmount;
+    private BigDecimal totalWithdrawalAmount;
 }
