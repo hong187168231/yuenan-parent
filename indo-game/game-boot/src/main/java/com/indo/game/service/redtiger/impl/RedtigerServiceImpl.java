@@ -154,7 +154,9 @@ public class RedtigerServiceImpl implements RedtigerService {
         channel.put("mobile", isApp);
 
         JSONObject returnJson = JSONObject.parseObject(commonRequest(getLoginUrl(), json, "login_redtiger"));
-
+        if (null==returnJson) {
+            return Result.failed();
+        }
         if (returnJson.containsKey("entry")) {
             ApiResponseData responseData = new ApiResponseData();
             String url = returnJson.getString("entry");

@@ -97,6 +97,7 @@ public class PsServiceImpl implements PsService {
             } else {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
+                this.logout(loginUser, platform, ip);
             }
             StringBuilder builder = new StringBuilder();
             builder.append(OpenAPIProperties.PS_API_URL).append("/launch/?host_id=");
@@ -130,7 +131,7 @@ public class PsServiceImpl implements PsService {
             map.put("member_id", loginUser.getId() + "");
             StringBuilder builder = new StringBuilder();
             builder.append(OpenAPIProperties.PS_API_URL).append("/admin/kickout");
-            JSONObject jsonObject = commonRequest(builder.toString(), map, loginUser.getId().intValue(), "cqGameLogin");
+            JSONObject jsonObject = commonRequest(builder.toString(), map, loginUser.getId().intValue(), "cqGamelogout");
             if (null == jsonObject) {
                 return Result.failed();
             }
@@ -152,7 +153,7 @@ public class PsServiceImpl implements PsService {
      * 公共请求
      */
     public JSONObject commonRequest(String apiUrl, Map<String, String> params, Integer userId, String type) throws Exception {
-        logger.info("pslog  {} commonRequest userId:{},paramsMap:{}", userId, params);
+        logger.info("pslog  {} commonRequest userId:{},paramsMap:{},type:{}", userId, params,type);
         JSONObject psApiResponseData = null;
         String resultString = GameUtil.doProxyPostJson(OpenAPIProperties.PROXY_HOST_NAME, OpenAPIProperties.PROXY_PORT, OpenAPIProperties.PROXY_TCP,
                 apiUrl, params, type, userId);

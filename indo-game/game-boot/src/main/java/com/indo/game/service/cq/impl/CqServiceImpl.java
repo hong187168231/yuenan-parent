@@ -123,6 +123,9 @@ public class CqServiceImpl implements CqService {
             return Result.failed("g091087", "第三方请求异常！");
         }
         JSONObject jsonStatusObject = JSON.parseObject(cqApiResponseData.getStatus());
+        if (null == jsonStatusObject) {
+            return Result.failed("g091087", "第三方请求异常！");
+        }
         if (("0").equals(jsonStatusObject.getString("code"))) {
             ApiResponseData responseData = new ApiResponseData();
             JSONObject jsonDataObject = JSON.parseObject(cqApiResponseData.getData());
@@ -182,9 +185,12 @@ public class CqServiceImpl implements CqService {
             apiUrl.append(OpenAPIProperties.CQ_API_URL).append("/gameboy/player/logout");
             CqApiResponseData cqApiResponseData = commonRequest(apiUrl.toString(), params, loginUser.getId().intValue(), "cqGameLogin");
             if (null == cqApiResponseData) {
-                return Result.failed();
+                return Result.failed("g091087", "第三方请求异常！");
             }
             JSONObject jsonObject = JSON.parseObject(cqApiResponseData.getStatus());
+            if (null == jsonObject) {
+                return Result.failed("g091087", "第三方请求异常！");
+            }
             if ("0".equals(jsonObject.getString("code"))) {
                 return Result.success(cqApiResponseData);
             } else {

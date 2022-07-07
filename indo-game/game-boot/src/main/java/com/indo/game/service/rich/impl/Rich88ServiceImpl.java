@@ -106,7 +106,9 @@ public class Rich88ServiceImpl implements Rich88Service {
             // 退出游戏
             Rich88ApiResponseData rich88ApiResponseData =
                     commonRequest(getLoginOutUrl(loginUser.getAccount()), null, loginUser.getId());
-
+            if (null == rich88ApiResponseData) {
+                return Result.failed("g091087", "第三方请求异常！");
+            }
             if (0 == rich88ApiResponseData.getCode()) {
                 return Result.success(rich88ApiResponseData);
             } else {

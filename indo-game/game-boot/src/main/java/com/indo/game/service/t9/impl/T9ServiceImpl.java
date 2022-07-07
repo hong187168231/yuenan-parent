@@ -96,7 +96,7 @@ public class T9ServiceImpl implements T9Service {
                 cptOpenMember.setLoginTime(new Date());
                 cptOpenMember.setType(parentName);
                 //创建玩家
-                createMemberGame(cptOpenMember);
+                return createMemberGame(cptOpenMember, platform, "1".equals(isMobileLogin));
             } else {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
@@ -154,7 +154,7 @@ public class T9ServiceImpl implements T9Service {
             params.put("gameCode", gameCode);
             params.put("isAPP", isAPP);
             params.put("hasLogo", true);
-            params.put("walletType", 2);
+//            params.put("walletType", 2);
             params.put("checkValue", getCheckValue(playerID, gameCode));
             t9ApiResponseData = commonRequest(getStartGameUrl(), params, playerID);
         } catch (Exception e) {
@@ -180,7 +180,7 @@ public class T9ServiceImpl implements T9Service {
      * @param cptOpenMember
      * @return
      */
-    private Result createMemberGame(CptOpenMember cptOpenMember) {
+    private Result createMemberGame(CptOpenMember cptOpenMember, String platform, boolean isAPP) {
         // 创建T9账号
         T9ApiResponseData t9ApiResponseData = createT9Member(cptOpenMember);
         if (null == t9ApiResponseData) {
@@ -189,7 +189,7 @@ public class T9ServiceImpl implements T9Service {
 
         if ("200".equals(t9ApiResponseData.getStatusCode())) {
             externalService.saveCptOpenMember(cptOpenMember);
-            return Result.success();
+            return getPlayerGameUrl(cptOpenMember.getUserName(), platform, isAPP);
         } else {
             return errorCode(t9ApiResponseData.getStatusCode(), t9ApiResponseData.getErrorMessage());
         }

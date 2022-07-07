@@ -12,7 +12,10 @@ import com.indo.game.service.ps.PsCallbackService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -31,11 +34,10 @@ public class PsCallBackController {
     @RequestMapping(value = "/VerifySession", method = RequestMethod.GET,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object verifySession(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
+    public Object verifySession(PsCallBackParentReq psVerifyCallBackReq, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("psCallBack verifyToken回调,params:{}", JSONObject.toJSONString(jsonObject));
-        PsCallBackParentReq psVerifyCallBackReq = JSONObject.toJavaObject(jsonObject,PsCallBackParentReq.class);
+        logger.info("psCallBack verifyToken回调,params:{}", JSONObject.toJSONString(psVerifyCallBackReq));
         Object psCallBackResponse = psCallbackService.psVerifyCallback(psVerifyCallBackReq, ip);
         logger.info("psCallBack verifyToken回调返回数据 params:{}", psCallBackResponse);
         return psCallBackResponse;
@@ -48,11 +50,10 @@ public class PsCallBackController {
     @RequestMapping(value = "/bet", method = RequestMethod.GET,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object bet(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
+    public Object bet(PsCallBackParentReq psbetCallBackReq, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("psCallBack psBet回调,params:{}", JSONObject.toJSONString(jsonObject));
-        PsCallBackParentReq psbetCallBackReq = JSONObject.toJavaObject(jsonObject,PsCallBackParentReq.class);
+        logger.info("psCallBack psBet回调,params:{}", JSONObject.toJSONString(psbetCallBackReq));
         Object object = psCallbackService.psBetCallback(psbetCallBackReq, ip);
         logger.info("psCallBack psBet回调返回数据 params:{}", object);
         return object;
@@ -65,11 +66,10 @@ public class PsCallBackController {
     @RequestMapping(value = "/result", method = RequestMethod.GET,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object result(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
+    public Object result(PsCallBackParentReq psbetCallBackReq, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("psCallBack psResult回调,params:{}", JSONObject.toJSONString(jsonObject));
-        PsCallBackParentReq psbetCallBackReq = JSONObject.toJavaObject(jsonObject,PsCallBackParentReq.class);
+        logger.info("psCallBack psResult回调,params:{}", JSONObject.toJSONString(psbetCallBackReq));
         Object object = psCallbackService.psResultCallback(psbetCallBackReq, ip);
         logger.info("psCallBack psResult回调返回数据 params:{}", object);
         return object;
@@ -82,11 +82,10 @@ public class PsCallBackController {
     @RequestMapping(value = "/refund", method = RequestMethod.GET,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object refund(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
+    public Object refund(PsCallBackParentReq psbetCallBackReq, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("psCallBack psRefundt回调,params:{}", JSONObject.toJSONString(jsonObject));
-        PsCallBackParentReq psbetCallBackReq = JSONObject.toJavaObject(jsonObject,PsCallBackParentReq.class);
+        logger.info("psCallBack psRefundt回调,params:{}", JSONObject.toJSONString(psbetCallBackReq));
         Object object = psCallbackService.psRefundtCallback(psbetCallBackReq, ip);
         logger.info("psCallBack psRefundt回调返回数据 params:{}", object);
         return object;
@@ -99,11 +98,10 @@ public class PsCallBackController {
     @RequestMapping(value = "/bonusaward", method = RequestMethod.GET,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object bonus(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
+    public Object bonus(PsCallBackParentReq psbetCallBackReq, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("psCallBack psBonus回调,params:{}", JSONObject.toJSONString(jsonObject));
-        PsCallBackParentReq psbetCallBackReq = JSONObject.toJavaObject(jsonObject,PsCallBackParentReq.class);
+        logger.info("psCallBack psBonus回调,params:{}", JSONObject.toJSONString(psbetCallBackReq));
         Object object = psCallbackService.psBonusCallback(psbetCallBackReq, ip);
         logger.info("psCallBack psBonus回调返回数据 params:{}", object);
         return object;
@@ -115,11 +113,10 @@ public class PsCallBackController {
     @RequestMapping(value = "/getbalance", method = RequestMethod.GET,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object getBalance(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
+    public Object getBalance(PsCallBackParentReq psbetCallBackReq, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("psCallBack psGetBalance回调,params:{}", JSONObject.toJSONString(jsonObject));
-        PsCallBackParentReq psbetCallBackReq = JSONObject.toJavaObject(jsonObject,PsCallBackParentReq.class);
+        logger.info("psCallBack psGetBalance回调,params:{}", JSONObject.toJSONString(psbetCallBackReq));
         Object object = psCallbackService.psGetBalanceCallback(psbetCallBackReq, ip);
         logger.info("psCallBack psGetBalance回调返回数据 params:{}", object);
         return object;

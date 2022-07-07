@@ -102,22 +102,12 @@ public class PgServiceImpl implements PgService {
                 logout(loginUser, platform, ip);
             }
 
-//            StringBuilder builder = new StringBuilder();
-//            builder.append(OpenAPIProperties.PG_API_URL).append("/Login/ v1/LoginGame/?");
-//            builder.append("operator_token=").append(OpenAPIProperties.PG_API_TOKEN);
-//            builder.append("&operator_player_session=").append(cptOpenMember.getPassword());
-//            builder.append("&language=").append(platformGameParent.getLanguageType());
-
-            Map<String, String> map = new HashMap<>();
-            map.put("operator_token", OpenAPIProperties.PG_API_TOKEN);
-            map.put("secret_key", OpenAPIProperties.PG_SECRET_KEY);
-            map.put("operator_player_session", cptOpenMember.getPassword());
-            map.put("player_name", cptOpenMember.getUserName());
-            map.put("currency", gameParentPlatform.getCurrencyType());
-            RandomGUID myGUID = new RandomGUID();
             StringBuilder builder = new StringBuilder();
-            builder.append(OpenAPIProperties.PG_API_URL).append("/Login/ v1/LoginGame")
-                    .append("?trace_id=").append(myGUID.toString());
+            builder.append(OpenAPIProperties.PG_LOGIN_URL).append("/web-lobby/games/?");
+            builder.append("operator_token=").append(OpenAPIProperties.PG_API_TOKEN);
+            builder.append("&operator_player_session=").append(cptOpenMember.getPassword());
+            builder.append("&language=").append(gameParentPlatform.getLanguageType());
+            logger.info("pglog  pgGame登录玩家 urlapi:{}", builder.toString(),cptOpenMember);
             //登录
             ApiResponseData responseData = new ApiResponseData();
             responseData.setPathUrl(builder.toString());
@@ -147,6 +137,7 @@ public class PgServiceImpl implements PgService {
         }
     }
 
+
     private PgApiResponseData createMember(GameParentPlatform platformGameParent, GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember, String isMobileLogin) {
         Map<String, String> map = new HashMap<>();
         map.put("operator_token", OpenAPIProperties.PG_API_TOKEN);
@@ -159,7 +150,9 @@ public class PgServiceImpl implements PgService {
                 .append("?trace_id=").append(myGUID.toString());
         PgApiResponseData pgApiResponseData = null;
         try {
+            logger.info("pglog  createMember创建玩家 urlapi:{},paramsMap:{},loginUser:{}", builder.toString(), map,cptOpenMember);
             pgApiResponseData = commonRequest(builder.toString(), map, cptOpenMember.getUserId(), "createPgMember");
+            logger.info("pglog  createMember创建玩家返回 pgApiResponseData:{}", JSONObject.toJSONString(pgApiResponseData));
         } catch (Exception e) {
             logger.error("pglog pgCeateMember:{}", e);
             e.printStackTrace();
@@ -187,7 +180,9 @@ public class PgServiceImpl implements PgService {
             RandomGUID myGUID = new RandomGUID();
             builder.append(OpenAPIProperties.PG_API_URL).append("/Player/v1/Kick")
                     .append("?trace_id=").append(myGUID.toString());
+            logger.info("pglog  logout登出玩家 urlapi:{},paramsMap:{},loginUser:{}", builder.toString(), map,loginUser);
             PgApiResponseData pgApiResponseData = commonRequest(builder.toString(), map, loginUser.getId().intValue(), "cqGameLogin");
+            logger.info("pglog  logout登出玩家返回 pgApiResponseData:{}", JSONObject.toJSONString(pgApiResponseData));
             if (null == pgApiResponseData) {
                 return Result.failed();
             }
