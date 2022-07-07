@@ -37,5 +37,5 @@ public interface MemBankMapper extends BaseMapper<MemBank> {
      * @param memReportDTO
      * @return
      */
-    Page<MemReportVo> findMemberReport(Page<MemReportVo> page, MemReportDTO memReportDTO);
+    Page<MemReportVo> findMemberReport(@Param("page")Page<MemReportVo> page, @Param("dto")MemReportDTO memReportDTO);
 }

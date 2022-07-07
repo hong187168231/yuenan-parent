@@ -107,9 +107,30 @@
         (SELECT SUM(pr.real_amount) FROM pay_recharge pr WHERE DATE_FORMAT(pr.create_time,'%Y-%m-%d')=c.datelist and pr.order_status=2   HAVING count(pr.mem_id) =3) as thirdMoney
         FROM calendar c
         WHERE 1=1
-        and c.datelist &gt;=#{beginTime}
-        and c.datelist &lt;=#{endTime}
+        and c.datelist &gt;=#{dto.beginTime}
+        and c.datelist &lt;=#{dto.endTime}
         GROUP BY c.datelist
+        ORDER BY c.datelist DESC
+    </select>
+    <select id="findTotalReport" resultType="com.indo.admin.pojo.vo.TotalReportVo">
+        SELECT
+        (SELECT COUNT(id) from mem_baseinfo WHERE DATE_FORMAT(create_time,'%Y-%m-%d')>=#{beginTime}
+        AND DATE_FORMAT(create_time,'%Y-%m-%d')&lt;=#{endTime} AND acc_type = 1)AS memNewlyNum,
+        (SELECT COUNT(id)from mem_baseinfo WHERE DATE_FORMAT( last_login_time,'%Y-%m-%d')>=#{beginTime}
+        AND DATE_FORMAT( last_login_time, '%Y-%m-%d' )&lt;=#{endTime} AND acc_type = 1) AS memLoginNum,
+        (SELECT COUNT(id)from mem_baseinfo WHERE DATE_FORMAT( create_time,'%Y-%m-%d')>=#{beginTime}
+        AND DATE_FORMAT( create_time, '%Y-%m-%d' )&lt;=#{endTime} AND DATE_FORMAT(create_time,'%Y-%m-%d')=DATE_FORMAT( first_recharge_time, '%Y-%m-%d' ) AND acc_type = 1) AS RegisterAndRechargeNum,
+        (SELECT COUNT(id)from mem_baseinfo WHERE DATE_FORMAT(first_recharge_time,'%Y-%m-%d' )>=#{beginTime}
+        AND DATE_FORMAT(first_recharge_time,'%Y-%m-%d')&lt;=#{endTime}  AND acc_type = 1) AS firstRechargeNum,
+        (SELECT COUNT(id)from mem_baseinfo WHERE first_recharge_time!=null  AND acc_type = 1) AS totalFirstRechargeNum,
+        (SELECT SUM(real_amount) FROM pay_recharge WHERE DATE_FORMAT(create_time,'%Y-%m-%d')>=#{beginTime} and DATE_FORMAT(create_time,'%Y-%m-%d')&lt;=#{endTime} and order_status=2   HAVING count(mem_id) =1) AS firstChargeMoney,
+        (SELECT SUM(real_amount) FROM pay_recharge WHERE DATE_FORMAT(create_time,'%Y-%m-%d')>=#{beginTime} and DATE_FORMAT(create_time,'%Y-%m-%d')&lt;=#{endTime} and order_status=2) AS totalChargeMoney,
+        (SELECT SUM(actual_amount) FROM pay_take_cash  WHERE DATE_FORMAT(create_time,'%Y-%m-%d')>=#{beginTime} and DATE_FORMAT(create_time,'%Y-%m-%d')&lt;=#{endTime}) AS withdrawalAmount,
+        (SELECT SUM(bet_amount) FROM game_txns WHERE DATE_FORMAT(create_time,'%Y-%m-%d')>=#{beginTime} and DATE_FORMAT(create_time,'%Y-%m-%d')&lt;=#{endTime}) AS bettingAmount,
+        (SELECT COUNT(DISTINCT user_id) FROM game_txns WHERE DATE_FORMAT(create_time,'%Y-%m-%d')>=#{beginTime} and DATE_FORMAT(create_time,'%Y-%m-%d')&lt;=#{endTime})bettingPeopleNum,
+        (SELECT SUM(rebate_amout)  FROM agent_rebate_record WHERE DATE_FORMAT(create_time,'%Y-%m-%d')>=#{beginTime} and DATE_FORMAT(create_time,'%Y-%m-%d')&lt;=#{endTime}) AS totalRebateAmount,
+        (SELECT SUM(winning_amount)*-1  FROM game_txns  WHERE  DATE_FORMAT(create_time,'%Y-%m-%d')>=#{beginTime} AND DATE_FORMAT(create_time,'%Y-%m-%d')&lt;=#{endTime} ) AS companyProfit,
+        (SELECT SUM(amount)  FROM mem_gold_change  WHERE DATE_FORMAT(create_time,'%Y-%m-%d')>=#{beginTime} and DATE_FORMAT(create_time,'%Y-%m-%d')&lt;=#{endTime} and change_type>300 and change_type&lt;400) AS activityAmount
     </select>
 
 </mapper>

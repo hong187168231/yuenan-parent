@@ -49,8 +49,9 @@
         LEFT JOIN game_txns gt on DATE_FORMAT(gt.create_time,'%Y-%m-%d')=c.datelist
         LEFT JOIN mem_gold_change mgc on DATE_FORMAT(mgc.create_time,'%Y-%m-%d')=c.datelist and mgc.change_type>300 and mgc.change_type &lt;400
         WHERE 1=1
-        and c.datelist &gt;=#{beginTime}
-        and c.datelist &lt;=#{endTime}
+        and c.datelist &gt;=#{dto.beginTime}
+        and c.datelist &lt;=#{dto.endTime}
         GROUP BY c.datelist
+        ORDER BY c.datelist DESC
     </select>
 </mapper>

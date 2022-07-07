@@ -1,10 +1,8 @@
 package com.indo.admin.modules.report.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.indo.admin.pojo.dto.AgentReportDTO;
-import com.indo.admin.pojo.dto.MemReportDTO;
-import com.indo.admin.pojo.dto.PayRechargeReportDTO;
-import com.indo.admin.pojo.dto.PlatformReportDTO;
+import com.indo.admin.pojo.dto.*;
+import com.indo.admin.pojo.vo.TotalReportVo;
 import com.indo.admin.pojo.vo.agent.AgentReportVo;
 import com.indo.admin.pojo.vo.game.PlatformReportVo;
 import com.indo.admin.pojo.vo.mem.MemReportVo;
@@ -38,4 +36,11 @@ public interface DataReportService {
      * @return
      */
     Page<PlatformReportVo> findPlatformReportPage(PlatformReportDTO platformReportDTO);
+
+    /**
+     * 查询总报表
+     * @param totalReportDTO
+     * @return
+     */
+    TotalReportVo findTotalReport(TotalReportDTO totalReportDTO);
 }
