@@ -319,7 +319,7 @@ public class PpCallbackServiceImpl implements PpCallbackService {
             }
             //投注 IP
             txns.setBetIp(ip);//  string 是 投注 IP
-            int num = txnsMapper.insert(oldTxns);
+            int num = txnsMapper.insert(txns);
             if (num <= 0) {
                 return initFailureResponse(100, "订单派奖请求失败");
             }
