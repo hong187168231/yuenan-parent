@@ -48,7 +48,7 @@ public class DgCallbackServiceImpl implements DgCallbackService {
 
     @Override
     public Object dgBalanceCallback(String agentName, DgCallBackReq<DgMemberCallBackReq> dgCallBackReq, String ip) {
-        DgMemberCallBackReq dgMemberCallBackReq = dgCallBackReq.getMember();
+        DgMemberCallBackReq dgMemberCallBackReq = JSONObject.toJavaObject(JSONObject.parseObject(JSONObject.toJSONString(dgCallBackReq.getMember())),DgMemberCallBackReq.class);
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(dgMemberCallBackReq.getUsername());
         JSONObject dataJson = new JSONObject();
         if (null == memBaseinfo) {
@@ -68,7 +68,7 @@ public class DgCallbackServiceImpl implements DgCallbackService {
 
     @Override
     public Object dgTransferCallback(DgCallBackReq<DgMemberCallBackReq> dgCallBackReq, String ip, String agentName) {
-        DgMemberCallBackReq dgMemberCallBackReq = dgCallBackReq.getMember();
+        DgMemberCallBackReq dgMemberCallBackReq = JSONObject.toJavaObject(JSONObject.parseObject(JSONObject.toJSONString(dgCallBackReq.getMember())),DgMemberCallBackReq.class);
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.DG_PLATFORM_CODE);
         GamePlatform gamePlatform ;
         if(OpenAPIProperties.DG_IS_PLATFORM_LOGIN.equals("Y")){//平台登录Y 游戏登录N
@@ -196,7 +196,7 @@ public class DgCallbackServiceImpl implements DgCallbackService {
 
     @Override
     public Object djInformCallback(DgCallBackReq<DgMemberCallBackReq> dgCallBackReq, String ip, String agentName) {
-        DgMemberCallBackReq dgMemberCallBackReq = dgCallBackReq.getMember();
+        DgMemberCallBackReq dgMemberCallBackReq = JSONObject.toJavaObject(JSONObject.parseObject(JSONObject.toJSONString(dgCallBackReq.getMember())),DgMemberCallBackReq.class);
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(dgMemberCallBackReq.getUsername());
         JSONObject dataJson = new JSONObject();
         BigDecimal balance = memBaseinfo.getBalance();
@@ -261,7 +261,7 @@ public class DgCallbackServiceImpl implements DgCallbackService {
 
     @Override
     public Object mgOrderCallback(DgCallBackReq<DgMemberCallBackReq> dgCallBackReq, String ip, String agentName) {
-        DgMemberCallBackReq dgMemberCallBackReq = dgCallBackReq.getMember();
+        DgMemberCallBackReq dgMemberCallBackReq = JSONObject.toJavaObject(JSONObject.parseObject(JSONObject.toJSONString(dgCallBackReq.getMember())),DgMemberCallBackReq.class);
         JSONObject dataJson = new JSONObject();
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(dgMemberCallBackReq.getUsername());
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
