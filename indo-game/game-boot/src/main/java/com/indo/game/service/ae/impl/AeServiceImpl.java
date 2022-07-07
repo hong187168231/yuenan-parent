@@ -94,7 +94,7 @@ public class AeServiceImpl implements AeService {
                 cptOpenMember = new CptOpenMember();
                 cptOpenMember.setUserId(loginUser.getId().intValue());
                 //第三方账号指定格式 运营商代码(英文大写) + 下划线 + 玩家账号（大写英数）
-                String name = OpenAPIProperties.AE_MERCHANT_ID + "_" + loginUser.getAccount();
+                String name = OpenAPIProperties.AE_MERCHANT_ID + "_" + loginUser.getAccount().toUpperCase(Locale.ROOT);
                 cptOpenMember.setUserName(name);
                 cptOpenMember.setPassword(loginUser.getAccount());
                 cptOpenMember.setCreateTime(new Date());

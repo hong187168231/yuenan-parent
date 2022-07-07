@@ -29,6 +29,18 @@ public class CptOpenMemberServiceImpl implements CptOpenMemberService {
     }
 
     @Override
+    public CptOpenMember getCptOpenMember(String userAcct, String type) {
+        CptOpenMember cptOpenMember = null;
+        if (userAcct != null && StringUtils.isNotBlank(type)) {
+            LambdaQueryWrapper<CptOpenMember> wrapper = new LambdaQueryWrapper();
+            wrapper.eq(CptOpenMember::getLoginTime, userAcct);
+            wrapper.eq(CptOpenMember::getType, type);
+            cptOpenMember = cptOpenMemberMapper.selectOne(wrapper);
+        }
+        return cptOpenMember;
+    }
+
+    @Override
     public void saveCptOpenMember(CptOpenMember cptOpenMember) {
         cptOpenMemberMapper.insert(cptOpenMember);
     }

@@ -10,6 +10,7 @@ import com.indo.common.utils.encrypt.MD5;
 import com.indo.game.mapper.TxnsMapper;
 import com.indo.game.pojo.dto.ae.AeCallBackParentReq;
 import com.indo.game.pojo.dto.ae.AeCallBackTransferReq;
+import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.game.pojo.entity.manage.GameCategory;
 import com.indo.game.pojo.entity.manage.GameParentPlatform;
 import com.indo.game.pojo.entity.manage.GamePlatform;
@@ -19,6 +20,7 @@ import com.indo.game.pojo.vo.callback.ae.AeGetBalanceResp;
 import com.indo.game.pojo.vo.callback.ae.AeGetBalanceRespSuccess;
 import com.indo.game.service.ae.AeCallbackService;
 import com.indo.game.service.common.GameCommonService;
+import com.indo.game.service.cptopenmember.CptOpenMemberService;
 import com.indo.user.pojo.bo.MemTradingBO;
 
 import org.slf4j.Logger;
@@ -47,6 +49,8 @@ public class AeCallbackServiceImpl implements AeCallbackService {
     private GameCommonService gameCommonService;
     @Autowired
     private TxnsMapper txnsMapper;
+    @Autowired
+    private CptOpenMemberService externalService;
 
     @Override
     public Object aeBalanceCallback(AeCallBackParentReq aeApiRequestData, String ip) {
@@ -57,8 +61,10 @@ public class AeCallbackServiceImpl implements AeCallbackService {
         builder.append(Base64.getEncoder().encodeToString(OpenAPIProperties.AE_MERCHANT_KEY.getBytes()));
         String sign = MD5.md5(builder.toString());
         if (aeApiRequestData.getSign().equalsIgnoreCase(sign)) {
-            String accountId = aeApiRequestData.getAccountId().substring(aeApiRequestData.getAccountId().indexOf("_") + 1);
-            MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(accountId);
+//            String accountId = aeApiRequestData.getAccountId().substring(aeApiRequestData.getAccountId().indexOf("_") + 1);
+            // 验证且绑定（AE-CPT第三方会员关系）
+            CptOpenMember cptOpenMember = externalService.getCptOpenMember(aeApiRequestData.getAccountId(), OpenAPIProperties.AE_PLATFORM_CODE);
+            MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cptOpenMember.getPassword());
             if (null == memBaseinfo) {
                 AeCallBackRespFail callBacekFail = new AeCallBackRespFail();
                 callBacekFail.setCode("2300");
@@ -91,8 +97,9 @@ public class AeCallbackServiceImpl implements AeCallbackService {
                 callBacekFail.setMsg("invalid IP address.");
                 return JSONObject.toJSON(callBacekFail);
             }
-            String userId = aeApiRequestData.getAccountId().substring(aeApiRequestData.getAccountId().indexOf("_") + 1);
-            MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(userId);
+//            String userId = aeApiRequestData.getAccountId().substring(aeApiRequestData.getAccountId().indexOf("_") + 1);
+            CptOpenMember cptOpenMember = externalService.getCptOpenMember(aeApiRequestData.getAccountId(), OpenAPIProperties.AE_PLATFORM_CODE);
+            MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cptOpenMember.getPassword());
             if (null == memBaseinfo) {
                 callBacekFail.setCode("2300");
                 callBacekFail.setMsg("用户帐号参数错误");
@@ -139,7 +146,7 @@ public class AeCallbackServiceImpl implements AeCallbackService {
         wrapper.eq(Txns::getMethod, "Give");
         wrapper.eq(Txns::getStatus, "Running");
         wrapper.eq(Txns::getPromotionTxId, aeApiRequestData.getTxnId());
-        wrapper.eq(Txns::getUserId, memBaseinfo.getAccount());
+//        wrapper.eq(Txns::getUserId, memBaseinfo.getAccount());
         Txns oldTxns = txnsMapper.selectOne(wrapper);
         if (null != oldTxns) {
             AeCallBackRespFail callBacekFail = new AeCallBackRespFail();
@@ -187,8 +194,9 @@ public class AeCallbackServiceImpl implements AeCallbackService {
             callBacekFail.setMsg("invalid IP address.");
             return JSONObject.toJSON(callBacekFail);
         }
-        String userId = aeApiRequestData.getAccountId().substring(aeApiRequestData.getAccountId().indexOf("_") + 1);
-        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(userId);
+//        String userId = aeApiRequestData.getAccountId().substring(aeApiRequestData.getAccountId().indexOf("_") + 1);
+        CptOpenMember cptOpenMember = externalService.getCptOpenMember(aeApiRequestData.getAccountId(), OpenAPIProperties.AE_PLATFORM_CODE);
+        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cptOpenMember.getPassword());
         if (null == memBaseinfo) {
             AeCallBackRespFail callBacekFail = new AeCallBackRespFail();
             callBacekFail.setCode("2300");
@@ -199,7 +207,7 @@ public class AeCallbackServiceImpl implements AeCallbackService {
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Txns::getPlatformTxId, aeApiRequestData.getTxnId());
         wrapper.eq(Txns::getPlatform, aeApiRequestData.getMerchantId());
-        wrapper.eq(Txns::getUserId, userId);
+//        wrapper.eq(Txns::getUserId, userId);
         Txns oldTxns = txnsMapper.selectOne(wrapper);
         if (null == oldTxns) {
             AeCallBackRespFail callBacekFail = new AeCallBackRespFail();
@@ -228,7 +236,7 @@ public class AeCallbackServiceImpl implements AeCallbackService {
      * 下注
      */
     private Object bet(AeCallBackTransferReq aeApiRequestData, MemTradingBO memBaseinfo, String ip) {
-        String userId = aeApiRequestData.getAccountId().substring(aeApiRequestData.getAccountId().indexOf("_") + 1);
+//        String userId = aeApiRequestData.getAccountId().substring(aeApiRequestData.getAccountId().indexOf("_") + 1);
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.AE_PLATFORM_CODE);
         GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(aeApiRequestData.getGameId(),gameParentPlatform.getPlatformCode());
         GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
@@ -245,7 +253,7 @@ public class AeCallbackServiceImpl implements AeCallbackService {
         wrapper.eq(Txns::getStatus, "Running");
         wrapper.eq(Txns::getPlatformTxId, aeApiRequestData.getTxnId());
         wrapper.eq(Txns::getPlatform, aeApiRequestData.getMerchantId());
-        wrapper.eq(Txns::getUserId, userId);
+//        wrapper.eq(Txns::getUserId, userId);
         Txns oldTxns = txnsMapper.selectOne(wrapper);
         if (null != oldTxns) {
             if ("Cancel Bet".equals(oldTxns.getMethod())) {
@@ -279,7 +287,7 @@ public class AeCallbackServiceImpl implements AeCallbackService {
         txns.setPlatformTxId(aeApiRequestData.getTxnId());
         //此交易是否是投注 true是投注 false 否
         //玩家 ID
-        txns.setUserId(userId);
+        txns.setUserId(memBaseinfo.getAccount());
         //玩家货币代码
         txns.setCurrency(gameParentPlatform.getCurrencyType());
         //平台代码
@@ -363,7 +371,7 @@ public class AeCallbackServiceImpl implements AeCallbackService {
         wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Adjust Bet"));
         wrapper.eq(Txns::getPlatform, aeApiRequestData.getMerchantId());
         wrapper.eq(Txns::getPlatformTxId, aeApiRequestData.getSourceTxnId());
-        wrapper.eq(Txns::getUserId, memBaseinfo.getId());
+//        wrapper.eq(Txns::getUserId, memBaseinfo.getId());
         Txns oldTxns = txnsMapper.selectOne(wrapper);
         if (null == oldTxns) {
             AeCallBackRespFail callBacekFail = new AeCallBackRespFail();
