@@ -157,7 +157,7 @@ public class AeServiceImpl implements AeService {
         StringBuilder builder = new StringBuilder();
         builder.append(OpenAPIProperties.AE_MERCHANT_ID).append(platformGameParent.getCurrencyType()).append(currentTime);
         builder.append(cptOpenMemberm.getUserName()).append("0").append(params.get("device")).append(gamePlatform.getPlatformCode());
-        builder.append(platformGameParent.getLanguageType()).append(Base64.getEncoder().encodeToString(OpenAPIProperties.AE_MERCHANT_KEY.getBytes()));
+        builder.append(platformGameParent.getLanguageType()).append(OpenAPIProperties.AE_MERCHANT_KEY);
         logger.info("aelog gameLogin登录用户加密前。 builder:{}", builder.toString());
         String sign = MD5.md5(builder.toString());
         params.put("gameId", gamePlatform.getPlatformCode());
@@ -202,7 +202,7 @@ public class AeServiceImpl implements AeService {
         long currentTime = System.currentTimeMillis();
         StringBuilder builder = new StringBuilder();
         builder.append(OpenAPIProperties.AE_MERCHANT_ID).append(platformGameParent.getCurrencyType()).append(currentTime);
-        builder.append(cptOpenMember.getUserName()).append(Base64.getEncoder().encodeToString(OpenAPIProperties.AE_MERCHANT_KEY.getBytes()));
+        builder.append(cptOpenMember.getUserName()).append(OpenAPIProperties.AE_MERCHANT_KEY);
         logger.info("aelog createMember创建账号加密前。 builder:{}", builder.toString());
         String sign = MD5.md5(builder.toString());
         Map<String, Object> params = new HashMap<String, Object>();
@@ -240,7 +240,7 @@ public class AeServiceImpl implements AeService {
             StringBuilder builder = new StringBuilder();
             String name = OpenAPIProperties.AE_MERCHANT_ID + "_" + loginUser.getAccount();
             builder.append(OpenAPIProperties.AE_MERCHANT_ID).append(platformGameParent.getCurrencyType()).append(currentTime);
-            builder.append(name).append(Base64.getEncoder().encodeToString(OpenAPIProperties.AE_MERCHANT_KEY.getBytes()));
+            builder.append(name).append(OpenAPIProperties.AE_MERCHANT_KEY);
             logger.info("aelog logout登出玩家加密前。 builder:{}", builder.toString());
             String sign = MD5.md5(builder.toString());
             Map<String, Object> params = new HashMap<String, Object>();
