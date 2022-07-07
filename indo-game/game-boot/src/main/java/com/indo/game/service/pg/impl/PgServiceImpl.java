@@ -129,7 +129,7 @@ public class PgServiceImpl implements PgService {
         }
         JSONObject jsonDataObject = JSON.parseObject(pgApiResponseData.getData());
         JSONObject jsonStatusObject = JSON.parseObject(pgApiResponseData.getError());
-        if (("1").equals(jsonDataObject.getString("action_result"))) {
+        if (null!=jsonDataObject&&("1").equals(jsonDataObject.getString("action_result"))) {
             externalService.saveCptOpenMember(cptOpenMember);
             return Result.success();
         } else {
@@ -188,7 +188,7 @@ public class PgServiceImpl implements PgService {
             }
             JSONObject jsonDataObject = JSON.parseObject(pgApiResponseData.getData());
             JSONObject jsonStatusObject = JSON.parseObject(pgApiResponseData.getError());
-            if (("1").equals(jsonDataObject.getString("action_result"))) {
+            if (null!=jsonDataObject&&("1").equals(jsonDataObject.getString("action_result"))) {
                 return Result.success();
             } else {
                 return errorCode(jsonStatusObject.getString("code"), jsonStatusObject.getString("message"));

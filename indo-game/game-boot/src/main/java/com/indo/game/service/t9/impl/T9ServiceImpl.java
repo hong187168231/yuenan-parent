@@ -126,10 +126,13 @@ public class T9ServiceImpl implements T9Service {
             params.put("playerID", loginUser.getAccount());
             params.put("actionType", "0");
             params.put("checkValue", getCheckValue("0"));
-
+            logger.info("T9log  logout退出登录 urlapi:{},paramsMap:{},loginUser:{}", getLogOutT9PlayerUrl(), params,loginUser);
             // 退出游戏
             T9ApiResponseData t9ApiResponseData = commonRequest(getLogOutT9PlayerUrl(), params, loginUser.getId());
-
+            logger.info("T9log  logout退出登录返回 t9ApiResponseData:{}", JSONObject.toJSONString(t9ApiResponseData));
+            if (null == t9ApiResponseData) {
+                return Result.failed("g091087", "第三方请求异常！");
+            }
             if ("200".equals(t9ApiResponseData.getStatusCode())) {
                 return Result.success(t9ApiResponseData);
             } else {
@@ -156,7 +159,9 @@ public class T9ServiceImpl implements T9Service {
             params.put("hasLogo", true);
 //            params.put("walletType", 2);
             params.put("checkValue", getCheckValue(playerID, gameCode));
+            logger.info("T9log  getPlayerGameUrl启动游戏获取游戏URL urlapi:{},paramsMap:{},loginUser:{}", getStartGameUrl(), params,playerID);
             t9ApiResponseData = commonRequest(getStartGameUrl(), params, playerID);
+            logger.info("T9log  getPlayerGameUrl启动游戏获取游戏URL返回 t9ApiResponseData:{}", JSONObject.toJSONString(t9ApiResponseData));
         } catch (Exception e) {
             logger.error("t9log getPlayerGameUrl:{}", e);
             e.printStackTrace();
@@ -209,7 +214,9 @@ public class T9ServiceImpl implements T9Service {
             Map<String, Object> params = new HashMap<>();
             params.put("playerID", cptOpenMember.getUserName());
             params.put("checkValue", getCheckValue(cptOpenMember.getUserName()));
+            logger.info("T9log  createT9Member创建玩家 urlapi:{},paramsMap:{},loginUser:{}", getCreateT9PlayerUrl(), params,cptOpenMember);
             t9ApiResponseData = commonRequest(getCreateT9PlayerUrl(), params, cptOpenMember.getUserId());
+            logger.info("T9log  createT9Member创建玩家返回 t9ApiResponseData:{}", JSONObject.toJSONString(t9ApiResponseData));
         } catch (Exception e) {
             logger.error("t9log createT9Member:{}", e);
             e.printStackTrace();
