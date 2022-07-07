@@ -276,7 +276,9 @@ public class PpCallbackServiceImpl implements PpCallbackService {
             gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
 
             Txns txns = new Txns();
-            BeanUtils.copyProperties(oldTxns, txns);
+            if (null != oldTxns) {
+                BeanUtils.copyProperties(oldTxns, txns);
+            }
             //游戏商注单号
             txns.setPlatformTxId(ppResultCallBackReq.getReference());
             //玩家 ID
