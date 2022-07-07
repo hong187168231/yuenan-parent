@@ -27,11 +27,12 @@ public class AwcCallBackController {
     @RequestMapping(value="/callBack",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object initGame(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
+    public Object initGame(AwcApiRequestParentData awcApiRequestData, HttpServletRequest request) {
+
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("awcCallBack  initGame 回调请求数据,IP:{} params:{}",ip,JSONObject.toJSONString(jsonObject));
-        AwcApiRequestParentData awcApiRequestData = JSONObject.toJavaObject(jsonObject,AwcApiRequestParentData.class);
+        logger.info("awcCallBack  initGame 回调请求数据,IP:{} params:{}",ip,JSONObject.toJSONString(awcApiRequestData));
+
         Object object = awcAeSexybcrtCallbackService.awcCallback(awcApiRequestData,ip);
         logger.info("awcCallBack  initGame 回调返回数据, params:{}",object);
         return object;
