@@ -22,5 +22,5 @@ public interface GameParentPlatformMapper extends BaseMapper<GameParentPlatform>
      * @param platformReportDTO
      * @return
      */
-    Page<PlatformReportVo> findPlatformReport(Page<PlatformReportVo> page, PlatformReportDTO platformReportDTO);
+    Page<PlatformReportVo> findPlatformReport(@Param("page")Page<PlatformReportVo> page,@Param("dto") PlatformReportDTO platformReportDTO);
 }

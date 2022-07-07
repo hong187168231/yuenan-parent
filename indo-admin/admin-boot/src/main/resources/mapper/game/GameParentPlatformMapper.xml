@@ -56,10 +56,10 @@
             gpp.platform_en_name as platformEnName,
             gpp.platform_cn_name as platformCnName,
             gc.game_name as categoryName,
-            (SELECT COUNT(DISTINCT gt.user_id) FROM game_txns gt WHERE gt.platform=gpp.platform_code AND DATE_FORMAT(gt.create_time,'%Y-%m-%d')&gt;=#{beginTime} AND DATE_FORMAT(gt.create_time,'%Y-%m-%d')&lt;=#{endTime} ) as gamePeopleNum,
-            (SELECT SUM(gt.bet_amount) FROM game_txns gt WHERE gt.platform=gpp.platform_code AND DATE_FORMAT(gt.create_time,'%Y-%m-%d')&gt;=#{beginTime} AND DATE_FORMAT(gt.create_time,'%Y-%m-%d')&lt;=#{endTime} ) as betAmount,
-            (SELECT SUM(gt.winning_amount) FROM game_txns gt WHERE gt.platform=gpp.platform_code AND DATE_FORMAT(gt.create_time,'%Y-%m-%d')&gt;=#{beginTime} AND DATE_FORMAT(gt.create_time,'%Y-%m-%d')&lt;=#{endTime} ) as winningAmount,
-            (SELECT SUM(gt.winning_amount)*-1  FROM game_txns gt WHERE gt.platform=gpp.platform_code AND DATE_FORMAT(gt.create_time,'%Y-%m-%d')&gt;=#{beginTime} AND DATE_FORMAT(gt.create_time,'%Y-%m-%d')&lt;=#{endTime} ) as companyProfit
+            (SELECT COUNT(DISTINCT gt.user_id) FROM game_txns gt WHERE gt.platform=gpp.platform_code AND DATE_FORMAT(gt.create_time,'%Y-%m-%d')&gt;=#{dto.beginTime} AND DATE_FORMAT(gt.create_time,'%Y-%m-%d')&lt;=#{dto.endTime} ) as gamePeopleNum,
+            (SELECT SUM(gt.bet_amount) FROM game_txns gt WHERE gt.platform=gpp.platform_code AND DATE_FORMAT(gt.create_time,'%Y-%m-%d')&gt;=#{dto.beginTime} AND DATE_FORMAT(gt.create_time,'%Y-%m-%d')&lt;=#{dto.endTime} ) as betAmount,
+            (SELECT SUM(gt.winning_amount) FROM game_txns gt WHERE gt.platform=gpp.platform_code AND DATE_FORMAT(gt.create_time,'%Y-%m-%d')&gt;=#{dto.beginTime} AND DATE_FORMAT(gt.create_time,'%Y-%m-%d')&lt;=#{dto.endTime} ) as winningAmount,
+            (SELECT SUM(gt.winning_amount)*-1  FROM game_txns gt WHERE gt.platform=gpp.platform_code AND DATE_FORMAT(gt.create_time,'%Y-%m-%d')&gt;=#{dto.beginTime} AND DATE_FORMAT(gt.create_time,'%Y-%m-%d')&lt;=#{dto.endTime} ) as companyProfit
         FROM game_parent_platform gpp
         LEFT JOIN game_platform gp on gp.platform_code=gpp.platform_code
         LEFT JOIN game_category gc on gc.id=gp.category_id

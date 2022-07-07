@@ -75,8 +75,9 @@
         LEFT JOIN agent_relation  ar on c.datelist=ar.create_time
         LEFT JOIN agent_rebate_record arr on DATE_FORMAT(arr.create_time,'%Y-%m-%d')=c.datelist
         where 1=1
-        and c.datelist &gt;=#{beginTime}
-        and c.datelist &lt;=#{endTime}
+        and c.datelist &gt;=#{dto.beginTime}
+        and c.datelist &lt;=#{dto.endTime}
         GROUP BY c.datelist
+        ORDER BY c.datelist DESC
     </select>
 </mapper>

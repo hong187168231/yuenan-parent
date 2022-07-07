@@ -7,9 +7,6 @@ import java.math.BigDecimal;
 
 @Data
 public class PlatformReportVo {
-    @ApiModelProperty(value = "日期")
-    private String dataTime;
-
     @ApiModelProperty(value = "平台英文名")
     private String platformEnName;
 

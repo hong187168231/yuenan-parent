@@ -6,10 +6,8 @@ import com.indo.admin.modules.game.mapper.GameParentPlatformMapper;
 import com.indo.admin.modules.mem.mapper.MemBankMapper;
 import com.indo.admin.modules.pay.mapper.PayRechargeMapper;
 import com.indo.admin.modules.report.service.DataReportService;
-import com.indo.admin.pojo.dto.AgentReportDTO;
-import com.indo.admin.pojo.dto.MemReportDTO;
-import com.indo.admin.pojo.dto.PayRechargeReportDTO;
-import com.indo.admin.pojo.dto.PlatformReportDTO;
+import com.indo.admin.pojo.dto.*;
+import com.indo.admin.pojo.vo.TotalReportVo;
 import com.indo.admin.pojo.vo.agent.AgentReportVo;
 import com.indo.admin.pojo.vo.game.PlatformReportVo;
 import com.indo.admin.pojo.vo.mem.MemReportVo;
@@ -64,6 +62,14 @@ public class DataReportServiceImpl implements DataReportService {
         }
         Page<PlatformReportVo> page = new Page<>(platformReportDTO.getPage(), platformReportDTO.getLimit());
         return gameParentPlatformMapper.findPlatformReport(page,platformReportDTO);
+    }
+
+    @Override
+    public TotalReportVo findTotalReport(TotalReportDTO totalReportDTO) {
+        if(StringUtils.isEmpty(totalReportDTO.getBeginTime())||StringUtils.isEmpty(totalReportDTO.getEndTime())){
+            throw new BizException("查询时间不可为空");
+        }
+        return payRechargeMapper.findTotalReport(totalReportDTO);
     }
 
 }

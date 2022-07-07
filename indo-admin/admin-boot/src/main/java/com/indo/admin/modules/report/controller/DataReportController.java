@@ -3,10 +3,8 @@ package com.indo.admin.modules.report.controller;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.modules.mem.service.IMemBaseinfoService;
 import com.indo.admin.modules.report.service.DataReportService;
-import com.indo.admin.pojo.dto.AgentReportDTO;
-import com.indo.admin.pojo.dto.MemReportDTO;
-import com.indo.admin.pojo.dto.PayRechargeReportDTO;
-import com.indo.admin.pojo.dto.PlatformReportDTO;
+import com.indo.admin.pojo.dto.*;
+import com.indo.admin.pojo.vo.TotalReportVo;
 import com.indo.admin.pojo.vo.agent.AgentReportVo;
 import com.indo.admin.pojo.vo.game.PlatformReportVo;
 import com.indo.admin.pojo.vo.mem.MemReportVo;
@@ -20,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 
 /**
- * 数据报表c
+ * 数据报表
  */
 @Api(tags = "数据报表接口")
 @RestController
@@ -53,5 +51,11 @@ public class DataReportController {
     @GetMapping(value = "/findPlatformReportPage")
     public Result<Page<PlatformReportVo>> findPlatformReportPage(PlatformReportDTO platformReportDT) {
         return Result.success(dataReportService.findPlatformReportPage(platformReportDT));
+    }
+
+    @ApiOperation(value = "查询总表")
+    @GetMapping(value = "/findTotalReport")
+    public Result<TotalReportVo> findTotalReport(TotalReportDTO totalReportDTO) {
+        return Result.success(dataReportService.findTotalReport(totalReportDTO));
     }
 }
