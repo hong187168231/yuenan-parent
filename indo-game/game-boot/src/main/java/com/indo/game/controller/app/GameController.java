@@ -167,7 +167,7 @@ public class GameController {
             if (res) {
                 String ip = IPAddressUtil.getIpAddress(request);
                 Result resultInfo = null;
-                if (OpenAPIProperties.AWC_PLATFORM_CODE.equals(parentName)) {
+                if (OpenAPIProperties.AWC_PLATFORM_CODE.equals(parentName)) {//AE真人视讯
                     resultInfo = awcService.awcGame(loginUser, isMobileLogin, ip, platform, parentName);
                 }
                 if (OpenAPIProperties.UG_PLATFORM_CODE.equals(parentName)) {
@@ -192,7 +192,7 @@ public class GameController {
                 if (OpenAPIProperties.JDB_PLATFORM_CODE.equals(parentName)) {
                     resultInfo = jdbService.jdbGame(loginUser, isMobileLogin, ip, platform, parentName);
                 }
-                if (OpenAPIProperties.AE_PLATFORM_CODE.equals(parentName)) {
+                if (OpenAPIProperties.AE_PLATFORM_CODE.equals(parentName)) {//AE电子
                     resultInfo = aeService.aeGame(loginUser, isMobileLogin, ip, platform, parentName);
                 }
                 if (OpenAPIProperties.CQ_PLATFORM_CODE.equals(parentName)) {

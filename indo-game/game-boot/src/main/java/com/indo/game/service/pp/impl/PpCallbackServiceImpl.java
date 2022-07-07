@@ -310,11 +310,13 @@ public class PpCallbackServiceImpl implements PpCallbackService {
             txns.setStatus("Running");
             //余额
             txns.setBalance(balance);
-            //更新时间
-            String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
-            oldTxns.setUpdateTime(dateStr);
-            oldTxns.setStatus("Settle");
-            txnsMapper.updateById(oldTxns);
+            if (null != oldTxns) {
+                //更新时间
+                String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
+                oldTxns.setUpdateTime(dateStr);
+                oldTxns.setStatus("Settle");
+                txnsMapper.updateById(oldTxns);
+            }
             //投注 IP
             txns.setBetIp(ip);//  string 是 投注 IP
             int num = txnsMapper.insert(oldTxns);

@@ -158,6 +158,7 @@ public class AeServiceImpl implements AeService {
         builder.append(OpenAPIProperties.AE_MERCHANT_ID).append(platformGameParent.getCurrencyType()).append(currentTime);
         builder.append(cptOpenMemberm.getUserName()).append("0").append(params.get("device")).append(gamePlatform.getPlatformCode());
         builder.append(platformGameParent.getLanguageType()).append(Base64.getEncoder().encodeToString(OpenAPIProperties.AE_MERCHANT_KEY.getBytes()));
+        logger.info("aelog gameLogin登录用户加密前。 builder:{}", builder.toString());
         String sign = MD5.md5(builder.toString());
         params.put("gameId", gamePlatform.getPlatformCode());
         params.put("sign", sign);
@@ -167,7 +168,9 @@ public class AeServiceImpl implements AeService {
         try {
             StringBuilder apiUrl = new StringBuilder();
             apiUrl.append(OpenAPIProperties.AE_API_URL).append("/api/login");
+            logger.info("aelog gameLogin登录用户请求。 apiUrl:{},params:{},user:{}", apiUrl.toString(),jsonStr,cptOpenMemberm);
             aeApiResponseData = commonRequest(apiUrl.toString(), jsonStr, cptOpenMemberm.getUserId(), "gameLogin");
+            logger.info("aelog gameLogin登录用户返回。 aeApiResponseData:{}", JSONObject.toJSONString(aeApiResponseData));
         } catch (Exception e) {
             logger.error("aelog aeGameLogin:{}", e);
             e.printStackTrace();
@@ -200,6 +203,7 @@ public class AeServiceImpl implements AeService {
         StringBuilder builder = new StringBuilder();
         builder.append(OpenAPIProperties.AE_MERCHANT_ID).append(platformGameParent.getCurrencyType()).append(currentTime);
         builder.append(cptOpenMember.getUserName()).append(Base64.getEncoder().encodeToString(OpenAPIProperties.AE_MERCHANT_KEY.getBytes()));
+        logger.info("aelog createMember创建账号加密前。 builder:{}", builder.toString());
         String sign = MD5.md5(builder.toString());
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("merchantId", OpenAPIProperties.AE_MERCHANT_ID);
@@ -213,7 +217,9 @@ public class AeServiceImpl implements AeService {
         apiUrl.append(OpenAPIProperties.AE_API_URL).append("/api/register");
         AeApiResponseData aeApiResponseData = null;
         try {
+            logger.info("aelog createMember创建账号请求。 apiUrl:{},params:{},user:{}", apiUrl.toString(),jsonStr,cptOpenMember);
             aeApiResponseData = commonRequest(apiUrl.toString(), jsonStr, cptOpenMember.getUserId(), "createMember");
+            logger.info("aelog createMember创建账号返回。 aeApiResponseData:{}", JSONObject.toJSONString(aeApiResponseData));
         } catch (Exception e) {
             logger.error("aelog aeCeateMember:{}", e);
             e.printStackTrace();
@@ -235,6 +241,7 @@ public class AeServiceImpl implements AeService {
             String name = OpenAPIProperties.AE_MERCHANT_ID + "_" + loginUser.getAccount();
             builder.append(OpenAPIProperties.AE_MERCHANT_ID).append(platformGameParent.getCurrencyType()).append(currentTime);
             builder.append(name).append(Base64.getEncoder().encodeToString(OpenAPIProperties.AE_MERCHANT_KEY.getBytes()));
+            logger.info("aelog logout登出玩家加密前。 builder:{}", builder.toString());
             String sign = MD5.md5(builder.toString());
             Map<String, Object> params = new HashMap<String, Object>();
             params.put("merchantId", OpenAPIProperties.AE_MERCHANT_ID);
@@ -245,7 +252,9 @@ public class AeServiceImpl implements AeService {
             String jsonStr = JSON.toJSONString(params);
             StringBuilder apiUrl = new StringBuilder();
             apiUrl.append(OpenAPIProperties.AE_API_URL).append("/api/logout");
+            logger.info("aelog logout登出玩家请求。 apiUrl:{},params:{},user:{}", apiUrl.toString(),jsonStr,loginUser);
             AeApiResponseData aeApiResponseData = commonRequest(apiUrl.toString(), jsonStr, loginUser.getId().intValue(), "gameLogout");
+            logger.info("aelog logout登出玩家返回。 aeApiResponseData:{}", JSONObject.toJSONString(aeApiResponseData));
             if (null == aeApiResponseData) {
                 return Result.failed();
             }
@@ -267,14 +276,12 @@ public class AeServiceImpl implements AeService {
      * 公共请求
      */
     public AeApiResponseData commonRequest(String apiUrl, String jsonStr, Integer userId, String type) throws Exception {
-        logger.info("aelog {} commonRequest userId:{},paramsMap:{}", userId, jsonStr);
+
         AeApiResponseData aeApiResponseData = null;
         String resultString = GameUtil.doProxyPostJson(OpenAPIProperties.PROXY_HOST_NAME, OpenAPIProperties.PROXY_PORT, OpenAPIProperties.PROXY_TCP, apiUrl, jsonStr, type, userId);
         logger.info("aelog apiResponse:" + resultString);
         if (StringUtils.isNotEmpty(resultString)) {
             aeApiResponseData = JSONObject.parseObject(resultString, AeApiResponseData.class);
-            logger.info("aelog {}:commonRequest type:{}, operateFlag:{}, hostName:{}, params:{}, result:{}, awcApiResponse:{}",
-                    userId, type, null, jsonStr, resultString, JSONObject.toJSONString(aeApiResponseData));
         }
         return aeApiResponseData;
     }

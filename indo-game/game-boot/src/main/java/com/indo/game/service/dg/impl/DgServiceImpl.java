@@ -100,31 +100,21 @@ public class DgServiceImpl implements DgService {
                 cptOpenMember.setLoginTime(new Date());
                 cptOpenMember.setType(parentName);
                 //创建玩家
-                Result result = createMemberGame(gameParentPlatform, cptOpenMember);
+                return createMemberGame(gameParentPlatform, cptOpenMember);
             } else {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
                 logout(loginUser, platform, ip);
+                return gameLogin(gameParentPlatform, cptOpenMember);
             }
 
-            JSONObject apiResponseData = gameLogin(gameParentPlatform, cptOpenMember);
-            if (null == apiResponseData || !"0".equals(apiResponseData.getString("codeId"))) {
-                return Result.failed("g091087", "第三方请求异常！");
-            }
-            StringBuilder builder = new StringBuilder();
-            builder.append(apiResponseData.getJSONArray("list").get(0)).append(apiResponseData.getString("token"));
-            builder.append("&language=").append(gameParentPlatform.getLanguageType());
-            //登录
-            ApiResponseData responseData = new ApiResponseData();
-            responseData.setPathUrl(builder.toString());
-            return Result.success(responseData);
         } catch (Exception e) {
             e.printStackTrace();
             return Result.failed("g100104", "网络繁忙，请稍后重试！");
         }
     }
 
-    private JSONObject gameLogin(GameParentPlatform platformGameParent, CptOpenMember cptOpenMember) {
+    private Result gameLogin(GameParentPlatform platformGameParent, CptOpenMember cptOpenMember) {
         JSONObject map = new JSONObject();
         Integer random = RandomUtil.getRandomOne(6);
         StringBuilder stringBuilder = new StringBuilder();
@@ -142,11 +132,25 @@ public class DgServiceImpl implements DgService {
         JSONObject dgApiResponseData = null;
         try {
             dgApiResponseData = commonRequest(apiUrl.toString(), map, cptOpenMember.getUserId(), "createPgMember");
+
+            if (null != dgApiResponseData && "0".equals(dgApiResponseData.getString("codeId"))) {
+                StringBuilder builder = new StringBuilder();
+                builder.append(dgApiResponseData.getJSONArray("list").get(0)).append(dgApiResponseData.getString("token"));
+                builder.append("&language=").append(platformGameParent.getLanguageType());
+                //登录
+                ApiResponseData responseData = new ApiResponseData();
+                responseData.setPathUrl(builder.toString());
+                return Result.success(responseData);
+            }else if(null == dgApiResponseData){
+                return Result.failed();
+            }else {
+                return errorCode(dgApiResponseData.getString("codeId"), dgApiResponseData.getString("random"));
+            }
         } catch (Exception e) {
             logger.error("Dglog dgGameLoginr:{}", e);
             e.printStackTrace();
+            return Result.failed();
         }
-        return dgApiResponseData;
     }
 
     private JSONObject createDgMemberGame(CptOpenMember cptOpenMember, GameParentPlatform platformGameParent) {
@@ -183,13 +187,14 @@ public class DgServiceImpl implements DgService {
      */
     private Result createMemberGame(GameParentPlatform platformGameParent, CptOpenMember cptOpenMember) {
         JSONObject apiResponseData = createDgMemberGame(cptOpenMember, platformGameParent);
-        if (null == apiResponseData || !"0".equals(apiResponseData.getString("codeId"))) {
-            return Result.failed("g091087", "第三方请求异常！");
-        }
-        if (("0").equals(apiResponseData.getString("codeId"))) {
+        if (null != apiResponseData && "0".equals(apiResponseData.getString("codeId"))) {
             externalService.saveCptOpenMember(cptOpenMember);
+            return gameLogin(platformGameParent,cptOpenMember);
+        }else if(null == apiResponseData){
+            return Result.failed();
+        }else {
+            return errorCode(apiResponseData.getString("codeId"), apiResponseData.getString("random"));
         }
-        return Result.success();
     }
 
 
@@ -210,18 +215,18 @@ public class DgServiceImpl implements DgService {
             StringBuilder apiUrl = new StringBuilder();
             apiUrl.append(OpenAPIProperties.DG_API_URL).append("/user/offline/").append(OpenAPIProperties.DG_AGENT_NAME);
             JSONObject apiResponseData = commonRequest(apiUrl.toString(), map, loginUser.getId().intValue(), "dgLogout");
-            if (null == apiResponseData || !"0".equals(apiResponseData.getString("codeId"))) {
-                return Result.failed();
-            }
-            if (("0").equals(apiResponseData.getString("codeId"))) {
+            if (null != apiResponseData && "0".equals(apiResponseData.getString("codeId"))) {
                 return Result.success();
+            }else if(null == apiResponseData){
+                return Result.failed();
+            }else {
+                return errorCode(apiResponseData.getString("codeId"), apiResponseData.getString("random"));
             }
         } catch (Exception e) {
             logger.error("Dglog  DgLogout:{}", e);
             e.printStackTrace();
             return Result.failed();
         }
-        return Result.failed();
     }
 
 
