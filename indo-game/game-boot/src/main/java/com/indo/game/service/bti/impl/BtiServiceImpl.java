@@ -78,14 +78,14 @@ public class BtiServiceImpl implements BtiService {
                 externalService.saveCptOpenMember(cptOpenMember);
                 // 请求URL
                 ApiResponseData responseData = new ApiResponseData();
-                responseData.setPathUrl(OpenAPIProperties.BTI_API_URL + "?operatorToken=" + cptOpenMember.getPassword());
+                responseData.setPathUrl(OpenAPIProperties.BTI_API_URL + "/en/sports/?operatorToken=" + cptOpenMember.getPassword());
                 return Result.success(responseData);
             } else {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
                 // 请求URL
                 ApiResponseData responseData = new ApiResponseData();
-                responseData.setPathUrl(OpenAPIProperties.BTI_API_URL + "?operatorToken=" + cptOpenMember.getPassword());
+                responseData.setPathUrl(OpenAPIProperties.BTI_API_URL + "/en/sports/?operatorToken=" + cptOpenMember.getPassword());
                 return Result.success(responseData);
 
             }

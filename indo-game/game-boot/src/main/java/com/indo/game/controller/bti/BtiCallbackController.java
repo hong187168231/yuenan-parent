@@ -25,7 +25,7 @@ public class BtiCallbackController {
     @Autowired
     private BtiCallbackService btiCallbackService;
 
-    @RequestMapping(value = "/ValidateToken", method = RequestMethod.GET,produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/ValidateToken", method = RequestMethod.GET,produces = "text/plain;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object validateToken(@RequestParam("auth_token") String authToken, HttpServletRequest request) {
@@ -36,7 +36,7 @@ public class BtiCallbackController {
         return object;
     }
 
-    @RequestMapping(value = "/Reserve", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/Reserve", method = RequestMethod.POST,produces = "text/plain;charset=UTF-8")
     @AllowAccess
     @ResponseBody
     public Object reserve(HttpServletRequest request) {
@@ -54,7 +54,7 @@ public class BtiCallbackController {
         return object;
     }
 
-    @RequestMapping(value = "/DebitReserve", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/DebitReserve", method = RequestMethod.POST,produces = "text/plain;charset=UTF-8")
     @AllowAccess
     @ResponseBody
     public Object debitReserve(HttpServletRequest request) {
@@ -74,7 +74,7 @@ public class BtiCallbackController {
     }
 
 
-    @RequestMapping(value = "/CancelReserve", method = RequestMethod.GET,produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/CancelReserve", method = RequestMethod.GET,produces = "text/plain;charset=UTF-8")
     @AllowAccess
     @ResponseBody
     public Object cancelReserve(HttpServletRequest request) {
@@ -92,7 +92,7 @@ public class BtiCallbackController {
         return object;
     }
 
-    @RequestMapping(value = "/CommitReserve", method = RequestMethod.GET,produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/CommitReserve", method = RequestMethod.GET,produces = "text/plain;charset=UTF-8")
     @AllowAccess
     @ResponseBody
     public Object commitReserve(HttpServletRequest request) {
@@ -110,7 +110,7 @@ public class BtiCallbackController {
         return object;
     }
 
-    @RequestMapping(value = "/DebitCustomer", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/DebitCustomer", method = RequestMethod.POST,produces = "text/plain;charset=UTF-8")
     @AllowAccess
     @ResponseBody
     public Object debitCustomer(HttpServletRequest request) {
@@ -130,7 +130,7 @@ public class BtiCallbackController {
 
     }
 
-    @RequestMapping(value = "/CreditCustomer", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/CreditCustomer", method = RequestMethod.POST,produces = "text/plain;charset=UTF-8")
     @AllowAccess
     @ResponseBody
     public Object creditCustomer(HttpServletRequest request) {
