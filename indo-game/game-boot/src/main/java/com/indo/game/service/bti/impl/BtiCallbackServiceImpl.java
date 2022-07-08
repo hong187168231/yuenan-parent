@@ -77,10 +77,10 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
 //            btlCallBackValidateTokenResp.setCurrency_code();
 //            btlCallBackValidateTokenResp.setBalance();
             StringBuilder builder = new StringBuilder();
-            builder.append("error_code=");
-            builder.append("cust_id=").append(memBaseinfo.getAccount()).append("\n");
-            builder.append("cust_login=").append(memBaseinfo.getAccount()).append("\n");
-            builder.append("currency_code=").append(gameParentPlatform.getCurrencyType()).append("\n");
+            builder.append("error_code=0 ");
+            builder.append("cust_id=").append(memBaseinfo.getAccount()).append(" ");
+            builder.append("cust_login=").append(memBaseinfo.getAccount()).append(" ");
+            builder.append("currency_code=").append(gameParentPlatform.getCurrencyType()).append(" ");
             builder.append("balance=").append(memBaseinfo.getBalance());
             return builder;
         } catch (Exception e) {
