@@ -17,9 +17,6 @@ import com.indo.game.pojo.entity.manage.GameCategory;
 import com.indo.game.pojo.entity.manage.GameParentPlatform;
 import com.indo.game.pojo.entity.manage.GamePlatform;
 import com.indo.game.pojo.entity.manage.Txns;
-import com.indo.game.pojo.vo.callback.btl.BtlCallBackParentErrorResp;
-import com.indo.game.pojo.vo.callback.btl.BtlCallBackCommResp;
-import com.indo.game.pojo.vo.callback.btl.BtlCallBackValidateTokenResp;
 import com.indo.game.service.bti.BtiCallbackService;
 import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
@@ -68,21 +65,13 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             if (null == memBaseinfo) {
                 return initFailureResponse(-2, "用户不存在");
             }
-            BtlCallBackValidateTokenResp btlCallBackValidateTokenResp = new BtlCallBackValidateTokenResp();
-            btlCallBackValidateTokenResp.setError_code(0);
-//            btlCallBackValidateTokenResp.setCust_id();
-//            btlCallBackValidateTokenResp.setCust_login();
-////            respJson.put("city", "");
-////            respJson.put("country", "");
-//            btlCallBackValidateTokenResp.setCurrency_code();
-//            btlCallBackValidateTokenResp.setBalance();
             StringBuilder builder = new StringBuilder();
             builder.append("error_code=0 ");
             builder.append("cust_id=").append(memBaseinfo.getAccount()).append(" ");
             builder.append("cust_login=").append(memBaseinfo.getAccount()).append(" ");
             builder.append("currency_code=").append(gameParentPlatform.getCurrencyType()).append(" ");
             builder.append("balance=").append(memBaseinfo.getBalance());
-            return builder;
+            return builder.toString();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return initFailureResponse(-1, e.getMessage());
@@ -207,11 +196,11 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
                 }
             }
 
-            BtlCallBackCommResp btlCallBackCommResp = new BtlCallBackCommResp();
-            btlCallBackCommResp.setError_code(0);
-            btlCallBackCommResp.setTrx_id(paySerialno);
-            btlCallBackCommResp.setBalance(balance);
-            return btlCallBackCommResp;
+            StringBuilder builder = new StringBuilder();
+            builder.append("error_code=0 ");
+            builder.append("trx_id=").append(paySerialno).append(" ");
+            builder.append("balance=").append(balance);
+            return builder.toString();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return initFailureResponse(-1, e.getMessage());
@@ -265,11 +254,11 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             txns.setCreateTime(dateStr);
             txnsMapper.insert(txns);
 
-            BtlCallBackCommResp btlCallBackCommResp = new BtlCallBackCommResp();
-            btlCallBackCommResp.setError_code(0);
-            btlCallBackCommResp.setTrx_id(reqId);
-            btlCallBackCommResp.setBalance(balance);
-            return btlCallBackCommResp;
+            StringBuilder builder = new StringBuilder();
+            builder.append("error_code=0 ");
+            builder.append("trx_id=").append(reqId).append(" ");
+            builder.append("balance=").append(balance);
+            return builder.toString();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return initFailureResponse(0, e.getMessage());
@@ -297,11 +286,11 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             // 查询用户请求订单
             Txns oldTxns = getTxns(platformGameParent, paySerialno, null);
             if (null == oldTxns) {
-                BtlCallBackCommResp btlCallBackCommResp = new BtlCallBackCommResp();
-                btlCallBackCommResp.setError_code(0);
-                btlCallBackCommResp.setBalance(memBaseinfo.getBalance());
-                btlCallBackCommResp.setError_message("Reserve was not found");
-                return btlCallBackCommResp;
+                StringBuilder builder = new StringBuilder();
+                builder.append("error_code=0 ");
+                builder.append("error_message=").append("Reserve was not found").append(" ");
+                builder.append("balance=").append(memBaseinfo.getBalance());
+                return builder.toString();
             }
 
             // 如果订单已经取消
@@ -335,10 +324,10 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             update(platformGameParent.getPlatformCode(), paySerialno, "Adjust");
 
             // 构建返回
-            BtlCallBackCommResp btlCallBackCommResp = new BtlCallBackCommResp();
-            btlCallBackCommResp.setError_code(0);
-            btlCallBackCommResp.setBalance(balance);
-            return btlCallBackCommResp;
+            StringBuilder builder = new StringBuilder();
+            builder.append("error_code=0 ");
+            builder.append("balance=").append(balance);
+            return builder.toString();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return initFailureResponse(-1, e.getMessage());
@@ -390,11 +379,11 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             // 更新预扣注单状态
             update(gameParentPlatform.getPlatformCode(), paySerialno, "Settle");
 
-            BtlCallBackCommResp btlCallBackCommResp = new BtlCallBackCommResp();
-            btlCallBackCommResp.setError_code(0);
-            btlCallBackCommResp.setTrx_id(reserveBetsRequest.getReserveId());
-            btlCallBackCommResp.setBalance(balance);
-            return btlCallBackCommResp;
+            StringBuilder builder = new StringBuilder();
+            builder.append("error_code=0 ");
+            builder.append("trx_id=").append(reserveBetsRequest.getReserveId()).append(" ");
+            builder.append("balance=").append(balance);
+            return builder.toString();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return initFailureResponse(0, e.getMessage());
@@ -498,11 +487,11 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             txns.setBetIp(ip);//  string 是 投注 IP
             txnsMapper.insert(txns);
 
-            BtlCallBackCommResp btlCallBackCommResp = new BtlCallBackCommResp();
-            btlCallBackCommResp.setError_code(0);
-            btlCallBackCommResp.setTrx_id(reqId);
-            btlCallBackCommResp.setBalance(balance);
-            return btlCallBackCommResp;
+            StringBuilder builder = new StringBuilder();
+            builder.append("error_code=0 ");
+            builder.append("trx_id=").append(reqId).append(" ");
+            builder.append("balance=").append(balance);
+            return builder.toString();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return initFailureResponse(0, e.getMessage());
@@ -605,11 +594,11 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             txns.setBetIp(ip);//  string 是 投注 IP
             txnsMapper.insert(txns);
 
-            BtlCallBackCommResp btlCallBackCommResp = new BtlCallBackCommResp();
-            btlCallBackCommResp.setError_code(0);
-            btlCallBackCommResp.setTrx_id(reqId);
-            btlCallBackCommResp.setBalance(balance);
-            return btlCallBackCommResp;
+            StringBuilder builder = new StringBuilder();
+            builder.append("error_code=0 ");
+            builder.append("trx_id=").append(reqId).append(" ");
+            builder.append("balance=").append(balance);
+            return builder.toString();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return initFailureResponse(0, e.getMessage());
@@ -718,11 +707,11 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
      * @param description 错误描述
      * @return JSONObject
      */
-    private BtlCallBackParentErrorResp initFailureResponse(Integer error, String description) {
-        BtlCallBackParentErrorResp btlCallBackParentErrorResp = new BtlCallBackParentErrorResp();
-        btlCallBackParentErrorResp.setError_code(error);
-        btlCallBackParentErrorResp.setError_message(description);
-        return btlCallBackParentErrorResp;
+    private String initFailureResponse(Integer error, String description) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("error_code=").append(error).append(" ");
+        builder.append("error_message=").append(description).append(" ");
+        return builder.toString();
     }
 
     private GameParentPlatform getGameParentPlatform() {
