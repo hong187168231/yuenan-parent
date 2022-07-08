@@ -69,8 +69,8 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             JSONObject respJson = initSuccessResponse();
             respJson.put("cust_id", memBaseinfo.getAccount());
             respJson.put("cust_login", memBaseinfo.getAccount());
-            respJson.put("city", "");
-            respJson.put("country", "");
+//            respJson.put("city", "");
+//            respJson.put("country", "");
             respJson.put("currency_code", gameParentPlatform.getCurrencyType());
             respJson.put("balance", memBaseinfo.getBalance());
 

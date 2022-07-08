@@ -87,17 +87,13 @@ public class CmdServiceImpl implements CmdService {
                 String returnResult = GameUtil.httpGetWithCookies(getLoginOutUrl(loginUser.getAccount()), null, null);
                 JSONObject result = JSONObject.parseObject(returnResult);
 
-                if (0 == result.getInteger("Code")) {
-                    logger.info("cmd体育log  登录cmdGame输入 urlapi:{}",getStartGame(cptOpenMember, gameParentPlatform.getCurrencyType(), gameParentPlatform.getLanguageType(), isMobileLogin));
-                    // 请求URL
-                    ApiResponseData responseData = new ApiResponseData();
-                    responseData.setPathUrl(getStartGame(cptOpenMember, gameParentPlatform.getCurrencyType(),
-                            gameParentPlatform.getLanguageType(), isMobileLogin));
-                    logger.info("cmd体育log  登录cmdGame返回 responseData:{}",responseData);
-                    return Result.success(responseData);
-                } else {
-                    return errorCode(result.getString("Code"), result.getString("Message"));
-                }
+                logger.info("cmd体育log  登录cmdGame输入 urlapi:{}",getStartGame(cptOpenMember, gameParentPlatform.getCurrencyType(), gameParentPlatform.getLanguageType(), isMobileLogin));
+                // 请求URL
+                ApiResponseData responseData = new ApiResponseData();
+                responseData.setPathUrl(getStartGame(cptOpenMember, gameParentPlatform.getCurrencyType(),
+                        gameParentPlatform.getLanguageType(), isMobileLogin));
+                logger.info("cmd体育log  登录cmdGame返回 responseData:{}",responseData);
+                return Result.success(responseData);
 
             }
 
