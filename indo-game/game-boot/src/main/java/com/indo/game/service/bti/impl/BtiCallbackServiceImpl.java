@@ -70,14 +70,19 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             }
             BtlCallBackValidateTokenResp btlCallBackValidateTokenResp = new BtlCallBackValidateTokenResp();
             btlCallBackValidateTokenResp.setError_code(0);
-            btlCallBackValidateTokenResp.setCust_id(memBaseinfo.getAccount());
-            btlCallBackValidateTokenResp.setCust_login(memBaseinfo.getAccount());
-//            respJson.put("city", "");
-//            respJson.put("country", "");
-            btlCallBackValidateTokenResp.setCurrency_code(gameParentPlatform.getCurrencyType());
-            btlCallBackValidateTokenResp.setBalance(memBaseinfo.getBalance());
-
-            return btlCallBackValidateTokenResp;
+//            btlCallBackValidateTokenResp.setCust_id();
+//            btlCallBackValidateTokenResp.setCust_login();
+////            respJson.put("city", "");
+////            respJson.put("country", "");
+//            btlCallBackValidateTokenResp.setCurrency_code();
+//            btlCallBackValidateTokenResp.setBalance();
+            StringBuilder builder = new StringBuilder();
+            builder.append("error_code=");
+            builder.append("cust_id=").append(memBaseinfo.getAccount()).append("\n");
+            builder.append("cust_login=").append(memBaseinfo.getAccount()).append("\n");
+            builder.append("currency_code=").append(gameParentPlatform.getCurrencyType()).append("\n");
+            builder.append("balance=").append(memBaseinfo.getBalance());
+            return builder;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return initFailureResponse(-1, e.getMessage());
