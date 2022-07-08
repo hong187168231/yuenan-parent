@@ -157,7 +157,7 @@ public class T9ServiceImpl implements T9Service {
             params.put("gameCode", gameCode);
             params.put("isAPP", isAPP);
             params.put("hasLogo", true);
-//            params.put("walletType", 2);
+            params.put("walletType", 2);
             params.put("checkValue", getCheckValue(playerID, gameCode));
             logger.info("T9log  getPlayerGameUrl启动游戏获取游戏URL urlapi:{},paramsMap:{},loginUser:{}", getStartGameUrl(), params,playerID);
             t9ApiResponseData = commonRequest(getStartGameUrl(), params, playerID);
