@@ -26,7 +26,6 @@ public class BtiCallbackController {
     private BtiCallbackService btiCallbackService;
 
     @RequestMapping(value = "/ValidateToken", method = RequestMethod.GET,produces = "text/plain;charset=UTF-8")
-    @ResponseBody
     @AllowAccess
     public Object validateToken(@RequestParam("auth_token") String authToken, HttpServletRequest request) {
         String ip = IPAddressUtil.getIpAddress(request);
@@ -38,7 +37,6 @@ public class BtiCallbackController {
 
     @RequestMapping(value = "/reserve", method = RequestMethod.POST,produces = "text/plain;charset=UTF-8")
     @AllowAccess
-    @ResponseBody
     public Object reserve(HttpServletRequest request) {
         String ip = IPAddressUtil.getIpAddress(request);
         BtiReserveBetsRequest reserveBetsRequest = null;
@@ -56,7 +54,6 @@ public class BtiCallbackController {
 
     @RequestMapping(value = "/debitreserve", method = RequestMethod.POST,produces = "text/plain;charset=UTF-8")
     @AllowAccess
-    @ResponseBody
     public Object debitReserve(HttpServletRequest request) {
         String ip = IPAddressUtil.getIpAddress(request);
         String reqId = request.getParameter("req_id");
@@ -76,7 +73,6 @@ public class BtiCallbackController {
 
     @RequestMapping(value = "/cancelreserve", method = RequestMethod.GET,produces = "text/plain;charset=UTF-8")
     @AllowAccess
-    @ResponseBody
     public Object cancelReserve(HttpServletRequest request) {
         String ip = IPAddressUtil.getIpAddress(request);
         BtiReserveBetsRequest reserveBetsRequest = null;
@@ -94,7 +90,6 @@ public class BtiCallbackController {
 
     @RequestMapping(value = "/commitreserve", method = RequestMethod.GET,produces = "text/plain;charset=UTF-8")
     @AllowAccess
-    @ResponseBody
     public Object commitReserve(HttpServletRequest request) {
         String ip = IPAddressUtil.getIpAddress(request);
         BtiReserveBetsRequest reserveBetsRequest = null;
@@ -112,7 +107,6 @@ public class BtiCallbackController {
 
     @RequestMapping(value = "/debitcustomer", method = RequestMethod.POST,produces = "text/plain;charset=UTF-8")
     @AllowAccess
-    @ResponseBody
     public Object debitCustomer(HttpServletRequest request) {
         String ip = IPAddressUtil.getIpAddress(request);
         String reqId = request.getParameter("req_id");
@@ -132,7 +126,6 @@ public class BtiCallbackController {
 
     @RequestMapping(value = "/creditcustomer", method = RequestMethod.POST,produces = "text/plain;charset=UTF-8")
     @AllowAccess
-    @ResponseBody
     public Object creditCustomer(HttpServletRequest request) {
         String ip = IPAddressUtil.getIpAddress(request);
         String reqId = request.getParameter("req_id");
