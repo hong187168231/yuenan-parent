@@ -103,10 +103,18 @@ public class PgServiceImpl implements PgService {
             }
 
             StringBuilder builder = new StringBuilder();
-            builder.append(OpenAPIProperties.PG_LOGIN_URL).append("/web-lobby/games/?");
-            builder.append("operator_token=").append(OpenAPIProperties.PG_API_TOKEN);
-            builder.append("&operator_player_session=").append(cptOpenMember.getPassword());
-            builder.append("&language=").append(gameParentPlatform.getLanguageType());
+            if("Y".equals(OpenAPIProperties.PG_IS_PLATFORM_LOGIN)) {
+                builder.append(OpenAPIProperties.PG_LOGIN_URL).append("/web-lobby/games/?");
+                builder.append("operator_token=").append(OpenAPIProperties.PG_API_TOKEN);
+                builder.append("&operator_player_session=").append(cptOpenMember.getPassword());
+                builder.append("&language=").append(gameParentPlatform.getLanguageType());
+            }else {
+                builder.append(OpenAPIProperties.PG_LOGIN_URL).append("/"+gamePlatform.getPlatformCode()+"/index.html/?");
+                builder.append("btt=1");//游戏启动模式3
+                builder.append("ot=").append(OpenAPIProperties.PG_API_TOKEN);//运营商独有的身份识别
+                builder.append("&ops=").append(cptOpenMember.getPassword());//运营商系统生成的令牌
+                builder.append("& =").append(gameParentPlatform.getLanguageType());//游戏显示语言
+            }
             logger.info("pglog  pgGame登录玩家 urlapi:{}", builder.toString(),cptOpenMember);
             //登录
             ApiResponseData responseData = new ApiResponseData();
@@ -124,16 +132,26 @@ public class PgServiceImpl implements PgService {
      */
     private Result createMemberGame(GameParentPlatform platformGameParent, GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember, String isMobileLogin) {
         PgApiResponseData pgApiResponseData = createMember(platformGameParent, gamePlatform, ip, cptOpenMember, isMobileLogin);
-        if (null == pgApiResponseData || null == pgApiResponseData.getData()) {
+        if (null == pgApiResponseData ) {
             return Result.failed("g091087", "第三方请求异常！");
         }
-        JSONObject jsonDataObject = JSON.parseObject(pgApiResponseData.getData());
-        JSONObject jsonStatusObject = JSON.parseObject(pgApiResponseData.getError());
+        JSONObject jsonDataObject = null;
+        JSONObject jsonStatusObject = null;
+        if(null!=pgApiResponseData.getData()){
+            jsonDataObject = JSON.parseObject(pgApiResponseData.getData());
+        }
+        if(null!=pgApiResponseData.getError()){
+            jsonStatusObject = JSON.parseObject(pgApiResponseData.getError());
+        }
         if (null!=jsonDataObject&&("1").equals(jsonDataObject.getString("action_result"))) {
             externalService.saveCptOpenMember(cptOpenMember);
             return Result.success();
         } else {
-            return errorCode(jsonStatusObject.getString("code"), jsonStatusObject.getString("message"));
+            if(null!=jsonStatusObject){
+                return errorCode(jsonStatusObject.getString("code"), jsonStatusObject.getString("message"));
+            }else {
+                return Result.failed("g091087", "第三方请求异常！");
+            }
         }
     }
 
@@ -186,12 +204,22 @@ public class PgServiceImpl implements PgService {
             if (null == pgApiResponseData) {
                 return Result.failed();
             }
-            JSONObject jsonDataObject = JSON.parseObject(pgApiResponseData.getData());
-            JSONObject jsonStatusObject = JSON.parseObject(pgApiResponseData.getError());
+            JSONObject jsonDataObject = null;
+            JSONObject jsonStatusObject = null;
+            if(null!=pgApiResponseData.getData()){
+                jsonDataObject = JSON.parseObject(pgApiResponseData.getData());
+            }
+            if(null!=pgApiResponseData.getError()){
+                jsonStatusObject = JSON.parseObject(pgApiResponseData.getError());
+            }
             if (null!=jsonDataObject&&("1").equals(jsonDataObject.getString("action_result"))) {
                 return Result.success();
             } else {
-                return errorCode(jsonStatusObject.getString("code"), jsonStatusObject.getString("message"));
+                if(null!=jsonStatusObject){
+                    return errorCode(jsonStatusObject.getString("code"), jsonStatusObject.getString("message"));
+                }else {
+                    return Result.failed("g091087", "第三方请求异常！");
+                }
             }
         } catch (Exception e) {
             logger.error("pglog  pglog out:{}", e);
