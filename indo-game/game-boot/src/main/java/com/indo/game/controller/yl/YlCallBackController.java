@@ -11,7 +11,10 @@ import com.indo.game.service.yl.YlCallbackService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -32,11 +35,10 @@ public class YlCallBackController {
     @RequestMapping(value = "/settleFishBet", method = RequestMethod.GET,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object bet(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
+    public Object bet(YlCallBackReq ylCallBackReq, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("ylCallBack {} ylSettleFishBet回调,params:{}", JSONObject.toJSONString(jsonObject));
-        YlCallBackReq ylCallBackReq =  JSONObject.toJavaObject(jsonObject,YlCallBackReq.class);
+        logger.info("ylCallBack {} ylSettleFishBet回调,params:{}", JSONObject.toJSONString(ylCallBackReq));
         Object object = ylCallbackService.psBetCallback(ylCallBackReq, ip);
         logger.info("ylCallBack {} ylSettleFishBet回调返回数据 params:{}", object);
         return object;
@@ -50,10 +52,10 @@ public class YlCallBackController {
     @RequestMapping(value = "/voidFishBet", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object voidFishBet(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
+    public Object voidFishBet(YlCallBackReq ylCallBackReq, HttpServletRequest request) {
+
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("ylCallBack {} voidFishBet回调,params:{}", JSONObject.toJSONString(jsonObject));
-        YlCallBackReq ylCallBackReq  =  JSONObject.toJavaObject(jsonObject,YlCallBackReq.class);
+        logger.info("ylCallBack {} voidFishBet回调,params:{}", JSONObject.toJSONString(ylCallBackReq));
         Object object = ylCallbackService.ylVoidFishBetCallback(ylCallBackReq, ip);
         logger.info("ylCallBack {} voidFishBet回调返回数据 params:{}", object);
         return object;
@@ -67,10 +69,10 @@ public class YlCallBackController {
     @RequestMapping(value = "/GetBalance", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object getBalance(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
+    public Object getBalance(YlCallBackReq ylCallBackReq, HttpServletRequest request) {
+
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("ylCallBack {} ylGetBalance回调,params:{}", JSONObject.toJSONString(jsonObject));
-        YlCallBackReq ylCallBackReq = JSONObject.toJavaObject(jsonObject,YlCallBackReq.class);
+        logger.info("ylCallBack {} ylGetBalance回调,params:{}", JSONObject.toJSONString(ylCallBackReq));
         Object object = ylCallbackService.ylGetBalanceCallback(ylCallBackReq, ip);
         logger.info("ylCallBack {} ylGetBalance回调返回数据 params:{}", object);
         return object;
