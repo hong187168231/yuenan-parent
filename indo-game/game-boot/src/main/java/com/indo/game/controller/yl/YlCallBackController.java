@@ -11,10 +11,7 @@ import com.indo.game.service.yl.YlCallbackService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -32,18 +29,17 @@ public class YlCallBackController {
     @RequestMapping(value = "/callBack", method = RequestMethod.GET,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object callBack(YlCallBackReq ylCallBackReq, HttpServletRequest request) {
-
+    public Object callBack(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("ylCallBack callBack回调,params:{},IP:{}", JSONObject.toJSONString(ylCallBackReq),ip);
-        JSONObject jsonObject = JSONObject.parseObject(ylCallBackReq.getMessage());
+        logger.info("ylCallBack callBack回调,params:{},IP:{}", JSONObject.toJSONString(jsonObject),ip);
+        JSONObject jsonsubObject = JSONObject.parseObject(jsonObject.getString("message"));
         Object object = new Object();
-        if("getBalance".equals(jsonObject.getString("action"))){
-            object = this.getBalance(jsonObject);
-        }else if("settleFishBet".equals(jsonObject.getString("action"))){
-            object = this.bet(jsonObject);
-        }else if("voidFishBet".equals(jsonObject.getString("action"))){
-            object = this.voidFishBet(jsonObject);
+        if("getBalance".equals(jsonsubObject.getString("action"))){
+            object = this.getBalance(jsonsubObject);
+        }else if("settleFishBet".equals(jsonsubObject.getString("action"))){
+            object = this.bet(jsonsubObject);
+        }else if("voidFishBet".equals(jsonsubObject.getString("action"))){
+            object = this.voidFishBet(jsonsubObject);
         }
         return object;
     }
