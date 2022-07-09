@@ -176,7 +176,7 @@ public class ObServiceImpl implements ObService {
         if (null == obApiResponseData) {
             return Result.failed("g091087", "第三方请求异常！");
         }
-        if (("0000").equals(obApiResponseData.getCode())) {
+        if (("0000").equals(obApiResponseData.getCode())||("2003").equals(obApiResponseData.getCode())) {
             externalService.saveCptOpenMember(cptOpenMember);
             return initGame(platformGameParent, gamePlatform, cptOpenMember, isMobileLogin);
         } else {
