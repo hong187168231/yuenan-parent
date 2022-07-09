@@ -2,6 +2,7 @@ package com.indo.game.service.yl.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.indo.common.config.OpenAPIProperties;
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.common.utils.DateUtils;
@@ -10,6 +11,7 @@ import com.indo.game.pojo.dto.ps.PsCallBackParentReq;
 import com.indo.game.pojo.dto.yl.YlCallBackReq;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.game.pojo.entity.manage.GameCategory;
+import com.indo.game.pojo.entity.manage.GameParentPlatform;
 import com.indo.game.pojo.entity.manage.GamePlatform;
 import com.indo.game.pojo.entity.manage.Txns;
 import com.indo.game.service.common.GameCommonService;
@@ -66,7 +68,13 @@ public class YlCallbackServiceImpl implements YlCallbackService {
         try {
             String userId = jsonObject.getString("userId");
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(jsonObject.getString("userId"));
-            GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(jsonObject.getString("gameId"));
+            GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.YL_PLATFORM_CODE);
+            GamePlatform gamePlatform;
+            if("Y".equals(OpenAPIProperties.YL_IS_PLATFORM_LOGIN)){
+                gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(gameParentPlatform.getPlatformCode(),gameParentPlatform.getPlatformCode());
+            }else {
+                gamePlatform = gameCommonService.getGamePlatformByplatformCode(jsonObject.getString("gameId"));
+            }
             GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
             BigDecimal betMoney = jsonObject.getBigDecimal("requireAmount");
             BigDecimal balance = memBaseinfo.getBalance();
@@ -79,7 +87,7 @@ public class YlCallbackServiceImpl implements YlCallbackService {
             String txId = jsonObject.getString("txId");
             LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
             wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Adjust Bet"));
-            wrapper.eq(Txns::getPlatform, jsonObject.getString("gameId"));
+            wrapper.eq(Txns::getPlatform, gameParentPlatform.getPlatformCode());
             wrapper.eq(Txns::getStatus, "Running");
             wrapper.eq(Txns::getPlatformTxId, txId);
             wrapper.eq(Txns::getUserId, memBaseinfo.getId());
@@ -109,59 +117,67 @@ public class YlCallbackServiceImpl implements YlCallbackService {
             gameCommonService.updateUserBalance(memBaseinfo, betAmount.abs(), GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
 
             Txns txns = new Txns();
-            //游戏商注单号
-            txns.setPlatformTxId(txId);
-            //此交易是否是投注 true是投注 false 否
-            //玩家 ID
-            txns.setUserId(userId);
-            //玩家货币代码
-            txns.setCurrency(jsonObject.getString("currency"));
-            //平台代码
-            txns.setPlatform(jsonObject.getString("gameId"));
-            //平台英文名称
-            //平台游戏类型
-            txns.setGameType(gameCategory.getGameType());
-            //游戏分类ID
-            txns.setCategoryId(gameCategory.getId());
-            //游戏分类名称
-            txns.setCategoryName(gameCategory.getGameName());
-            //平台游戏代码
-            txns.setGameCode(gamePlatform.getPlatformCode());
-            //游戏名称
-            txns.setGameName(gamePlatform.getPlatformEnName());
-            //下注金额
-            txns.setBetAmount(betAmount);
-            //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
-            txns.setWinningAmount(winAmount);
-            //玩家下注时间transTime
-            txns.setBetTime(DateUtils.format(jsonObject.getDate("transTime"), DateUtils.newFormat));
-            //真实下注金额,需增加在玩家的金额
-            txns.setRealBetAmount(betAmount);
-            //真实返还金额,游戏赢分
-            txns.setRealWinAmount(winAmount);
-            //返还金额 (包含下注金额)
-            //赌注的结果 : 赢:0,输:1,平手:2
-            int resultTyep;
-            if (winAmount.compareTo(BigDecimal.ZERO) == 1) {
-                resultTyep = 0;
-            } else {
-                resultTyep = 1;
+            if(null!=oldTxns) {
+                BeanUtils.copyProperties(oldTxns, txns);
+            }else {
+                //游戏商注单号
+                txns.setPlatformTxId(txId);
+                //此交易是否是投注 true是投注 false 否
+                //玩家 ID
+                txns.setUserId(userId);
+                //玩家货币代码
+                txns.setCurrency(gameParentPlatform.getCurrencyType());
+                //平台代码
+                txns.setPlatform(gameParentPlatform.getPlatformCode());
+                //平台名称
+                txns.setPlatformEnName(gameParentPlatform.getPlatformEnName());
+                txns.setPlatformCnName(gameParentPlatform.getPlatformCnName());
+                //平台游戏类型
+                txns.setGameType(gameCategory.getGameType());
+                //游戏分类ID
+                txns.setCategoryId(gameCategory.getId());
+                //游戏分类名称
+                txns.setCategoryName(gameCategory.getGameName());
+                //平台游戏代码
+                txns.setGameCode(gamePlatform.getPlatformCode());
+                //游戏名称
+                txns.setGameName(gamePlatform.getPlatformEnName());
+                //下注金额
+                txns.setBetAmount(betAmount);
+                //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
+                txns.setWinningAmount(winAmount);
+                //玩家下注时间transTime
+                txns.setBetTime(DateUtils.format(jsonObject.getDate("transTime"), DateUtils.newFormat));
+                //真实下注金额,需增加在玩家的金额
+                txns.setRealBetAmount(betAmount);
+                //真实返还金额,游戏赢分
+                txns.setRealWinAmount(winAmount);
+                //返还金额 (包含下注金额)
+                //赌注的结果 : 赢:0,输:1,平手:2
+                int resultTyep;
+                if (winAmount.compareTo(BigDecimal.ZERO) == 1) {
+                    resultTyep = 0;
+                } else {
+                    resultTyep = 1;
+                }
+                txns.setResultType(resultTyep);
+                //有效投注金额 或 投注面值
+                txns.setTurnover(betAmount);
+                //辨认交易时间依据
+                txns.setTxTime(null != jsonObject.getDate("transTime") ? DateUtils.format(jsonObject.getDate("transTime"), DateUtils.newFormat) : "");
+                //操作名称
+                txns.setMethod("Place Bet");
+                txns.setStatus("Running");
+                //余额
+                txns.setBalance(balance);
+                //创建时间
+                String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
+                txns.setCreateTime(dateStr);
             }
-            txns.setResultType(resultTyep);
-            //有效投注金额 或 投注面值
-            txns.setTurnover(betAmount);
-            //辨认交易时间依据
-            txns.setTxTime(null != jsonObject.getDate("transTime") ? DateUtils.format(jsonObject.getDate("transTime"), DateUtils.newFormat) : "");
-            //操作名称
-            txns.setMethod("Place Bet");
-            txns.setStatus("Running");
-            //余额
-            txns.setBalance(balance);
-            //创建时间
-            String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
-            txns.setCreateTime(dateStr);
             if (oldTxns != null) {
-                txns.setStatus("Settle");
+                //操作名称
+                txns.setMethod("Settle");
+                oldTxns.setStatus("Settle");
                 txnsMapper.updateById(oldTxns);
             }
             int num = txnsMapper.insert(txns);
