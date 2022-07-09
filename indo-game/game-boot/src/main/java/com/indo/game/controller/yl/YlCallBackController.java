@@ -26,7 +26,7 @@ public class YlCallBackController {
     /**
      * 回调
      */
-    @RequestMapping(value = "/callBack", method = RequestMethod.GET,produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/callBack", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object callBack(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
