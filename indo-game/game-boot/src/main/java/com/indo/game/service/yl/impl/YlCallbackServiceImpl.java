@@ -47,8 +47,7 @@ public class YlCallbackServiceImpl implements YlCallbackService {
 
 
     @Override
-    public Object ylGetBalanceCallback(YlCallBackReq ylCallBackReq, String ip) {
-        JSONObject jsonObject = JSONObject.parseObject(ylCallBackReq.getMessage());
+    public Object ylGetBalanceCallback(JSONObject jsonObject) {
         JSONObject dataJson = new JSONObject();
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(jsonObject.getString("userId"));
         if (null != memBaseinfo) {
@@ -62,10 +61,9 @@ public class YlCallbackServiceImpl implements YlCallbackService {
     }
 
     @Override
-    public Object psBetCallback(YlCallBackReq ylCallBackReq, String ip) {
+    public Object psBetCallback(JSONObject jsonObject) {
         JSONObject dataJson = new JSONObject();
         try {
-            JSONObject jsonObject = JSONObject.parseObject(ylCallBackReq.getMessage());
             String userId = jsonObject.getString("userId");
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(jsonObject.getString("userId"));
             GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(jsonObject.getString("gameId"));
@@ -162,8 +160,6 @@ public class YlCallbackServiceImpl implements YlCallbackService {
             //创建时间
             String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
             txns.setCreateTime(dateStr);
-            //投注 IP
-            txns.setBetIp(ip);//  string 是 投注 IP
             if (oldTxns != null) {
                 txns.setStatus("Settle");
                 txnsMapper.updateById(oldTxns);
@@ -187,10 +183,9 @@ public class YlCallbackServiceImpl implements YlCallbackService {
     }
 
     @Override
-    public Object ylVoidFishBetCallback(YlCallBackReq ylCallBackReq, String ip) {
+    public Object ylVoidFishBetCallback(JSONObject jsonObject) {
         JSONObject dataJson = new JSONObject();
         try {
-            JSONObject jsonObject = JSONObject.parseObject(ylCallBackReq.getMessage());
             String txId = jsonObject.getString("txId");
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(jsonObject.getString("userId"));
             LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
