@@ -8,10 +8,12 @@ import com.indo.game.common.util.PostRawParamsParseUtil;
 import com.indo.game.common.util.XmlUtil;
 import com.indo.game.pojo.dto.bti.BtiCreditRequest;
 import com.indo.game.pojo.dto.bti.BtiReserveBetsRequest;
+import com.indo.game.pojo.dto.bti.BtiReserveRequst;
 import com.indo.game.service.bti.BtiCallbackService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,16 +39,17 @@ public class BtiCallbackController {
 
     @RequestMapping(value = "/reserve", method = RequestMethod.POST,produces = "text/plain;charset=UTF-8")
     @AllowAccess
-    public Object reserve(HttpServletRequest request) {
+    public Object reserve(HttpServletRequest request, @Validated @RequestBody BtiReserveRequst btiReserveRequst) {
         String ip = IPAddressUtil.getIpAddress(request);
         BtiReserveBetsRequest reserveBetsRequest = null;
         try {
-            String params = PostRawParamsParseUtil.getRequestPostBytes(request);
-            reserveBetsRequest = (BtiReserveBetsRequest) XmlUtil.convertXmlStrToObject(BtiReserveBetsRequest.class, params);
+//            String params = PostRawParamsParseUtil.getRequestPostBytes(request);
+//            reserveBetsRequest = (BtiReserveBetsRequest) XmlUtil.convertXmlStrToObject(BtiReserveBetsRequest.class, params);
+            reserveBetsRequest = new BtiReserveBetsRequest();
         } catch (Exception e) {
             logger.error("BtiCallback reserve 转换失败", e);
         }
-        logger.info("BtiCallback reserve 回调, params:{}", JSONObject.toJSONString(reserveBetsRequest));
+        logger.info("BtiCallback reserve 回调, params:{}", JSONObject.toJSONString(btiReserveRequst));
         Object object = btiCallbackService.reserve(reserveBetsRequest, ip);
         logger.info("BtiCallback reserve 回调返回数据 params:{}", object);
         return object;
