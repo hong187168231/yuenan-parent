@@ -34,11 +34,10 @@ public class ObCallBackController {
     @RequestMapping(value = "/balance", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object getBalance(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
+    public Object getBalance(ObCallBackParentReq obCallBackParentReq, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("obCallBack {} GetBalance 回调,取得用户的余额 params:{}", JSONObject.toJSONString(jsonObject));
-        ObCallBackParentReq obCallBackParentReq = JSONObject.toJavaObject(jsonObject,ObCallBackParentReq.class);
+        logger.info("obCallBack {} GetBalance 回调,取得用户的余额 params:{}", JSONObject.toJSONString(obCallBackParentReq));
         Object object = obCallbackService.obBalanceCallback(obCallBackParentReq, ip);
         logger.info("obCallBack {} GetBalance 回调返回数据,取得用户的余额 params:{}", object);
         return object;
@@ -51,11 +50,10 @@ public class ObCallBackController {
     @RequestMapping(value = "/transfer", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object transfer(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
+    public Object transfer(ObCallBackParentReq obCallBackParentReq, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("obCallBack {} transfer回调,取得用户的余额 params:{}", JSONObject.toJSONString(jsonObject));
-        ObCallBackParentReq obCallBackParentReq = JSONObject.toJavaObject(jsonObject,ObCallBackParentReq.class);
+        logger.info("obCallBack {} transfer回调,取得用户的余额 params:{}", JSONObject.toJSONString(obCallBackParentReq));
         Object object = obCallbackService.obTransfer(obCallBackParentReq, ip);
         logger.info("obCallBack {} transfer回调返回数据,取得用户的余额 params:{}", object);
         return object;
@@ -67,11 +65,10 @@ public class ObCallBackController {
     @RequestMapping(value = "/transferstatus", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object transferStatus(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
+    public Object transferStatus(ObCallBackParentReq obCallBackParentReq, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("aeCallBack {} transferStatus回调,取得用户的余额 params:{}", JSONObject.toJSONString(jsonObject));
-        ObCallBackParentReq obCallBackParentReq = JSONObject.toJavaObject(jsonObject,ObCallBackParentReq.class);
+        logger.info("aeCallBack {} transferStatus回调,取得用户的余额 params:{}", JSONObject.toJSONString(obCallBackParentReq));
         Object object = obCallbackService.transferStatus(obCallBackParentReq, ip);
         logger.info("aeCallBack {} transferStatus回调返回数据,取得用户的余额 params:{}", object);
         return object;
