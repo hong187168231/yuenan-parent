@@ -71,8 +71,8 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             builder.append("cust_id=").append(memBaseinfo.getAccount()).append("\n");
             builder.append("balance=").append(memBaseinfo.getBalance()).append("\n");
             builder.append("cust_login=").append(memBaseinfo.getAccount()).append("\n");
-            builder.append("city=").append("").append("\n");
-            builder.append("country=").append(gameParentPlatform.getLanguageType()).append("\n");
+            builder.append("city=").append(gameParentPlatform.getCity()).append("\n");
+            builder.append("country=").append(gameParentPlatform.getCountry()).append("\n");
             builder.append("currency_code=").append(gameParentPlatform.getCurrencyType()).append("\n");
 
             return builder.toString();
