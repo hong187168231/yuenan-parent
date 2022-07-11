@@ -37,9 +37,9 @@ public class ObCallBackController {
     public Object getBalance(ObCallBackParentReq obCallBackParentReq, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("obCallBack {} GetBalance 回调,取得用户的余额 params:{}", JSONObject.toJSONString(obCallBackParentReq));
+        logger.info("obCallBack GetBalance 回调,取得用户的余额 params:{}", JSONObject.toJSONString(obCallBackParentReq));
         Object object = obCallbackService.obBalanceCallback(obCallBackParentReq, ip);
-        logger.info("obCallBack {} GetBalance 回调返回数据,取得用户的余额 params:{}", object);
+        logger.info("obCallBack GetBalance 回调返回数据,取得用户的余额 params:{}", object);
         return object;
     }
 
@@ -53,9 +53,9 @@ public class ObCallBackController {
     public Object transfer(ObCallBackParentReq obCallBackParentReq, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("obCallBack {} transfer回调,取得用户的余额 params:{}", JSONObject.toJSONString(obCallBackParentReq));
+        logger.info("obCallBack transfer回调,取得用户的余额 params:{}", JSONObject.toJSONString(obCallBackParentReq));
         Object object = obCallbackService.obTransfer(obCallBackParentReq, ip);
-        logger.info("obCallBack {} transfer回调返回数据,取得用户的余额 params:{}", object);
+        logger.info("obCallBack transfer回调返回数据,取得用户的余额 params:{}", object);
         return object;
     }
 
@@ -68,9 +68,9 @@ public class ObCallBackController {
     public Object transferStatus(ObCallBackParentReq obCallBackParentReq, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("aeCallBack {} transferStatus回调,取得用户的余额 params:{}", JSONObject.toJSONString(obCallBackParentReq));
+        logger.info("aeCallBack transferStatus回调,取得用户的余额 params:{}", JSONObject.toJSONString(obCallBackParentReq));
         Object object = obCallbackService.transferStatus(obCallBackParentReq, ip);
-        logger.info("aeCallBack {} transferStatus回调返回数据,取得用户的余额 params:{}", object);
+        logger.info("aeCallBack transferStatus回调返回数据,取得用户的余额 params:{}", object);
         return object;
     }
 }

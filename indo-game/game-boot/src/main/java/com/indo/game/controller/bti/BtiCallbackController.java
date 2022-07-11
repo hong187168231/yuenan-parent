@@ -39,7 +39,7 @@ public class BtiCallbackController {
 
     @RequestMapping(value = "/reserve", method = RequestMethod.POST,produces = "text/plain;charset=UTF-8")
     @AllowAccess
-    public Object reserve(HttpServletRequest request, @Validated @RequestBody BtiReserveRequst btiReserveRequst) {
+    public Object reserve(HttpServletRequest request, BtiReserveRequst btiReserveRequst) {
         String ip = IPAddressUtil.getIpAddress(request);
         BtiReserveBetsRequest reserveBetsRequest = null;
         try {
