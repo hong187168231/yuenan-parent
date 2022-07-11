@@ -66,10 +66,10 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
                 return initFailureResponse(-2, "用户不存在");
             }
             StringBuilder builder = new StringBuilder();
-            builder.append("error_code=0 ");
-            builder.append("cust_id=").append(memBaseinfo.getAccount()).append(" ");
-            builder.append("cust_login=").append(memBaseinfo.getAccount()).append(" ");
-            builder.append("currency_code=").append(gameParentPlatform.getCurrencyType()).append(" ");
+            builder.append("error_code=0\\n");
+            builder.append("cust_id=").append(memBaseinfo.getAccount()).append("\\n");
+            builder.append("cust_login=").append(memBaseinfo.getAccount()).append("\\n");
+            builder.append("currency_code=").append(gameParentPlatform.getCurrencyType()).append("\\n");
             builder.append("balance=").append(memBaseinfo.getBalance());
             return builder.toString();
         } catch (Exception e) {
@@ -197,8 +197,8 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             }
 
             StringBuilder builder = new StringBuilder();
-            builder.append("error_code=0 ");
-            builder.append("trx_id=").append(paySerialno).append(" ");
+            builder.append("error_code=0\\n");
+            builder.append("trx_id=").append(paySerialno).append("\\n");
             builder.append("balance=").append(balance);
             return builder.toString();
         } catch (Exception e) {
@@ -255,8 +255,8 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             txnsMapper.insert(txns);
 
             StringBuilder builder = new StringBuilder();
-            builder.append("error_code=0 ");
-            builder.append("trx_id=").append(reqId).append(" ");
+            builder.append("error_code=0\\n");
+            builder.append("trx_id=").append(reqId).append("\\n");
             builder.append("balance=").append(balance);
             return builder.toString();
         } catch (Exception e) {
@@ -287,8 +287,8 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             Txns oldTxns = getTxns(platformGameParent, paySerialno, null);
             if (null == oldTxns) {
                 StringBuilder builder = new StringBuilder();
-                builder.append("error_code=0 ");
-                builder.append("error_message=").append("Reserve was not found").append(" ");
+                builder.append("error_code=\\n");
+                builder.append("error_message=").append("Reserve was not found").append("\\n");
                 builder.append("balance=").append(memBaseinfo.getBalance());
                 return builder.toString();
             }
@@ -325,7 +325,7 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
 
             // 构建返回
             StringBuilder builder = new StringBuilder();
-            builder.append("error_code=0 ");
+            builder.append("error_code=0\\n");
             builder.append("balance=").append(balance);
             return builder.toString();
         } catch (Exception e) {
@@ -380,8 +380,8 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             update(gameParentPlatform.getPlatformCode(), paySerialno, "Settle");
 
             StringBuilder builder = new StringBuilder();
-            builder.append("error_code=0 ");
-            builder.append("trx_id=").append(reserveBetsRequest.getReserveId()).append(" ");
+            builder.append("error_code=0\\n");
+            builder.append("trx_id=").append(reserveBetsRequest.getReserveId()).append("\\n");
             builder.append("balance=").append(balance);
             return builder.toString();
         } catch (Exception e) {
@@ -488,8 +488,8 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             txnsMapper.insert(txns);
 
             StringBuilder builder = new StringBuilder();
-            builder.append("error_code=0 ");
-            builder.append("trx_id=").append(reqId).append(" ");
+            builder.append("error_code=0\\n");
+            builder.append("trx_id=").append(reqId).append("\\n");
             builder.append("balance=").append(balance);
             return builder.toString();
         } catch (Exception e) {
@@ -595,8 +595,8 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             txnsMapper.insert(txns);
 
             StringBuilder builder = new StringBuilder();
-            builder.append("error_code=0 ");
-            builder.append("trx_id=").append(reqId).append(" ");
+            builder.append("error_code=0\\n");
+            builder.append("trx_id=").append(reqId).append("\\n");
             builder.append("balance=").append(balance);
             return builder.toString();
         } catch (Exception e) {
@@ -709,8 +709,8 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
      */
     private String initFailureResponse(Integer error, String description) {
         StringBuilder builder = new StringBuilder();
-        builder.append("error_code=").append(error).append(" ");
-        builder.append("error_message=").append(description).append(" ");
+        builder.append("error_code=").append(error).append("\\n");
+        builder.append("error_message=").append(description).append("\\n");
         return builder.toString();
     }
 
