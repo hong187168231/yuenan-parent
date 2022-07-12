@@ -149,7 +149,7 @@ public class PpCallbackServiceImpl implements PpCallbackService {
             BigDecimal betAmount = ppBetCallBackReq.getAmount();
 
             // 查询用户请求订单
-            Txns oldTxns = getTxns(ppBetCallBackReq.getReference(), memBaseinfo.getId());
+            Txns oldTxns = getTxnsByRoundld(ppBetCallBackReq.getRoundId(), memBaseinfo.getId());
             if (null != oldTxns) {
                 JSONObject json = initSuccessResponse(ppBetCallBackReq.getReference(), platformGameParent.getCurrencyType(), balance);
                 json.put("usedPromo", BigDecimal.ZERO);
@@ -803,9 +803,20 @@ public class PpCallbackServiceImpl implements PpCallbackService {
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
         wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet")
                 .or().eq(Txns::getMethod, "Cancel Bet")
-                .or().eq(Txns::getMethod, "Adjust Bet"));
+                .or().eq(Txns::getMethod, "Settle"));
         wrapper.eq(Txns::getStatus, "Running");
         wrapper.eq(Txns::getPlatformTxId, reference);
+        wrapper.eq(Txns::getUserId, userId);
+        return txnsMapper.selectOne(wrapper);
+    }
+
+    private Txns getTxnsByRoundld(String roundld, Long userId) {
+        LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+        wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet")
+                .or().eq(Txns::getMethod, "Cancel Bet")
+                .or().eq(Txns::getMethod, "Settle"));
+        wrapper.eq(Txns::getStatus, "Running");
+        wrapper.eq(Txns::getRoundId, roundld);
         wrapper.eq(Txns::getUserId, userId);
         return txnsMapper.selectOne(wrapper);
     }
