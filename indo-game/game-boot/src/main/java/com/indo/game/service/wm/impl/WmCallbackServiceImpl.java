@@ -49,7 +49,7 @@ public class WmCallbackServiceImpl implements WmCallbackService {
                 return initFailureResponse(10303, "有此代理商ID,但代理商代码(signature)错误");
             }
 
-            if (null!=wmCallBackReq.getUser()&&!"".equals(wmCallBackReq.getUser())) {
+            if (null==wmCallBackReq.getUser() || "".equals(wmCallBackReq.getUser())) {
                 return initFailureResponse(10502, "帐号名不得为空");
             }
 
@@ -85,7 +85,7 @@ public class WmCallbackServiceImpl implements WmCallbackService {
                 return initFailureResponse(10303, "有此代理商ID,但代理商代码(signature)错误");
             }
 
-            if (null!=wmCallBackReq.getUser()&&!"".equals(wmCallBackReq.getUser())) {
+            if (null==wmCallBackReq.getUser() || "".equals(wmCallBackReq.getUser())) {
                 return initFailureResponse(10502, "帐号名不得为空");
             }
 
@@ -262,7 +262,7 @@ public class WmCallbackServiceImpl implements WmCallbackService {
                 return initFailureResponse(10303, "有此代理商ID,但代理商代码(signature)错误");
             }
 
-            if (null!=wmCallBackReq.getUser()&&!"".equals(wmCallBackReq.getUser())) {
+            if (null==wmCallBackReq.getUser() || "".equals(wmCallBackReq.getUser())) {
                 return initFailureResponse(10502, "帐号名不得为空");
             }
 
