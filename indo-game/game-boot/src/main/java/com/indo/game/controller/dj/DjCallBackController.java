@@ -28,7 +28,7 @@ public class DjCallBackController {
 
 
     /**
-     * 令牌验证
+     * 获取余额
      */
     @RequestMapping(value = "/get_balance.aspx", method = RequestMethod.GET,produces = "application/json;charset=UTF-8")
     @ResponseBody
@@ -36,9 +36,9 @@ public class DjCallBackController {
     public Object getBalance(DjCallBackParentReq djCallBackParentReq, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("DJCallBack {} verifyToken回调,params:{}", JSONObject.toJSONString(djCallBackParentReq));
+        logger.info("DJCallBack  getBalance回调,params:{},IP:{}", JSONObject.toJSONString(djCallBackParentReq),ip);
         Object object = djCallbackService.getBalance(djCallBackParentReq, ip);
-        logger.info("DJCallBack {} verifyToken回调返回数据 params:{}", object);
+        logger.info("DJCallBack getBalance回调返回数据 params:{}", object);
         return object;
     }
 
@@ -51,9 +51,9 @@ public class DjCallBackController {
     @AllowAccess
     public Object bet(DjCallBackParentReq djCallBackParentReq, HttpServletRequest request) {
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("psCallBack {} psBet回调,params:{}", JSONObject.toJSONString(djCallBackParentReq));
+        logger.info("psCallBack bet回调,params:{},IP:{}", JSONObject.toJSONString(djCallBackParentReq),ip);
         Object object = djCallbackService.djBetCallback(djCallBackParentReq, ip);
-        logger.info("psCallBack {} psBet回调返回数据 params:{}", object);
+        logger.info("psCallBack bet回调返回数据 params:{}", object);
         return object;
     }
 
@@ -69,9 +69,9 @@ public class DjCallBackController {
     public Object refund(DjCallBackParentReq djCallBackParentReq, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("psCallBack {} psRefundt回调,params:{}", JSONObject.toJSONString(djCallBackParentReq));
+        logger.info("psCallBack refund回调,params:{},IP:{}", JSONObject.toJSONString(djCallBackParentReq),ip);
         Object object = djCallbackService.djRefundtCallback(djCallBackParentReq, ip);
-        logger.info("psCallBack {} psRefundt回调返回数据 params:{}", object);
+        logger.info("psCallBack refund回调返回数据 params:{}", object);
         return object;
     }
 
