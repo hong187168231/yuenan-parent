@@ -37,14 +37,17 @@ public class WmCallbackController {
             e.printStackTrace();
             params = new JSONObject();
         }
-        logger.info("wmCallback callBack 回调请求, params:{}", params);
+        logger.info("wmCallback callBack 回调请求, params:{}", JSONObject.toJSONString(params));
         // 查询余额
         if ("CallBalance".equals(params.getString("cmd"))) {
+            logger.info("wmCallback getBalance 回调查询余额请求, params:{}", JSONObject.toJSONString(params));
             return callBalance(params, request);
         } else if ("PointInout".equals(params.getString("cmd"))) {
+            logger.info("wmCallback pointInout 回调下注请求,params:{}", JSONObject.toJSONString(params));
             // 下注,回奖
             return pointInout(params, request);
         } else if ("TimeoutBetReturn".equals(params.getString("cmd"))) {
+            logger.info("wmCallback timeoutBetReturn 回调回退余额请求, params:{}", JSONObject.toJSONString(params));
             // 回滚
             return timeoutBetReturn(params, request);
         }
@@ -58,26 +61,32 @@ public class WmCallbackController {
 
     private Object callBalance(JSONObject params, HttpServletRequest request) {
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("wmCallback getBalance 回调查询余额请求, params:{}", params);
+
         Object object = wmCallbackService.getBalance(params, ip);
-        logger.info("wmCallback getBalance 回调查询余额返回数据 params:{}", object);
+        logger.info("wmCallback getBalance 回调查询余额返回数据 params:{}", JSONObject.toJSONString(object));
         return object;
     }
 
     private Object pointInout(JSONObject params, HttpServletRequest request) {
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("wmCallback pointInout 回调下注请求,params:{}", params);
+
         Object object = wmCallbackService.pointInout(params, ip);
-        logger.info("wmCallback pointInout 回调下注返回数据 params:{}", object);
+        logger.info("wmCallback pointInout 回调下注返回数据 params:{}", JSONObject.toJSONString(object));
         return object;
     }
 
     private Object timeoutBetReturn(JSONObject params, HttpServletRequest request) {
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("wmCallback timeoutBetReturn 回调回退余额请求, params:{}", params);
+
         Object object = wmCallbackService.timeoutBetReturn(params, ip);
-        logger.info("wmCallback timeoutBetReturn 回调回退余额返回数据 params:{}", object);
+        logger.info("wmCallback timeoutBetReturn 回调回退余额返回数据 params:{}", JSONObject.toJSONString(object));
         return object;
     }
 
+    public static void main(String args[]){
+        String[] datas = "cmd=CallBalance&user=swuserid&signature=0ae2ecac3fd0bc37bc70f278cf875250&requestDate=2022-07-12+16%3A27%3A15".split("&");
+        for (String data : datas) {
+            System.out.println(data.split("=")[0]+"------------"+data.split("=")[1]);
+        }
+    }
 }
