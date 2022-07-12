@@ -149,7 +149,7 @@ public class PpCallbackServiceImpl implements PpCallbackService {
             BigDecimal betAmount = ppBetCallBackReq.getAmount();
 
             // 查询用户请求订单
-            Txns oldTxns = getTxnsByRoundld(ppBetCallBackReq.getRoundId(), memBaseinfo.getId());
+            Txns oldTxns = getTxnsByRoundld(ppBetCallBackReq.getRoundId(), memBaseinfo.getAccount());
             if (null != oldTxns) {
                 JSONObject json = initSuccessResponse(ppBetCallBackReq.getReference(), platformGameParent.getCurrencyType(), balance);
                 json.put("usedPromo", BigDecimal.ZERO);
@@ -258,7 +258,7 @@ public class PpCallbackServiceImpl implements PpCallbackService {
             // 会员余额
             BigDecimal balance = memBaseinfo.getBalance();
             // 查询用户请求订单
-            Txns oldTxns = getTxnsByRoundld(ppResultCallBackReq.getRoundId(), memBaseinfo.getId());
+            Txns oldTxns = getTxnsByRoundld(ppResultCallBackReq.getRoundId(), memBaseinfo.getAccount());
 //            if (null != oldTxns) {
 //                return initSuccessResponse(ppResultCallBackReq.getReference(), platformGameParent.getCurrencyType(), balance);
 //            }
@@ -375,7 +375,7 @@ public class PpCallbackServiceImpl implements PpCallbackService {
             }
 
             // 查询用户请求订单
-            Txns txns = getTxns(ppBonusWinCallBackReq.getReference(), memBaseinfo.getId());
+            Txns txns = getTxns(ppBonusWinCallBackReq.getReference(), memBaseinfo.getAccount());
             if (null != txns) {
                 return initSuccessResponse(ppBonusWinCallBackReq.getReference(), platformGameParent.getCurrencyType(), balance);
             }
@@ -503,7 +503,7 @@ public class PpCallbackServiceImpl implements PpCallbackService {
             }
 
             // 查询用户请求订单
-            Txns txns = getTxns(ppJackpotWinCallBackReq.getReference(), memBaseinfo.getId());
+            Txns txns = getTxns(ppJackpotWinCallBackReq.getReference(), memBaseinfo.getAccount());
             if (null != txns) {
                 return initSuccessResponse(ppJackpotWinCallBackReq.getReference(), platformGameParent.getCurrencyType(), balance);
             }
@@ -623,7 +623,7 @@ public class PpCallbackServiceImpl implements PpCallbackService {
             }
 
             // 查询用户请求订单
-            Txns txns = getTxns(ppPromoWinCallBackReq.getReference(), memBaseinfo.getId());
+            Txns txns = getTxns(ppPromoWinCallBackReq.getReference(), memBaseinfo.getAccount());
             if (null != txns) {
                 return initSuccessResponse(ppPromoWinCallBackReq.getReference(), platformGameParent.getCurrencyType(), balance);
             }
@@ -738,7 +738,7 @@ public class PpCallbackServiceImpl implements PpCallbackService {
             JSONObject json = initSuccessResponse();
             json.put("transactionId", ppRefundWinCallBackReq.getReference());
             // 查询用户请求订单
-            Txns oldTxns = getTxns(ppRefundWinCallBackReq.getReference(), memBaseinfo.getId());
+            Txns oldTxns = getTxns(ppRefundWinCallBackReq.getReference(), memBaseinfo.getAccount());
             if (null == oldTxns) {
                 return json;
             }
@@ -799,7 +799,7 @@ public class PpCallbackServiceImpl implements PpCallbackService {
      * @param userId    会员ID
      * @return 订单
      */
-    private Txns getTxns(String reference, Long userId) {
+    private Txns getTxns(String reference, String userId) {
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
         wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet")
                 .or().eq(Txns::getMethod, "Cancel Bet")
@@ -810,7 +810,7 @@ public class PpCallbackServiceImpl implements PpCallbackService {
         return txnsMapper.selectOne(wrapper);
     }
 
-    private Txns getTxnsByRoundld(String roundld, Long userId) {
+    private Txns getTxnsByRoundld(String roundld, String userId) {
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
         wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet")
                 .or().eq(Txns::getMethod, "Cancel Bet")
