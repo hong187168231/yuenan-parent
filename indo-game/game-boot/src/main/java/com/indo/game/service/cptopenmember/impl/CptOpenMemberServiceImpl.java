@@ -33,7 +33,7 @@ public class CptOpenMemberServiceImpl implements CptOpenMemberService {
         CptOpenMember cptOpenMember = null;
         if (userAcct != null && StringUtils.isNotBlank(type)) {
             LambdaQueryWrapper<CptOpenMember> wrapper = new LambdaQueryWrapper();
-            wrapper.eq(CptOpenMember::getLoginTime, userAcct);
+            wrapper.eq(CptOpenMember::getUserName, userAcct);
             wrapper.eq(CptOpenMember::getType, type);
             cptOpenMember = cptOpenMemberMapper.selectOne(wrapper);
         }
