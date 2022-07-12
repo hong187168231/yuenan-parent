@@ -58,8 +58,9 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
                 return initFailureResponse(1049, "会员不存在");
             }
 
-            JSONObject jsonObject1 = initSuccessResponse();
+            JSONObject jsonObject1 = initSuccessResponse(params.getString("uuid"));
             jsonObject1.put("sid", params.get("sid"));
+
             return jsonObject1;
 
         } catch (Exception e) {
@@ -89,8 +90,9 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             }
 
             // 会员余额返回
-            JSONObject jsonObject1 = initSuccessResponse();
+            JSONObject jsonObject1 = initSuccessResponse(params.getString("uuid"));
             jsonObject1.put("balance", memBaseinfo.getBalance());
+            jsonObject1.put("bonus", 0);
             return jsonObject1;
         } catch (Exception e) {
             return initFailureResponse(1049, e.getMessage());
@@ -207,8 +209,9 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
                 return initFailureResponse(1049, "订单入库请求失败");
             }
 
-            JSONObject jsonObject1 = initSuccessResponse();
+            JSONObject jsonObject1 = initSuccessResponse(params.getString("uuid"));
             jsonObject1.put("balance", memBaseinfo.getBalance());
+            jsonObject1.put("bonus", 0);
             return jsonObject1;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -295,8 +298,9 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
                 return initFailureResponse(1001, "订单派奖请求失败");
             }
 
-            JSONObject jsonObject1 = initSuccessResponse();
+            JSONObject jsonObject1 = initSuccessResponse(params.getString("uuid"));
             jsonObject1.put("balance", balance);
+            jsonObject1.put("bonus", 0);
             return jsonObject1;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -357,8 +361,9 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             oldTxns.setUpdateTime(dateStr);
             txnsMapper.updateById(oldTxns);
 
-            JSONObject jsonObject1 = initSuccessResponse();
+            JSONObject jsonObject1 = initSuccessResponse(params.getString("uuid"));
             jsonObject1.put("balance", balance);
+            jsonObject1.put("bonus", 0);
             return jsonObject1;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -521,8 +526,9 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
                 return initFailureResponse(100, "活动派奖订单入库请求失败");
             }
 
-            JSONObject jsonObject1 = initSuccessResponse();
+            JSONObject jsonObject1 = initSuccessResponse(params.getString("uuid"));
             jsonObject1.put("balance", balance);
+            jsonObject1.put("bonus", 0);
             return jsonObject1;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -570,10 +576,10 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
      *
      * @return JSONObject
      */
-    private JSONObject initSuccessResponse() {
+    private JSONObject initSuccessResponse(String uuid) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("status", "OK");
-        jsonObject.put("uuid", GeneratorIdUtil.generateId());
+        jsonObject.put("uuid", uuid);
         return jsonObject;
     }
 

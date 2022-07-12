@@ -290,7 +290,7 @@ public class GameController {
 
     @ApiOperation(value = "强迫登出玩家", httpMethod = "POST")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "platform", value = "第三方游戏平台代码 ", paramType = "query", dataType = "string", required = true)
+            @ApiImplicitParam(name = "platform", value = "第三方平台代码 ", paramType = "query", dataType = "string", required = true)
     })
     @PostMapping(value ="/logoutPlatform",produces = "application/json;charset=UTF-8")
     @ResponseBody
