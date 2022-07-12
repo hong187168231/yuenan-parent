@@ -81,7 +81,7 @@ public class DgCallbackServiceImpl implements DgCallbackService {
         JSONObject dataJson = new JSONObject();
         BigDecimal balance = memBaseinfo.getBalance();
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
-        wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Adjust Bet"));
+        wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Settle"));
         wrapper.eq(Txns::getStatus, "Running");
         wrapper.eq(Txns::getPlatformTxId, dgCallBackReq.getData());
         
@@ -92,78 +92,89 @@ public class DgCallbackServiceImpl implements DgCallbackService {
             return dataJson;
         }
 
-        if (dgMemberCallBackReq.getAmount().compareTo(BigDecimal.ZERO) == 1) {//赢
-            balance = balance.add(dgMemberCallBackReq.getAmount());
-            gameCommonService.updateUserBalance(memBaseinfo, dgMemberCallBackReq.getAmount(), GoldchangeEnum.DSFYXZZ, TradingEnum.INCOME);
-        }
-        if (dgMemberCallBackReq.getAmount().compareTo(BigDecimal.ZERO) == -1) {//输
-            if (memBaseinfo.getBalance().compareTo(dgMemberCallBackReq.getAmount()) == -1) {
-                dataJson.put("code", "120");
-                dataJson.put("message", "余额不足");
+
+//创建时间
+        String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
+        Txns txns = new Txns();
+        if (oldTxns != null) {
+            if (dgMemberCallBackReq.getAmount().compareTo(BigDecimal.ZERO) != 0) {
+                balance = balance.add(dgMemberCallBackReq.getAmount());
+                gameCommonService.updateUserBalance(memBaseinfo, dgMemberCallBackReq.getAmount(), GoldchangeEnum.SETTLE, TradingEnum.INCOME);
+            }
+            txns.setId(null);
+            txns.setBalance(balance);
+            //操作名称
+            txns.setMethod("Settle");
+            txns.setStatus("Running");
+            oldTxns.setStatus("Settle");
+            //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
+            txns.setWinningAmount(dgMemberCallBackReq.getAmount());
+            txns.setWinAmount(dgMemberCallBackReq.getAmount());
+            oldTxns.setUpdateTime(dateStr);
+            txnsMapper.updateById(oldTxns);
+            int num = txnsMapper.insert(txns);
+            if (num <= 0) {
+                dataJson.put("codeId", "98");
+                dataJson.put("message", "操作失败！");
                 return dataJson;
             }
-            balance = balance.subtract(dgMemberCallBackReq.getAmount());
+        }else {
+            balance = balance.add(dgMemberCallBackReq.getAmount());
             gameCommonService.updateUserBalance(memBaseinfo, dgMemberCallBackReq.getAmount(), GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
-        }
+            //游戏商注单号
+            txns.setPlatformTxId(dgCallBackReq.getData());
+            //玩家 ID
+            txns.setUserId(memBaseinfo.getAccount());
 
+            txns.setRoundId(dgCallBackReq.getTicketId());
+            //玩家货币代码
+            txns.setCurrency(gameParentPlatform.getCurrencyType());
+            //平台代码
+            txns.setPlatform(gameParentPlatform.getPlatformCode());
+            //平台英文名称
+            txns.setPlatformEnName(gameParentPlatform.getPlatformEnName());
+            //平台中文名称
+            txns.setPlatformCnName(gameParentPlatform.getPlatformCnName());
+            //平台游戏类型
+            txns.setGameType(gameCategory.getGameType());
+            //游戏分类ID
+            txns.setCategoryId(gameCategory.getId());
+            //游戏分类名称
+            txns.setCategoryName(gameCategory.getGameName());
+            //平台游戏代码
+            txns.setGameCode(gamePlatform.getPlatformCode());
+            //游戏名称
+            txns.setGameName(gamePlatform.getPlatformEnName());
+            //下注金额
+            txns.setBetAmount(dgMemberCallBackReq.getAmount());
+            //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
+            txns.setWinningAmount(dgMemberCallBackReq.getAmount());
+            txns.setWinAmount(dgMemberCallBackReq.getAmount());
+            //真实下注金额,需增加在玩家的金额
+            txns.setRealBetAmount(dgMemberCallBackReq.getAmount());
+            //真实返还金额,游戏赢分
+            txns.setRealWinAmount(dgMemberCallBackReq.getAmount());
+            //返还金额 (包含下注金额)
+            //赌注的结果 : 赢:0,输:1,平手:2
+            int resultTyep;
+            //有效投注金额 或 投注面值
+            txns.setTurnover(dgMemberCallBackReq.getAmount());
+            //操作名称
+            txns.setMethod("Place Bet");
+            txns.setStatus("Running");
+            //余额
+            txns.setBalance(balance);
 
-        Txns txns = new Txns();
-        //游戏商注单号
-        txns.setPlatformTxId(dgCallBackReq.getData());
-        //玩家 ID
-        txns.setUserId(memBaseinfo.getAccount());
+            txns.setCreateTime(dateStr);
+            //投注 IP
+            txns.setBetIp(ip);//  string 是 投注 IP
 
-        txns.setRoundId(dgCallBackReq.getTicketId());
-        //玩家货币代码
-        txns.setCurrency(gameParentPlatform.getCurrencyType());
-        //平台代码
-        txns.setPlatform(gameParentPlatform.getPlatformCode());
-        //平台英文名称
-        txns.setPlatformEnName(gameParentPlatform.getPlatformEnName());
-        //平台中文名称
-        txns.setPlatformCnName(gameParentPlatform.getPlatformCnName());
-        //平台游戏类型
-        txns.setGameType(gameCategory.getGameType());
-        //游戏分类ID
-        txns.setCategoryId(gameCategory.getId());
-        //游戏分类名称
-        txns.setCategoryName(gameCategory.getGameName());
-        //平台游戏代码
-        txns.setGameCode(gamePlatform.getPlatformCode());
-        //游戏名称
-        txns.setGameName(gamePlatform.getPlatformEnName());
-        //下注金额
-        txns.setBetAmount(dgMemberCallBackReq.getAmount());
-        //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
-        txns.setWinningAmount(dgMemberCallBackReq.getAmount());
-        //真实下注金额,需增加在玩家的金额
-        txns.setRealBetAmount(dgMemberCallBackReq.getAmount());
-        //真实返还金额,游戏赢分
-        txns.setRealWinAmount(dgMemberCallBackReq.getAmount());
-        //返还金额 (包含下注金额)
-        //赌注的结果 : 赢:0,输:1,平手:2
-        int resultTyep;
-        //有效投注金额 或 投注面值
-        txns.setTurnover(dgMemberCallBackReq.getAmount());
-        //操作名称
-        txns.setMethod("Place Bet");
-        txns.setStatus("Running");
-        //余额
-        txns.setBalance(balance);
-        //创建时间
-        String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
-        txns.setCreateTime(dateStr);
-        //投注 IP
-        txns.setBetIp(ip);//  string 是 投注 IP
-        if (oldTxns != null) {
-            txns.setStatus("Settle");
-            txnsMapper.updateById(oldTxns);
-        }
-        int num = txnsMapper.insert(txns);
-        if (num <= 0) {
-            dataJson.put("codeId", "98");
-            dataJson.put("message", "操作失败！");
-            return dataJson;
+            int num = txnsMapper.insert(txns);
+            if (num <= 0) {
+                dataJson.put("codeId", "98");
+                dataJson.put("message", "操作失败！");
+                return dataJson;
+            }
         }
         dataJson.put("codeId", "0");
         dataJson.put("token", dgCallBackReq.getToken());
@@ -180,7 +191,7 @@ public class DgCallbackServiceImpl implements DgCallbackService {
     public Object dgCheckTransferCallback(DgCallBackReq<DgMemberCallBackReq> dgCallBackReq, String ip, String agentName) {
         JSONObject dataJson = new JSONObject();
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
-        wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Adjust Bet"));
+        wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Settle"));
         wrapper.eq(Txns::getStatus, "Running");
         wrapper.eq(Txns::getPlatformTxId, dgCallBackReq.getData());
         Txns oldTxns = txnsMapper.selectOne(wrapper);
@@ -201,7 +212,7 @@ public class DgCallbackServiceImpl implements DgCallbackService {
         JSONObject dataJson = new JSONObject();
         BigDecimal balance = memBaseinfo.getBalance();
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
-        wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Adjust Bet"));
+        wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Settle"));
         wrapper.eq(Txns::getStatus, "Running");
         wrapper.eq(Txns::getPlatformTxId, dgCallBackReq.getData());
         
@@ -209,7 +220,7 @@ public class DgCallbackServiceImpl implements DgCallbackService {
         if (dgMemberCallBackReq.getAmount().compareTo(BigDecimal.ZERO) == -1) {
             if (null != oldTxns) {
                 balance = balance.add(dgMemberCallBackReq.getAmount());
-                gameCommonService.updateUserBalance(memBaseinfo, dgMemberCallBackReq.getAmount(), GoldchangeEnum.DSFYXZZ, TradingEnum.INCOME);
+                gameCommonService.updateUserBalance(memBaseinfo, dgMemberCallBackReq.getAmount(), GoldchangeEnum.PLACE_BET, TradingEnum.INCOME);
             } else {
                 dataJson.put("codeId", "0");
                 dataJson.put("token", dgCallBackReq.getToken());
@@ -223,7 +234,7 @@ public class DgCallbackServiceImpl implements DgCallbackService {
         } else if (dgMemberCallBackReq.getAmount().compareTo(BigDecimal.ZERO) == 1) {
             if (null == oldTxns) {
                 balance = balance.add(dgMemberCallBackReq.getAmount());
-                gameCommonService.updateUserBalance(memBaseinfo, dgMemberCallBackReq.getAmount(), GoldchangeEnum.DSFYXZZ, TradingEnum.INCOME);
+                gameCommonService.updateUserBalance(memBaseinfo, dgMemberCallBackReq.getAmount(), GoldchangeEnum.PLACE_BET, TradingEnum.INCOME);
             } else {
                 dataJson.put("codeId", "0");
                 dataJson.put("data", dgCallBackReq.getData());
