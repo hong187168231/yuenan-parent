@@ -199,7 +199,7 @@ public class PpCallbackServiceImpl implements PpCallbackService {
             //游戏平台的下注项目
             txns.setBetType(ppBetCallBackReq.getGameId());
             //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
-//            txns.setWinningAmount(BigDecimal.ZERO);
+            txns.setWinningAmount(ppBetCallBackReq.getAmount().negate());
             //玩家下注时间
             txns.setBetTime(DateUtils.formatByLong(ppBetCallBackReq.getTimestamp(), DateUtils.newFormat));
             //真实下注金额,需增加在玩家的金额
@@ -271,9 +271,9 @@ public class PpCallbackServiceImpl implements PpCallbackService {
             }
 
             // 会员余额
-            balance = balance.add(betAmount);
+            balance = balance.add(betAmount).add(oldTxns.getBetAmount());
             // 更新玩家余额
-            gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
+            gameCommonService.updateUserBalance(memBaseinfo, betAmount.add(oldTxns.getBetAmount()), GoldchangeEnum.SETTLE, TradingEnum.INCOME);
 
             Txns txns = new Txns();
             if (null != oldTxns) {
@@ -288,7 +288,7 @@ public class PpCallbackServiceImpl implements PpCallbackService {
             txns.setGameInfo(ppResultCallBackReq.getRoundDetails());
             txns.setRoundId(ppResultCallBackReq.getRoundId());
             //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
-            txns.setWinningAmount(ppResultCallBackReq.getAmount());
+            txns.setWinningAmount(ppResultCallBackReq.getAmount().add(oldTxns.getBetAmount()));
             txns.setWinAmount(ppResultCallBackReq.getAmount());
             //真实返还金额,游戏赢分
             txns.setRealWinAmount(ppResultCallBackReq.getAmount());
@@ -736,7 +736,7 @@ public class PpCallbackServiceImpl implements PpCallbackService {
             }
             // 构建返回
             JSONObject json = initSuccessResponse();
-
+            json.put("transactionId", ppRefundWinCallBackReq.getReference());
             // 查询用户请求订单
             Txns oldTxns = getTxns(ppRefundWinCallBackReq.getReference(), memBaseinfo.getId());
             if (null == oldTxns) {
@@ -745,7 +745,6 @@ public class PpCallbackServiceImpl implements PpCallbackService {
 
             // 如果订单已经取消
             if ("Cancel Bet".equals(oldTxns.getMethod())) {
-                json.put("transactionId", ppRefundWinCallBackReq.getReference());
                 return json;
             }
             BigDecimal realWinAmount = ppRefundWinCallBackReq.getAmount();
@@ -762,15 +761,15 @@ public class PpCallbackServiceImpl implements PpCallbackService {
             txns.setId(null);
             txns.setStatus("Running");
             txns.setRealWinAmount(realWinAmount);//真实返还金额
-            txns.setMethod("Adjust Bet");
+            txns.setMethod("Cancel Bet");
             txns.setCreateTime(dateStr);
             txnsMapper.insert(txns);
 
-            oldTxns.setStatus("Adjust");
+            oldTxns.setStatus("Cancel Bet");
             oldTxns.setUpdateTime(dateStr);
             txnsMapper.updateById(oldTxns);
 
-            json.put("transactionId", ppRefundWinCallBackReq.getReference());
+
             return json;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
