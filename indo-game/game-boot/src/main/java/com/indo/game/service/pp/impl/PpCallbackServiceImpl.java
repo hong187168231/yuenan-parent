@@ -132,20 +132,16 @@ public class PpCallbackServiceImpl implements PpCallbackService {
         try {
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(ppBetCallBackReq.getUserId());
             if (null == memBaseinfo) {
-                return initFailureResponse(2, "玩家不存在",json);
+                return initFailureResponse(2, "玩家不存在", json);
             }
             // 会员余额
             BigDecimal balance = memBaseinfo.getBalance();
             GamePlatform gamePlatform;
-            if("Y".equals(OpenAPIProperties.PP_IS_PLATFORM_LOGIN)){
-                gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platformGameParent.getPlatformCode(),platformGameParent.getPlatformCode());
-            }else {
+            if ("Y".equals(OpenAPIProperties.PP_IS_PLATFORM_LOGIN)) {
+                gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platformGameParent.getPlatformCode(), platformGameParent.getPlatformCode());
+            } else {
                 gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(ppBetCallBackReq.getGameId(), platformGameParent.getPlatformCode());
 
-            }
-            if (null == gamePlatform) {
-                json.put("cash", balance);
-                return initFailureResponse(3, "游戏不存在",json);
             }
             GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
 
@@ -161,12 +157,12 @@ public class PpCallbackServiceImpl implements PpCallbackService {
             }
 
             if (memBaseinfo.getBalance().compareTo(betAmount) < 0) {
-                return initFailureResponse(1, "玩家余额不足",json);
+                return initFailureResponse(1, "玩家余额不足", json);
             }
 
             // 下注金额小于0
             if (betAmount.compareTo(BigDecimal.ZERO) < 0) {
-                return initFailureResponse(7, "下注金额不能小0",json);
+                return initFailureResponse(7, "下注金额不能小0", json);
             }
             balance = balance.subtract(betAmount);
             // 更新玩家余额
@@ -188,8 +184,9 @@ public class PpCallbackServiceImpl implements PpCallbackService {
             //平台名称
             txns.setPlatformEnName(platformGameParent.getPlatformEnName());
             txns.setPlatformCnName(platformGameParent.getPlatformCnName());
-            //平台游戏类型
-            txns.setGameType(gameCategory.getGameType());
+            if (null!=gamePlatform){
+                //平台游戏类型
+                txns.setGameType(gameCategory.getGameType());
             //游戏分类ID
             txns.setCategoryId(gameCategory.getId());
             //游戏分类名称
@@ -198,6 +195,7 @@ public class PpCallbackServiceImpl implements PpCallbackService {
             txns.setGameCode(gamePlatform.getPlatformCode());
             //游戏名称
             txns.setGameName(gamePlatform.getPlatformEnName());
+        }
             //下注金额
             txns.setBetAmount(ppBetCallBackReq.getAmount());
             //游戏平台的下注项目
@@ -372,8 +370,7 @@ public class PpCallbackServiceImpl implements PpCallbackService {
 
             }
             if (null == gamePlatform) {
-                json.put("cash", balance);
-                return initFailureResponse(3, "游戏不存在",json);
+                gamePlatform = gameCommonService.getGamePlatformByParentName(OpenAPIProperties.PP_PLATFORM_CODE).get(0);
             }
             GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
 
@@ -504,8 +501,7 @@ public class PpCallbackServiceImpl implements PpCallbackService {
 
             }
             if (null == gamePlatform) {
-                json.put("cash", balance);
-                return initFailureResponse(3, "游戏不存在",json);
+                gamePlatform = gameCommonService.getGamePlatformByParentName(OpenAPIProperties.PP_PLATFORM_CODE).get(0);
             }
             GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
 
@@ -826,6 +822,7 @@ public class PpCallbackServiceImpl implements PpCallbackService {
                 .or().eq(Txns::getMethod, "Settle"));
         wrapper.eq(Txns::getStatus, "Running");
         wrapper.eq(Txns::getPlatformTxId, reference);
+        wrapper.eq(Txns::getPlatform, OpenAPIProperties.PP_PLATFORM_CODE);
         wrapper.eq(Txns::getUserId, userId);
         return txnsMapper.selectOne(wrapper);
     }
@@ -836,6 +833,7 @@ public class PpCallbackServiceImpl implements PpCallbackService {
                 .or().eq(Txns::getMethod, "Cancel Bet")
                 .or().eq(Txns::getMethod, "Settle"));
         wrapper.eq(Txns::getStatus, "Running");
+        wrapper.eq(Txns::getPlatform, OpenAPIProperties.PP_PLATFORM_CODE);
         wrapper.eq(Txns::getRoundId, roundld);
         wrapper.eq(Txns::getUserId, userId);
         return txnsMapper.selectOne(wrapper);
