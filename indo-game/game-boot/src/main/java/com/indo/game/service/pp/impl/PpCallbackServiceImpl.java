@@ -143,6 +143,10 @@ public class PpCallbackServiceImpl implements PpCallbackService {
                 gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(ppBetCallBackReq.getGameId(), platformGameParent.getPlatformCode());
 
             }
+            if (null == gamePlatform) {
+                json.put("cash", balance);
+                return initFailureResponse(3, "游戏不存在",json);
+            }
             GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
 
 
