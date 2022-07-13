@@ -264,9 +264,10 @@ public class PpCallbackServiceImpl implements PpCallbackService {
             BigDecimal balance = memBaseinfo.getBalance();
             // 查询用户请求订单
             Txns oldTxns = getTxnsByRoundld(ppResultCallBackReq.getRoundId(), memBaseinfo.getAccount());
-//            if (null != oldTxns) {
-//                return initSuccessResponse(ppResultCallBackReq.getReference(), platformGameParent.getCurrencyType(), balance);
-//            }
+            if (null != oldTxns && "Settle".equals(oldTxns.getMethod())) {
+                json.put("cash", balance);
+                return json;
+            }
 
             // 中奖金额
             BigDecimal betAmount = ppResultCallBackReq.getAmount();
@@ -275,12 +276,16 @@ public class PpCallbackServiceImpl implements PpCallbackService {
                 json.put("cash", balance);
                 return initFailureResponse(7, "中奖金额不能小0",json);
             }
-
-            // 会员余额
-            balance = balance.add(betAmount).add(oldTxns.getBetAmount());
-            // 更新玩家余额
-            gameCommonService.updateUserBalance(memBaseinfo, betAmount.add(oldTxns.getBetAmount()), GoldchangeEnum.SETTLE, TradingEnum.INCOME);
-
+            if(betAmount.compareTo(BigDecimal.ZERO)!=0) {
+                // 会员余额
+                balance = balance.add(betAmount);
+                if(betAmount.compareTo(BigDecimal.ZERO)==1) {//赢
+                    // 更新玩家余额
+                    gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
+                }else {
+                    gameCommonService.updateUserBalance(memBaseinfo, betAmount.abs(), GoldchangeEnum.SETTLE, TradingEnum.SPENDING);
+                }
+            }
             Txns txns = new Txns();
             if (null != oldTxns) {
                 BeanUtils.copyProperties(oldTxns, txns);
@@ -294,7 +299,7 @@ public class PpCallbackServiceImpl implements PpCallbackService {
             txns.setGameInfo(ppResultCallBackReq.getRoundDetails());
             txns.setRoundId(ppResultCallBackReq.getRoundId());
             //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
-            txns.setWinningAmount(ppResultCallBackReq.getAmount().add(oldTxns.getBetAmount()));
+            txns.setWinningAmount(ppResultCallBackReq.getAmount());
             txns.setWinAmount(ppResultCallBackReq.getAmount());
             //真实返还金额,游戏赢分
             txns.setRealWinAmount(ppResultCallBackReq.getAmount());
