@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 
 @RestController
-@RequestMapping("/mt")
+@RequestMapping("/mt/callBack")
 public class MtController {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
