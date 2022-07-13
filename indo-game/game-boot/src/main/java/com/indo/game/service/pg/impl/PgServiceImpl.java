@@ -109,7 +109,7 @@ public class PgServiceImpl implements PgService {
                 builder.append("&operator_player_session=").append(cptOpenMember.getPassword());
                 builder.append("&language=").append(gameParentPlatform.getLanguageType());
             }else {
-                builder.append(OpenAPIProperties.PG_LOGIN_URL).append("/"+gamePlatform.getPlatformCode()+"/index.html/?");
+                builder.append(OpenAPIProperties.PG_LOGIN_URL).append("/"+gamePlatform.getPlatformCode()+"/index.html?");
                 builder.append("btt=1");//游戏启动模式3
                 builder.append("&ot=").append(OpenAPIProperties.PG_API_TOKEN);//运营商独有的身份识别
                 builder.append("&ops=").append(cptOpenMember.getPassword());//运营商系统生成的令牌
