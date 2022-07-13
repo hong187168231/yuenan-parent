@@ -29,10 +29,10 @@ public class YlCallBackController {
     @RequestMapping(value = "/callBack", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object callBack(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
+    public Object callBack(YlCallBackReq ylCallBackReq, HttpServletRequest request) {
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("ylCallBack callBack回调,params:{},IP:{}", JSONObject.toJSONString(jsonObject),ip);
-        JSONObject jsonsubObject = JSONObject.parseObject(jsonObject.getString("message"));
+        logger.info("ylCallBack callBack回调,params:{},IP:{}", JSONObject.toJSONString(ylCallBackReq),ip);
+        JSONObject jsonsubObject = JSONObject.parseObject(ylCallBackReq.getMessage());
         Object object = new Object();
         if("getBalance".equals(jsonsubObject.getString("action"))){
             object = this.getBalance(jsonsubObject);
