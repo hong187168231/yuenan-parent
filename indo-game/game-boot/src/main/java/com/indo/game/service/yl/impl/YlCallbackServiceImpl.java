@@ -52,7 +52,7 @@ public class YlCallbackServiceImpl implements YlCallbackService {
     public Object ylGetBalanceCallback(JSONObject jsonObject) {
         JSONObject dataJson = new JSONObject();
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(jsonObject.getString("userId"));
-        if (null != memBaseinfo) {
+        if (null == memBaseinfo) {
             dataJson.put("status", 500);
             dataJson.put("msg", "system busy");
             return dataJson;
