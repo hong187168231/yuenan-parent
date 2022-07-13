@@ -34,7 +34,7 @@ public class ActivityConfigController {
     @PutMapping(value = "/update")
     public Result update(@RequestBody ActivityConfig activityConfig) {
         activityConfig.setUpdateTime(new Date());
-       // activityConfig.setUpdateUser(JwtUtils.getUsername());
+        activityConfig.setUpdateUser(JwtUtils.getUsername());
         activityConfigService.updateById(activityConfig);
         return Result.success();
     }
