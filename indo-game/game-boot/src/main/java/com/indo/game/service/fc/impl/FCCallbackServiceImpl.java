@@ -270,7 +270,7 @@ public class FCCallbackServiceImpl implements FCCallbackService {
      * @param round     回合(一般游戏为0,免费游戏有具体1.2.3...)
      * @return 订单
      */
-    private Txns getTxns(String reference, Long userId, Long round) {
+    private Txns getTxns(String reference, Long userId, String round) {
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
         wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet")
                 .or().eq(Txns::getMethod, "Cancel Bet")
@@ -278,6 +278,7 @@ public class FCCallbackServiceImpl implements FCCallbackService {
                 .or().eq(Txns::getMethod, "Settle"));
         wrapper.eq(Txns::getStatus, "Running");
         wrapper.eq(Txns::getPlatformTxId, reference);
+        wrapper.eq(Txns::getPlatform, OpenAPIProperties.FC_PLATFORM_CODE);
         wrapper.eq(Txns::getUserId, userId);
         if (null != round) {
             wrapper.eq(Txns::getRoundId, round);
