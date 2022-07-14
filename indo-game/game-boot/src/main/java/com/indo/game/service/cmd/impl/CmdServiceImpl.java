@@ -32,31 +32,28 @@ public class CmdServiceImpl implements CmdService {
 
     @Override
     public Result cmdGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName) {
-        logger.info("cmdlog {} cmdGame account:{},cmdCodeId:{}", parentName, loginUser.getAccount(), platform);
+        logger.info("cmd体育log  cmdGame loginUser:{}, ip:{}, platform:{}, parentName:{}, isMobileLogin:{}", loginUser,ip,platform,parentName,isMobileLogin);
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
         if (null == gameParentPlatform) {
-            return Result.failed("(" + parentName + ")游戏平台不存在");
+            return Result.failed("(" + parentName + ")平台不存在");
         }
-        if (gameParentPlatform.getIsStart().equals(0)) {
-            return Result.failed("g100101", "游戏平台未启用");
+        if (0==gameParentPlatform.getIsStart()) {
+            return Result.failed("g100101", "平台未启用");
         }
         if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
             return Result.failed("g000001", gameParentPlatform.getMaintenanceContent());
         }
-        if (!platform.equals(parentName)) {
-            GamePlatform gamePlatform;
-            // 是否开售校验
-            gamePlatform = gameCommonService.getGamePlatformByplatformCode(platform);
-            if (null == gamePlatform) {
-                return Result.failed("(" + platform + ")平台游戏不存在");
-            }
-            if (gamePlatform.getIsStart().equals(0)) {
-                return Result.failed("g100102", "游戏未启用");
-            }
-            if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
-                return Result.failed("g091047", gamePlatform.getMaintenanceContent());
-            }
+        // 是否开售校验
+        GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
+        if (null == gamePlatform) {
+            return Result.failed("(" + platform + ")游戏不存在");
+        }
+        if (0==gamePlatform.getIsStart()) {
+            return Result.failed("g100102", "游戏未启用");
+        }
+        if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
+            return Result.failed("g091047", gamePlatform.getMaintenanceContent());
         }
 
         BigDecimal balance = loginUser.getBalance();
@@ -84,23 +81,19 @@ public class CmdServiceImpl implements CmdService {
                 // 第一次登录自动创建玩家, 后续登录返回登录游戏URL
                 return createMemberGame(cptOpenMember, gameParentPlatform, isMobileLogin);
             } else {
-                CptOpenMember updateCptOpenMember = new CptOpenMember();
-                updateCptOpenMember.setId(cptOpenMember.getId());
-                updateCptOpenMember.setLoginTime(new Date());
-                externalService.updateCptOpenMember(updateCptOpenMember);
+                cptOpenMember.setLoginTime(new Date());
+                externalService.updateCptOpenMember(cptOpenMember);
 
                 String returnResult = GameUtil.httpGetWithCookies(getLoginOutUrl(loginUser.getAccount()), null, null);
                 JSONObject result = JSONObject.parseObject(returnResult);
 
-                if (0 == result.getInteger("Code")) {
-                    // 请求URL
-                    ApiResponseData responseData = new ApiResponseData();
-                    responseData.setPathUrl(getStartGame(cptOpenMember, gameParentPlatform.getCurrencyType(),
-                            gameParentPlatform.getLanguageType(), isMobileLogin));
-                    return Result.success(responseData);
-                } else {
-                    return errorCode(result.getString("Code"), result.getString("Message"));
-                }
+                logger.info("cmd体育log  登录cmdGame输入 urlapi:{}",getStartGame(cptOpenMember, gameParentPlatform.getCurrencyType(), gameParentPlatform.getLanguageType(), isMobileLogin));
+                // 请求URL
+                ApiResponseData responseData = new ApiResponseData();
+                responseData.setPathUrl(getStartGame(cptOpenMember, gameParentPlatform.getCurrencyType(),
+                        gameParentPlatform.getLanguageType(), isMobileLogin));
+                logger.info("cmd体育log  登录cmdGame返回 responseData:{}",responseData);
+                return Result.success(responseData);
 
             }
 
@@ -115,9 +108,13 @@ public class CmdServiceImpl implements CmdService {
     public Result logout(LoginInfo loginUser, String platform, String ip) {
         logger.info("cmdlogout {} cmdGame account:{},cmdCodeId:{}", ip, loginUser.getAccount(), platform);
         try {
+            logger.info("cmd体育log  登出logout输入 loginUser:{}, ip:{}, urlapi:{}", loginUser,ip,getLoginOutUrl(loginUser.getAccount()));
             String returnResult = GameUtil.httpGetWithCookies(getLoginOutUrl(loginUser.getAccount()), null, null);
+            logger.info("cmd体育log  登出logout返回 responseData:{}",returnResult);
             JSONObject result = JSONObject.parseObject(returnResult);
-
+            if (null == result) {
+                return Result.failed("g100104", "网络繁忙，请稍后重试！");
+            }
             if (0 == result.getInteger("Code")) {
                 return Result.success();
             } else {
@@ -136,19 +133,23 @@ public class CmdServiceImpl implements CmdService {
      * @return Result
      */
     private Result createMemberGame(CptOpenMember cptOpenMember, GameParentPlatform gameParentPlatform, String isMobileLogin) {
+        logger.info("cmd体育log  创建账号createMemberGame输入 urlapi:{}",getLoginUrl(cptOpenMember.getPassword(), gameParentPlatform.getCurrencyType()));
         String returnResult
                 = GameUtil.httpGetWithCookies(
                 getLoginUrl(cptOpenMember.getPassword(), gameParentPlatform.getCurrencyType()), null, null);
+        logger.info("cmd体育log  创建账号createMemberGame返回 responseData:{}",returnResult);
         JSONObject result = JSONObject.parseObject(returnResult);
         if (null == result) {
             return Result.failed("g091087", "第三方请求异常！");
         }
 
         if (0 == result.getInteger("Code")) {
+            logger.info("cmd体育log  登录createMemberGame输入 urlapi:{}",getStartGame(cptOpenMember, gameParentPlatform.getCurrencyType(), gameParentPlatform.getLanguageType(), isMobileLogin));
             // 请求URL
             ApiResponseData responseData = new ApiResponseData();
             responseData.setPathUrl(
                     getStartGame(cptOpenMember, gameParentPlatform.getCurrencyType(), gameParentPlatform.getLanguageType(), isMobileLogin));
+            logger.info("cmd体育log  登录createMemberGame返回 responseData:{}",responseData);
             return Result.success(responseData);
         } else {
             return errorCode(result.getString("Code"), result.getString("Message"));
@@ -180,6 +181,7 @@ public class CmdServiceImpl implements CmdService {
         url.append("&currency=").append(currency);
         url.append("&templatename=").append(OpenAPIProperties.CMD_TEMPLATE_NAME);
         url.append("&view=").append(OpenAPIProperties.CMD_VIEW);
+        logger.info("getStartGame玩家登录地址输入, url:{}", url);
         return url.toString();
     }
 
@@ -196,6 +198,7 @@ public class CmdServiceImpl implements CmdService {
         url.append("&PartnerKey=").append(OpenAPIProperties.CMD_PARTNER_KEY);
         url.append("&UserName=").append(userAccount);
         url.append("&Currency=").append(currency);
+        logger.info("getLoginUrl創建用戶CMD請求地址输入, url:{}", url);
         return url.toString();
     }
 
@@ -211,6 +214,7 @@ public class CmdServiceImpl implements CmdService {
         url.append(OpenAPIProperties.CMD_API_URL).append("/?Method=kickuser");
         url.append("&PartnerKey=").append(OpenAPIProperties.CMD_PARTNER_KEY);
         url.append("&UserName=").append(userAccount);
+        logger.info("getLoginUrl玩家退出游戏API地址输入, url:{}", url);
         return url.toString();
     }
 

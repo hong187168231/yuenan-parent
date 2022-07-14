@@ -54,7 +54,7 @@ public class AgentRebateRecord extends BaseEntity {
     private BigDecimal todayRemain;
 
     @ApiModelProperty(value = "返点金额")
-    private BigDecimal rebateAmount;
+    private BigDecimal rebateAmout;
 
     @ApiModelProperty(value = "状态，0-待发放，1-已发放")
     private Integer status;

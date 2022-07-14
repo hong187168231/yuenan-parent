@@ -2,7 +2,11 @@ package com.indo.admin.modules.pay.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.indo.admin.pojo.dto.PayRechargeReportDTO;
+import com.indo.admin.pojo.dto.TotalReportDTO;
 import com.indo.admin.pojo.req.pay.PayRechargeReq;
+import com.indo.admin.pojo.vo.TotalReportVo;
+import com.indo.admin.pojo.vo.pay.PayRechargeReportVo;
 import com.indo.admin.pojo.vo.pay.RechargeOrderVO;
 import com.indo.core.pojo.entity.PayRecharge;
 import org.apache.ibatis.annotations.Mapper;
@@ -24,5 +28,18 @@ public interface PayRechargeMapper extends BaseMapper<PayRecharge> {
 
     List<RechargeOrderVO> rechargeList(@Param("page") Page<RechargeOrderVO> page, @Param("req") PayRechargeReq req);
 
+    /**
+     * 查询充值报表
+     * @param page
+     * @param payRechargeReportDTO
+     * @return
+     */
+    Page<PayRechargeReportVo> findPayRechargeReport(@Param("page")Page<PayRechargeReportVo> page, @Param("dto")PayRechargeReportDTO payRechargeReportDTO);
 
+    /**
+     * 查询总报表
+     * @param
+     * @return
+     */
+    TotalReportVo findTotalReport(TotalReportDTO totalReportDTO);
 }

@@ -2,6 +2,7 @@ package com.indo.game.service.ps.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.indo.common.config.OpenAPIProperties;
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.common.utils.DateUtils;
@@ -9,6 +10,7 @@ import com.indo.game.mapper.TxnsMapper;
 import com.indo.game.pojo.dto.ps.PsCallBackParentReq;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.game.pojo.entity.manage.GameCategory;
+import com.indo.game.pojo.entity.manage.GameParentPlatform;
 import com.indo.game.pojo.entity.manage.GamePlatform;
 import com.indo.game.pojo.entity.manage.Txns;
 import com.indo.game.pojo.vo.callback.ps.PsCallBackResponse;
@@ -50,7 +52,7 @@ public class PsCallbackServiceImpl implements PsCallbackService {
 
     @Override
     public Object psVerifyCallback(PsCallBackParentReq psCallBackParentReq, String ip) {
-        CptOpenMember cptOpenMember = externalService.quertCptOpenMember(psCallBackParentReq.getAccess_token(), "PS");
+        CptOpenMember cptOpenMember = externalService.quertCptOpenMember(psCallBackParentReq.getAccess_token(), OpenAPIProperties.PS_PLATFORM_CODE);
         JSONObject dataJson = new JSONObject();
         if (cptOpenMember == null) {
             dataJson.put("code", 1);
@@ -73,7 +75,7 @@ public class PsCallbackServiceImpl implements PsCallbackService {
 
     @Override
     public Object psBetCallback(PsCallBackParentReq psbetCallBackReq, String ip) {
-        CptOpenMember cptOpenMember = externalService.quertCptOpenMember(psbetCallBackReq.getAccess_token(), "PS");
+        CptOpenMember cptOpenMember = externalService.quertCptOpenMember(psbetCallBackReq.getAccess_token(), OpenAPIProperties.PS_PLATFORM_CODE);
         JSONObject dataJson = new JSONObject();
         if (cptOpenMember == null) {
             dataJson.put("status_code", "1");
@@ -81,7 +83,14 @@ public class PsCallbackServiceImpl implements PsCallbackService {
             return dataJson;
         }
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cptOpenMember.getUserName());
-        GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(psbetCallBackReq.getGame_id());
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.PS_PLATFORM_CODE);
+        GamePlatform gamePlatform;
+        if("Y".equals(OpenAPIProperties.PS_IS_PLATFORM_LOGIN)){
+            gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(gameParentPlatform.getPlatformCode(),gameParentPlatform.getPlatformCode());
+        }else {
+            gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(String.valueOf(psbetCallBackReq.getGame_id()), gameParentPlatform.getPlatformCode());
+
+        }
         GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         BigDecimal balance = memBaseinfo.getBalance();
         BigDecimal betAmount = new BigDecimal(psbetCallBackReq.getTotal_bet()).divide(new BigDecimal(100));
@@ -93,8 +102,8 @@ public class PsCallbackServiceImpl implements PsCallbackService {
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
         wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Adjust Bet"));
         wrapper.eq(Txns::getStatus, "Running");
-        wrapper.eq(Txns::getPromotionTxId, psbetCallBackReq.getTxn_id());
-        wrapper.eq(Txns::getUserId, memBaseinfo.getId());
+        wrapper.eq(Txns::getPlatformTxId, psbetCallBackReq.getTxn_id());
+        wrapper.eq(Txns::getUserId, memBaseinfo.getAccount());
         Txns oldTxns = txnsMapper.selectOne(wrapper);
         if (null != oldTxns) {
             if ("Cancel Bet".equals(oldTxns.getMethod())) {
@@ -118,10 +127,15 @@ public class PsCallbackServiceImpl implements PsCallbackService {
         txns.setRoundId(psbetCallBackReq.getTxn_id());
         //此交易是否是投注 true是投注 false 否
         //玩家 ID
-        txns.setUserId(memBaseinfo.getId().toString());
+        txns.setUserId(memBaseinfo.getAccount());
+        //玩家货币代码
+        txns.setCurrency(gameParentPlatform.getCurrencyType());
         //平台代码
-        txns.setPlatform(gamePlatform.getPlatformCode());
+        txns.setPlatform(gameParentPlatform.getPlatformCode());
         //平台英文名称
+        txns.setPlatformEnName(gameParentPlatform.getPlatformEnName());
+        //平台中文名称
+        txns.setPlatformCnName(gameParentPlatform.getPlatformCnName());
         //平台游戏类型
         txns.setGameType(gameCategory.getGameType());
         //游戏分类ID
@@ -129,7 +143,7 @@ public class PsCallbackServiceImpl implements PsCallbackService {
         //游戏分类名称
         txns.setCategoryName(gameCategory.getGameName());
         //平台游戏代码
-        txns.setGameCode(psbetCallBackReq.getGame_id());
+        txns.setGameCode(gamePlatform.getPlatformCode());
         //游戏名称
         txns.setGameName(gamePlatform.getPlatformEnName());
         //下注金额
@@ -171,7 +185,7 @@ public class PsCallbackServiceImpl implements PsCallbackService {
 
     @Override
     public Object psResultCallback(PsCallBackParentReq psbetCallBackReq, String ip) {
-        CptOpenMember cptOpenMember = externalService.quertCptOpenMember(psbetCallBackReq.getAccess_token(), "PS");
+        CptOpenMember cptOpenMember = externalService.quertCptOpenMember(psbetCallBackReq.getAccess_token(), OpenAPIProperties.PS_PLATFORM_CODE);
         JSONObject dataJson = new JSONObject();
         if (cptOpenMember == null) {
             dataJson.put("status_code", "1");
@@ -180,8 +194,8 @@ public class PsCallbackServiceImpl implements PsCallbackService {
         }
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cptOpenMember.getUserName());
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Txns::getPromotionTxId, psbetCallBackReq.getTxn_id());
-        wrapper.eq(Txns::getUserId, memBaseinfo.getId());
+        wrapper.eq(Txns::getPlatformTxId, psbetCallBackReq.getTxn_id());
+        wrapper.eq(Txns::getUserId, memBaseinfo.getAccount());
         Txns oldTxns = txnsMapper.selectOne(wrapper);
         if (null == oldTxns) {
             dataJson.put("status_code", "2");
@@ -222,7 +236,7 @@ public class PsCallbackServiceImpl implements PsCallbackService {
     @Override
     public Object psRefundtCallback(PsCallBackParentReq psbetCallBackReq, String ip) {
 
-        CptOpenMember cptOpenMember = externalService.quertCptOpenMember(psbetCallBackReq.getAccess_token(), "PS");
+        CptOpenMember cptOpenMember = externalService.quertCptOpenMember(psbetCallBackReq.getAccess_token(), OpenAPIProperties.PS_PLATFORM_CODE);
         JSONObject dataJson = new JSONObject();
         if (cptOpenMember == null) {
             dataJson.put("status_code", "1");
@@ -232,8 +246,8 @@ public class PsCallbackServiceImpl implements PsCallbackService {
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cptOpenMember.getUserName());
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Txns::getStatus, "Running");
-        wrapper.eq(Txns::getPromotionTxId, psbetCallBackReq.getTxn_id());
-        wrapper.eq(Txns::getUserId, memBaseinfo.getId());
+        wrapper.eq(Txns::getPlatformTxId, psbetCallBackReq.getTxn_id());
+        wrapper.eq(Txns::getUserId, memBaseinfo.getAccount());
         Txns oldTxns = txnsMapper.selectOne(wrapper);
         if (null == oldTxns) {
             dataJson.put("status_code", "2");
@@ -263,7 +277,7 @@ public class PsCallbackServiceImpl implements PsCallbackService {
 
     @Override
     public Object psBonusCallback(PsCallBackParentReq psbetCallBackReq, String ip) {
-        CptOpenMember cptOpenMember = externalService.quertCptOpenMember(psbetCallBackReq.getAccess_token(), "PS");
+        CptOpenMember cptOpenMember = externalService.quertCptOpenMember(psbetCallBackReq.getAccess_token(), OpenAPIProperties.PS_PLATFORM_CODE);
         JSONObject dataJson = new JSONObject();
         if (cptOpenMember == null) {
             dataJson.put("status_code", "1");
@@ -274,8 +288,8 @@ public class PsCallbackServiceImpl implements PsCallbackService {
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Txns::getMethod, "Give");
         wrapper.eq(Txns::getStatus, "Running");
-        wrapper.eq(Txns::getPromotionTxId, psbetCallBackReq.getTxn_id());
-        wrapper.eq(Txns::getUserId, memBaseinfo.getId());
+        wrapper.eq(Txns::getPlatformTxId, psbetCallBackReq.getTxn_id());
+        wrapper.eq(Txns::getUserId, memBaseinfo.getAccount());
         Txns oldTxns = txnsMapper.selectOne(wrapper);
         if (null == oldTxns) {
             dataJson.put("status_code", "2");
@@ -311,7 +325,7 @@ public class PsCallbackServiceImpl implements PsCallbackService {
 
     @Override
     public Object psGetBalanceCallback(PsCallBackParentReq psbetCallBackReq, String ip) {
-        CptOpenMember cptOpenMember = externalService.quertCptOpenMember(psbetCallBackReq.getAccess_token(), "PS");
+        CptOpenMember cptOpenMember = externalService.quertCptOpenMember(psbetCallBackReq.getAccess_token(), OpenAPIProperties.PS_PLATFORM_CODE);
         JSONObject dataJson = new JSONObject();
         if (cptOpenMember == null) {
             dataJson.put("status_code", "1");

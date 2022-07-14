@@ -32,17 +32,17 @@
         pco.*, mb.id AS memId,
         mb.mem_level AS memLevel
         FROM
-        pay_task_cash pco
-        INNER JOIN mem_baseinfo mb ON pco.user_id = mb.id
+        pay_take_cash pco
+        INNER JOIN mem_baseinfo mb ON pco.mem_id = mb.id
         where 1=1
-        <if test="dto.dto.orderNo != null ">
+        <if test="dto.orderNo != null ">
             and pco.order_no = #{dto.orderNo}
         </if>
-        <if test="dto.dto.orderStatus != null ">
+        <if test="dto.orderStatus != null ">
             and pco.order_status = #{dto.orderStatus}
         </if>
-        <if test="dto.dto.userId != null ">
-            and mb.user_id = #{dto.userId}
+        <if test="dto.account != null ">
+            and mb.account = #{dto.account}
         </if>
         <if test="dto.beginAmount != null ">
             and pco.actual_amount &gt;= #{dto.beginAmount}

@@ -60,29 +60,25 @@ public class JdbServiceImpl implements JdbService {
         logger.info("jdblog {} aeGame account:{}, aeCodeId:{}", loginUser.getId(), loginUser.getNickName(), platform);
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
-        if(null==gameParentPlatform){
-            return Result.failed("("+parentName+")游戏平台不存在");
+        if (null == gameParentPlatform) {
+            return Result.failed("(" + parentName + ")平台不存在");
         }
-        if ("0".equals(gameParentPlatform.getIsStart())) {
-            return Result.failed("g"+"100101","游戏平台未启用");
+        if (0==gameParentPlatform.getIsStart()) {
+            return Result.failed("g100101", "平台未启用");
         }
         if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
-            return Result.failed("g000001",gameParentPlatform.getMaintenanceContent());
+            return Result.failed("g000001", gameParentPlatform.getMaintenanceContent());
         }
-        GamePlatform gamePlatform = null;
-        if(!platform.equals(parentName)) {
-            gamePlatform = new GamePlatform();
-            // 是否开售校验
-            gamePlatform = gameCommonService.getGamePlatformByplatformCode(platform);
-            if (null == gamePlatform) {
-                return Result.failed("("+platform+")平台游戏不存在");
-            }
-            if ("0".equals(gamePlatform.getIsStart())) {
-                return Result.failed("g"+"100102","游戏未启用");
-            }
-            if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
-                return Result.failed("g091047",gamePlatform.getMaintenanceContent());
-            }
+        // 是否开售校验
+        GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
+        if (null == gamePlatform) {
+            return Result.failed("(" + platform + ")游戏不存在");
+        }
+        if (0==gamePlatform.getIsStart()) {
+            return Result.failed("g100102", "游戏未启用");
+        }
+        if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
+            return Result.failed("g091047", gamePlatform.getMaintenanceContent());
         }
 //        //初次判断站点棋牌余额是否够该用户
 //        MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(loginUser.getAccount());
@@ -114,10 +110,8 @@ public class JdbServiceImpl implements JdbService {
                 //创建玩家
                 externalService.saveCptOpenMember(cptOpenMember);
             } else {
-                CptOpenMember updateCptOpenMember = new CptOpenMember();
-                updateCptOpenMember.setId(cptOpenMember.getId());
-                updateCptOpenMember.setLoginTime(new Date());
-                externalService.updateCptOpenMember(updateCptOpenMember);
+                cptOpenMember.setLoginTime(new Date());
+                externalService.updateCptOpenMember(cptOpenMember);
             }
             if(b) {
                 JdbApiIsGameingRequestBack<JdbApiIsGameingInfoRequestBack> jdbApiIsGameingRequestBack = getIsGameing(loginUser, ip);

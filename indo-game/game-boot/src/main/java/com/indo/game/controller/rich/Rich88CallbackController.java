@@ -37,7 +37,7 @@ public class Rich88CallbackController {
     /**
      * 获取平台SESSION ID
      */
-    @RequestMapping(value="/rich88/session_id",method= RequestMethod.GET)
+    @RequestMapping(value="/rich88/session_id",method= RequestMethod.GET,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object getSessionId(HttpServletRequest request) {
@@ -45,54 +45,54 @@ public class Rich88CallbackController {
         String pfId = request.getHeader("pf-id");
         String timestamp = request.getHeader("timestamp");
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("Rich88Callback {} getSessionId 回调,IP:"+ip+" params:{}, {}",apiKey, timestamp);
+        logger.info("Rich88Callback  getSessionId 回调,IP:"+ip+" params:{}, {}",apiKey, timestamp);
         Object object = rich88CallbackService.getSessionId(apiKey,pfId, timestamp, ip);
-        logger.info("Rich88Callback {} getSessionId 回调返回数据, params:{}",object);
+        logger.info("Rich88Callback  getSessionId 回调返回数据, params:{}",object);
         return object;
     }
 
     /**
      * 获取余额
      */
-    @RequestMapping(value="/rich88/balance/{account}",method= RequestMethod.GET)
+    @RequestMapping(value="/rich88/balance/{account}",method= RequestMethod.GET,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object getBalance(@PathVariable(name = "account") String account, HttpServletRequest request) {
         String authorization = request.getHeader("Authorization");
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("Rich88Callback {} getBalance 回调,IP:"+ip+" account:{}",account);
+        logger.info("Rich88Callback getBalance 回调,IP:"+ip+" account:{}",account);
         Object object = rich88CallbackService.getBalance(authorization, account,ip);
-        logger.info("Rich88Callback {} getBalance 回调返回数据, params:{}",object);
+        logger.info("Rich88Callback getBalance 回调返回数据, params:{}",object);
         return object;
     }
 
     /**
      * 交易
      */
-    @RequestMapping(value="/rich88/transfer",method= RequestMethod.POST)
+    @RequestMapping(value="/rich88/transfer",method= RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object transfer(@RequestBody Rich88TransferReq rich88TransferReq, HttpServletRequest request) {
         String authorization = request.getHeader("Authorization");
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("Rich88Callback {} transfer 回调,IP:"+ip+" params:{}", JSONObject.toJSONString(rich88TransferReq));
+        logger.info("Rich88Callback transfer 回调,IP:"+ip+" params:{}", JSONObject.toJSONString(rich88TransferReq));
         Object object = rich88CallbackService.transfer(rich88TransferReq,authorization,ip);
-        logger.info("Rich88Callback {} transfer 回调返回数据, params:{}",object);
+        logger.info("Rich88Callback transfer 回调返回数据, params:{}",object);
         return object;
     }
 
     /**
      * 活动派奖
      */
-    @RequestMapping(value="/rich88/award_activity",method= RequestMethod.POST)
+    @RequestMapping(value="/rich88/award_activity",method= RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object awardActivity(@RequestBody Rich88ActivityReq rich88ActivityReq, HttpServletRequest request) {
         String authorization = request.getHeader("Authorization");
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("Rich88Callback {} awardActivity 回调,IP:"+ip+" params:{}", JSONObject.toJSONString(rich88ActivityReq));
+        logger.info("Rich88Callback awardActivity 回调,IP:"+ip+" params:{}", JSONObject.toJSONString(rich88ActivityReq));
         Object object = rich88CallbackService.awardActivity(rich88ActivityReq, authorization,ip);
-        logger.info("Rich88Callback {} awardActivity 回调返回数据, params:{}",object);
+        logger.info("Rich88Callback awardActivity 回调返回数据, params:{}",object);
         return object;
     }
 }

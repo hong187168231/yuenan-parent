@@ -55,6 +55,12 @@ public class GameParentPlatform {
     @ApiModelProperty(value = "支持币种")
     private String currencyType;
 
+    @ApiModelProperty(value = "城市")
+    private String city;
+
+    @ApiModelProperty(value = "国家")
+    private String country;
+
     @ApiModelProperty(value = "白名单IP")
     private String ipAddr;
 

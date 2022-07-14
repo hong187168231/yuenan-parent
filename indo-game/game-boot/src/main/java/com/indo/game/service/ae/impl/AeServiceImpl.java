@@ -55,30 +55,29 @@ public class AeServiceImpl implements AeService {
     public Result aeGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName) {
         logger.info("aelog {} aeGame account:{}, aeCodeId:{}", loginUser.getId(), loginUser.getNickName(), platform);
         // 是否开售校验
-        GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(parentName);
-        if (null == platformGameParent) {
-            return Result.failed("(" + parentName + ")游戏平台不存在");
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
+        if (null == gameParentPlatform) {
+            return Result.failed("(" + parentName + ")平台不存在");
         }
-        if ("0".equals(platformGameParent.getIsStart())) {
-            return Result.failed("g" + "100101", "游戏平台未启用");
+        if (0==gameParentPlatform.getIsStart()) {
+            return Result.failed("g100101", "平台未启用");
         }
-        if ("1".equals(platformGameParent.getIsOpenMaintenance())) {
-            return Result.failed("g000001", platformGameParent.getMaintenanceContent());
+        if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
+            return Result.failed("g000001", gameParentPlatform.getMaintenanceContent());
         }
-        GamePlatform gamePlatform = new GamePlatform();
-        if (!platform.equals(parentName)) {
-            // 是否开售校验
-            gamePlatform = gameCommonService.getGamePlatformByplatformCode(platform);
-            if (null == gamePlatform) {
-                return Result.failed("(" + platform + ")平台游戏不存在");
-            }
-            if ("0".equals(gamePlatform.getIsStart())) {
-                return Result.failed("g" + "100102", "游戏未启用");
-            }
-            if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
-                return Result.failed("g091047", gamePlatform.getMaintenanceContent());
-            }
+
+        // 是否开售校验
+        GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
+        if (null == gamePlatform) {
+            return Result.failed("(" + platform + ")游戏不存在");
         }
+        if (0==gamePlatform.getIsStart()) {
+            return Result.failed("g100102", "游戏未启用");
+        }
+        if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
+            return Result.failed("g091047", gamePlatform.getMaintenanceContent());
+        }
+
         BigDecimal balance = loginUser.getBalance();
         //验证站点棋牌余额
         if (null == balance || BigDecimal.ZERO == balance) {
@@ -95,24 +94,22 @@ public class AeServiceImpl implements AeService {
                 cptOpenMember = new CptOpenMember();
                 cptOpenMember.setUserId(loginUser.getId().intValue());
                 //第三方账号指定格式 运营商代码(英文大写) + 下划线 + 玩家账号（大写英数）
-                String name = OpenAPIProperties.AE_MERCHANT_ID + "_" + loginUser.getAccount();
+                String name = OpenAPIProperties.AE_MERCHANT_ID + "_" + loginUser.getAccount().toUpperCase(Locale.ROOT);
                 cptOpenMember.setUserName(name);
                 cptOpenMember.setPassword(loginUser.getAccount());
                 cptOpenMember.setCreateTime(new Date());
                 cptOpenMember.setLoginTime(new Date());
                 cptOpenMember.setType(parentName);
                 //创建玩家
-                return createMemberGame(platformGameParent, gamePlatform, ip, cptOpenMember, isMobileLogin);
+                return createMemberGame(gameParentPlatform, gamePlatform, ip, cptOpenMember, isMobileLogin);
             } else {
-                CptOpenMember updateCptOpenMember = new CptOpenMember();
-                updateCptOpenMember.setId(cptOpenMember.getId());
-                updateCptOpenMember.setLoginTime(new Date());
-                externalService.updateCptOpenMember(updateCptOpenMember);
+                cptOpenMember.setLoginTime(new Date());
+                externalService.updateCptOpenMember(cptOpenMember);
                 //先登出
                 logout(loginUser, platform, ip);
             }
             //登录
-            return initGame(platformGameParent, gamePlatform, cptOpenMember, isMobileLogin);
+            return initGame(gameParentPlatform, gamePlatform, cptOpenMember, isMobileLogin);
         } catch (Exception e) {
             e.printStackTrace();
             return Result.failed("g100104", "网络繁忙，请稍后重试！");
@@ -150,17 +147,18 @@ public class AeServiceImpl implements AeService {
         params.put("username", cptOpenMemberm.getUserName());
         params.put("playmode", "0"); //游玩模式。0: 正式
         //设备。0: 行动装置 1: 网页
-        if ("1".equals(isMobileLogin)) {
-            params.put("device", "0");
-        } else {
+//        if ("1".equals(isMobileLogin)) {
+//            params.put("device", "0");
+//        } else {
 //            false 桌面设备登入
             params.put("device", "1");
-        }
+//        }
         // 加密
         StringBuilder builder = new StringBuilder();
         builder.append(OpenAPIProperties.AE_MERCHANT_ID).append(platformGameParent.getCurrencyType()).append(currentTime);
         builder.append(cptOpenMemberm.getUserName()).append("0").append(params.get("device")).append(gamePlatform.getPlatformCode());
         builder.append(platformGameParent.getLanguageType()).append(Base64.getEncoder().encodeToString(OpenAPIProperties.AE_MERCHANT_KEY.getBytes()));
+        logger.info("aelog gameLogin登录用户加密前。 builder:{}", builder.toString());
         String sign = MD5.md5(builder.toString());
         params.put("gameId", gamePlatform.getPlatformCode());
         params.put("sign", sign);
@@ -170,7 +168,9 @@ public class AeServiceImpl implements AeService {
         try {
             StringBuilder apiUrl = new StringBuilder();
             apiUrl.append(OpenAPIProperties.AE_API_URL).append("/api/login");
+            logger.info("aelog gameLogin登录用户请求。 apiUrl:{},params:{},user:{}", apiUrl.toString(),jsonStr,cptOpenMemberm);
             aeApiResponseData = commonRequest(apiUrl.toString(), jsonStr, cptOpenMemberm.getUserId(), "gameLogin");
+            logger.info("aelog gameLogin登录用户返回。 aeApiResponseData:{}", JSONObject.toJSONString(aeApiResponseData));
         } catch (Exception e) {
             logger.error("aelog aeGameLogin:{}", e);
             e.printStackTrace();
@@ -203,6 +203,7 @@ public class AeServiceImpl implements AeService {
         StringBuilder builder = new StringBuilder();
         builder.append(OpenAPIProperties.AE_MERCHANT_ID).append(platformGameParent.getCurrencyType()).append(currentTime);
         builder.append(cptOpenMember.getUserName()).append(Base64.getEncoder().encodeToString(OpenAPIProperties.AE_MERCHANT_KEY.getBytes()));
+        logger.info("aelog createMember创建账号加密前。 builder:{}", builder.toString());
         String sign = MD5.md5(builder.toString());
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("merchantId", OpenAPIProperties.AE_MERCHANT_ID);
@@ -216,7 +217,9 @@ public class AeServiceImpl implements AeService {
         apiUrl.append(OpenAPIProperties.AE_API_URL).append("/api/register");
         AeApiResponseData aeApiResponseData = null;
         try {
+            logger.info("aelog createMember创建账号请求。 apiUrl:{},params:{},user:{}", apiUrl.toString(),jsonStr,cptOpenMember);
             aeApiResponseData = commonRequest(apiUrl.toString(), jsonStr, cptOpenMember.getUserId(), "createMember");
+            logger.info("aelog createMember创建账号返回。 aeApiResponseData:{}", JSONObject.toJSONString(aeApiResponseData));
         } catch (Exception e) {
             logger.error("aelog aeCeateMember:{}", e);
             e.printStackTrace();
@@ -238,6 +241,7 @@ public class AeServiceImpl implements AeService {
             String name = OpenAPIProperties.AE_MERCHANT_ID + "_" + loginUser.getAccount();
             builder.append(OpenAPIProperties.AE_MERCHANT_ID).append(platformGameParent.getCurrencyType()).append(currentTime);
             builder.append(name).append(Base64.getEncoder().encodeToString(OpenAPIProperties.AE_MERCHANT_KEY.getBytes()));
+            logger.info("aelog logout登出玩家加密前。 builder:{}", builder.toString());
             String sign = MD5.md5(builder.toString());
             Map<String, Object> params = new HashMap<String, Object>();
             params.put("merchantId", OpenAPIProperties.AE_MERCHANT_ID);
@@ -248,7 +252,9 @@ public class AeServiceImpl implements AeService {
             String jsonStr = JSON.toJSONString(params);
             StringBuilder apiUrl = new StringBuilder();
             apiUrl.append(OpenAPIProperties.AE_API_URL).append("/api/logout");
+            logger.info("aelog logout登出玩家请求。 apiUrl:{},params:{},user:{}", apiUrl.toString(),jsonStr,loginUser);
             AeApiResponseData aeApiResponseData = commonRequest(apiUrl.toString(), jsonStr, loginUser.getId().intValue(), "gameLogout");
+            logger.info("aelog logout登出玩家返回。 aeApiResponseData:{}", JSONObject.toJSONString(aeApiResponseData));
             if (null == aeApiResponseData) {
                 return Result.failed();
             }
@@ -270,15 +276,13 @@ public class AeServiceImpl implements AeService {
      * 公共请求
      */
     public AeApiResponseData commonRequest(String apiUrl, String jsonStr, Integer userId, String type) throws Exception {
-        logger.info("aelog {} commonRequest userId:{},paramsMap:{}", userId, jsonStr);
+
         AeApiResponseData aeApiResponseData = null;
         String resultString = GameUtil.doProxyPostJson(OpenAPIProperties.PROXY_HOST_NAME, OpenAPIProperties.PROXY_PORT, OpenAPIProperties.PROXY_TCP,
             apiUrl, jsonStr, type, userId);
         logger.info("aelog apiResponse:" + resultString);
         if (StringUtils.isNotEmpty(resultString)) {
             aeApiResponseData = JSONObject.parseObject(resultString, AeApiResponseData.class);
-            logger.info("aelog {}:commonRequest type:{}, operateFlag:{}, hostName:{}, params:{}, result:{}, awcApiResponse:{}",
-                    userId, type, null, jsonStr, resultString, JSONObject.toJSONString(aeApiResponseData));
         }
         return aeApiResponseData;
     }

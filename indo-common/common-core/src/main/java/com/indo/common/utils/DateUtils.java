@@ -15,10 +15,7 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.TimeZone;
+import java.util.*;
 
 @Slf4j
 public class DateUtils {
@@ -1457,9 +1454,136 @@ public class DateUtils {
         return utc4Time.toInstant(ZoneOffset.ofHours(8)).toEpochMilli() / 1000;
     }
 
+    /**
+     * 获取北京时间 unix时间戳
+     * @return
+     */
+    public static long getGMT8TimeLength10(){
+        long epoch = 0;
+        try {
+            Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"), Locale.CHINESE);
+            Calendar day = Calendar.getInstance();
+            day.set(Calendar.YEAR, cal.get(Calendar.YEAR));
+            day.set(Calendar.MONTH, cal.get(Calendar.MONTH));
+            day.set(Calendar.DATE, cal.get(Calendar.DATE));
+            day.set(Calendar.HOUR_OF_DAY, cal.get(Calendar.HOUR_OF_DAY));
+            day.set(Calendar.MINUTE, cal.get(Calendar.MINUTE));
+            day.set(Calendar.SECOND, cal.get(Calendar.SECOND));
+            Date gmt8 = day.getTime();
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String t = df.format(gmt8);
+            epoch = df.parse(t).getTime() / 1000;
+        } catch (Exception e) {
+            System.out.println("获取GMT8时间 getGMT8Time() error !");
+            e.printStackTrace();
+        }
+        return  epoch;
+    }
+
+    /**
+
+     * 得到UTC时间，类型为字符串，格式为"yyyy-MM-dd HH:mm"<br />
+
+     * 如果获取失败，返回null
+
+     * @return
+
+     */
+
+    public static Long getUTCTimeStr(String formatStr) {
+        DateFormat format = new SimpleDateFormat(formatStr);
+        StringBuffer UTCTimeBuffer = new StringBuffer();
+
+        // 1、取得本地时间：
+
+        Calendar cal = Calendar.getInstance() ;
+
+        // 2、取得时间偏移量：
+
+        int zoneOffset = cal.get(java.util.Calendar.ZONE_OFFSET);
+
+        // 3、取得夏令时差：
+
+        int dstOffset = cal.get(java.util.Calendar.DST_OFFSET);
+
+        // 4、从本地时间里扣除这些差量，即可以取得UTC时间：
+
+        cal.add(java.util.Calendar.MILLISECOND, -(zoneOffset + dstOffset));
+
+        int year = cal.get(Calendar.YEAR);
+
+        int month = cal.get(Calendar.MONTH)+1;
+
+        int day = cal.get(Calendar.DAY_OF_MONTH);
+
+        int hour = cal.get(Calendar.HOUR_OF_DAY);
+
+        int minute = cal.get(Calendar.MINUTE);
+
+        int millisecond = cal.get(Calendar.MILLISECOND);
+
+        UTCTimeBuffer.append(year).append("-").append(month).append("-").append(day) ;
+
+        UTCTimeBuffer.append(" ").append(hour).append(":").append(minute).append(":").append(millisecond);
+
+        try{
+
+            return format.parse(UTCTimeBuffer.toString()).getTime()/1000;
+
+//            return UTCTimeBuffer.toString() ;
+
+        }catch(ParseException e)
+
+        {
+
+            e.printStackTrace() ;
+
+        }
+
+        return null ;
+
+    }
+
+    /**
+
+     * 将UTC时间转换为东八区时间
+
+     * @param UTCTime
+
+     * @return
+
+     */
+
+    public static String getLocalTimeFromUTC(String UTCTime,DateFormat format){
+
+        java.util.Date UTCDate = null ;
+
+        String localTimeStr = null ;
+
+        try {
+
+            UTCDate = format.parse(UTCTime);
+
+            format.setTimeZone(TimeZone.getTimeZone("GMT-8")) ;
+
+            localTimeStr = format.format(UTCDate) ;
+
+        } catch (ParseException e) {
+
+            e.printStackTrace();
+
+        }
+
+        return localTimeStr ;
+
+    }
+
     public static void main(String[] args) {
 //        System.out.println(daysBetween("2022-01-25", "2022-01-28"));
-        System.out.println(getUTC8TimeLength10());
+        DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//        System.out.println(getUTCTimeStr(DateUtils.newFormat));
+        System.out.println(getLocalTimeFromUTC("637922749635693535",format));
+
     }
 
 }

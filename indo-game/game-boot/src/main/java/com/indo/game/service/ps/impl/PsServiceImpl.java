@@ -53,29 +53,26 @@ public class PsServiceImpl implements PsService {
     public Result psGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName) {
         logger.info("pslog  {} jkGame account:{}, pgCodeId:{}", loginUser.getId(), loginUser.getNickName(), platform);
         // 是否开售校验
-        GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(parentName);
-        if (null == platformGameParent) {
-            return Result.failed("(" + parentName + ")游戏平台不存在");
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
+        if (null == gameParentPlatform) {
+            return Result.failed("(" + parentName + ")平台不存在");
         }
-        if ("0".equals(platformGameParent.getIsStart())) {
-            return Result.failed("g" + "100101", "游戏平台未启用");
+        if (0==gameParentPlatform.getIsStart()) {
+            return Result.failed("g100101", "平台未启用");
         }
-        if ("1".equals(platformGameParent.getIsOpenMaintenance())) {
-            return Result.failed("g000001", platformGameParent.getMaintenanceContent());
+        if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
+            return Result.failed("g000001", gameParentPlatform.getMaintenanceContent());
         }
-        GamePlatform gamePlatform = new GamePlatform();
-        if (!platform.equals(parentName)) {
-            // 是否开售校验
-            gamePlatform = gameCommonService.getGamePlatformByplatformCode(platform);
-            if (null == gamePlatform) {
-                return Result.failed("(" + platform + ")平台游戏不存在");
-            }
-            if ("0".equals(gamePlatform.getIsStart())) {
-                return Result.failed("g" + "100102", "游戏未启用");
-            }
-            if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
-                return Result.failed("g091047", gamePlatform.getMaintenanceContent());
-            }
+        // 是否开售校验
+        GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
+        if (null == gamePlatform) {
+            return Result.failed("(" + platform + ")游戏不存在");
+        }
+        if (0==gamePlatform.getIsStart()) {
+            return Result.failed("g100102", "游戏未启用");
+        }
+        if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
+            return Result.failed("g091047", gamePlatform.getMaintenanceContent());
         }
         BigDecimal balance = loginUser.getBalance();
         //验证站点棋牌余额
@@ -98,16 +95,15 @@ public class PsServiceImpl implements PsService {
                 //创建玩家
                 externalService.saveCptOpenMember(cptOpenMember);
             } else {
-                CptOpenMember updateCptOpenMember = new CptOpenMember();
-                updateCptOpenMember.setId(cptOpenMember.getId());
-                updateCptOpenMember.setLoginTime(new Date());
-                externalService.updateCptOpenMember(updateCptOpenMember);
+                cptOpenMember.setLoginTime(new Date());
+                externalService.updateCptOpenMember(cptOpenMember);
+                this.logout(loginUser, platform, ip);
             }
             StringBuilder builder = new StringBuilder();
             builder.append(OpenAPIProperties.PS_API_URL).append("/launch/?host_id=");
             builder.append(OpenAPIProperties.PS_HOST_ID);
             builder.append("&game_id=").append(platform);
-            builder.append("&lang=").append(platformGameParent.getLanguageType());
+            builder.append("&lang=").append(gameParentPlatform.getLanguageType());
             builder.append("&access_token=").append(cptOpenMember.getPassword());
 
             //登录
@@ -135,7 +131,7 @@ public class PsServiceImpl implements PsService {
             map.put("member_id", loginUser.getId() + "");
             StringBuilder builder = new StringBuilder();
             builder.append(OpenAPIProperties.PS_API_URL).append("/admin/kickout");
-            JSONObject jsonObject = commonRequest(builder.toString(), map, loginUser.getId().intValue(), "cqGameLogin");
+            JSONObject jsonObject = commonRequest(builder.toString(), map, loginUser.getId().intValue(), "cqGamelogout");
             if (null == jsonObject) {
                 return Result.failed();
             }
@@ -157,7 +153,7 @@ public class PsServiceImpl implements PsService {
      * 公共请求
      */
     public JSONObject commonRequest(String apiUrl, Map<String, String> params, Integer userId, String type) throws Exception {
-        logger.info("pslog  {} commonRequest userId:{},paramsMap:{}", userId, params);
+        logger.info("pslog  {} commonRequest userId:{},paramsMap:{},type:{}", userId, params,type);
         JSONObject psApiResponseData = null;
         String resultString = GameUtil.doProxyPostJson(OpenAPIProperties.PROXY_HOST_NAME, OpenAPIProperties.PROXY_PORT, OpenAPIProperties.PROXY_TCP,
                 apiUrl, params, type, userId);

@@ -8,6 +8,7 @@ import com.indo.common.result.Result;
 import com.indo.common.utils.DateUtils;
 import com.indo.common.utils.GameUtil;
 import com.indo.common.utils.encrypt.MD5Encoder;
+import com.indo.game.common.util.V8Encrypt;
 import com.indo.game.mapper.TxnsMapper;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
 import com.indo.game.pojo.entity.CptOpenMember;
@@ -45,33 +46,30 @@ public class V8ServiceImpl implements V8Service {
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
         if (null == gameParentPlatform) {
-            return Result.failed("(" + parentName + ")游戏平台不存在");
+            return Result.failed("(" + parentName + ")平台不存在");
         }
-        if (gameParentPlatform.getIsStart().equals(0)) {
-            return Result.failed("g100101", "游戏平台未启用");
+        if (0==gameParentPlatform.getIsStart()) {
+            return Result.failed("g100101", "平台未启用");
         }
         if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
             return Result.failed("g000001", gameParentPlatform.getMaintenanceContent());
         }
-        if (!platform.equals(parentName)) {
-            GamePlatform gamePlatform;
-            // 是否开售校验
-            gamePlatform = gameCommonService.getGamePlatformByplatformCode(platform);
-            if (null == gamePlatform) {
-                return Result.failed("(" + platform + ")平台游戏不存在");
-            }
-            if (gamePlatform.getIsStart().equals(0)) {
-                return Result.failed("g100102", "游戏未启用");
-            }
-            if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
-                return Result.failed("g091047", gamePlatform.getMaintenanceContent());
-            }
+        // 是否开售校验
+        GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
+        if (null == gamePlatform) {
+            return Result.failed("(" + platform + ")游戏不存在");
+        }
+        if (0==gamePlatform.getIsStart()) {
+            return Result.failed("g100102", "游戏未启用");
+        }
+        if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
+            return Result.failed("g091047", gamePlatform.getMaintenanceContent());
         }
 
         BigDecimal balance = loginUser.getBalance();
         //验证站点余额
         if (null == balance || balance.compareTo(BigDecimal.ZERO) == 0) {
-            logger.info("站点v8余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
+            logger.info("站点v8余额不足，当前用户memid: {},nickName: {},balance: {}", loginUser.getId(), loginUser.getNickName(), balance);
             //站点棋牌余额不足
             return Result.failed("g300004", "会员余额不足");
         }
@@ -91,17 +89,15 @@ public class V8ServiceImpl implements V8Service {
                 externalService.saveCptOpenMember(cptOpenMember);
 
                 // 第一次登录自动创建玩家, 后续登录返回登录游戏URL
-                return createMemberGame(cptOpenMember, platform, ip, true);
+                return createMemberGame(cptOpenMember, platform, ip, true,balance);
             } else {
-                CptOpenMember updateCptOpenMember = new CptOpenMember();
-                updateCptOpenMember.setId(cptOpenMember.getId());
-                updateCptOpenMember.setLoginTime(new Date());
-                externalService.updateCptOpenMember(updateCptOpenMember);
+                cptOpenMember.setLoginTime(new Date());
+                externalService.updateCptOpenMember(cptOpenMember);
                 // 先退出游戏
                 GameUtil.httpGetWithCookies(getLoginOutUrl(loginUser.getAccount()), null, null);
 
                 // 请求地址
-                return createMemberGame(cptOpenMember, platform, ip, false);
+                return createMemberGame(cptOpenMember, platform, ip, false,balance);
             }
 
 
@@ -222,10 +218,10 @@ public class V8ServiceImpl implements V8Service {
      * @param cptOpenMember cptOpenMember
      * @return Result
      */
-    private Result createMemberGame(CptOpenMember cptOpenMember, String platform, String ip, boolean isCreateUser) {
+    private Result createMemberGame(CptOpenMember cptOpenMember, String platform, String ip, boolean isCreateUser,BigDecimal balance) {
         try {
             //
-            String result = GameUtil.httpGetWithCookies(getLoginUrl(cptOpenMember.getUserName(), platform, ip), null, null);
+            String result = GameUtil.httpGetWithCookies(getLoginUrl(cptOpenMember.getUserName(), platform, ip,balance), null, null);
             JSONObject jsonObject = JSONObject.parseObject(result);
 
             if (null == jsonObject || null == jsonObject.getJSONObject("d")) {
@@ -260,7 +256,7 @@ public class V8ServiceImpl implements V8Service {
      *
      * @return String
      */
-    private String getLoginUrl(String userAccount, String gameId, String ip) throws Exception {
+    private String getLoginUrl(String userAccount, String gameId, String ip,BigDecimal balance) throws Exception {
         long timestamp = System.currentTimeMillis();
         StringBuilder url = new StringBuilder();
         url.append(OpenAPIProperties.V8_API_URL);
@@ -269,14 +265,21 @@ public class V8ServiceImpl implements V8Service {
 
         StringBuilder urlParams = new StringBuilder();
         urlParams.append("s=0&account=").append(userAccount);
-        urlParams.append("&money=0&orderid=").append(getOrderid(userAccount));
+        urlParams.append("&money=").append(balance);
+        urlParams.append("&orderid=").append(getOrderid(userAccount));
         urlParams.append("&ip=").append(ip);
         urlParams.append("&lineCode=").append(OpenAPIProperties.V8_LINE_CODE);
-        urlParams.append("&KindID=").append(gameId);
-
-        url.append("&param=").append(GameUtil.encrypt(urlParams.toString(), OpenAPIProperties.V8_DESKEY));
+        logger.info("v8Game getLoginUrl登录请求:lineCode:{},isPlatformLogin:{}",OpenAPIProperties.V8_LINE_CODE, OpenAPIProperties.V8_IS_PLATFORM_LOGIN);
+        if(OpenAPIProperties.V8_IS_PLATFORM_LOGIN.equals("Y")){
+            urlParams.append("&KindID=0");
+        }else {
+            urlParams.append("&KindID=").append(gameId);
+        }
+        logger.info("v8Game getLoginUrl登录请求加密前:urlParams:{}", urlParams.toString());
+        url.append("&param=").append(V8Encrypt.AESEncrypt(urlParams.toString(), OpenAPIProperties.V8_DESKEY));
         url.append("&key=");
         url.append(getKey(timestamp));
+        logger.info("v8Game getLoginUrl登录请求:userAccount:{},gameId:{},ip:{},url:{}", userAccount, gameId, ip, url.toString());
         return url.toString();
     }
 
@@ -296,9 +299,10 @@ public class V8ServiceImpl implements V8Service {
         StringBuilder urlParams = new StringBuilder();
         urlParams.append("s=8&account=").append(account);
 
-        url.append("&param=").append(GameUtil.encrypt(urlParams.toString(), OpenAPIProperties.V8_DESKEY));
+        url.append("&param=").append(V8Encrypt.AESEncrypt(urlParams.toString(), OpenAPIProperties.V8_DESKEY));
         url.append("&key=");
         url.append(getKey(timestamp));
+        logger.info("v8Game getLoginUrl玩家退出游戏:userAccount:{},url:{}", account,  url.toString());
         return url.toString();
     }
 
@@ -319,9 +323,10 @@ public class V8ServiceImpl implements V8Service {
         urlParams.append("s=3&account=").append(account);
         urlParams.append("&money=").append(money);
         urlParams.append("&orderid=").append(orderid);
-        url.append("&param=").append(GameUtil.encrypt(urlParams.toString(), OpenAPIProperties.V8_DESKEY));
+        url.append("&param=").append(V8Encrypt.AESEncrypt(urlParams.toString(), OpenAPIProperties.V8_DESKEY));
         url.append("&key=");
         url.append(getKey(timestamp));
+        logger.info("v8Game getLoginUrl玩家下分请求:userAccount:{},money:{},orderid:{},url:{}", account, money, orderid, url.toString());
         return url.toString();
     }
 
@@ -340,9 +345,10 @@ public class V8ServiceImpl implements V8Service {
 
         StringBuilder urlParams = new StringBuilder();
         urlParams.append("s=7&account=").append(account);
-        url.append("&param=").append(GameUtil.encrypt(urlParams.toString(), OpenAPIProperties.V8_DESKEY));
+        url.append("&param=").append(V8Encrypt.AESEncrypt(urlParams.toString(), OpenAPIProperties.V8_DESKEY));
         url.append("&key=");
         url.append(getKey(timestamp));
+        logger.info("v8Game getLoginUrl玩家游戏余额和在线状态地址请求:userAccount:{},url:{}", account, url.toString());
         return url.toString();
     }
 
@@ -361,9 +367,10 @@ public class V8ServiceImpl implements V8Service {
 
         StringBuilder urlParams = new StringBuilder();
         urlParams.append("s=4&orderid=").append(orderid);
-        url.append("&param=").append(GameUtil.encrypt(urlParams.toString(), OpenAPIProperties.V8_DESKEY));
+        url.append("&param=").append(V8Encrypt.AESEncrypt(urlParams.toString(), OpenAPIProperties.V8_DESKEY));
         url.append("&key=");
         url.append(getKey(timestamp));
+        logger.info("v8Game getLoginUrl玩家上下分订单查询请求:orderid:{},url:{}", orderid, url.toString());
         return url.toString();
     }
 

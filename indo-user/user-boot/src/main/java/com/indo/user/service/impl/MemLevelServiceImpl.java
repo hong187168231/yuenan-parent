@@ -174,8 +174,10 @@ public class MemLevelServiceImpl extends ServiceImpl<MemLevelMapper, MemLevel> i
             return BeanConvertUtils.srcToTarget(cacheList, MemLevel.class);
         }
         LambdaQueryWrapper<MemLevel> wrapper = new LambdaQueryWrapper<>();
+        wrapper.orderByDesc(MemLevel::getLevel);
         List<MemLevel> list = this.baseMapper.selectList(wrapper);
         RedisUtils.lSet(RedisKeys.SYS_LEVEL_KEY, list.toArray());
-        return list;
+        cacheList = UserBusinessRedisUtils.lGet(RedisKeys.SYS_LEVEL_KEY, 0, -1);
+        return BeanConvertUtils.srcToTarget(cacheList, MemLevel.class);
     }
 }

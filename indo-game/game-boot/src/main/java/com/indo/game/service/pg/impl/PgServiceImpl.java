@@ -46,7 +46,7 @@ public class PgServiceImpl implements PgService {
 
 
     /**
-     * 登录游戏CQ9游戏
+     * 登录游戏PG游戏
      *
      * @return loginUser 用户信息
      */
@@ -54,29 +54,26 @@ public class PgServiceImpl implements PgService {
     public Result pgGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName) {
         logger.info("pglog  {} pgGame account:{}, pgCodeId:{}", loginUser.getId(), loginUser.getNickName(), platform);
         // 是否开售校验
-        GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(parentName);
-        if (null == platformGameParent) {
-            return Result.failed("(" + parentName + ")游戏平台不存在");
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
+        if (null == gameParentPlatform) {
+            return Result.failed("(" + parentName + ")平台不存在");
         }
-        if ("0".equals(platformGameParent.getIsStart())) {
-            return Result.failed("g" + "100101", "游戏平台未启用");
+        if (0==gameParentPlatform.getIsStart()) {
+            return Result.failed("g100101", "平台未启用");
         }
-        if ("1".equals(platformGameParent.getIsOpenMaintenance())) {
-            return Result.failed("g000001", platformGameParent.getMaintenanceContent());
+        if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
+            return Result.failed("g000001", gameParentPlatform.getMaintenanceContent());
         }
-        GamePlatform gamePlatform = new GamePlatform();
-        if (!platform.equals(parentName)) {
-            // 是否开售校验
-            gamePlatform = gameCommonService.getGamePlatformByplatformCode(platform);
-            if (null == gamePlatform) {
-                return Result.failed("(" + platform + ")平台游戏不存在");
-            }
-            if ("0".equals(gamePlatform.getIsStart())) {
-                return Result.failed("g" + "100102", "游戏未启用");
-            }
-            if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
-                return Result.failed("g091047", gamePlatform.getMaintenanceContent());
-            }
+        // 是否开售校验
+        GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
+        if (null == gamePlatform) {
+            return Result.failed("(" + platform + ")游戏不存在");
+        }
+        if (0==gamePlatform.getIsStart()) {
+            return Result.failed("g100102", "游戏未启用");
+        }
+        if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
+            return Result.failed("g091047", gamePlatform.getMaintenanceContent());
         }
         BigDecimal balance = loginUser.getBalance();
         //验证站点棋牌余额
@@ -100,18 +97,25 @@ public class PgServiceImpl implements PgService {
                 //创建玩家
                 externalService.saveCptOpenMember(cptOpenMember);
             } else {
-                CptOpenMember updateCptOpenMember = new CptOpenMember();
-                updateCptOpenMember.setId(cptOpenMember.getId());
-                updateCptOpenMember.setLoginTime(new Date());
-                externalService.updateCptOpenMember(updateCptOpenMember);
+                cptOpenMember.setLoginTime(new Date());
+                externalService.updateCptOpenMember(cptOpenMember);
                 logout(loginUser, platform, ip);
             }
 
             StringBuilder builder = new StringBuilder();
-            builder.append(OpenAPIProperties.PG_LOGIN_URL).append("/web-lobby/games/?");
-            builder.append("operator_token=").append(OpenAPIProperties.PG_API_TOKEN);
-            builder.append("&operator_player_session=").append(cptOpenMember.getPassword());
-            builder.append("&language=").append(platformGameParent.getLanguageType());
+            if("Y".equals(OpenAPIProperties.PG_IS_PLATFORM_LOGIN)) {
+                builder.append(OpenAPIProperties.PG_LOGIN_URL).append("/web-lobby/games/?");
+                builder.append("operator_token=").append(OpenAPIProperties.PG_API_TOKEN);
+                builder.append("&operator_player_session=").append(cptOpenMember.getPassword());
+                builder.append("&language=").append(gameParentPlatform.getLanguageType());
+            }else {
+                builder.append(OpenAPIProperties.PG_LOGIN_URL).append("/"+gamePlatform.getPlatformCode()+"/index.html?");
+                builder.append("btt=1");//游戏启动模式3
+                builder.append("&ot=").append(OpenAPIProperties.PG_API_TOKEN);//运营商独有的身份识别
+                builder.append("&ops=").append(cptOpenMember.getPassword());//运营商系统生成的令牌
+                builder.append("&language=").append(gameParentPlatform.getLanguageType());//游戏显示语言
+            }
+            logger.info("pglog  pgGame登录玩家 urlapi:{}", builder.toString(),cptOpenMember);
             //登录
             ApiResponseData responseData = new ApiResponseData();
             responseData.setPathUrl(builder.toString());
@@ -128,18 +132,29 @@ public class PgServiceImpl implements PgService {
      */
     private Result createMemberGame(GameParentPlatform platformGameParent, GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember, String isMobileLogin) {
         PgApiResponseData pgApiResponseData = createMember(platformGameParent, gamePlatform, ip, cptOpenMember, isMobileLogin);
-        if (null == pgApiResponseData || null == pgApiResponseData.getData()) {
+        if (null == pgApiResponseData ) {
             return Result.failed("g091087", "第三方请求异常！");
         }
-        JSONObject jsonDataObject = JSON.parseObject(pgApiResponseData.getData());
-        JSONObject jsonStatusObject = JSON.parseObject(pgApiResponseData.getError());
-        if (("1").equals(jsonDataObject.getString("action_result"))) {
+        JSONObject jsonDataObject = null;
+        JSONObject jsonStatusObject = null;
+        if(null!=pgApiResponseData.getData()){
+            jsonDataObject = JSON.parseObject(pgApiResponseData.getData());
+        }
+        if(null!=pgApiResponseData.getError()){
+            jsonStatusObject = JSON.parseObject(pgApiResponseData.getError());
+        }
+        if (null!=jsonDataObject&&("1").equals(jsonDataObject.getString("action_result"))) {
             externalService.saveCptOpenMember(cptOpenMember);
             return Result.success();
         } else {
-            return errorCode(jsonStatusObject.getString("code"), jsonStatusObject.getString("message"));
+            if(null!=jsonStatusObject){
+                return errorCode(jsonStatusObject.getString("code"), jsonStatusObject.getString("message"));
+            }else {
+                return Result.failed("g091087", "第三方请求异常！");
+            }
         }
     }
+
 
     private PgApiResponseData createMember(GameParentPlatform platformGameParent, GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember, String isMobileLogin) {
         Map<String, String> map = new HashMap<>();
@@ -153,7 +168,9 @@ public class PgServiceImpl implements PgService {
                 .append("?trace_id=").append(myGUID.toString());
         PgApiResponseData pgApiResponseData = null;
         try {
+            logger.info("pglog  createMember创建玩家 urlapi:{},paramsMap:{},loginUser:{}", builder.toString(), map,cptOpenMember);
             pgApiResponseData = commonRequest(builder.toString(), map, cptOpenMember.getUserId(), "createPgMember");
+            logger.info("pglog  createMember创建玩家返回 pgApiResponseData:{}", JSONObject.toJSONString(pgApiResponseData));
         } catch (Exception e) {
             logger.error("pglog pgCeateMember:{}", e);
             e.printStackTrace();
@@ -181,16 +198,28 @@ public class PgServiceImpl implements PgService {
             RandomGUID myGUID = new RandomGUID();
             builder.append(OpenAPIProperties.PG_API_URL).append("/Player/v1/Kick")
                     .append("?trace_id=").append(myGUID.toString());
+            logger.info("pglog  logout登出玩家 urlapi:{},paramsMap:{},loginUser:{}", builder.toString(), map,loginUser);
             PgApiResponseData pgApiResponseData = commonRequest(builder.toString(), map, loginUser.getId().intValue(), "cqGameLogin");
+            logger.info("pglog  logout登出玩家返回 pgApiResponseData:{}", JSONObject.toJSONString(pgApiResponseData));
             if (null == pgApiResponseData) {
                 return Result.failed();
             }
-            JSONObject jsonDataObject = JSON.parseObject(pgApiResponseData.getData());
-            JSONObject jsonStatusObject = JSON.parseObject(pgApiResponseData.getError());
-            if (("1").equals(jsonDataObject.getString("action_result"))) {
+            JSONObject jsonDataObject = null;
+            JSONObject jsonStatusObject = null;
+            if(null!=pgApiResponseData.getData()){
+                jsonDataObject = JSON.parseObject(pgApiResponseData.getData());
+            }
+            if(null!=pgApiResponseData.getError()){
+                jsonStatusObject = JSON.parseObject(pgApiResponseData.getError());
+            }
+            if (null!=jsonDataObject&&("1").equals(jsonDataObject.getString("action_result"))) {
                 return Result.success();
             } else {
-                return errorCode(jsonStatusObject.getString("code"), jsonStatusObject.getString("message"));
+                if(null!=jsonStatusObject){
+                    return errorCode(jsonStatusObject.getString("code"), jsonStatusObject.getString("message"));
+                }else {
+                    return Result.failed("g091087", "第三方请求异常！");
+                }
             }
         } catch (Exception e) {
             logger.error("pglog  pglog out:{}", e);

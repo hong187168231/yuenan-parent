@@ -25,7 +25,7 @@ import javax.annotation.Resource;
 
 
 /**
- * DG
+ * kingmaker
  *
  * @author
  */
@@ -281,7 +281,7 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                         jsonArray.add(dataJson);
                         continue;
                     }
-                    balance = balance.add(jsonObject.getBigDecimal("amt"));
+                    balance = balance.add(json.getBigDecimal("amt"));
                     gameCommonService.updateUserBalance(memBaseinfo, jsonObject.getBigDecimal("amt"), GoldchangeEnum.DSFYXZZ, TradingEnum.INCOME);
                 }
 

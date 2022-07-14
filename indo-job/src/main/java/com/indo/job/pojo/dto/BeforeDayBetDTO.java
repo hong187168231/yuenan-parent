@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 @Data
 public class BeforeDayBetDTO {
 
-    private Long memId;
+    private Long parentId;
     private Integer memLevel;
     private String realName;
     private String superior;

@@ -118,8 +118,13 @@ public class Rich88CallbackServiceImpl implements Rich88CallbackService {
             return initFailureResponse(20008, "交易序号不能为空");
         }
         try {
-            GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(rich88TransferReq.getGame_code());
+            GamePlatform gamePlatform;
+            if("Y".equals(OpenAPIProperties.RICH_IS_PLATFORM_LOGIN)){
+                gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(gameParentPlatform.getPlatformCode(),gameParentPlatform.getPlatformCode());
+            }else {
+                gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(rich88TransferReq.getGame_code(), gameParentPlatform.getPlatformCode());
 
+            }
             // 查询订单
             Txns oldTxns = getTxns(gameParentPlatform, paySerialno, rich88TransferReq.getAccount());
 
@@ -222,7 +227,7 @@ public class Rich88CallbackServiceImpl implements Rich88CallbackService {
             }
 
             // 查询用户请求订单
-            Txns txns = getActivityTxns(platformGameParent, rich88ActivityReq.getAward_id(), memBaseinfo.getId().toString());
+            Txns txns = getActivityTxns(platformGameParent, rich88ActivityReq.getAward_id(), memBaseinfo.getAccount());
             if (null != txns) {
                 return initFailureResponse(20006, "獎勵已送出");
             }
@@ -238,7 +243,7 @@ public class Rich88CallbackServiceImpl implements Rich88CallbackService {
             //此交易是否是投注 true是投注 false 否
             txns.setBet(false);
             //玩家 ID
-            txns.setUserId(memBaseinfo.getId().toString());
+            txns.setUserId(memBaseinfo.getAccount());
             //玩家货币代码
             txns.setCurrency(rich88ActivityReq.getCurrency());
             //游戏平台的下注项目

@@ -53,31 +53,28 @@ public class MgServiceImpl implements MgService {
      */
     @Override
     public Result mgGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName) {
-        logger.info("mgLog  {} mgGame account:{}, pgCodeId:{}", loginUser.getId(), loginUser.getNickName(), platform);
+        logger.info("mgLog登录游戏Mg游戏 mgGame userId:{}, account:{}, platform:{}, parentName:{}", loginUser.getId(), loginUser.getAccount(), platform, parentName);
         // 是否开售校验
-        GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(parentName);
-        if (null == platformGameParent) {
-            return Result.failed("(" + parentName + ")游戏平台不存在");
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
+        if (null == gameParentPlatform) {
+            return Result.failed("(" + parentName + ")平台不存在");
         }
-        if ("0".equals(platformGameParent.getIsStart())) {
-            return Result.failed("g" + "100101", "游戏平台未启用");
+        if (0==gameParentPlatform.getIsStart()) {
+            return Result.failed("g100101", "平台未启用");
         }
-        if ("1".equals(platformGameParent.getIsOpenMaintenance())) {
-            return Result.failed("g000001", platformGameParent.getMaintenanceContent());
+        if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
+            return Result.failed("g000001", gameParentPlatform.getMaintenanceContent());
         }
-        GamePlatform gamePlatform = new GamePlatform();
-        if (!platform.equals(parentName)) {
-            // 是否开售校验
-            gamePlatform = gameCommonService.getGamePlatformByplatformCode(platform);
-            if (null == gamePlatform) {
-                return Result.failed("(" + platform + ")平台游戏不存在");
-            }
-            if ("0".equals(gamePlatform.getIsStart())) {
-                return Result.failed("g" + "100102", "游戏未启用");
-            }
-            if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
-                return Result.failed("g091047", gamePlatform.getMaintenanceContent());
-            }
+        // 是否开售校验
+        GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
+        if (null == gamePlatform) {
+            return Result.failed("(" + platform + ")游戏不存在");
+        }
+        if (0==gamePlatform.getIsStart()) {
+            return Result.failed("g100102", "游戏未启用");
+        }
+        if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
+            return Result.failed("g091047", gamePlatform.getMaintenanceContent());
         }
         BigDecimal balance = loginUser.getBalance();
         //验证站点棋牌余额
@@ -87,13 +84,14 @@ public class MgServiceImpl implements MgService {
             return Result.failed("g300004", "会员余额不足");
         }
         try {
-            JSONObject tokenJson = gameToken(loginUser.getId().intValue());
-            if (StringUtils.isEmpty(tokenJson.getString("access_token"))) {
-                return errorCode(tokenJson.getString("code"), tokenJson.getString("message"));
-            }
+            JSONObject tokenJson;
             // 验证且绑定（AE-CPT第三方会员关系）
             CptOpenMember cptOpenMember = externalService.getCptOpenMember(loginUser.getId().intValue(), parentName);
             if (cptOpenMember == null) {
+                tokenJson = gameToken(loginUser.getId().intValue());
+                if (StringUtils.isEmpty(tokenJson.getString("access_token"))) {
+                    return errorCode(tokenJson.getString("code"), tokenJson.getString("message"));
+                }
                 cptOpenMember = new CptOpenMember();
                 cptOpenMember.setUserName(loginUser.getAccount());
                 cptOpenMember.setPassword(SnowflakeId.generateId().toString());
@@ -102,24 +100,19 @@ public class MgServiceImpl implements MgService {
                 cptOpenMember.setLoginTime(new Date());
                 cptOpenMember.setType(parentName);
                 //创建玩家
-                Result result = createMemberGame(cptOpenMember, tokenJson.getString("access_token"));
+                return createMemberGame(gameParentPlatform , gamePlatform,cptOpenMember, isMobileLogin, "Bearer "+tokenJson.getString("access_token"));
             } else {
-                CptOpenMember updateCptOpenMember = new CptOpenMember();
-                updateCptOpenMember.setId(cptOpenMember.getId());
-                updateCptOpenMember.setLoginTime(new Date());
-                externalService.updateCptOpenMember(updateCptOpenMember);
+                cptOpenMember.setLoginTime(new Date());
+                externalService.updateCptOpenMember(cptOpenMember);
                 logout(loginUser, platform, ip);
+                tokenJson = gameToken(loginUser.getId().intValue());
+                if (StringUtils.isEmpty(tokenJson.getString("access_token"))) {
+                    return errorCode(tokenJson.getString("code"), tokenJson.getString("message"));
+                }
             }
 
-            JSONObject jsonObject = gameLogin(platformGameParent, gamePlatform, cptOpenMember, isMobileLogin, tokenJson.getString("access_token"));
-            ;
-            if (StringUtils.isEmpty(jsonObject.getString("url"))) {
-                return errorCode(jsonObject.getString("code"), jsonObject.getString("message"));
-            }
-            //登录
-            ApiResponseData responseData = new ApiResponseData();
-            responseData.setPathUrl(jsonObject.getString("url"));
-            return Result.success(responseData);
+            return gameLogin(gameParentPlatform, gamePlatform, cptOpenMember, isMobileLogin, "Bearer "+tokenJson.getString("access_token"));
+
         } catch (Exception e) {
             e.printStackTrace();
             return Result.failed("g100104", "网络繁忙，请稍后重试！");
@@ -132,12 +125,14 @@ public class MgServiceImpl implements MgService {
         map.put("client_secret", OpenAPIProperties.MG_CLIENT_SECRET);
         map.put("grant_type", "client_credentials");
         StringBuilder builder = new StringBuilder();
-        builder.append(OpenAPIProperties.MG_SESSION_URL).append("/connect/token");
+        builder.append(OpenAPIProperties.MG_TOKEN_URL).append("/connect/token");
         JSONObject apiResponseData = null;
+        logger.info("mgLog登录游戏Mg游戏gameToken输入 builder:{}, params:{}, userId:{}", builder.toString(), map, userId);
         try {
             apiResponseData = commonRequest(builder.toString(), map, userId, "", "createMgToken");
+            logger.info("mgLog登录游戏Mg游戏gameToken返回 JSONObject:{}", null!=apiResponseData?apiResponseData.toJSONString():"");
         } catch (Exception e) {
-            logger.error("mgLog pgCeateMember:{}", e);
+            logger.error("mgLog gameToken:{}", e);
             e.printStackTrace();
         }
         return apiResponseData;
@@ -148,16 +143,21 @@ public class MgServiceImpl implements MgService {
     /**
      * 创建账户并登录逻辑
      */
-    private Result createMemberGame(CptOpenMember cptOpenMember, String token) {
+    private Result createMemberGame(GameParentPlatform platformGameParent, GamePlatform gamePlatform,CptOpenMember cptOpenMember, String isMobileLogin, String token) {
         JSONObject pgApiResponseData = createMember(cptOpenMember, token);
         if (null == pgApiResponseData) {
             return Result.failed("g091087", "第三方请求异常！");
         }
         if (!StringUtils.isEmpty(pgApiResponseData.getString("uri"))) {
             externalService.saveCptOpenMember(cptOpenMember);
-            return Result.success();
+            return gameLogin(platformGameParent, gamePlatform, cptOpenMember, isMobileLogin, "Bearer "+token);
         } else {
-            return errorCode(pgApiResponseData.getString("code"), pgApiResponseData.getString("message"));
+            if (!StringUtils.isEmpty(pgApiResponseData.getString("error"))) {
+                JSONObject errorJ = (JSONObject)pgApiResponseData.get("error");
+                return errorCode(errorJ.getString("code"), errorJ.getString("message"));
+            }else {
+                return errorCode(pgApiResponseData.getString("code"), pgApiResponseData.getString("message"));
+            }
         }
     }
 
@@ -167,9 +167,11 @@ public class MgServiceImpl implements MgService {
         StringBuilder builder = new StringBuilder();
         builder.append(OpenAPIProperties.MG_API_URL).append("/api/v1/agents/")
                 .append(OpenAPIProperties.MG_AGENT_CODE).append("/players");
+        logger.info("mgLog登录游戏Mg游戏创建用户createMember输入 url:{}, params:{}, userId:{}, token:{}", builder.toString(), map, cptOpenMember.getUserId(),token);
         JSONObject apiResponseData = null;
         try {
             apiResponseData = commonRequest(builder.toString(), map, cptOpenMember.getUserId(), token, "createMgMember");
+            logger.info("mgLog登录游戏Mg游戏创建用户createMember返回 JSONObject:{}", null!=apiResponseData?apiResponseData.toJSONString():"");
         } catch (Exception e) {
             logger.error("mgLog pgCeateMember:{}", e);
             e.printStackTrace();
@@ -182,12 +184,38 @@ public class MgServiceImpl implements MgService {
     /**
      * 调用API登录
      */
-    private JSONObject gameLogin(GameParentPlatform platformGameParent, GamePlatform gamePlatform,
+    private Result gameLogin(GameParentPlatform platformGameParent, GamePlatform gamePlatform,
                                  CptOpenMember cptOpenMemberm, String isMobileLogin, String token) {
         JSONObject apiResponseData = null;
         try {
             Map<String, String> params = new HashMap<String, String>();
-            params.put("contentCode", gamePlatform.getPlatformCode());
+            if(OpenAPIProperties.MG_IS_PLATFORM_LOGIN.equals("Y")){
+//                1	Live	真人视讯
+//                2	Slots	老虎机
+//                3	Sports	体育
+//                4	Animal	斗鸡
+//                5	Poker	棋牌游戏
+//                6	Fishing	捕鱼
+//                7	Lottery	彩票
+                String contentCode = "Live Dealer";
+                if(gamePlatform.getCategoryId()==1){
+//                    contentCode = "Live Dealer";
+                    contentCode = "SMG_titaniumLiveGames_BaccaratNC";
+                }else if(gamePlatform.getCategoryId()==2){
+//                    contentCode = "Slot";
+                    contentCode = "Slot";
+                }else if(gamePlatform.getCategoryId()==5){
+//                    contentCode = "QiPai";
+                    contentCode = "Slot";
+                }else if(gamePlatform.getCategoryId()==6){
+//                    contentCode = "Fishing";
+                    contentCode = "Slot";
+                }
+                params.put("contentCode", contentCode);
+            }else {
+                params.put("contentCode", gamePlatform.getPlatformCode());
+            }
+
             if ("0".equals(isMobileLogin)) {
                 params.put("platform", "Desktop");
             } else if ("1".equals(isMobileLogin)) {
@@ -199,12 +227,30 @@ public class MgServiceImpl implements MgService {
             StringBuilder apiUrl = new StringBuilder();
             apiUrl.append(OpenAPIProperties.MG_API_URL).append("/api/v1/agents/").append(OpenAPIProperties.MG_AGENT_CODE);
             apiUrl.append("/players/").append(cptOpenMemberm.getUserName()).append("/sessions");
+            logger.info("mgLog登录游戏Mg游戏登录用户gameLogin输入 apiUrl:{}, params:{}, userId:{}, token:{}", apiUrl.toString(), params, cptOpenMemberm.getUserId(), token);
             apiResponseData = commonRequest(apiUrl.toString(), params, cptOpenMemberm.getUserId(), token, "mgGameLogin");
+            logger.info("mgLog登录游戏Mg游戏登录用户gameLogin返回JSONObject:{}", null!=apiResponseData?apiResponseData.toJSONString():"");
+            if (null != apiResponseData && null != apiResponseData.getString("url") && !"".equals(apiResponseData.getString("url"))) {
+                //登录
+                ApiResponseData responseData = new ApiResponseData();
+                responseData.setPathUrl(apiResponseData.getString("url"));
+                return Result.success(responseData);
+            }else if(null == apiResponseData){
+                return Result.failed();
+            }else {
+                if (!StringUtils.isEmpty(apiResponseData.getString("error"))) {
+                    JSONObject errorJ = (JSONObject)apiResponseData.get("error");
+                    return errorCode(errorJ.getString("code"), errorJ.getString("message"));
+                }else {
+                    return errorCode(apiResponseData.getString("code"), apiResponseData.getString("message"));
+                }
+            }
+
         } catch (Exception e) {
             logger.error("mglog mgGameLogin:{}", e);
             e.printStackTrace();
+            return Result.failed();
         }
-        return apiResponseData;
     }
 
     /**
@@ -226,33 +272,33 @@ public class MgServiceImpl implements MgService {
      * 公共请求
      */
     public JSONObject commonRequest(String apiUrl, Map<String, String> params, Integer userId, String token, String type) throws Exception {
-        logger.info("mgLog  {} commonRequest userId:{},paramsMap:{}", userId, params);
         JSONObject apiResponseData = null;
          String resultString = GameUtil.doProxyPostHeaderJson(OpenAPIProperties.PROXY_HOST_NAME, OpenAPIProperties.PROXY_PORT, OpenAPIProperties.PROXY_TCP,
                 apiUrl, params, type, userId, token);
-        logger.info("mgLog  apiResponse:" + resultString);
         if (StringUtils.isNotEmpty(resultString)) {
             apiResponseData = JSONObject.parseObject(resultString);
-            logger.info("mgLog  {}:commonRequest type:{}, operateFlag:{}, hostName:{}, params:{}, result:{}, awcApiResponse:{}",
-                    userId, type, null, params, resultString, JSONObject.toJSONString(apiResponseData));
         }
         return apiResponseData;
     }
 
 
     public Result errorCode(String errorCode, String errorMessage) {
-        if ("401".equals(errorCode)) {
-            return Result.failed("g000002", errorMessage);
-        } else if ("404".equals(errorCode)) {
-            return Result.failed("g009999", errorMessage);
-        } else if ("409".equals(errorCode)) {
-            return Result.failed("g009999", errorMessage);
-        } else if ("400".equals(errorCode)) {
-            return Result.failed("g000007", errorMessage);
-        } else if ("500".equals(errorCode)) {
-            return Result.failed("g091145", errorMessage);
-        } else {
-            return Result.failed("g009999", errorMessage);
+        switch (errorCode) {
+            case "InputValidationError":
+                return Result.failed("g091118", errorMessage);
+            case "GeneralError":
+                return Result.failed("g091145", errorMessage);
+            case "PlayerDoesNotExist":
+                return Result.failed("g010001", errorMessage);
+            case "ContentNotFoundForPlayer":
+                return Result.failed("g091068", errorMessage);
+            case "PlayerIsLocked":
+                return Result.failed("g200003", errorMessage);
+            case "GameDoesNotExist":
+                return Result.failed("g091158", errorMessage);
+            //        9999 失败。                                                Failed.
+            default:
+                return Result.failed("g009999", errorMessage);
         }
     }
 }

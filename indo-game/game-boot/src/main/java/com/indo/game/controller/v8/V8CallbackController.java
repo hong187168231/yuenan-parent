@@ -8,18 +8,17 @@ import com.indo.common.config.OpenAPIProperties;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.utils.GameUtil;
 import com.indo.common.utils.IPAddressUtil;
+import com.indo.game.common.util.V8Encrypt;
 import com.indo.game.service.v8.V8CallbackService;
 import com.indo.game.service.v8.V8Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/v8")
@@ -33,7 +32,8 @@ public class V8CallbackController {
     @Autowired
     private V8Service v8Service;
 
-    @RequestMapping(value = "/crebit", method = RequestMethod.POST)
+    @RequestMapping(value = "/crebit", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
+    @ResponseBody
     @AllowAccess
     public Object crebit(@LoginUser LoginInfo loginUser,
                          @RequestBody JSONObject params, HttpServletRequest request){
@@ -43,7 +43,8 @@ public class V8CallbackController {
         return v8Service.crebit(loginUser, platform, money, ip);
     }
 
-    @RequestMapping(value = "/balance", method = RequestMethod.POST)
+    @RequestMapping(value = "/balance", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
+    @ResponseBody
     @AllowAccess
     public Object balance4V8(@LoginUser LoginInfo loginUser,
                          @RequestBody JSONObject params, HttpServletRequest request){
@@ -53,19 +54,21 @@ public class V8CallbackController {
     }
 
     @RequestMapping(value = "/callBack", method = RequestMethod.GET)
+    @ResponseBody
     @AllowAccess
-    public Object callBack(HttpServletRequest request) {
+    public Object callBack(@RequestParam Map<String,String> paramMap, HttpServletRequest request) {
         String ip = IPAddressUtil.getIpAddress(request);
-        String agent = request.getParameter("agent");
-        String timestamp = request.getParameter("timestamp");
-        String param = request.getParameter("param");
-        String key = request.getParameter("key");
-        logger.info("V8Callback callBack 回调, params:{}, {}, {}, {}", agent, timestamp, param, key);
+        String agent = paramMap.get("agent");
+        String timestamp = paramMap.get("timestamp");
+        String param = paramMap.get("param");
+        String key = paramMap.get("key");
+        logger.info("V8Callback callBack 回调, agent:{}, timestamp:{}, param:{}, key:{}, ip:{}", agent, timestamp, param, key,ip);
         int method = 0;
         String account = null;
         BigDecimal money = BigDecimal.ZERO;
         try {
-            param = GameUtil.decrypt(param, OpenAPIProperties.V8_DESKEY);
+            param = V8Encrypt.AESDecrypt(param, OpenAPIProperties.V8_DESKEY,true);
+            logger.info("V8Callback 回调 解密后数据, param[]:{}", param);
             String[] params = param.split("&");
             for (String temp : params) {
                 if (temp.indexOf("s=") == 0) {
@@ -82,6 +85,8 @@ public class V8CallbackController {
             } else if (13 == method) {
                 // 上分
                 return debit(agent, timestamp, account, key, money, ip);
+            } else if (11 == method) {//通知下分
+
             }
         } catch (Exception e) {
             e.printStackTrace();

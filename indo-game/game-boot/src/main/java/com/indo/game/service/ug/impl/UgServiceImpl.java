@@ -52,8 +52,6 @@ public class UgServiceImpl implements UgService {
     GameTypeMapper gameTypeMapper;
     @Autowired
     GameCategoryMapper gameCategoryMapper;
-    @Autowired
-    private GamePlatformMapper gamePlatformMapper;
 
     @Autowired
     private TxnsMapper txnsMapper;
@@ -64,31 +62,28 @@ public class UgServiceImpl implements UgService {
      */
     @Override
     public Result ugGame(LoginInfo loginUser, String ip,String platform,String WebType,String parentName) {
-        logger.info("uglog ugGame {} aeGame account:{}, aeCodeId:{}", loginUser.getId(), loginUser.getNickName());
+        logger.info("uglog ugGame loginUser:{}, ip:{}, platform:{}, WebType:{}, parentName:{}", loginUser, platform, WebType, parentName);
+        // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
-        if(null==gameParentPlatform){
-            return Result.failed("("+parentName+")游戏平台不存在");
+        if (null == gameParentPlatform) {
+            return Result.failed("(" + parentName + ")平台不存在");
         }
-        if ("0".equals(gameParentPlatform.getIsStart())) {
-            return Result.failed("g"+"100101","游戏平台未启用");
+        if (0==gameParentPlatform.getIsStart()) {
+            return Result.failed("g100101", "平台未启用");
         }
         if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
-            return Result.failed("g000001",gameParentPlatform.getMaintenanceContent());
+            return Result.failed("g000001", gameParentPlatform.getMaintenanceContent());
         }
-        GamePlatform gamePlatform = null;
-        if(!platform.equals(parentName)) {
-            gamePlatform = new GamePlatform();
-            // 是否开售校验
-            gamePlatform = gameCommonService.getGamePlatformByplatformCode(platform);
-            if (null == gamePlatform) {
-                return Result.failed("("+platform+")平台游戏不存在");
-            }
-            if ("0".equals(gamePlatform.getIsStart())) {
-                return Result.failed("g"+"100102","游戏未启用");
-            }
-            if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
-                return Result.failed("g091047",gamePlatform.getMaintenanceContent());
-            }
+        // 是否开售校验
+        GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
+        if (null == gamePlatform) {
+            return Result.failed("(" + platform + ")游戏不存在");
+        }
+        if (0==gamePlatform.getIsStart()) {
+            return Result.failed("g100102", "游戏未启用");
+        }
+        if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
+            return Result.failed("g091047", gamePlatform.getMaintenanceContent());
         }
         //初次判断站点棋牌余额是否够该用户
 //        MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(loginUser.getAccount());
@@ -115,16 +110,11 @@ public class UgServiceImpl implements UgService {
                 //创建玩家
                 return restrictedPlayer(gameParentPlatform,loginUser,gamePlatform, ip, cptOpenMember,WebType);
             } else {
-                Result result = this.logout(loginUser,ip);
-                if(null!=result&&"00000".equals(result.getCode())) {
-                    CptOpenMember updateCptOpenMember = new CptOpenMember();
-                    updateCptOpenMember.setId(cptOpenMember.getId());
-                    updateCptOpenMember.setLoginTime(new Date());
-                    externalService.updateCptOpenMember(updateCptOpenMember);
-                    //登录
-                    return initGame(gameParentPlatform,loginUser, gamePlatform, ip, WebType);
-                }
-                return result;
+                this.logout(loginUser,ip);
+                cptOpenMember.setLoginTime(new Date());
+                externalService.updateCptOpenMember(cptOpenMember);
+                //登录
+                return initGame(gameParentPlatform,loginUser, gamePlatform, ip, WebType);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -146,17 +136,20 @@ public class UgServiceImpl implements UgService {
             if(null!=OpenAPIProperties.UG_AGENT&&!"".equals(OpenAPIProperties.UG_AGENT)){
                 ugRegisterPlayerJsonDTO.setAgentId(Integer.valueOf(OpenAPIProperties.UG_AGENT));//代理编号
             }
-
+            ugRegisterPlayerJsonDTO.setApiKey(OpenAPIProperties.UG_API_KEY);
+            ugRegisterPlayerJsonDTO.setOperatorId(OpenAPIProperties.UG_COMPANY_KEY);
+            logger.info("UG体育注册会员restrictedPlayer输入 apiUrl:{}, params:{}, userId:{}, ip:{}", OpenAPIProperties.UG_API_URL+"/api/single/register", JSONObject.toJSONString(ugRegisterPlayerJsonDTO), loginUser.getId(), ip);
             UgApiResponseData ugApiResponse = commonRequestPost(ugRegisterPlayerJsonDTO, OpenAPIProperties.UG_API_URL+"/api/single/register", loginUser.getId().intValue(), ip, "restrictedPlayer");
-
-            if (null == ugApiResponse ) {
-                return Result.failed("g100104","网络繁忙，请稍后重试！");
-            }
-            if("000000".equals(ugApiResponse.getCode())){
+            logger.info("UG体育注册会员返回参数: ugApiResponse:{}"+ugApiResponse);
+            if(null!=ugApiResponse&&"000000".equals(ugApiResponse.getCode())){
                 externalService.saveCptOpenMember(cptOpenMember);
                 return initGame(gameParentPlatform,loginUser,gamePlatform, ip,WebType);
+            }else if(null==ugApiResponse){
+                return Result.failed();
             }else {
-                return Result.failed("g"+ugApiResponse.getCode(),ugApiResponse.getMsg());
+                {
+                    return this.errorCode(ugApiResponse.getCode(),ugApiResponse.getMsg());
+                }
             }
         } catch (Exception e) {
             logger.error("uglog restrictedPlayer game error {} ", e);
@@ -169,7 +162,7 @@ public class UgServiceImpl implements UgService {
      */
     private Result initGame(GameParentPlatform gameParentPlatform,LoginInfo loginUser,GamePlatform gamePlatform, String ip,String WebType) throws Exception {
         logger.info("uglog initGame Login {} initGame ugGame account:{}, ugCodeId:{},ip:{}", loginUser.getId(), loginUser.getNickName(),ip);
-        try {
+//        try {
 //            operatorId	string	16	Y	商户代码
 //            userId	string	50	Y	玩家帐号
 //            returnUrl	string	200	Y	登出后重定向网址
@@ -179,41 +172,52 @@ public class UgServiceImpl implements UgService {
 //            webType	string	10	N	入口类型，预设值：mobile
 //            theme	string	6	N	版面，预设值：style
 //            sportId	number		N	偏好运动类型，预设值：1 (足球)，支援设定的运动有：1 (足球), 2 (篮球), 7 (网球), 11 (板球)
-            String param = "operatorId="+OpenAPIProperties.UG_COMPANY_KEY+"&userId="+loginUser.getAccount()
-                    +"&returnUrl="+OpenAPIProperties.UG_RETURN_URL+"&oddsExpression="+gamePlatform.getPlatformCode()
+            String urlLogin = OpenAPIProperties.UG_LOGIN_URL+"/auth/single?operatorId="+OpenAPIProperties.UG_COMPANY_KEY+"&userId="+loginUser.getAccount()
+                    +"&returnUrl="+OpenAPIProperties.UG_RETURN_URL+"&oddsExpression=decimal"
                     +"&language="+gameParentPlatform.getLanguageType()
                     +"&webType="+WebType+"&theme=style&sportId=1";
+            logger.info("UG体育登录initGame输入 urlLogin:{},  loginUser:{}, ip:{}", urlLogin, loginUser, ip);
 
-
-            UgApiResponseData ugApiResponse = commonRequestGet(param, OpenAPIProperties.UG_API_URL+"/auth/single", loginUser.getId().intValue(), ip, "Login");
-            if("000000".equals(ugApiResponse.getCode())){
+//            UgApiResponseData ugApiResponse = commonRequestGet(param, OpenAPIProperties.UG_LOGIN_URL+"/auth/single", loginUser.getId().intValue(), ip, "Login");
+//            logger.info("UG体育登录返回参数: ugApiResponse:{}"+ugApiResponse);
+//            if(null!=ugApiResponse&&"000000".equals(ugApiResponse.getCode())){
                 ApiResponseData responseData = new ApiResponseData();
-                responseData.setPathUrl((String) ugApiResponse.getData());
+                responseData.setPathUrl(urlLogin);
                 return Result.success(responseData);
-            }else {
-                return Result.failed("g"+ugApiResponse.getCode(),ugApiResponse.getMsg());
-            }
-        } catch (Exception e) {
-            logger.error("uglog initGame Login game error {} ", e);
-            return Result.failed("g100104","网络繁忙，请稍后重试！");
-        }
+//            }else if(null==ugApiResponse){
+//                return Result.failed();
+//            }else {
+//                {
+//                    return this.errorCode(ugApiResponse.getCode(),ugApiResponse.getMsg());
+//                }
+//            }
+//        } catch (Exception e) {
+//            logger.error("uglog initGame Login game error {} ", e);
+//            return Result.failed("g100104","网络繁忙，请稍后重试！");
+//        }
     }
 
     /**
      * 强迫登出玩家
      */
     public Result logout(LoginInfo loginUser,String ip){
-        logger.info("uglog logout {} initGame ugGame account:{}, ugCodeId:{},ip:{}", loginUser.getId(), loginUser.getNickName(),ip);
         UgLogoutJsonDTO ugLogoutJsonDTO = new UgLogoutJsonDTO();
         ugLogoutJsonDTO.setUserId(loginUser.getAccount());
-
+        ugLogoutJsonDTO.setApiKey(OpenAPIProperties.UG_API_KEY);
+        ugLogoutJsonDTO.setOperatorId(OpenAPIProperties.UG_COMPANY_KEY);
+        logger.info("UG体育登出玩家输入 apiUrl:{}, params:{}, userId:{}, ip:{}", OpenAPIProperties.UG_API_URL+"/api/single/logout", JSONObject.toJSONString(ugLogoutJsonDTO), loginUser.getId(), ip);
         UgApiResponseData ugApiResponse = null;
         try {
             ugApiResponse = commonRequestPost(ugLogoutJsonDTO, OpenAPIProperties.UG_API_URL+"/api/single/logout", Integer.valueOf(loginUser.getId().intValue()), ip, "logout");
-            if("000000".equals(ugApiResponse.getCode())){
+            logger.info("UG体育登出玩家返回参数: ugApiResponse:{}"+ugApiResponse);
+            if(null!=ugApiResponse&&"000000".equals(ugApiResponse.getCode())){
                 return Result.success(ugApiResponse);
+            }else if(null==ugApiResponse){
+                return Result.failed();
             }else {
-                return Result.failed("g"+ugApiResponse.getCode(),ugApiResponse.getMsg());
+                {
+                    return this.errorCode(ugApiResponse.getCode(),ugApiResponse.getMsg());
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -229,7 +233,6 @@ public class UgServiceImpl implements UgService {
     public UgApiResponseData commonRequestGet(String param, String url, Integer userId, String ip, String type) throws Exception {
 
         UgApiResponseData ugApiResponse = null;
-        logger.info("uglog {} commonRequest ,url:{},paramsMap:{}", userId, url, param);
         String resultString = GameUtil.sendGet(url, param);
         logger.info("ug_api_response:"+resultString);
         if (StringUtils.isNotEmpty(resultString)) {
@@ -243,7 +246,7 @@ public class UgServiceImpl implements UgService {
     public UgApiResponseData commonRequestPost(Object object, String url, Integer userId, String ip, String type) throws Exception {
 
         UgApiResponseData ugApiResponse = null;
-        logger.info("uglog {} commonRequest ,url:{},paramsMap:{}", userId, url, object);
+        logger.info("uglog {} commonRequest ,url:{},paramsMap:{}", userId, url, JSONObject.toJSONString(object));
 //        Map<String, String> trr = new HashMap<>();
 //        trr.put("MemberAccount", "swuserid");
 //        trr.put("CompanyKey", "y6RbXQyRr4");
@@ -254,10 +257,6 @@ public class UgServiceImpl implements UgService {
         logger.info("ug_api_response:"+resultString);
         if (StringUtils.isNotEmpty(resultString)) {
             ugApiResponse = JSONObject.parseObject(resultString, UgApiResponseData.class);
-            //String operateFlag = (String) redisTemplate.opsForValue().get(Constants.AE_GAME_OPERATE_FLAG + userId);
-            logger.info("uglog {}:commonRequest type:{}, operateFlag:{}, url:{}, hostName:{}, params:{}, result:{}, ugApiResponse:{}",
-                    //userId, type, operateFlag, url,
-                    userId, type, null, url, JSONObject.toJSONString(object), resultString, JSONObject.toJSONString(ugApiResponse));
         }
         return ugApiResponse;
     }
@@ -267,12 +266,13 @@ public class UgServiceImpl implements UgService {
 
         UgApiTasksResponseData ugApiResponse = null;
         UgTasksJsonDTO ugTasksJsonDTO = new UgTasksJsonDTO();
-        String sortNo = txnsMapper.getMaxSortNo("UG Sports");
+        String sortNo = txnsMapper.getMaxSortNo(OpenAPIProperties.UG_PLATFORM_CODE);
         ugTasksJsonDTO.setSortNo(Long.valueOf(null!=sortNo&&!"".equals(sortNo)?sortNo:"0"));//排序编号 返回大于该排序编号的注单
         try {
             ugApiResponse = commonTasksRequest(ugTasksJsonDTO, OpenAPIProperties.UG_API_URL+"/SportApi/GetBetSheetBySort",  "ugPullOrder");
             if("000000".equals(ugApiResponse.getErrorCode())){
-                GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode("UG Sports");
+                GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.UG_PLATFORM_CODE);
+                GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.UG_PLATFORM_CODE,OpenAPIProperties.UG_PLATFORM_CODE);
                 GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
                 List<SortBetDto> subBetDtoList = ugApiResponse.getData();
                 for (SortBetDto sortBetDto:subBetDtoList){
@@ -361,14 +361,14 @@ public class UgServiceImpl implements UgService {
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
         wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Waiting").or().eq(Txns::getMethod, "Cancel Bet"));
         wrapper.eq(Txns::getStatus, "Running");
-        wrapper.eq(Txns::getPlatform, "UG Sports");
+        wrapper.eq(Txns::getPlatform, OpenAPIProperties.UG_PLATFORM_CODE);
         List<Txns> txnsList = txnsMapper.selectList(wrapper);
         for (Txns txns:txnsList) {
         ugTasksJsonBetIdDTO.setBetID(txns.getPlatformTxId());
             try {
                 ugApiResponse = commonTasksRequest(ugTasksJsonBetIdDTO, OpenAPIProperties.UG_API_URL + "/SportApi/GetBetSheetByBetID", "ugPullOrderByBetID");
                 if ("000000".equals(ugApiResponse.getErrorCode())) {
-                    GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode("UG Sports");
+                    GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(OpenAPIProperties.UG_PLATFORM_CODE);
                     GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
                     List<SortBetDto> subBetDtoList = ugApiResponse.getData();
                     for (SortBetDto sortBetDto : subBetDtoList) {
@@ -460,7 +460,7 @@ public class UgServiceImpl implements UgService {
 //        trr.put("APIPassword", "RTJdTw36imErhpDm7p2ePb3Da3h6WT3S");
 //        logger.info("ug_api_request:"+JSONObject.toJSONString(object));
 //        String resultString1 = GameUtil.doProxyPostJson(OpenAPIProperties.PROXY_HOST_NAME, OpenAPIProperties.PROXY_PORT, OpenAPIProperties.PROXY_TCP,url, trr, type, userId);
-        String resultString = GameUtil.doProxyPostJson(OpenAPIProperties.PROXY_HOST_NAME, OpenAPIProperties.PROXY_PORT, OpenAPIProperties.PROXY_TCP,url, JSONObject.toJSONString(object), type);
+        String resultString = GameUtil.doProxyPostJson(OpenAPIProperties.PROXY_HOST_NAME, OpenAPIProperties.PROXY_PORT, OpenAPIProperties.PROXY_TCP,url, JSONObject.toJSONString(object), type,0);
         logger.info("ug_api_response:"+resultString);
         if (StringUtils.isNotEmpty(resultString)) {
             ugApiResponse = JSONObject.parseObject(resultString, UgApiTasksResponseData.class);
@@ -471,5 +471,103 @@ public class UgServiceImpl implements UgService {
         }
         return ugApiResponse;
     }
-
+        public Result errorCode(String errorCode, String errorMessage) {
+            switch (errorCode) {
+                case "000001"://	系统维护	SYSTEM MAINTENANCE
+                    return Result.failed("g000001", errorMessage);
+                case "000002"://	授权已取消	AUTHORIZATION HAS BEEN CANCELED
+                    return Result.failed("g000002", errorMessage);
+                case "000003"://	IP 不在白名单中	IP NOT IN THE WHITELIST
+                    return Result.failed("g000003", errorMessage);
+                case "000004"://	API 密钥错误	API KEY ERROR
+                    return Result.failed("g091160", errorMessage);
+                case "000005"://	系统忙碌	SYSTEM BUSY
+                    return Result.failed("g000005", errorMessage);
+                case "000006"://	超出查询时间范围	OVER INQUIRY TIME RANGE
+                    return Result.failed("g000006", errorMessage);
+                case "000007"://	参数错误	ENTER PARAMETER ERROR
+                    return Result.failed("g000007", errorMessage);
+                case "000008"://	频繁请求	REQUEST TOO MUCH FREQUENTLY
+                    return Result.failed("g000008", errorMessage);
+                case "000009"://	无效的网址	INVALID URL
+                    return Result.failed("g091159", errorMessage);
+                case "000010"://	API password 错误	API PASSWORD ERROR
+                    return Result.failed("g000004", errorMessage);
+//                case "000011"://	不允许的请求方法	METHOD NOT ALLOWED
+//                    return Result.failed("g009999", errorMessage);
+//                case "000012"://	operatorId 错误	OPERATOR ID ERROR
+//                    return Result.failed("g009999", errorMessage);
+//                case "000013"://	商户不存在	OPERATOR NOT EXIST
+//                    return Result.failed("g009999", errorMessage);
+//                case "000014"://	session 不存在	SESSION NOT EXIST
+//                    return Result.failed("g009999", errorMessage);
+//                case "000015"://	转帐 key 错误	TRANSFER KEY ERROR
+//                    return Result.failed("g009999", errorMessage);
+//                case "000016"://	不被接受的请求	REQUEST NOT ACCEPTED
+//                    return Result.failed("g009999", errorMessage);
+//                case "000017"://	商户未启用	OPERATOR IS NOT ENABLE
+//                    return Result.failed("g009999", errorMessage);
+//                case "100001"://	会员帐号不存在	MEMBER ACCOUNT IS NOT EXIST
+//                    return Result.failed("g009999", errorMessage);
+//                case "100002"://	不允许的货币	NOT ALLOWED CURRENCY
+//                    return Result.failed("g009999", errorMessage);
+//                case "100003"://	无效的帐号	INVALID ACCOUNT
+//                    return Result.failed("g009999", errorMessage);
+//                case "100004"://	会员帐号已存在	MEMBER ACCOUNT ALREADY EXIST
+//                    return Result.failed("g009999", errorMessage);
+//                case "100005"://	建立帐号失败	CREATE ACCOUNT FAIL
+//                    return Result.failed("g009999", errorMessage);
+//                case "100006"://	错误的货币	CURRENCY ERROR
+//                    return Result.failed("g009999", errorMessage);
+//                case "100007"://	钱包不存在	WALLET NOT EXIST
+//                    return Result.failed("g009999", errorMessage);
+//                case "100008"://	钱包更新失败	WALLET UPDATE FAIL
+//                    return Result.failed("g009999", errorMessage);
+//                case "100009"://	管理帐号不存在	MANAGER ACCOUNT NOT EXIST
+//                    return Result.failed("g009999", errorMessage);
+//                case "100010"://	userId 只限英数	USER ID ALPHANUMERIC ONLY
+//                    return Result.failed("g009999", errorMessage);
+//                case "100011"://	不支援的货币	CURRENCY NOT SUPPORT
+//                    return Result.failed("g009999", errorMessage);
+//                case "100012"://	商户不存在	COMPANY ACCOUNT IS NOT EXIST
+//                    return Result.failed("g009999", errorMessage);
+//                case "200001"://	登入失败	LOGIN FAILED
+//                    return Result.failed("g009999", errorMessage);
+//                case "200002"://	帐户已关闭	ACCOUNT CLOSED
+//                    return Result.failed("g009999", errorMessage);
+//                case "200003"://	帐户已锁定	ACCOUNT LOCKED
+//                    return Result.failed("g009999", errorMessage);
+//                case "300001"://	输入的存款 / 提款金额少于或等于0	ENTER DEPOSIT/WITHDRAWAL AMOUNT LESS THAN OR EQUAL TO 0
+//                    return Result.failed("g009999", errorMessage);
+//                case "300002"://	存款 / 提款失败	DEPOSIT/WITHDRAWAL FAILED
+//                    return Result.failed("g009999", errorMessage);
+//                case "300003"://	存款 / 提款序号已存在	DEPOSIT/WITHDRAWAL SEQ ALREADY EXIST
+//                    return Result.failed("g009999", errorMessage);
+//                case "300004"://	余额不足	INSUFFICIENT BALANCE
+//                    return Result.failed("g009999", errorMessage);
+//                case "300005"://	存款 / 提款金钥不正确	DEPOSIT/WITHDRAWAL KEY INCORRECT
+//                    return Result.failed("g009999", errorMessage);
+//                case "400001"://	存款 / 提款序号不存在	DEPOSIT/WITHDRAWAL SEQ NOT EXIST
+//                    return Result.failed("g009999", errorMessage);
+//                case "400002"://	存款 / 提款存在，但帐户不匹配	DEPOSIT/WITHDRAWAL TURNOVER EXISTS, BUT ACCOUNT NOT MATCH
+//                    return Result.failed("g009999", errorMessage);
+//                case "500001"://	投注限制无效	BET LIMIT INVALID
+//                    return Result.failed("g009999", errorMessage);
+//                case "500002"://	佣金组别不存在	COMM GROUP NOT EXIST
+//                    return Result.failed("g009999", errorMessage);
+//                case "500003"://	赔率表达不存在	ODDS STYLE NOT EXIST
+//                    return Result.failed("g009999", errorMessage);
+//                case "600001"://	投注限制不存在	BET LIMIT NOT EXIST
+//                    return Result.failed("g009999", errorMessage);
+//                case "800001"://	更新会员状态失败	UPDATE MEMBER STATUS ERROR
+//                    return Result.failed("g009999", errorMessage);
+//                case "800002"://	更新会员限额失败	UPDATE MEMBER LIMIT ERROR
+//                    return Result.failed("g009999", errorMessage);
+//                case "900001"://	非内部请求	NOT INTERNAL REQUEST
+//                    return Result.failed("g091145", errorMessage);
+                //        9999 失败。                                                Failed.
+                default:
+                    return Result.failed("g009999", errorMessage);
+            }
+        }
 }

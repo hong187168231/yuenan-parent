@@ -9,6 +9,7 @@ import com.indo.admin.pojo.req.mem.MemRebateAddReq;
 import com.indo.admin.modules.mem.service.IMemRebateService;
 import com.indo.admin.pojo.vo.mem.MemBetVo;
 import com.indo.admin.pojo.vo.mem.MemRebateVo;
+import com.indo.common.constant.RedisKeys;
 import com.indo.core.pojo.entity.AgentRebateConfig;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,8 +31,13 @@ public class MemRebateServiceImpl extends ServiceImpl<MemRebateMapper, AgentReba
     @Override
     public MemRebateVo queryMemRabate() {
         MemRebateVo memRebateVo = new MemRebateVo();
+        List<MemBetVo> list =AdminBusinessRedisUtils.get(RedisKeys.SYS_REBATE_KEY);
+        if(list!=null){
+            memRebateVo.setBetList(list);
+            return memRebateVo;
+        }
         AgentRebateConfig memRebate = baseMapper.selectById(1);
-        List<MemBetVo> list = JSONArray.parseArray(memRebate.getRebateValue(), MemBetVo.class);
+        list = JSONArray.parseArray(memRebate.getRebateValue(), MemBetVo.class);
         memRebateVo.setBetList(list);
         return memRebateVo;
     }

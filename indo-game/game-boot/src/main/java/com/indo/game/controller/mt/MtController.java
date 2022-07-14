@@ -10,16 +10,13 @@ import com.indo.game.service.mt.MtService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 
 @RestController
-@RequestMapping("/mt")
+@RequestMapping("/mt/callBack")
 public class MtController {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -27,7 +24,8 @@ public class MtController {
     @Autowired
     private MtService mtService;
     // 全部提取
-    @RequestMapping(value = "/allWithdraw", method = RequestMethod.POST)
+    @RequestMapping(value = "/allWithdraw", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
+    @ResponseBody
     @AllowAccess
     public Object allWithdraw(@LoginUser LoginInfo loginUser,
                               @RequestBody JSONObject params, HttpServletRequest request) {
@@ -39,7 +37,8 @@ public class MtController {
         return object;
     }
     // 查询余额
-    @RequestMapping(value = "/getPlayerBalance", method = RequestMethod.POST)
+    @RequestMapping(value = "/getPlayerBalance", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
+    @ResponseBody
     @AllowAccess
     private Object getPlayerBalance(@LoginUser LoginInfo loginUser,
                                     @RequestBody JSONObject params, HttpServletRequest request) {
@@ -51,7 +50,8 @@ public class MtController {
         return object;
     }
     // 充值
-    @RequestMapping(value = "/deposit", method = RequestMethod.POST)
+    @RequestMapping(value = "/deposit", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
+    @ResponseBody
     @AllowAccess
     private Object deposit(@LoginUser LoginInfo loginUser,
                            @RequestBody JSONObject params, HttpServletRequest request) {
@@ -64,7 +64,8 @@ public class MtController {
         return object;
     }
     // 提取
-    @RequestMapping(value = "/withdraw", method = RequestMethod.POST)
+    @RequestMapping(value = "/withdraw", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
+    @ResponseBody
     @AllowAccess
     private Object withdraw(@LoginUser LoginInfo loginUser,
                             @RequestBody JSONObject params, HttpServletRequest request) {

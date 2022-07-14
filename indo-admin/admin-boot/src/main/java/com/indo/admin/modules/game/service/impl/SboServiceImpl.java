@@ -41,7 +41,7 @@ public class SboServiceImpl implements SboService {
         try {
             LambdaQueryWrapper<GameAgent> wrapper = new LambdaQueryWrapper<>();
             wrapper.eq(GameAgent::getUsername, sboAgentDTO.getUsername());
-            wrapper.eq(GameAgent::getParentName, "SBO");
+            wrapper.eq(GameAgent::getParentName, OpenAPIProperties.SBO_PLATFORM_CODE);
             GameAgent gameAgent = gameAgentMapper.selectOne(wrapper);
             if (null != gameAgent) {
                 return Result.failed("代理已经存在");
@@ -69,7 +69,7 @@ public class SboServiceImpl implements SboService {
                 gameAgent = new GameAgent();
                 BeanUtils.copyProperties(sboAgentDTO, gameAgent);
                 gameAgent.setStatus("ACTIVE");
-                gameAgent.setParentName("SBO");
+                gameAgent.setParentName(OpenAPIProperties.SBO_PLATFORM_CODE);
                 gameAgentMapper.insert(gameAgent);
                 return Result.success(sboApiResponse);
             } else {
@@ -90,7 +90,7 @@ public class SboServiceImpl implements SboService {
         try {
             LambdaQueryWrapper<GameAgent> wrapper = new LambdaQueryWrapper<>();
             wrapper.eq(GameAgent::getUsername, sboUpdateAgentStatusDTO.getUsername());
-            wrapper.eq(GameAgent::getParentName, "SBO");
+            wrapper.eq(GameAgent::getParentName, OpenAPIProperties.SBO_PLATFORM_CODE);
             GameAgent gameAgent = gameAgentMapper.selectOne(wrapper);
             if (null == gameAgent) {
                 return Result.failed("代理不存在");
@@ -139,7 +139,7 @@ public class SboServiceImpl implements SboService {
 
             LambdaQueryWrapper<GameAgent> wrapper = new LambdaQueryWrapper<>();
             wrapper.eq(GameAgent::getUsername, sboUpdateAgentPresetBetDTO.getUsername());
-            wrapper.eq(GameAgent::getParentName, "SBO");
+            wrapper.eq(GameAgent::getParentName, OpenAPIProperties.SBO_PLATFORM_CODE);
             GameAgent gameAgent = gameAgentMapper.selectOne(wrapper);
             SboUpdateAgentPresetBetJsonDTO sboUpdateAgentPresetBetJsonDTO = new SboUpdateAgentPresetBetJsonDTO();
             BeanUtils.copyProperties(sboUpdateAgentPresetBetDTO, sboUpdateAgentPresetBetJsonDTO);

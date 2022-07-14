@@ -10,7 +10,7 @@ import java.util.Date;
 public class FCBetCallbackReq {
     // 游戏编号
     @JSONField(name = "RecordID")
-    private Long recordID;
+    private String recordID;
     // 交易序号
     @JSONField(name = "BankID")
     private String bankID;

@@ -11,6 +11,7 @@ import com.indo.game.pojo.dto.comm.ApiResponseData;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.game.pojo.entity.manage.GameParentPlatform;
 import com.indo.game.pojo.entity.manage.GamePlatform;
+import com.indo.game.pojo.vo.callback.bl.BlResponseParentData;
 import com.indo.game.service.bl.BlService;
 import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
@@ -52,29 +53,27 @@ public class BlServiceImpl implements BlService {
     public Result blGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName) {
         logger.info("BLlog  {} dgGame account:{}, pgCodeId:{}", loginUser.getId(), loginUser.getNickName(), platform);
         // 是否开售校验
-        GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(parentName);
-        if (null == platformGameParent) {
-            return Result.failed("(" + parentName + ")游戏平台不存在");
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
+        if (null == gameParentPlatform) {
+            return Result.failed("(" + parentName + ")平台不存在");
         }
-        if ("0".equals(platformGameParent.getIsStart())) {
-            return Result.failed("g" + "100101", "游戏平台未启用");
+        if (0==gameParentPlatform.getIsStart()) {
+            return Result.failed("g100101", "平台未启用");
         }
-        if ("1".equals(platformGameParent.getIsOpenMaintenance())) {
-            return Result.failed("g000001", platformGameParent.getMaintenanceContent());
+        if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
+            return Result.failed("g000001", gameParentPlatform.getMaintenanceContent());
         }
-        GamePlatform gamePlatform = new GamePlatform();
-        if (!platform.equals(parentName)) {
-            // 是否开售校验
-            gamePlatform = gameCommonService.getGamePlatformByplatformCode(platform);
-            if (null == gamePlatform) {
-                return Result.failed("(" + platform + ")平台游戏不存在");
-            }
-            if ("0".equals(gamePlatform.getIsStart())) {
-                return Result.failed("g" + "100102", "游戏未启用");
-            }
-            if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
-                return Result.failed("g091047", gamePlatform.getMaintenanceContent());
-            }
+
+        // 是否开售校验
+        GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
+        if (null == gamePlatform) {
+            return Result.failed("(" + platform + ")游戏不存在");
+        }
+        if (0==gamePlatform.getIsStart()) {
+            return Result.failed("g100102", "游戏未启用");
+        }
+        if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
+            return Result.failed("g091047", gamePlatform.getMaintenanceContent());
         }
         BigDecimal balance = loginUser.getBalance();
         //验证站点棋牌余额
@@ -97,37 +96,40 @@ public class BlServiceImpl implements BlService {
                 //创建玩家
                 externalService.saveCptOpenMember(cptOpenMember);
             } else {
-                CptOpenMember updateCptOpenMember = new CptOpenMember();
-                updateCptOpenMember.setId(cptOpenMember.getId());
-                updateCptOpenMember.setLoginTime(new Date());
-                externalService.updateCptOpenMember(updateCptOpenMember);
-                logout(loginUser, platform, ip);
+                cptOpenMember.setLoginTime(new Date());
+                externalService.updateCptOpenMember(cptOpenMember);
+                Result result = logout(loginUser, platform, ip);
             }
-
-            JSONObject apiResponseData = gameLogin(platformGameParent, cptOpenMember);
-            if (null == apiResponseData || !"200".equals(apiResponseData.getJSONObject("resp_msg").getString("code"))) {
+            BlResponseParentData apiResponseData = gameLogin(gameParentPlatform, gamePlatform,cptOpenMember,ip);
+            if (null != apiResponseData && "200".equals(apiResponseData.getResp_msg().getCode())) {
+                //登录
+                ApiResponseData responseData = new ApiResponseData();
+                responseData.setPathUrl(apiResponseData.getResp_data().getUrl());
+                return Result.success(responseData);
+            }else {
                 return Result.failed("g091087", "第三方请求异常！");
             }
-            //登录
-            ApiResponseData responseData = new ApiResponseData();
-            responseData.setPathUrl(apiResponseData.getJSONObject("resp_data").getString("url"));
-            return Result.success(responseData);
         } catch (Exception e) {
             e.printStackTrace();
             return Result.failed("g100104", "网络繁忙，请稍后重试！");
         }
     }
 
-    private JSONObject gameLogin(GameParentPlatform platformGameParent, CptOpenMember cptOpenMember) {
+    private BlResponseParentData gameLogin(GameParentPlatform platformGameParent,GamePlatform gamePlatform, CptOpenMember cptOpenMember,String ip) {
         Map<String, String> map = new HashMap<String, String>();
         Integer random = RandomUtil.getRandomOne(7);
         Long dataTime = System.currentTimeMillis() / 1000;
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(OpenAPIProperties.BL_KEY_SECRET).append(random).append(dataTime);
         String sign = SignMd5Utils.getSha1(stringBuilder.toString()).toLowerCase();
+        if(OpenAPIProperties.BTI_IS_PLATFORM_LOGIN.equals("Y")){
+            map.put("game_code", "");
+        }else {
+            map.put("game_code", gamePlatform.getPlatformCode());
+        }
         map.put("player_account", cptOpenMember.getUserName());
         map.put("lang", platformGameParent.getLanguageType());
-        map.put("ip", "116.204.208.100");
+        map.put("ip", ip);
         map.put("country", platformGameParent.getLanguageType());
         map.put("AccessKeyId", OpenAPIProperties.BL_KEY_ID);
         map.put("Timestamp", dataTime + "");
@@ -135,11 +137,13 @@ public class BlServiceImpl implements BlService {
         map.put("Sign", sign);
         StringBuilder apiUrl = new StringBuilder();
         apiUrl.append(OpenAPIProperties.BL_API_URL).append("/v1/player/login");
-        JSONObject dgApiResponseData = null;
+        BlResponseParentData dgApiResponseData = null;
         try {
+            logger.info("BL启动游戏 gameLogin apiUrl:{},map:{}",apiUrl.toString(), map);
             dgApiResponseData = commonRequest(apiUrl.toString(), map, cptOpenMember.getUserId(), "createBLlogin");
+            logger.info("BL启动游戏 gameLogin apiResponseData:{}",dgApiResponseData);
         } catch (Exception e) {
-            logger.error("BLlog dgGameLoginr:{}", e);
+            logger.error("BLlog createBLlogin:{}", e);
             e.printStackTrace();
         }
         return dgApiResponseData;
@@ -159,39 +163,41 @@ public class BlServiceImpl implements BlService {
             String sign = SignMd5Utils.getSha1(stringBuilder.toString()).toLowerCase();
             map.put("player_account", loginUser.getAccount());
             map.put("AccessKeyId", OpenAPIProperties.BL_KEY_ID);
+            map.put("Timestamp", dataTime + "");
             map.put("Nonce", random + "");
             map.put("Sign", sign);
             StringBuilder apiUrl = new StringBuilder();
             apiUrl.append(OpenAPIProperties.BL_API_URL).append("/v1/player/logout");
-            JSONObject apiResponseData = commonRequest(apiUrl.toString(), map, loginUser.getId().intValue(), "BLlogout");
-            if (null == apiResponseData || !"200".equals(apiResponseData.getJSONObject("resp_msg").getString("code"))) {
+            logger.info("BL强迫登出玩家 logout apiUrl:{},map:{}",apiUrl.toString(), map);
+            BlResponseParentData apiResponseData = commonRequest(apiUrl.toString(), map, loginUser.getId().intValue(), "BLlogout");
+            logger.info("BL强迫登出玩家 logout apiResponseData:{}",apiResponseData);
+            if (null != apiResponseData && "0".equals(apiResponseData.getResp_msg().getCode())) {
+                return Result.success();
+            }else {
                 return Result.failed("g091087", "第三方请求异常！");
             }
-            if ("200".equals(apiResponseData.getJSONObject("resp_msg").getString("code"))) {
-                return Result.success();
-            }
         } catch (Exception e) {
+            e.printStackTrace();
             logger.error("BLlog  BLlogout:{}", e);
             e.printStackTrace();
             return Result.failed();
         }
-        return Result.failed();
     }
 
 
     /**
      * 公共请求
      */
-    public JSONObject commonRequest(String apiUrl, Map<String, String> params, Integer userId, String type) throws Exception {
-        logger.info("BLlog  {} commonRequest userId:{},paramsMap:{}", userId, params);
-        JSONObject apiResponseData = null;
+    public BlResponseParentData commonRequest(String apiUrl, Map<String, String> params, Integer userId, String type) throws Exception {
+        logger.info("BLlog commonRequest userId:{},type:{},paramsMap:{},apiUrl:{}", userId, type,params,apiUrl);
+        BlResponseParentData apiResponseData = null;
         String resultString = GameUtil.doProxyPostJson(OpenAPIProperties.PROXY_HOST_NAME, OpenAPIProperties.PROXY_PORT, OpenAPIProperties.PROXY_TCP,
                 apiUrl, params, type, userId);
-        logger.info("BLlog  apiResponse:" + resultString);
+        logger.info("BLlog  apiResponse apiResponseParamsMap:{},apiUrl:{}",resultString,apiUrl);
         if (StringUtils.isNotEmpty(resultString)) {
-            apiResponseData = JSONObject.parseObject(resultString);
-            logger.info("BLlog  {}:commonRequest type:{}, operateFlag:{}, hostName:{}, params:{}, result:{}, awcApiResponse:{}",
-                    userId, type, null, params, resultString, JSONObject.toJSONString(apiResponseData));
+            apiResponseData = JSONObject.parseObject(resultString,BlResponseParentData.class);
+            logger.info("BLlog  commonRequest apiResponse userId:{}, type:{}, apiResponse:{}",
+                    userId, type,JSONObject.toJSONString(apiResponseData));
         }
         return apiResponseData;
     }

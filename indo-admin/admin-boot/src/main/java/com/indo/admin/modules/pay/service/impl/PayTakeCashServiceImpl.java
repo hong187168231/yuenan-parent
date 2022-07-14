@@ -4,6 +4,7 @@ import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.indo.admin.modules.mem.mapper.MemBaseinfoMapper;
 import com.indo.admin.modules.pay.mapper.PayTakeCashMapper;
 import com.indo.admin.modules.pay.service.IPayTakeCashService;
 import com.indo.admin.pojo.vo.pay.PayTakeCashApplyVO;
@@ -14,6 +15,7 @@ import com.indo.common.result.Result;
 import com.indo.common.utils.StringUtils;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
+import com.indo.core.pojo.entity.MemBaseinfo;
 import com.indo.core.pojo.entity.PayTakeCash;
 import com.indo.pay.api.WithdrawFeignClient;
 import com.indo.pay.pojo.bo.PayTakeCashBO;
@@ -39,6 +41,8 @@ public class PayTakeCashServiceImpl extends ServiceImpl<PayTakeCashMapper, PayTa
     private DozerUtil dozerUtil;
     @Resource
     private WithdrawFeignClient withdrawFeignClient;
+    @Resource
+    private MemBaseinfoMapper memBaseinfoMapper;
 
     @Override
     public Page<PayTakeCashApplyVO> cashApplyList(PayTakeCashReq req) {
@@ -58,8 +62,13 @@ public class PayTakeCashServiceImpl extends ServiceImpl<PayTakeCashMapper, PayTa
         if (cashOrderDTO.getOrderStatus() != null) {
             wrapper.eq(PayTakeCash::getCashStatus, cashOrderDTO.getOrderStatus());
         }
-        if (cashOrderDTO.getUserId() != null) {
-            wrapper.eq(PayTakeCash::getMemId, cashOrderDTO.getUserId());
+        if (cashOrderDTO.getAccount() != null) {
+            LambdaQueryWrapper<MemBaseinfo> baseinfoWrapper = new LambdaQueryWrapper<>();
+            baseinfoWrapper.eq(MemBaseinfo::getAccount,cashOrderDTO.getAccount());
+            MemBaseinfo memBaseinfo =memBaseinfoMapper.selectOne(baseinfoWrapper);
+            if(memBaseinfo!=null){
+                wrapper.eq(PayTakeCash::getMemId, memBaseinfo.getId());
+            }
         }
         if (cashOrderDTO.getBeginAmount() != null) {
             wrapper.ge(PayTakeCash::getActualAmount, cashOrderDTO.getBeginAmount());

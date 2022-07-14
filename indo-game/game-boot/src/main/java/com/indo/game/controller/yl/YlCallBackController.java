@@ -11,70 +11,67 @@ import com.indo.game.service.yl.YlCallbackService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
-@RequestMapping("/YL/callBack")
+@RequestMapping("/YL")
 public class YlCallBackController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private YlCallbackService ylCallbackService;
 
-
-
+    /**
+     * 回调
+     */
+    @RequestMapping(value = "/callBack", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    @AllowAccess
+    public Object callBack(YlCallBackReq ylCallBackReq, HttpServletRequest request) {
+        String ip = IPAddressUtil.getIpAddress(request);
+        logger.info("ylCallBack callBack回调,params:{},IP:{}", JSONObject.toJSONString(ylCallBackReq),ip);
+        JSONObject jsonsubObject = JSONObject.parseObject(ylCallBackReq.getMessage());
+        Object object = new Object();
+        if("getBalance".equals(jsonsubObject.getString("action"))){
+            object = this.getBalance(jsonsubObject);
+        }else if("settleFishBet".equals(jsonsubObject.getString("action"))){
+            object = this.bet(jsonsubObject);
+        }else if("voidFishBet".equals(jsonsubObject.getString("action"))){
+            object = this.voidFishBet(jsonsubObject);
+        }
+        return object;
+    }
 
     /**
      * 下注及结算
      */
-    @RequestMapping(value = "/settleFishBet", method = RequestMethod.GET)
-    @ResponseBody
-    @AllowAccess
-    public Object bet(YlCallBackReq ylCallBackReq, HttpServletRequest request) {
+    public Object bet(JSONObject jsonObject) {
 
-        String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("ylCallBack {} ylSettleFishBet回调,params:{}", JSONObject.toJSONString(ylCallBackReq));
-        Object object = ylCallbackService.psBetCallback(ylCallBackReq, ip);
-        logger.info("ylCallBack {} ylSettleFishBet回调返回数据 params:{}", object);
+        Object object = ylCallbackService.psBetCallback(jsonObject);
+        logger.info("ylCallBack ylSettleFishBet回调返回数据 params:{}", object);
         return object;
     }
-
-
 
     /**
      * 返还押注
      */
-    @RequestMapping(value = "/voidFishBet", method = RequestMethod.POST)
-    @ResponseBody
-    @AllowAccess
-    public Object voidFishBet(YlCallBackReq ylCallBackReq, HttpServletRequest request) {
+    public Object voidFishBet(JSONObject jsonObject) {
 
-        String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("ylCallBack {} voidFishBet回调,params:{}", JSONObject.toJSONString(ylCallBackReq));
-        Object object = ylCallbackService.ylVoidFishBetCallback(ylCallBackReq, ip);
-        logger.info("ylCallBack {} voidFishBet回调返回数据 params:{}", object);
+        Object object = ylCallbackService.ylVoidFishBetCallback(jsonObject);
+        logger.info("ylCallBack voidFishBet回调返回数据 params:{}", object);
         return object;
     }
-
 
 
     /**
      * 获取余额
      */
-    @RequestMapping(value = "/GetBalance", method = RequestMethod.POST)
-    @ResponseBody
-    @AllowAccess
-    public Object getBalance(YlCallBackReq ylCallBackReq, HttpServletRequest request) {
+    public Object getBalance(JSONObject jsonObject) {
 
-        String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("ylCallBack {} ylGetBalance回调,params:{}", JSONObject.toJSONString(ylCallBackReq));
-        Object object = ylCallbackService.ylGetBalanceCallback(ylCallBackReq, ip);
-        logger.info("ylCallBack {} ylGetBalance回调返回数据 params:{}", object);
+        Object object = ylCallbackService.ylGetBalanceCallback(jsonObject);
+        logger.info("ylCallBack ylGetBalance回调返回数据 params:{}", object);
         return object;
     }
 }

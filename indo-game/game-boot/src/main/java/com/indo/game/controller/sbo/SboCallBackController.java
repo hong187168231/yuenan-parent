@@ -24,7 +24,7 @@ public class SboCallBackController {
     /**
      * 取得用户的余额
      */
-    @RequestMapping(value="/GetBalance",method=RequestMethod.POST)
+    @RequestMapping(value="/GetBalance",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object getBalance(SboCallBackParentReq sboCallBackParentReq) {
@@ -37,7 +37,7 @@ public class SboCallBackController {
     /**
      * 扣除投注金额
      */
-    @RequestMapping(value="/Deduct",method=RequestMethod.POST)
+    @RequestMapping(value="/Deduct",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object deduct(SboCallBackDeductReq sboCallBackDeductReq) {
@@ -50,7 +50,7 @@ public class SboCallBackController {
     /**
      * 结算投注
      */
-    @RequestMapping(value="/Settle",method=RequestMethod.POST)
+    @RequestMapping(value="/Settle",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object settle(SboCallBackSettleReq sboCallBackSettleReq) {
@@ -63,7 +63,7 @@ public class SboCallBackController {
     /**
      * 回滚
      */
-    @RequestMapping(value="/Rollback",method=RequestMethod.POST)
+    @RequestMapping(value="/Rollback",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object rollback(SboCallBackRollbackReq sboCallBackRollbackReq) {
@@ -76,7 +76,7 @@ public class SboCallBackController {
     /**
      * 取消投注
      */
-    @RequestMapping(value="/Cancel",method=RequestMethod.POST)
+    @RequestMapping(value="/Cancel",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object cancel(SboCallBackCancelReq sboCallBackCancelReq) {
@@ -89,7 +89,7 @@ public class SboCallBackController {
     /**
      * 小费
      */
-    @RequestMapping(value="/Tip",method=RequestMethod.POST)
+    @RequestMapping(value="/Tip",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object tip(SboCallBackTipReq sboCallBackTipReq) {
@@ -102,7 +102,7 @@ public class SboCallBackController {
     /**
      * 红利
      */
-    @RequestMapping(value="/Bonus",method=RequestMethod.POST)
+    @RequestMapping(value="/Bonus",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object bonus(SboCallBackBonusReq sboCallBackBonusReq) {
@@ -115,7 +115,7 @@ public class SboCallBackController {
     /**
      * 归还注额
      */
-    @RequestMapping(value="/ReturnStake",method=RequestMethod.POST)
+    @RequestMapping(value="/ReturnStake",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object returnStake(SboCallBackReturnStakeReq sboCallBackBonusReq) {
@@ -128,7 +128,7 @@ public class SboCallBackController {
     /**
      * 取得投注状态
      */
-    @RequestMapping(value="/GetBetStatus",method=RequestMethod.POST)
+    @RequestMapping(value="/GetBetStatus",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object getBetStatus(SboCallBackGetBetStatusReq sboCallBackGetBetStatusReq) {
@@ -141,7 +141,7 @@ public class SboCallBackController {
 //    /**
 //     * 转帐交易
 //     */
-//    @RequestMapping(value="/Transfer",method=RequestMethod.POST)
+//    @RequestMapping(value="/Transfer",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
 //    @ResponseBody
 //    public Object transfer(SboCallBackTransferReq sboCallBackTransferReq) {
 //        logger.info("sboCallBack {} transfer 回调,取得投注状态 params:{}",JSONObject.toJSONString(sboCallBackTransferReq));
@@ -153,7 +153,7 @@ public class SboCallBackController {
 //    /**
 //     * 转帐交易回滚
 //     */
-//    @RequestMapping(value="/RollbackTransfer",method=RequestMethod.POST)
+//    @RequestMapping(value="/RollbackTransfer",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
 //    @ResponseBody
 //    public Object rollbackTransfer(SboCallBackRollbackTransferReq sboCallBackRollbackTransferReq) {
 //        logger.info("sboCallBack {} rollbackTransfer 回调,转帐交易回滚 params:{}",JSONObject.toJSONString(sboCallBackRollbackTransferReq));
@@ -165,7 +165,7 @@ public class SboCallBackController {
 //    /**
 //     * 取得转帐交易状态
 //     */
-//    @RequestMapping(value="/GetTransferStatus",method=RequestMethod.POST)
+//    @RequestMapping(value="/GetTransferStatus",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
 //    @ResponseBody
 //    public Object getTransferStatus(SboCallBackGetTransferStautsReq sboCallBackGetTransferStautsReq) {
 //        logger.info("sboCallBack {} getTransferStatus 回调,取得转帐交易状态 params:{}",JSONObject.toJSONString(sboCallBackGetTransferStautsReq));
@@ -177,7 +177,7 @@ public class SboCallBackController {
     /**
      * LiveCoin購買
      */
-    @RequestMapping(value="/liveCoinTransaction",method=RequestMethod.POST)
+    @RequestMapping(value="/liveCoinTransaction",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object liveCoinTransaction(SboCallBackLiveCoinTransactionReq sboCallBackLiveCoinTransactionReq) {

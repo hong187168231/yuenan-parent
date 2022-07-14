@@ -19,6 +19,8 @@ public interface CptOpenMemberService {
      */
     CptOpenMember getCptOpenMember(Integer userId, String type);
 
+    public CptOpenMember getCptOpenMember(String userAcct, String type);
+
     void saveCptOpenMember(CptOpenMember cptOpenMember);
 
     void updateCptOpenMember(CptOpenMember cptOpenMember);

@@ -8,11 +8,7 @@ import com.indo.game.service.cmd.CmdCallbackService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -25,8 +21,9 @@ public class CmdCallbackController {
     @Autowired
     private CmdCallbackService cmdCallbackService;
 
-    @RequestMapping(value = "/callBack", method = RequestMethod.GET)
+    @RequestMapping(value = "/callBack", method = RequestMethod.GET,produces = "application/json;charset=UTF-8")
     @AllowAccess
+    @ResponseBody
     public Object check(@RequestParam("token") String token,
                         @RequestParam("secret_key") String secretKey,
                         HttpServletRequest request) {
@@ -38,8 +35,9 @@ public class CmdCallbackController {
     }
 
 
-    @RequestMapping(value = "/callBack/getBalance", method = RequestMethod.GET)
+    @RequestMapping(value = "/callBack/getBalance", method = RequestMethod.GET,produces = "application/json;charset=UTF-8")
     @AllowAccess
+    @ResponseBody
     public Object getBalance(@RequestParam("balancePackage") String balancePackage,
                              @RequestParam("packageId") String packageId,
                              @RequestParam("dateSent") String dateSent,
@@ -51,8 +49,9 @@ public class CmdCallbackController {
         return object;
     }
 
-    @RequestMapping(value = "/callBack/deductBalance", method = RequestMethod.POST)
+    @RequestMapping(value = "/callBack/deductBalance", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @AllowAccess
+    @ResponseBody
     public Object deductBalance(@RequestBody JSONObject params, HttpServletRequest request) {
         String ip = IPAddressUtil.getIpAddress(request);
         logger.info("cmdCallback deductBalance 回调下注params:{}", params);
@@ -61,8 +60,9 @@ public class CmdCallbackController {
         return object;
     }
 
-    @RequestMapping(value = "/callBack/updateBalance", method = RequestMethod.POST)
+    @RequestMapping(value = "/callBack/updateBalance", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @AllowAccess
+    @ResponseBody
     public Object updateBalance(@RequestBody JSONObject params, HttpServletRequest request) {
         String ip = IPAddressUtil.getIpAddress(request);
         logger.info("cmdCallback updateBalance 回调更新余额 params:{}", params);

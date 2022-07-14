@@ -37,31 +37,28 @@ public class RedtigerServiceImpl implements RedtigerService {
 
     @Override
     public Result redtigerGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName) {
-        logger.info("t9log {} t9Game account:{},t9CodeId:{}", loginUser.getId(), loginUser.getAccount(), platform);
+        logger.info("RTlog RTGame   userId:{},account:{},platform:{},parentName:{}", loginUser.getId(), loginUser.getAccount(), platform,parentName);
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
         if (null == gameParentPlatform) {
-            return Result.failed("(" + parentName + ")游戏平台不存在");
+            return Result.failed("(" + parentName + ")平台不存在");
         }
-        if (gameParentPlatform.getIsStart().equals(0)) {
-            return Result.failed("g100101", "游戏平台未启用");
+        if (0==gameParentPlatform.getIsStart()) {
+            return Result.failed("g100101", "平台未启用");
         }
         if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
             return Result.failed("g000001", gameParentPlatform.getMaintenanceContent());
         }
-        if (!platform.equals(parentName)) {
-            GamePlatform gamePlatform;
-            // 是否开售校验
-            gamePlatform = gameCommonService.getGamePlatformByplatformCode(platform);
-            if (null == gamePlatform) {
-                return Result.failed("(" + platform + ")平台游戏不存在");
-            }
-            if (gamePlatform.getIsStart().equals(0)) {
-                return Result.failed("g100102", "游戏未启用");
-            }
-            if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
-                return Result.failed("g091047", gamePlatform.getMaintenanceContent());
-            }
+        // 是否开售校验
+        GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
+        if (null == gamePlatform) {
+            return Result.failed("(" + platform + ")游戏不存在");
+        }
+        if (0==gamePlatform.getIsStart()) {
+            return Result.failed("g100102", "游戏未启用");
+        }
+        if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
+            return Result.failed("g091047", gamePlatform.getMaintenanceContent());
         }
 
         BigDecimal balance = loginUser.getBalance();
@@ -87,10 +84,8 @@ public class RedtigerServiceImpl implements RedtigerService {
                 //创建玩家
 //                createMemberGame(cptOpenMember);
             } else {
-                CptOpenMember updateCptOpenMember = new CptOpenMember();
-                updateCptOpenMember.setId(cptOpenMember.getId());
-                updateCptOpenMember.setLoginTime(new Date());
-                externalService.updateCptOpenMember(updateCptOpenMember);
+                cptOpenMember.setLoginTime(new Date());
+                externalService.updateCptOpenMember(cptOpenMember);
             }
 
             // 启动游戏
@@ -159,7 +154,9 @@ public class RedtigerServiceImpl implements RedtigerService {
         channel.put("mobile", isApp);
 
         JSONObject returnJson = JSONObject.parseObject(commonRequest(getLoginUrl(), json, "login_redtiger"));
-
+        if (null==returnJson) {
+            return Result.failed();
+        }
         if (returnJson.containsKey("entry")) {
             ApiResponseData responseData = new ApiResponseData();
             String url = returnJson.getString("entry");

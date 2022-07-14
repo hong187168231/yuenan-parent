@@ -85,15 +85,6 @@ public class JiliCallbackServiceImpl implements JiliCallbackService {
         String paySerialno = jiliCallbackBetReq.getReqId();
         String ppPlatformCode = OpenAPIProperties.JILI_PLATFORM_CODE;
         CptOpenMember cptOpenMember = externalService.quertCptOpenMember(jiliCallbackBetReq.getToken(), ppPlatformCode);
-        String userName;
-        if (!jiliCallbackBetReq.getIsFreeRound()) {
-            if (null == cptOpenMember) {
-                return initFailureResponse(4, "Api access token 已过期或无效");
-            }
-            userName = cptOpenMember.getUserName();
-        } else {
-            userName = jiliCallbackBetReq.getUserId();
-        }
 
         if (StringUtils.isBlank(paySerialno)) {
             return initFailureResponse(3, "交易序号不能为空");
@@ -105,7 +96,7 @@ public class JiliCallbackServiceImpl implements JiliCallbackService {
 
             // 查询订单
             Txns oldTxns = getTxns(platformGameParent, paySerialno);
-            MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(userName);
+            MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cptOpenMember.getUserName());
             if (null == memBaseinfo) {
                 return initFailureResponse(4, "Api access token 已过期或无效");
             }
@@ -204,7 +195,7 @@ public class JiliCallbackServiceImpl implements JiliCallbackService {
             }
 
             JSONObject jsonObject = initSuccessResponse();
-            jsonObject.put("username", userName);
+            jsonObject.put("username", cptOpenMember.getUserName());
             jsonObject.put("balance", balance);
             jsonObject.put("currency", platformGameParent.getCurrencyType());
             return jsonObject;
@@ -256,7 +247,7 @@ public class JiliCallbackServiceImpl implements JiliCallbackService {
             txns.setId(null);
             txns.setStatus("Running");
             txns.setRealWinAmount(cancelAmount);//真实返还金额
-            txns.setMethod("Adjust Bet");
+            txns.setMethod("Cancel Bet");
             txns.setCreateTime(dateStr);
             txnsMapper.insert(txns);
 

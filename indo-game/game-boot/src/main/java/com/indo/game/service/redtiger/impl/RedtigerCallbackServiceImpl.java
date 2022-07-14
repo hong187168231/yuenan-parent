@@ -58,8 +58,9 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
                 return initFailureResponse(1049, "会员不存在");
             }
 
-            JSONObject jsonObject1 = initSuccessResponse();
+            JSONObject jsonObject1 = initSuccessResponse(params.getString("uuid"));
             jsonObject1.put("sid", params.get("sid"));
+
             return jsonObject1;
 
         } catch (Exception e) {
@@ -89,8 +90,9 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             }
 
             // 会员余额返回
-            JSONObject jsonObject1 = initSuccessResponse();
+            JSONObject jsonObject1 = initSuccessResponse(params.getString("uuid"));
             jsonObject1.put("balance", memBaseinfo.getBalance());
+            jsonObject1.put("bonus", 0);
             return jsonObject1;
         } catch (Exception e) {
             return initFailureResponse(1049, e.getMessage());
@@ -117,7 +119,13 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             JSONObject table = game.getJSONObject("details").getJSONObject("table");
 
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(playerID);
-            GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(game.getString("id"));
+            GamePlatform gamePlatform;
+            if("Y".equals(OpenAPIProperties.REDTIGER_IS_PLATFORM_LOGIN)){
+                gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platformGameParent.getPlatformCode(),platformGameParent.getPlatformCode());
+            }else {
+                gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(table.getString("id"), platformGameParent.getPlatformCode());
+
+            }
             GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
 
             // 会员余额
@@ -148,11 +156,11 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             //此交易是否是投注 true是投注 false 否
             txns.setBet(true);
             //玩家 ID
-            txns.setUserId(memBaseinfo.getId().toString());
+            txns.setUserId(memBaseinfo.getAccount());
             //玩家货币代码
             txns.setCurrency(platformGameParent.getCurrencyType());
             txns.setGameInfo(game.getString("type"));
-            txns.setRoundId(game.getString("id"));
+            txns.setRoundId(game.getString("type"));
             //平台代码
             txns.setPlatform(platformGameParent.getPlatformCode());
             //平台名称
@@ -201,8 +209,9 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
                 return initFailureResponse(1049, "订单入库请求失败");
             }
 
-            JSONObject jsonObject1 = initSuccessResponse();
+            JSONObject jsonObject1 = initSuccessResponse(params.getString("uuid"));
             jsonObject1.put("balance", memBaseinfo.getBalance());
+            jsonObject1.put("bonus", 0);
             return jsonObject1;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -251,11 +260,11 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             //游戏商注单号
             oldTxns.setPlatformTxId(platformTxId);
             //玩家 ID
-            oldTxns.setUserId(memBaseinfo.getId().toString());
+            oldTxns.setUserId(memBaseinfo.getAccount());
             //玩家货币代码
             oldTxns.setCurrency(platformGameParent.getCurrencyType());
             oldTxns.setGameInfo(game.getString("type"));
-            oldTxns.setRoundId(game.getString("id"));
+            oldTxns.setRoundId(game.getString("type"));
             //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
             oldTxns.setWinningAmount(betAmount);
             oldTxns.setWinAmount(betAmount);
@@ -289,8 +298,9 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
                 return initFailureResponse(1001, "订单派奖请求失败");
             }
 
-            JSONObject jsonObject1 = initSuccessResponse();
+            JSONObject jsonObject1 = initSuccessResponse(params.getString("uuid"));
             jsonObject1.put("balance", balance);
+            jsonObject1.put("bonus", 0);
             return jsonObject1;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -351,8 +361,9 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             oldTxns.setUpdateTime(dateStr);
             txnsMapper.updateById(oldTxns);
 
-            JSONObject jsonObject1 = initSuccessResponse();
+            JSONObject jsonObject1 = initSuccessResponse(params.getString("uuid"));
             jsonObject1.put("balance", balance);
+            jsonObject1.put("bonus", 0);
             return jsonObject1;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -380,18 +391,24 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             JSONObject promoTransaction = params.getJSONObject("promoTransaction");
             String platformTxId = promoTransaction.getString("id");
             JSONObject game = params.getJSONObject("game");
-
+            JSONObject table = game.getJSONObject("details").getJSONObject("table");
             // 赢奖金额
             BigDecimal betAmount = BigDecimal.ZERO;
             String roundId = null, promotionId = null, promoType = promoTransaction.getString("type");
-            GamePlatform gamePlatform = null;
+            GamePlatform gamePlatform;
+            if("Y".equals(OpenAPIProperties.REDTIGER_IS_PLATFORM_LOGIN)){
+                gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platformGameParent.getPlatformCode(),platformGameParent.getPlatformCode());
+            }else {
+                gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(table.getString("id"), platformGameParent.getPlatformCode());
+
+            }
+            GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
             // 免费回合游戏
             if ("FreeRoundPlayableSpent".equals(promoType)) {
                 betAmount = promoTransaction.getBigDecimal("amount");
                 roundId = promoTransaction.getString("voucherId");
             } else if ("JackpotWin".equals(promoType)) {
                 // 免费回合头奖
-                gamePlatform = gameCommonService.getGamePlatformByplatformCode(game.getString("id"));
                 roundId = game.getJSONObject("details").getJSONObject("table").getString("id");
                 promotionId = roundId;
                 JSONArray jsonArray = promoTransaction.getJSONArray("jackpots");
@@ -420,7 +437,6 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
 
                 // 因在游戏回合中获胜而发放促销奖金。
                 betAmount = promoTransaction.getBigDecimal("amount");
-                gamePlatform = gameCommonService.getGamePlatformByplatformCode(game.getString("id"));
                 roundId = game.getJSONObject("details").getJSONObject("table").getString("id");
                 promotionId = roundId;
             }
@@ -428,7 +444,6 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             if (null == gamePlatform) {
                 gamePlatform = gameCommonService.getGamePlatformByParentName(OpenAPIProperties.REDTIGER_PLATFORM_CODE).get(0);
             }
-            GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
 
             // 赢奖金额小于0
             if (betAmount.compareTo(BigDecimal.ZERO) < 0) {
@@ -451,7 +466,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             //此交易是否是投注 true是投注 false 否
             txns.setBet(false);
             //玩家 ID
-            txns.setUserId(memBaseinfo.getId().toString());
+            txns.setUserId(memBaseinfo.getAccount());
             //玩家货币代码
             txns.setCurrency(params.getString("currency"));
             //游戏平台的下注项目
@@ -511,8 +526,9 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
                 return initFailureResponse(100, "活动派奖订单入库请求失败");
             }
 
-            JSONObject jsonObject1 = initSuccessResponse();
+            JSONObject jsonObject1 = initSuccessResponse(params.getString("uuid"));
             jsonObject1.put("balance", balance);
+            jsonObject1.put("bonus", 0);
             return jsonObject1;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -560,10 +576,10 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
      *
      * @return JSONObject
      */
-    private JSONObject initSuccessResponse() {
+    private JSONObject initSuccessResponse(String uuid) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("status", "OK");
-        jsonObject.put("uuid", GeneratorIdUtil.generateId());
+        jsonObject.put("uuid", uuid);
         return jsonObject;
     }
 

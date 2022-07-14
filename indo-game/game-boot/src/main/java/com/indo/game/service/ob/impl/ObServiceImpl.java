@@ -7,12 +7,11 @@ import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
 import com.indo.common.utils.GameUtil;
 import com.indo.common.utils.encrypt.MD5;
-import com.indo.game.pojo.dto.ae.AeApiResponseData;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.game.pojo.entity.manage.GameParentPlatform;
 import com.indo.game.pojo.entity.manage.GamePlatform;
-import com.indo.game.service.ae.AeService;
+import com.indo.game.pojo.vo.callback.ob.ObApiResponseData;
 import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
 import com.indo.game.service.ob.ObService;
@@ -52,31 +51,28 @@ public class ObServiceImpl implements ObService {
      */
     @Override
     public Result obGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName) {
-        logger.info("OBlog {} obGame account:{}, aeCodeId:{}", loginUser.getId(), loginUser.getNickName(), platform);
+        logger.info("OB体育log  obGame loginUser:{}, ip:{}, platform:{}, parentName:{}, isMobileLogin:{}", loginUser,ip,platform,parentName,isMobileLogin);
         // 是否开售校验
-        GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(parentName);
-        if (null == platformGameParent) {
-            return Result.failed("(" + parentName + ")游戏平台不存在");
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
+        if (null == gameParentPlatform) {
+            return Result.failed("(" + parentName + ")平台不存在");
         }
-        if ("0".equals(platformGameParent.getIsStart())) {
-            return Result.failed("g" + "100101", "游戏平台未启用");
+        if (0==gameParentPlatform.getIsStart()) {
+            return Result.failed("g100101", "平台未启用");
         }
-        if ("1".equals(platformGameParent.getIsOpenMaintenance())) {
-            return Result.failed("g000001", platformGameParent.getMaintenanceContent());
+        if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
+            return Result.failed("g000001", gameParentPlatform.getMaintenanceContent());
         }
-        GamePlatform gamePlatform = new GamePlatform();
-        if (!platform.equals(parentName)) {
-            // 是否开售校验
-            gamePlatform = gameCommonService.getGamePlatformByplatformCode(platform);
-            if (null == gamePlatform) {
-                return Result.failed("(" + platform + ")平台游戏不存在");
-            }
-            if ("0".equals(gamePlatform.getIsStart())) {
-                return Result.failed("g" + "100102", "游戏未启用");
-            }
-            if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
-                return Result.failed("g091047", gamePlatform.getMaintenanceContent());
-            }
+        // 是否开售校验
+        GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
+        if (null == gamePlatform) {
+            return Result.failed("(" + platform + ")游戏不存在");
+        }
+        if (0==gamePlatform.getIsStart()) {
+            return Result.failed("g100102", "游戏未启用");
+        }
+        if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
+            return Result.failed("g091047", gamePlatform.getMaintenanceContent());
         }
         BigDecimal balance = loginUser.getBalance();
         //验证站点棋牌余额
@@ -99,17 +95,15 @@ public class ObServiceImpl implements ObService {
                 cptOpenMember.setLoginTime(new Date());
                 cptOpenMember.setType(parentName);
                 //创建玩家
-                return createMemberGame(platformGameParent, gamePlatform, ip, cptOpenMember, isMobileLogin);
+                return createMemberGame(gameParentPlatform, gamePlatform, ip, cptOpenMember, isMobileLogin);
             } else {
-                CptOpenMember updateCptOpenMember = new CptOpenMember();
-                updateCptOpenMember.setId(cptOpenMember.getId());
-                updateCptOpenMember.setLoginTime(new Date());
-                externalService.updateCptOpenMember(updateCptOpenMember);
+                cptOpenMember.setLoginTime(new Date());
+                externalService.updateCptOpenMember(cptOpenMember);
                 //先登出
                 logout(loginUser, platform, ip);
             }
             //登录
-            return initGame(platformGameParent, gamePlatform, cptOpenMember, isMobileLogin);
+            return initGame(gameParentPlatform, gamePlatform, cptOpenMember, isMobileLogin);
         } catch (Exception e) {
             e.printStackTrace();
             return Result.failed("g100104", "网络繁忙，请稍后重试！");
@@ -121,24 +115,24 @@ public class ObServiceImpl implements ObService {
      */
     private Result initGame(GameParentPlatform platformGameParent, GamePlatform gamePlatform,
                             CptOpenMember cptOpenMember, String isMobileLogin) {
-        AeApiResponseData aeApiResponseData = gameLogin(platformGameParent, gamePlatform, cptOpenMember, isMobileLogin);
-        if (null == aeApiResponseData) {
+        ObApiResponseData obApiResponseData = gameLogin(platformGameParent, gamePlatform, cptOpenMember, isMobileLogin);
+        if (null == obApiResponseData) {
             return Result.failed("g091087", "第三方请求异常！");
         }
-        if (("0000").equals(aeApiResponseData.getCode())) {
+        if (("0000").equals(obApiResponseData.getCode())) {
             ApiResponseData responseData = new ApiResponseData();
-            JSONObject jsonObject = JSONObject.parseObject(aeApiResponseData.getData());
+            JSONObject jsonObject = JSONObject.parseObject(obApiResponseData.getData());
             responseData.setPathUrl(jsonObject.getString("loginUrl"));
             return Result.success(responseData);
         } else {
-            return errorCode(aeApiResponseData.getCode(), aeApiResponseData.getMsg());
+            return errorCode(obApiResponseData.getCode(), obApiResponseData.getMsg());
         }
     }
 
     /**
      * 调用API登录
      */
-    private AeApiResponseData gameLogin(GameParentPlatform platformGameParent, GamePlatform gamePlatform, CptOpenMember cptOpenMember, String isMobileLogin) {
+    private ObApiResponseData gameLogin(GameParentPlatform platformGameParent, GamePlatform gamePlatform, CptOpenMember cptOpenMember, String isMobileLogin) {
         long currentTime = System.currentTimeMillis();
         Map<String, String> params = new HashMap<String, String>();
         params.put("userName", cptOpenMember.getUserName());
@@ -160,38 +154,40 @@ public class ObServiceImpl implements ObService {
         stringBuilder.append(signKey).append("&").append(OpenAPIProperties.OB_MERCHANT_KEY);
         String sign = MD5.md5(stringBuilder.toString());
         params.put("signature", sign);
-        AeApiResponseData aeApiResponseData = null;
+        ObApiResponseData obApiResponseData = null;
         try {
             StringBuilder apiUrl = new StringBuilder();
             apiUrl.append(OpenAPIProperties.OB_API_URL).append("/api/user/login");
-            aeApiResponseData = commonRequest(apiUrl.toString(), params, cptOpenMember.getUserId(), "gameLogin");
+            logger.info("OB体育log  登录gameLogin输入 apiUrl:{}, platform:{}", apiUrl.toString(), params);
+            obApiResponseData = commonRequest(apiUrl.toString(), params, cptOpenMember.getUserId(), "gameLogin");
+            logger.info("OB体育log  登录gameLogin返回 obApiResponseData:{}", obApiResponseData);
         } catch (Exception e) {
             logger.error("OBlog aeGameLogin:{}", e);
             e.printStackTrace();
         }
-        return aeApiResponseData;
+        return obApiResponseData;
     }
 
     /**
      * 创建账户并登录逻辑
      */
     private Result createMemberGame(GameParentPlatform platformGameParent, GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember, String isMobileLogin) {
-        AeApiResponseData aeApiResponseData = createMember(platformGameParent, gamePlatform, ip, cptOpenMember, isMobileLogin);
-        if (null == aeApiResponseData) {
+        ObApiResponseData obApiResponseData = createMember(platformGameParent, gamePlatform, ip, cptOpenMember, isMobileLogin);
+        if (null == obApiResponseData) {
             return Result.failed("g091087", "第三方请求异常！");
         }
-        if (("0000").equals(aeApiResponseData.getCode())) {
+        if (("0000").equals(obApiResponseData.getCode())||("2003").equals(obApiResponseData.getCode())) {
             externalService.saveCptOpenMember(cptOpenMember);
             return initGame(platformGameParent, gamePlatform, cptOpenMember, isMobileLogin);
         } else {
-            return errorCode(aeApiResponseData.getCode(), aeApiResponseData.getMsg());
+            return errorCode(obApiResponseData.getCode(), obApiResponseData.getMsg());
         }
     }
 
     /**
      * 调用API创建账号
      */
-    private AeApiResponseData createMember(GameParentPlatform platformGameParent, GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember, String isMobileLogin) {
+    private ObApiResponseData createMember(GameParentPlatform platformGameParent, GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember, String isMobileLogin) {
 
         long currentTime = System.currentTimeMillis();
         Map<String, String> params = new HashMap<String, String>();
@@ -209,14 +205,16 @@ public class ObServiceImpl implements ObService {
         params.put("signature", sign);
         StringBuilder apiUrl = new StringBuilder();
         apiUrl.append(OpenAPIProperties.OB_API_URL).append("/api/user/create");
-        AeApiResponseData aeApiResponseData = null;
+        ObApiResponseData obApiResponseData = null;
         try {
-            aeApiResponseData = commonRequest(apiUrl.toString(), params, cptOpenMember.getUserId(), "obCreateMember");
+            logger.info("OB体育log  创建账号createMember输入 apiUrl:{}, platform:{}", apiUrl.toString(), params);
+            obApiResponseData = commonRequest(apiUrl.toString(), params, cptOpenMember.getUserId(), "obCreateMember");
+            logger.info("OB体育log  创建账号createMember返回 obApiResponseData:{}", obApiResponseData);
         } catch (Exception e) {
             logger.error("OBlog aeCeateMember:{}", e);
             e.printStackTrace();
         }
-        return aeApiResponseData;
+        return obApiResponseData;
     }
 
     /**
@@ -242,14 +240,16 @@ public class ObServiceImpl implements ObService {
             params.put("signature", sign);
             StringBuilder apiUrl = new StringBuilder();
             apiUrl.append(OpenAPIProperties.OB_API_URL).append("/api/user/kickOutUser");
-            AeApiResponseData aeApiResponseData = commonRequest(apiUrl.toString(), params, loginUser.getId().intValue(), "gameLogout");
-            if (null == aeApiResponseData) {
+            logger.info("OB体育log  登出玩家logout输入 apiUrl:{}, platform:{}", apiUrl.toString(), params);
+            ObApiResponseData obApiResponseData = commonRequest(apiUrl.toString(), params, loginUser.getId().intValue(), "gameLogout");
+            logger.info("OB体育log  登出玩家logout返回 obApiResponseData:{}", obApiResponseData);
+            if (null == obApiResponseData) {
                 return Result.failed();
             }
-            if ("0000".equals(aeApiResponseData.getCode())) {
-                return Result.success(aeApiResponseData);
+            if ("0000".equals(obApiResponseData.getCode())) {
+                return Result.success(obApiResponseData);
             } else {
-                return errorCode(aeApiResponseData.getCode(), aeApiResponseData.getMsg());
+                return errorCode(obApiResponseData.getCode(), obApiResponseData.getMsg());
             }
         } catch (Exception e) {
             logger.error("OBlog OBlogout:{}", e);
@@ -263,17 +263,17 @@ public class ObServiceImpl implements ObService {
     /**
      * 公共请求
      */
-    public AeApiResponseData commonRequest(String apiUrl, Map<String, String> jsonStr, Integer userId, String type) throws Exception {
+    public ObApiResponseData commonRequest(String apiUrl, Map<String, String> jsonStr, Integer userId, String type) throws Exception {
         logger.info("OBlog {} commonRequest userId:{},paramsMap:{}", userId, jsonStr);
-        AeApiResponseData aeApiResponseData = null;
+        ObApiResponseData obApiResponseData = null;
         String resultString = GameUtil.doProxyPostJson(OpenAPIProperties.PROXY_HOST_NAME, OpenAPIProperties.PROXY_PORT, OpenAPIProperties.PROXY_TCP, apiUrl, jsonStr, type, userId);
         logger.info("OBlog apiResponse:" + resultString);
         if (StringUtils.isNotEmpty(resultString)) {
-            aeApiResponseData = JSONObject.parseObject(resultString, AeApiResponseData.class);
+            obApiResponseData = JSONObject.parseObject(resultString, ObApiResponseData.class);
             logger.info("OBlog {}:commonRequest type:{}, operateFlag:{}, hostName:{}, params:{}, result:{}, awcApiResponse:{}",
-                    userId, type, null, jsonStr, resultString, JSONObject.toJSONString(aeApiResponseData));
+                    userId, type, null, jsonStr, resultString, JSONObject.toJSONString(obApiResponseData));
         }
-        return aeApiResponseData;
+        return obApiResponseData;
     }
 
     public Result errorCode(String errorCode, String errorMessage) {

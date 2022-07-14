@@ -52,29 +52,27 @@ public class CqServiceImpl implements CqService {
     public Result cqGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName) {
         logger.info("cqlog {} cqGame account:{}, cqCodeId:{}", loginUser.getId(), loginUser.getNickName(), platform);
         // 是否开售校验
-        GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(parentName);
-        if (null == platformGameParent) {
-            return Result.failed("(" + parentName + ")游戏平台不存在");
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
+        if (null == gameParentPlatform) {
+            return Result.failed("(" + parentName + ")平台不存在");
         }
-        if ("0".equals(platformGameParent.getIsStart())) {
-            return Result.failed("g" + "100101", "游戏平台未启用");
+        if (0==gameParentPlatform.getIsStart()) {
+            return Result.failed("g100101", "平台未启用");
         }
-        if ("1".equals(platformGameParent.getIsOpenMaintenance())) {
-            return Result.failed("g000001", platformGameParent.getMaintenanceContent());
+        if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
+            return Result.failed("g000001", gameParentPlatform.getMaintenanceContent());
         }
-        GamePlatform gamePlatform = new GamePlatform();
-        if (!platform.equals(parentName)) {
-            // 是否开售校验
-            gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
-            if (null == gamePlatform) {
-                return Result.failed("(" + platform + ")平台游戏不存在");
-            }
-            if ("0".equals(gamePlatform.getIsStart())) {
-                return Result.failed("g" + "100102", "游戏未启用");
-            }
-            if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
-                return Result.failed("g091047", gamePlatform.getMaintenanceContent());
-            }
+
+        // 是否开售校验
+        GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
+        if (null == gamePlatform) {
+            return Result.failed("(" + platform + ")游戏不存在");
+        }
+        if (0==gamePlatform.getIsStart()) {
+            return Result.failed("g100102", "游戏未启用");
+        }
+        if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
+            return Result.failed("g091047", gamePlatform.getMaintenanceContent());
         }
         BigDecimal balance = loginUser.getBalance();
         //验证站点棋牌余额
@@ -87,7 +85,9 @@ public class CqServiceImpl implements CqService {
 
             // 验证且绑定（AE-CPT第三方会员关系）
             CptOpenMember cptOpenMember = externalService.getCptOpenMember(loginUser.getId().intValue(), parentName);
+            boolean b = true;
             if (cptOpenMember == null) {
+                b = false;
                 cptOpenMember = new CptOpenMember();
                 cptOpenMember.setUserName(loginUser.getAccount());
                 cptOpenMember.setUserId(loginUser.getId().intValue());
@@ -99,13 +99,14 @@ public class CqServiceImpl implements CqService {
                 //创建玩家
                 externalService.saveCptOpenMember(cptOpenMember);
             } else {
-                CptOpenMember updateCptOpenMember = new CptOpenMember();
-                updateCptOpenMember.setId(cptOpenMember.getId());
-                updateCptOpenMember.setLoginTime(new Date());
-                externalService.updateCptOpenMember(updateCptOpenMember);
+                cptOpenMember.setLoginTime(new Date());
+                externalService.updateCptOpenMember(cptOpenMember);
+            }
+            if(b){
+                this.logout(loginUser,parentName,ip);
             }
             //登录
-            return initGame(platformGameParent, gamePlatform, cptOpenMember, isMobileLogin);
+            return initGame(gameParentPlatform, gamePlatform, cptOpenMember, isMobileLogin);
         } catch (Exception e) {
             e.printStackTrace();
             return Result.failed("g100104", "网络繁忙，请稍后重试！");
@@ -122,6 +123,9 @@ public class CqServiceImpl implements CqService {
             return Result.failed("g091087", "第三方请求异常！");
         }
         JSONObject jsonStatusObject = JSON.parseObject(cqApiResponseData.getStatus());
+        if (null == jsonStatusObject) {
+            return Result.failed("g091087", "第三方请求异常！");
+        }
         if (("0").equals(jsonStatusObject.getString("code"))) {
             ApiResponseData responseData = new ApiResponseData();
             JSONObject jsonDataObject = JSON.parseObject(cqApiResponseData.getData());
@@ -181,9 +185,12 @@ public class CqServiceImpl implements CqService {
             apiUrl.append(OpenAPIProperties.CQ_API_URL).append("/gameboy/player/logout");
             CqApiResponseData cqApiResponseData = commonRequest(apiUrl.toString(), params, loginUser.getId().intValue(), "cqGameLogin");
             if (null == cqApiResponseData) {
-                return Result.failed();
+                return Result.failed("g091087", "第三方请求异常！");
             }
             JSONObject jsonObject = JSON.parseObject(cqApiResponseData.getStatus());
+            if (null == jsonObject) {
+                return Result.failed("g091087", "第三方请求异常！");
+            }
             if ("0".equals(jsonObject.getString("code"))) {
                 return Result.success(cqApiResponseData);
             } else {

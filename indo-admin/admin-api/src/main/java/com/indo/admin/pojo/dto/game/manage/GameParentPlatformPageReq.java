@@ -43,4 +43,7 @@ public class GameParentPlatformPageReq extends BaseDTO {
 
     @ApiModelProperty(value = "是否虚拟平台 0否  1是")
     private String isVirtual;
+
+    @ApiModelProperty(value = "平台中文名称")
+    private String platformCnName;
 }

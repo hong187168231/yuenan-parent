@@ -24,89 +24,75 @@ public class UgCallBackController {
     /**
      * 玩家登入验证URL
      */
-    @RequestMapping(value="/checkLogin",method=RequestMethod.POST)
+    @RequestMapping(value="/checkLogin",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object checkLogin(@RequestParam Map<String, String> params) {
-        logger.info("ugCallBack {} callBack 回调,getBalance获取余额 params:{}",JSONObject.toJSONString(params));
-        Set<String> keySet = params.keySet();
+    public Object checkLogin(@RequestBody JSONObject jsonObject) {
+        logger.info("ugCallBack callBack 回调玩家登入验证URL,checkLogin params:{}",JSONObject.toJSONString(jsonObject));
         UgCallBackCheckLoginReq ugCallBackCheckLoginReq = new UgCallBackCheckLoginReq();
-        for(String key : keySet){
-            ugCallBackCheckLoginReq = JSONObject.parseObject(key,ugCallBackCheckLoginReq.getClass());
-        }
+        ugCallBackCheckLoginReq.setApiPassword(jsonObject.getString("apiPassword"));
+        ugCallBackCheckLoginReq.setUserId(jsonObject.getString("userId"));
+        ugCallBackCheckLoginReq.setToken(jsonObject.getString("token"));
         Object getBalance = ugCallbackService.checkLogin(ugCallBackCheckLoginReq);
-        logger.info("ugCallBack {} callBack 回调返回数据,getBalance获取余额 params:{}",JSONObject.toJSONString(getBalance));
+        logger.info("ugCallBackcallBack 回调玩家登入验证URL返回数据,checkLogin params:{}",JSONObject.toJSONString(getBalance));
         return getBalance;
     }
     /**
      * 获取余额
      */
-    @RequestMapping(value="/getBalance",method=RequestMethod.POST)
+    @RequestMapping(value="/getBalance",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object getBalance(@RequestParam Map<String, String> params) {
-        logger.info("ugCallBack {} callBack 回调,getBalance获取余额 params:{}",JSONObject.toJSONString(params));
-        Set<String> keySet = params.keySet();
+    public Object getBalance(@RequestBody JSONObject jsonObject) {
+        logger.info("ugCallBack callBack 回调,getBalance获取余额 params:{}",JSONObject.toJSONString(jsonObject));
         UgCallBackGetBalanceReq ugCallBackGetBalanceReq = new UgCallBackGetBalanceReq();
-        for(String key : keySet){
-            ugCallBackGetBalanceReq = JSONObject.parseObject(key,ugCallBackGetBalanceReq.getClass());
-        }
+        ugCallBackGetBalanceReq.setApiPassword(jsonObject.getString("apiPassword"));
+        ugCallBackGetBalanceReq.setUserId(jsonObject.getString("userId"));
         Object getBalance = ugCallbackService.getBalance(ugCallBackGetBalanceReq);
-        logger.info("ugCallBack {} callBack 回调返回数据,getBalance获取余额 params:{}",JSONObject.toJSONString(getBalance));
+        logger.info("ugCallBack  callBack 回调返回数据,getBalance获取余额 params:{}",JSONObject.toJSONString(getBalance));
         return getBalance;
     }
 
     /**
      * 加余额/扣除余额
      */
-    @RequestMapping(value="/changeBalance",method=RequestMethod.POST)
+    @RequestMapping(value="/changeBalance",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object transfer(@RequestParam Map<String, String> params) {
-        logger.info("ugCallBack {} callBack 回调,transfer加余额/扣除余额 params:{}",JSONObject.toJSONString(params));
-        Set<String> keySet = params.keySet();
-        UgCallBackTransferReq<UgCallBackTransactionItemReq> ugCallBackTransferReq = new UgCallBackTransferReq<UgCallBackTransactionItemReq>();
-        for(String key : keySet){
-            ugCallBackTransferReq = JSONObject.parseObject(key,ugCallBackTransferReq.getClass());
-        }
+    public Object transfer(@RequestBody JSONObject jsonObject) {
+        logger.info("ugCallBack  callBack 回调,transfer加余额/扣除余额 params:{}",JSONObject.toJSONString(jsonObject));
+        UgCallBackTransferReq<UgCallBackTransactionItemReq> ugCallBackTransferReq = JSONObject.toJavaObject(jsonObject,UgCallBackTransferReq.class);
         Object transfer = ugCallbackService.transfer(ugCallBackTransferReq);
-        logger.info("ugCallBack {} callBack 回调返回数据,transfer加余额/扣除余额 params:{}",JSONObject.toJSONString(transfer));
+        logger.info("ugCallBack callBack 回调返回数据,transfer加余额/扣除余额 params:{}",JSONObject.toJSONString(transfer));
         return transfer;
     }
 
     /**
      * 取消交易
      */
-    @RequestMapping(value="/cancelBet",method=RequestMethod.POST)
+    @RequestMapping(value="/cancelBet",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object cancel(@RequestParam Map<String, String> params) {
-        logger.info("ugCallBack {} callBack 回调,cancel取消交易 params:{}",JSONObject.toJSONString(params));
-        Set<String> keySet = params.keySet();
-        UgCallBackCancelReq ugCallBackCancelReq = new UgCallBackCancelReq();
-        for(String key : keySet){
-            ugCallBackCancelReq = JSONObject.parseObject(key,ugCallBackCancelReq.getClass());
-        }
+    public Object cancel(@RequestBody JSONObject jsonObject) {
+        logger.info("ugCallBack  callBack 回调,cancel取消交易 params:{}",JSONObject.toJSONString(jsonObject));
+        UgCallBackCancelReq<UgCallBackCancelItemReq> ugCallBackCancelReq = JSONObject.toJavaObject(jsonObject,UgCallBackCancelReq.class);
+
         Object cancel = ugCallbackService.cancel(ugCallBackCancelReq);
-        logger.info("ugCallBack {} callBack 回调返回数据,cancel取消交易 params:{}",JSONObject.toJSONString(cancel));
+        logger.info("ugCallBack   callBack 回调返回数据,cancel取消交易 params:{}",JSONObject.toJSONString(cancel));
         return cancel;
     }
 
     /**
      * 检查交易结果
      */
-    @RequestMapping(value="/checkTxn",method=RequestMethod.POST)
+    @RequestMapping(value="/checkTxn",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object check(@RequestParam Map<String, String> params) {
-        logger.info("ugCallBack {} callBack 回调,check检查交易结果 params:{}",JSONObject.toJSONString(params));
-        Set<String> keySet = params.keySet();
-        UgCallBackCheckTxnReq<UgCallBackCheckTxnItemReq> ugCallBackCheckTxnReq = new UgCallBackCheckTxnReq();
-        for(String key : keySet){
-            ugCallBackCheckTxnReq = JSONObject.parseObject(key,ugCallBackCheckTxnReq.getClass());
-        }
+    public Object check(@RequestBody JSONObject jsonObject) {
+        logger.info("ugCallBack  callBack 回调,check检查交易结果 params:{}",JSONObject.toJSONString(jsonObject));
+        UgCallBackCheckTxnReq<UgCallBackCheckTxnItemReq> ugCallBackCheckTxnReq = JSONObject.toJavaObject(jsonObject,UgCallBackCheckTxnReq.class);
         Object check = ugCallbackService.check(ugCallBackCheckTxnReq);
-        logger.info("ugCallBack {} callBack 回调返回数据,check检查交易结果 params:{}",JSONObject.toJSONString(check));
+        logger.info("ugCallBack  callBack 回调返回数据,check检查交易结果 params:{}",JSONObject.toJSONString(check));
         return check;
     }
 }

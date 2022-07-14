@@ -56,29 +56,25 @@ public class AwcServiceImpl implements AwcService {
         logger.info("awclog {} aeGame account:{}, aeCodeId:{}", loginUser.getId(), loginUser.getNickName(), platform);
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
-        if(null==gameParentPlatform){
-            return Result.failed("("+parentName+")游戏平台不存在");
+        if (null == gameParentPlatform) {
+            return Result.failed("(" + parentName + ")平台不存在");
         }
-        if ("0".equals(gameParentPlatform.getIsStart())) {
-            return Result.failed("g"+"100101","游戏平台未启用");
+        if (0==gameParentPlatform.getIsStart()) {
+            return Result.failed("g100101", "平台未启用");
         }
         if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
-            return Result.failed("g000001",gameParentPlatform.getMaintenanceContent());
+            return Result.failed("g000001", gameParentPlatform.getMaintenanceContent());
         }
-        GamePlatform gamePlatform = null;
-        if(!platform.equals(parentName)) {
-            gamePlatform = new GamePlatform();
-            // 是否开售校验
-            gamePlatform = gameCommonService.getGamePlatformByplatformCode(platform);
-            if (null == gamePlatform) {
-                return Result.failed("("+platform+")平台游戏不存在");
-            }
-            if ("0".equals(gamePlatform.getIsStart())) {
-                return Result.failed("g"+"100102","游戏未启用");
-            }
-            if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
-                return Result.failed("g091047",gamePlatform.getMaintenanceContent());
-            }
+        // 是否开售校验
+        GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
+        if (null == gamePlatform) {
+            return Result.failed("(" + platform + ")游戏不存在");
+        }
+        if (0==gamePlatform.getIsStart()) {
+            return Result.failed("g100102", "游戏未启用");
+        }
+        if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
+            return Result.failed("g091047", gamePlatform.getMaintenanceContent());
         }
 //        //初次判断站点棋牌余额是否够该用户
 //        MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(loginUser.getAccount());
@@ -108,16 +104,11 @@ public class AwcServiceImpl implements AwcService {
                 //创建玩家
                 return createMemberGame(gameParentPlatform,gamePlatform, ip, cptOpenMember,isMobileLogin);
             } else {
-                Result result = this.logout(loginUser,ip);
-                if(null!=result&&"00000".equals(result.getCode())) {
-                    CptOpenMember updateCptOpenMember = new CptOpenMember();
-                    updateCptOpenMember.setId(cptOpenMember.getId());
-                    updateCptOpenMember.setLoginTime(new Date());
-                    externalService.updateCptOpenMember(updateCptOpenMember);
-                    //登录
-                    return initGame(gameParentPlatform,gamePlatform, ip, cptOpenMember, isMobileLogin);
-                }
-                return result;
+                this.logout(loginUser,ip);
+                cptOpenMember.setLoginTime(new Date());
+                externalService.updateCptOpenMember(cptOpenMember);
+                //登录
+                return initGame(gameParentPlatform,gamePlatform, ip, cptOpenMember, isMobileLogin);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -257,7 +248,12 @@ public class AwcServiceImpl implements AwcService {
 
             trr.put("language", gameParentPlatform.getLanguageType());
             String url = "/wallet/login";
-            if(null!=gamePlatform) {
+            if(!gameParentPlatform.getPlatformCode().equals(gamePlatform.getParentName())) {
+                url = "/wallet/doLoginAndLaunchGame";
+                trr.put("gameCode", gamePlatform.getPlatformCode());//平台游戏代码
+            }else {
+                trr.put("gameForbidden", "");//指定对玩家隐藏游戏平台，您仅能透过 API 执行这个动作
+            }
 //                String str[] = gamePlatform.getPlatformCode().split("_");
 //                trr.put("platform", str[0]);//游戏平台名称
                 trr.put("platform", "SEXYBCRT");//游戏平台名称
@@ -265,7 +261,7 @@ public class AwcServiceImpl implements AwcService {
 //            GameCategory gameCategory = gameCategoryMapper.selectById(gamePlatform.getCategoryId());
 //                trr.put("gameType", str[1]);//平台游戏类型
                 trr.put("gameType", "LIVE");//平台游戏类型
-                trr.put("gameCode", gamePlatform.getPlatformCode());//平台游戏代码
+
 //                List<GamePlatform> gamePlatformList = gameCommonService.getGamePlatformByParentName(gameParentPlatform.getPlatformCode());
 //                List<String> codeList = new ArrayList<>();
 //                Map<String, List<String>> gameForbiddenMap = new HashMap<>();
@@ -290,8 +286,7 @@ public class AwcServiceImpl implements AwcService {
 //                }
 //                JSONObject gameForbiddenStr = GameUtil.getJsonMap(gameForbiddenMap);
 //                trr.put("gameForbidden", gameForbiddenStr.toString());//指定对玩家隐藏游戏平台，您仅能透过 API 执行这个动作
-                url = "/wallet/doLoginAndLaunchGame";
-            }
+
 //           platform: SEXYBCRT
 //                   - gameType: LIVE
 //                   - value (ID): {"limitId":[IDs]}

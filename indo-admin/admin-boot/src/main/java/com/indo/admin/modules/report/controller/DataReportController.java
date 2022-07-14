@@ -2,76 +2,60 @@ package com.indo.admin.modules.report.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.modules.mem.service.IMemBaseinfoService;
+import com.indo.admin.modules.report.service.DataReportService;
+import com.indo.admin.pojo.dto.*;
+import com.indo.admin.pojo.vo.TotalReportVo;
+import com.indo.admin.pojo.vo.agent.AgentReportVo;
+import com.indo.admin.pojo.vo.game.PlatformReportVo;
+import com.indo.admin.pojo.vo.mem.MemReportVo;
+import com.indo.admin.pojo.vo.pay.PayRechargeReportVo;
 import com.indo.common.result.PageResult;
 import com.indo.common.result.Result;
-import com.indo.user.pojo.req.agent.AgentReportReq;
-import com.indo.user.pojo.req.mem.MemReportReq;
-import com.indo.user.pojo.vo.AgentReportVo;
-import com.indo.user.pojo.vo.MemReportVo;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.List;
 
 /**
- * 数据报表c
+ * 数据报表
  */
 @Api(tags = "数据报表接口")
 @RestController
 @RequestMapping("/api/v1/dataReport")
 public class DataReportController {
 
-
     @Resource
-    private IMemBaseinfoService iMemBaseInfoService;
+    private DataReportService dataReportService;
 
 
     @ApiOperation(value = "查询会员报表")
-    @GetMapping(value = "/memReportList")
-    public Result<PageResult<MemReportVo>> memReportList(MemReportReq dto) {
-        Integer pageNum = 1;
-        Integer pageSize = 10;
-        if (null != dto.getPage() && null != dto.getLimit()) {
-            pageNum = dto.getPage();
-            pageSize = dto.getLimit();
-        }
-        Page<MemReportVo> page = new Page<>(pageNum, pageSize);
-//        List<MemReportVo> list = iMemBaseInfoService.memReportList(page, dto);
-//        page.setRecords(list);
-        return Result.success(PageResult.getPageResult(page));
-    }
-
-    @ApiOperation(value = "导出会员报表")
-    @ApiImplicitParam(name = "ids", value = "用户ID，逗号拼接(1,2)")
-    @GetMapping(value = "/memReportExport")
-    public void memReportExport(HttpServletResponse response, @RequestParam(required = false) List<Long> ids) throws IOException {
-//        iMemBaseInfoService.memReportExport(response, ids);
+    @GetMapping(value = "/findMemReportPaghe")
+    public Result<Page<MemReportVo>> findMemReportPaghe(MemReportDTO memReportDTO) {
+        return Result.success(dataReportService.findMemberReportPage(memReportDTO));
     }
 
     @ApiOperation(value = "查询代理报表")
-    @GetMapping(value = "/agentReportList")
-    public Result<PageResult<AgentReportVo>> agentReportList(AgentReportReq dto) {
-        Integer pageNum = 1;
-        Integer pageSize = 10;
-        if (null != dto.getPage() && null != dto.getLimit()) {
-            pageNum = dto.getPage();
-            pageSize = dto.getLimit();
-        }
-        Page<AgentReportVo> page = new Page<>(pageNum, pageSize);
-//        List<AgentReportVo> list = iMemBaseInfoService.agentReportList(page, dto);
-//        page.setRecords(list);
-        return Result.success(PageResult.getPageResult(page));
+    @GetMapping(value = "/findAgentReportPage")
+    public Result<Page<AgentReportVo>> findAgentReportPage(AgentReportDTO agentReportDTO) {
+        return Result.success(dataReportService.findAgentReportPage(agentReportDTO));
     }
 
-    @ApiOperation(value = "导出代理报表")
-    @ApiImplicitParam(name = "ids", value = "用户ID，逗号拼接(1,2)")
-    @GetMapping(value = "/agentReportExport")
-    public void agentReportExport(HttpServletResponse response, @RequestParam(required = false) List<Long> ids) throws IOException {
-//        iMemBaseInfoService.agentReportExport(response, ids);
+    @ApiOperation(value = "查询充值报表")
+    @GetMapping(value = "/findPayRechargeReportPage")
+    public Result<Page<PayRechargeReportVo>> findPayRechargeReportPage(PayRechargeReportDTO payRechargeReportDTO) {
+        return Result.success(dataReportService.findPayRechargeReportPage(payRechargeReportDTO));
+    }
+
+    @ApiOperation(value = "查询平台报表")
+    @GetMapping(value = "/findPlatformReportPage")
+    public Result<Page<PlatformReportVo>> findPlatformReportPage(PlatformReportDTO platformReportDT) {
+        return Result.success(dataReportService.findPlatformReportPage(platformReportDT));
+    }
+
+    @ApiOperation(value = "查询总表")
+    @GetMapping(value = "/findTotalReport")
+    public Result<TotalReportVo> findTotalReport(TotalReportDTO totalReportDTO) {
+        return Result.success(dataReportService.findTotalReport(totalReportDTO));
     }
 }

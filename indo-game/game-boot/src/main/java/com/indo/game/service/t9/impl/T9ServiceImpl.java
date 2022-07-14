@@ -55,27 +55,24 @@ public class T9ServiceImpl implements T9Service {
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
         if (null == gameParentPlatform) {
-            return Result.failed("(" + parentName + ")游戏平台不存在");
+            return Result.failed("(" + parentName + ")平台不存在");
         }
-        if (gameParentPlatform.getIsStart().equals(0)) {
-            return Result.failed("g100101", "游戏平台未启用");
+        if (0==gameParentPlatform.getIsStart()) {
+            return Result.failed("g100101", "平台未启用");
         }
         if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
             return Result.failed("g000001", gameParentPlatform.getMaintenanceContent());
         }
-        if (!platform.equals(parentName)) {
-            GamePlatform gamePlatform;
-            // 是否开售校验
-            gamePlatform = gameCommonService.getGamePlatformByplatformCode(platform);
-            if (null == gamePlatform) {
-                return Result.failed("(" + platform + ")平台游戏不存在");
-            }
-            if (gamePlatform.getIsStart().equals(0)) {
-                return Result.failed("g100102", "游戏未启用");
-            }
-            if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
-                return Result.failed("g091047", gamePlatform.getMaintenanceContent());
-            }
+        // 是否开售校验
+        GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
+        if (null == gamePlatform) {
+            return Result.failed("(" + platform + ")游戏不存在");
+        }
+        if (0==gamePlatform.getIsStart()) {
+            return Result.failed("g100102", "游戏未启用");
+        }
+        if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
+            return Result.failed("g091047", gamePlatform.getMaintenanceContent());
         }
 
         BigDecimal balance = loginUser.getBalance();
@@ -99,12 +96,10 @@ public class T9ServiceImpl implements T9Service {
                 cptOpenMember.setLoginTime(new Date());
                 cptOpenMember.setType(parentName);
                 //创建玩家
-                createMemberGame(cptOpenMember);
+                return createMemberGame(cptOpenMember, platform, "1".equals(isMobileLogin));
             } else {
-                CptOpenMember updateCptOpenMember = new CptOpenMember();
-                updateCptOpenMember.setId(cptOpenMember.getId());
-                updateCptOpenMember.setLoginTime(new Date());
-                externalService.updateCptOpenMember(updateCptOpenMember);
+                cptOpenMember.setLoginTime(new Date());
+                externalService.updateCptOpenMember(cptOpenMember);
 
                 Map<String, Object> params = new HashMap<>();
                 params.put("playerID", loginUser.getAccount());
@@ -131,10 +126,13 @@ public class T9ServiceImpl implements T9Service {
             params.put("playerID", loginUser.getAccount());
             params.put("actionType", "0");
             params.put("checkValue", getCheckValue("0"));
-
+            logger.info("T9log  logout退出登录 urlapi:{},paramsMap:{},loginUser:{}", getLogOutT9PlayerUrl(), params,loginUser);
             // 退出游戏
             T9ApiResponseData t9ApiResponseData = commonRequest(getLogOutT9PlayerUrl(), params, loginUser.getId());
-
+            logger.info("T9log  logout退出登录返回 t9ApiResponseData:{}", JSONObject.toJSONString(t9ApiResponseData));
+            if (null == t9ApiResponseData) {
+                return Result.failed("g091087", "第三方请求异常！");
+            }
             if ("200".equals(t9ApiResponseData.getStatusCode())) {
                 return Result.success(t9ApiResponseData);
             } else {
@@ -161,7 +159,9 @@ public class T9ServiceImpl implements T9Service {
             params.put("hasLogo", true);
             params.put("walletType", 2);
             params.put("checkValue", getCheckValue(playerID, gameCode));
+            logger.info("T9log  getPlayerGameUrl启动游戏获取游戏URL urlapi:{},paramsMap:{},loginUser:{}", getStartGameUrl(), params,playerID);
             t9ApiResponseData = commonRequest(getStartGameUrl(), params, playerID);
+            logger.info("T9log  getPlayerGameUrl启动游戏获取游戏URL返回 t9ApiResponseData:{}", JSONObject.toJSONString(t9ApiResponseData));
         } catch (Exception e) {
             logger.error("t9log getPlayerGameUrl:{}", e);
             e.printStackTrace();
@@ -185,7 +185,7 @@ public class T9ServiceImpl implements T9Service {
      * @param cptOpenMember
      * @return
      */
-    private Result createMemberGame(CptOpenMember cptOpenMember) {
+    private Result createMemberGame(CptOpenMember cptOpenMember, String platform, boolean isAPP) {
         // 创建T9账号
         T9ApiResponseData t9ApiResponseData = createT9Member(cptOpenMember);
         if (null == t9ApiResponseData) {
@@ -194,7 +194,7 @@ public class T9ServiceImpl implements T9Service {
 
         if ("200".equals(t9ApiResponseData.getStatusCode())) {
             externalService.saveCptOpenMember(cptOpenMember);
-            return Result.success();
+            return getPlayerGameUrl(cptOpenMember.getUserName(), platform, isAPP);
         } else {
             return errorCode(t9ApiResponseData.getStatusCode(), t9ApiResponseData.getErrorMessage());
         }
@@ -214,7 +214,9 @@ public class T9ServiceImpl implements T9Service {
             Map<String, Object> params = new HashMap<>();
             params.put("playerID", cptOpenMember.getUserName());
             params.put("checkValue", getCheckValue(cptOpenMember.getUserName()));
+            logger.info("T9log  createT9Member创建玩家 urlapi:{},paramsMap:{},loginUser:{}", getCreateT9PlayerUrl(), params,cptOpenMember);
             t9ApiResponseData = commonRequest(getCreateT9PlayerUrl(), params, cptOpenMember.getUserId());
+            logger.info("T9log  createT9Member创建玩家返回 t9ApiResponseData:{}", JSONObject.toJSONString(t9ApiResponseData));
         } catch (Exception e) {
             logger.error("t9log createT9Member:{}", e);
             e.printStackTrace();

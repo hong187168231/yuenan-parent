@@ -50,17 +50,17 @@ public class GameUtil extends HttpCommonUtils {
     /**
      * 设置连接超时时间,单位毫秒
      */
-    private static final int CONNECT_TIMEOUT = 10000;
+    private static final int CONNECT_TIMEOUT = 180000;
     /*
      * 从连接池获取到连接的超时,单位毫秒
      * */
-    private static final int CONNECTION_REQUEST_TIMEOUT = 3000;
+    private static final int CONNECTION_REQUEST_TIMEOUT = 180000;
     /*
      * 请求获取数据的超时时间,单位毫秒
      * */
-    private static final int SOCKET_TIMEOUT = 7000;
+    private static final int SOCKET_TIMEOUT = 180000;
     // 连接主机超时（30s）
-    public static final int HTTP_CONNECT_TIMEOUT_30S = 30 * 1000;
+    public static final int HTTP_CONNECT_TIMEOUT_30S = 180 * 1000;
     // 从主机读取数据超时（3min）
     public static final int HTTP_READ_TIMEOUT_3MIN = 180 * 1000;
     public static final String DEFAULT_CHARSET = "utf-8";
@@ -123,39 +123,39 @@ public class GameUtil extends HttpCommonUtils {
         return jsonObject;
     }
 
-    /**
-     * 加密
-     */
-    public static String encrypt(String sSrc, String aeskey) throws Exception {
-        Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-        byte[] raw = aeskey.getBytes();
-        SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
-        cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
-        byte[] encrypted = cipher.doFinal(sSrc.getBytes(StandardCharsets.UTF_8));
-        //此处使用BASE64做转码。
-        return URLEncoder.encode(Base64.getEncoder().encodeToString(encrypted), StandardCharsets.UTF_8.toString());
-    }
-
-    /**
-     * 解密
-     */
-    public static String decrypt(String sSrc, String aeskey) {
-        try {
-            sSrc = sSrc.replaceAll(" ", "+");
-            byte[] raw = aeskey.getBytes("ASCII");
-            SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
-            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-            cipher.init(Cipher.DECRYPT_MODE, skeySpec);
-            //先用base64解密
-            byte[] encrypted1 = Base64.getDecoder().decode(sSrc);
-            byte[] original = cipher.doFinal(encrypted1);
-            String originalString = new String(original, StandardCharsets.UTF_8);
-            return originalString;
-        } catch (Exception ex) {
-            logger.error("decrypt error", ex);
-            return null;
-        }
-    }
+//    /**
+//     * 加密
+//     */
+//    public static String encrypt(String sSrc, String aeskey) throws Exception {
+//        Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+//        byte[] raw = aeskey.getBytes();
+//        SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
+//        cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
+//        byte[] encrypted = cipher.doFinal(sSrc.getBytes(StandardCharsets.UTF_8));
+//        //此处使用BASE64做转码。
+//        return URLEncoder.encode(Base64.getEncoder().encodeToString(encrypted), StandardCharsets.UTF_8.toString());
+//    }
+//
+//    /**
+//     * 解密
+//     */
+//    public static String decrypt(String sSrc, String aeskey) {
+//        try {
+//            sSrc = sSrc.replaceAll(" ", "+");
+//            byte[] raw = aeskey.getBytes("ASCII");
+//            SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
+//            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+//            cipher.init(Cipher.DECRYPT_MODE, skeySpec);
+//            //先用base64解密
+//            byte[] encrypted1 = Base64.getDecoder().decode(sSrc);
+//            byte[] original = cipher.doFinal(encrypted1);
+//            String originalString = new String(original, StandardCharsets.UTF_8);
+//            return originalString;
+//        } catch (Exception ex) {
+//            logger.error("decrypt error", ex);
+//            return null;
+//        }
+//    }
 
 
     /**
@@ -192,7 +192,7 @@ public class GameUtil extends HttpCommonUtils {
             //如果访问一个接口,多少时间内无法返回数据,就直接放弃此次调用。
             httpPost.setConfig(requestConfig);
             //不复用TCP SOCKET
-            httpPost.setHeader("connection", "close");
+//            httpPost.setHeader("connection", "close");
             httpPost.setHeader("Content-Type", "application/x-www-form-urlencoded");
             List<BasicNameValuePair> list = new ArrayList<>();
             for (String key : paramsMap.keySet()) {
@@ -281,70 +281,6 @@ public class GameUtil extends HttpCommonUtils {
         } catch (Exception e) {
             logger.error("httplog {}:{} doProxyPostJson occur error:{}, url:{}, proxyHost:{}, proxyPort:{}, originParams:{}",
                     userId, type, e.getMessage(), weather_url, paramsString, e);
-            return resultString;
-        } finally {
-            HttpCommonUtils.closeHttpClientAndResponse(response, httpClient, weather_url, paramsString);
-        }
-        return resultString;
-    }
-
-    public static String doProxyPostJson(String proxyHostName, int proxyPort, String proxyTcp, String weather_url, String json, String type) {
-//        return GameUtil.httpProxy(weather_url,json,proxyHostName,proxyPort);
-        // 设置代理IP、端口、协议
-        // 创建HttpClientBuilder
-        CloseableHttpClient httpClient = HttpClients.createDefault();
-        // 依次是代理地址，代理端口号，协议类型
-//        HttpHost proxy = new HttpHost(proxyHostName, proxyPort, proxyTcp);
-
-        CloseableHttpResponse response = null;
-        String resultString = "";
-        String paramsString = "";
-        try {
-            // 创建Http Post请求
-            HttpPost httpPost = new HttpPost(weather_url);
-            // 设置请求超时 20+10+25=55s 配合业务设置
-            RequestConfig requestConfig = RequestConfig.custom()
-                    // 设置连接超时时间,单位毫秒。
-                    .setConnectTimeout(CONNECT_TIMEOUT)
-                    // 从连接池获取到连接的超时,单位毫秒。
-                    .setConnectionRequestTimeout(CONNECTION_REQUEST_TIMEOUT)
-                    // 请求获取数据的超时时间,单位毫秒;
-                    .setSocketTimeout(SOCKET_TIMEOUT)
-                    //设置代理
-//                    .setProxy(proxy)
-                    .build();
-            //如果访问一个接口,多少时间内无法返回数据,就直接放弃此次调用。
-            httpPost.setConfig(requestConfig);
-            //不复用TCP SOCKET
-//            httpPost.setHeader("connection", "close");
-//            httpPost.setHeader("Content-Type", "application/json");
-//            List<BasicNameValuePair> list = new ArrayList<>();
-//            for (String key : paramsMap.keySet()) {
-//                list.add(new BasicNameValuePair(key, String.valueOf(paramsMap.get(key))));
-//            }
-
-            // 创建请求内容
-//            UrlEncodedFormEntity urlEncodedFormEntity = new UrlEncodedFormEntity(list, StandardCharsets.UTF_8);
-//            httpPost.setEntity(urlEncodedFormEntity);
-            StringEntity stringEntityentity = new StringEntity(json, StandardCharsets.UTF_8);//解决中文乱码问题
-            stringEntityentity.setContentEncoding(StandardCharsets.UTF_8.toString());
-            stringEntityentity.setContentType("application/json");
-            httpPost.setEntity(stringEntityentity);
-
-            //log参数
-//            paramsString = JSONObject.toJSONString(paramsMap);
-            // 执行http请求
-            BasicResponseHandler handler = new BasicResponseHandler();
-            resultString = httpClient.execute(httpPost, handler);
-//            // 执行http请求
-//            response = closeableHttpClient.execute(httpPost);
-//            HttpEntity entity = response.getEntity();
-//            resultString = EntityUtils.toString(entity, StandardCharsets.UTF_8);
-//            // 此句关闭了流
-//            EntityUtils.consume(entity);
-        } catch (Exception e) {
-            logger.error("httplog {}:{} doProxyPostJson occur error:{}, url:{}, proxyHost:{}, proxyPort:{}, originParams:{}",
-                    type, e.getMessage(), weather_url, paramsString, e);
             return resultString;
         } finally {
             HttpCommonUtils.closeHttpClientAndResponse(response, httpClient, weather_url, paramsString);
@@ -519,6 +455,7 @@ public class GameUtil extends HttpCommonUtils {
         } catch (Exception e) {
             logger.error("httplog {}:{} doProxyPostJson occur error:{}, url:{}, proxyHost:{}, proxyPort:{}, originParams:{}",
                     userId, type, e.getMessage(), url, paramsString, e);
+            e.printStackTrace();
             return resultString;
         } finally {
             HttpCommonUtils.closeHttpClientAndResponse(response, closeableHttpClient, url, paramsString);
@@ -601,8 +538,12 @@ public class GameUtil extends HttpCommonUtils {
 
                 // 设置连接超时,设置读取超时
                 RequestConfig requestConfig = RequestConfig.custom()
-                        .setConnectTimeout(10000)
-                        .setSocketTimeout(10000)
+                        // 设置连接超时时间,单位毫秒。
+                        .setConnectTimeout(CONNECT_TIMEOUT)
+                        // 从连接池获取到连接的超时,单位毫秒。
+                        .setConnectionRequestTimeout(CONNECTION_REQUEST_TIMEOUT)
+                        // 请求获取数据的超时时间,单位毫秒;
+                        .setSocketTimeout(SOCKET_TIMEOUT)
                         .build();
                 httpPost.setConfig(requestConfig);
 
@@ -654,8 +595,12 @@ public class GameUtil extends HttpCommonUtils {
 
                 // 设置连接超时,设置读取超时
                 RequestConfig requestConfig = RequestConfig.custom()
-                        .setConnectTimeout(10000)
-                        .setSocketTimeout(10000)
+                        // 设置连接超时时间,单位毫秒。
+                        .setConnectTimeout(CONNECT_TIMEOUT)
+                        // 从连接池获取到连接的超时,单位毫秒。
+                        .setConnectionRequestTimeout(CONNECTION_REQUEST_TIMEOUT)
+                        // 请求获取数据的超时时间,单位毫秒;
+                        .setSocketTimeout(SOCKET_TIMEOUT)
                         .build();
                 httpPost.setConfig(requestConfig);
 
@@ -696,9 +641,9 @@ public class GameUtil extends HttpCommonUtils {
         logger.info("GET请求 httpGetWithCookies headers:{}, proxy: {}", headers, proxy);
         logger.info("GET请求 httpGetWithCookies url:{}", url);
         PoolingHttpClientConnectionManager connManager = new PoolingHttpClientConnectionManager();
-        connManager.setMaxTotal(150);
+        connManager.setMaxTotal(1000);
         connManager.setDefaultConnectionConfig(ConnectionConfig.custom().setCharset(Charset.forName("utf-8")).build());
-        SocketConfig socketConfig = SocketConfig.custom().setSoTimeout(30000).setSoReuseAddress(true).build();
+        SocketConfig socketConfig = SocketConfig.custom().setSoTimeout(CONNECT_TIMEOUT).setSoReuseAddress(true).build();
         connManager.setDefaultSocketConfig(socketConfig);
         CloseableHttpClient httpClient = HttpClients.custom().setConnectionManager(connManager).setConnectionManagerShared(true).build();
 
@@ -720,7 +665,7 @@ public class GameUtil extends HttpCommonUtils {
             HttpEntity entity = response.getEntity();
             String result = EntityUtils.toString(entity, DEFAULT_CHARSET);
             EntityUtils.consume(entity); // 此句关闭了流
-            logger.info("GET请求 httpGetWithCookies result:{}", result);
+            logger.info("GET请求返回 httpGetWithCookies result:{}", result);
             return result;
         } catch (Exception e) {
             logger.error("请求的接口为:[{}], 发生异常原因: {}", url, e.getMessage(), e);

@@ -5,14 +5,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.indo.common.annotation.AllowAccess;
 import com.indo.common.utils.IPAddressUtil;
 import com.indo.game.common.util.PostRawParamsParseUtil;
+import com.indo.game.pojo.dto.wm.WmCallBackReq;
 import com.indo.game.service.wm.WmCallbackService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -25,29 +23,23 @@ public class WmCallbackController {
     @Autowired
     private WmCallbackService wmCallbackService;
 
-    @RequestMapping(value = "/callBack", method = RequestMethod.POST)
+    @RequestMapping(value = "/callBack", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
+    @ResponseBody
     @AllowAccess
-    public Object callBack(HttpServletRequest request) {
-        JSONObject params = new JSONObject();
-        try {
-            String[] datas = PostRawParamsParseUtil.getRequestPostBytes(request).split("&");
-            for (String data : datas) {
-                params.put(data.split("=")[0], data.split("=")[1]);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            params = new JSONObject();
-        }
-        logger.info("wmCallback callBack 回调请求, params:{}", params);
+    public Object callBack(HttpServletRequest request, WmCallBackReq wmCallBackReq) {
+        logger.info("wmCallback callBack 回调请求参数, params:{}", JSONObject.toJSONString(wmCallBackReq));
         // 查询余额
-        if ("CallBalance".equals(params.getString("cmd"))) {
-            return callBalance(params, request);
-        } else if ("PointInout".equals(params.getString("cmd"))) {
+        if ("CallBalance".equals(wmCallBackReq.getCmd())){
+            logger.info("wmCallback getBalance 回调查询余额请求, params:{}", JSONObject.toJSONString(wmCallBackReq));
+            return callBalance(wmCallBackReq, request);
+        } else if ("PointInout".equals(wmCallBackReq.getCmd())) {
+            logger.info("wmCallback pointInout 回调下注请求,params:{}", JSONObject.toJSONString(wmCallBackReq));
             // 下注,回奖
-            return pointInout(params, request);
-        } else if ("TimeoutBetReturn".equals(params.getString("cmd"))) {
+            return pointInout(wmCallBackReq, request);
+        } else if ("TimeoutBetReturn".equals(wmCallBackReq.getCmd())) {
+            logger.info("wmCallback timeoutBetReturn 回调回退余额请求, params:{}", JSONObject.toJSONString(wmCallBackReq));
             // 回滚
-            return timeoutBetReturn(params, request);
+            return timeoutBetReturn(wmCallBackReq, request);
         }
 
         JSONObject jsonObject = new JSONObject();
@@ -57,28 +49,27 @@ public class WmCallbackController {
     }
 
 
-    private Object callBalance(JSONObject params, HttpServletRequest request) {
+    private Object callBalance(WmCallBackReq wmCallBackReq, HttpServletRequest request) {
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("wmCallback getBalance 回调查询余额, params:{}", params);
-        Object object = wmCallbackService.getBalance(params, ip);
-        logger.info("wmCallback getBalance 回调查询余额返回数据 params:{}", object);
+
+        Object object = wmCallbackService.getBalance(wmCallBackReq, ip);
+        logger.info("wmCallback getBalance 回调查询余额返回数据 params:{}", JSONObject.toJSONString(object));
         return object;
     }
 
-    private Object pointInout(JSONObject params, HttpServletRequest request) {
+    private Object pointInout(WmCallBackReq wmCallBackReq, HttpServletRequest request) {
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("wmCallback pointInout 回调下注params:{}", params);
-        Object object = wmCallbackService.pointInout(params, ip);
-        logger.info("wmCallback pointInout 回调下注返回数据 params:{}", object);
+
+        Object object = wmCallbackService.pointInout(wmCallBackReq, ip);
+        logger.info("wmCallback pointInout 回调下注返回数据 params:{}", JSONObject.toJSONString(object));
         return object;
     }
 
-    private Object timeoutBetReturn(JSONObject params, HttpServletRequest request) {
+    private Object timeoutBetReturn(WmCallBackReq wmCallBackReq, HttpServletRequest request) {
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("wmCallback timeoutBetReturn 回调回退余额 params:{}", params);
-        Object object = wmCallbackService.timeoutBetReturn(params, ip);
-        logger.info("wmCallback timeoutBetReturn 回调回退余额返回数据 params:{}", object);
+
+        Object object = wmCallbackService.timeoutBetReturn(wmCallBackReq, ip);
+        logger.info("wmCallback timeoutBetReturn 回调回退余额返回数据 params:{}", JSONObject.toJSONString(object));
         return object;
     }
-
 }

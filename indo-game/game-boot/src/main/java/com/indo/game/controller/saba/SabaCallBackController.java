@@ -24,7 +24,7 @@ public class SabaCallBackController {
     /**
      * 取得用户的余额
      */
-    @RequestMapping(value="/getbalance",method=RequestMethod.POST)
+    @RequestMapping(value="/getbalance",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object getBalance(SabaCallBackReq<SabaCallBackParentReq> sabaCallBackReqq) {
@@ -37,7 +37,7 @@ public class SabaCallBackController {
     /**
      * 扣除投注金额 当下注单状态为未结算
      */
-    @RequestMapping(value="/placebet",method=RequestMethod.POST)
+    @RequestMapping(value="/placebet",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object placeBet(SabaCallBackReq<SabaCallBackPlaceBetReq> sabaCallBackReq) {
@@ -50,7 +50,7 @@ public class SabaCallBackController {
     /**
      * 当沙巴体育通过 PlaceBet 方法收到成功结果，沙巴体育将会呼叫 ConfirmBet
      */
-    @RequestMapping(value="/confirmbet",method=RequestMethod.POST)
+    @RequestMapping(value="/confirmbet",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object confirmBet(SabaCallBackReq<SabaCallBackConfirmBetReq<TicketInfoReq>> sabaCallBackReq) {
@@ -63,7 +63,7 @@ public class SabaCallBackController {
     /**
      * 取消投注
      */
-    @RequestMapping(value="/CancelBet",method=RequestMethod.POST)
+    @RequestMapping(value="/CancelBet",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object cancelBet(SabaCallBackReq<SabaCallBackCancelBetReq<TradingInfoReq>> sabaCallBackReq) {
@@ -76,7 +76,7 @@ public class SabaCallBackController {
     /**
      * 结算
      */
-    @RequestMapping(value="/Settle",method=RequestMethod.POST)
+    @RequestMapping(value="/Settle",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object settle(SabaCallBackReq<SabaCallBackSettleReq<SettleTradingInfoReq<ParlayDetailReq<SystemParlayDetailReq>>>> sabaCallBackReq) {
@@ -89,7 +89,7 @@ public class SabaCallBackController {
     /**
      * 重新结算
      */
-    @RequestMapping(value="/resettle",method=RequestMethod.POST)
+    @RequestMapping(value="/resettle",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object resettle(SabaCallBackReq<SabaCallBackSettleReq<SettleTradingInfoReq<ParlayDetailReq<SystemParlayDetailReq>>>> sabaCallBackReq)  {
@@ -102,7 +102,7 @@ public class SabaCallBackController {
     /**
      * 撤销结算投注
      */
-    @RequestMapping(value="/unsettle",method=RequestMethod.POST)
+    @RequestMapping(value="/unsettle",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object unsettle(SabaCallBackReq<SabaCallBackSettleReq<SettleTradingInfoReq<ParlayDetailReq<SystemParlayDetailReq>>>> sabaCallBackReq){
@@ -115,7 +115,7 @@ public class SabaCallBackController {
     /**
      * 沙巴体育通过此方法提供下注细节给厂商
      */
-    @RequestMapping(value="/placeBetParlay",method=RequestMethod.POST)
+    @RequestMapping(value="/placeBetParlay",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object placeBetParlay(SabaCallBackReq<SabaCallBackPlaceBetParlayReq> sabaCallBackReq){
@@ -128,7 +128,7 @@ public class SabaCallBackController {
     /**
      * 当沙巴体育通过 PlaceBetParlay 方法收到成功结果，沙巴体育将会呼叫 ConfirmBetParlay
      */
-    @RequestMapping(value="/confirmBetParlay",method=RequestMethod.POST)
+    @RequestMapping(value="/confirmBetParlay",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object confirmBetParlay(SabaCallBackReq<SabaCallBackConfirmBetParlayReq> sabaCallBackReq){
@@ -142,7 +142,7 @@ public class SabaCallBackController {
      * 厂商提供此方法，沙巴体育通过呼叫此方法提供下注细节给厂商
      *  本方法支持快乐彩、彩票、桌面游戏产品
      */
-    @RequestMapping(value="/placeBet3rd",method=RequestMethod.POST)
+    @RequestMapping(value="/placeBet3rd",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object placeBet3rd(SabaCallBackReq<SabaCallBackPlaceBet3rdReq<PlaceBet3rdTicketInfoReq>> sabaCallBackReq){
@@ -156,7 +156,7 @@ public class SabaCallBackController {
      * 厂商提供此方法，沙巴体育通过呼叫此方法提供下注细节给厂商
      *  本方法支持快乐彩、彩票、桌面游戏产品
      */
-    @RequestMapping(value="/confirmBet3rd",method=RequestMethod.POST)
+    @RequestMapping(value="/confirmBet3rd",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object confirmBet3rd(SabaCallBackReq<SabaCallBackConfirmBet3rdReq<ConfirmBet3rdTicketInfoReq>> sabaCallBackReq){
@@ -169,7 +169,7 @@ public class SabaCallBackController {
     /**
      * 当 Cash Out 交易被接受后，沙巴体育将会通过此方法传输交易
      */
-    @RequestMapping(value="/cashOut",method=RequestMethod.POST)
+    @RequestMapping(value="/cashOut",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object cashOut(SabaCallBackReq<SabaCallBackCashOutReq<CashOutTicketInfoReq>> sabaCallBackReq){
@@ -182,7 +182,7 @@ public class SabaCallBackController {
     /**
      * 因 Cashout 票的异动造成原 Cashout 的主票发生变化，沙巴体育将会透过这支 API 传送原 Cashout 主票的信息。
      */
-    @RequestMapping(value="/updateBet",method=RequestMethod.POST)
+    @RequestMapping(value="/updateBet",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object updateBet(SabaCallBackReq<SabaCallBackCashOutReq<UpdateBetTicketInfoReq>> sabaCallBackReq){
@@ -195,7 +195,7 @@ public class SabaCallBackController {
     /**
      * 检查沙巴体育与厂商之间的连结是否有效。
      */
-    @RequestMapping(value="/healthcheck",method=RequestMethod.POST)
+    @RequestMapping(value="/healthcheck",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object healthcheck(SabaCallBackReq<HealthCheckReq> sabaCallBackReq){

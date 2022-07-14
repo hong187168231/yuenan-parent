@@ -29,15 +29,16 @@ public class AeCallBackController {
     /**
      * 回调 余额查询
      */
-    @RequestMapping(value = "/callBack/single/wallet/balance", method = RequestMethod.POST)
+    @RequestMapping(value = "/callBack/single/wallet/balance", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object getBalance(@RequestBody AeCallBackParentReq aeApiRequestData, HttpServletRequest request) {
+    public Object getBalance(@RequestBody JSONObject jsonObject , HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("aeCallBack {} GetBalance 回调,取得用户的余额 params:{}", JSONObject.toJSONString(aeApiRequestData));
+        logger.info("aeCallBack GetBalance 回调,取得用户的余额 params:{}", JSONObject.toJSONString(jsonObject));
+        AeCallBackParentReq aeApiRequestData = JSONObject.toJavaObject(jsonObject,AeCallBackParentReq.class);
         Object object = aeCallbackService.aeBalanceCallback(aeApiRequestData, ip);
-        logger.info("aeCallBack {} GetBalance 回调返回数据,取得用户的余额 params:{}", object);
+        logger.info("aeCallBack GetBalance 回调返回数据,取得用户的余额 params:{}", object);
         return object;
     }
 
@@ -45,30 +46,32 @@ public class AeCallBackController {
     /**
      * 回调 单一钱包 额度转换
      */
-    @RequestMapping(value = "/callBack/single/wallet/fund/transfer", method = RequestMethod.POST)
+    @RequestMapping(value = "/callBack/single/wallet/fund/transfer", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object transfer(@RequestBody AeCallBackTransferReq aeApiRequestData, HttpServletRequest request) {
+    public Object transfer(@RequestBody JSONObject jsonObject , HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("aeCallBack {} transfer 回调,取得用户的余额 params:{}", JSONObject.toJSONString(aeApiRequestData));
+        logger.info("aeCallBack transfer 回调,取得用户的余额 params:{}", JSONObject.toJSONString(jsonObject));
+        AeCallBackTransferReq aeApiRequestData = JSONObject.toJavaObject(jsonObject,AeCallBackTransferReq.class);
         Object object = aeCallbackService.aeTransfer(aeApiRequestData, ip);
-        logger.info("aeCallBack {} transfer 回调返回数据,取得用户的余额 params:{}", object);
+        logger.info("aeCallBack transfer 回调返回数据,取得用户的余额 params:{}", object);
         return object;
     }
 
     /**
      * 回调 单一钱包 额度转换查询
      */
-    @RequestMapping(value = "/callBack/single/wallet/fund/query", method = RequestMethod.POST)
+    @RequestMapping(value = "/callBack/single/wallet/fund/query", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object query(@RequestBody AeCallBackTransferReq aeApiRequestData, HttpServletRequest request) {
+    public Object query(@RequestBody JSONObject jsonObject , HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("aeCallBack {} query 回调,取得用户的余额 params:{}", JSONObject.toJSONString(aeApiRequestData));
+        logger.info("aeCallBack query 回调,取得用户的余额 params:{}", JSONObject.toJSONString(jsonObject));
+        AeCallBackTransferReq aeApiRequestData = JSONObject.toJavaObject(jsonObject,AeCallBackTransferReq.class);
         Object object = aeCallbackService.query(aeApiRequestData, ip);
-        logger.info("aeCallBack {} query 回调返回数据,取得用户的余额 params:{}", object);
+        logger.info("aeCallBack  query 回调返回数据,取得用户的余额 params:{}", object);
         return object;
     }
 }

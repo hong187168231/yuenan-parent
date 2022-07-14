@@ -1,24 +1,16 @@
 package com.indo.job.executor.jobhandler;
 
-import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.pojo.vo.mem.MemBetVo;
 import com.indo.common.constant.RedisKeys;
-import com.indo.common.enums.BrokerMessageStatus;
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
-import com.indo.common.rabbitmq.bo.Message;
 import com.indo.common.redis.utils.RedisUtils;
+import com.indo.common.utils.StringUtils;
 import com.indo.common.utils.ViewUtil;
-import com.indo.core.brokery.RabbitBroker;
 import com.indo.core.pojo.dto.MemGoldChangeDTO;
-import com.indo.core.pojo.entity.AgentRebate;
 import com.indo.core.pojo.entity.AgentRebateRecord;
-import com.indo.core.pojo.entity.BrokerMessage;
-import com.indo.core.pojo.entity.GameTxns;
-import com.indo.core.service.IBrokerMessageService;
 import com.indo.core.service.IMemGoldChangeService;
+import com.indo.job.common.util.DateUtil;
 import com.indo.job.mapper.AgentRebateRecordMapper;
 import com.indo.job.mapper.GameTxnsMapper;
 import com.indo.job.pojo.dto.BeforeDayBetDTO;
@@ -31,6 +23,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Component
 @Slf4j
@@ -47,38 +40,43 @@ public class AgentRebateJob {
     private IMemGoldChangeService iMemGoldChangeService;
 
     @XxlJob("agentRebateJob")
-    private void agentRebateJob() {
+    public void agentRebateJob() {
         List<MemBetVo> list = RedisUtils.get(RedisKeys.SYS_REBATE_KEY);
-        IPage<BeforeDayBetDTO> page = new Page<>();
-        List<BeforeDayBetDTO> dataList = gameTxnsMapper.beforeDayBetList(page);
-        dataList.forEach(BeforeData -> {
-            BigDecimal teamSumBet = gameTxnsMapper.teamSumBet(BeforeData.getAccount());
-            BigDecimal yesterdayRemain = agentRebateRecordMapper.yesterdayRemain(BeforeData.getAccount());
-            Map<String, BigDecimal> rebateMap = getSubRebateAmount(list, teamSumBet.subtract(yesterdayRemain));
-            BigDecimal rebateAmount = rebateMap.get("rebateValue");
-            BigDecimal todayRemain = rebateMap.get("todayRemain");
+        List<BeforeDayBetDTO> dataList = gameTxnsMapper.beforeDayBetList(DateUtil.yesterdayFirstDate(),DateUtil.yesterdayLastDate());
+        for(BeforeDayBetDTO BeforeData:dataList){
+            if(StringUtils.isEmpty(BeforeData.getSuperior())){
+                continue;
+            }
+            AtomicReference<BigDecimal> rebateAmount = new AtomicReference<>();
+            list.forEach(l->{
+                if(BeforeData.getRealBetAmount().intValue()>=l.getSubTotalBet()){
+                    rebateAmount.set(new BigDecimal(l.getRebateValue()));
+                }
+            });
+            if(rebateAmount==null||rebateAmount.get().intValue()<=0){
+                continue;
+            }
+            BigDecimal amount = ViewUtil.getTradeOffAmount(rebateAmount.get());
 
             AgentRebateRecord agentRebateRecord = new AgentRebateRecord();
-            agentRebateRecord.setMemId(BeforeData.getMemId());
+            agentRebateRecord.setMemId(BeforeData.getParentId());
             agentRebateRecord.setAccount(BeforeData.getAccount());
             agentRebateRecord.setCreateUser("job");
-            agentRebateRecord.setRebateAmount(rebateAmount);
-            agentRebateRecord.setTodayRemain(todayRemain);
+            agentRebateRecord.setRebateAmout(amount);
             agentRebateRecord.setMemLevel(BeforeData.getMemLevel());
             agentRebateRecord.setRealName(BeforeData.getRealName());
             agentRebateRecord.setSuperior(BeforeData.getSuperior());
             agentRebateRecord.setTeamNum(BeforeData.getTeamNum());
-            agentRebateRecord.setTeamAmout(teamSumBet);
+            agentRebateRecord.setTeamAmout(BeforeData.getRealBetAmount());
             agentRebateRecordMapper.insert(agentRebateRecord);
 
             MemGoldChangeDTO agentRebateChange = new MemGoldChangeDTO();
-            agentRebateChange.setChangeAmount(rebateAmount);
+            agentRebateChange.setChangeAmount(amount);
             agentRebateChange.setTradingEnum(TradingEnum.INCOME);
             agentRebateChange.setGoldchangeEnum(GoldchangeEnum.DLFY);
-            agentRebateChange.setUserId(BeforeData.getMemId());
+            agentRebateChange.setUserId(BeforeData.getParentId());
             iMemGoldChangeService.updateMemGoldChange(agentRebateChange);
-
-        });
+        }
     }
 
 

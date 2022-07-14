@@ -22,7 +22,7 @@ public class PayTakeCashReq extends BaseDTO {
 
     private Integer endAmount;
 
-    private Long userId;
+    private String account;
 
     private Date beginTime;
 

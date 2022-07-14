@@ -16,7 +16,7 @@ import java.util.Map;
 @Mapper
 public interface GameTxnsMapper extends BaseMapper<GameTxns> {
 
-    List<BeforeDayBetDTO> beforeDayBetList(@Param("page") IPage<BeforeDayBetDTO> page);
+    List<BeforeDayBetDTO> beforeDayBetList(@Param("startTime") String startTime,@Param("endTime") String endTime);
 
 
     BigDecimal teamSumBet(@Param("account") String account);

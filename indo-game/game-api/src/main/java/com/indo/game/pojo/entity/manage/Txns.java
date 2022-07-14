@@ -25,7 +25,7 @@ public class Txns {
     @ApiModelProperty(value = "此交易是否是投注")
     private Boolean bet;
 
-    @ApiModelProperty(value = "玩家 ID")
+    @ApiModelProperty(value = "玩家 账号")
     private String userId;
 
     @ApiModelProperty(value = "玩家货币代码")
@@ -135,6 +135,10 @@ public class Txns {
     @ApiModelProperty(value = "操作名称")
     @NotNull(message = "操作名称")
     private String method;
+
+    @ApiModelProperty(value = "游戏回调方法名称")
+    @NotNull(message = "游戏回调方法名称")
+    private String gameMethod;
 
     @ApiModelProperty(value = "余额")
     @NotNull(message = "余额")

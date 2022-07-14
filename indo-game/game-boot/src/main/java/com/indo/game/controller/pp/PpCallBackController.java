@@ -15,10 +15,7 @@ import com.indo.game.service.pp.PpCallbackService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -34,7 +31,7 @@ public class PpCallBackController {
     /**
      * 令牌验证
      */
-    @RequestMapping(value = "/Authenticate", method = RequestMethod.POST)
+    @RequestMapping(value = "/Authenticate", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object authenticate(PpAuthenticateCallBackReq ppAuthenticateCallBackReq, HttpServletRequest request) {
@@ -49,7 +46,7 @@ public class PpCallBackController {
     /**
      * 查询余额
      */
-    @RequestMapping(value = "/Balance", method = RequestMethod.POST)
+    @RequestMapping(value = "/Balance", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object getBalance(PpBalanceCallBackReq ppBalanceCallBackReq, HttpServletRequest request) {
@@ -65,7 +62,7 @@ public class PpCallBackController {
     /**
      * 下注
      */
-    @RequestMapping(value = "/Bet", method = RequestMethod.POST)
+    @RequestMapping(value = "/Bet", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object bet(PpBetCallBackReq ppBetCallBackReq, HttpServletRequest request) {
@@ -80,7 +77,7 @@ public class PpCallBackController {
     /**
      * 将赢奖金额添加到玩家余额中。返回更新余额值。 Result
      */
-    @RequestMapping(value = "/Result", method = RequestMethod.POST)
+    @RequestMapping(value = "/Result", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object result(PpResultCallBackReq ppResultCallBackReq, HttpServletRequest request) {
@@ -95,7 +92,7 @@ public class PpCallBackController {
     /**
      * 通知娱乐场运营商免费回合已结束以及玩家余额应增加的奖励金额。 BonusWin
      */
-    @RequestMapping(value = "/BonusWin", method = RequestMethod.POST)
+    @RequestMapping(value = "/BonusWin", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object bonusWin(PpBonusWinCallBackReq ppBonusWinCallBackReq, HttpServletRequest request) {
@@ -110,7 +107,7 @@ public class PpCallBackController {
     /**
      * 通过这种方法，Pragmatic Play 系统将通知娱乐场运营商有关累积奖金赢奖的信息。 JackpotWin
      */
-    @RequestMapping(value = "/JackpotWin", method = RequestMethod.POST)
+    @RequestMapping(value = "/JackpotWin", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object jackpotWin(PpJackpotWinCallBackReq ppJackpotWinCallBackReq, HttpServletRequest request) {
@@ -125,7 +122,7 @@ public class PpCallBackController {
     /**
      * 通知娱乐场运营商锦标赛活动已结束，玩家的现金余额应增加promoWin 中的金额。 PromoWin
      */
-    @RequestMapping(value = "/PromoWin", method = RequestMethod.POST)
+    @RequestMapping(value = "/PromoWin", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object promoWin(PpPromoWinCallBackReq ppPromoWinCallBackReq, HttpServletRequest request) {
@@ -140,7 +137,7 @@ public class PpCallBackController {
     /**
      * 退款到玩家余额。此方法用于在游戏无法结束时取消赌注。 Refund
      */
-    @RequestMapping(value = "/Refund", method = RequestMethod.POST)
+    @RequestMapping(value = "/Refund", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object refund(PpRefundWinCallBackReq ppRefundWinCallBackReq, HttpServletRequest request) {

@@ -31,8 +31,8 @@
         <if test="req.endAmount ">
             and aca.apply_amount &lt;= #{req.endAmount}
         </if>
-        <if test="req.beginTime != null and req.beginTime !='' ">
-            and aca.create_time &gt;= #{req.beginTime}
+        <if test="req.startTime != null and req.startTime !='' ">
+            and aca.create_time &gt;= #{req.startTime}
         </if>
         <if test="req.endTime != null  and req.endTime !='' ">
             and aca.create_time &lt;= #{req.endTime}

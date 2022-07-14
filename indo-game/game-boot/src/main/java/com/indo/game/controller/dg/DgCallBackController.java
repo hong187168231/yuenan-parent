@@ -5,6 +5,7 @@ import com.indo.common.annotation.AllowAccess;
 import com.indo.common.utils.IPAddressUtil;
 import com.indo.game.pojo.dto.cq.CqBetCallBackReq;
 import com.indo.game.pojo.dto.dg.DgCallBackReq;
+import com.indo.game.pojo.dto.dg.DgMemberCallBackReq;
 import com.indo.game.service.cq.CqCallbackService;
 import com.indo.game.service.dg.DgCallbackService;
 
@@ -32,78 +33,85 @@ public class DgCallBackController {
     /**
      * 查询余额
      */
-    @RequestMapping(value = "/user/getBalance/{agentName}", method = RequestMethod.POST)
+    @RequestMapping(value = "/user/getBalance/{agentName}", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @AllowAccess
-    public Object getBalance(@PathVariable(name = "agentName") String agentName, @RequestBody DgCallBackReq dgCallBackReq,
+    @ResponseBody
+    public Object getBalance(@PathVariable(name = "agentName") String agentName, @RequestBody JSONObject jsonObject,
                              HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("dgCallBack {} getBalance 回调,下注params:{}", JSONObject.toJSONString(dgCallBackReq));
+        logger.info("dgCallBack getBalance 回调,下注params:{},agentName:{}", JSONObject.toJSONString(jsonObject), agentName);
+        DgCallBackReq<DgMemberCallBackReq> dgCallBackReq = JSONObject.toJavaObject(jsonObject,DgCallBackReq.class);
         Object object = dgCallbackService.dgBalanceCallback(agentName, dgCallBackReq, ip);
-        logger.info("dgCallBack {} getBalance 回调下注返回数据,取得用户的余额 params:{}", object);
+        logger.info("dgCallBack getBalance 回调下注返回数据,取得用户的余额 params:{}", object);
         return object;
     }
 
     /**
      * 存取款接口
      */
-    @RequestMapping(value = "/account/transfer/{agentName}", method = RequestMethod.POST)
+    @RequestMapping(value = "/account/transfer/{agentName}", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @AllowAccess
-    public Object transfer(@PathVariable(name = "agentName") String agentName, @RequestBody DgCallBackReq dgCallBackReq,
+    @ResponseBody
+    public Object transfer(@PathVariable(name = "agentName") String agentName, @RequestBody JSONObject jsonObject,
                               HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("dgCallBack {} transfer回调,params:{}", JSONObject.toJSONString(dgCallBackReq), agentName);
+        logger.info("dgCallBack transfer回调 params:{},agentName:{}", JSONObject.toJSONString(jsonObject), agentName);
+        DgCallBackReq<DgMemberCallBackReq> dgCallBackReq = JSONObject.toJavaObject(jsonObject,DgCallBackReq.class);
         Object object = dgCallbackService.dgTransferCallback(dgCallBackReq, ip, agentName);
-        logger.info("dgCallBack {} transfer回调返回数据, params:{}", object);
+        logger.info("dgCallBack transfer回调返回数据, params:{}", object);
         return object;
     }
 
     /**
      * 确认存取款结果接口
      */
-    @RequestMapping(value = "/account/checkTransfer/{agentName} ", method = RequestMethod.POST)
+    @RequestMapping(value = "/account/checkTransfer/{agentName} ", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object checkTransfer(@PathVariable(name = "agentName") String agentName, @RequestBody DgCallBackReq dgCallBackReq,
+    public Object checkTransfer(@PathVariable(name = "agentName") String agentName, @RequestBody JSONObject jsonObject,
                       HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("dgCallBack {} checkTransfer回调params:{}", JSONObject.toJSONString(dgCallBackReq), agentName);
+        logger.info("dgCallBack checkTransfer回调params:{},agentName:{}", JSONObject.toJSONString(jsonObject), agentName);
+        DgCallBackReq<DgMemberCallBackReq> dgCallBackReq = JSONObject.toJavaObject(jsonObject,DgCallBackReq.class);
         Object object = dgCallbackService.dgCheckTransferCallback(dgCallBackReq, ip, agentName);
-        logger.info("dgCallBack {} checkTransfer回调返回数据,取得用户的余额 params:{}", object);
+        logger.info("dgCallBack checkTransfer回调返回数据,取得用户的余额 params:{}", object);
         return object;
     }
 
     /**
      * 请求回滚转账事务
      */
-    @RequestMapping(value = "/account/inform/{agentName} ", method = RequestMethod.POST)
+    @RequestMapping(value = "/account/inform/{agentName} ", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object inform(@PathVariable(name = "agentName") String agentName, @RequestBody DgCallBackReq dgCallBackReq,
+    public Object inform(@PathVariable(name = "agentName") String agentName, @RequestBody JSONObject jsonObject,
                          HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("dgCallBack {} inform回调,params:{}", JSONObject.toJSONString(dgCallBackReq), agentName);
+        logger.info("dgCallBack inform回调,params:{},agentName:{}", JSONObject.toJSONString(jsonObject), agentName);
+        DgCallBackReq<DgMemberCallBackReq> dgCallBackReq = JSONObject.toJavaObject(jsonObject,DgCallBackReq.class);
         Object object = dgCallbackService.djInformCallback(dgCallBackReq, ip, agentName);
-        logger.info("dgCallBack {} inform回调返回数据,取得用户的余额 params:{}", object);
+        logger.info("dgCallBack inform回调返回数据,取得用户的余额 params:{}", object);
         return object;
     }
 
     /**
      * 遊戲紅利
      */
-    @RequestMapping(value = "/account/order/{agentName}", method = RequestMethod.POST)
+    @RequestMapping(value = "/account/order/{agentName}", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object order(@PathVariable(name = "agentName") String agentName, @RequestBody DgCallBackReq dgCallBackReq,
+    public Object order(@PathVariable(name = "agentName") String agentName, @RequestBody JSONObject jsonObject,
                          HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("cqCallBack {} bonus回调,params:{}", JSONObject.toJSONString(dgCallBackReq), agentName);
+        logger.info("cqCallBack  bonus回调,params:{},agentName:{}", JSONObject.toJSONString(jsonObject), agentName);
+        DgCallBackReq<DgMemberCallBackReq> dgCallBackReq = JSONObject.toJavaObject(jsonObject,DgCallBackReq.class);
         Object object = dgCallbackService.mgOrderCallback(dgCallBackReq, ip, agentName);
-        logger.info("cqCallBack {} bonus回调返回数据 params:{}", object);
+        logger.info("cqCallBack   bonus回调返回数据 params:{}", object);
         return object;
     }
 
@@ -111,16 +119,17 @@ public class DgCallBackController {
     /**
      * 針對完成的訂單做補款
      */
-    @RequestMapping(value = "/account/unsettle/{agentName} ", method = RequestMethod.POST)
+    @RequestMapping(value = "/account/unsettle/{agentName} ", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object unsettle(@PathVariable(name = "agentName") String agentName, @RequestBody DgCallBackReq dgCallBackReq,
+    public Object unsettle(@PathVariable(name = "agentName") String agentName, @RequestBody JSONObject jsonObject,
                         HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("cqCallBack {} credit回调,params:{}", JSONObject.toJSONString(dgCallBackReq), agentName);
+        logger.info("cqCallBack   credit回调,params:{},agentName:{}", JSONObject.toJSONString(jsonObject), agentName);
+        DgCallBackReq<DgMemberCallBackReq> dgCallBackReq = JSONObject.toJavaObject(jsonObject,DgCallBackReq.class);
         Object object = dgCallbackService.mgUnsettleCallback(dgCallBackReq, ip, agentName);
-        logger.info("cqCallBack {} credit回调返回数据 params:{}", object);
+        logger.info("cqCallBack   credit回调返回数据 params:{}", object);
         return object;
     }
 
