@@ -272,7 +272,8 @@ public class AeServiceImpl implements AeService {
     public AeApiResponseData commonRequest(String apiUrl, String jsonStr, Integer userId, String type) throws Exception {
         logger.info("aelog {} commonRequest userId:{},paramsMap:{}", userId, jsonStr);
         AeApiResponseData aeApiResponseData = null;
-        String resultString = GameUtil.doProxyPostJson(OpenAPIProperties.PROXY_HOST_NAME, OpenAPIProperties.PROXY_PORT, OpenAPIProperties.PROXY_TCP, apiUrl, jsonStr, type, userId);
+        String resultString = GameUtil.doProxyPostJson(OpenAPIProperties.PROXY_HOST_NAME, OpenAPIProperties.PROXY_PORT, OpenAPIProperties.PROXY_TCP,
+            apiUrl, jsonStr, type, userId);
         logger.info("aelog apiResponse:" + resultString);
         if (StringUtils.isNotEmpty(resultString)) {
             aeApiResponseData = JSONObject.parseObject(resultString, AeApiResponseData.class);

@@ -163,7 +163,8 @@ public class GameUtil extends HttpCommonUtils {
      *
      * @param url 请求地址
      */
-    public static String doProxyPostJson(String proxyHostName, int proxyPort, String proxyTcp, String url, Map<String, String> paramsMap, String type, Integer userId) {
+    public static String doProxyPostJson(String proxyHostName, int proxyPort, String proxyTcp, String url,
+                                         Map<String, String> paramsMap, String type, Integer userId) {
         // 设置代理IP、端口、协议
         // 创建HttpClientBuilder
         HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();

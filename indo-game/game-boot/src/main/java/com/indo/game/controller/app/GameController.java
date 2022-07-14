@@ -34,6 +34,7 @@ import com.indo.game.service.rich.Rich88Service;
 import com.indo.game.service.sa.SaService;
 import com.indo.game.service.saba.SabaService;
 import com.indo.game.service.sbo.SboService;
+import com.indo.game.service.sgwin.SGWinService;
 import com.indo.game.service.t9.T9Service;
 import com.indo.game.service.ug.UgService;
 import com.indo.game.service.v8.V8Service;
@@ -127,6 +128,8 @@ public class GameController {
     @Autowired
     private SaService saService;
     @Autowired
+    private SGWinService sgWinService;
+    @Autowired
     private RedissonClient redissonClient;
     @Resource
     private SysIpLimitClient sysIpLimitClient;
@@ -137,7 +140,8 @@ public class GameController {
             @ApiImplicitParam(name = "platform", value = "登录平台请输入平台代码parentName， 单一游戏登录请输入游戏代码", paramType = "query", dataType = "string", required = true),
             @ApiImplicitParam(name = "parentName", value = "第三方平台代码（AWC,UG,SBO,SABA,JDB,AE,CQ） ", paramType = "query", dataType = "string", required = true)
     })
-    public Result initGame(@LoginUser LoginInfo loginUser, @RequestParam("isMobileLogin") String isMobileLogin, @RequestParam("platform") String platform,
+    public Result initGame(@LoginUser LoginInfo loginUser, @RequestParam("isMobileLogin") String isMobileLogin,
+                           @RequestParam("platform") String platform,
                            @RequestParam("parentName") String parentName,
                            HttpServletRequest request) throws InterruptedException {
 
@@ -258,7 +262,9 @@ public class GameController {
                 if ("SA".equals(parentName)) {
                     resultInfo = saService.saGame(loginUser, isMobileLogin, ip, platform, parentName);
                 }
-
+                if ("SGWin".equals(parentName)) {
+                    resultInfo = sgWinService.sgwinGame(loginUser, isMobileLogin, ip, platform, parentName);
+                }
                 if (resultInfo == null) {
                     log.info("登录平台或单一游戏登录log {} loginPlatform result is null. params:{},ip:{},parentName:{}", loginUser.getId(), params, ip, parentName);
                     return Result.failed("g100104", "网络繁忙，请稍后重试！");
