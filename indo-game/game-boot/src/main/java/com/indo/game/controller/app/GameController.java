@@ -35,30 +35,26 @@ import com.indo.game.service.rich.Rich88Service;
 import com.indo.game.service.sa.SaService;
 import com.indo.game.service.saba.SabaService;
 import com.indo.game.service.sbo.SboService;
+import com.indo.game.service.sgwin.SGWinService;
 import com.indo.game.service.t9.T9Service;
 import com.indo.game.service.ug.UgService;
 import com.indo.game.service.v8.V8Service;
 import com.indo.game.service.wm.WmService;
 import com.indo.game.service.yl.YlService;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-
 import org.apache.commons.lang3.StringUtils;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-
 import java.util.concurrent.TimeUnit;
 
 @RestController
@@ -124,6 +120,8 @@ public class GameController {
     private ObService obService;
     @Autowired
     private SaService saService;
+//    @Autowired
+//    private SGWinService sgWinService;
     @Autowired
     private RedissonClient redissonClient;
     @Resource
@@ -261,9 +259,9 @@ public class GameController {
                 if (OpenAPIProperties.OB_PLATFORM_CODE.equals(parentName)) {
                     resultInfo = obService.obGame(loginUser, isMobileLogin, ip, platform, parentName);
                 }
-                if (OpenAPIProperties.SA_PLATFORM_CODE.equals(parentName)) {
-                    resultInfo = saService.saGame(loginUser, isMobileLogin, ip, platform, parentName);
-                }
+//                if (OpenAPIProperties.SA_PLATFORM_CODE.equals(parentName)) {
+//                    resultInfo = saService.saGame(loginUser, isMobileLogin, ip, platform, parentName);
+//                }
 
                 if (resultInfo == null) {
                     log.info("登录平台或单一游戏登录log {} loginPlatform result is null. params:{},ip:{},parentName:{}", loginUser.getId(), params, ip, parentName);
@@ -392,6 +390,9 @@ public class GameController {
             if (OpenAPIProperties.SA_PLATFORM_CODE.equals(platform)) {
                 resultInfo = saService.logout(loginUser, platform, ip);
             }
+//            if (OpenAPIProperties.SGWIN_PLATFORM_CODE.equals(platform)) {
+//                resultInfo = sgWinService.logout(loginUser, platform, ip);
+//            }
             if (resultInfo == null) {
                 log.info("退出平台log {} loginPlatform result is null. params:{},ip:{}", loginUser.getId(), params, ip);
                 return Result.failed("g100104", "网络繁忙，请稍后重试！");
