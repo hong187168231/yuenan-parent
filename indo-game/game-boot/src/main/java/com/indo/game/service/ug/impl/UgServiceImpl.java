@@ -162,7 +162,7 @@ public class UgServiceImpl implements UgService {
      */
     private Result initGame(GameParentPlatform gameParentPlatform,LoginInfo loginUser,GamePlatform gamePlatform, String ip,String WebType) throws Exception {
         logger.info("uglog initGame Login {} initGame ugGame account:{}, ugCodeId:{},ip:{}", loginUser.getId(), loginUser.getNickName(),ip);
-        try {
+//        try {
 //            operatorId	string	16	Y	商户代码
 //            userId	string	50	Y	玩家帐号
 //            returnUrl	string	200	Y	登出后重定向网址
@@ -172,29 +172,29 @@ public class UgServiceImpl implements UgService {
 //            webType	string	10	N	入口类型，预设值：mobile
 //            theme	string	6	N	版面，预设值：style
 //            sportId	number		N	偏好运动类型，预设值：1 (足球)，支援设定的运动有：1 (足球), 2 (篮球), 7 (网球), 11 (板球)
-            String param = "operatorId="+OpenAPIProperties.UG_COMPANY_KEY+"&userId="+loginUser.getAccount()
+            String urlLogin = OpenAPIProperties.UG_LOGIN_URL+"/auth/single?operatorId="+OpenAPIProperties.UG_COMPANY_KEY+"&userId="+loginUser.getAccount()
                     +"&returnUrl="+OpenAPIProperties.UG_RETURN_URL+"&oddsExpression=decimal"
                     +"&language="+gameParentPlatform.getLanguageType()
                     +"&webType="+WebType+"&theme=style&sportId=1";
-            logger.info("UG体育登录initGame输入 apiUrl:{}, params:{}, userId:{}, ip:{}", OpenAPIProperties.UG_LOGIN_URL+"/auth/single", param, loginUser.getId(), ip);
+            logger.info("UG体育登录initGame输入 urlLogin:{},  loginUser:{}, ip:{}", urlLogin, loginUser, ip);
 
-            UgApiResponseData ugApiResponse = commonRequestGet(param, OpenAPIProperties.UG_LOGIN_URL+"/auth/single", loginUser.getId().intValue(), ip, "Login");
-            logger.info("UG体育登录返回参数: ugApiResponse:{}"+ugApiResponse);
-            if(null!=ugApiResponse&&"000000".equals(ugApiResponse.getCode())){
+//            UgApiResponseData ugApiResponse = commonRequestGet(param, OpenAPIProperties.UG_LOGIN_URL+"/auth/single", loginUser.getId().intValue(), ip, "Login");
+//            logger.info("UG体育登录返回参数: ugApiResponse:{}"+ugApiResponse);
+//            if(null!=ugApiResponse&&"000000".equals(ugApiResponse.getCode())){
                 ApiResponseData responseData = new ApiResponseData();
-                responseData.setPathUrl((String) ugApiResponse.getData());
+                responseData.setPathUrl(urlLogin);
                 return Result.success(responseData);
-            }else if(null==ugApiResponse){
-                return Result.failed();
-            }else {
-                {
-                    return this.errorCode(ugApiResponse.getCode(),ugApiResponse.getMsg());
-                }
-            }
-        } catch (Exception e) {
-            logger.error("uglog initGame Login game error {} ", e);
-            return Result.failed("g100104","网络繁忙，请稍后重试！");
-        }
+//            }else if(null==ugApiResponse){
+//                return Result.failed();
+//            }else {
+//                {
+//                    return this.errorCode(ugApiResponse.getCode(),ugApiResponse.getMsg());
+//                }
+//            }
+//        } catch (Exception e) {
+//            logger.error("uglog initGame Login game error {} ", e);
+//            return Result.failed("g100104","网络繁忙，请稍后重试！");
+//        }
     }
 
     /**
