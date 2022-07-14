@@ -88,6 +88,7 @@ public class MemLevelServiceImpl extends SuperServiceImpl<MemLevelMapper, MemLev
     void refreshMemLevel() {
         LambdaQueryWrapper<MemLevel> wrapper = new LambdaQueryWrapper();
         List<MemLevel> levelList = this.baseMapper.selectList(wrapper);
+        wrapper.orderByDesc(MemLevel::getLevel);
         AdminBusinessRedisUtils.refreshMemLevel(levelList);
     }
 

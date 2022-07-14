@@ -27,12 +27,14 @@ import com.indo.core.pojo.dto.MemGoldChangeDTO;
 import com.indo.core.pojo.entity.AgentRelation;
 import com.indo.core.pojo.entity.MemBaseinfo;
 import com.indo.core.pojo.entity.MemInviteCode;
+import com.indo.core.pojo.entity.MemLevel;
 import com.indo.core.service.IMemGoldChangeService;
 import com.indo.core.util.BusinessRedisUtils;
 import com.indo.user.common.util.UserBusinessRedisUtils;
 import com.indo.user.mapper.AgentRelationMapper;
 import com.indo.user.mapper.MemBaseInfoMapper;
 import com.indo.user.mapper.MemInviteCodeMapper;
+import com.indo.user.mapper.MemLevelMapper;
 import com.indo.user.pojo.bo.MemTradingBO;
 import com.indo.user.pojo.req.LogOutReq;
 import com.indo.user.pojo.req.LoginReq;
@@ -70,6 +72,9 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
 
     @Autowired
     private MemInviteCodeMapper memInviteCodeMapper;
+
+    @Resource
+    private MemLevelMapper memLevelMapper;
 
     @Resource
     private SysIpLimitClient sysIpLimitClient;
@@ -304,6 +309,10 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
             cacheMemBaseInfo = findMemBaseInfo(account);
         }
         MemBaseInfoVo vo = DozerUtil.map(cacheMemBaseInfo, MemBaseInfoVo.class);
+        LambdaQueryWrapper<MemLevel> wrapper = new LambdaQueryWrapper();
+        wrapper.eq(MemLevel::getId,vo.getMemLevel());
+        MemLevel memLevel = memLevelMapper.selectOne(wrapper);
+        vo.setLevel(memLevel.getLevel());
         return vo;
     }
 

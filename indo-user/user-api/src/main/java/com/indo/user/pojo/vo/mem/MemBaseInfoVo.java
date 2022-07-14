@@ -52,8 +52,11 @@ public class MemBaseInfoVo {
     @ApiModelProperty(value = "whatsapp")
     private String whatsApp;
 
-    @ApiModelProperty(value = "用户等级")
+    @ApiModelProperty(value = "用户等级ID")
     private Integer memLevel = 0;
+
+    @ApiModelProperty(value = "用户等级")
+    private Integer level = 0;
 
     @ApiModelProperty(value = "账户类型：1 玩家 2-代理")
     private Integer accType;
