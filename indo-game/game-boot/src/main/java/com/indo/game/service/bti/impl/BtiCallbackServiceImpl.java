@@ -100,7 +100,7 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             }
 
             if (balance.compareTo(betAmount) < 0) {
-                return initFailureResponse(-10, "玩家余额不足",balance,paySerialno);
+                return initFailureResponse(-4, "玩家余额不足",balance,paySerialno);
             }
             // 查询订单
             Txns oldTxns = getTxns(gameParentPlatform, paySerialno, null);
@@ -115,7 +115,7 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             }
             GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(gameParentPlatform.getPlatformCode(),gameParentPlatform.getPlatformCode());
             if (null == gamePlatform) {
-                return initFailureResponse(-10, "游戏不存在",balance,paySerialno);
+                return initFailureResponse(-4, "游戏不存在",balance,paySerialno);
             }
             GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
 
@@ -166,7 +166,7 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             //游戏平台的下注项目
 //            txns.setBetType(betTypeId);
             //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
-//            txns.setWinningAmount(winloseAmount);
+            txns.setWinningAmount(betAmount.negate());
             String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
             //玩家下注时间
             txns.setBetTime(dateStr);
@@ -309,13 +309,17 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
 
             // 如果订单已经取消
             if ("Cancel Bet".equals(oldTxns.getMethod())) {
-                return initFailureResponse(-10, "注单已取消");
+                StringBuilder builder = new StringBuilder();
+                builder.append("error_code=0\n");
+                builder.append("error_message=").append("Reserve was not found").append("\n");
+                builder.append("balance=").append(memBaseinfo.getBalance());
+                return builder.toString();
             }
 
-            // 如果订单有已经结算的
-            if (null != getTxnsHasDebit(platformGameParent, paySerialno)) {
-                return initFailureResponse(-10, "注单已结算");
-            }
+//            // 如果订单有已经结算的
+//            if (null != getTxnsHasDebit(platformGameParent, paySerialno)) {
+//                return initFailureResponse(-4, "注单已结算");
+//            }
 
             // 回退金额（预扣款注单下注金额）
             BigDecimal winAmount = oldTxns.getAmount();
