@@ -609,6 +609,8 @@ public class OpenAPIProperties implements InitializingBean {
     public static String SGWIN_API_URL;
     public static String SGWIN_AGENT_ID;
     public static String SGWIN_AGENT;
+    public static String SGWIN_PLATFORM_CODE;
+
     @Value("${sgwin.apiUrl}")
     private String sgwinApiurl;
     @Value("${sgwin.sgwinToken}")
@@ -617,6 +619,8 @@ public class OpenAPIProperties implements InitializingBean {
     private String sgwinAgentId;
     @Value("${sgwin.sgwinAgent}")
     private String sgwinAgent;
+    @Value("${sgwin.platformCode}")
+    private String sgwinPlatformCode;
 
 
     @Override
@@ -840,5 +844,6 @@ public class OpenAPIProperties implements InitializingBean {
         SGWIN_API_URL = sgwinApiurl;
         SGWIN_AGENT_ID= sgwinAgentId;
         SGWIN_AGENT = sgwinAgent;
+        SGWIN_PLATFORM_CODE = sgwinPlatformCode;
     }
 }
