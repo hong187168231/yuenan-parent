@@ -310,9 +310,9 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
         }
         MemBaseInfoVo vo = DozerUtil.map(cacheMemBaseInfo, MemBaseInfoVo.class);
         LambdaQueryWrapper<MemLevel> wrapper = new LambdaQueryWrapper();
-        wrapper.eq(MemLevel::getId,vo.getMemLevel());
+        wrapper.eq(MemLevel::getId, vo.getMemLevel());
         MemLevel memLevel = memLevelMapper.selectOne(wrapper);
-        vo.setLevel(memLevel.getLevel());
+        vo.setLevel((memLevel == null || memLevel.getLevel() == null) ? 0 : memLevel.getLevel());
         return vo;
     }
 
