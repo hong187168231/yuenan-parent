@@ -68,28 +68,4 @@ public enum GoldchangeEnum {
         this.name = name;
     }
 
-    public static String getNameByValue(int value) {
-        GoldchangeEnum balanceChangeEnum = valueOf(value);
-        return null == balanceChangeEnum ? "" : balanceChangeEnum.getName();
-    }
-
-    public static GoldchangeEnum valueOf(Integer value) {
-        if (null == value) {
-            return null;
-        }
-        GoldchangeEnum[] values = GoldchangeEnum.values();
-        for (GoldchangeEnum balanceChangeEnum : values) {
-            if (value.equals(balanceChangeEnum.getName())) {
-                return balanceChangeEnum;
-            }
-        }
-        return null;
-    }
-
-
-    public static void main(String[] args) {
-        System.out.println(GoldchangeEnum.valueOf("CZ"));
-    }
-
-
 }

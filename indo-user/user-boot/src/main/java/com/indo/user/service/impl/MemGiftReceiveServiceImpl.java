@@ -165,7 +165,7 @@ public class MemGiftReceiveServiceImpl extends ServiceImpl<MemGiftReceiveMapper,
         MemGoldChangeDTO goldChangeDO = new MemGoldChangeDTO();
         goldChangeDO.setChangeAmount(new BigDecimal(giftReceiveReq.getGiftAmount()));
         goldChangeDO.setTradingEnum(TradingEnum.INCOME);
-        goldChangeDO.setGoldchangeEnum(GoldchangeEnum.valueOf(giftReceiveReq.getGiftNameEnum().getName()));
+        goldChangeDO.setGoldchangeEnum(GoldchangeEnum.valueOf(giftReceiveReq.getGiftNameEnum().name()));
         goldChangeDO.setUserId(loginInfo.getId());
         goldChangeDO.setUpdateUser(loginInfo.getAccount());
         Boolean flag = iMemGoldChangeService.updateMemGoldChange(goldChangeDO);
