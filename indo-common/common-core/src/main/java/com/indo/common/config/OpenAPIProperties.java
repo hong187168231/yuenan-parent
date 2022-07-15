@@ -611,15 +611,15 @@ public class OpenAPIProperties implements InitializingBean {
     public static String SGWIN_AGENT;
     public static String SGWIN_PLATFORM_CODE;
 
-    @Value("${sgwin.apiUrl}")
+    //@Value("${sgwin.apiUrl}")
     private String sgwinApiurl;
-    @Value("${sgwin.sgwinToken}")
+    //@Value("${sgwin.sgwinToken}")
     private String sgwinToken;
-    @Value("${sgwin.sgwinAgentId}")
+    //@Value("${sgwin.sgwinAgentId}")
     private String sgwinAgentId;
-    @Value("${sgwin.sgwinAgent}")
+    //@Value("${sgwin.sgwinAgent}")
     private String sgwinAgent;
-    @Value("${sgwin.platformCode}")
+    //@Value("${sgwin.platformCode}")
     private String sgwinPlatformCode;
 
 
