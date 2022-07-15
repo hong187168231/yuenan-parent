@@ -78,8 +78,13 @@ public class MemLevelServiceImpl extends ServiceImpl<MemLevelMapper, MemLevel> i
                     gift.setGiftEnum(GiftEnum.reward);
                     gift.setGiftName(GiftEnum.reward.getName());
                     gift.setAmount(memLevel.getReward().intValue());
-                    int count = iMemGiftReceiveService.countRewardReceive(memId, GiftEnum.reward.name(), memLevel.getLevel());
-                    gift.setReceiveStatus(count == 0 ? 1 : 2);
+                    if (memTradingVo.getLevel() >= memLevel.getLevel()) {
+                        int count = iMemGiftReceiveService.countRewardReceive(memId, GiftEnum.reward.name(), memTradingVo.getLevel());
+                        // 0 不可领取 1 可领取 2 已经领取
+                        gift.setReceiveStatus(count == 0 ? 1 : 2);
+                    } else {
+                        gift.setReceiveStatus(0);
+                    }
                     giftList.add(gift);
                 }
                 if (memLevel.getEverydayGift() != null) {
