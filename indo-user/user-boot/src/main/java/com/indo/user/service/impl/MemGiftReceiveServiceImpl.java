@@ -8,14 +8,18 @@ import com.indo.common.utils.DateUtils;
 import com.indo.common.web.exception.BizException;
 import com.indo.core.pojo.dto.MemGoldChangeDTO;
 import com.indo.core.pojo.entity.MemGiftReceive;
+import com.indo.core.pojo.entity.MemLevel;
 import com.indo.core.service.IMemGoldChangeService;
 import com.indo.user.mapper.MemGiftReceiveMapper;
+import com.indo.user.mapper.MemLevelMapper;
 import com.indo.user.pojo.req.gift.GiftReceiveReq;
 import com.indo.user.service.IMemGiftReceiveService;
+import com.indo.user.service.IMemLevelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -36,7 +40,8 @@ public class MemGiftReceiveServiceImpl extends ServiceImpl<MemGiftReceiveMapper,
     @Autowired
     private MemGiftReceiveMapper memGiftReceiveMapper;
 
-
+    @Resource
+    private IMemLevelService memLevelService;
     /**
      * 礼金领取
      *
@@ -47,6 +52,8 @@ public class MemGiftReceiveServiceImpl extends ServiceImpl<MemGiftReceiveMapper,
     @Override
     @Transactional
     public boolean saveMemGiftReceive(GiftReceiveReq req, LoginInfo loginInfo) {
+        // 根据会员等级id查询会员等级
+        MemLevel memLevel = memLevelService.getById(loginInfo.getMemLevel());
         // 检查领取状态
         checkReceiveFlag(req, loginInfo);
         // 保存记录
@@ -56,7 +63,9 @@ public class MemGiftReceiveServiceImpl extends ServiceImpl<MemGiftReceiveMapper,
         memGiftReceive.setGiftCode(req.getGiftNameEnum().name());
         memGiftReceive.setGiftName(req.getGiftNameEnum().getName());
         if (req.getGiftNameEnum().equals(GiftNameEnum.reward)) {
-            memGiftReceive.setUpLevel(loginInfo.getMemLevel());
+            if (memLevel.getLevel() < 10) {
+                memGiftReceive.setUpLevel(memLevel.getLevel() + 1);
+            }
         }
         // 插入礼金领取记录并更新账变信息
         if (this.baseMapper.insert(memGiftReceive) > 0) {
@@ -105,10 +114,10 @@ public class MemGiftReceiveServiceImpl extends ServiceImpl<MemGiftReceiveMapper,
     private void checkVipGift(GiftReceiveReq req, LoginInfo loginInfo) {
         GiftNameEnum giftNameEnum = req.getGiftNameEnum();
         Long memId = loginInfo.getId();
-        Integer upLevel = loginInfo.getMemLevel();
+        MemLevel memLevel = memLevelService.getById(loginInfo.getMemLevel());
         switch (giftNameEnum) {
             case reward:
-                int count = countRewardReceive(memId, giftNameEnum.name(), upLevel);
+                int count = countRewardReceive(memId, giftNameEnum.name(), memLevel.getLevel());
                 if (count > 0) {
                     throw new BizException("您已领取过晋级奖励，请勿重复提交");
                 }
