@@ -531,107 +531,107 @@ public class PpCallbackServiceImpl implements PpCallbackService {
             }
             // 会员余额
             BigDecimal balance = memBaseinfo.getBalance();
-            GamePlatform gamePlatform;
-            if("Y".equals(OpenAPIProperties.PP_IS_PLATFORM_LOGIN)){
-                gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platformGameParent.getPlatformCode(),platformGameParent.getPlatformCode());
-            }else {
-                gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(ppJackpotWinCallBackReq.getGameId(), platformGameParent.getPlatformCode());
-
-            }
-            if (null == gamePlatform) {
-                gamePlatform = gameCommonService.getGamePlatformByParentName(OpenAPIProperties.PP_PLATFORM_CODE).get(0);
-            }
-            GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
-
-            // 赢奖金额
-            BigDecimal betAmount = ppJackpotWinCallBackReq.getAmount();
-
-            // 赢奖金额小于0
-            if (betAmount.compareTo(BigDecimal.ZERO) < 0) {
-                json.put("cash", balance);
-                return initFailureResponse(7, "赢奖金额不能小0",json);
-            }
-
-            // 查询用户请求订单
-            Txns txns = getTxns(ppJackpotWinCallBackReq.getReference(), memBaseinfo.getAccount());
-            if (null != txns) {
-                return initSuccessResponse(ppJackpotWinCallBackReq.getReference(), platformGameParent.getCurrencyType(), balance);
-            }
-            txns = new Txns();
-            // 会员余额
-            balance = balance.add(betAmount);
-            // 更新玩家余额
-            gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.reward, TradingEnum.INCOME);
-
-            //游戏商注单号
-            txns.setPlatformTxId(ppJackpotWinCallBackReq.getReference());
-            //此交易是否是投注 true是投注 false 否
-            txns.setBet(false);
-            //玩家 ID
-            txns.setUserId(memBaseinfo.getAccount());
-            //玩家货币代码
-            txns.setCurrency(platformGameParent.getCurrencyType());
-            txns.setGameInfo(ppJackpotWinCallBackReq.getGameId());
-            txns.setRoundId(ppJackpotWinCallBackReq.getRoundId());
-            //游戏平台的下注项目
-            txns.setBetType(ppJackpotWinCallBackReq.getJackpotId());
-            // 奖金游戏
-            txns.setHasBonusGame(1);
-            //平台代码
-            txns.setPlatform(platformGameParent.getPlatformCode());
-            //平台名称
-            txns.setPlatformEnName(platformGameParent.getPlatformEnName());
-            txns.setPlatformCnName(platformGameParent.getPlatformCnName());
-            //平台游戏类型
-            txns.setGameType(gameCategory.getGameType());
-            //游戏分类ID
-            txns.setCategoryId(gameCategory.getId());
-            //游戏分类名称
-            txns.setCategoryName(gameCategory.getGameName());
-            //平台游戏代码
-            txns.setGameCode(gamePlatform.getPlatformCode());
-            //游戏名称
-            txns.setGameName(gamePlatform.getPlatformEnName());
-            //下注金额
-            txns.setBetAmount(BigDecimal.ZERO);
-            //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
-            txns.setWinningAmount(ppJackpotWinCallBackReq.getAmount());
-            //玩家下注时间
-            txns.setBetTime(DateUtils.formatByLong(ppJackpotWinCallBackReq.getTimestamp(), DateUtils.newFormat));
-            //真实下注金额,需增加在玩家的金额
-            txns.setRealBetAmount(BigDecimal.ZERO);
-            //真实返还金额,游戏赢分
-            txns.setRealWinAmount(ppJackpotWinCallBackReq.getAmount());
-            //返还金额 (包含下注金额)
-            txns.setWinAmount(ppJackpotWinCallBackReq.getAmount());
-            //赌注的结果 : 赢:0,输:1,平手:2
-            int resultTyep;
-            if (ppJackpotWinCallBackReq.getAmount().compareTo(BigDecimal.ZERO) == 0) {
-                resultTyep = 2;
-            } else if (ppJackpotWinCallBackReq.getAmount().compareTo(BigDecimal.ZERO) > 0) {
-                resultTyep = 0;
-            } else {
-                resultTyep = 1;
-            }
-            txns.setResultType(resultTyep);
-            //有效投注金额 或 投注面值
-            txns.setTurnover(BigDecimal.ZERO);
-            //辨认交易时间依据
-            txns.setTxTime(DateUtils.formatByLong(ppJackpotWinCallBackReq.getTimestamp(), DateUtils.newFormat));
-            //操作名称
-            txns.setMethod("Settle");
-            txns.setStatus("Running");
-            //余额
-            txns.setBalance(balance);
-            //创建时间
-            String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
-            //投注 IP
-            txns.setBetIp(ip);//  string 是 投注 IP
-            txns.setCreateTime(dateStr);
-            int num = txnsMapper.insert(txns);
-            if (num <= 0) {
-                return initFailureResponse(100, "订单入库请求失败",json);
-            }
+//            GamePlatform gamePlatform;
+//            if("Y".equals(OpenAPIProperties.PP_IS_PLATFORM_LOGIN)){
+//                gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platformGameParent.getPlatformCode(),platformGameParent.getPlatformCode());
+//            }else {
+//                gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(ppJackpotWinCallBackReq.getGameId(), platformGameParent.getPlatformCode());
+//
+//            }
+//            if (null == gamePlatform) {
+//                gamePlatform = gameCommonService.getGamePlatformByParentName(OpenAPIProperties.PP_PLATFORM_CODE).get(0);
+//            }
+//            GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
+//
+//            // 赢奖金额
+//            BigDecimal betAmount = ppJackpotWinCallBackReq.getAmount();
+//
+//            // 赢奖金额小于0
+//            if (betAmount.compareTo(BigDecimal.ZERO) < 0) {
+//                json.put("cash", balance);
+//                return initFailureResponse(7, "赢奖金额不能小0",json);
+//            }
+//
+//            // 查询用户请求订单
+//            Txns txns = getTxns(ppJackpotWinCallBackReq.getReference(), memBaseinfo.getAccount());
+//            if (null != txns) {
+//                return initSuccessResponse(ppJackpotWinCallBackReq.getReference(), platformGameParent.getCurrencyType(), balance);
+//            }
+//            txns = new Txns();
+//            // 会员余额
+//            balance = balance.add(betAmount);
+//            // 更新玩家余额
+//            gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.reward, TradingEnum.INCOME);
+//
+//            //游戏商注单号
+//            txns.setPlatformTxId(ppJackpotWinCallBackReq.getReference());
+//            //此交易是否是投注 true是投注 false 否
+//            txns.setBet(false);
+//            //玩家 ID
+//            txns.setUserId(memBaseinfo.getAccount());
+//            //玩家货币代码
+//            txns.setCurrency(platformGameParent.getCurrencyType());
+//            txns.setGameInfo(ppJackpotWinCallBackReq.getGameId());
+//            txns.setRoundId(ppJackpotWinCallBackReq.getRoundId());
+//            //游戏平台的下注项目
+//            txns.setBetType(ppJackpotWinCallBackReq.getJackpotId());
+//            // 奖金游戏
+//            txns.setHasBonusGame(1);
+//            //平台代码
+//            txns.setPlatform(platformGameParent.getPlatformCode());
+//            //平台名称
+//            txns.setPlatformEnName(platformGameParent.getPlatformEnName());
+//            txns.setPlatformCnName(platformGameParent.getPlatformCnName());
+//            //平台游戏类型
+//            txns.setGameType(gameCategory.getGameType());
+//            //游戏分类ID
+//            txns.setCategoryId(gameCategory.getId());
+//            //游戏分类名称
+//            txns.setCategoryName(gameCategory.getGameName());
+//            //平台游戏代码
+//            txns.setGameCode(gamePlatform.getPlatformCode());
+//            //游戏名称
+//            txns.setGameName(gamePlatform.getPlatformEnName());
+//            //下注金额
+//            txns.setBetAmount(BigDecimal.ZERO);
+//            //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
+//            txns.setWinningAmount(ppJackpotWinCallBackReq.getAmount());
+//            //玩家下注时间
+//            txns.setBetTime(DateUtils.formatByLong(ppJackpotWinCallBackReq.getTimestamp(), DateUtils.newFormat));
+//            //真实下注金额,需增加在玩家的金额
+//            txns.setRealBetAmount(BigDecimal.ZERO);
+//            //真实返还金额,游戏赢分
+//            txns.setRealWinAmount(ppJackpotWinCallBackReq.getAmount());
+//            //返还金额 (包含下注金额)
+//            txns.setWinAmount(ppJackpotWinCallBackReq.getAmount());
+//            //赌注的结果 : 赢:0,输:1,平手:2
+//            int resultTyep;
+//            if (ppJackpotWinCallBackReq.getAmount().compareTo(BigDecimal.ZERO) == 0) {
+//                resultTyep = 2;
+//            } else if (ppJackpotWinCallBackReq.getAmount().compareTo(BigDecimal.ZERO) > 0) {
+//                resultTyep = 0;
+//            } else {
+//                resultTyep = 1;
+//            }
+//            txns.setResultType(resultTyep);
+//            //有效投注金额 或 投注面值
+//            txns.setTurnover(BigDecimal.ZERO);
+//            //辨认交易时间依据
+//            txns.setTxTime(DateUtils.formatByLong(ppJackpotWinCallBackReq.getTimestamp(), DateUtils.newFormat));
+//            //操作名称
+//            txns.setMethod("Settle");
+//            txns.setStatus("Running");
+//            //余额
+//            txns.setBalance(balance);
+//            //创建时间
+//            String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
+//            //投注 IP
+//            txns.setBetIp(ip);//  string 是 投注 IP
+//            txns.setCreateTime(dateStr);
+//            int num = txnsMapper.insert(txns);
+//            if (num <= 0) {
+//                return initFailureResponse(100, "订单入库请求失败",json);
+//            }
             json.put("cash", balance);
             return json;
         } catch (Exception e) {
