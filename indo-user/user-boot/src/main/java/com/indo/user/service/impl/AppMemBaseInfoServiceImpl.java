@@ -50,6 +50,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -98,7 +99,7 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
     public Result<AppLoginVo> appLogin(LoginReq req) {
         //黑名单校验
         List<SysIpLimit> list =sysIpLimitClient.findSysIpLimitByType(1).getData();
-        if(list!=null||list.size()>0){
+        if(!CollectionUtils.isEmpty(list)){
             // 获取请求信息
             ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
             HttpServletRequest request = attributes.getRequest();
