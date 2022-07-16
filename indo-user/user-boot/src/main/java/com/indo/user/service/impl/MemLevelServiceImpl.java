@@ -58,6 +58,8 @@ public class MemLevelServiceImpl extends ServiceImpl<MemLevelMapper, MemLevel> i
         MemTradingBO memTradingVo = memBaseInfoService.tradingInfo(loginInfo.getAccount());
         memLevelVo.setTradingVo(memTradingVo);
 
+        MemLevel userLevel = memLevelMapper.selectById(memTradingVo.getMemLevel());
+
         List<LevelInfo> levelInfoList = new ArrayList<>();
         List<MemLevel> list = getLevelList();
 
@@ -79,7 +81,7 @@ public class MemLevelServiceImpl extends ServiceImpl<MemLevelMapper, MemLevel> i
                     gift.setGiftEnum(GiftEnum.reward);
                     gift.setGiftName(GiftEnum.reward.getName());
                     gift.setAmount(memLevel.getReward().intValue());
-                    if (NumberUtils.toInt(memTradingVo.getLevel() + StringUtils.EMPTY) >= memLevel.getLevel()) {
+                    if (userLevel.getLevel() >= memLevel.getLevel()) {
                         int count = iMemGiftReceiveService.countRewardReceive(memId, GiftEnum.reward.name(), memLevel.getLevel() + 1);
                         // 0 不可领取 1 可领取 2 已经领取
                         gift.setReceiveStatus(count == 0 ? 1 : 2);
