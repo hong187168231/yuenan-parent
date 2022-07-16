@@ -93,7 +93,7 @@ public class MemLevelServiceImpl extends ServiceImpl<MemLevelMapper, MemLevel> i
                     gift.setGiftEnum(GiftEnum.everyday);
                     gift.setGiftName(GiftEnum.everyday.getName());
                     gift.setAmount(memLevel.getEverydayGift().intValue());
-                    if (userLevel.getLevel() >= memLevel.getLevel()) {
+                    if (userLevel.getLevel().equals(memLevel.getLevel())) {
                         int count = iMemGiftReceiveService.countTodayReceive(memId, GiftEnum.everyday.name());
                         gift.setReceiveStatus(count == 0 ? 1 : 2);
                     }
@@ -104,7 +104,7 @@ public class MemLevelServiceImpl extends ServiceImpl<MemLevelMapper, MemLevel> i
                     gift.setGiftEnum(GiftEnum.week);
                     gift.setGiftName(GiftEnum.week.getName());
                     gift.setAmount(memLevel.getWeekGift().intValue());
-                    if (userLevel.getLevel() >= memLevel.getLevel()) {
+                    if (userLevel.getLevel().equals(memLevel.getLevel())) {
                         int count = iMemGiftReceiveService.countWeekReceive(memId, GiftEnum.week.name());
                         gift.setReceiveStatus(count == 0 ? 1 : 2);
                     }
@@ -115,7 +115,7 @@ public class MemLevelServiceImpl extends ServiceImpl<MemLevelMapper, MemLevel> i
                     gift.setGiftEnum(GiftEnum.month);
                     gift.setGiftName(GiftEnum.month.getName());
                     gift.setAmount(memLevel.getMonthGift().intValue());
-                    if (userLevel.getLevel() >= memLevel.getLevel()) {
+                    if (userLevel.getLevel().equals(memLevel.getLevel())) {
                         int count = iMemGiftReceiveService.countMonthReceive(memId, GiftEnum.month.name());
                         gift.setReceiveStatus(count == 0 ? 1 : 2);
                     }
@@ -126,7 +126,7 @@ public class MemLevelServiceImpl extends ServiceImpl<MemLevelMapper, MemLevel> i
                     gift.setGiftEnum(GiftEnum.year);
                     gift.setGiftName(GiftEnum.year.getName());
                     gift.setAmount(memLevel.getYearGift().intValue());
-                    if (userLevel.getLevel() >= memLevel.getLevel()) {
+                    if (userLevel.getLevel().equals(memLevel.getLevel())) {
                         int count = iMemGiftReceiveService.countYearReceive(memId, GiftEnum.year.name());
                         gift.setReceiveStatus(count == 0 ? 1 : 2);
                     }
@@ -137,7 +137,7 @@ public class MemLevelServiceImpl extends ServiceImpl<MemLevelMapper, MemLevel> i
                     gift.setGiftEnum(GiftEnum.birthday);
                     gift.setGiftName(GiftEnum.birthday.getName());
                     gift.setAmount(memLevel.getBirthdayGift().intValue());
-                    if (userLevel.getLevel() >= memLevel.getLevel()) {
+                    if (userLevel.getLevel().equals(memLevel.getLevel())) {
                         int count = iMemGiftReceiveService.countBirthdayReceive(memId, GiftEnum.birthday.name());
                         gift.setReceiveStatus(count == 0 ? 1 : 2);
                     }
