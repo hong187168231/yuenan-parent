@@ -7,6 +7,7 @@ import com.indo.common.enums.GiftEnum;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.redis.utils.RedisUtils;
 import com.indo.common.utils.CollectionUtil;
+import com.indo.common.utils.StringUtils;
 import com.indo.common.web.util.BeanConvertUtils;
 import com.indo.core.pojo.entity.MemLevel;
 import com.indo.user.common.util.UserBusinessRedisUtils;
@@ -78,7 +79,7 @@ public class MemLevelServiceImpl extends ServiceImpl<MemLevelMapper, MemLevel> i
                     gift.setGiftEnum(GiftEnum.reward);
                     gift.setGiftName(GiftEnum.reward.getName());
                     gift.setAmount(memLevel.getReward().intValue());
-                    if (memTradingVo.getLevel() >= memLevel.getLevel()) {
+                    if (NumberUtils.toInt(memTradingVo.getLevel() + StringUtils.EMPTY) >= memLevel.getLevel()) {
                         int count = iMemGiftReceiveService.countRewardReceive(memId, GiftEnum.reward.name(), memLevel.getLevel() + 1);
                         // 0 不可领取 1 可领取 2 已经领取
                         gift.setReceiveStatus(count == 0 ? 1 : 2);
