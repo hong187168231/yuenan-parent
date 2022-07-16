@@ -98,22 +98,22 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
     @Override
     public Result<AppLoginVo> appLogin(LoginReq req) {
         //黑名单校验
-        List<SysIpLimit> list =sysIpLimitClient.findSysIpLimitByType(1).getData();
-        if(!CollectionUtils.isEmpty(list)){
-            // 获取请求信息
-            ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-            HttpServletRequest request = attributes.getRequest();
-            String clientIP = IPUtils.getIpAddr(request);
-            Boolean status = false;
-            for(SysIpLimit l :list){
-                if(l.getIp().equals(clientIP)){
-                    status=true;
-                }
-            }
-            if(status){
-                throw new BizException("非法的IP登录");
-            }
-        }
+//        List<SysIpLimit> list =sysIpLimitClient.findSysIpLimitByType(1).getData();
+//        if(!CollectionUtils.isEmpty(list)){
+//            // 获取请求信息
+//            ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+//            HttpServletRequest request = attributes.getRequest();
+//            String clientIP = IPUtils.getIpAddr(request);
+//            Boolean status = false;
+//            for(SysIpLimit l :list){
+//                if(l.getIp().equals(clientIP)){
+//                    status=true;
+//                }
+//            }
+//            if(status){
+//                throw new BizException("非法的IP登录");
+//            }
+//        }
         if (StringUtils.isBlank(req.getAccount())) {
             return Result.failed("请填写账号！");
         }
