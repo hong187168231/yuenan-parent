@@ -65,6 +65,8 @@ public class MemGiftReceiveServiceImpl extends ServiceImpl<MemGiftReceiveMapper,
         if (req.getGiftNameEnum().equals(GiftNameEnum.reward)) {
             if (memLevel.getLevel() < 10) {
                 memGiftReceive.setUpLevel(memLevel.getLevel() + 1);
+            } else {
+                return false;
             }
         }
         // 插入礼金领取记录并更新账变信息
