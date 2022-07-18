@@ -11,14 +11,7 @@ import com.indo.common.utils.DateUtils;
 import com.indo.common.utils.StringUtils;
 import com.indo.game.common.util.PPHashAESEncrypt;
 import com.indo.game.mapper.TxnsMapper;
-import com.indo.game.pojo.dto.pp.PpAuthenticateCallBackReq;
-import com.indo.game.pojo.dto.pp.PpBalanceCallBackReq;
-import com.indo.game.pojo.dto.pp.PpBetCallBackReq;
-import com.indo.game.pojo.dto.pp.PpBonusWinCallBackReq;
-import com.indo.game.pojo.dto.pp.PpJackpotWinCallBackReq;
-import com.indo.game.pojo.dto.pp.PpPromoWinCallBackReq;
-import com.indo.game.pojo.dto.pp.PpRefundWinCallBackReq;
-import com.indo.game.pojo.dto.pp.PpResultCallBackReq;
+import com.indo.game.pojo.dto.pp.*;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.game.pojo.entity.manage.GameCategory;
 import com.indo.game.pojo.entity.manage.GameParentPlatform;
@@ -297,6 +290,18 @@ public class PpCallbackServiceImpl implements PpCallbackService {
                     gameCommonService.updateUserBalance(memBaseinfo, settledAmount.abs(), GoldchangeEnum.SETTLE, TradingEnum.SPENDING);
                 }
             }
+            BigDecimal promoWinAmount = ppResultCallBackReq.getPromoWinAmount();
+            if(promoWinAmount.compareTo(BigDecimal.ZERO)!=0) {
+                // 会员余额
+                balance = balance.add(promoWinAmount);
+                settledAmount =  settledAmount.add(promoWinAmount);
+                if(promoWinAmount.compareTo(BigDecimal.ZERO)==1) {//赢
+                    // 更新玩家余额
+                    gameCommonService.updateUserBalance(memBaseinfo, promoWinAmount, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
+                }else {
+                    gameCommonService.updateUserBalance(memBaseinfo, promoWinAmount.abs(), GoldchangeEnum.SETTLE, TradingEnum.SPENDING);
+                }
+            }
             // 查询用户请求订单
             List<Txns> oldTxnsList = getTxnsByRoundld(ppResultCallBackReq.getRoundId(), memBaseinfo.getAccount());
             BigDecimal betAmount = BigDecimal.ZERO;
@@ -422,7 +427,7 @@ public class PpCallbackServiceImpl implements PpCallbackService {
 //            }
 
             // 查询用户请求订单
-//            Txns txns = getTxns(ppBonusWinCallBackReq.getReference(), memBaseinfo.getAccount());
+//            Txns txns = getTxnsByBonusCode(ppBonusWinCallBackReq.getBonusCode(), memBaseinfo.getAccount());
 //            if (null != txns) {
 //                return initSuccessResponse(ppBonusWinCallBackReq.getReference(), platformGameParent.getCurrencyType(), balance);
 //            }
@@ -443,6 +448,7 @@ public class PpCallbackServiceImpl implements PpCallbackService {
 //            txns.setCurrency(platformGameParent.getCurrencyType());
 //            txns.setGameInfo(ppBonusWinCallBackReq.getGameId());
 //            txns.setRoundId(ppBonusWinCallBackReq.getRoundId());
+//            txns.setRePlatformTxId(ppBonusWinCallBackReq.getBonusCode());
 //            //游戏平台的下注项目
 //            txns.setBetType(ppBonusWinCallBackReq.getGameId());
 //            // 奖金游戏
@@ -767,6 +773,21 @@ public class PpCallbackServiceImpl implements PpCallbackService {
         }
     }
 
+    //实时结束游戏回合的交易
+    @Override
+    public Object endRound(PpEndRoundCallBackReq ppEndRoundCallBackReq, String ip) {
+        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(ppEndRoundCallBackReq.getUserId());
+        JSONObject json = initSuccessResponse();
+        if (null == memBaseinfo) {
+            return initFailureResponse(2, "玩家不存在",json);
+        }
+        // 会员余额
+        BigDecimal balance = memBaseinfo.getBalance();
+        json.put("cash", balance);
+        json.put("bonus", BigDecimal.ZERO);
+        return json;
+    }
+
     // 退款
     @Override
     public Object refund(PpRefundWinCallBackReq ppRefundWinCallBackReq, String ip) {
@@ -860,6 +881,18 @@ public class PpCallbackServiceImpl implements PpCallbackService {
                 .or().eq(Txns::getMethod, "Settle"));
         wrapper.eq(Txns::getStatus, "Running");
         wrapper.eq(Txns::getPlatformTxId, reference);
+        wrapper.eq(Txns::getPlatform, OpenAPIProperties.PP_PLATFORM_CODE);
+        wrapper.eq(Txns::getUserId, userId);
+        return txnsMapper.selectOne(wrapper);
+    }
+
+    private Txns getTxnsByBonusCode(String bonusCode, String userId) {
+        LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+        wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet")
+                .or().eq(Txns::getMethod, "Cancel Bet")
+                .or().eq(Txns::getMethod, "Settle"));
+        wrapper.eq(Txns::getStatus, "Running");
+        wrapper.eq(Txns::getRePlatformTxId, bonusCode);
         wrapper.eq(Txns::getPlatform, OpenAPIProperties.PP_PLATFORM_CODE);
         wrapper.eq(Txns::getUserId, userId);
         return txnsMapper.selectOne(wrapper);
