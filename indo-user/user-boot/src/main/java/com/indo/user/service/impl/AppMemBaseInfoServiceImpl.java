@@ -214,6 +214,7 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
         userInfo.setAccount(req.getAccount());
         userInfo.setPassword(req.getPassword());
         userInfo.setPasswordMd5(req.getPassword());
+        userInfo.setMemLevel(11);
         if (StringUtils.isNotBlank(DeviceInfoUtil.getDeviceId())) {
             userInfo.setDeviceCode(DeviceInfoUtil.getDeviceId());
         }
