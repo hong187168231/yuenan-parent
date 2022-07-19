@@ -917,6 +917,7 @@ public class PpCallbackServiceImpl implements PpCallbackService {
             // 下注金额小于0
             if (betAmount.compareTo(BigDecimal.ZERO) < 0) {//调整金额小于0
                 if (balance.compareTo(betAmount.abs()) < 0) {
+                    json.put("cash", balance);
                     return initFailureResponse(1, "玩家余额不足", json);
                 }
                 gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.SETTLE, TradingEnum.SPENDING);
