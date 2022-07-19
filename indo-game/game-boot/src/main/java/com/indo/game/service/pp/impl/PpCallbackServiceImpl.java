@@ -291,7 +291,7 @@ public class PpCallbackServiceImpl implements PpCallbackService {
                 }
             }
             BigDecimal promoWinAmount = ppResultCallBackReq.getPromoWinAmount();
-            if(promoWinAmount.compareTo(BigDecimal.ZERO)!=0) {
+            if(null!=promoWinAmount&&promoWinAmount.compareTo(BigDecimal.ZERO)!=0) {
                 // 会员余额
                 balance = balance.add(promoWinAmount);
                 settledAmount =  settledAmount.add(promoWinAmount);
