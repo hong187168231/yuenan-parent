@@ -879,7 +879,19 @@ public class PpCallbackServiceImpl implements PpCallbackService {
         wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet")
                 .or().eq(Txns::getMethod, "Cancel Bet")
                 .or().eq(Txns::getMethod, "Settle"));
-        wrapper.eq(Txns::getStatus, "Running");
+        wrapper.and(c -> c.eq(Txns::getStatus, "Running")
+                .or().eq(Txns::getStatus, "Settle"));
+        wrapper.eq(Txns::getPlatformTxId, reference);
+        wrapper.eq(Txns::getPlatform, OpenAPIProperties.PP_PLATFORM_CODE);
+        wrapper.eq(Txns::getUserId, userId);
+        return txnsMapper.selectOne(wrapper);
+    }
+
+    private Txns getTxnsJackpotWin(String reference, String userId) {
+        LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Txns::getMethod, "Settle");
+        wrapper.and(c -> c.eq(Txns::getStatus, "Running")
+                .or().eq(Txns::getStatus, "Settle"));
         wrapper.eq(Txns::getPlatformTxId, reference);
         wrapper.eq(Txns::getPlatform, OpenAPIProperties.PP_PLATFORM_CODE);
         wrapper.eq(Txns::getUserId, userId);
