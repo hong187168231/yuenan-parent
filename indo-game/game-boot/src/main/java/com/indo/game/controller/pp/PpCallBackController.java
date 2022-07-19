@@ -155,4 +155,18 @@ public class PpCallBackController {
         return object;
     }
 
+    /**
+     * 娱乐场运营商将根据该请求来更改玩家余额，然后返回更新后的余额。如果请求的金额为负并且玩家余额不足，运营商应返回错误代码 1，表示“余额不足”。
+     */
+    @RequestMapping(value = "/adjustment.html", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    @AllowAccess
+    public Object adjustment(PpAdjustmentCallBackReq ppAdjustmentCallBackReq, HttpServletRequest request) {
+
+        String ip = IPAddressUtil.getIpAddress(request);
+        logger.info("ppCallBack refund 更改玩家余额回调,params:{}", JSONObject.toJSONString(ppAdjustmentCallBackReq));
+        Object object = ppCallbackService.adjustment(ppAdjustmentCallBackReq, ip);
+        logger.info("ppCallBack refund 更改玩家余额返回数据 params:{}", object);
+        return object;
+    }
 }

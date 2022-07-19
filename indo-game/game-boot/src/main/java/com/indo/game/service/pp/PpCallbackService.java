@@ -72,4 +72,12 @@ public interface PpCallbackService {
      * @return
      */
     Object refund(PpRefundWinCallBackReq ppRefundWinCallBackReq, String ip);
+
+    /**
+     *系统将向娱乐场运营商发送玩家需要调整的余额金额
+     * @param ppAdjustmentCallBackReq
+     * @param ip
+     * @return
+     */
+    public Object adjustment(PpAdjustmentCallBackReq ppAdjustmentCallBackReq, String ip);
 }
