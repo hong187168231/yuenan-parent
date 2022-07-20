@@ -263,6 +263,7 @@ public class GameController {
 //                    resultInfo = saService.saGame(loginUser, isMobileLogin, ip, platform, parentName);
 //                }
 
+
                 if (resultInfo == null) {
                     log.info("登录平台或单一游戏登录log {} loginPlatform result is null. params:{},ip:{},parentName:{}", loginUser.getId(), params, ip, parentName);
                     return Result.failed("g100104", "网络繁忙，请稍后重试！");

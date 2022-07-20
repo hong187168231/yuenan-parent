@@ -622,6 +622,23 @@ public class OpenAPIProperties implements InitializingBean {
     //@Value("${sgwin.platformCode}")
     private String sgwinPlatformCode;
 
+    //TP
+    public static String TP_API_URL;
+    public static String TP_API_TOKEN;
+    public static String TP_API_KEY;
+    public static String TP_PLATFORM_CODE;
+    public static String TP_IS_PLATFORM_LOGIN;
+    @Value("${tp.tpApiurl}")
+    private String tpApiurl;
+    @Value("${tp.tpApiToken}")
+    private String tpApiToken;
+    @Value("${tp.tpApiKey}")
+    private String tpApiKey;
+    @Value("${tp.platformCode}")
+    private String tpPlatformCode;
+    @Value("${tp.isPlatformLogin}")
+    private String tpIsPlatformLogin;
+
 
     @Override
     public void afterPropertiesSet() {
@@ -845,5 +862,11 @@ public class OpenAPIProperties implements InitializingBean {
         SGWIN_AGENT_ID= sgwinAgentId;
         SGWIN_AGENT = sgwinAgent;
         SGWIN_PLATFORM_CODE = sgwinPlatformCode;
+
+        TP_PLATFORM_CODE = tpPlatformCode;
+        TP_IS_PLATFORM_LOGIN = tpIsPlatformLogin;
+        TP_API_URL = tpApiurl;
+        TP_API_TOKEN = tpApiToken;
+        TP_API_KEY = tpApiKey;
     }
 }
