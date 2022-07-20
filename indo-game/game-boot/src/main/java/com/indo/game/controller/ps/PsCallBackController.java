@@ -3,10 +3,7 @@ package com.indo.game.controller.ps;
 import com.alibaba.fastjson.JSONObject;
 import com.indo.common.annotation.AllowAccess;
 import com.indo.common.utils.IPAddressUtil;
-import com.indo.game.pojo.dto.pg.PgVerifyCallBackReq;
 import com.indo.game.pojo.dto.ps.PsCallBackParentReq;
-import com.indo.game.pojo.vo.callback.ps.PsCallBackResponse;
-import com.indo.game.service.pg.PgCallbackService;
 import com.indo.game.service.ps.PsCallbackService;
 
 import org.slf4j.Logger;

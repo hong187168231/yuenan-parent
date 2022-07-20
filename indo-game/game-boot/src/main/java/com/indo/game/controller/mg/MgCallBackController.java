@@ -1,14 +1,11 @@
 package com.indo.game.controller.mg;
 
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.annotation.JSONField;
 import com.indo.common.annotation.AllowAccess;
 import com.indo.common.utils.DateUtils;
 import com.indo.common.utils.IPAddressUtil;
 import com.indo.game.pojo.dto.mg.MgCallBackReq;
-import com.indo.game.pojo.dto.pg.PgVerifyCallBackReq;
 import com.indo.game.service.mg.MgCallbackService;
-import com.indo.game.service.pg.PgCallbackService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.math.BigDecimal;
 
 @RestController
 @RequestMapping("/mg/callBack")

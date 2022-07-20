@@ -8,17 +8,13 @@ import com.indo.common.enums.TradingEnum;
 import com.indo.common.utils.DateUtils;
 import com.indo.game.mapper.TxnsMapper;
 import com.indo.game.pojo.dto.mg.MgCallBackReq;
-import com.indo.game.pojo.dto.pg.PgVerifyCallBackReq;
-import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.game.pojo.entity.manage.GameCategory;
 import com.indo.game.pojo.entity.manage.GameParentPlatform;
 import com.indo.game.pojo.entity.manage.GamePlatform;
 import com.indo.game.pojo.entity.manage.Txns;
 import com.indo.game.pojo.vo.callback.pg.PgCallBackResponse;
 import com.indo.game.service.common.GameCommonService;
-import com.indo.game.service.cptopenmember.CptOpenMemberService;
 import com.indo.game.service.mg.MgCallbackService;
-import com.indo.game.service.pg.PgCallbackService;
 import com.indo.user.pojo.bo.MemTradingBO;
 
 import org.slf4j.Logger;
