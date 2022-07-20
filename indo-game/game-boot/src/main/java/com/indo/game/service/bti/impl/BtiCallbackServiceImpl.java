@@ -119,11 +119,11 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             }
             GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
 
-            if(betAmount.compareTo(BigDecimal.ZERO)!=0) {
-                balance = balance.subtract(betAmount);
-                // 更新余额
-                gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
-            }
+//            if(betAmount.compareTo(BigDecimal.ZERO)!=0) {
+//                balance = balance.subtract(betAmount);
+//                // 更新余额
+//                gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
+//            }
 
 //            List<BtiBetRequest> list = reserveBetsRequest.getBetList();
 //            String betTypeId = null;
@@ -317,11 +317,11 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
 
             // 回退金额（预扣款注单下注金额）
             BigDecimal betAmount = oldTxns.getAmount();
-            if(betAmount.compareTo(BigDecimal.ZERO)!=0) {
-                balance = memBaseinfo.getBalance().add(betAmount);
-                // 会员退款
-                gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.CANCEL_BET, TradingEnum.INCOME);
-            }
+//            if(betAmount.compareTo(BigDecimal.ZERO)!=0) {
+//                balance = memBaseinfo.getBalance().add(betAmount);
+//                // 会员退款
+//                gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.CANCEL_BET, TradingEnum.INCOME);
+//            }
             String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
 
             Txns txns = new Txns();
@@ -392,14 +392,16 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             List<Txns> txnslist = getTxnsHasDebit(gameParentPlatform, paySerialno);
             // 提交debit注单金额总和
             BigDecimal debitAmount = BigDecimal.valueOf(txnslist.stream().mapToDouble(o -> o.getBetAmount().doubleValue()).sum());
-
+            balance = balance.subtract(debitAmount);
+                // 更新余额
+                gameCommonService.updateUserBalance(memBaseinfo, debitAmount, GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
             // 预扣款金额比下注金额多， 需要回退用户金额
-            if (betAmount.compareTo(debitAmount) > 0) {
-                // 回退部分预扣金额
-                gameCommonService.updateUserBalance(memBaseinfo, betAmount.subtract(debitAmount), GoldchangeEnum.CANCEL_BET, TradingEnum.INCOME);
-                balance = balance.add(betAmount.subtract(debitAmount));
-
-            }
+//            if (betAmount.compareTo(debitAmount) > 0) {
+//                // 回退部分预扣金额
+//                gameCommonService.updateUserBalance(memBaseinfo, betAmount.subtract(debitAmount), GoldchangeEnum.CANCEL_BET, TradingEnum.INCOME);
+//                balance = balance.add(betAmount.subtract(debitAmount));
+//
+//            }
             String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
             for(Txns oldTxns :txnslist){
                 // 更新预扣注单状态
