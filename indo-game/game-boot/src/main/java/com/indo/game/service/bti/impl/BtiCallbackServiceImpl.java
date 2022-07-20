@@ -103,7 +103,7 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
                 return initFailureResponse(-4, "玩家余额不足",balance,paySerialno);
             }
             // 查询订单
-            Txns oldTxns = getTxns(gameParentPlatform, paySerialno, null);
+            Txns oldTxns = getReserveTxns(gameParentPlatform, paySerialno);
             // 重复订单
             if (null != oldTxns) {
                 StringBuilder builder = new StringBuilder();
@@ -236,13 +236,13 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             }
 
             // reserve_id 查询是否存在
-            Txns oldTxnsReserve = getTxns(gameParentPlatform, paySerialno, null);
+            Txns oldTxnsReserve = getReserveTxns(gameParentPlatform, paySerialno);
             if (null == oldTxnsReserve) {
                 return initFailureResponse(0, "reserve_id not found",balance,paySerialno);
             }
 
             // req_id 查询是否存在
-            Txns oldReqTxnsReserve = getTxns(gameParentPlatform, paySerialno, reqId);
+            Txns oldReqTxnsReserve = getDebitReserveTxns(gameParentPlatform, paySerialno, reqId);
             if (null != oldReqTxnsReserve) {
                 return initFailureResponse(0, "req_id is already debit",balance,paySerialno);
             }
@@ -260,12 +260,12 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             txns.setRealBetAmount(btiDebitReserveRequst.getAmount());
             txns.setMethod("Place Bet");
             //操作名称
-            txns.setStatus("Running");
+            txns.setStatus("Reserve");
             txns.setCreateTime(dateStr);
             txnsMapper.insert(txns);
-            oldTxnsReserve.setUpdateTime(dateStr);
-            oldTxnsReserve.setStatus("Reserve");
-            txnsMapper.updateById(oldTxnsReserve);
+//            oldTxnsReserve.setUpdateTime(dateStr);
+//            oldTxnsReserve.setStatus("Reserve");
+//            txnsMapper.updateById(oldTxnsReserve);
 
             StringBuilder builder = new StringBuilder();
             builder.append("error_code=0\n");
@@ -296,9 +296,17 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             if (null == memBaseinfo) {
                 return initFailureResponse(-2, "用户不存在");
             }
-
+// reserve_id 查询是否存在
+            Txns oldTxnsCancelReserveTxns = getCancelReserveTxns(platformGameParent, paySerialno);
+            if (null != oldTxnsCancelReserveTxns) {
+                StringBuilder builder = new StringBuilder();
+                builder.append("error_code=0\n");
+                builder.append("error_message=").append("Reserve was not found").append("\n");
+                builder.append("balance=").append(balance);
+                return builder.toString();
+            }
             // 查询用户请求订单
-            Txns oldTxns = getTxns(platformGameParent, paySerialno, null);
+            Txns oldTxns = getReserveTxns(platformGameParent, paySerialno);
             if (null == oldTxns) {
                 StringBuilder builder = new StringBuilder();
                 builder.append("error_code=0\n");
@@ -307,27 +315,12 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
                 return builder.toString();
             }
 
-            // 如果订单已经取消
-            if ("Cancel Bet".equals(oldTxns.getMethod())) {
-                StringBuilder builder = new StringBuilder();
-                builder.append("error_code=0\n");
-                builder.append("error_message=").append("Reserve was not found").append("\n");
-                builder.append("balance=").append(memBaseinfo.getBalance());
-                return builder.toString();
-            }
-
-//            // 如果订单有已经结算的
-//            if (null != getTxnsHasDebit(platformGameParent, paySerialno)) {
-//                return initFailureResponse(-4, "注单已结算");
-//            }
-
             // 回退金额（预扣款注单下注金额）
-            BigDecimal winAmount = oldTxns.getAmount();
-
-            if(winAmount.compareTo(BigDecimal.ZERO)!=0) {
-                balance = memBaseinfo.getBalance().add(winAmount);
+            BigDecimal betAmount = oldTxns.getAmount();
+            if(betAmount.compareTo(BigDecimal.ZERO)!=0) {
+                balance = memBaseinfo.getBalance().add(betAmount);
                 // 会员退款
-                gameCommonService.updateUserBalance(memBaseinfo, winAmount, GoldchangeEnum.CANCEL_BET, TradingEnum.INCOME);
+                gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.CANCEL_BET, TradingEnum.INCOME);
             }
             String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
 
@@ -336,7 +329,7 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             txns.setBalance(balance);
             txns.setId(null);
             txns.setStatus("Running");
-            txns.setRealWinAmount(winAmount);//真实返还金额
+            txns.setRealWinAmount(betAmount);//真实返还金额
             txns.setMethod("Cancel Bet");
             txns.setCreateTime(dateStr);
             txnsMapper.insert(txns);
@@ -376,6 +369,16 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             if (null == memBaseinfo) {
                 return initFailureResponse(0, "用户不存在");
             }
+            BigDecimal balance = memBaseinfo.getBalance();
+            Txns oldTxnsCommitReserve = commitReserve(gameParentPlatform, paySerialno);
+            if (null == oldTxnsCommitReserve) {
+                StringBuilder builder = new StringBuilder();
+                builder.append("error_code=0\n");
+                builder.append("error_message=No error\n");
+                builder.append("trx_id=").append(paySerialno).append("\n");
+                builder.append("balance=").append(balance);
+                return builder.toString();
+            }
             // reserve_id 查询是否存在
             Txns oldTxnsReserve = getReserveTxns(gameParentPlatform, paySerialno);
             if (null == oldTxnsReserve) {
@@ -389,35 +392,36 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             List<Txns> txnslist = getTxnsHasDebit(gameParentPlatform, paySerialno);
             // 提交debit注单金额总和
             BigDecimal debitAmount = BigDecimal.valueOf(txnslist.stream().mapToDouble(o -> o.getBetAmount().doubleValue()).sum());
-            BigDecimal balance = memBaseinfo.getBalance();
+
             // 预扣款金额比下注金额多， 需要回退用户金额
             if (betAmount.compareTo(debitAmount) > 0) {
                 // 回退部分预扣金额
-                gameCommonService.updateUserBalance(memBaseinfo, betAmount.subtract(debitAmount), GoldchangeEnum.UNVOID_SETTLE, TradingEnum.INCOME);
+                gameCommonService.updateUserBalance(memBaseinfo, betAmount.subtract(debitAmount), GoldchangeEnum.CANCEL_BET, TradingEnum.INCOME);
                 balance = balance.add(betAmount.subtract(debitAmount));
 
             }
-
             String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
-
+            for(Txns oldTxns :txnslist){
+                // 更新预扣注单状态
+                oldTxns.setUpdateTime(dateStr);
+                oldTxns.setStatus("commitReserve");
+                txnsMapper.updateById(oldTxnsReserve);
+            }
             Txns txns = new Txns();
             BeanUtils.copyProperties(oldTxnsReserve, txns);
-            txns.setBalance(balance);
-            txns.setId(null);
-            txns.setStatus("Running");
-            txns.setRealWinAmount(debitAmount);//真实返还金额
-            txns.setMethod("CommitReserve");
+            txns.setBetAmount(debitAmount);
+            txns.setWinAmount(debitAmount);
+            txns.setWinningAmount(debitAmount.negate());
             txns.setCreateTime(dateStr);
+            txns.setMethod("Place Bet");
+            //操作名称
+            txns.setStatus("Running");
             txnsMapper.insert(txns);
-            // 更新预扣注单状态
-            oldTxnsReserve.setUpdateTime(dateStr);
-            oldTxnsReserve.setStatus("CommitReserve");
-            txnsMapper.updateById(oldTxnsReserve);
 
             StringBuilder builder = new StringBuilder();
             builder.append("error_code=0\n");
             builder.append("error_message=No error\n");
-            builder.append("trx_id=").append(btiCommitReserveRequst.getReserve_id()).append("\n");
+            builder.append("trx_id=").append(paySerialno).append("\n");
             builder.append("balance=").append(balance);
             return builder.toString();
         } catch (Exception e) {
@@ -426,6 +430,7 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
         }
     }
 
+    //重新结算
     @Override
     public Object debitCustomer(BtiDebitCustomerRequst btiDebitCustomerRequst, String ip) {
 
@@ -445,11 +450,6 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
                 return initFailureResponse(0, "用户不存在");
             }
 
-            Txns oldTxns = getTxns(gameParentPlatform, reqId, null);
-            // 重复订单
-            if (null != oldTxns) {
-                return initFailureResponse(0, "注单已结算");
-            }
             // 扣款
             BigDecimal betAmount = btiDebitCustomerRequst.getAmount();
             BigDecimal balance = memBaseinfo.getBalance();
@@ -460,7 +460,7 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             if(betAmount.compareTo(BigDecimal.ZERO)!=0) {
                 balance = balance.subtract(betAmount);
                 // 更新余额
-                gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.BETNSETTLE, TradingEnum.SPENDING);
+                gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.UNSETTLE, TradingEnum.SPENDING);
             }
 
 
@@ -494,6 +494,7 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             //下注金额
             txns.setBetAmount(betAmount);
             txns.setWinAmount(betAmount.negate());
+            txns.setWinningAmount(betAmount.negate());
             //游戏平台的下注项目
 //            txns.setBetType(cmdCallbackBetReq.getGame().toString());
             //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
@@ -536,6 +537,7 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
         }
     }
 
+    //结算
     @Override
     public Object creditCustomer(BtiCreditCustomerRequst btiCreditCustomerRequst, String ip) {
 
@@ -557,10 +559,15 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             }
             BigDecimal balance = memBaseinfo.getBalance();
 
-            Txns oldTxns = getTxns(gameParentPlatform, reqId, null);
+            Txns oldTxns = creditCustomerReserve(gameParentPlatform, reqId);
             // 重复订单
             if (null != oldTxns) {
-                return initFailureResponse(0, "注单已结算");
+                StringBuilder builder = new StringBuilder();
+                builder.append("error_code=0\n");
+                builder.append("error_message=No error\n");
+                builder.append("trx_id=").append(reqId).append("\n");
+                builder.append("balance=").append(balance);
+                return builder.toString();
             }
 
             // 所有中奖金额
@@ -572,7 +579,7 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             if(winAmount.compareTo(BigDecimal.ZERO)!=0) {
                 balance = memBaseinfo.getBalance().add(winAmount);
                 // 更新余额
-                gameCommonService.updateUserBalance(memBaseinfo, winAmount, GoldchangeEnum.BETNSETTLE, TradingEnum.INCOME);
+                gameCommonService.updateUserBalance(memBaseinfo, winAmount, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
             }
 
             Txns txns = new Txns();
@@ -646,27 +653,6 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
         }
     }
 
-    /**
-     * 查询第三方订单是否存在
-     *
-     * @param gameParentPlatform gameParentPlatform
-     * @param paySerialno        paySerialno
-     * @param rePlatformTxId     req_id
-     * @return Txns
-     */
-    private Txns getTxns(GameParentPlatform gameParentPlatform, String paySerialno, String rePlatformTxId) {
-        LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
-        wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet")
-                .or().eq(Txns::getMethod, "Cancel Bet")
-                .or().eq(Txns::getMethod, "Reserve"));
-        wrapper.eq(Txns::getStatus, "Running");
-        wrapper.eq(Txns::getPlatformTxId, paySerialno);
-        wrapper.eq(Txns::getPlatform, gameParentPlatform.getPlatformCode());
-        if (StringUtils.isNotEmpty(rePlatformTxId)) {
-            wrapper.eq(Txns::getRePlatformTxId, rePlatformTxId);
-        }
-        return txnsMapper.selectOne(wrapper);
-    }
 
     /**
      * 查询预扣款注单, 不查询debit注单
@@ -677,10 +663,54 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
      */
     private Txns getReserveTxns(GameParentPlatform gameParentPlatform, String paySerialno) {
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
-        wrapper.and(c -> c.eq(Txns::getMethod, "Reserve"));
+        wrapper.eq(Txns::getMethod, "Reserve");
+        wrapper.eq(Txns::getStatus, "Running");
         wrapper.eq(Txns::getPlatformTxId, paySerialno);
         wrapper.eq(Txns::getPlatform, gameParentPlatform.getPlatformCode());
-        wrapper.isNull(Txns::getRePlatformTxId);
+        return txnsMapper.selectOne(wrapper);
+    }
+
+    /**
+     * 查询预扣款注单, 不查询debit注单
+     *
+     * @param gameParentPlatform gameParentPlatform
+     * @param paySerialno        paySerialno
+     * @return Txns
+     */
+    private Txns getCancelReserveTxns(GameParentPlatform gameParentPlatform, String paySerialno) {
+        LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Txns::getMethod, "Cancel Bet");
+        wrapper.eq(Txns::getStatus, "Running");
+        wrapper.eq(Txns::getPlatformTxId, paySerialno);
+        wrapper.eq(Txns::getPlatform, gameParentPlatform.getPlatformCode());
+        return txnsMapper.selectOne(wrapper);
+    }
+
+    /**
+     * 查询已经提交注单
+     * @param gameParentPlatform
+     * @param paySerialno
+     * @return
+     */
+    private Txns commitReserve(GameParentPlatform gameParentPlatform, String paySerialno) {
+        LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+        wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet"));
+        wrapper.eq(Txns::getStatus, "Running");
+        wrapper.eq(Txns::getPlatformTxId, paySerialno);
+        wrapper.eq(Txns::getPlatform, gameParentPlatform.getPlatformCode());
+        return txnsMapper.selectOne(wrapper);
+    }
+
+    private Txns getDebitReserveTxns(GameParentPlatform gameParentPlatform, String paySerialno, String rePlatformTxId) {
+        LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+
+        wrapper.eq(Txns::getMethod, "Place Bet");
+        wrapper.and(c -> c.eq(Txns::getStatus, "Reserve").or().eq(Txns::getStatus, "commitReserve"));
+        wrapper.eq(Txns::getPlatformTxId, paySerialno);
+        wrapper.eq(Txns::getPlatform, gameParentPlatform.getPlatformCode());
+        if (StringUtils.isNotEmpty(rePlatformTxId)) {
+            wrapper.eq(Txns::getRePlatformTxId, rePlatformTxId);
+        }
         return txnsMapper.selectOne(wrapper);
     }
 
@@ -693,10 +723,8 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
      */
     private List<Txns> getTxnsHasDebit(GameParentPlatform gameParentPlatform, String paySerialno) {
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
-        wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet")
-                .or().eq(Txns::getMethod, "Cancel Bet")
-                .or().eq(Txns::getMethod, "Adjust Bet"));
-        wrapper.eq(Txns::getStatus, "Running");
+        wrapper.eq(Txns::getMethod, "Place Bet");
+        wrapper.eq(Txns::getStatus, "Reserve");
         wrapper.eq(Txns::getPlatformTxId, paySerialno);
         wrapper.eq(Txns::getPlatform, gameParentPlatform.getPlatformCode());
         wrapper.isNotNull(Txns::getRePlatformTxId);
@@ -704,23 +732,22 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
     }
 
     /**
-     * 更新预扣注单状态
-     *
-     * @param platformTxId 预扣注单reserve ID
-     * @param platformCode 游戏code
-     * @param status       待修改状态
+     * 结算
+     * @param gameParentPlatform
+     * @param paySerialno
+     * @return
      */
-    private void update(String platformTxId, String platformCode, String status) {
-        LambdaUpdateWrapper<Txns> updateWrapper = new LambdaUpdateWrapper<>();
-        updateWrapper.eq(Txns::getPlatformTxId, platformTxId);
-        updateWrapper.eq(Txns::getPlatform, platformCode);
-
-        Txns txns = new Txns();
-        txns.setStatus(status);
-        String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
-        txns.setUpdateTime(dateStr);
-        txnsMapper.update(txns, updateWrapper);
+    private Txns creditCustomerReserve(GameParentPlatform gameParentPlatform, String paySerialno) {
+        LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+        wrapper.and(c -> c.eq(Txns::getMethod, "Settle"));
+        wrapper.eq(Txns::getStatus, "Running");
+        wrapper.eq(Txns::getPlatformTxId, paySerialno);
+        wrapper.eq(Txns::getPlatform, gameParentPlatform.getPlatformCode());
+        return txnsMapper.selectOne(wrapper);
     }
+
+
+
 
     /**
      * 查询IP是否被封
