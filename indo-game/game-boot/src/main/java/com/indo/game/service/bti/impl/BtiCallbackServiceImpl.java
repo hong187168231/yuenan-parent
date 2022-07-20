@@ -371,7 +371,7 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             }
             BigDecimal balance = memBaseinfo.getBalance();
             Txns oldTxnsCommitReserve = commitReserve(gameParentPlatform, paySerialno);
-            if (null == oldTxnsCommitReserve) {
+            if (null != oldTxnsCommitReserve) {
                 StringBuilder builder = new StringBuilder();
                 builder.append("error_code=0\n");
                 builder.append("error_message=No error\n");
@@ -392,7 +392,7 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             List<Txns> txnslist = getTxnsHasDebit(gameParentPlatform, paySerialno);
             // 提交debit注单金额总和
             BigDecimal debitAmount = BigDecimal.valueOf(txnslist.stream().mapToDouble(o -> o.getBetAmount().doubleValue()).sum());
-
+            logger.info("BtiCallback commitReserve 回调, 预扣款金额betAmount:{},实际投注金额debitAmount:{}", betAmount, debitAmount);
             // 预扣款金额比下注金额多， 需要回退用户金额
             if (betAmount.compareTo(debitAmount) == 1) {
                 // 回退部分预扣金额
