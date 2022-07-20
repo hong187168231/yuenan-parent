@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.indo.user.mapper.MsgStatusRecordMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.indo.core.pojo.entity.MsgStatusRecord">
+        <id column="id" property="id" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="msg_id" property="msgId" />
+        <result column="msg_type" property="msgType" />
+        <result column="states" property="states" />
+        <result column="mem_id" property="memId" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        create_time,
+        update_time,
+        id, msg_id, msg_type, states,mem_id
+    </sql>
+
+    <select id="findSysMsgInfo" resultType="com.indo.user.pojo.vo.MsgPushRecordVO">
+        SELECT
+        mpr.id as id,
+        mpr.title as title,
+        mpr.content as content
+        FROM msg_push_record mpr
+        LEFT JOIN msg_status_record msr on msr.msg_id=mpr.id and msr.mem_id=#{memId}
+        WHERE
+        msr.id is null
+        AND (mpr.device_type=0 OR mpr.device_type=#{deviceType})
+    </select>
+    <select id="findSysMsgInfoCount" resultType="java.lang.Integer">
+        SELECT
+        COUNT(0)
+        FROM msg_push_record mpr
+        LEFT JOIN msg_status_record msr on msr.msg_id=mpr.id and msr.mem_id=#{memId}
+        WHERE
+        msr.id is null
+        AND (mpr.device_type=0 OR mpr.device_type=#{deviceType})
+    </select>
+</mapper>
