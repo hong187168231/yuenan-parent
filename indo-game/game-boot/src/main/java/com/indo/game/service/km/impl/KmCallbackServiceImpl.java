@@ -79,6 +79,11 @@ public class KmCallbackServiceImpl implements KmCallbackService {
         if (array.size() > 0) {
             for (int i = 0; i < array.size(); i++) {
                 JSONObject json = array.getJSONObject(i);
+                logger.info("kmDebitCallback json=="+i+":{}", JSONObject.toJSONString(json));
+                BigDecimal amt = json.getBigDecimal("amt");
+                if(null==amt){
+                    amt = BigDecimal.ZERO;
+                }
                 MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(json.getString("userid"));
                 BigDecimal balance = memBaseinfo.getBalance();
                 JSONObject dataJson = new JSONObject();
@@ -112,14 +117,17 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                             jsonArray.add(dataJson);
                             continue;
                         }
-                        if (memBaseinfo.getBalance().compareTo(json.getBigDecimal("amt")) == -1) {
+
+                        if (memBaseinfo.getBalance().compareTo(amt) == -1) {
                             dataJson.put("err", 10);
                             dataJson.put("errdesc", "Token has expired");
                             jsonArray.add(dataJson);
                             continue;
                         }
-                        balance = balance.subtract(json.getBigDecimal("amt"));
-                        gameCommonService.updateUserBalance(memBaseinfo, jsonObject.getBigDecimal("amt"), GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
+                        if (amt.compareTo(BigDecimal.ZERO) != 0) {
+                            balance = balance.subtract(amt);
+                            gameCommonService.updateUserBalance(memBaseinfo, amt, GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
+                        }
                     }
 
                 } else {
@@ -132,14 +140,16 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                         jsonArray.add(dataJson);
                         continue;
                     }
-                    if (memBaseinfo.getBalance().compareTo(json.getBigDecimal("amt")) == -1) {
+                    if (memBaseinfo.getBalance().compareTo(amt) == -1) {
                         dataJson.put("err", 10);
                         dataJson.put("errdesc", "Token has expired");
                         jsonArray.add(dataJson);
                         continue;
                     }
-                    balance = balance.subtract(json.getBigDecimal("amt"));
-                    gameCommonService.updateUserBalance(memBaseinfo, jsonObject.getBigDecimal("amt"), GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
+                    if (amt.compareTo(BigDecimal.ZERO) != 0) {
+                        balance = balance.subtract(amt);
+                        gameCommonService.updateUserBalance(memBaseinfo, amt, GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
+                    }
                 }
 
                 Txns txns = new Txns();
@@ -154,18 +164,18 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                 //平台代码
                 txns.setPlatform("DG");
                 //下注金额
-                txns.setBetAmount(jsonObject.getBigDecimal("amt"));
+                txns.setBetAmount(amt);
                 //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
-                txns.setWinningAmount(jsonObject.getBigDecimal("amt"));
+                txns.setWinningAmount(amt);
                 //真实下注金额,需增加在玩家的金额
-                txns.setRealBetAmount(jsonObject.getBigDecimal("amt"));
+                txns.setRealBetAmount(amt);
                 //真实返还金额,游戏赢分
-                txns.setRealWinAmount(jsonObject.getBigDecimal("amt"));
+                txns.setRealWinAmount(amt);
                 //返还金额 (包含下注金额)
                 //赌注的结果 : 赢:0,输:1,平手:2
                 int resultTyep;
                 //有效投注金额 或 投注面值
-                txns.setTurnover(jsonObject.getBigDecimal("amt"));
+                txns.setTurnover(amt);
                 //操作名称
                 txns.setMethod("Place Bet");
                 txns.setStatus("Running");
@@ -207,6 +217,11 @@ public class KmCallbackServiceImpl implements KmCallbackService {
         if (array.size() > 0) {
             for (int i = 0; i < array.size(); i++) {
                 JSONObject json = array.getJSONObject(i);
+                logger.info("kmCreditCallback json=="+i+":{}", JSONObject.toJSONString(json));
+                BigDecimal amt = json.getBigDecimal("amt");
+                if(null==amt){
+                    amt = BigDecimal.ZERO;
+                }
                 MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(json.getString("userid"));
                 BigDecimal balance = memBaseinfo.getBalance();
                 JSONObject dataJson = new JSONObject();
@@ -248,7 +263,7 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                                 betBigDecimal = txns.getBetAmount();
                             }
                         }
-                        if (json.getBigDecimal("amt").compareTo(betBigDecimal) == -1) {
+                        if (amt.compareTo(betBigDecimal) == -1) {
                             BigDecimal money = addBigDecimal.subtract(betBigDecimal);
                             balance = balance.add(money);
                             gameCommonService.updateUserBalance(memBaseinfo, money, GoldchangeEnum.REFUND, TradingEnum.INCOME);
@@ -267,8 +282,10 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                             jsonArray.add(dataJson);
                             continue;
                         }
-                        balance = balance.add(jsonObject.getBigDecimal("amt"));
-                        gameCommonService.updateUserBalance(memBaseinfo, jsonObject.getBigDecimal("amt"), GoldchangeEnum.DSFYXZZ, TradingEnum.INCOME);
+                        if (amt.compareTo(BigDecimal.ZERO) != 0) {
+                            balance = balance.add(amt);
+                            gameCommonService.updateUserBalance(memBaseinfo, amt, GoldchangeEnum.DSFYXZZ, TradingEnum.INCOME);
+                        }
                     }
 
                 } else {
@@ -281,8 +298,10 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                         jsonArray.add(dataJson);
                         continue;
                     }
-                    balance = balance.add(json.getBigDecimal("amt"));
-                    gameCommonService.updateUserBalance(memBaseinfo, jsonObject.getBigDecimal("amt"), GoldchangeEnum.DSFYXZZ, TradingEnum.INCOME);
+                    if (amt.compareTo(BigDecimal.ZERO) != 0) {
+                        balance = balance.add(amt);
+                        gameCommonService.updateUserBalance(memBaseinfo, amt, GoldchangeEnum.DSFYXZZ, TradingEnum.INCOME);
+                    }
                 }
 
                 Txns txns = new Txns();
@@ -295,18 +314,18 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                 //平台代码
                 txns.setPlatform("KingMaker");
                 //下注金额
-                txns.setBetAmount(jsonObject.getBigDecimal("amt"));
+                txns.setBetAmount(amt);
                 //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
-                txns.setWinningAmount(jsonObject.getBigDecimal("amt"));
+                txns.setWinningAmount(amt);
                 //真实下注金额,需增加在玩家的金额
-                txns.setRealBetAmount(jsonObject.getBigDecimal("amt"));
+                txns.setRealBetAmount(amt);
                 //真实返还金额,游戏赢分
-                txns.setRealWinAmount(jsonObject.getBigDecimal("amt"));
+                txns.setRealWinAmount(amt);
                 //返还金额 (包含下注金额)
                 //赌注的结果 : 赢:0,输:1,平手:2
                 int resultTyep;
                 //有效投注金额 或 投注面值
-                txns.setTurnover(jsonObject.getBigDecimal("amt"));
+                txns.setTurnover(amt);
                 //操作名称
                 txns.setMethod("Place Bet");
                 txns.setStatus("Running");
