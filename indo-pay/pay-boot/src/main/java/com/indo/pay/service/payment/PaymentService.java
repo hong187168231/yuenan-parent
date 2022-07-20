@@ -22,14 +22,19 @@ import com.indo.pay.pojo.resp.BasePayResp;
 import com.indo.pay.pojo.resp.EasyPayResp;
 import com.indo.pay.pojo.resp.HuaRenPayResp;
 import com.indo.pay.pojo.resp.SevenPayResp;
+import com.indo.pay.pojo.vo.PayWayVO;
+import com.indo.pay.service.IPayWayService;
 import com.indo.pay.service.IRechargeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * @author puff
@@ -49,7 +54,10 @@ public class PaymentService {
 
     @Autowired
     private IRechargeService rechargeService;
+    @Autowired
+    private IPayWayService payWayService;
 
+    private static final String DEFAULT_PAY_WAY = "h5";
 
     public Result paymentRequestByUser(LoginInfo loginInfo, RechargeReq rechargeReq, HttpServletRequest request) {
         Result result;
@@ -174,8 +182,8 @@ public class PaymentService {
             req.setSecretKey(payChannel.getSecretKey());
             req.setMerchantOrderNo(GeneratorIdUtil.generateId());
             req.setPayChannelId(payChannel.getPayChannelId());
-            req.setPayWayId(payWay.getPayWayId());
-            req.setTradeAmount(rechargeReq.getAmount());
+            req.setPayWayId(Objects.nonNull(payWay.getPayWayId()) ? payWay.getPayWayId() : getDefaultPayWayId(loginInfo, payChannel.getPayChannelId()));
+            req.setTradeAmount(rechargeReq.getAmount().setScale(4));
             req.setType(rechargeReq.getPayBankCode());
             // 支付请求
             SevenPayResp sevenPayResp = sevenOnlinePaymentService.onlinePayment(req, SevenPayResp.class);
@@ -188,6 +196,25 @@ public class PaymentService {
             log.error("paylog 777支付 创建订单失败 {} 777Pay {}", this.getClass().getName(), JSON.toJSONString(req), e);
         }
         return Result.failed("777支付失败");
+    }
+
+    /**
+     * 默认H5支付方式
+     * @param loginInfo
+     * @param payChannelId
+     * @return
+     */
+    private Long getDefaultPayWayId(LoginInfo loginInfo, Long payChannelId) {
+        List<PayWayVO> payWayVoList = payWayService.wayList(loginInfo, payChannelId);
+        if (CollectionUtils.isEmpty(payWayVoList)) {
+            return null;
+        }
+        for (PayWayVO vo : payWayVoList) {
+            if (DEFAULT_PAY_WAY.equals(vo.getWayName())) {
+                return vo.getPayWayId();
+            }
+        }
+        return null;
     }
 
 }
