@@ -11,14 +11,7 @@ import com.indo.common.utils.DateUtils;
 import com.indo.common.utils.StringUtils;
 import com.indo.game.common.util.PPHashAESEncrypt;
 import com.indo.game.mapper.TxnsMapper;
-import com.indo.game.pojo.dto.pp.PpAuthenticateCallBackReq;
-import com.indo.game.pojo.dto.pp.PpBalanceCallBackReq;
-import com.indo.game.pojo.dto.pp.PpBetCallBackReq;
-import com.indo.game.pojo.dto.pp.PpBonusWinCallBackReq;
-import com.indo.game.pojo.dto.pp.PpJackpotWinCallBackReq;
-import com.indo.game.pojo.dto.pp.PpPromoWinCallBackReq;
-import com.indo.game.pojo.dto.pp.PpRefundWinCallBackReq;
-import com.indo.game.pojo.dto.pp.PpResultCallBackReq;
+import com.indo.game.pojo.dto.pp.*;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.game.pojo.entity.manage.GameCategory;
 import com.indo.game.pojo.entity.manage.GameParentPlatform;
@@ -297,6 +290,18 @@ public class PpCallbackServiceImpl implements PpCallbackService {
                     gameCommonService.updateUserBalance(memBaseinfo, settledAmount.abs(), GoldchangeEnum.SETTLE, TradingEnum.SPENDING);
                 }
             }
+            BigDecimal promoWinAmount = ppResultCallBackReq.getPromoWinAmount();
+            if(null!=promoWinAmount&&promoWinAmount.compareTo(BigDecimal.ZERO)!=0) {
+                // 会员余额
+                balance = balance.add(promoWinAmount);
+                settledAmount =  settledAmount.add(promoWinAmount);
+                if(promoWinAmount.compareTo(BigDecimal.ZERO)==1) {//赢
+                    // 更新玩家余额
+                    gameCommonService.updateUserBalance(memBaseinfo, promoWinAmount, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
+                }else {
+                    gameCommonService.updateUserBalance(memBaseinfo, promoWinAmount.abs(), GoldchangeEnum.SETTLE, TradingEnum.SPENDING);
+                }
+            }
             // 查询用户请求订单
             List<Txns> oldTxnsList = getTxnsByRoundld(ppResultCallBackReq.getRoundId(), memBaseinfo.getAccount());
             BigDecimal betAmount = BigDecimal.ZERO;
@@ -422,7 +427,7 @@ public class PpCallbackServiceImpl implements PpCallbackService {
 //            }
 
             // 查询用户请求订单
-//            Txns txns = getTxns(ppBonusWinCallBackReq.getReference(), memBaseinfo.getAccount());
+//            Txns txns = getTxnsByBonusCode(ppBonusWinCallBackReq.getBonusCode(), memBaseinfo.getAccount());
 //            if (null != txns) {
 //                return initSuccessResponse(ppBonusWinCallBackReq.getReference(), platformGameParent.getCurrencyType(), balance);
 //            }
@@ -443,6 +448,7 @@ public class PpCallbackServiceImpl implements PpCallbackService {
 //            txns.setCurrency(platformGameParent.getCurrencyType());
 //            txns.setGameInfo(ppBonusWinCallBackReq.getGameId());
 //            txns.setRoundId(ppBonusWinCallBackReq.getRoundId());
+//            txns.setRePlatformTxId(ppBonusWinCallBackReq.getBonusCode());
 //            //游戏平台的下注项目
 //            txns.setBetType(ppBonusWinCallBackReq.getGameId());
 //            // 奖金游戏
@@ -553,7 +559,7 @@ public class PpCallbackServiceImpl implements PpCallbackService {
             }
 
             // 查询用户请求订单
-            Txns txns = getTxns(ppJackpotWinCallBackReq.getReference(), memBaseinfo.getAccount());
+            Txns txns = getTxnsJackpotWin(ppJackpotWinCallBackReq.getReference(), memBaseinfo.getAccount());
             if (null != txns) {
                 return initSuccessResponse(ppJackpotWinCallBackReq.getReference(), platformGameParent.getCurrencyType(), balance);
             }
@@ -767,6 +773,21 @@ public class PpCallbackServiceImpl implements PpCallbackService {
         }
     }
 
+    //实时结束游戏回合的交易
+    @Override
+    public Object endRound(PpEndRoundCallBackReq ppEndRoundCallBackReq, String ip) {
+        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(ppEndRoundCallBackReq.getUserId());
+        JSONObject json = initSuccessResponse();
+        if (null == memBaseinfo) {
+            return initFailureResponse(2, "玩家不存在",json);
+        }
+        // 会员余额
+        BigDecimal balance = memBaseinfo.getBalance();
+        json.put("cash", balance);
+        json.put("bonus", BigDecimal.ZERO);
+        return json;
+    }
+
     // 退款
     @Override
     public Object refund(PpRefundWinCallBackReq ppRefundWinCallBackReq, String ip) {
@@ -845,7 +866,136 @@ public class PpCallbackServiceImpl implements PpCallbackService {
         // 与哈希参数对比。如果失败，娱乐场运营商应发送错误代码5
         return StringUtils.isBlank(reqHash) || !reqHash.equals(reqParamHash);
     }
+    // 系统将向娱乐场运营商发送玩家需要调整的余额金额
+    @Override
+    public Object adjustment(PpAdjustmentCallBackReq ppAdjustmentCallBackReq, String ip) {
+        logger.info("pp_adjustment  ppGame paramJson:{}, ip:{}", JSONObject.toJSONString(ppAdjustmentCallBackReq), ip);
+        GameParentPlatform platformGameParent = getGameParentPlatform();
+        JSONObject json = initSuccessResponse(ppAdjustmentCallBackReq.getReference(), platformGameParent.getCurrencyType(), BigDecimal.ZERO);
 
+        // 请求参数与哈希参数对比。如果失败，娱乐场运营商应发送错误代码5
+        if (checkReqHash(ppAdjustmentCallBackReq, ppAdjustmentCallBackReq.getHash())) {
+            return initFailureResponse(5, "请求参数非法",json);
+        }
+
+        // 校验IP
+        if (checkIp(ip, platformGameParent)) {
+            return initFailureResponse(5, "非信任來源IP",json);
+        }
+
+        try {
+            MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(ppAdjustmentCallBackReq.getUserId());
+            if (null == memBaseinfo) {
+                return initFailureResponse(2, "玩家不存在", json);
+            }
+            // 会员余额
+            BigDecimal balance = memBaseinfo.getBalance();
+            GamePlatform gamePlatform;
+            if ("Y".equals(OpenAPIProperties.PP_IS_PLATFORM_LOGIN)) {
+                gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platformGameParent.getPlatformCode(), platformGameParent.getPlatformCode());
+            } else {
+                gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(ppAdjustmentCallBackReq.getGameId(), platformGameParent.getPlatformCode());
+
+            }
+            if (null == gamePlatform) {
+                json.put("cash", balance);
+                return initFailureResponse(3, "游戏不存在",json);
+            }
+            GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
+
+
+            // 下注金额
+            BigDecimal betAmount = ppAdjustmentCallBackReq.getAmount();
+
+            // 查询用户请求订单
+            Txns oldTxns = getTxns(ppAdjustmentCallBackReq.getReference(), memBaseinfo.getAccount());
+            if (null != oldTxns) {
+                json.put("cash", balance);
+                return json;
+            }
+
+            // 下注金额小于0
+            if (betAmount.compareTo(BigDecimal.ZERO) < 0) {//调整金额小于0
+                if (balance.compareTo(betAmount.abs()) < 0) {
+                    json.put("cash", balance);
+                    return initFailureResponse(1, "玩家余额不足", json);
+                }
+                gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.SETTLE, TradingEnum.SPENDING);
+            }else {
+                // 更新玩家余额
+                gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
+            }
+            balance = balance.add(betAmount);
+
+
+            Txns txns = new Txns();
+            //游戏商注单号
+            txns.setPlatformTxId(ppAdjustmentCallBackReq.getReference());
+            //此交易是否是投注 true是投注 false 否
+            txns.setBet(true);
+            //玩家 ID
+            txns.setUserId(memBaseinfo.getAccount());
+            //玩家货币代码
+            txns.setCurrency(platformGameParent.getCurrencyType());
+            txns.setRoundId(ppAdjustmentCallBackReq.getRoundId());
+            //平台代码
+            txns.setPlatform(platformGameParent.getPlatformCode());
+            //平台名称
+            txns.setPlatformEnName(platformGameParent.getPlatformEnName());
+            txns.setPlatformCnName(platformGameParent.getPlatformCnName());
+            if (null!=gamePlatform){
+                //平台游戏类型
+                txns.setGameType(gameCategory.getGameType());
+                //游戏分类ID
+                txns.setCategoryId(gameCategory.getId());
+                //游戏分类名称
+                txns.setCategoryName(gameCategory.getGameName());
+                //平台游戏代码
+                txns.setGameCode(gamePlatform.getPlatformCode());
+                //游戏名称
+                txns.setGameName(gamePlatform.getPlatformEnName());
+            }
+            //下注金额
+            txns.setBetAmount(ppAdjustmentCallBackReq.getAmount());
+            //游戏平台的下注项目
+            txns.setBetType(ppAdjustmentCallBackReq.getGameId());
+            //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
+            txns.setWinningAmount(ppAdjustmentCallBackReq.getAmount());
+            //玩家下注时间
+            txns.setBetTime(DateUtils.formatByLong(ppAdjustmentCallBackReq.getTimestamp(), DateUtils.newFormat));
+            //真实下注金额,需增加在玩家的金额
+            txns.setRealBetAmount(ppAdjustmentCallBackReq.getAmount());
+            //真实返还金额,游戏赢分
+            txns.setRealWinAmount(BigDecimal.ZERO);
+            //返还金额 (包含下注金额)
+            //赌注的结果 : 赢:0,输:1,平手:2
+            //有效投注金额 或 投注面值
+            txns.setTurnover(ppAdjustmentCallBackReq.getAmount());
+            //辨认交易时间依据
+            txns.setTxTime(DateUtils.formatByLong(ppAdjustmentCallBackReq.getTimestamp(), DateUtils.newFormat));
+            //操作名称
+            txns.setMethod("Settle");
+            txns.setStatus("Running");
+            //余额
+            txns.setBalance(balance);
+            //创建时间
+            String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
+            txns.setCreateTime(dateStr);
+            //投注 IP
+            txns.setBetIp(ip);//  string 是 投注 IP
+            int num = txnsMapper.insert(txns);
+            if (num <= 0) {
+                return initFailureResponse(100, "订单入库请求失败",json);
+            }
+
+            json.put("cash", balance);
+            return json;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return initFailureResponse(100, e.getMessage(),json);
+        }
+
+    }
     /**
      * 获取历史订单
      *
@@ -858,8 +1008,32 @@ public class PpCallbackServiceImpl implements PpCallbackService {
         wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet")
                 .or().eq(Txns::getMethod, "Cancel Bet")
                 .or().eq(Txns::getMethod, "Settle"));
-        wrapper.eq(Txns::getStatus, "Running");
+        wrapper.and(c -> c.eq(Txns::getStatus, "Running")
+                .or().eq(Txns::getStatus, "Settle"));
         wrapper.eq(Txns::getPlatformTxId, reference);
+        wrapper.eq(Txns::getPlatform, OpenAPIProperties.PP_PLATFORM_CODE);
+        wrapper.eq(Txns::getUserId, userId);
+        return txnsMapper.selectOne(wrapper);
+    }
+
+    private Txns getTxnsJackpotWin(String reference, String userId) {
+        LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Txns::getMethod, "Settle");
+        wrapper.and(c -> c.eq(Txns::getStatus, "Running")
+                .or().eq(Txns::getStatus, "Settle"));
+        wrapper.eq(Txns::getPlatformTxId, reference);
+        wrapper.eq(Txns::getPlatform, OpenAPIProperties.PP_PLATFORM_CODE);
+        wrapper.eq(Txns::getUserId, userId);
+        return txnsMapper.selectOne(wrapper);
+    }
+
+    private Txns getTxnsByBonusCode(String bonusCode, String userId) {
+        LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+        wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet")
+                .or().eq(Txns::getMethod, "Cancel Bet")
+                .or().eq(Txns::getMethod, "Settle"));
+        wrapper.eq(Txns::getStatus, "Running");
+        wrapper.eq(Txns::getRePlatformTxId, bonusCode);
         wrapper.eq(Txns::getPlatform, OpenAPIProperties.PP_PLATFORM_CODE);
         wrapper.eq(Txns::getUserId, userId);
         return txnsMapper.selectOne(wrapper);

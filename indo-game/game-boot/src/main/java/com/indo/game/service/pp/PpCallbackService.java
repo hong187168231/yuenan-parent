@@ -1,13 +1,6 @@
 package com.indo.game.service.pp;
 
-import com.indo.game.pojo.dto.pp.PpAuthenticateCallBackReq;
-import com.indo.game.pojo.dto.pp.PpBalanceCallBackReq;
-import com.indo.game.pojo.dto.pp.PpBetCallBackReq;
-import com.indo.game.pojo.dto.pp.PpBonusWinCallBackReq;
-import com.indo.game.pojo.dto.pp.PpJackpotWinCallBackReq;
-import com.indo.game.pojo.dto.pp.PpPromoWinCallBackReq;
-import com.indo.game.pojo.dto.pp.PpRefundWinCallBackReq;
-import com.indo.game.pojo.dto.pp.PpResultCallBackReq;
+import com.indo.game.pojo.dto.pp.*;
 
 public interface PpCallbackService {
 
@@ -63,6 +56,14 @@ public interface PpCallbackService {
      */
     Object promoWin(PpPromoWinCallBackReq ppPromoWinCallBackReq, String ip);
 
+    /**
+     * 每次一个游戏回合结束时，Pragmatic Play 系统都将调用 EndRound 方法，以便运营商能够在自己一侧实时结束游戏回合的交易
+     * @param ppEndRoundCallBackReq
+     * @param ip
+     * @return
+     */
+    public Object endRound(PpEndRoundCallBackReq ppEndRoundCallBackReq, String ip);
+
 
     /**
      * 玩家退款
@@ -71,4 +72,12 @@ public interface PpCallbackService {
      * @return
      */
     Object refund(PpRefundWinCallBackReq ppRefundWinCallBackReq, String ip);
+
+    /**
+     *系统将向娱乐场运营商发送玩家需要调整的余额金额
+     * @param ppAdjustmentCallBackReq
+     * @param ip
+     * @return
+     */
+    public Object adjustment(PpAdjustmentCallBackReq ppAdjustmentCallBackReq, String ip);
 }

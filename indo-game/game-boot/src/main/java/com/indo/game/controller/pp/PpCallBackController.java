@@ -3,14 +3,7 @@ package com.indo.game.controller.pp;
 import com.alibaba.fastjson.JSONObject;
 import com.indo.common.annotation.AllowAccess;
 import com.indo.common.utils.IPAddressUtil;
-import com.indo.game.pojo.dto.pp.PpAuthenticateCallBackReq;
-import com.indo.game.pojo.dto.pp.PpBalanceCallBackReq;
-import com.indo.game.pojo.dto.pp.PpBetCallBackReq;
-import com.indo.game.pojo.dto.pp.PpBonusWinCallBackReq;
-import com.indo.game.pojo.dto.pp.PpJackpotWinCallBackReq;
-import com.indo.game.pojo.dto.pp.PpPromoWinCallBackReq;
-import com.indo.game.pojo.dto.pp.PpRefundWinCallBackReq;
-import com.indo.game.pojo.dto.pp.PpResultCallBackReq;
+import com.indo.game.pojo.dto.pp.*;
 import com.indo.game.service.pp.PpCallbackService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -133,7 +126,20 @@ public class PpCallBackController {
         logger.info("ppCallBack refund 回调退款返回数据 params:{}", object);
         return object;
     }
+    /**
+     * 每次一个游戏回合结束时，Pragmatic Play 系统都将调用 EndRound 方法，以便运营商能够在自己一侧实时结束游戏回合的交易
+     */
+    @RequestMapping(value = "/EndRound", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    @AllowAccess
+    public Object endRound(PpEndRoundCallBackReq ppEndRoundCallBackReq, HttpServletRequest request) {
 
+        String ip = IPAddressUtil.getIpAddress(request);
+        logger.info("ppCallBack endRound 回调实时结束游戏回合的交易,params:{}", JSONObject.toJSONString(ppEndRoundCallBackReq));
+        Object object = ppCallbackService.endRound(ppEndRoundCallBackReq, ip);
+        logger.info("ppCallBack endRound 回调实时结束游戏回合的交易返回数据 params:{}", object);
+        return object;
+    }
     /**
      * 退款到玩家余额。此方法用于在游戏无法结束时取消赌注。 Refund
      */
@@ -149,4 +155,18 @@ public class PpCallBackController {
         return object;
     }
 
+    /**
+     * 娱乐场运营商将根据该请求来更改玩家余额，然后返回更新后的余额。如果请求的金额为负并且玩家余额不足，运营商应返回错误代码 1，表示“余额不足”。
+     */
+    @RequestMapping(value = "/adjustment.html", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    @AllowAccess
+    public Object adjustment(PpAdjustmentCallBackReq ppAdjustmentCallBackReq, HttpServletRequest request) {
+
+        String ip = IPAddressUtil.getIpAddress(request);
+        logger.info("ppCallBack refund 更改玩家余额回调,params:{}", JSONObject.toJSONString(ppAdjustmentCallBackReq));
+        Object object = ppCallbackService.adjustment(ppAdjustmentCallBackReq, ip);
+        logger.info("ppCallBack refund 更改玩家余额返回数据 params:{}", object);
+        return object;
+    }
 }

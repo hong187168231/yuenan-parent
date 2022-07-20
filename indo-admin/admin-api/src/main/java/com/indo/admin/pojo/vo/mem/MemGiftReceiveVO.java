@@ -29,7 +29,7 @@ public class MemGiftReceiveVO {
     private String giftCode;
 
     @ApiModelProperty(value = "礼金名称")
-    private Integer giftName;
+    private String giftName;
 
     @ApiModelProperty(value = "礼金金额")
     private Integer giftAmount;
