@@ -108,7 +108,7 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             if (null != oldTxns) {
                 StringBuilder builder = new StringBuilder();
                 builder.append("error_code=0\n");
-                builder.append("error_message=No error\n");
+                builder.append("error_message=repeated submit\n");
                 builder.append("trx_id=").append(paySerialno).append("\n");
                 builder.append("balance=").append(balance);
                 return builder.toString();
@@ -244,7 +244,7 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             // req_id 查询是否存在
             Txns oldReqTxnsReserve = getDebitReserveTxns(gameParentPlatform, paySerialno, reqId);
             if (null != oldReqTxnsReserve) {
-                return initFailureResponse(0, "req_id is already debit",balance,paySerialno);
+                return initFailureResponse(0, "repeated submit",balance,paySerialno);
             }
 
             // // 写入新的debit订单，用于后续commit进行下注金额比对
@@ -301,7 +301,7 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             if (null != oldTxnsCancelReserveTxns) {
                 StringBuilder builder = new StringBuilder();
                 builder.append("error_code=0\n");
-                builder.append("error_message=").append("Reserve was not found").append("\n");
+                builder.append("error_message=").append("repeated submit").append("\n");
                 builder.append("balance=").append(balance);
                 return builder.toString();
             }
@@ -374,7 +374,7 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             if (null != oldTxnsCommitReserve) {
                 StringBuilder builder = new StringBuilder();
                 builder.append("error_code=0\n");
-                builder.append("error_message=No error\n");
+                builder.append("error_message=repeated submit\n");
                 builder.append("trx_id=").append(paySerialno).append("\n");
                 builder.append("balance=").append(balance);
                 return builder.toString();
@@ -564,7 +564,7 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             if (null != oldTxns) {
                 StringBuilder builder = new StringBuilder();
                 builder.append("error_code=0\n");
-                builder.append("error_message=No error\n");
+                builder.append("error_message=No errorrepeated submit\n");
                 builder.append("trx_id=").append(reqId).append("\n");
                 builder.append("balance=").append(balance);
                 return builder.toString();
