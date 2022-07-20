@@ -53,7 +53,9 @@ public class MsgController {
 
     @ApiOperation(value = "系统消息接口", httpMethod = "GET")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "deviceType", value = "设备类型:1ios,2android ", paramType = "query", dataType = "int", required = true)
+            @ApiImplicitParam(name = "deviceType", value = "设备类型:1ios,2android ", paramType = "query", dataType = "int", required = true),
+            @ApiImplicitParam(name = "page", value = "页码", paramType = "query", dataType = "Long"),
+            @ApiImplicitParam(name = "limit", value = "每页数量", paramType = "query", dataType = "Long")
     })
     @GetMapping(value = "/sys")
     public Result<Page<MsgPushRecordVO>> register(@RequestParam MsgPushRecordDto msgPushRecordDto, @LoginUser LoginInfo loginInfo) {
