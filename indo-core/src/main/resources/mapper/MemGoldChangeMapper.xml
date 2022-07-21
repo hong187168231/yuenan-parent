@@ -9,7 +9,7 @@
             CASE
                 WHEN m.balance + #{balance} < 0 THEN
                     m.balance + #{balance}
-                WHEN m.balance + #{balance} > 0 THEN
+                WHEN m.balance + #{balance} >= 0 THEN
                     m.balance + #{balance}
                 END
             ),
@@ -17,7 +17,7 @@
                 CASE
                     WHEN m.can_amount + #{canAmount} > 0 THEN
                         m.can_amount + #{canAmount}
-                    WHEN m.can_amount + #{canAmount} < 0 THEN
+                    WHEN m.can_amount + #{canAmount} <= 0 THEN
                         m.can_amount + #{canAmount}
                     END
                 ),
@@ -25,8 +25,7 @@
                 CASE
                     WHEN m.total_bet + #{betAmount} > 0 THEN
                         m.total_bet + #{betAmount}
-                    END
-                    WHEN m.total_bet + #{betAmount} < 0 THEN
+                    WHEN m.total_bet + #{betAmount} <= 0 THEN
                         m.total_bet + #{betAmount}
                     END
                 ),
@@ -34,8 +33,7 @@
                 CASE
                     WHEN m.total_deposit + #{rechargeAmount} > 0 THEN
                         m.total_deposit + #{rechargeAmount}
-                    END
-                    WHEN m.total_deposit + #{rechargeAmount} < 0 THEN
+                    WHEN m.total_deposit + #{rechargeAmount} <= 0 THEN
                         m.total_deposit + #{rechargeAmount}
                     END
                 ),
@@ -43,8 +41,7 @@
                 CASE
                     WHEN m.total_enchashment + #{cashAmount} > 0 THEN
                         m.total_enchashment + #{cashAmount}
-                    END
-                    WHEN m.total_enchashment + #{cashAmount} < 0 THEN
+                    WHEN m.total_enchashment + #{cashAmount} <= 0 THEN
                         m.total_enchashment + #{cashAmount}
                     END
                 ),
@@ -52,7 +49,6 @@
                 CASE
                     WHEN m.total_deposit + #{rechargeAmount} > 0 THEN
                         m.deposit_num + 1
-                    END
                     WHEN m.total_deposit + #{rechargeAmount} < 0 THEN
                         m.deposit_num + 1
                     END
@@ -61,7 +57,6 @@
                 CASE
                     WHEN m.total_enchashment + #{cashAmount} > 0 THEN
                         m.deposit_num + 1
-                    END
                     WHEN m.total_enchashment + #{cashAmount} < 0 THEN
                         m.deposit_num + 1
                     END
