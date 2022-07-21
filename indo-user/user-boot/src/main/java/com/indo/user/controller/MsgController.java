@@ -58,7 +58,7 @@ public class MsgController {
             @ApiImplicitParam(name = "limit", value = "每页数量", paramType = "query", dataType = "Long")
     })
     @GetMapping(value = "/sys")
-    public Result<Page<MsgPushRecordVO>> register(@RequestParam MsgPushRecordDto msgPushRecordDto, @LoginUser LoginInfo loginInfo) {
+    public Result<Page<MsgPushRecordVO>> register(MsgPushRecordDto msgPushRecordDto, @LoginUser LoginInfo loginInfo) {
       return Result.success(msgStatusRecordService.findSysMsgInfoPage(msgPushRecordDto,loginInfo));
     }
 
