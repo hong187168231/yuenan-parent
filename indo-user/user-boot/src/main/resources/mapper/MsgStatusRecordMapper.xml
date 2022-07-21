@@ -24,7 +24,8 @@
         SELECT
         mpr.id as id,
         mpr.title as title,
-        mpr.content as content
+        mpr.content as content,
+        mpr.create_time as createTime
         FROM msg_push_record mpr
         LEFT JOIN msg_status_record msr on msr.msg_id=mpr.id and msr.mem_id=#{memId}
         WHERE

@@ -13,4 +13,7 @@ public class MsgPushRecordVO {
 
     @ApiModelProperty(value = "内容")
     private String content;
+
+    @ApiModelProperty(value = "创建时间")
+    private String createTime;
 }
