@@ -53,11 +53,11 @@ public class CodeGenerator {
 
         // 数据源配置
         DataSourceConfig dsc = new DataSourceConfig();
-        dsc.setUrl("jdbc:mysql://45.207.61.53:3306/indo-synthesis?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=UTC");
+        dsc.setUrl("jdbc:mysql://103.97.124.215:3306/blockchain_test?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=UTC");
         // dsc.setSchemaName("public");
         dsc.setDriverName("com.mysql.cj.jdbc.Driver");
-        dsc.setUsername("root");
-        dsc.setPassword("IQ8yj4pmhO&s");
+        dsc.setUsername("blockchain_test");
+        dsc.setPassword("ZXSjtMECcbmhjNNE");
         mpg.setDataSource(dsc);
 
         // 包配置
