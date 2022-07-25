@@ -294,7 +294,7 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(userName);
             BigDecimal balance = memBaseinfo.getBalance();
             if (null == memBaseinfo) {
-                return initFailureResponse(-2, "用户不存在");
+                return initFailureResponse(-2, "用户不存在",balance,paySerialno);
             }
 // reserve_id 查询是否存在
             Txns oldTxnsCancelReserveTxns = getCancelReserveTxns(platformGameParent, paySerialno);
@@ -316,7 +316,7 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             }
 
             // 回退金额（预扣款注单下注金额）
-            BigDecimal betAmount = oldTxns.getAmount();
+            BigDecimal betAmount = oldTxns.getBetAmount();
             if(betAmount.compareTo(BigDecimal.ZERO)!=0) {
                 balance = memBaseinfo.getBalance().add(betAmount);
                 // 会员退款
@@ -382,7 +382,7 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             // reserve_id 查询是否存在
             Txns oldTxnsReserve = getReserveTxns(gameParentPlatform, paySerialno);
             if (null == oldTxnsReserve) {
-                return initFailureResponse(0, "reserve_id not found");
+                return initFailureResponse(0, "reserve_id not found",balance,paySerialno);
             }
 
             // 预扣款金额
@@ -449,10 +449,19 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             if (null == memBaseinfo) {
                 return initFailureResponse(0, "用户不存在");
             }
+            BigDecimal balance = memBaseinfo.getBalance();
+            Txns oldTxns = this.creditCustomerReserve(gameParentPlatform,reqId);
+            if(null!=oldTxns){
+                StringBuilder builder = new StringBuilder();
+                builder.append("error_code=0\n");
+                builder.append("error_message=No error\n");
+                builder.append("trx_id=").append(reqId).append("\n");
+                builder.append("balance=").append(balance);
+                return builder.toString();
+            }
 
             // 扣款
             BigDecimal betAmount = btiDebitCustomerRequst.getAmount();
-            BigDecimal balance = memBaseinfo.getBalance();
 
             GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(gameParentPlatform.getPlatformCode(),gameParentPlatform.getPlatformCode());
             GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
