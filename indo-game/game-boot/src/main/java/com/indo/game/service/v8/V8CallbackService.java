@@ -13,7 +13,7 @@ public interface V8CallbackService {
      * @param ip ip
      * @return object
      */
-    Object getBalance(String agent, String timestamp, String account, String key, String ip);
+    Object getBalance(String agent, String timestamp, String account, String key, String ip,int s);
 
     /**
      * 上分金额
@@ -25,5 +25,11 @@ public interface V8CallbackService {
      * @param ip ip
      * @return object
      */
-    Object debit(String agent, String timestamp, String account, String key, BigDecimal money, String ip);
+    Object debit(String agent, String timestamp, String account, String key, BigDecimal money, String ip,int s,String orderId,String gameNo);
+
+    Object settle(String agent, String timestamp, String account, String key, BigDecimal money, String ip,int s,String orderId,String gameNo);
+
+    Object queryStatus(String agent, String timestamp, String account, String key, String ip,int s,String orderId);
+
+    Object cancelBet(String agent, String timestamp, String account, String key, BigDecimal money,String ip,int s,String orderId);
 }

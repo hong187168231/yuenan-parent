@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.indo.common.config.OpenAPIProperties;
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
+import com.indo.common.redis.utils.GeneratorIdUtil;
 import com.indo.common.utils.DateUtils;
 import com.indo.common.utils.StringUtils;
 import com.indo.game.mapper.TxnsMapper;
@@ -703,7 +704,7 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
      */
     private Txns commitReserve(GameParentPlatform gameParentPlatform, String paySerialno) {
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
-        wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet"));
+        wrapper.eq(Txns::getMethod, "Place Bet");
         wrapper.eq(Txns::getStatus, "Running");
         wrapper.eq(Txns::getPlatformTxId, paySerialno);
         wrapper.eq(Txns::getPlatform, gameParentPlatform.getPlatformCode());
@@ -799,5 +800,85 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
 
     private GameParentPlatform getGameParentPlatform() {
         return gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.BTI_PLATFORM_CODE);
+    }
+
+    @Override
+    public Object status(String token, String ip) {
+        try {
+
+            GameParentPlatform gameParentPlatform = getGameParentPlatform();
+
+            CptOpenMember cptOpenMember = externalService.quertCptOpenMember(token, gameParentPlatform.getPlatformCode());
+
+            if (null == cptOpenMember) {
+                StringBuilder builder = new StringBuilder();
+                builder.append("uid="+ GeneratorIdUtil.generateId()+"\n");
+                builder.append("token="+token+"\n");
+                builder.append("status=").append("anon").append("\n");
+                builder.append("message=").append("token 错误").append("\n");
+                builder.append("balance=").append(BigDecimal.ZERO).append("\n");
+
+                return builder.toString();
+            }
+            MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cptOpenMember.getUserName());
+            if (null == memBaseinfo) {
+                StringBuilder builder = new StringBuilder();
+                builder.append("uid="+ GeneratorIdUtil.generateId()+"\n");
+                builder.append("token="+token+"\n");
+                builder.append("status=").append("anon").append("\n");
+                builder.append("message=").append("用户不存在").append("\n");
+                builder.append("balance=").append(BigDecimal.ZERO).append("\n");
+
+                return builder.toString();
+            }
+
+            StringBuilder builder = new StringBuilder();
+            builder.append("uid="+ GeneratorIdUtil.generateId()+"\n");
+            builder.append("token="+token+"\n");
+            builder.append("status=").append("real").append("\n");
+            builder.append("message=").append("success").append("\n");
+            builder.append("balance=").append(memBaseinfo.getBalance()).append("\n");
+
+            return builder.toString();
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return initFailureResponse(-1, e.getMessage());
+        }
+    }
+
+    @Override
+    public Object refresh(String token, String ip) {
+        try {
+
+            GameParentPlatform gameParentPlatform = getGameParentPlatform();
+
+            CptOpenMember cptOpenMember = externalService.quertCptOpenMember(token, gameParentPlatform.getPlatformCode());
+            StringBuilder builder = new StringBuilder();
+            if (null == cptOpenMember) {
+                builder.append("status=").append("failure").append("\n");
+                builder.append("message=").append("token 错误").append("\n");
+                builder.append("balance=").append(BigDecimal.ZERO).append("\n");
+
+                return builder.toString();
+            }
+            MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cptOpenMember.getUserName());
+            if (null == memBaseinfo) {
+                builder.append("status=").append("failure").append("\n");
+                builder.append("message=").append("用户不存在").append("\n");
+                builder.append("balance=").append(BigDecimal.ZERO).append("\n");
+
+                return builder.toString();
+            }
+
+
+            builder.append("status=").append("success").append("\n");
+            builder.append("message=").append("success").append("\n");
+            builder.append("balance=").append(memBaseinfo.getBalance()).append("\n");
+
+            return builder.toString();
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return initFailureResponse(-1, e.getMessage());
+        }
     }
 }
