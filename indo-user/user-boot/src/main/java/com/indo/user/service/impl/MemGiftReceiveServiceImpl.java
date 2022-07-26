@@ -65,8 +65,8 @@ public class MemGiftReceiveServiceImpl extends ServiceImpl<MemGiftReceiveMapper,
         memGiftReceive.setGiftCode(req.getGiftNameEnum().name());
         memGiftReceive.setGiftName(req.getGiftNameEnum().getName());
         if (req.getGiftNameEnum().equals(GiftNameEnum.reward)) {
-            if (memLevel.getLevel() < 10) {
-                memGiftReceive.setUpLevel(memLevel.getLevel() + 1);
+            if (req.getLevel() < 10) {
+                memGiftReceive.setUpLevel(req.getLevel() + 1);
             } else {
                 return false;
             }
@@ -97,16 +97,10 @@ public class MemGiftReceiveServiceImpl extends ServiceImpl<MemGiftReceiveMapper,
             case vip:
                 checkVipGift(req, loginInfo);
                 break;
-            case register:
-                checkRegisterGift(loginInfo);
-                break;
-            case activity:
-                // todo
-                break;
-            case deposit:
-                // todo
-                break;
+            default:
+                throw new BizException("您不能领取该奖励");
         }
+
     }
 
     /**
