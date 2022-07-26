@@ -139,7 +139,7 @@ public class BtiCallbackController {
         return object;
     }
 
-    @RequestMapping(value = "/status", method = RequestMethod.GET,produces = "text/plain;charset=UTF-8")
+    @RequestMapping(value = "/status", method = RequestMethod.GET,produces = "application/json;charset=UTF-8")
     @AllowAccess
     public Object status(@RequestParam("token") String token, HttpServletRequest request) {
         String ip = IPAddressUtil.getIpAddress(request);
@@ -149,7 +149,7 @@ public class BtiCallbackController {
         return object;
     }
 
-    @RequestMapping(value = "/refresh", method = RequestMethod.GET,produces = "text/plain;charset=UTF-8")
+    @RequestMapping(value = "/refresh", method = RequestMethod.GET,produces = "application/json;charset=UTF-8")
     @AllowAccess
     public Object refresh(@RequestParam("token") String token, HttpServletRequest request) {
         String ip = IPAddressUtil.getIpAddress(request);
