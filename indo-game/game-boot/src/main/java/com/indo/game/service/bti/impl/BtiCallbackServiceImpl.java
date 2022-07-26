@@ -805,41 +805,35 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
     @Override
     public Object status(String token, String ip) {
         try {
-
+            JSONObject dataJson = new JSONObject();
             GameParentPlatform gameParentPlatform = getGameParentPlatform();
 
             CptOpenMember cptOpenMember = externalService.quertCptOpenMember(token, gameParentPlatform.getPlatformCode());
 
             if (null == cptOpenMember) {
-                StringBuilder builder = new StringBuilder();
-                builder.append("uid="+ GeneratorIdUtil.generateId()+"\n");
-                builder.append("token="+token+"\n");
-                builder.append("status=").append("anon").append("\n");
-                builder.append("message=").append("token 错误").append("\n");
-                builder.append("balance=").append(String.valueOf(BigDecimal.ZERO)).append("\n");
-
-                return builder.toString();
+                dataJson.put("uid",GeneratorIdUtil.generateId());
+                dataJson.put("token",token);
+                dataJson.put("status","anon");
+                dataJson.put("message","token 错误");
+                dataJson.put("balance",String.valueOf(BigDecimal.ZERO));
+                return dataJson;
             }
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cptOpenMember.getUserName());
             if (null == memBaseinfo) {
-                StringBuilder builder = new StringBuilder();
-                builder.append("uid="+ GeneratorIdUtil.generateId()+"\n");
-                builder.append("token="+token+"\n");
-                builder.append("status=").append("anon").append("\n");
-                builder.append("message=").append("用户不存在").append("\n");
-                builder.append("balance=").append(String.valueOf(BigDecimal.ZERO)).append("\n");
-
-                return builder.toString();
+                dataJson.put("uid",GeneratorIdUtil.generateId());
+                dataJson.put("token",token);
+                dataJson.put("status","anon");
+                dataJson.put("message","用户不存在");
+                dataJson.put("balance",String.valueOf(BigDecimal.ZERO));
+                return dataJson;
             }
 
-            StringBuilder builder = new StringBuilder();
-            builder.append("uid="+ GeneratorIdUtil.generateId()+"\n");
-            builder.append("token="+token+"\n");
-            builder.append("status=").append("real").append("\n");
-            builder.append("message=").append("success").append("\n");
-            builder.append("balance=").append(String.valueOf(memBaseinfo.getBalance())).append("\n");
-
-            return builder.toString();
+            dataJson.put("uid",GeneratorIdUtil.generateId());
+            dataJson.put("token",token);
+            dataJson.put("status","real");
+            dataJson.put("message","success");
+            dataJson.put("balance",String.valueOf(memBaseinfo.getBalance()));
+            return dataJson;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return initFailureResponse(-1, e.getMessage());
@@ -851,31 +845,26 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
         try {
 
             GameParentPlatform gameParentPlatform = getGameParentPlatform();
-
+            JSONObject dataJson = new JSONObject();
             CptOpenMember cptOpenMember = externalService.quertCptOpenMember(token, gameParentPlatform.getPlatformCode());
             StringBuilder builder = new StringBuilder();
             if (null == cptOpenMember) {
-                builder.append("status=").append("failure").append("\n");
-                builder.append("message=").append("token 错误").append("\n");
-                builder.append("balance=").append(String.valueOf(BigDecimal.ZERO)).append("\n");
-
-                return builder.toString();
+                dataJson.put("status","failure");
+                dataJson.put("message","token 错误");
+                dataJson.put("balance",String.valueOf(BigDecimal.ZERO));
+                return dataJson;
             }
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cptOpenMember.getUserName());
             if (null == memBaseinfo) {
-                builder.append("status=").append("failure").append("\n");
-                builder.append("message=").append("用户不存在").append("\n");
-                builder.append("balance=").append(String.valueOf(BigDecimal.ZERO)).append("\n");
-
-                return builder.toString();
+                dataJson.put("status","failure");
+                dataJson.put("message","用户不存在");
+                dataJson.put("balance",String.valueOf(BigDecimal.ZERO));
+                return dataJson;
             }
-
-
-            builder.append("status=").append("success").append("\n");
-            builder.append("message=").append("success").append("\n");
-            builder.append("balance=").append(String.valueOf(memBaseinfo.getBalance())).append("\n");
-
-            return builder.toString();
+            dataJson.put("status","success");
+            dataJson.put("message","success");
+            dataJson.put("balance",String.valueOf(memBaseinfo.getBalance()));
+            return dataJson;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return initFailureResponse(-1, e.getMessage());
