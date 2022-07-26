@@ -8,7 +8,7 @@ import lombok.Data;
 /**
  * 通道银行配置
  *
- * @author teman@cg.app
+ * @author justin
  * @since 1.0.0
  */
 @Data
