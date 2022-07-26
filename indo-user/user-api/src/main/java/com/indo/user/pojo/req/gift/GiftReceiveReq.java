@@ -25,4 +25,7 @@ public class GiftReceiveReq {
     @ApiModelProperty(value = "礼金金额", required = true)
     private Integer giftAmount;
 
+    @ApiModelProperty(value = "领取等级", required = true)
+    private Integer level;
+
 }

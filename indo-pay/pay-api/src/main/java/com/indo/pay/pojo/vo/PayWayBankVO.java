@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * @author teman@cg.app
+ * @author justin
  * @since 1.0.0
  */
 @Data

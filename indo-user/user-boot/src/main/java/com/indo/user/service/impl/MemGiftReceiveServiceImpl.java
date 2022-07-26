@@ -2,7 +2,10 @@ package com.indo.user.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.indo.common.enums.*;
+import com.indo.common.enums.GiftNameEnum;
+import com.indo.common.enums.GiftTypeEnum;
+import com.indo.common.enums.GoldchangeEnum;
+import com.indo.common.enums.TradingEnum;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.utils.DateUtils;
 import com.indo.common.web.exception.BizException;
@@ -11,7 +14,6 @@ import com.indo.core.pojo.entity.MemGiftReceive;
 import com.indo.core.pojo.entity.MemLevel;
 import com.indo.core.service.IMemGoldChangeService;
 import com.indo.user.mapper.MemGiftReceiveMapper;
-import com.indo.user.mapper.MemLevelMapper;
 import com.indo.user.pojo.req.gift.GiftReceiveReq;
 import com.indo.user.service.IMemGiftReceiveService;
 import com.indo.user.service.IMemLevelService;
@@ -119,35 +121,59 @@ public class MemGiftReceiveServiceImpl extends ServiceImpl<MemGiftReceiveMapper,
         MemLevel memLevel = memLevelService.getById(loginInfo.getMemLevel());
         switch (giftNameEnum) {
             case reward:
-                int count = countRewardReceive(memId, giftNameEnum.name(), memLevel.getLevel());
-                if (count > 0) {
-                    throw new BizException("您已领取过晋级奖励，请勿重复提交");
+                if (memLevel.getLevel() >= req.getLevel()) {
+                    int count = countRewardReceive(memId, giftNameEnum.name(), req.getLevel() + 1);
+                    if (count > 0) {
+                        throw new BizException("您已领取过晋级奖励，请勿重复提交");
+                    }
+                } else {
+                    throw new BizException("您不能领取该奖励");
                 }
                 break;
             case everyday:
-                int countToday = countTodayReceive(memId, giftNameEnum.name());
-                if (countToday > 0) {
-                    throw new BizException("您已领取过当日礼金，请勿重复提交");
+                if (memLevel.getLevel().equals(req.getLevel())) {
+                    int countToday = countTodayReceive(memId, giftNameEnum.name());
+                    if (countToday > 0) {
+                        throw new BizException("您已领取过当日礼金，请勿重复提交");
+                    }
+                } else {
+                    throw new BizException("您不能领取该奖励");
                 }
             case week:
-                int countWeek = countWeekReceive(memId, giftNameEnum.name());
-                if (countWeek > 0) {
-                    throw new BizException("您已领取过本周礼金，请勿重复提交");
+                if (memLevel.getLevel().equals(req.getLevel())) {
+                    int countWeek = countWeekReceive(memId, giftNameEnum.name());
+                    if (countWeek > 0) {
+                        throw new BizException("您已领取过本周礼金，请勿重复提交");
+                    }
+                } else {
+                    throw new BizException("您不能领取该奖励");
                 }
             case month:
-                int countMonth = countMonthReceive(memId, giftNameEnum.name());
-                if (countMonth > 0) {
-                    throw new BizException("您已领取过本月礼金，请勿重复提交");
+                if (memLevel.getLevel().equals(req.getLevel())) {
+                    int countMonth = countMonthReceive(memId, giftNameEnum.name());
+                    if (countMonth > 0) {
+                        throw new BizException("您已领取过本月礼金，请勿重复提交");
+                    }
+                } else {
+                    throw new BizException("您不能领取该奖励");
                 }
             case year:
-                int countYear = countYearReceive(memId, giftNameEnum.name());
-                if (countYear > 0) {
-                    throw new BizException("您已领取过本年礼金，请勿重复提交");
+                if (memLevel.getLevel().equals(req.getLevel())) {
+                    int countYear = countYearReceive(memId, giftNameEnum.name());
+                    if (countYear > 0) {
+                        throw new BizException("您已领取过本年礼金，请勿重复提交");
+                    }
+                } else {
+                    throw new BizException("您不能领取该奖励");
                 }
             case birthday:
-                int countBirthday = countBirthdayReceive(memId, giftNameEnum.name());
-                if (countBirthday > 0) {
-                    throw new BizException("您已领取过生日礼金，请勿重复提交");
+                if (memLevel.getLevel().equals(req.getLevel())) {
+                    int countBirthday = countBirthdayReceive(memId, giftNameEnum.name());
+                    if (countBirthday > 0) {
+                        throw new BizException("您已领取过生日礼金，请勿重复提交");
+                    }
+                } else {
+                    throw new BizException("您不能领取该奖励");
                 }
                 break;
         }

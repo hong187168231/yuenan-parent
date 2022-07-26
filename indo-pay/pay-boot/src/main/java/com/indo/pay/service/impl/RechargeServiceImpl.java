@@ -72,21 +72,21 @@ public class RechargeServiceImpl extends SuperServiceImpl<RechargeMapper, PayRec
         if (ObjectUtil.isEmpty(payChannelConfig)) {
             throw new BizException("暂无充值渠道");
         }
-        PayWayConfig payWayCfg = iPayWayService.getPayWayById(rechargeReq.getPayWayId());
-        if (ObjectUtil.isEmpty(payWayCfg)) {
-            throw new BizException("暂无充值方式");
-        }
-        if (null != payWayCfg.getMinAmount() &&
-                rechargeReq.getAmount().intValue() < payWayCfg.getMinAmount()) {
-            throw new BizException("小于渠道最低充值金额");
-        }
-        if (null != payWayCfg.getMaxAmount() &&
-                rechargeReq.getAmount().intValue() > payWayCfg.getMaxAmount()) {
-            throw new BizException("大于渠道最高充值金额");
-        }
+//        PayWayConfig payWayCfg = iPayWayService.getPayWayById(rechargeReq.getPayWayId());
+//        if (ObjectUtil.isEmpty(payWayCfg)) {
+//            throw new BizException("暂无充值方式");
+//        }
+//        if (null != payWayCfg.getMinAmount() &&
+//                rechargeReq.getAmount().intValue() < payWayCfg.getMinAmount()) {
+//            throw new BizException("小于渠道最低充值金额");
+//        }
+//        if (null != payWayCfg.getMaxAmount() &&
+//                rechargeReq.getAmount().intValue() > payWayCfg.getMaxAmount()) {
+//            throw new BizException("大于渠道最高充值金额");
+//        }
         RechargeBO rechargeBO = new RechargeBO();
         rechargeBO.setPayChannel(DozerUtil.map(payChannelConfig, PayChannel.class));
-        rechargeBO.setPayWay(DozerUtil.map(payWayCfg, PayWay.class));
+//        rechargeBO.setPayWay(DozerUtil.map(payWayCfg, PayWay.class));
         return rechargeBO;
     }
 

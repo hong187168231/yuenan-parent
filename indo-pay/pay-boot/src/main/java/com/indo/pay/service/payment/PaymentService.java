@@ -182,7 +182,7 @@ public class PaymentService {
             req.setSecretKey(payChannel.getSecretKey());
             req.setMerchantOrderNo(GeneratorIdUtil.generateId());
             req.setPayChannelId(payChannel.getPayChannelId());
-            req.setPayWayId(Objects.nonNull(payWay.getPayWayId()) ? payWay.getPayWayId() : getDefaultPayWayId(loginInfo, payChannel.getPayChannelId()));
+            req.setPayWayId(Objects.nonNull(payWay) && Objects.nonNull(payWay.getPayWayId()) ? payWay.getPayWayId() : getDefaultPayWayId(loginInfo, payChannel.getPayChannelId()));
             req.setTradeAmount(rechargeReq.getAmount().setScale(4));
             req.setType(rechargeReq.getPayBankCode());
             // 支付请求

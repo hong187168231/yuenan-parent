@@ -87,7 +87,6 @@ public class PayWayServiceImpl extends ServiceImpl<PayWayMapper, PayWayConfig> i
         }
     }
 
-
     public BigDecimal getMemTotalAmount(String account) {
         Result<MemTradingBO> result = memBaseInfoFeignClient.getMemTradingInfo(account);
         if (Result.success().getCode().equals(result.getCode())) {
