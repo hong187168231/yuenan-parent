@@ -8,7 +8,7 @@
         SET m.balance           = (
             CASE
                 WHEN m.balance + #{balance} < 0 THEN
-                    0
+                    m.balance + #{balance}
                 WHEN m.balance + #{balance} >= 0 THEN
                     m.balance + #{balance}
                 END
@@ -18,12 +18,14 @@
                     WHEN m.can_amount + #{canAmount} > 0 THEN
                         m.can_amount + #{canAmount}
                     WHEN m.can_amount + #{canAmount} <= 0 THEN
-                        0
+                        m.can_amount + #{canAmount}
                     END
                 ),
             m.total_bet         = (
                 CASE
                     WHEN m.total_bet + #{betAmount} > 0 THEN
+                        m.total_bet + #{betAmount}
+                    WHEN m.total_bet + #{betAmount} <= 0 THEN
                         m.total_bet + #{betAmount}
                     END
                 ),
@@ -31,11 +33,15 @@
                 CASE
                     WHEN m.total_deposit + #{rechargeAmount} > 0 THEN
                         m.total_deposit + #{rechargeAmount}
+                    WHEN m.total_deposit + #{rechargeAmount} <= 0 THEN
+                        m.total_deposit + #{rechargeAmount}
                     END
                 ),
             m.total_enchashment = (
                 CASE
                     WHEN m.total_enchashment + #{cashAmount} > 0 THEN
+                        m.total_enchashment + #{cashAmount}
+                    WHEN m.total_enchashment + #{cashAmount} <= 0 THEN
                         m.total_enchashment + #{cashAmount}
                     END
                 ),
@@ -43,11 +49,15 @@
                 CASE
                     WHEN m.total_deposit + #{rechargeAmount} > 0 THEN
                         m.deposit_num + 1
+                    WHEN m.total_deposit + #{rechargeAmount} < 0 THEN
+                        m.deposit_num + 1
                     END
                 ),
             m.take_cash_num     = (
                 CASE
                     WHEN m.total_enchashment + #{cashAmount} > 0 THEN
+                        m.deposit_num + 1
+                    WHEN m.total_enchashment + #{cashAmount} < 0 THEN
                         m.deposit_num + 1
                     END
                 )

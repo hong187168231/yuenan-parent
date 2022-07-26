@@ -138,4 +138,24 @@ public class BtiCallbackController {
         logger.info("BtiCallback creditCustomer 回调返回数据 params:{}", object);
         return object;
     }
+
+    @RequestMapping(value = "/status", method = RequestMethod.GET,produces = "text/plain;charset=UTF-8")
+    @AllowAccess
+    public Object status(@RequestParam("token") String token, HttpServletRequest request) {
+        String ip = IPAddressUtil.getIpAddress(request);
+        logger.info("BtiCallback status 回调, token:{},ip:{}", token, ip);
+        Object object = btiCallbackService.status(token, ip);
+        logger.info("BtiCallback status 回调返回数据 params:{}", object);
+        return object;
+    }
+
+    @RequestMapping(value = "/refresh", method = RequestMethod.GET,produces = "text/plain;charset=UTF-8")
+    @AllowAccess
+    public Object refresh(@RequestParam("token") String token, HttpServletRequest request) {
+        String ip = IPAddressUtil.getIpAddress(request);
+        logger.info("BtiCallback refresh 回调, token:{},ip:{}", token, ip);
+        Object object = btiCallbackService.refresh(token, ip);
+        logger.info("BtiCallback refresh 回调返回数据 params:{}", object);
+        return object;
+    }
 }

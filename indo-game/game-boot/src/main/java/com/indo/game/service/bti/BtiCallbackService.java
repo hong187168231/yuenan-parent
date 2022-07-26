@@ -64,4 +64,23 @@ public interface BtiCallbackService {
      * @return
      */
     Object creditCustomer(BtiCreditCustomerRequst btiCreditCustomerRequst, String ip);
+
+    /**
+     * The method retrieves customer login status and session information. The method is called automatically on
+     * page load. The operator should confirm the customer’s session (“real” or “anon”) and when “real” - send
+     * customer’s balance and currency in the callback. .
+     * @param token
+     * @param ip
+     * @return
+     */
+    Object status(String token, String ip);
+
+    /**
+     * This event is called every few seconds (usually 20) from the BTi web-application into the JS API
+     * implementation. It confirms customer’s session and makes sure it is still logged in on operator’s side.
+     * @param token
+     * @param ip
+     * @return
+     */
+    Object refresh(String token, String ip);
 }

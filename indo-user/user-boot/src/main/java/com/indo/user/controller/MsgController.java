@@ -1,14 +1,17 @@
 package com.indo.user.controller;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.api.MsgFeignClient;
 import com.indo.admin.pojo.dto.MsgDTO;
-import com.indo.admin.pojo.vo.msg.MsgPushRecordVO;
 import com.indo.admin.pojo.vo.msg.MsgStationLetterVO;
 import com.indo.admin.pojo.vo.msg.MsgTotalVO;
 import com.indo.common.annotation.LoginUser;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
 import com.indo.common.web.exception.BizException;
+import com.indo.user.pojo.dto.MsgPushRecordDto;
+import com.indo.user.pojo.vo.MsgPushRecordVO;
+import com.indo.user.service.IMsgStatusRecordService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -30,6 +33,9 @@ public class MsgController {
     @Resource
     private MsgFeignClient msgFeignClient;
 
+    @Resource
+    private IMsgStatusRecordService msgStatusRecordService;
+
     @ApiOperation(value = "个人消息接口", httpMethod = "GET")
     @GetMapping(value = "/personal")
     public Result<List<MsgStationLetterVO>> loginDo(@LoginUser LoginInfo loginInfo) {
@@ -47,19 +53,13 @@ public class MsgController {
 
     @ApiOperation(value = "系统消息接口", httpMethod = "GET")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "deviceType", value = "设备类型 ", paramType = "query", dataType = "int", required = true)
+            @ApiImplicitParam(name = "deviceType", value = "设备类型:1ios,2android ", paramType = "query", dataType = "int", required = true),
+            @ApiImplicitParam(name = "page", value = "页码", paramType = "query", dataType = "Long"),
+            @ApiImplicitParam(name = "limit", value = "每页数量", paramType = "query", dataType = "Long")
     })
     @GetMapping(value = "/sys")
-    public Result<List<MsgPushRecordVO>> register(@RequestParam("deviceType") Integer deviceType) {
-        MsgDTO dto = new MsgDTO();
-        dto.setDeviceType(deviceType);
-        Result result = msgFeignClient.getSysMsg(dto);
-        if (Result.success().getCode().equals(result.getCode())) {
-            List<MsgPushRecordVO> data = (List<MsgPushRecordVO>) result.getData();
-            return Result.success(data);
-        } else {
-            throw new BizException("远程调用异常");
-        }
+    public Result<Page<MsgPushRecordVO>> register(MsgPushRecordDto msgPushRecordDto, @LoginUser LoginInfo loginInfo) {
+      return Result.success(msgStatusRecordService.findSysMsgInfoPage(msgPushRecordDto,loginInfo));
     }
 
 
@@ -93,15 +93,20 @@ public class MsgController {
             @ApiImplicitParam(name = "msgId", value = "消息id ", dataType = "Long", required = true)
     })
     @GetMapping(value = "/delete")
-    public Result<List<MsgPushRecordVO>> delete(@RequestParam("msgType") Integer msgType,@RequestParam("msgId") Long msgId) {
-        MsgDTO dto = new MsgDTO();
-        dto.setMsgId(msgId);
-        dto.setMsgType(msgType);
-        Result result = msgFeignClient.deleteMsg(dto);
-        if (Result.success().getCode().equals(result.getCode())) {
+    public Result<List<MsgPushRecordVO>> delete(@RequestParam("msgType") Integer msgType,@RequestParam("msgId") Long msgId,@LoginUser LoginInfo loginInfo) {
+        if(msgType.equals(2)){
+            msgStatusRecordService.insertMsgStatusRecord(msgId,msgType,loginInfo);
             return Result.success();
-        } else {
-            throw new BizException("远程调用异常");
+        }else {
+            MsgDTO dto = new MsgDTO();
+            dto.setMsgId(msgId);
+            dto.setMsgType(msgType);
+            Result result = msgFeignClient.deleteMsg(dto);
+            if (Result.success().getCode().equals(result.getCode())) {
+                return Result.success();
+            } else {
+                throw new BizException("远程调用异常");
+            }
         }
     }
 

@@ -53,7 +53,7 @@ public class V8CallbackController {
         return v8Service.balance(loginUser, platform, ip);
     }
 
-    @RequestMapping(value = "/callBack", method = RequestMethod.GET)
+    @RequestMapping(value = "/callBack", method = RequestMethod.GET,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object callBack(@RequestParam Map<String,String> paramMap, HttpServletRequest request) {
@@ -65,6 +65,8 @@ public class V8CallbackController {
         logger.info("V8Callback callBack 回调, agent:{}, timestamp:{}, param:{}, key:{}, ip:{}", agent, timestamp, param, key,ip);
         int method = 0;
         String account = null;
+        String orderId = null;
+        String gameNo = null;
         BigDecimal money = BigDecimal.ZERO;
         try {
             param = V8Encrypt.AESDecrypt(param, OpenAPIProperties.V8_DESKEY,true);
@@ -77,16 +79,24 @@ public class V8CallbackController {
                     account = temp.replace("account=", "");
                 } else if (temp.indexOf("money=") == 0) {
                     money = BigDecimal.valueOf(Double.valueOf(temp.replace("money=", "")));
+                } else if (temp.indexOf("orderId=") == 0) {
+                    orderId = temp.replace("orderId=", "");
+                } else if (temp.indexOf("gameNo=") == 0) {
+                    gameNo = temp.replace("gameNo=", "");
                 }
             }
             // 查询余额
-            if (12 == method) {
-                return getBalance(agent, timestamp, account, key, ip);
-            } else if (13 == method) {
+            if (1001 == method) {//查询会员余额接口
+                return getBalance(agent, timestamp, account, key, ip,method);
+            } else if (1002 == method) {//请求下注接口
                 // 上分
-                return debit(agent, timestamp, account, key, money, ip);
-            } else if (11 == method) {//通知下分
-
+                return debit(agent, timestamp, account, key, money, ip,method,orderId,gameNo);
+            } else if (1003 == method) {//接收派奬接口
+                return settle(agent, timestamp, account, key, money, ip,method,orderId,gameNo);
+            }else if (1004 == method) {//接收派奬接口
+                return queryStatus(agent, timestamp, account, key, ip,method,orderId);
+            }else if (1005 == method) {//取消下注接口
+                return cancelBet(agent, timestamp, account, key, money, ip,method,orderId);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -101,18 +111,42 @@ public class V8CallbackController {
     }
 
     // 查余额
-    private Object getBalance(String agent, String timestamp, String account, String key, String ip) {
-        logger.info("V8Callback getBalance 回调, params:{}, {}, {}, {}", agent, timestamp, account, key);
-        Object object = v8CallbackService.getBalance(agent, timestamp, account, key, ip);
+    private Object getBalance(String agent, String timestamp, String account, String key, String ip,int s) {
+        logger.info("V8Callback getBalance 回调, agent:{}, timestamp:{}, account:{}, key:{}, ip:{}, s:{}", agent, timestamp, account, key, ip, s);
+        Object object = v8CallbackService.getBalance(agent, timestamp, account, key, ip, s);
         logger.info("V8Callback getBalance 回调返回数据 params:{}", object);
         return object;
     }
 
-    // 上分
-    private Object debit(String agent, String timestamp, String account, String key, BigDecimal money, String ip) {
-        logger.info("V8Callback debit 回调, params:{}, {}, {}, {}, {}", agent, timestamp, account, key, money);
-        Object object = v8CallbackService.debit(agent, timestamp, account, key, money, ip);
+    // 下注
+    private Object debit(String agent, String timestamp, String account, String key, BigDecimal money, String ip,int s,String orderId,String gameNo) {
+        logger.info("V8Callback debit 回调,  agent:{}, timestamp:{}, account:{}, key:{},money:{}, ip:{}, s:{}, orderId:{}, gameNo:{}", agent, timestamp, account, key,money, ip, s, orderId, gameNo);
+        Object object = v8CallbackService.debit(agent, timestamp, account, key, money, ip, s, orderId, gameNo);
         logger.info("V8Callback debit 回调返回数据 params:{}", object);
+        return object;
+    }
+
+    // 结算
+    private Object settle(String agent, String timestamp, String account, String key, BigDecimal money, String ip,int s,String orderId,String gameNo) {
+        logger.info("V8Callback settle 回调, agent:{}, timestamp:{}, account:{}, key:{},money:{}, ip:{}, s:{}, orderId:{}, gameNo:{}", agent, timestamp, account, key,money, ip, s, orderId, gameNo);
+        Object object = v8CallbackService.settle(agent, timestamp, account, key, money, ip, s, orderId, gameNo);
+        logger.info("V8Callback settle 回调返回数据 params:{}", object);
+        return object;
+    }
+
+    // 查询订单
+    private Object queryStatus(String agent, String timestamp, String account, String key,  String ip,int s,String orderId) {
+        logger.info("V8Callback queryStatus 回调, params:{}, agent:{}, timestamp:{}, account:{}, key:{}, ip:{}, s:{}, orderId:{}", agent, timestamp, account, key, ip, s, orderId);
+        Object object = v8CallbackService.queryStatus(agent, timestamp, account, key, ip, s, orderId);
+        logger.info("V8Callback queryStatus 回调返回数据 params:{}", object);
+        return object;
+    }
+
+    // 取消下注接口
+    private Object cancelBet(String agent, String timestamp, String account, String key, BigDecimal money, String ip,int s,String orderId) {
+        logger.info("V8Callback queryStatus 回调, params:{}, agent:{}, timestamp:{}, account:{}, key:{}, ip:{}, s:{}, orderId:{}", agent, timestamp, account, key, ip, s, orderId);
+        Object object = v8CallbackService.cancelBet(agent, timestamp, account, key, money, ip, s, orderId);
+        logger.info("V8Callback queryStatus 回调返回数据 params:{}", object);
         return object;
     }
 

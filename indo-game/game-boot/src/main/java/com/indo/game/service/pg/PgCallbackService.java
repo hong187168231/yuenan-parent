@@ -1,16 +1,19 @@
 package com.indo.game.service.pg;
 
 
-import com.indo.game.pojo.dto.pg.PgVerifyCallBackReq;
+import com.indo.game.pojo.dto.pg.PgAdjustmentOutCallBackReq;
+import com.indo.game.pojo.dto.pg.PgGetBalanceCallBackReq;
+import com.indo.game.pojo.dto.pg.PgTransferInOutCallBackReq;
+import com.indo.game.pojo.dto.pg.PgVerifySessionCallBackReq;
 
 public interface PgCallbackService {
 
 
-    Object pgVerifyCallback(PgVerifyCallBackReq pgVerifyCallBackReq, String ip);
+    Object pgVerifyCallback(PgVerifySessionCallBackReq pgVerifySessionCallBackReq, String ip);
 
-    Object pgBalanceCallback(PgVerifyCallBackReq pgVerifyCallBackReq, String ip);
+    Object pgBalanceCallback(PgGetBalanceCallBackReq pgGetBalanceCallBackReq, String ip);
 
-    Object pgTransferInCallback(PgVerifyCallBackReq pgVerifyCallBackReq, String ip);
+    Object pgTransferInCallback(PgTransferInOutCallBackReq pgTransferInOutCallBackReq, String ip);
 
-    Object pgAdjustmentCallback(PgVerifyCallBackReq pgVerifyCallBackReq, String ip);
+    Object pgAdjustmentCallback(PgAdjustmentOutCallBackReq pgAdjustmentOutCallBackReq, String ip);
 }

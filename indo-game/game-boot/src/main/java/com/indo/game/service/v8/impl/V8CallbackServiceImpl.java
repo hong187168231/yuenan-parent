@@ -1,6 +1,7 @@
 package com.indo.game.service.v8.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.indo.common.config.OpenAPIProperties;
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
@@ -17,6 +18,7 @@ import com.indo.game.service.v8.V8CallbackService;
 import com.indo.user.pojo.bo.MemTradingBO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,105 +39,314 @@ public class V8CallbackServiceImpl implements V8CallbackService {
 
 
     @Override
-    public Object getBalance(String agent, String timestamp, String account, String key, String ip) {
-        logger.info("v8_getBalance v8Game paramJson:{},{},{},{}, ip:{}", agent, timestamp, account, key, ip);
+    public Object getBalance(String agent, String timestamp, String account, String key, String ip,int s) {
         try {
             GameParentPlatform platformGameParent = getGameParentPlatform();
             // 校验IP
             if (checkIp(ip, platformGameParent)) {
-                return initFailureResponse(28, "ip 被禁用");
+                return initResponse(s,4,account,BigDecimal.ZERO);
             }
 
             // 渠道不存在（请检查渠道 ID 是否正确）
             if (!OpenAPIProperties.V8_AGENT.equals(agent)) {
-                return initFailureResponse(2, "渠道不存在");
+                return initResponse(s,10,account,BigDecimal.ZERO);
             }
 
             // 渠道验证错误
-            if (!key.equals(getKey(Long.parseLong(account)))) {
-                return initFailureResponse(15, "key 验证失败");
-            }
-
-            // 验证时间超时 , 大于30秒
-            if (checkTimestamp(Long.parseLong(timestamp))) {
-                return initFailureResponse(3, "验证时间超时");
-            }
+//            if (!key.equals(getKey(Long.parseLong(account)))) {
+//                return initFailureResponse(15, "key 验证失败");
+//            }
+//
+//            // 验证时间超时 , 大于30秒
+//            if (checkTimestamp(Long.parseLong(timestamp))) {
+//                return initFailureResponse(3, "验证时间超时");
+//            }
 
             // 查询玩家是否存在
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(account);
             if (null == memBaseinfo) {
-                return initFailureResponse(1024, "会员不存在");
+                return initResponse(s,2,account,BigDecimal.ZERO);
             }
 
             // 会员余额返回
             if (memBaseinfo.getBalance().compareTo(BigDecimal.ZERO) > 0) {
-                JSONObject jsonObject1 = initSuccessResponse();
-                jsonObject1.put("money", memBaseinfo.getBalance());
-                return jsonObject1;
+                return initResponse(s,0,account,memBaseinfo.getBalance());
+            }else {
+                return initResponse(s,1,account,memBaseinfo.getBalance());
             }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
+            return initResponse(s,3,account,BigDecimal.ZERO);
         }
-
-        // 数据库异常
-        return initFailureResponse(27, "会员余额不足");
     }
 
     @Override
-    public Object debit(String agent, String timestamp, String account, String key, BigDecimal money, String ip) {
-        logger.info("v8_debit v8Game paramJson:{},{},{},{},{}, ip:{}", agent, timestamp, account, key, money, ip);
+    public Object debit(String agent, String timestamp, String account, String key, BigDecimal money, String ip,int s,String orderId,String gameNo) {
 
         try {
             GameParentPlatform platformGameParent = getGameParentPlatform();
             // 校验IP
             if (checkIp(ip, platformGameParent)) {
-                return initFailureResponse(28, "ip 被禁用");
+                return initResponse(s, 4, account, BigDecimal.ZERO);
             }
 
             // 渠道不存在（请检查渠道 ID 是否正确）
             if (!OpenAPIProperties.V8_AGENT.equals(agent)) {
-                return initFailureResponse(2, "渠道不存在");
+                return initResponse(s, 10, account, BigDecimal.ZERO);
             }
 
-            // 渠道验证错误
-            if (!key.equals(getKey(Long.parseLong(account)))) {
-                return initFailureResponse(15, "key 验证失败");
-            }
-
-            // 验证时间超时 , 大于30秒
-            if (checkTimestamp(Long.parseLong(timestamp))) {
-                return initFailureResponse(3, "验证时间超时");
-            }
+//            // 渠道验证错误
+//            if (!key.equals(getKey(Long.parseLong(account)))) {
+//                return initFailureResponse(15, "key 验证失败");
+//            }
+//
+//            // 验证时间超时 , 大于30秒
+//            if (checkTimestamp(Long.parseLong(timestamp))) {
+//                return initFailureResponse(3, "验证时间超时");
+//            }
 
             // 查询玩家是否存在
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(account);
             if (null == memBaseinfo) {
-                return initFailureResponse(1024, "会员不存在");
+                return initResponse(s, 2, account, BigDecimal.ZERO);
             }
 
             BigDecimal balance = memBaseinfo.getBalance();
-
+            LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+            wrapper.eq(Txns::getMethod, "Place Bet");
+            wrapper.eq(Txns::getStatus, "Running");
+            wrapper.eq(Txns::getPlatformTxId, orderId);
+            wrapper.eq(Txns::getPlatform, platformGameParent.getPlatformCode());
+            Txns oldTxns = txnsMapper.selectOne(wrapper);
+            if(null!=oldTxns){
+                return initResponse(s,0,account,memBaseinfo.getBalance());
+            }
             if (memBaseinfo.getBalance().compareTo(balance) < 0) {
-                return initFailureResponse(1005, "玩家余额不足");
+                return initResponse(s, 1, account, memBaseinfo.getBalance());
+            } else{
+
+                if(BigDecimal.ZERO.compareTo(money)!=0){
+                    balance = balance.subtract(money);
+                    // 更新余额
+                    gameCommonService.updateUserBalance(memBaseinfo, money, GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
+                }
+                // 生成订单数据
+                Txns txns = getInitTxns(platformGameParent, orderId, account, money, balance, ip);
+                int num = txnsMapper.insert(txns);
+
+                return initResponse(s,0,account,memBaseinfo.getBalance());
+
             }
-
-            String paySerialno = GeneratorIdUtil.generateId();
-            // 生成订单数据
-            Txns txns = getInitTxns(platformGameParent, paySerialno, account, money, balance, ip);
-            int num = txnsMapper.insert(txns);
-            if (num <= 0) {
-                return initFailureResponse(1006, "资料库异常");
-            }
-
-            // 更新余额
-            gameCommonService.updateUserBalance(memBaseinfo, money, GoldchangeEnum.DSFYXZZ, TradingEnum.SPENDING);
-            return initSuccessResponse();
-
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
+        return initResponse(s,3,account,BigDecimal.ZERO);
         }
+    }
 
-        return initFailureResponse(999, "资料库异常");
+    @Override
+    public Object settle(String agent, String timestamp, String account, String key, BigDecimal money, String ip,int s,String orderId,String gameNo) {
+
+        try {
+            GameParentPlatform platformGameParent = getGameParentPlatform();
+            // 校验IP
+            if (checkIp(ip, platformGameParent)) {
+                return initResponse(s, 4, account, BigDecimal.ZERO);
+            }
+
+            // 渠道不存在（请检查渠道 ID 是否正确）
+            if (!OpenAPIProperties.V8_AGENT.equals(agent)) {
+                return initResponse(s, 10, account, BigDecimal.ZERO);
+            }
+
+//            // 渠道验证错误
+//            if (!key.equals(getKey(Long.parseLong(account)))) {
+//                return initFailureResponse(15, "key 验证失败");
+//            }
+//
+//            // 验证时间超时 , 大于30秒
+//            if (checkTimestamp(Long.parseLong(timestamp))) {
+//                return initFailureResponse(3, "验证时间超时");
+//            }
+
+            // 查询玩家是否存在
+            MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(account);
+            if (null == memBaseinfo) {
+                return initResponse(s, 2, account, BigDecimal.ZERO);
+            }
+
+            BigDecimal balance = memBaseinfo.getBalance();
+            LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+            wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Settle"));
+            wrapper.eq(Txns::getStatus, "Running");
+            wrapper.eq(Txns::getPlatformTxId, orderId);
+            wrapper.eq(Txns::getPlatform, platformGameParent.getPlatformCode());
+            Txns oldTxns = txnsMapper.selectOne(wrapper);
+            if(null!=oldTxns&&"Settle".equals(oldTxns.getMethod())){
+                return initResponse(s,0,account,memBaseinfo.getBalance());
+            }
+            if (memBaseinfo.getBalance().compareTo(balance) < 0) {
+                return initResponse(s, 1, account, memBaseinfo.getBalance());
+            } else{
+
+                if(BigDecimal.ZERO.compareTo(money)!=0){
+                    balance = balance.add(money);
+                    // 更新余额
+                    gameCommonService.updateUserBalance(memBaseinfo, money, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
+                }
+                Txns txns = new Txns();
+                String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
+                txns.setCreateTime(dateStr);
+                if(null!=oldTxns){
+
+                    BeanUtils.copyProperties(oldTxns, txns);
+                    oldTxns.setStatus("Settle");
+                    oldTxns.setUpdateTime(dateStr);
+                    txnsMapper.updateById(oldTxns);
+                }
+                txns.setWinningAmount(money);
+                txns.setWinAmount(money);
+                //余额
+                txns.setBalance(balance);
+                //操作名称
+                txns.setMethod("Place Bet");
+                txns.setStatus("Running");
+                // 生成订单数据
+                int num = txnsMapper.insert(txns);
+
+                return initResponse(s,0,account,memBaseinfo.getBalance());
+
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return initResponse(s,3,account,BigDecimal.ZERO);
+        }
+    }
+
+    @Override
+    public Object queryStatus(String agent, String timestamp, String account, String key, String ip,int s,String orderId){
+        try {
+            GameParentPlatform platformGameParent = getGameParentPlatform();
+            // 校验IP
+            if (checkIp(ip, platformGameParent)) {
+                return initResponse(s, 4, 5);
+            }
+
+            // 渠道不存在（请检查渠道 ID 是否正确）
+            if (!OpenAPIProperties.V8_AGENT.equals(agent)) {
+                return initResponse(s, 10, 5);
+            }
+
+//            // 渠道验证错误
+//            if (!key.equals(getKey(Long.parseLong(account)))) {
+//                return initFailureResponse(15, "key 验证失败");
+//            }
+//
+//            // 验证时间超时 , 大于30秒
+//            if (checkTimestamp(Long.parseLong(timestamp))) {
+//                return initFailureResponse(3, "验证时间超时");
+//            }
+
+            // 查询玩家是否存在
+            MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(account);
+            if (null == memBaseinfo) {
+                return initResponse(s, 2, account, BigDecimal.ZERO);
+            }
+
+            BigDecimal balance = memBaseinfo.getBalance();
+            LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+            wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Settle"));
+            wrapper.eq(Txns::getStatus, "Running");
+            wrapper.eq(Txns::getPlatformTxId, orderId);
+            wrapper.eq(Txns::getPlatform, platformGameParent.getPlatformCode());
+            Txns oldTxns = txnsMapper.selectOne(wrapper);
+            if(null!=oldTxns){
+                return initResponse(s,0,1);
+            }else {
+                return initResponse(s,0,4);
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return initResponse(s,3,2);
+        }
+    }
+
+    @Override
+    public Object cancelBet(String agent, String timestamp, String account, String key, BigDecimal money, String ip,int s,String orderId) {
+
+        try {
+            GameParentPlatform platformGameParent = getGameParentPlatform();
+            // 校验IP
+            if (checkIp(ip, platformGameParent)) {
+                return initResponse(s, 4, 5);
+            }
+
+            // 渠道不存在（请检查渠道 ID 是否正确）
+            if (!OpenAPIProperties.V8_AGENT.equals(agent)) {
+                return initResponse(s, 10, 5);
+            }
+
+//            // 渠道验证错误
+//            if (!key.equals(getKey(Long.parseLong(account)))) {
+//                return initFailureResponse(15, "key 验证失败");
+//            }
+//
+//            // 验证时间超时 , 大于30秒
+//            if (checkTimestamp(Long.parseLong(timestamp))) {
+//                return initFailureResponse(3, "验证时间超时");
+//            }
+
+            // 查询玩家是否存在
+            MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(account);
+            if (null == memBaseinfo) {
+                return initResponse(s, 2, 5);
+            }
+
+            BigDecimal balance = memBaseinfo.getBalance();
+            LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+            wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Settle").or().eq(Txns::getMethod, "Cancel Bet"));
+            wrapper.eq(Txns::getStatus, "Running");
+            wrapper.eq(Txns::getPlatformTxId, orderId);
+            wrapper.eq(Txns::getPlatform, platformGameParent.getPlatformCode());
+            Txns oldTxns = txnsMapper.selectOne(wrapper);
+            if(null==oldTxns){
+                return initResponse(s,0,1);
+            }
+            if(null!=oldTxns&&"Cancel Bet".equals(oldTxns.getMethod())){
+                return initResponse(s,0,1);
+            }
+            if(null!=oldTxns&&"Settle".equals(oldTxns.getMethod())){
+                return initResponse(s,8,2);
+            }
+            if(BigDecimal.ZERO.compareTo(money)!=0){
+                balance = balance.add(money);
+                // 更新余额
+                gameCommonService.updateUserBalance(memBaseinfo, money, GoldchangeEnum.CANCEL_BET, TradingEnum.INCOME);
+            }
+            Txns txns = new Txns();
+            String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
+            txns.setCreateTime(dateStr);
+            if(null!=oldTxns){
+
+                BeanUtils.copyProperties(oldTxns, txns);
+                oldTxns.setStatus("Cancel Bet");
+                oldTxns.setUpdateTime(dateStr);
+                txnsMapper.updateById(oldTxns);
+            }
+            txns.setWinningAmount(money);
+            txns.setWinAmount(money);
+            //余额
+            txns.setBalance(balance);
+            //操作名称
+            txns.setMethod("Cancel Bet");
+            txns.setStatus("Running");
+            // 生成订单数据
+            int num = txnsMapper.insert(txns);
+
+            return initResponse(s,0,1);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return initResponse(s,3,2);
+        }
     }
 
     /**
@@ -180,6 +391,8 @@ public class V8CallbackServiceImpl implements V8CallbackService {
         txns.setGameName(gamePlatform.getPlatformEnName());
         //下注金额
         txns.setBetAmount(pointAmount);
+        txns.setWinningAmount(pointAmount.negate());
+        txns.setWinAmount(pointAmount.negate());
         //创建时间
         String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
         //玩家下注时间
@@ -189,7 +402,7 @@ public class V8CallbackServiceImpl implements V8CallbackService {
         //辨认交易时间依据
         txns.setTxTime(dateStr);
         //操作名称
-        txns.setMethod("Settle");
+        txns.setMethod("Place Bet");
         txns.setStatus("Running");
         //余额
         txns.setBalance(balance);
@@ -217,25 +430,34 @@ public class V8CallbackServiceImpl implements V8CallbackService {
 
     /**
      * 初始化成功json返回
-     *
+     *  s=1001,1002,1003
      * @return JSONObject
      */
-    private JSONObject initSuccessResponse() {
+    private JSONObject initResponse(int s,int code,String account,BigDecimal amount) {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("code", 0);
+        jsonObject.put("m", "/channelHandle");
+        jsonObject.put("s", s);
+        JSONObject jsonObjectSub = new JSONObject();
+        jsonObjectSub.put("code", code);
+        jsonObjectSub.put("account", account);
+        jsonObjectSub.put("money", amount);
+        jsonObject.put("d",jsonObjectSub);
         return jsonObject;
     }
 
     /**
-     * 初始化交互失败返回
-     *
-     * @param error       错误码
-     * @param description 错误描述
+     * 初始化成功json返回
+     *  s=1004,1005
      * @return JSONObject
      */
-    private JSONObject initFailureResponse(Integer error, String description) {
+    private JSONObject initResponse(int s,int code,int status) {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("code", error);
+        jsonObject.put("m", "/channelHandle");
+        jsonObject.put("s", s);
+        JSONObject jsonObjectSub = new JSONObject();
+        jsonObjectSub.put("code", code);
+        jsonObjectSub.put("status", status);
+        jsonObject.put("d",jsonObjectSub);
         return jsonObject;
     }
 
