@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
+import com.indo.admin.common.enums.AccountTypeEnum;
 import com.indo.admin.common.util.AdminBusinessRedisUtils;
 import com.indo.admin.modules.agent.mapper.AgentRelationMapper;
 import com.indo.admin.modules.mem.mapper.MemBaseinfoMapper;
@@ -105,7 +106,7 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
         AgentRelation memAgent = new AgentRelation();
         BeanUtils.copyProperties(req, memBaseinfo);
         memBaseinfo.setPasswordMd5(MD5.md5(req.getPassword()));
-        memBaseinfo.setAccType(2);
+        memBaseinfo.setAccType(AccountTypeEnum.AGENT.getValue());
         if (baseMapper.insert(memBaseinfo) > 0) {
             memAgent.setMemId(memBaseinfo.getId());
             memAgent.setAccount(memBaseinfo.getAccount());
