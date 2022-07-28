@@ -1,7 +1,7 @@
 package com.indo.admin.modules.activity.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.indo.admin.pojo.entity.ActivityConfig;
+import com.indo.core.pojo.entity.ActivityConfig;
 
 /**
  * <p>

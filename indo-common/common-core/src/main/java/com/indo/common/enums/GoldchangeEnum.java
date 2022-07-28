@@ -36,6 +36,7 @@ public enum GoldchangeEnum {
     year(306, "每年礼金"),
     register(307, "注册送好礼"),
     SUPERLOTTO(309, "国年大乐透"),
+    LOAN(310, "借呗"),
 
     TXKK(401, "提现扣款"),
     JJTC(407, "奖金提出"),

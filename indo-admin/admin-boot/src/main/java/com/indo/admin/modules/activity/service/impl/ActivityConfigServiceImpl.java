@@ -2,9 +2,9 @@ package com.indo.admin.modules.activity.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.indo.admin.modules.activity.mapper.ActivityConfigMapper;
+import com.indo.core.mapper.ActivityConfigMapper;
 import com.indo.admin.modules.activity.service.IActivityConfigService;
-import com.indo.admin.pojo.entity.ActivityConfig;
+import com.indo.core.pojo.entity.ActivityConfig;
 import org.springframework.stereotype.Service;
 
 /**
