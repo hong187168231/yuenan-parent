@@ -60,6 +60,9 @@ public class LoanRecordServiceImpl extends ServiceImpl<LoanRecordMapper, LoanRec
         LambdaQueryWrapper<ActivityConfig> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(ActivityConfig::getTypes,2);
         ActivityConfig activityConfig = activityConfigMapper.selectOne(wrapper);
+        if(activityConfig==null){
+            throw new BizException("无相关活动配置，无法参加活动");
+        }
         JSONObject json = JSONObject.parseObject(activityConfig.getConfigInfo());
         BigDecimal money = json.getBigDecimal("vip"+loginInfo.getMemLevel());
         if(money==null||money.compareTo(BigDecimal.ZERO)==0){

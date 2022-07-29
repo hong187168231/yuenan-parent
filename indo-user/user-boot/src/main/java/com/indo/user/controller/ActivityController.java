@@ -8,9 +8,11 @@ import com.indo.common.constant.RedisConstants;
 import com.indo.common.result.Result;
 import com.indo.common.web.util.DozerUtil;
 import com.indo.core.pojo.entity.Activity;
+import com.indo.core.pojo.entity.ActivityConfig;
 import com.indo.core.pojo.entity.ActivityType;
 import com.indo.user.common.util.UserBusinessRedisUtils;
 import com.indo.user.pojo.vo.act.ActivityVo;
+import com.indo.user.service.ActivityConfigService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -43,7 +45,8 @@ public class ActivityController {
 
     @Resource
     private DozerUtil dozerUtil;
-
+    @Resource
+    private ActivityConfigService activityConfigService;
 
     @ApiOperation(value = "查询活动类型列表", httpMethod = "GET")
     @GetMapping(value = "/typeList")
@@ -104,5 +107,9 @@ public class ActivityController {
         return Result.success(voTypeList);
     }
 
-
+    @ApiOperation(value = "查询全部活动配置信息", httpMethod = "GET")
+    @GetMapping(value = "/findActivityConfList")
+    public Result<List<ActivityConfig>> findActivityConfList() {
+        return Result.success(activityConfigService.findActivityConfList());
+    }
 }

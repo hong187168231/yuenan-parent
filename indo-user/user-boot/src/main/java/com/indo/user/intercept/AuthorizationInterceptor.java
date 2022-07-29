@@ -86,7 +86,7 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
                 return super.preHandle(request, response, handler);
             }
         }
-        return false;
+        return true;
     }
 
 

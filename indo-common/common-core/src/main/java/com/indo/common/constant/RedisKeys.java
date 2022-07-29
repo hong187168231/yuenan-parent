@@ -45,6 +45,10 @@ public class RedisKeys {
      * 等级配置
      */
     public static final String SYS_RABBITMQ_MSG_ID_KEY = "SYS:RABBITMQ_MSG_ID_KEY:";
+    /**
+     *
+     */
+    public static final String SYS_ACTIVITY_CONFIG_KEY = "SYS:ACTIVITY_CONFIG_KEY";
 
 
     // 提现频率

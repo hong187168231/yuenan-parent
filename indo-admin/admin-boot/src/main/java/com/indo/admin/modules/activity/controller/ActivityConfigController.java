@@ -2,6 +2,8 @@ package com.indo.admin.modules.activity.controller;
 
 
 import com.indo.admin.modules.activity.service.IActivityConfigService;
+import com.indo.common.constant.RedisKeys;
+import com.indo.common.redis.utils.RedisUtils;
 import com.indo.core.pojo.entity.ActivityConfig;
 import com.indo.common.result.Result;
 import com.indo.common.web.util.JwtUtils;
@@ -34,6 +36,7 @@ public class ActivityConfigController {
         activityConfig.setUpdateTime(new Date());
         activityConfig.setUpdateUser(JwtUtils.getUsername());
         activityConfigService.updateById(activityConfig);
+        RedisUtils.del(RedisKeys.SYS_ACTIVITY_CONFIG_KEY);
         return Result.success();
     }
     @ApiOperation(value = "根据类型查询活动配置")
