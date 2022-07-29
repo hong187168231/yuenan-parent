@@ -8,17 +8,17 @@ import com.github.pagehelper.PageInfo;
 import com.indo.common.annotation.LoginUser;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
+import com.indo.common.utils.IPAddressUtil;
 import com.indo.pay.pojo.resp.SafeboxMoneyResp;
 import com.indo.pay.pojo.resp.SafeboxRecord;
 import com.indo.pay.pojo.vo.PayBankVO;
 import com.indo.pay.service.IPayBankService;
 import com.indo.pay.service.ISafeBoxService;
 import io.lettuce.core.dynamic.annotation.Param;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -37,18 +37,19 @@ import java.util.List;
 @Slf4j
 public class SafeBoxController {
 
-
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     @Resource
     private ISafeBoxService iSafeBoxService;
 
     @ApiOperation(value = "查询余额")
     @GetMapping("/lookingMoney")
     public Result lookingMoney(@LoginUser LoginInfo loginUser) {
-        System.out.println("查询余额");
+        logger.info ("保险箱查询余额/safebox/lookingMoney 请求userid：" +  loginUser.getId().toString());
         SafeboxMoneyResp safeboxMoneyResp = iSafeBoxService.checkSafeboxBalance(loginUser.getId());
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("code", 200);
-        jsonObject.put("safebox_monney", safeboxMoneyResp.getUserSafemoney());
+        jsonObject.put("safeboxMoney", safeboxMoneyResp.getUserSafemoney());
+        jsonObject.put("userBalance", loginUser.getBalance());
+        logger.info ("保险箱查询余额/safebox/lookingMoney 返回data：" +  safeboxMoneyResp);
         return Result.success(jsonObject);
     }
 
