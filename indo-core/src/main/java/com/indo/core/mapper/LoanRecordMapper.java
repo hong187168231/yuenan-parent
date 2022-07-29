@@ -2,6 +2,7 @@ package com.indo.core.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.indo.core.pojo.entity.LoanRecord;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * <p>
@@ -11,6 +12,7 @@ import com.indo.core.pojo.entity.LoanRecord;
  * @author xxx
  * @since 2022-07-28
  */
+@Mapper
 public interface LoanRecordMapper extends BaseMapper<LoanRecord> {
 
 }
