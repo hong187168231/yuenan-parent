@@ -39,6 +39,9 @@ public class MemTradingServiceImpl implements IMemTradingService {
     @Override
     public Page<MemTradingVO> capitalList(CapitalDTO queryDto) {
         if (ObjectUtil.isNotNull(queryDto.getChangeCategory())) {
+            if(queryDto.getChangeTypes()==null){
+                queryDto.setChangeTypes(new HashSet<>());
+            }
             queryDto.getChangeTypes().add(queryDto.getChangeCategory().getCode());
         }
         Page<MemTradingVO> page = new Page<>(queryDto.getPage(), queryDto.getLimit());
