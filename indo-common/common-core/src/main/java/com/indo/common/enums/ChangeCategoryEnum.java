@@ -42,6 +42,8 @@ public enum ChangeCategoryEnum {
     CANCEL_TIP(215, "取消打赏"),
     REFUND(216, "返还金额"),
     DSFYXZZ(217, "第三方游戏平台转账"),
+    SAFEBOXSAVE(218,"保险箱存入"),
+    SAFEBOXDRAW(219,"保险箱取出"),
 
     reward(301, "促销奖励"),
     everyday(302, "每日礼金"),
