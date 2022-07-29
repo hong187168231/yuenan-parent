@@ -29,7 +29,7 @@ public interface ILoanRecordService extends IService<LoanRecord> {
     /**
      * 自动还款
      */
-    void automaticbBackMoney(LoginInfo loginInfo);
+    void automaticbBackMoney();
 
     /**
      * 主动还款

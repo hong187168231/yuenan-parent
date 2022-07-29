@@ -91,7 +91,7 @@ public class LoanRecordServiceImpl extends ServiceImpl<LoanRecordMapper, LoanRec
     @Scheduled(cron = "0 0 1 * * ?")
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void automaticbBackMoney(LoginInfo loginInfo) {
+    public void automaticbBackMoney() {
         LambdaQueryWrapper<LoanRecord> loanWrapper = new LambdaQueryWrapper<>();
         loanWrapper.eq(LoanRecord::getStates,1);
         loanWrapper.lt(LoanRecord::getBackTime,LocalDateTime.now());
@@ -101,7 +101,7 @@ public class LoanRecordServiceImpl extends ServiceImpl<LoanRecordMapper, LoanRec
             agentRebateChange.setChangeAmount(l.getLoanAmount());
             agentRebateChange.setTradingEnum(TradingEnum.SPENDING);
             agentRebateChange.setGoldchangeEnum(GoldchangeEnum.LOAN);
-            agentRebateChange.setUserId(loginInfo.getId());
+            agentRebateChange.setUserId(l.getMemId());
             iMemGoldChangeService.updateMemGoldChange(agentRebateChange);
             l.setBackMoney(l.getLoanAmount());
             l.setStates(2);
@@ -115,6 +115,7 @@ public class LoanRecordServiceImpl extends ServiceImpl<LoanRecordMapper, LoanRec
     public void activeBackMoney(LoginInfo loginInfo) {
         LambdaQueryWrapper<LoanRecord> loanWrapper = new LambdaQueryWrapper<>();
         loanWrapper.eq(LoanRecord::getStates,1);
+        loanWrapper.eq(LoanRecord::getMemId,loginInfo.getId());
         LoanRecord loanRecord =baseMapper.selectOne(loanWrapper);
         if(loanRecord==null){
             throw new BizException("无欠款");
