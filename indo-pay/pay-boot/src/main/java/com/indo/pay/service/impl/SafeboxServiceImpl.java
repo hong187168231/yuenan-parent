@@ -1,15 +1,13 @@
 package com.indo.pay.service.impl;
 
 import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.core.base.service.impl.SuperServiceImpl;
-import com.indo.core.mapper.MemTradingMapper;
 import com.indo.core.pojo.dto.MemGoldChangeDTO;
 import com.indo.core.service.IMemGoldChangeService;
 import com.indo.pay.mapper.SafeboxRecordMapper;
-import com.indo.pay.pojo.resp.SafeboxMoneyResp;
+import com.indo.pay.pojo.req.SafeboxMoneyReq;
 import com.indo.pay.pojo.resp.SafeboxRecord;
 import com.indo.pay.service.ISafeBoxService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.List;
 
 
 @Service
@@ -36,7 +33,7 @@ public class SafeboxServiceImpl extends SuperServiceImpl<SafeboxRecordMapper, Sa
     @Transactional
     public void insertSafeboxRecord(SafeboxRecord record) {
         //更新保险箱金额
-        SafeboxMoneyResp boxMoney = new SafeboxMoneyResp();
+        SafeboxMoneyReq boxMoney = new SafeboxMoneyReq();
         boxMoney.setUserId(record.getUserId());
         boxMoney.setUserSafemoney(record.getAfterAmount());
 
@@ -72,14 +69,14 @@ public class SafeboxServiceImpl extends SuperServiceImpl<SafeboxRecordMapper, Sa
      */
     @Override
     @Transactional
-    public void updateUserSafeboxMoney(SafeboxMoneyResp req) {
+    public void updateUserSafeboxMoney(SafeboxMoneyReq req) {
         safeboxRecordMapper.updateUserSafeboxMoney(req);
     }
     /**
      * 增加一条用户保险箱金额
      */
     @Override
-    public void insertUserSafeboxMoney(SafeboxMoneyResp req) {
+    public void insertUserSafeboxMoney(SafeboxMoneyReq req) {
         safeboxRecordMapper.insertUserSafeboxMoney(req);
     }
 
@@ -88,18 +85,18 @@ public class SafeboxServiceImpl extends SuperServiceImpl<SafeboxRecordMapper, Sa
      * 查询用户保险箱和用户余额
      * */
     @Override
-    public SafeboxMoneyResp checkSafeboxBalance(Long userid) {
+    public SafeboxMoneyReq checkSafeboxBalance(Long userid) {
         //通过Authorization获取userid
         System.out.println("checkSafeboxBalance:"+userid);
         //查询用户余额
 
         //查询获取用户保险金余额
-        SafeboxMoneyResp safeboxMoneyResp = safeboxRecordMapper.checkSafeboxBalance(userid);
+        SafeboxMoneyReq safeboxMoneyReq = safeboxRecordMapper.checkSafeboxBalance(userid);
 
         //为null则创建一条数据
-        if (safeboxMoneyResp == null){
+        if (safeboxMoneyReq == null){
 
-            SafeboxMoneyResp userMoney = new SafeboxMoneyResp();
+            SafeboxMoneyReq userMoney = new SafeboxMoneyReq();
             userMoney.setUserId(userid.intValue());
             userMoney.setUserSafemoney(new BigDecimal(0));
 
@@ -109,7 +106,7 @@ public class SafeboxServiceImpl extends SuperServiceImpl<SafeboxRecordMapper, Sa
         }
 
         //不为null返回数据
-        return safeboxMoneyResp;
+        return safeboxMoneyReq;
     }
 
     @Override

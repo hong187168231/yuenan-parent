@@ -2,19 +2,15 @@ package com.indo.pay.controller;
 
 
 import com.alibaba.fastjson.JSONObject;
-import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.indo.common.annotation.LoginUser;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
-import com.indo.common.utils.IPAddressUtil;
+import com.indo.pay.pojo.req.SafeboxMoneyReq;
 import com.indo.pay.pojo.resp.SafeboxMoneyResp;
 import com.indo.pay.pojo.resp.SafeboxRecord;
-import com.indo.pay.pojo.vo.PayBankVO;
-import com.indo.pay.service.IPayBankService;
 import com.indo.pay.service.ISafeBoxService;
-import io.lettuce.core.dynamic.annotation.Param;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -24,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.List;
 
 /**
  * 保险箱
@@ -43,14 +38,15 @@ public class SafeBoxController {
 
     @ApiOperation(value = "查询余额")
     @GetMapping("/lookingMoney")
-    public Result lookingMoney(@LoginUser LoginInfo loginUser) {
+    public Result<SafeboxMoneyResp> lookingMoney(@LoginUser LoginInfo loginUser) {
         logger.info ("保险箱查询余额/safebox/lookingMoney 请求userid：" +  loginUser.getId().toString());
-        SafeboxMoneyResp safeboxMoneyResp = iSafeBoxService.checkSafeboxBalance(loginUser.getId());
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("safeboxMoney", safeboxMoneyResp.getUserSafemoney());
-        jsonObject.put("userBalance", loginUser.getBalance());
-        logger.info ("保险箱查询余额/safebox/lookingMoney 返回data：" +  safeboxMoneyResp);
-        return Result.success(jsonObject);
+        SafeboxMoneyReq safeboxMoneyReq = iSafeBoxService.checkSafeboxBalance(loginUser.getId());
+        //返回数据
+        SafeboxMoneyResp safeboxMoneyResp = new SafeboxMoneyResp();
+        safeboxMoneyResp.setUserSafemoney(safeboxMoneyReq.getUserSafemoney());
+        safeboxMoneyResp.setUserBalance(loginUser.getBalance());
+        logger.info ("保险箱查询余额/safebox/lookingMoney 返回data：" + safeboxMoneyResp);
+        return Result.success(safeboxMoneyResp);
     }
 
     @ApiOperation(value = "转入转出金额")
@@ -59,6 +55,7 @@ public class SafeBoxController {
             @ApiImplicitParam(name = "changeAmount", value = "转入转出金额", required = true, paramType = "query", dataType = "int"),
     })
     public Result transferMoney(@RequestParam("changeAmount") Integer changeAmount, @LoginUser LoginInfo loginUser) {
+        logger.info ("保险箱转入转出金额/safebox/transferMoney 请求userid：" +  loginUser.getId().toString() + "，amounnt：" + changeAmount);
         //判断传入值是否为0
         BigDecimal amount = new BigDecimal(changeAmount);
         if(amount.compareTo(new BigDecimal("0.00"))==0 ) {
@@ -75,8 +72,8 @@ public class SafeBoxController {
         BigDecimal balance = loginUser.getBalance();
         //查询获取用户保险金余额，为null则 返回0
         Long uid = loginUser.getId();
-        SafeboxMoneyResp safeboxMoneyResp = iSafeBoxService.checkSafeboxBalance(uid);
-        BigDecimal boxBalance = safeboxMoneyResp.getUserSafemoney();
+        SafeboxMoneyReq safeboxMoneyReq = iSafeBoxService.checkSafeboxBalance(uid);
+        BigDecimal boxBalance = safeboxMoneyReq.getUserSafemoney();
 
         //比较转入转出数量看是否可以正常扣除
         if (isInMoney){
@@ -130,11 +127,14 @@ public class SafeBoxController {
             @ApiImplicitParam(name = "page", value = "当前页", required = true, paramType = "query", dataType = "int"),
             @ApiImplicitParam(name = "limit", value = "每页数量", required = true, paramType = "query", dataType = "int"),
     })
-    public Result querySafeboxRecordById(@RequestParam("page") Integer page,@RequestParam("limit") Integer limit, @LoginUser LoginInfo loginUser){
-
+    public Result<PageInfo<SafeboxRecord>> querySafeboxRecordById(@RequestParam("page") Integer page,@RequestParam("limit") Integer limit, @LoginUser LoginInfo loginUser){
+        logger.info ("保险箱转入转出记录/safebox/safeboxRecord 请求userid：" +  loginUser.getId().toString());
         PageHelper.startPage(page,limit);
 
         PageInfo<SafeboxRecord> list = new PageInfo<>(iSafeBoxService.selectSafeboxRecordById(loginUser.getId()));
+
+        logger.info ("保险箱转入转出记录/safebox/safeboxRecord 返回data：" + list);
+
         return Result.success(list);
     }
 }

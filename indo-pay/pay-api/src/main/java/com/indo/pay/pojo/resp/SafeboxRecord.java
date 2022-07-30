@@ -8,7 +8,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.sql.Timestamp;
 
 
@@ -17,17 +16,17 @@ import java.sql.Timestamp;
 @TableName("safebox_change_record")
 public class SafeboxRecord {
 
-    @ApiModelProperty(value = "主键id")
+    @ApiModelProperty(value = "订单id")
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
-    @ApiModelProperty(value = "订单id")
+    @ApiModelProperty(value = "订单编号")
     private String orderNumber;
 
     @ApiModelProperty(value = "用户id")
     private Integer userId;
 
-    @ApiModelProperty(value = "交易类型")
+    @ApiModelProperty(value = "交易类型,0:转出，1：转入")
     private Integer safeOrdertype;
 
     @ApiModelProperty(value = "转入转出金额")
