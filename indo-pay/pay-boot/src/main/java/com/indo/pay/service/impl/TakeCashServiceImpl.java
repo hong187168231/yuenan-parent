@@ -22,12 +22,10 @@ import com.indo.core.pojo.entity.MemBank;
 import com.indo.core.pojo.entity.MemBaseinfo;
 import com.indo.core.pojo.entity.PayTakeCash;
 import com.indo.core.service.IMemGoldChangeService;
-import com.indo.pay.common.constant.PayConstants;
 import com.indo.pay.mapper.MemBankRelationMapper;
 import com.indo.pay.mapper.TakeCashMapper;
 import com.indo.pay.pojo.dto.PayCallBackDTO;
 import com.indo.pay.pojo.req.TakeCashApplyReq;
-import com.indo.pay.pojo.resp.withdraw.HuaRenWithdrawCallbackReq;
 import com.indo.pay.pojo.vo.TakeCashRecordVO;
 import com.indo.pay.service.ITakeCashService;
 import com.indo.user.api.MemBaseInfoFeignClient;
@@ -37,7 +35,6 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionSystemException;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -121,23 +118,23 @@ public class TakeCashServiceImpl extends SuperServiceImpl<TakeCashMapper, PayTak
         MemTradingBO memTradingBO = this.getMemTradingInfo(loginUser.getAccount());
         // 账户余额不足
         if (cashApplyReq.getTakeCashAmount().compareTo(memTradingBO.getBalance()) == 1) {
-//            throw new BizException(StatusCode.ACCOUNT_BALANCE_DEFICIENCY);
+            throw new BizException("账户余额不足");
         }
         // 大于可提现金额
         if (cashApplyReq.getTakeCashAmount().compareTo(memTradingBO.getCanAmount()) == 1) {
-//            throw new BizException(StatusCode.DOT_MEET_CAN_AMOUNT);
+            throw new BizException("提前金额大于可提现金额");
         }
         // 存在处理中的提现订单
         boolean processCashFlag = this.selectProcessCashOrder(loginUser.getId());
         if (processCashFlag) {
-//            throw new BizException(StatusCode.EXIST_CASH_ORDER);
+           throw new BizException("已存在提现中的订单");
         }
         // 获取会员提现银行卡信息
         MemBank memBank = this.selectMemBankById(cashApplyReq.getMemBankId());
         // 银行卡信息无效
         if (memBank == null || NumberUtils.toInt(memBank.getStatus() + "") == 1
                 || !memBank.getAccount().equals(loginUser.getAccount())) {
-//            throw new BizException(StatusCode.CASH_BANK_INVALID);
+            throw new BizException("银行卡无效");
         }
         MemBaseInfoBO currentMem = getMemCacheBaseInfo(loginUser.getAccount());
         if (currentMem.getProhibitDisbursement().equals(1)) {
