@@ -37,6 +37,7 @@ import com.indo.game.service.saba.SabaService;
 import com.indo.game.service.sbo.SboService;
 import com.indo.game.service.sgwin.SGWinService;
 import com.indo.game.service.t9.T9Service;
+import com.indo.game.service.tp.TpService;
 import com.indo.game.service.ug.UgService;
 import com.indo.game.service.v8.V8Service;
 import com.indo.game.service.wm.WmService;
@@ -120,6 +121,8 @@ public class GameController {
     private ObService obService;
     @Autowired
     private SaService saService;
+    @Autowired
+    private TpService tpService;
 //    @Autowired
 //    private SGWinService sgWinService;
     @Autowired
@@ -259,9 +262,16 @@ public class GameController {
                 if (OpenAPIProperties.OB_PLATFORM_CODE.equals(parentName)) {
                     resultInfo = obService.obGame(loginUser, isMobileLogin, ip, platform, parentName);
                 }
-//                if (OpenAPIProperties.SA_PLATFORM_CODE.equals(parentName)) {
-//                    resultInfo = saService.saGame(loginUser, isMobileLogin, ip, platform, parentName);
-//                }
+                if (OpenAPIProperties.SA_PLATFORM_CODE.equals(parentName)) {
+                    resultInfo = saService.saGame(loginUser, isMobileLogin, ip, platform, parentName);
+                }
+
+                if (OpenAPIProperties.TP_PLATFORM_CODE.equals(parentName)) {
+                    String loginType = "mobile";
+                    if (!"1".equals(isMobileLogin))
+                        loginType = "web";
+                    resultInfo = tpService.tpGame(loginUser, loginType, ip, platform, parentName);
+                }
 
 
                 if (resultInfo == null) {
@@ -390,6 +400,9 @@ public class GameController {
             }
             if (OpenAPIProperties.SA_PLATFORM_CODE.equals(platform)) {
                 resultInfo = saService.logout(loginUser, platform, ip);
+            }
+            if (OpenAPIProperties.TP_PLATFORM_CODE.equals(platform)) {
+                resultInfo = tpService.logout(loginUser, ip);
             }
 //            if (OpenAPIProperties.SGWIN_PLATFORM_CODE.equals(platform)) {
 //                resultInfo = sgWinService.logout(loginUser, platform, ip);

@@ -6,6 +6,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 /**
  * @ClassName : RegisterReq
  * @Description : 注册请求参数类
@@ -22,8 +24,8 @@ public class GiftReceiveReq {
     @ApiModelProperty(value = "礼金名称", required = true)
     private GiftNameEnum giftNameEnum;
 
-    @ApiModelProperty(value = "礼金金额", required = true)
-    private Integer giftAmount;
+    @ApiModelProperty(value = "礼金金额", required = false)
+    private BigDecimal giftAmount;
 
     @ApiModelProperty(value = "领取等级", required = true)
     private Integer level;

@@ -8,6 +8,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.math.BigDecimal;
+
 /**
  * <p>
  * 活动类型表
@@ -43,5 +45,7 @@ public class MemGiftReceive extends BaseEntity {
     @ApiModelProperty(value = "备注")
     private String remark;
 
+    @ApiModelProperty(value = "礼金金额")
+    private BigDecimal giftAmount;
 
 }

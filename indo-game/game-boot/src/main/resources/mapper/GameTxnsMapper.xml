@@ -75,14 +75,12 @@
         FROM game_txns t left join mem_baseinfo m on t.user_id=m.account left join agent_relation a on LOCATE(m.id,a.sub_user_ids)
         WHERE
         ((t.method = 'Settle' and t.status = 'Running') or (t.method = 'Place Bet' and t.status = 'Running'))
-        <choose>
-            <when test='req.agentAcct != null and req.agentAcct.trim() neq ""'>
-                and  a.superior = #{req.agentAcct}
-            </when>
-            <otherwise>
-                and  a.superior = #{req.userAcct}
-            </otherwise>
-        </choose>
+        <if test='req.agentAcctList != null and req.agentAcctList.size()>0'>
+            and t.platform IN
+            <foreach collection='req.agentAcctList' item='agentAcct' open='(' separator=',' close=')'>
+                #{agentAcct}
+            </foreach>
+        </if>
         <if test='req.platformTxId != null and req.platformTxId.trim() neq ""'>
             and  t.platform_tx_id = #{req.platformTxId}
         </if>
@@ -112,5 +110,18 @@
                 order by t.create_time desc
             </otherwise>
         </choose>
+    </select>
+
+    <select id="queryAgentRelation" resultType="com.indo.core.pojo.entity.AgentRelation">
+    select * from (SELECT t1.*,if(FIND_IN_SET(parent_id,@pids)>0,@pids := CONCAT(@pids,',',mem_id),0)as ischild
+    from(select *from agent_relation t order by t.parent_id,t.mem_id)t1,(select @pids := #{userId})t2
+
+    )t3 where ischild !=0
+    </select>
+    <select id="queryAgentRelationByUserId" resultType="com.indo.core.pojo.entity.AgentRelation">
+        select * from (SELECT t1.*,if(FIND_IN_SET(parent_id,@pids)>0,@pids := CONCAT(@pids,',',mem_id),0)as ischild
+                       from(select *from agent_relation t order by t.parent_id,t.mem_id)t1,(select @pids := #{userId})t2
+
+                      )t3 where ischild !=0 and mem_id = #{agentAcct}
     </select>
 </mapper>

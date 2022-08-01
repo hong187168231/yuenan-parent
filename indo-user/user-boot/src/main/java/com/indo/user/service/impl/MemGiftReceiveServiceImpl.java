@@ -13,7 +13,9 @@ import com.indo.core.pojo.dto.MemGoldChangeDTO;
 import com.indo.core.pojo.entity.MemGiftReceive;
 import com.indo.core.pojo.entity.MemLevel;
 import com.indo.core.service.IMemGoldChangeService;
+import com.indo.user.mapper.MemBaseInfoMapper;
 import com.indo.user.mapper.MemGiftReceiveMapper;
+import com.indo.user.mapper.MemLevelMapper;
 import com.indo.user.pojo.req.gift.GiftReceiveReq;
 import com.indo.user.service.IMemGiftReceiveService;
 import com.indo.user.service.IMemLevelService;
@@ -36,14 +38,16 @@ import java.util.Date;
 @Service
 public class MemGiftReceiveServiceImpl extends ServiceImpl<MemGiftReceiveMapper, MemGiftReceive> implements IMemGiftReceiveService {
 
-    @Autowired
+    @Resource
     private IMemGoldChangeService iMemGoldChangeService;
 
-    @Autowired
+    @Resource
     private MemGiftReceiveMapper memGiftReceiveMapper;
 
     @Resource
     private IMemLevelService memLevelService;
+    @Resource
+    private MemBaseInfoMapper memBaseInfoMapper;
     /**
      * 礼金领取
      *
@@ -64,8 +68,9 @@ public class MemGiftReceiveServiceImpl extends ServiceImpl<MemGiftReceiveMapper,
         memGiftReceive.setGiftType(req.getGiftTypeEnum().getCode());
         memGiftReceive.setGiftCode(req.getGiftNameEnum().name());
         memGiftReceive.setGiftName(req.getGiftNameEnum().getName());
+        memGiftReceive.setGiftAmount(req.getGiftAmount());
         if (req.getGiftNameEnum().equals(GiftNameEnum.reward)) {
-            if (req.getLevel() < 10) {
+            if (req.getLevel() <= 10) {
                 memGiftReceive.setUpLevel(req.getLevel() + 1);
             } else {
                 return false;
@@ -113,6 +118,7 @@ public class MemGiftReceiveServiceImpl extends ServiceImpl<MemGiftReceiveMapper,
         GiftNameEnum giftNameEnum = req.getGiftNameEnum();
         Long memId = loginInfo.getId();
         MemLevel memLevel = memLevelService.getById(loginInfo.getMemLevel());
+        BigDecimal BetMoney = memBaseInfoMapper.findUserBetMoney(loginInfo.getAccount());
         switch (giftNameEnum) {
             case reward:
                 if (memLevel.getLevel() >= req.getLevel()) {
@@ -120,6 +126,10 @@ public class MemGiftReceiveServiceImpl extends ServiceImpl<MemGiftReceiveMapper,
                     if (count > 0) {
                         throw new BizException("您已领取过晋级奖励，请勿重复提交");
                     }
+                    if(BetMoney.compareTo(memLevel.getReward())<0){
+                        throw new BizException("有效投注未达标");
+                    }
+                    req.setGiftAmount(memLevel.getReward());
                 } else {
                     throw new BizException("您不能领取该奖励");
                 }
@@ -133,6 +143,10 @@ public class MemGiftReceiveServiceImpl extends ServiceImpl<MemGiftReceiveMapper,
                 } else {
                     throw new BizException("您不能领取该奖励");
                 }
+                if(BetMoney.compareTo(memLevel.getEverydayGift())<0){
+                    throw new BizException("有效投注未达标");
+                }
+                req.setGiftAmount(memLevel.getEverydayGift());
             case week:
                 if (memLevel.getLevel().equals(req.getLevel())) {
                     int countWeek = countWeekReceive(memId, giftNameEnum.name());
@@ -142,6 +156,10 @@ public class MemGiftReceiveServiceImpl extends ServiceImpl<MemGiftReceiveMapper,
                 } else {
                     throw new BizException("您不能领取该奖励");
                 }
+                if(BetMoney.compareTo(memLevel.getWeekGift())<0){
+                    throw new BizException("有效投注未达标");
+                }
+                req.setGiftAmount(memLevel.getWeekGift());
             case month:
                 if (memLevel.getLevel().equals(req.getLevel())) {
                     int countMonth = countMonthReceive(memId, giftNameEnum.name());
@@ -151,6 +169,10 @@ public class MemGiftReceiveServiceImpl extends ServiceImpl<MemGiftReceiveMapper,
                 } else {
                     throw new BizException("您不能领取该奖励");
                 }
+                if(BetMoney.compareTo(memLevel.getMonthGift())<0){
+                    throw new BizException("有效投注未达标");
+                }
+                req.setGiftAmount(memLevel.getMonthGift());
             case year:
                 if (memLevel.getLevel().equals(req.getLevel())) {
                     int countYear = countYearReceive(memId, giftNameEnum.name());
@@ -160,6 +182,10 @@ public class MemGiftReceiveServiceImpl extends ServiceImpl<MemGiftReceiveMapper,
                 } else {
                     throw new BizException("您不能领取该奖励");
                 }
+                if(BetMoney.compareTo(memLevel.getYearGift())<0){
+                    throw new BizException("有效投注未达标");
+                }
+                req.setGiftAmount(memLevel.getYearGift());
             case birthday:
                 if (memLevel.getLevel().equals(req.getLevel())) {
                     int countBirthday = countBirthdayReceive(memId, giftNameEnum.name());
@@ -169,6 +195,10 @@ public class MemGiftReceiveServiceImpl extends ServiceImpl<MemGiftReceiveMapper,
                 } else {
                     throw new BizException("您不能领取该奖励");
                 }
+                if(BetMoney.compareTo(memLevel.getBirthdayGift())<0){
+                    throw new BizException("有效投注未达标");
+                }
+                req.setGiftAmount(memLevel.getBirthdayGift());
                 break;
         }
 
@@ -194,7 +224,7 @@ public class MemGiftReceiveServiceImpl extends ServiceImpl<MemGiftReceiveMapper,
      */
     public void updateGiftGold(GiftReceiveReq giftReceiveReq, LoginInfo loginInfo) {
         MemGoldChangeDTO goldChangeDO = new MemGoldChangeDTO();
-        goldChangeDO.setChangeAmount(new BigDecimal(giftReceiveReq.getGiftAmount()));
+        goldChangeDO.setChangeAmount(giftReceiveReq.getGiftAmount());
         goldChangeDO.setTradingEnum(TradingEnum.INCOME);
         goldChangeDO.setGoldchangeEnum(GoldchangeEnum.valueOf(giftReceiveReq.getGiftNameEnum().name()));
         goldChangeDO.setUserId(loginInfo.getId());

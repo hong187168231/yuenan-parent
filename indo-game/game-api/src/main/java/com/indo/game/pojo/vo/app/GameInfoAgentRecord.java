@@ -20,7 +20,7 @@ public class GameInfoAgentRecord {
     @ApiModelProperty(value = "中奖金额（赢为正数，亏为负数，和为0）")
     private BigDecimal winningAmount;
 
-    @ApiModelProperty(value = "用户ID")
+    @ApiModelProperty(value = "用户账号")
     private String userAcct;
 
     @ApiModelProperty(value = "上级代理")
