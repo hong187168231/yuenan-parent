@@ -33,7 +33,7 @@ public class MemGoldChange extends BaseEntity {
     private Long goldChangId;
 
     @ApiModelProperty(value = "相关id 如充值订单id 、彩票派獎id(ksorderid)  代理結算id")
-    @TableField("refId")
+    @TableField("ref_no")
     private Long refId;
 
     @ApiModelProperty(value = "账变流水号")
