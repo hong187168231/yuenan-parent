@@ -91,19 +91,19 @@ public class TakeCashServiceImpl extends SuperServiceImpl<TakeCashMapper, PayTak
         BigDecimal cashAmount = cashApplyReq.getTakeCashAmount();
         // 提现金额必须大于0
         if (!(cashAmount.doubleValue() > 0)) {
-            //  throw new BizException(StatusCode.CASH_AMOUNT_GREATER_ZERO);
+            throw new BizException("提现金额必须大于0");
         }
         // 提现金额只能为1的倍数
         if ((cashAmount.doubleValue() % 1) > 0) {
-            //  throw new BizException(StatusCode.CASH_AMOUNT_MULTIPLE_ONE);
+            throw new BizException("提现金额只能为1的倍数");
         }
         // 提现金额不能为负数
         if (cashAmount.compareTo(BigDecimal.ZERO) <= 0) {
-            // throw new BizException(StatusCode.CASH_AMOUNT_NOT_NEGATIVE);
+            throw new BizException("提现金额不能为负数");
         }
         // 提现银行卡不能为空
         if (null == cashApplyReq.getMemBankId()) {
-            //  throw new BizException(StatusCode.CASH_BANKCARD_NOT_NULL);
+            throw new BizException("提现银行卡不能为空");
         }
     }
 
