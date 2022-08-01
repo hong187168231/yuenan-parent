@@ -28,9 +28,9 @@ public class SboCallBackController {
     @ResponseBody
     @AllowAccess
     public Object getBalance(SboCallBackParentReq sboCallBackParentReq) {
-        logger.info("sboCallBack {} GetBalance 回调,取得用户的余额 params:{}",JSONObject.toJSONString(sboCallBackParentReq));
+        logger.info("sboCallBack GetBalance 回调,取得用户的余额 params:{}",JSONObject.toJSONString(sboCallBackParentReq));
         Object getBalance = sboCallbackService.getBalance(sboCallBackParentReq);
-        logger.info("sboCallBack {} GetBalance 回调返回数据,取得用户的余额 params:{}",getBalance);
+        logger.info("sboCallBack  GetBalance 回调返回数据,取得用户的余额 params:{}",getBalance);
         return getBalance;
     }
 
@@ -41,9 +41,9 @@ public class SboCallBackController {
     @ResponseBody
     @AllowAccess
     public Object deduct(SboCallBackDeductReq sboCallBackDeductReq) {
-        logger.info("sboCallBack {} Deduct 回调,扣除投注金额 params:{}",JSONObject.toJSONString(sboCallBackDeductReq));
+        logger.info("sboCallBack  Deduct 回调,扣除投注金额 params:{}",JSONObject.toJSONString(sboCallBackDeductReq));
         Object deduct = sboCallbackService.deduct(sboCallBackDeductReq);
-        logger.info("sboCallBack {} Deduct 回调返回数据,扣除投注金额 params:{}",deduct);
+        logger.info("sboCallBack Deduct 回调返回数据,扣除投注金额 params:{}",deduct);
         return deduct;
     }
 
@@ -54,9 +54,9 @@ public class SboCallBackController {
     @ResponseBody
     @AllowAccess
     public Object settle(SboCallBackSettleReq sboCallBackSettleReq) {
-        logger.info("sboCallBack {} settle 回调,结算投注 params:{}",JSONObject.toJSONString(sboCallBackSettleReq));
+        logger.info("sboCallBack settle 回调,结算投注 params:{}",JSONObject.toJSONString(sboCallBackSettleReq));
         Object settle = sboCallbackService.settle(sboCallBackSettleReq);
-        logger.info("sboCallBack {} settle 回调返回数据,结算投注 params:{}",settle);
+        logger.info("sboCallBack settle 回调返回数据,结算投注 params:{}",settle);
         return settle;
     }
 
@@ -67,9 +67,9 @@ public class SboCallBackController {
     @ResponseBody
     @AllowAccess
     public Object rollback(SboCallBackRollbackReq sboCallBackRollbackReq) {
-        logger.info("sboCallBack {} rollback 回调,回滚 params:{}",JSONObject.toJSONString(sboCallBackRollbackReq));
+        logger.info("sboCallBack rollback 回调,回滚 params:{}",JSONObject.toJSONString(sboCallBackRollbackReq));
         Object rollback = sboCallbackService.rollback(sboCallBackRollbackReq);
-        logger.info("sboCallBack {} rollback 回调返回数据,回滚 params:{}",rollback);
+        logger.info("sboCallBack rollback 回调返回数据,回滚 params:{}",rollback);
         return rollback;
     }
 
@@ -80,9 +80,9 @@ public class SboCallBackController {
     @ResponseBody
     @AllowAccess
     public Object cancel(SboCallBackCancelReq sboCallBackCancelReq) {
-        logger.info("sboCallBack {} Cancel 回调,回滚 params:{}",JSONObject.toJSONString(sboCallBackCancelReq));
+        logger.info("sboCallBack Cancel 回调,回滚 params:{}",JSONObject.toJSONString(sboCallBackCancelReq));
         Object cancel = sboCallbackService.cancel(sboCallBackCancelReq);
-        logger.info("sboCallBack {} Cancel 回调返回数据,回滚 params:{}",cancel);
+        logger.info("sboCallBack Cancel 回调返回数据,回滚 params:{}",cancel);
         return cancel;
     }
 
@@ -93,9 +93,9 @@ public class SboCallBackController {
     @ResponseBody
     @AllowAccess
     public Object tip(SboCallBackTipReq sboCallBackTipReq) {
-        logger.info("sboCallBack {} tip 回调,小费 params:{}",JSONObject.toJSONString(sboCallBackTipReq));
+        logger.info("sboCallBack tip 回调,小费 params:{}",JSONObject.toJSONString(sboCallBackTipReq));
         Object tip = sboCallbackService.tip(sboCallBackTipReq);
-        logger.info("sboCallBack {} tip 回调返回数据,小费 params:{}",tip);
+        logger.info("sboCallBack tip 回调返回数据,小费 params:{}",tip);
         return tip;
     }
 
@@ -106,9 +106,9 @@ public class SboCallBackController {
     @ResponseBody
     @AllowAccess
     public Object bonus(SboCallBackBonusReq sboCallBackBonusReq) {
-        logger.info("sboCallBack {} bonus 回调,红利 params:{}",JSONObject.toJSONString(sboCallBackBonusReq));
+        logger.info("sboCallBack  bonus 回调,红利 params:{}",JSONObject.toJSONString(sboCallBackBonusReq));
         Object bonus = sboCallbackService.bonus(sboCallBackBonusReq);
-        logger.info("sboCallBack {} bonus 回调返回数据,红利 params:{}",bonus);
+        logger.info("sboCallBack  bonus 回调返回数据,红利 params:{}",bonus);
         return bonus;
     }
 
@@ -119,9 +119,9 @@ public class SboCallBackController {
     @ResponseBody
     @AllowAccess
     public Object returnStake(SboCallBackReturnStakeReq sboCallBackBonusReq) {
-        logger.info("sboCallBack {} returnStake 回调,归还注额 params:{}",JSONObject.toJSONString(sboCallBackBonusReq));
+        logger.info("sboCallBack returnStake 回调,归还注额 params:{}",JSONObject.toJSONString(sboCallBackBonusReq));
         Object returnStake = sboCallbackService.returnStake(sboCallBackBonusReq);
-        logger.info("sboCallBack {} returnStake 回调返回数据,归还注额 params:{}",returnStake);
+        logger.info("sboCallBack returnStake 回调返回数据,归还注额 params:{}",returnStake);
         return returnStake;
     }
 
@@ -132,9 +132,9 @@ public class SboCallBackController {
     @ResponseBody
     @AllowAccess
     public Object getBetStatus(SboCallBackGetBetStatusReq sboCallBackGetBetStatusReq) {
-        logger.info("sboCallBack {} getBetStatus 回调,取得投注状态 params:{}",JSONObject.toJSONString(sboCallBackGetBetStatusReq));
+        logger.info("sboCallBack getBetStatus 回调,取得投注状态 params:{}",JSONObject.toJSONString(sboCallBackGetBetStatusReq));
         Object getBetStatus = sboCallbackService.getBetStatus(sboCallBackGetBetStatusReq);
-        logger.info("sboCallBack {} getBetStatus 回调返回数据,取得投注状态 params:{}",getBetStatus);
+        logger.info("sboCallBack  getBetStatus 回调返回数据,取得投注状态 params:{}",getBetStatus);
         return getBetStatus;
     }
 
@@ -181,9 +181,9 @@ public class SboCallBackController {
     @ResponseBody
     @AllowAccess
     public Object liveCoinTransaction(SboCallBackLiveCoinTransactionReq sboCallBackLiveCoinTransactionReq) {
-        logger.info("sboCallBack {} getTransferStatus 回调,LiveCoin購買 params:{}",JSONObject.toJSONString(sboCallBackLiveCoinTransactionReq));
+        logger.info("sboCallBack  getTransferStatus 回调,LiveCoin購買 params:{}",JSONObject.toJSONString(sboCallBackLiveCoinTransactionReq));
         Object liveCoinTransaction = sboCallbackService.liveCoinTransaction(sboCallBackLiveCoinTransactionReq);
-        logger.info("sboCallBack {} getTransferStatus 回调返回数据,LiveCoin購買 params:{}",liveCoinTransaction);
+        logger.info("sboCallBack  getTransferStatus 回调返回数据,LiveCoin購買 params:{}",liveCoinTransaction);
         return liveCoinTransaction;
     }
 }

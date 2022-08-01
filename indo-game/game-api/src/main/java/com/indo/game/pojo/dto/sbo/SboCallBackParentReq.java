@@ -4,7 +4,7 @@ import com.alibaba.fastjson.annotation.JSONField;
 
 public class SboCallBackParentReq {
     private String CompanyKey;
-    private String UserName;
+    private String Username;
     private int ProductType;
     private int GameType;
     private int Gpid;
@@ -16,13 +16,13 @@ public class SboCallBackParentReq {
     public void setCompanyKey(String companyKey) {
         CompanyKey = companyKey;
     }
-    @JSONField(name="UserName")
+    @JSONField(name="Username")
     public String getUserName() {
-        return UserName;
+        return Username;
     }
-    @JSONField(name="UserName")
+    @JSONField(name="Username")
     public void setUserName(String userName) {
-        UserName = userName;
+        Username = userName;
     }
     @JSONField(name="ProductType")
     public int getProductType() {
