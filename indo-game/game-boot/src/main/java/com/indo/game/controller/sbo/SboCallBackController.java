@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/sbo/callBackss")
+@RequestMapping("/sbo/callBack")
 public class SboCallBackController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
