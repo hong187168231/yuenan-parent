@@ -16,14 +16,6 @@ public class SboCallBackParentReq {
     public void setCompanyKey(String companyKey) {
         CompanyKey = companyKey;
     }
-    @JSONField(name="Username")
-    public String getUserName() {
-        return Username;
-    }
-    @JSONField(name="Username")
-    public void setUserName(String userName) {
-        Username = userName;
-    }
     @JSONField(name="ProductType")
     public int getProductType() {
         return ProductType;
@@ -48,4 +40,14 @@ public class SboCallBackParentReq {
     public void setGpid(int gpid) {
         Gpid = gpid;
     }
+
+    @JSONField(name="Username")
+    public String getUsername() {
+        return Username;
+    }
+    @JSONField(name="Username")
+    public void setUsername(String username) {
+        Username = username;
+    }
+
 }
