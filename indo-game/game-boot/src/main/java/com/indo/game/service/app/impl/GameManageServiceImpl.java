@@ -6,15 +6,18 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.common.constant.RedisConstants;
+import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.redis.utils.RedisUtils;
 import com.indo.common.result.Result;
 import com.indo.common.utils.CollectionUtil;
 import com.indo.core.pojo.entity.Activity;
+import com.indo.core.pojo.entity.AgentRelation;
 import com.indo.core.pojo.entity.PayWithdrawConfig;
 import com.indo.game.mapper.TxnsMapper;
 import com.indo.game.mapper.frontend.GameCategoryMapper;
 import com.indo.game.mapper.frontend.GameParentPlatformMapper;
 import com.indo.game.mapper.frontend.GamePlatformMapper;
+import com.indo.game.pojo.dto.manage.GameInfoPageImpReq;
 import com.indo.game.pojo.dto.manage.GameInfoPageReq;
 import com.indo.game.pojo.entity.manage.*;
 import com.indo.game.pojo.vo.app.GameInfoAgentRecord;
@@ -23,6 +26,8 @@ import com.indo.game.pojo.vo.app.GamePlatformRecord;
 import com.indo.game.pojo.vo.app.GameStatiRecord;
 import com.indo.game.service.app.IGameManageService;
 import com.indo.game.service.common.GameCommonService;
+import com.indo.user.pojo.bo.MemTradingBO;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -98,10 +103,34 @@ public class GameManageServiceImpl implements IGameManageService {
     }
 
     @Override
-    public IPage<GameInfoAgentRecord> queryAllAgentGameInfo(GameInfoPageReq req) {
-        IPage<GameInfoAgentRecord> page = new Page<>(req.getPage(), req.getLimit());
-        page.setRecords(txnsMapper.queryAllAgentGameInfo(page, req));
-        return page;
+    public Result<List<GameInfoAgentRecord>> queryAllAgentGameInfo(LoginInfo loginUser,GameInfoPageReq req) {
+        boolean b = false;
+        //验证是否是当前用户下代理
+        GameInfoPageImpReq gameInfoPageImpReq = new GameInfoPageImpReq();
+        BeanUtils.copyProperties(req, gameInfoPageImpReq);
+        List agentAcctList = new ArrayList();
+        if(null!=req && !"".equals(req.getAgentAcct())){
+            MemTradingBO memTradingBO = gameCommonService.getMemTradingInfo(req.getAgentAcct());
+            List<AgentRelation> agentRelationList = txnsMapper.queryAgentRelationByUserId(String.valueOf(loginUser.getId()),String.valueOf(memTradingBO.getId()));
+            if(null!=agentRelationList && agentRelationList.size()>0){
+               List<AgentRelation> subAgentRelationList = txnsMapper.queryAgentRelation(String.valueOf(memTradingBO.getId()));
+                    if(null!=subAgentRelationList && subAgentRelationList.size()>0){
+                        for(AgentRelation agentRelation : subAgentRelationList){
+                            agentAcctList.add(agentRelation.getAccount());
+                        }
+                    }else {
+                        return Result.success();
+                    }
+           }else {
+                return Result.failed("g091035", "无效代理ID" );
+           }
+        }else {
+            agentAcctList.add(loginUser.getAccount());
+        }
+        gameInfoPageImpReq.setAgentAcctList(agentAcctList);
+        IPage<GameInfoAgentRecord> page = new Page<>(gameInfoPageImpReq.getPage(), gameInfoPageImpReq.getLimit());
+        page.setRecords(txnsMapper.queryAllAgentGameInfo(page, gameInfoPageImpReq));
+        return Result.success(page.getRecords(), page.getTotal());
     }
 
     @Override

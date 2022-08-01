@@ -91,7 +91,7 @@ public class TpServiceImpl implements TpService {
         }
 
         try {
-            String gamehall = "";
+            String gamehall = "gpk2";
             // 验证且绑定（KY-CPT第三方会员关系）
             CptOpenMember cptOpenMember = externalService.getCptOpenMember(loginUser.getId().intValue(), parentName);
             if (cptOpenMember == null) {
@@ -127,7 +127,7 @@ public class TpServiceImpl implements TpService {
     public Result logout(LoginInfo loginUser,String ip){
         // 验证且绑定（KY-CPT第三方会员关系）
         CptOpenMember cptOpenMember = externalService.getCptOpenMember(loginUser.getId().intValue(), OpenAPIProperties.T9_PLATFORM_CODE);
-        String gamehall = "";
+        String gamehall = "gpk2";
         String callBackBalanceStr = getBalance(cptOpenMember,gamehall);
         if (null == callBackBalanceStr || "".equals(callBackBalanceStr) ) {
             return Result.failed("g100104","网络繁忙，请稍后重试！");
@@ -146,7 +146,7 @@ public class TpServiceImpl implements TpService {
                 }
                 Map<String, String> trr = new HashMap<>();
                 trr.put("account", loginUser.getAccount());//player帳號
-                trr.put("gamehall", "");//遊戲廠商
+                trr.put("gamehall", gamehall);//遊戲廠商
                 trr.put("agent_id", "");//代理id
                 String signStr = "account=" + loginUser.getAccount() + "&gamehall=" + "" + "&agent_id=" + OpenAPIProperties.TP_API_KEY;
                 trr.put("sign", MD5.md5(signStr));//簽章

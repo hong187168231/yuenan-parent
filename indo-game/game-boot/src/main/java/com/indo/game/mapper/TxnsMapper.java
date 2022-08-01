@@ -2,6 +2,8 @@ package com.indo.game.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.indo.core.pojo.entity.AgentRelation;
+import com.indo.game.pojo.dto.manage.GameInfoPageImpReq;
 import com.indo.game.pojo.dto.manage.GameInfoPageReq;
 import com.indo.game.pojo.entity.manage.Txns;
 import com.indo.game.pojo.vo.app.GameInfoAgentRecord;
@@ -20,7 +22,11 @@ public interface TxnsMapper extends BaseMapper<Txns> {
 
     List<GameInfoRecord> queryAllGameInfo(@Param("page") IPage<GameInfoRecord> page, @Param("req") GameInfoPageReq req);
 
-    List<GameInfoAgentRecord> queryAllAgentGameInfo(@Param("page") IPage<GameInfoAgentRecord> page, @Param("req") GameInfoPageReq req);
+    List<GameInfoAgentRecord> queryAllAgentGameInfo(@Param("page") IPage<GameInfoAgentRecord> page, @Param("req") GameInfoPageImpReq req);
+
+    List<AgentRelation> queryAgentRelation( @Param("userId") String userId);
+
+    List<AgentRelation> queryAgentRelationByUserId( @Param("userId") String userId,@Param("agentAcct") String agentAcct);
 
     String getMaxSortNo(@Param("platform") String platform);
 }
