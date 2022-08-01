@@ -119,6 +119,11 @@
         where mb.account = #{account}
     </select>
 
-
+    <select id="findUserBetMoney" resultType="java.math.BigDecimal">
+        SELECT
+        SUM(bet_amount)
+        FROM game_txns
+        WHERE user_id=#{account}
+    </select>
 
 </mapper>

@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -20,9 +21,9 @@ import java.util.List;
 public class LevelUpRuleVO {
 
     @ApiModelProperty(value = "所需存款")
-    private Long needDeposit;
+    private BigDecimal needDeposit;
 
     @ApiModelProperty(value = "所需投注")
-    private Long needBet;
+    private BigDecimal needBet;
 
 }

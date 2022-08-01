@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 @ApiModel(value = "memGiftReceiveVO对象", description = "会员礼金领取vo")
@@ -32,7 +33,7 @@ public class MemGiftReceiveVO {
     private String giftName;
 
     @ApiModelProperty(value = "礼金金额")
-    private Integer giftAmount;
+    private BigDecimal giftAmount;
 
     @ApiModelProperty(value = "创建时间")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")

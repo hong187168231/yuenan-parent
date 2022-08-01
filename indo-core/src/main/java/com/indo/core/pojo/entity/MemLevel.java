@@ -8,6 +8,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.math.BigDecimal;
+
 /**
  * <p>
  * 会员等级表
@@ -30,28 +32,28 @@ public class MemLevel extends BaseEntity {
     private Integer level;
 
     @ApiModelProperty(value = "所需存款")
-    private Long needDeposit;
+    private BigDecimal needDeposit;
 
     @ApiModelProperty(value = "所需投注")
-    private Long needBet;
+    private BigDecimal needBet;
 
     @ApiModelProperty(value = "晋级奖励")
-    private Long reward;
+    private BigDecimal reward;
 
     @ApiModelProperty(value = "每日礼金")
-    private Long everydayGift;
+    private BigDecimal everydayGift;
 
     @ApiModelProperty(value = "每周礼金")
-    private Long weekGift;
+    private BigDecimal weekGift;
 
     @ApiModelProperty(value = "每月礼金")
-    private Long monthGift;
+    private BigDecimal monthGift;
 
     @ApiModelProperty(value = "每年礼金")
-    private Long yearGift;
+    private BigDecimal yearGift;
 
     @ApiModelProperty(value = "生日礼金")
-    private Long birthdayGift;
+    private BigDecimal birthdayGift;
 
     @ApiModelProperty(value = "会员人数")
     private Integer memNum;
