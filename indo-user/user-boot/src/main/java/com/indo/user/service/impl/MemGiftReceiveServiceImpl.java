@@ -119,6 +119,9 @@ public class MemGiftReceiveServiceImpl extends ServiceImpl<MemGiftReceiveMapper,
         Long memId = loginInfo.getId();
         MemLevel memLevel = memLevelService.getById(loginInfo.getMemLevel());
         BigDecimal BetMoney = memBaseInfoMapper.findUserBetMoney(loginInfo.getAccount());
+        if(BetMoney==null){
+           BetMoney = BigDecimal.ZERO;
+        }
         switch (giftNameEnum) {
             case reward:
                 if (memLevel.getLevel() >= req.getLevel()) {
