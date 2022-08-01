@@ -1,6 +1,8 @@
 package com.indo.game.service.app;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.indo.common.pojo.bo.LoginInfo;
+import com.indo.common.result.Result;
 import com.indo.game.pojo.dto.manage.GameInfoPageReq;
 import com.indo.game.pojo.entity.manage.GameCategory;
 import com.indo.game.pojo.entity.manage.GameParentPlatform;
@@ -27,7 +29,7 @@ public interface IGameManageService {
 
     IPage<GameInfoRecord> queryAllGameInfo(GameInfoPageReq req);
 
-    IPage<GameInfoAgentRecord> queryAllAgentGameInfo(GameInfoPageReq req);
+    Result<List<GameInfoAgentRecord>> queryAllAgentGameInfo(LoginInfo loginUser,GameInfoPageReq req);
 
     public List<GameParentPlatform> queryAllGameParentPlatform();
 

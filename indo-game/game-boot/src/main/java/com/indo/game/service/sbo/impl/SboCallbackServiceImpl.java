@@ -35,9 +35,9 @@ public class SboCallbackServiceImpl implements SboCallbackService {
     //取得用户的余额
     public Object getBalance(SboCallBackParentReq sboCallBackParentReq) {
 
-        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sboCallBackParentReq.getUserName());
+        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sboCallBackParentReq.getUsername());
         SboCallBackCommResp sboCallBackCommResp = new SboCallBackCommResp();
-        sboCallBackCommResp.setAccountName(sboCallBackParentReq.getUserName());
+        sboCallBackCommResp.setAccountName(sboCallBackParentReq.getUsername());
         if (null == memBaseinfo) {
             sboCallBackCommResp.setErrorCode(1);
             sboCallBackCommResp.setErrorMessage("Member not exist");
@@ -53,9 +53,9 @@ public class SboCallbackServiceImpl implements SboCallbackService {
 
     //扣除投注金额
     public Object deduct(SboCallBackDeductReq sboCallBackDeductReq) {
-        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sboCallBackDeductReq.getUserName());
+        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sboCallBackDeductReq.getUsername());
         SboCallBackCommResp sboCallBackCommResp = new SboCallBackCommResp();
-        sboCallBackCommResp.setAccountName(sboCallBackDeductReq.getUserName());
+        sboCallBackCommResp.setAccountName(sboCallBackDeductReq.getUsername());
         if (null == memBaseinfo) {
             sboCallBackCommResp.setErrorCode(1);
             sboCallBackCommResp.setErrorMessage("Member not exist");
@@ -77,7 +77,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
                 sboCallBackCommResp.setErrorMessage("No Error");
 
                 Txns txns = new Txns();
-                txns.setUserId(sboCallBackDeductReq.getUserName());
+                txns.setUserId(sboCallBackDeductReq.getUsername());
                 txns.setBetAmount(betAmount);
                 txns.setPlatformTxId(sboCallBackDeductReq.getTransferCode());
                 txns.setRoundId(sboCallBackDeductReq.getTransactionId());
@@ -106,9 +106,9 @@ public class SboCallbackServiceImpl implements SboCallbackService {
     public Object settle(SboCallBackSettleReq sboCallBackSettleReq) {
         //同一个赌注发出多次API请求,这意味着我们要求该次赌注重新结算
 
-        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sboCallBackSettleReq.getUserName());
+        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sboCallBackSettleReq.getUsername());
         SboCallBackCommResp sboCallBackCommResp = new SboCallBackCommResp();
-        sboCallBackCommResp.setAccountName(sboCallBackSettleReq.getUserName());
+        sboCallBackCommResp.setAccountName(sboCallBackSettleReq.getUsername());
         if (null == memBaseinfo) {
             sboCallBackCommResp.setErrorCode(1);
             sboCallBackCommResp.setErrorMessage("Member not exist");
@@ -118,7 +118,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
             wrapper.eq(Txns::getMethod, "Place Bet");
             wrapper.eq(Txns::getStatus, "Running");
             wrapper.eq(Txns::getPlatformTxId, sboCallBackSettleReq.getTransferCode());
-            wrapper.eq(Txns::getUserId, sboCallBackSettleReq.getUserName());
+            wrapper.eq(Txns::getUserId, sboCallBackSettleReq.getUsername());
             wrapper.eq(Txns::getPlatform, platformCode);
             wrapper.eq(Txns::getGameType, sboCallBackSettleReq.getGameType());
             Txns oldTxns = txnsMapper.selectOne(wrapper);
@@ -146,7 +146,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
             Txns txns = new Txns();
             BeanUtils.copyProperties(oldTxns, txns);
             txns.setId(null);
-            txns.setUserId(sboCallBackSettleReq.getUserName());
+            txns.setUserId(sboCallBackSettleReq.getUsername());
             txns.setBetAmount(oldTxns.getBetAmount());
             txns.setPlatformTxId(sboCallBackSettleReq.getTransferCode());
             txns.setBetTime(sboCallBackSettleReq.getResultTime());
@@ -172,9 +172,9 @@ public class SboCallbackServiceImpl implements SboCallbackService {
     //回滚
     public Object rollback(SboCallBackRollbackReq sboCallBackRollbackReq) {
 
-        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sboCallBackRollbackReq.getUserName());
+        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sboCallBackRollbackReq.getUsername());
         SboCallBackCommResp sboCallBackCommResp = new SboCallBackCommResp();
-        sboCallBackCommResp.setAccountName(sboCallBackRollbackReq.getUserName());
+        sboCallBackCommResp.setAccountName(sboCallBackRollbackReq.getUsername());
         if (null == memBaseinfo) {
             sboCallBackCommResp.setErrorCode(1);
             sboCallBackCommResp.setErrorMessage("Member not exist");
@@ -183,7 +183,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
             wrapper.eq(Txns::getStatus, "Running");
             wrapper.eq(Txns::getMethod, "settle");
             wrapper.eq(Txns::getPlatformTxId, sboCallBackRollbackReq.getTransferCode());
-            wrapper.eq(Txns::getUserId, sboCallBackRollbackReq.getUserName());
+            wrapper.eq(Txns::getUserId, sboCallBackRollbackReq.getUsername());
             wrapper.eq(Txns::getPlatform, sboCallBackRollbackReq.getProductType());
             wrapper.eq(Txns::getGameType, sboCallBackRollbackReq.getGameType());
             Txns oldTxns = txnsMapper.selectOne(wrapper);
@@ -229,16 +229,16 @@ public class SboCallbackServiceImpl implements SboCallbackService {
     //取消投注
     public Object cancel(SboCallBackCancelReq sboCallBackCancelReq) {
 
-        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sboCallBackCancelReq.getUserName());
+        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sboCallBackCancelReq.getUsername());
         SboCallBackCommResp sboCallBackCommResp = new SboCallBackCommResp();
-        sboCallBackCommResp.setAccountName(sboCallBackCancelReq.getUserName());
+        sboCallBackCommResp.setAccountName(sboCallBackCancelReq.getUsername());
         if (null == memBaseinfo) {
             sboCallBackCommResp.setErrorCode(1);
             sboCallBackCommResp.setErrorMessage("Member not exist");
         } else {
             LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
             wrapper.eq(Txns::getPlatformTxId, sboCallBackCancelReq.getTransferCode());
-            wrapper.eq(Txns::getUserId, sboCallBackCancelReq.getUserName());
+            wrapper.eq(Txns::getUserId, sboCallBackCancelReq.getUsername());
             wrapper.eq(Txns::getPlatform, sboCallBackCancelReq.getProductType());
             wrapper.eq(Txns::getGameType, sboCallBackCancelReq.getGameType());
             wrapper.orderByDesc(Txns::getId);
@@ -290,9 +290,9 @@ public class SboCallbackServiceImpl implements SboCallbackService {
 
     //小费
     public Object tip(SboCallBackTipReq sboCallBackTipReq) {
-        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sboCallBackTipReq.getUserName());
+        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sboCallBackTipReq.getUsername());
         SboCallBackCommResp sboCallBackCommResp = new SboCallBackCommResp();
-        sboCallBackCommResp.setAccountName(sboCallBackTipReq.getUserName());
+        sboCallBackCommResp.setAccountName(sboCallBackTipReq.getUsername());
         if (null == memBaseinfo) {
             sboCallBackCommResp.setErrorCode(1);
             sboCallBackCommResp.setErrorMessage("Member not exist");
@@ -313,7 +313,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
                 sboCallBackCommResp.setErrorMessage("No Error");
 
                 Txns txns = new Txns();
-                txns.setUserId(sboCallBackTipReq.getUserName());
+                txns.setUserId(sboCallBackTipReq.getUsername());
                 txns.setBetAmount(betAmount);
                 txns.setPlatformTxId(sboCallBackTipReq.getTransferCode());
                 txns.setRoundId(sboCallBackTipReq.getTransactionId());
@@ -339,9 +339,9 @@ public class SboCallbackServiceImpl implements SboCallbackService {
 
     //红利
     public Object bonus(SboCallBackBonusReq sboCallBackBonusReq) {
-        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sboCallBackBonusReq.getUserName());
+        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sboCallBackBonusReq.getUsername());
         SboCallBackCommResp sboCallBackCommResp = new SboCallBackCommResp();
-        sboCallBackCommResp.setAccountName(sboCallBackBonusReq.getUserName());
+        sboCallBackCommResp.setAccountName(sboCallBackBonusReq.getUsername());
         if (null == memBaseinfo) {
             sboCallBackCommResp.setErrorCode(1);
             sboCallBackCommResp.setErrorMessage("Member not exist");
@@ -358,7 +358,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
             sboCallBackCommResp.setErrorMessage("No Error");
 
             Txns txns = new Txns();
-            txns.setUserId(sboCallBackBonusReq.getUserName());
+            txns.setUserId(sboCallBackBonusReq.getUsername());
             txns.setBetAmount(betAmount);
             txns.setPlatformTxId(sboCallBackBonusReq.getTransferCode());
             txns.setRoundId(sboCallBackBonusReq.getTransactionId());
@@ -383,9 +383,9 @@ public class SboCallbackServiceImpl implements SboCallbackService {
 
     //归还注额
     public Object returnStake(SboCallBackReturnStakeReq sboCallBackBonusReq) {
-        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sboCallBackBonusReq.getUserName());
+        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sboCallBackBonusReq.getUsername());
         SboCallBackCommResp sboCallBackCommResp = new SboCallBackCommResp();
-        sboCallBackCommResp.setAccountName(sboCallBackBonusReq.getUserName());
+        sboCallBackCommResp.setAccountName(sboCallBackBonusReq.getUsername());
         if (null == memBaseinfo) {
             sboCallBackCommResp.setErrorCode(1);
             sboCallBackCommResp.setErrorMessage("Member not exist");
@@ -395,7 +395,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
             wrapper.eq(Txns::getStatus, "Running");
             wrapper.eq(Txns::getPlatformTxId, sboCallBackBonusReq.getTransferCode());
             wrapper.eq(Txns::getRoundId, sboCallBackBonusReq.getTransactionId());
-            wrapper.eq(Txns::getUserId, sboCallBackBonusReq.getUserName());
+            wrapper.eq(Txns::getUserId, sboCallBackBonusReq.getUsername());
             wrapper.eq(Txns::getPlatform, sboCallBackBonusReq.getProductType());
             wrapper.eq(Txns::getGameType, sboCallBackBonusReq.getGameType());
             Txns oldTxns = txnsMapper.selectOne(wrapper);
@@ -433,7 +433,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
 
     //取得投注状态
     public Object getBetStatus(SboCallBackGetBetStatusReq sboCallBackGetBetStatusReq) {
-        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sboCallBackGetBetStatusReq.getUserName());
+        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sboCallBackGetBetStatusReq.getUsername());
         SboCallBackGetBetStatusResp sboCallBackGetBetStatusResp = new SboCallBackGetBetStatusResp();
         sboCallBackGetBetStatusResp.setTransactionId(sboCallBackGetBetStatusReq.getTransactionId());
         sboCallBackGetBetStatusResp.setTransferCode(sboCallBackGetBetStatusReq.getTransferCode());
@@ -443,7 +443,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
         } else {
             LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
             wrapper.eq(Txns::getPlatformTxId, sboCallBackGetBetStatusReq.getTransferCode());
-            wrapper.eq(Txns::getUserId, sboCallBackGetBetStatusReq.getUserName());
+            wrapper.eq(Txns::getUserId, sboCallBackGetBetStatusReq.getUsername());
             wrapper.eq(Txns::getPlatform, sboCallBackGetBetStatusReq.getProductType());
             wrapper.eq(Txns::getGameType, sboCallBackGetBetStatusReq.getGameType());
             wrapper.orderByDesc(Txns::getId);
@@ -483,9 +483,9 @@ public class SboCallbackServiceImpl implements SboCallbackService {
 
 //    //转帐交易
 //    public Object transfer(SboCallBackTransferReq sboCallBackTransferReq) {
-//        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sboCallBackTransferReq.getUserName());
+//        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sboCallBackTransferReq.getUsername());
 //        SboCallBackCommResp sboCallBackCommResp = new SboCallBackCommResp();
-//        sboCallBackCommResp.setAccountName(sboCallBackTransferReq.getUserName());
+//        sboCallBackCommResp.setAccountName(sboCallBackTransferReq.getUsername());
 //        if (null == memBaseinfo) {
 //            sboCallBackCommResp.setErrorCode(1);
 //            sboCallBackCommResp.setErrorMessage("Member not exist");
@@ -494,7 +494,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
 //            wrapper.eq(Txns::getStatus, "Transfer");
 //            wrapper.eq(Txns::getPlatformTxId, sboCallBackTransferReq.getTransferRefno());
 //            wrapper.eq(Txns::getRoundId, sboCallBackTransferReq.getGpid());
-//            wrapper.eq(Txns::getUserId, sboCallBackTransferReq.getUserName());
+//            wrapper.eq(Txns::getUserId, sboCallBackTransferReq.getUsername());
 //            wrapper.eq(Txns::getPlatform, sboCallBackTransferReq.getProductType());
 //            wrapper.eq(Txns::getGameType, sboCallBackTransferReq.getGameType());
 //            Txns oldTxns = txnsMapper.selectOne(wrapper);
@@ -517,7 +517,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
 //                }
 //
 //                Txns txns = new Txns();
-//                txns.setUserId(sboCallBackTransferReq.getUserName());
+//                txns.setUserId(sboCallBackTransferReq.getUsername());
 //                txns.setBetAmount(amount);
 //                txns.setPlatformTxId(sboCallBackTransferReq.getTransferRefno());
 //                txns.setRoundId(sboCallBackTransferReq.getGpid());
@@ -547,9 +547,9 @@ public class SboCallbackServiceImpl implements SboCallbackService {
 //
 //    //转帐交易回滚
 //    public Object rollbackTransfer(SboCallBackRollbackTransferReq sboCallBackRollbackTransferReq) {
-//        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sboCallBackRollbackTransferReq.getUserName());
+//        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sboCallBackRollbackTransferReq.getUsername());
 //        SboCallBackCommResp sboCallBackCommResp = new SboCallBackCommResp();
-//        sboCallBackCommResp.setAccountName(sboCallBackRollbackTransferReq.getUserName());
+//        sboCallBackCommResp.setAccountName(sboCallBackRollbackTransferReq.getUsername());
 //        if (null == memBaseinfo) {
 //            sboCallBackCommResp.setErrorCode(1);
 //            sboCallBackCommResp.setErrorMessage("Member not exist");
@@ -558,7 +558,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
 //            wrapper.eq(Txns::getPlatformTxId, sboCallBackRollbackTransferReq.getTransferRefno());
 //            wrapper.eq(Txns::getRoundId, sboCallBackRollbackTransferReq.getGpid());
 //            wrapper.eq(Txns::getStatus, "Transfer");
-//            wrapper.eq(Txns::getUserId, sboCallBackRollbackTransferReq.getUserName());
+//            wrapper.eq(Txns::getUserId, sboCallBackRollbackTransferReq.getUsername());
 //            wrapper.eq(Txns::getPlatform, sboCallBackRollbackTransferReq.getProductType());
 //            wrapper.eq(Txns::getGameType, sboCallBackRollbackTransferReq.getGameType());
 //            Txns oldTxns = txnsMapper.selectOne(wrapper);
@@ -575,7 +575,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
 ////                }
 //
 //                Txns txns = new Txns();
-//                txns.setUserId(sboCallBackRollbackTransferReq.getUserName());
+//                txns.setUserId(sboCallBackRollbackTransferReq.getUsername());
 //                txns.setBetAmount(amount);
 //                txns.setPlatformTxId(sboCallBackRollbackTransferReq.getTransferRefno());
 //                txns.setRoundId(sboCallBackRollbackTransferReq.getGpid());
@@ -607,9 +607,9 @@ public class SboCallbackServiceImpl implements SboCallbackService {
 //
 //    //取得转帐交易状态
 //    public Object getTransferStatus(SboCallBackGetTransferStautsReq sboCallBackGetTransferStautsReq) {
-//        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sboCallBackGetTransferStautsReq.getUserName());
+//        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sboCallBackGetTransferStautsReq.getUsername());
 //        SboCallBackGetTransferStatusResp sboCallBackGetTransferStatusResp = new SboCallBackGetTransferStatusResp();
-//        sboCallBackGetTransferStatusResp.setAccountName(sboCallBackGetTransferStautsReq.getUserName());
+//        sboCallBackGetTransferStatusResp.setAccountName(sboCallBackGetTransferStautsReq.getUsername());
 //        sboCallBackGetTransferStatusResp.setBalance(null == memBaseinfo.getBalance() ? "" : memBaseinfo.getBalance().toString());
 //        if (null == memBaseinfo) {
 //            sboCallBackGetTransferStatusResp.setErrorCode(1);
@@ -619,7 +619,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
 //            wrapper.eq(Txns::getPlatformTxId, sboCallBackGetTransferStautsReq.getTransferRefno());
 //            wrapper.eq(Txns::getRoundId, sboCallBackGetTransferStautsReq.getGpid());
 //            wrapper.eq(Txns::getStatus, "Transfer");
-//            wrapper.eq(Txns::getUserId, sboCallBackGetTransferStautsReq.getUserName());
+//            wrapper.eq(Txns::getUserId, sboCallBackGetTransferStautsReq.getUsername());
 //            wrapper.eq(Txns::getPlatform, sboCallBackGetTransferStautsReq.getProductType());
 //            wrapper.eq(Txns::getGameType, sboCallBackGetTransferStautsReq.getGameType());
 //            Txns oldTxns = txnsMapper.selectOne(wrapper);
@@ -640,9 +640,9 @@ public class SboCallbackServiceImpl implements SboCallbackService {
 
     //LiveCoin購買
     public Object liveCoinTransaction(SboCallBackLiveCoinTransactionReq sboCallBackLiveCoinTransactionReq) {
-        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sboCallBackLiveCoinTransactionReq.getUserName());
+        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sboCallBackLiveCoinTransactionReq.getUsername());
         SboCallBackCommResp sboCallBackCommResp = new SboCallBackCommResp();
-        sboCallBackCommResp.setAccountName(sboCallBackLiveCoinTransactionReq.getUserName());
+        sboCallBackCommResp.setAccountName(sboCallBackLiveCoinTransactionReq.getUsername());
         if (null == memBaseinfo) {
             sboCallBackCommResp.setErrorCode(1);
             sboCallBackCommResp.setErrorMessage("Member not exist");
@@ -663,7 +663,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
                 sboCallBackCommResp.setErrorMessage("No Error");
 
                 Txns txns = new Txns();
-                txns.setUserId(sboCallBackLiveCoinTransactionReq.getUserName());
+                txns.setUserId(sboCallBackLiveCoinTransactionReq.getUsername());
                 txns.setBetAmount(betAmount);
                 txns.setPlatformTxId(sboCallBackLiveCoinTransactionReq.getTransferCode());
                 txns.setRoundId(sboCallBackLiveCoinTransactionReq.getTransactionId());
