@@ -33,6 +33,7 @@ import com.indo.pay.service.ITakeCashService;
 import com.indo.user.api.MemBaseInfoFeignClient;
 import com.indo.user.pojo.bo.MemTradingBO;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -134,7 +135,7 @@ public class TakeCashServiceImpl extends SuperServiceImpl<TakeCashMapper, PayTak
         // 获取会员提现银行卡信息
         MemBank memBank = this.selectMemBankById(cashApplyReq.getMemBankId());
         // 银行卡信息无效
-        if (memBank == null || memBank.getStatus().equals(0)
+        if (memBank == null || NumberUtils.toInt(memBank.getStatus() + "") == 1
                 || !memBank.getAccount().equals(loginUser.getAccount())) {
 //            throw new BizException(StatusCode.CASH_BANK_INVALID);
         }
@@ -255,6 +256,7 @@ public class TakeCashServiceImpl extends SuperServiceImpl<TakeCashMapper, PayTak
     /**
      * 公共回调订单处理成功
      */
+    @Override
     @Transactional
     public boolean withdrawSuccess(PayCallBackDTO callBackDTO) {
         log.info("进入代付回调数据成功处理========================================={}==", callBackDTO.getOrderNo());
