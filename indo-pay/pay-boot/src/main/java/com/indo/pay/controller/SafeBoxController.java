@@ -7,6 +7,7 @@ import com.github.pagehelper.PageInfo;
 import com.indo.common.annotation.LoginUser;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
+import com.indo.core.pojo.entity.MemBaseinfo;
 import com.indo.pay.pojo.req.SafeboxMoneyReq;
 import com.indo.pay.pojo.resp.SafeboxMoneyResp;
 import com.indo.pay.pojo.resp.SafeboxRecord;
@@ -41,10 +42,12 @@ public class SafeBoxController {
     public Result<SafeboxMoneyResp> lookingMoney(@LoginUser LoginInfo loginUser) {
         logger.info ("保险箱查询余额/safebox/lookingMoney 请求userid：" +  loginUser.getId().toString());
         SafeboxMoneyReq safeboxMoneyReq = iSafeBoxService.checkSafeboxBalance(loginUser.getId());
+        //查询用户基本信息得到余额
+        MemBaseinfo memBaseinfo = iSafeBoxService.checkMemBaseinfo(loginUser.getId());
         //返回数据
         SafeboxMoneyResp safeboxMoneyResp = new SafeboxMoneyResp();
         safeboxMoneyResp.setUserSafemoney(safeboxMoneyReq.getUserSafemoney());
-        safeboxMoneyResp.setUserBalance(loginUser.getBalance());
+        safeboxMoneyResp.setUserBalance(memBaseinfo.getBalance());
         logger.info ("保险箱查询余额/safebox/lookingMoney 返回data：" + safeboxMoneyResp);
         return Result.success(safeboxMoneyResp);
     }
@@ -52,7 +55,7 @@ public class SafeBoxController {
     @ApiOperation(value = "转入转出金额")
     @PostMapping("/transferMoney")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "changeAmount", value = "转入转出金额", required = true, paramType = "query", dataType = "int"),
+            @ApiImplicitParam(name = "changeAmount", value = "转入转出金额,转入为正值，比如1000,转出为负值，如-1000", required = true, paramType = "query", dataType = "int"),
     })
     public Result transferMoney(@RequestParam("changeAmount") Integer changeAmount, @LoginUser LoginInfo loginUser) {
         logger.info ("保险箱转入转出金额/safebox/transferMoney 请求userid：" +  loginUser.getId().toString() + "，amounnt：" + changeAmount);
@@ -108,6 +111,7 @@ public class SafeBoxController {
         record.setBeforeAmount(boxBalance);
         record.setChangeAmount(amount);
         record.setAfterAmount(laterAmount);
+
         //当前timestamp
         long currentSec = System.currentTimeMillis();
         Timestamp timestamp = new Timestamp(currentSec);

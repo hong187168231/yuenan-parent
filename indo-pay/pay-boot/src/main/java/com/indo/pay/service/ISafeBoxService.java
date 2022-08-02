@@ -1,6 +1,7 @@
 package com.indo.pay.service;
 
 import com.github.pagehelper.Page;
+import com.indo.core.pojo.entity.MemBaseinfo;
 import com.indo.pay.pojo.req.SafeboxMoneyReq;
 import com.indo.pay.pojo.resp.SafeboxRecord;
 
@@ -23,9 +24,14 @@ public interface ISafeBoxService {
     void insertUserSafeboxMoney(SafeboxMoneyReq req);
 
     /**
-     * 查询用户保险箱和用户余额
+     * 查询用户保险箱余额
      * */
     SafeboxMoneyReq checkSafeboxBalance(Long userid);
+
+    /**
+     * 查询用户余额
+     * */
+    MemBaseinfo checkMemBaseinfo(Long userid);
 
     /**
      * 查询用户保险箱记录

@@ -11,10 +11,12 @@ import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.web.exception.BizException;
 import com.indo.core.mapper.ActivityConfigMapper;
 import com.indo.core.mapper.LoanRecordMapper;
+import com.indo.core.mapper.MemLevelMapper;
 import com.indo.core.pojo.dto.LoanRecordDTO;
 import com.indo.core.pojo.dto.MemGoldChangeDTO;
 import com.indo.core.pojo.entity.ActivityConfig;
 import com.indo.core.pojo.entity.LoanRecord;
+import com.indo.core.pojo.entity.MemLevel;
 import com.indo.core.pojo.entity.SysParameter;
 import com.indo.core.service.ILoanRecordService;
 import com.indo.core.service.IMemGoldChangeService;
@@ -46,6 +48,8 @@ public class LoanRecordServiceImpl extends ServiceImpl<LoanRecordMapper, LoanRec
     @Resource
     private IMemGoldChangeService iMemGoldChangeService;
 
+    @Resource
+    private MemLevelMapper memLevelMapper;
     @Override
     public Page<LoanRecord> findLoanRecordPageByMemId(LoanRecordDTO loanRecordDTO,LoginInfo loginInfo) {
         Page<LoanRecord> page = new Page<>(loanRecordDTO.getPage(), loanRecordDTO.getLimit());
@@ -57,6 +61,7 @@ public class LoanRecordServiceImpl extends ServiceImpl<LoanRecordMapper, LoanRec
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void loanMoney(LoginInfo loginInfo) {
+        MemLevel memLevel = memLevelMapper.selectById(loginInfo.getMemLevel());
         LambdaQueryWrapper<ActivityConfig> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(ActivityConfig::getTypes,2);
         ActivityConfig activityConfig = activityConfigMapper.selectOne(wrapper);
@@ -64,7 +69,7 @@ public class LoanRecordServiceImpl extends ServiceImpl<LoanRecordMapper, LoanRec
             throw new BizException("无相关活动配置，无法参加活动");
         }
         JSONObject json = JSONObject.parseObject(activityConfig.getConfigInfo());
-        BigDecimal money = json.getBigDecimal("vip"+loginInfo.getMemLevel());
+        BigDecimal money = json.getBigDecimal("vip"+memLevel.getLevel());
         if(money==null||money.compareTo(BigDecimal.ZERO)==0){
             throw new BizException("无借呗配置，请与管理员联系");
         }

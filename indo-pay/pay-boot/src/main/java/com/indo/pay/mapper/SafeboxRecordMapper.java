@@ -2,6 +2,7 @@ package com.indo.pay.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.github.pagehelper.Page;
+import com.indo.core.pojo.entity.MemBaseinfo;
 import com.indo.pay.pojo.req.SafeboxMoneyReq;
 import com.indo.pay.pojo.resp.SafeboxRecord;
 import org.apache.ibatis.annotations.Insert;
@@ -38,6 +39,13 @@ public interface SafeboxRecordMapper extends BaseMapper<SafeboxRecord> {
      */
     @Insert("INSERT INTO safebox_cash VALUES(#{userId},#{userSafemoney})")
     void insertUserSafeboxMoney(SafeboxMoneyReq req);
+
+    /**
+     * 查询用户金额
+     */
+    @Select("SELECT * FROM mem_baseinfo WHERE id=#{userId}")
+    MemBaseinfo checkMemBaseinfo(Long userid);
+
 
     /**
      * 查询用户保险箱记录

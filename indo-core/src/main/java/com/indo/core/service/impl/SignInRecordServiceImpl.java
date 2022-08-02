@@ -16,12 +16,14 @@ import com.indo.core.pojo.entity.ActivityConfig;
 import com.indo.core.pojo.entity.SignInRecord;
 import com.indo.core.service.IMemGoldChangeService;
 import com.indo.core.service.ISignInRecordService;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -65,6 +67,12 @@ public class SignInRecordServiceImpl extends ServiceImpl<SignInRecordMapper, Sig
         JSONObject json = JSONObject.parseObject(activityConfig.getConfigInfo());
         LambdaQueryWrapper<SignInRecord> srWrapper = new LambdaQueryWrapper<>();
         srWrapper.eq(SignInRecord::getMemId,loginInfo.getId());
+        List<SignInRecord> srList=  baseMapper.selectList(srWrapper);
+        srList.forEach(l->{
+            if(DateUtils.isSameDay(l.getCreateTime(),new Date())){
+                throw new BizException("今天已签到");
+            }
+        });
         Integer num = baseMapper.selectCount(srWrapper);
         BigDecimal money = json.getBigDecimal("sign"+((num+1)%7));
         SignInRecord signInRecord = new SignInRecord();

@@ -81,4 +81,7 @@ public class MemBaseInfoVo {
     @ApiModelProperty(value = "最后登录时间")
     private Date lastLoginTime;
 
+    @ApiModelProperty(value = "已借款金额")
+    private BigDecimal loanAmount;
+
 }
