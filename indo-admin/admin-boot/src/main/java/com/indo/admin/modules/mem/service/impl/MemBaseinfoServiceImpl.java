@@ -11,7 +11,7 @@ import com.indo.admin.common.enums.AccountTypeEnum;
 import com.indo.admin.common.util.AdminBusinessRedisUtils;
 import com.indo.admin.modules.agent.mapper.AgentRelationMapper;
 import com.indo.admin.modules.mem.mapper.MemBaseinfoMapper;
-import com.indo.admin.modules.mem.mapper.MemLevelMapper;
+import com.indo.core.mapper.MemLevelMapper;
 import com.indo.admin.modules.mem.service.IMemBaseinfoService;
 import com.indo.common.constant.AppConstants;
 import com.indo.common.utils.DateUtils;
@@ -32,15 +32,12 @@ import com.indo.core.pojo.entity.AgentRelation;
 import com.indo.core.pojo.entity.MemBaseinfo;
 import com.indo.core.pojo.entity.MemLevel;
 import com.indo.core.util.BusinessRedisUtils;
-import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 

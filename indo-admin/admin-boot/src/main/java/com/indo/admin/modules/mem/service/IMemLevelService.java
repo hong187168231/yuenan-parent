@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.pojo.req.mem.MemLevelAddReq;
 import com.indo.admin.pojo.req.mem.MemLevelPageReq;
 import com.indo.admin.pojo.req.mem.MemLevelUpdateReq;
-import com.indo.admin.pojo.vo.mem.MemLevelVo;
+import com.indo.core.pojo.vo.MemLevelVo;
 import com.indo.core.base.service.SuperService;
 import com.indo.core.pojo.entity.MemLevel;
 

@@ -1,6 +1,5 @@
 package com.indo.core.service.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -17,7 +16,6 @@ import com.indo.core.pojo.dto.MemGoldChangeDTO;
 import com.indo.core.pojo.entity.ActivityConfig;
 import com.indo.core.pojo.entity.LoanRecord;
 import com.indo.core.pojo.entity.MemLevel;
-import com.indo.core.pojo.entity.SysParameter;
 import com.indo.core.service.ILoanRecordService;
 import com.indo.core.service.IMemGoldChangeService;
 import org.springframework.scheduling.annotation.Async;

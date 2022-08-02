@@ -2,29 +2,22 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.indo.core.mapper.MemLevelMapper">
 
-    <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.indo.core.pojo.entity.MemLevel">
-        <id column="id" property="id"/>
-        <result column="create_time" property="createTime"/>
-        <result column="update_time" property="updateTime"/>
-        <result column="level" property="level"/>
-        <result column="need_deposit" property="needDeposit"/>
-        <result column="need_bet" property="needBet"/>
-        <result column="reward" property="reward"/>
-        <result column="everyday_gift" property="everydayGift"/>
-        <result column="week_gift" property="weekGift"/>
-        <result column="month_gift" property="monthGift"/>
-        <result column="year_gift" property="yearGift"/>
-        <result column="birthday_gift" property="birthdayGift"/>
-        <result column="mem_num" property="memNum"/>
-    </resultMap>
+    <select id="listByMemLevel" resultType="com.indo.core.pojo.vo.MemLevelVo">
+        select *
+        from mem_level
+    </select>
 
-    <!-- 通用查询结果列 -->
-    <sql id="Base_Column_List">
-        create_time,
-        update_time,
-        id, level, need_deposit, need_bet, reward, everyday_gift, week_gift, month_gift, year_gift, birthday_gift,
-        mem_num, icon
-    </sql>
-
+    <select id="selectNameByIds" resultType="String">
+        select
+        name
+        from mem_level
+        <where>
+            <if test="list != null and list.size()>0">
+                id IN
+                <foreach item="item" index="index" collection="list" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </select>
 </mapper>
