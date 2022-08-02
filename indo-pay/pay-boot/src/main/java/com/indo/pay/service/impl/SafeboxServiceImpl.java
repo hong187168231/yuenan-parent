@@ -5,6 +5,7 @@ import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.core.base.service.impl.SuperServiceImpl;
 import com.indo.core.pojo.dto.MemGoldChangeDTO;
+import com.indo.core.pojo.entity.MemBaseinfo;
 import com.indo.core.service.IMemGoldChangeService;
 import com.indo.pay.mapper.SafeboxRecordMapper;
 import com.indo.pay.pojo.req.SafeboxMoneyReq;
@@ -82,13 +83,13 @@ public class SafeboxServiceImpl extends SuperServiceImpl<SafeboxRecordMapper, Sa
 
 
     /**
-     * 查询用户保险箱和用户余额
+     * 查询用户保险箱余额
      * */
     @Override
+    @Transactional
     public SafeboxMoneyReq checkSafeboxBalance(Long userid) {
         //通过Authorization获取userid
-        System.out.println("checkSafeboxBalance:"+userid);
-        //查询用户余额
+//        System.out.println("checkSafeboxBalance:"+userid);
 
         //查询获取用户保险金余额
         SafeboxMoneyReq safeboxMoneyReq = safeboxRecordMapper.checkSafeboxBalance(userid);
@@ -107,6 +108,14 @@ public class SafeboxServiceImpl extends SuperServiceImpl<SafeboxRecordMapper, Sa
 
         //不为null返回数据
         return safeboxMoneyReq;
+    }
+
+    /**
+     * 查询用户余额
+     * */
+    @Override
+    public MemBaseinfo checkMemBaseinfo(Long userid) {
+        return safeboxRecordMapper.checkMemBaseinfo(userid);
     }
 
     @Override
