@@ -1,4 +1,4 @@
-package com.indo.user.mapper;
+package com.indo.core.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.indo.core.pojo.entity.MemLevel;

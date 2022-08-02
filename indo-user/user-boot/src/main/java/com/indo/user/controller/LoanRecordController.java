@@ -30,7 +30,7 @@ import javax.annotation.Resource;
  */
 @Api(tags = "借款相关")
 @RestController
-@RequestMapping("loanRecord")
+@RequestMapping("/api/v1/loanRecord")
 public class LoanRecordController {
     @Resource
     private ILoanRecordService loanRecordService;

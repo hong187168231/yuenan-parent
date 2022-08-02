@@ -15,11 +15,9 @@ import com.indo.core.pojo.entity.MemLevel;
 import com.indo.core.service.IMemGoldChangeService;
 import com.indo.user.mapper.MemBaseInfoMapper;
 import com.indo.user.mapper.MemGiftReceiveMapper;
-import com.indo.user.mapper.MemLevelMapper;
 import com.indo.user.pojo.req.gift.GiftReceiveReq;
 import com.indo.user.service.IMemGiftReceiveService;
 import com.indo.user.service.IMemLevelService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

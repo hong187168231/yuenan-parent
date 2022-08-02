@@ -10,7 +10,6 @@ import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.indo.admin.api.SysIpLimitClient;
-import com.indo.admin.pojo.entity.SysIpLimit;
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.common.pojo.bo.LoginInfo;
@@ -19,22 +18,19 @@ import com.indo.common.utils.DeviceInfoUtil;
 import com.indo.common.utils.StringUtils;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
-import com.indo.common.web.util.IPUtils;
 import com.indo.core.base.service.impl.SuperServiceImpl;
+import com.indo.core.mapper.LoanRecordMapper;
 import com.indo.core.pojo.bo.MemBaseInfoBO;
 import com.indo.core.pojo.dto.MemBaseInfoDTO;
 import com.indo.core.pojo.dto.MemGoldChangeDTO;
-import com.indo.core.pojo.entity.AgentRelation;
-import com.indo.core.pojo.entity.MemBaseinfo;
-import com.indo.core.pojo.entity.MemInviteCode;
-import com.indo.core.pojo.entity.MemLevel;
+import com.indo.core.pojo.entity.*;
 import com.indo.core.service.IMemGoldChangeService;
 import com.indo.core.util.BusinessRedisUtils;
 import com.indo.user.common.util.UserBusinessRedisUtils;
 import com.indo.user.mapper.AgentRelationMapper;
 import com.indo.user.mapper.MemBaseInfoMapper;
 import com.indo.user.mapper.MemInviteCodeMapper;
-import com.indo.user.mapper.MemLevelMapper;
+import com.indo.core.mapper.MemLevelMapper;
 import com.indo.user.pojo.bo.MemTradingBO;
 import com.indo.user.pojo.req.LogOutReq;
 import com.indo.user.pojo.req.LoginReq;
@@ -50,18 +46,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
 import java.util.Date;
-import java.util.List;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -82,6 +74,9 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
 
     @Resource
     private IMemGoldChangeService iMemGoldChangeService;
+
+    @Resource
+    private LoanRecordMapper loanRecordMapper;
 
     @Value("${google.client_id}")
     private String googleClientId;
@@ -315,6 +310,11 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
         wrapper.eq(MemLevel::getId, vo.getMemLevel());
         MemLevel memLevel = memLevelMapper.selectOne(wrapper);
         vo.setLevel((memLevel == null || memLevel.getLevel() == null) ? 0 : memLevel.getLevel());
+        LambdaQueryWrapper<LoanRecord> loanWrapper = new LambdaQueryWrapper<>();
+        loanWrapper.eq(LoanRecord::getMemId,vo.getId());
+        loanWrapper.eq(LoanRecord::getStates,1);
+        LoanRecord loanRecord = loanRecordMapper.selectOne(loanWrapper);
+        vo.setLoanAmount(loanRecord.getLoanAmount());
         return vo;
     }
 

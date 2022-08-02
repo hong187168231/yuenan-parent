@@ -30,7 +30,7 @@ import javax.annotation.Resource;
  */
 @Api(tags = "签到相关")
 @RestController
-@RequestMapping("signInRecord")
+@RequestMapping("/api/v1/signInRecord")
 public class SignInRecordController {
     @Resource
     private ISignInRecordService signInRecordServicel;
