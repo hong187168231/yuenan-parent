@@ -7,10 +7,7 @@ import com.indo.game.service.sbo.SboCallbackService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/sbo/callBack")
@@ -27,8 +24,9 @@ public class SboCallBackController {
     @RequestMapping(value="/GetBalance",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object getBalance(SboCallBackParentReq sboCallBackParentReq) {
-        logger.info("sboCallBack GetBalance 回调,取得用户的余额 params:{}",JSONObject.toJSONString(sboCallBackParentReq));
+    public Object getBalance(@RequestBody JSONObject jsonObject) {
+        logger.info("sboCallBack GetBalance 回调,取得用户的余额 params:{}",jsonObject);
+        SboCallBackParentReq sboCallBackParentReq = JSONObject.toJavaObject(jsonObject,SboCallBackParentReq.class);
         Object getBalance = sboCallbackService.getBalance(sboCallBackParentReq);
         logger.info("sboCallBack  GetBalance 回调返回数据,取得用户的余额 params:{}",getBalance);
         return getBalance;
