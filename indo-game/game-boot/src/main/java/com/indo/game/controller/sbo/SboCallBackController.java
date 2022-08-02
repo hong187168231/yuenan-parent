@@ -38,8 +38,9 @@ public class SboCallBackController {
     @RequestMapping(value="/Deduct",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object deduct(SboCallBackDeductReq sboCallBackDeductReq) {
-        logger.info("sboCallBack  Deduct 回调,扣除投注金额 params:{}",JSONObject.toJSONString(sboCallBackDeductReq));
+    public Object deduct(@RequestBody JSONObject jsonObject) {
+        logger.info("sboCallBack  Deduct 回调,扣除投注金额 params:{}",jsonObject);
+        SboCallBackDeductReq sboCallBackDeductReq = JSONObject.toJavaObject(jsonObject,SboCallBackDeductReq.class);
         Object deduct = sboCallbackService.deduct(sboCallBackDeductReq);
         logger.info("sboCallBack Deduct 回调返回数据,扣除投注金额 params:{}",deduct);
         return deduct;
@@ -51,8 +52,9 @@ public class SboCallBackController {
     @RequestMapping(value="/Settle",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object settle(SboCallBackSettleReq sboCallBackSettleReq) {
-        logger.info("sboCallBack settle 回调,结算投注 params:{}",JSONObject.toJSONString(sboCallBackSettleReq));
+    public Object settle(@RequestBody JSONObject jsonObject) {
+        logger.info("sboCallBack settle 回调,结算投注 params:{}",jsonObject);
+        SboCallBackSettleReq sboCallBackSettleReq = JSONObject.toJavaObject(jsonObject,SboCallBackSettleReq.class);
         Object settle = sboCallbackService.settle(sboCallBackSettleReq);
         logger.info("sboCallBack settle 回调返回数据,结算投注 params:{}",settle);
         return settle;
@@ -64,8 +66,9 @@ public class SboCallBackController {
     @RequestMapping(value="/Rollback",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object rollback(SboCallBackRollbackReq sboCallBackRollbackReq) {
-        logger.info("sboCallBack rollback 回调,回滚 params:{}",JSONObject.toJSONString(sboCallBackRollbackReq));
+    public Object rollback(@RequestBody JSONObject jsonObject) {
+        logger.info("sboCallBack rollback 回调,回滚 params:{}",jsonObject);
+        SboCallBackRollbackReq sboCallBackRollbackReq = JSONObject.toJavaObject(jsonObject,SboCallBackRollbackReq.class);
         Object rollback = sboCallbackService.rollback(sboCallBackRollbackReq);
         logger.info("sboCallBack rollback 回调返回数据,回滚 params:{}",rollback);
         return rollback;
@@ -77,8 +80,9 @@ public class SboCallBackController {
     @RequestMapping(value="/Cancel",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object cancel(SboCallBackCancelReq sboCallBackCancelReq) {
-        logger.info("sboCallBack Cancel 回调,回滚 params:{}",JSONObject.toJSONString(sboCallBackCancelReq));
+    public Object cancel(@RequestBody JSONObject jsonObject) {
+        logger.info("sboCallBack Cancel 回调,回滚 params:{}",jsonObject);
+        SboCallBackCancelReq sboCallBackCancelReq = JSONObject.toJavaObject(jsonObject,SboCallBackCancelReq.class);
         Object cancel = sboCallbackService.cancel(sboCallBackCancelReq);
         logger.info("sboCallBack Cancel 回调返回数据,回滚 params:{}",cancel);
         return cancel;
@@ -90,8 +94,9 @@ public class SboCallBackController {
     @RequestMapping(value="/Tip",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object tip(SboCallBackTipReq sboCallBackTipReq) {
-        logger.info("sboCallBack tip 回调,小费 params:{}",JSONObject.toJSONString(sboCallBackTipReq));
+    public Object tip(@RequestBody JSONObject jsonObject) {
+        logger.info("sboCallBack tip 回调,小费 params:{}",jsonObject);
+        SboCallBackTipReq sboCallBackTipReq = JSONObject.toJavaObject(jsonObject,SboCallBackTipReq.class);
         Object tip = sboCallbackService.tip(sboCallBackTipReq);
         logger.info("sboCallBack tip 回调返回数据,小费 params:{}",tip);
         return tip;
@@ -103,8 +108,9 @@ public class SboCallBackController {
     @RequestMapping(value="/Bonus",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object bonus(SboCallBackBonusReq sboCallBackBonusReq) {
-        logger.info("sboCallBack  bonus 回调,红利 params:{}",JSONObject.toJSONString(sboCallBackBonusReq));
+    public Object bonus(@RequestBody JSONObject jsonObject) {
+        logger.info("sboCallBack  bonus 回调,红利 params:{}",jsonObject);
+        SboCallBackBonusReq sboCallBackBonusReq = JSONObject.toJavaObject(jsonObject,SboCallBackBonusReq.class);
         Object bonus = sboCallbackService.bonus(sboCallBackBonusReq);
         logger.info("sboCallBack  bonus 回调返回数据,红利 params:{}",bonus);
         return bonus;
@@ -116,8 +122,9 @@ public class SboCallBackController {
     @RequestMapping(value="/ReturnStake",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object returnStake(SboCallBackReturnStakeReq sboCallBackBonusReq) {
-        logger.info("sboCallBack returnStake 回调,归还注额 params:{}",JSONObject.toJSONString(sboCallBackBonusReq));
+    public Object returnStake(@RequestBody JSONObject jsonObject) {
+        logger.info("sboCallBack returnStake 回调,归还注额 params:{}",jsonObject);
+        SboCallBackReturnStakeReq sboCallBackBonusReq = JSONObject.toJavaObject(jsonObject,SboCallBackReturnStakeReq.class);
         Object returnStake = sboCallbackService.returnStake(sboCallBackBonusReq);
         logger.info("sboCallBack returnStake 回调返回数据,归还注额 params:{}",returnStake);
         return returnStake;
@@ -129,8 +136,9 @@ public class SboCallBackController {
     @RequestMapping(value="/GetBetStatus",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object getBetStatus(SboCallBackGetBetStatusReq sboCallBackGetBetStatusReq) {
-        logger.info("sboCallBack getBetStatus 回调,取得投注状态 params:{}",JSONObject.toJSONString(sboCallBackGetBetStatusReq));
+    public Object getBetStatus(@RequestBody JSONObject jsonObject) {
+        logger.info("sboCallBack getBetStatus 回调,取得投注状态 params:{}",jsonObject);
+        SboCallBackGetBetStatusReq sboCallBackGetBetStatusReq = JSONObject.toJavaObject(jsonObject,SboCallBackGetBetStatusReq.class);
         Object getBetStatus = sboCallbackService.getBetStatus(sboCallBackGetBetStatusReq);
         logger.info("sboCallBack  getBetStatus 回调返回数据,取得投注状态 params:{}",getBetStatus);
         return getBetStatus;
@@ -178,8 +186,9 @@ public class SboCallBackController {
     @RequestMapping(value="/liveCoinTransaction",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object liveCoinTransaction(SboCallBackLiveCoinTransactionReq sboCallBackLiveCoinTransactionReq) {
-        logger.info("sboCallBack  getTransferStatus 回调,LiveCoin購買 params:{}",JSONObject.toJSONString(sboCallBackLiveCoinTransactionReq));
+    public Object liveCoinTransaction(@RequestBody JSONObject jsonObject) {
+        logger.info("sboCallBack  getTransferStatus 回调,LiveCoin購買 params:{}",jsonObject);
+        SboCallBackLiveCoinTransactionReq sboCallBackLiveCoinTransactionReq = JSONObject.toJavaObject(jsonObject,SboCallBackLiveCoinTransactionReq.class);
         Object liveCoinTransaction = sboCallbackService.liveCoinTransaction(sboCallBackLiveCoinTransactionReq);
         logger.info("sboCallBack  getTransferStatus 回调返回数据,LiveCoin購買 params:{}",liveCoinTransaction);
         return liveCoinTransaction;
