@@ -1,11 +1,10 @@
 package com.indo.admin.modules.mem.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.indo.admin.pojo.req.mem.MemLevelAddReq;
 import com.indo.admin.pojo.req.mem.MemLevelPageReq;
 import com.indo.admin.pojo.req.mem.MemLevelUpdateReq;
 import com.indo.admin.modules.mem.service.IMemLevelService;
-import com.indo.admin.pojo.vo.mem.MemLevelVo;
+import com.indo.core.pojo.vo.MemLevelVo;
 import com.indo.common.result.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
