@@ -1,15 +1,18 @@
 package com.indo.game.service.sbo.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.indo.common.config.OpenAPIProperties;
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.common.utils.DateUtils;
 import com.indo.game.mapper.TxnsMapper;
 import com.indo.game.pojo.dto.sbo.*;
 import com.indo.game.pojo.entity.manage.GameCategory;
+import com.indo.game.pojo.entity.manage.GameParentPlatform;
 import com.indo.game.pojo.entity.manage.GamePlatform;
 import com.indo.game.pojo.entity.manage.Txns;
 import com.indo.game.pojo.vo.callback.sbo.SboCallBackCommResp;
+import com.indo.game.pojo.vo.callback.sbo.SboCallBackDeductResp;
 import com.indo.game.pojo.vo.callback.sbo.SboCallBackGetBetStatusResp;
 import com.indo.game.pojo.vo.callback.sbo.SboCallBackGetTransferStatusResp;
 import com.indo.game.service.common.GameCommonService;
@@ -33,11 +36,25 @@ public class SboCallbackServiceImpl implements SboCallbackService {
     private TxnsMapper txnsMapper;
 
     //取得用户的余额
-    public Object getBalance(SboCallBackParentReq sboCallBackParentReq) {
-
-        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sboCallBackParentReq.getUsername());
+    public Object getBalance(SboCallBackParentReq sboCallBackParentReq,String ip) {
         SboCallBackCommResp sboCallBackCommResp = new SboCallBackCommResp();
         sboCallBackCommResp.setAccountName(sboCallBackParentReq.getUsername());
+        if(null == sboCallBackParentReq.getUsername() || "".equals(sboCallBackParentReq.getUsername())){
+            sboCallBackCommResp.setErrorCode(3);
+            sboCallBackCommResp.setErrorMessage("Username empty");
+            return sboCallBackCommResp;
+        }
+        if(!verifyKey(sboCallBackParentReq.getCompanyKey())){
+            sboCallBackCommResp.setErrorCode(4);
+            sboCallBackCommResp.setErrorMessage("CompanyKey Error");
+            return sboCallBackCommResp;
+        }
+        if(!checkIp(ip)){
+            sboCallBackCommResp.setErrorCode(2);
+            sboCallBackCommResp.setErrorMessage("Invalid Ip");
+            return sboCallBackCommResp;
+        }
+        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sboCallBackParentReq.getUsername());
         if (null == memBaseinfo) {
             sboCallBackCommResp.setErrorCode(1);
             sboCallBackCommResp.setErrorMessage("Member not exist");
@@ -52,24 +69,91 @@ public class SboCallbackServiceImpl implements SboCallbackService {
 
 
     //扣除投注金额
-    public Object deduct(SboCallBackDeductReq sboCallBackDeductReq) {
-        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sboCallBackDeductReq.getUsername());
-        SboCallBackCommResp sboCallBackCommResp = new SboCallBackCommResp();
+    public Object deduct(SboCallBackDeductReq sboCallBackDeductReq,String ip) {
+
+        SboCallBackDeductResp sboCallBackCommResp = new SboCallBackDeductResp();
         sboCallBackCommResp.setAccountName(sboCallBackDeductReq.getUsername());
+        sboCallBackCommResp.setBetAmount(sboCallBackDeductReq.getAmount());
+        if(null == sboCallBackDeductReq.getUsername() || "".equals(sboCallBackDeductReq.getUsername())){
+            sboCallBackCommResp.setErrorCode(3);
+            sboCallBackCommResp.setErrorMessage("Username empty");
+            return sboCallBackCommResp;
+        }
+        if(!verifyKey(sboCallBackDeductReq.getCompanyKey())){
+            sboCallBackCommResp.setErrorCode(4);
+            sboCallBackCommResp.setErrorMessage("CompanyKey Error");
+            return sboCallBackCommResp;
+        }
+        if(!checkIp(ip)){
+            sboCallBackCommResp.setErrorCode(2);
+            sboCallBackCommResp.setErrorMessage("Invalid Ip");
+            return sboCallBackCommResp;
+        }
+        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sboCallBackDeductReq.getUsername());
         if (null == memBaseinfo) {
             sboCallBackCommResp.setErrorCode(1);
             sboCallBackCommResp.setErrorMessage("Member not exist");
+            return sboCallBackCommResp;
         } else {
             BigDecimal betAmount = sboCallBackDeductReq.getAmount();
             BigDecimal balance = memBaseinfo.getBalance();
+            sboCallBackCommResp.setBalance(balance);
             if (memBaseinfo.getBalance().compareTo(betAmount) == -1) {
                 sboCallBackCommResp.setErrorCode(5);
                 sboCallBackCommResp.setErrorMessage("Not enough balance");
+                return sboCallBackCommResp;
             } else {
+                //        1	Sports Book	体育博彩
+                //        3	SBO Games	电子游戏
+                //        5	Virtual Sports	虚拟运动
+                //        7	SBO Live Casino	真人赌场
+                //        9	Seamless Game Provider	无缝游戏
+                //        10	Live Coin	線上貨幣
+                LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+                wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Settle"));
+                wrapper.eq(Txns::getStatus, "Running");
+                wrapper.eq(Txns::getPlatformTxId, sboCallBackDeductReq.getTransferCode());
+                if(2==sboCallBackDeductReq.getProductType()) {//无缝游戏完美真人赌场，相同的transferCode且相同的transactionId不能被扣除投注金额两次，但相同的transferCode可以搭配不同的transactionId再扣除投注金额
+                    wrapper.eq(Txns::getRoundId, sboCallBackDeductReq.getTransactionId());
+                }
+                wrapper.eq(Txns::getPlatform, OpenAPIProperties.SBO_PLATFORM_CODE);
+//        wrapper.eq(Txns::getUserId, userId);
+                Txns oldTxns = txnsMapper.selectOne(wrapper);
+                if(null!=oldTxns){
+                    if("Settle".equals(oldTxns.getMethod())){
+                        sboCallBackCommResp.setErrorCode(2001);
+                        sboCallBackCommResp.setErrorMessage("Bet Already Settled");
+                        return sboCallBackCommResp;
+                    }
+                    if("Cancel Bet".equals(oldTxns.getMethod())){
+                        sboCallBackCommResp.setErrorCode(2002);
+                        sboCallBackCommResp.setErrorMessage("Bet Already Canceled");
+                        return sboCallBackCommResp;
+                    }
+                    if(7==sboCallBackDeductReq.getProductType()) {
+                        if (oldTxns.getBetAmount().compareTo(betAmount) == -1) {//真人赌场，相同的transferCode可以被扣除投注金额两次，但第二次扣除投注金额必须比第一次大。
+                            sboCallBackCommResp.setErrorCode(5003);
+                            sboCallBackCommResp.setErrorMessage("Bet With Same RefNo Exists");
+                            return sboCallBackCommResp;
+                        }
+                    }else {
+                        //体育博彩，相同的transferCode不能被扣除投注金额两次。
+                        //虚拟体育，相同的transferCode不能被扣除投注金额两次。
+                        sboCallBackCommResp.setErrorCode(5003);
+                        sboCallBackCommResp.setErrorMessage("Bet With Same RefNo Exists");
+                        return sboCallBackCommResp;
+                    }
+                }
                 String platformCode = this.getpPlatformCode(sboCallBackDeductReq.getProductType());
 
                 balance = balance.subtract(betAmount);
-                GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(platformCode);
+                GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.SBO_PLATFORM_CODE);
+                GamePlatform gamePlatform;
+                if(OpenAPIProperties.SBO_IS_PLATFORM_LOGIN.equals("Y")){
+                    gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.SBO_PLATFORM_CODE,OpenAPIProperties.SBO_PLATFORM_CODE);
+                }else {
+                    gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platformCode, OpenAPIProperties.SBO_PLATFORM_CODE);
+                }
                 GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
                 gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
                 sboCallBackCommResp.setBalance(balance);
@@ -78,7 +162,28 @@ public class SboCallbackServiceImpl implements SboCallbackService {
 
                 Txns txns = new Txns();
                 txns.setUserId(sboCallBackDeductReq.getUsername());
+                //玩家货币代码
+                txns.setCurrency(gameParentPlatform.getCurrencyType());
+                //平台代码
+                txns.setPlatform(gameParentPlatform.getPlatformCode());
+                //平台英文名称
+                txns.setPlatformEnName(gameParentPlatform.getPlatformEnName());
+                //平台中文名称
+                txns.setPlatformCnName(gameParentPlatform.getPlatformCnName());
+                //平台游戏类型
+                txns.setGameType(gameCategory.getGameType());
+                //游戏分类ID
+                txns.setCategoryId(gameCategory.getId());
+                //游戏分类名称
+                txns.setCategoryName(gameCategory.getGameName());
+                //平台游戏代码
+                txns.setGameCode(gamePlatform.getPlatformCode());
+                //游戏名称
+                txns.setGameName(gamePlatform.getPlatformEnName());
+                //下注金额
                 txns.setBetAmount(betAmount);
+                //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
+                txns.setWinningAmount(betAmount.negate());
                 txns.setPlatformTxId(sboCallBackDeductReq.getTransferCode());
                 txns.setRoundId(sboCallBackDeductReq.getTransactionId());
                 txns.setBetTime(sboCallBackDeductReq.getBetTime());
@@ -89,10 +194,6 @@ public class SboCallbackServiceImpl implements SboCallbackService {
                 txns.setStatus("Running");
                 String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
                 txns.setCreateTime(dateStr);
-                txns.setPlatformCnName(gamePlatform.getPlatformCnName());
-                txns.setPlatformEnName(gamePlatform.getPlatformEnName());
-                txns.setCategoryId(gameCategory.getId());
-                txns.setCategoryName(gameCategory.getGameName());
                 txnsMapper.insert(txns);
             }
 
@@ -103,57 +204,99 @@ public class SboCallbackServiceImpl implements SboCallbackService {
     }
 
     //结算投注
-    public Object settle(SboCallBackSettleReq sboCallBackSettleReq) {
+    public Object settle(SboCallBackSettleReq sboCallBackSettleReq,String ip) {
         //同一个赌注发出多次API请求,这意味着我们要求该次赌注重新结算
 
-        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sboCallBackSettleReq.getUsername());
+
         SboCallBackCommResp sboCallBackCommResp = new SboCallBackCommResp();
         sboCallBackCommResp.setAccountName(sboCallBackSettleReq.getUsername());
+        if(null == sboCallBackSettleReq.getUsername() || "".equals(sboCallBackSettleReq.getUsername())){
+            sboCallBackCommResp.setErrorCode(3);
+            sboCallBackCommResp.setErrorMessage("Username empty");
+            return sboCallBackCommResp;
+        }
+        if(!verifyKey(sboCallBackSettleReq.getCompanyKey())){
+            sboCallBackCommResp.setErrorCode(4);
+            sboCallBackCommResp.setErrorMessage("CompanyKey Error");
+            return sboCallBackCommResp;
+        }
+        if(!checkIp(ip)){
+            sboCallBackCommResp.setErrorCode(2);
+            sboCallBackCommResp.setErrorMessage("Invalid Ip");
+            return sboCallBackCommResp;
+        }
+        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sboCallBackSettleReq.getUsername());
         if (null == memBaseinfo) {
             sboCallBackCommResp.setErrorCode(1);
             sboCallBackCommResp.setErrorMessage("Member not exist");
+            return sboCallBackCommResp;
         } else {
+            BigDecimal balance = memBaseinfo.getBalance();
+            sboCallBackCommResp.setBalance(balance);
             String platformCode = this.getpPlatformCode(sboCallBackSettleReq.getProductType());
             LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
-            wrapper.eq(Txns::getMethod, "Place Bet");
+            wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Settle"));
             wrapper.eq(Txns::getStatus, "Running");
             wrapper.eq(Txns::getPlatformTxId, sboCallBackSettleReq.getTransferCode());
-            wrapper.eq(Txns::getUserId, sboCallBackSettleReq.getUsername());
+//            wrapper.eq(Txns::getUserId, sboCallBackSettleReq.getUsername());
             wrapper.eq(Txns::getPlatform, platformCode);
-            wrapper.eq(Txns::getGameType, sboCallBackSettleReq.getGameType());
+//            wrapper.eq(Txns::getGameType, sboCallBackSettleReq.getGameType());
             Txns oldTxns = txnsMapper.selectOne(wrapper);
+            if (null != oldTxns) {
+                if ("Cancel Bet".equals(oldTxns.getMethod())) {
+                    sboCallBackCommResp.setErrorCode(2002);
+                    sboCallBackCommResp.setErrorMessage("Bet Already Canceled");
+                    return sboCallBackCommResp;
+                }
+                if ("Settle".equals(oldTxns.getMethod())) {
+                    sboCallBackCommResp.setErrorCode(2002);
+                    sboCallBackCommResp.setErrorMessage("Bet Already Canceled");
+                    return sboCallBackCommResp;
+                }
+            } else {
+                sboCallBackCommResp.setErrorCode(6);
+                sboCallBackCommResp.setErrorMessage("Bet not exists");
+                return sboCallBackCommResp;
+            }
+            if (BigDecimal.ZERO.compareTo(sboCallBackSettleReq.getWinLoss()) != 0) {//为0时表示输投注金额
+                if (BigDecimal.ZERO.compareTo(sboCallBackSettleReq.getWinLoss()) == -1) {//赢 或者 平手
 
-            BigDecimal betAmount = oldTxns.getBetAmount();
-            BigDecimal balance = BigDecimal.valueOf(0D);
-            if ("2".equals(sboCallBackSettleReq.getResultType())) {//平手
-                balance = memBaseinfo.getBalance().add(betAmount);
-                gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
-            }
-            if ("0".equals(sboCallBackSettleReq.getResultType())) {//赢
-                balance = memBaseinfo.getBalance().add(sboCallBackSettleReq.getWinLoss());
-                gameCommonService.updateUserBalance(memBaseinfo, sboCallBackSettleReq.getWinLoss(), GoldchangeEnum.SETTLE, TradingEnum.INCOME);
-            }
-            if ("1".equals(sboCallBackSettleReq.getResultType())) {//输
-                BigDecimal realBetAmount = sboCallBackSettleReq.getWinLoss().subtract(betAmount);
-                balance = memBaseinfo.getBalance().subtract(realBetAmount);
-                gameCommonService.updateUserBalance(memBaseinfo, realBetAmount, GoldchangeEnum.SETTLE, TradingEnum.SPENDING);
-            }
+                } else {//小于0时，翻倍输
 
-            sboCallBackCommResp.setBalance(balance);
-            sboCallBackCommResp.setErrorCode(0);
-            sboCallBackCommResp.setErrorMessage("No Error");
+                }
+            }
+            BigDecimal winLoss = sboCallBackSettleReq.getWinLoss();
 
             Txns txns = new Txns();
             BeanUtils.copyProperties(oldTxns, txns);
             txns.setId(null);
             txns.setUserId(sboCallBackSettleReq.getUsername());
-            txns.setBetAmount(oldTxns.getBetAmount());
             txns.setPlatformTxId(sboCallBackSettleReq.getTransferCode());
-            txns.setBetTime(sboCallBackSettleReq.getResultTime());
-            txns.setPlatform(platformCode);
-            txns.setGameType(String.valueOf(sboCallBackSettleReq.getGameType()));
+            if ("2".equals(sboCallBackSettleReq.getResultType())) {//平手
+                balance = balance.add(winLoss);
+                gameCommonService.updateUserBalance(memBaseinfo, winLoss, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
+            }
+            if ("0".equals(sboCallBackSettleReq.getResultType())) {//赢
+                balance = balance.add(winLoss);
+                gameCommonService.updateUserBalance(memBaseinfo, winLoss, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
+            }
+//            if ("1".equals(sboCallBackSettleReq.getResultType())) {//输
+//                BigDecimal realBetAmount = sboCallBackSettleReq.getWinLoss().subtract(betAmount);
+//                balance = memBaseinfo.getBalance().subtract(realBetAmount);
+//                gameCommonService.updateUserBalance(memBaseinfo, realBetAmount, GoldchangeEnum.SETTLE, TradingEnum.SPENDING);
+//            }
             txns.setResultType(sboCallBackSettleReq.getResultType());
-            txns.setWinAmount(sboCallBackSettleReq.getWinLoss());
+
+            sboCallBackCommResp.setBalance(balance);
+            sboCallBackCommResp.setErrorCode(0);
+            sboCallBackCommResp.setErrorMessage("No Error");
+
+
+            if ("2".equals(sboCallBackSettleReq.getResultType())) {//平手 或 赢
+                txns.setWinningAmount(winLoss);
+            } else {
+                txns.setWinAmount(winLoss.negate());
+            }
             txns.setBalance(balance);
             txns.setStatus("Running");
             txns.setMethod("Settle");
@@ -170,39 +313,62 @@ public class SboCallbackServiceImpl implements SboCallbackService {
     }
 
     //回滚
-    public Object rollback(SboCallBackRollbackReq sboCallBackRollbackReq) {
+    public Object rollback(SboCallBackRollbackReq sboCallBackRollbackReq,String ip) {
 
-        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sboCallBackRollbackReq.getUsername());
+
         SboCallBackCommResp sboCallBackCommResp = new SboCallBackCommResp();
         sboCallBackCommResp.setAccountName(sboCallBackRollbackReq.getUsername());
+        if(null == sboCallBackRollbackReq.getUsername() || "".equals(sboCallBackRollbackReq.getUsername())){
+            sboCallBackCommResp.setErrorCode(3);
+            sboCallBackCommResp.setErrorMessage("Username empty");
+            return sboCallBackCommResp;
+        }
+        if(!verifyKey(sboCallBackRollbackReq.getCompanyKey())){
+            sboCallBackCommResp.setErrorCode(4);
+            sboCallBackCommResp.setErrorMessage("CompanyKey Error");
+            return sboCallBackCommResp;
+        }
+        if(!checkIp(ip)){
+            sboCallBackCommResp.setErrorCode(2);
+            sboCallBackCommResp.setErrorMessage("Invalid Ip");
+            return sboCallBackCommResp;
+        }
+        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sboCallBackRollbackReq.getUsername());
         if (null == memBaseinfo) {
             sboCallBackCommResp.setErrorCode(1);
             sboCallBackCommResp.setErrorMessage("Member not exist");
+            return sboCallBackCommResp;
         } else {
+            BigDecimal balance = memBaseinfo.getBalance();
             LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
             wrapper.eq(Txns::getStatus, "Running");
             wrapper.eq(Txns::getMethod, "settle");
             wrapper.eq(Txns::getPlatformTxId, sboCallBackRollbackReq.getTransferCode());
-            wrapper.eq(Txns::getUserId, sboCallBackRollbackReq.getUsername());
-            wrapper.eq(Txns::getPlatform, sboCallBackRollbackReq.getProductType());
-            wrapper.eq(Txns::getGameType, sboCallBackRollbackReq.getGameType());
+//            wrapper.eq(Txns::getUserId, sboCallBackRollbackReq.getUsername());
+//            wrapper.eq(Txns::getPlatform, sboCallBackRollbackReq.getProductType());
+//            wrapper.eq(Txns::getGameType, sboCallBackRollbackReq.getGameType());
             Txns oldTxns = txnsMapper.selectOne(wrapper);
+            if(null==oldTxns){
+                sboCallBackCommResp.setBalance(balance);
+                sboCallBackCommResp.setErrorCode(0);
+                sboCallBackCommResp.setErrorMessage("No Error");
+                return sboCallBackCommResp;
+            }
+            BigDecimal winLoss = oldTxns.getWinningAmount();
 
-            BigDecimal betAmount = oldTxns.getBetAmount();
-            BigDecimal balance = BigDecimal.valueOf(0D);
             if ("2".equals(oldTxns.getResultType())) {//平手
-                balance = memBaseinfo.getBalance().subtract(betAmount);
-                gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.UNSETTLE, TradingEnum.SPENDING);
+                balance = balance.subtract(winLoss);
+                gameCommonService.updateUserBalance(memBaseinfo, winLoss, GoldchangeEnum.UNSETTLE, TradingEnum.SPENDING);
             }
             if ("0".equals(oldTxns.getResultType())) {//赢
-                balance = memBaseinfo.getBalance().subtract(oldTxns.getWinAmount());
-                gameCommonService.updateUserBalance(memBaseinfo, oldTxns.getWinAmount(), GoldchangeEnum.UNSETTLE, TradingEnum.SPENDING);
+                balance = balance.subtract(winLoss);
+                gameCommonService.updateUserBalance(memBaseinfo, winLoss, GoldchangeEnum.UNSETTLE, TradingEnum.SPENDING);
             }
-            if ("1".equals(oldTxns.getResultType())) {//输
-                BigDecimal realBetAmount = oldTxns.getWinAmount().subtract(betAmount);
-                balance = memBaseinfo.getBalance().add(realBetAmount);
-                gameCommonService.updateUserBalance(memBaseinfo, realBetAmount, GoldchangeEnum.UNSETTLE, TradingEnum.INCOME);
-            }
+//            if ("1".equals(oldTxns.getResultType())) {//输
+//                BigDecimal realBetAmount = oldTxns.getWinAmount().subtract(betAmount);
+//                balance = memBaseinfo.getBalance().add(realBetAmount);
+//                gameCommonService.updateUserBalance(memBaseinfo, realBetAmount, GoldchangeEnum.UNSETTLE, TradingEnum.INCOME);
+//            }
 
             sboCallBackCommResp.setBalance(balance);
             sboCallBackCommResp.setErrorCode(0);
@@ -211,6 +377,8 @@ public class SboCallbackServiceImpl implements SboCallbackService {
             Txns txns = new Txns();
             BeanUtils.copyProperties(oldTxns, txns);
             txns.setId(null);
+            txns.setWinningAmount(BigDecimal.ZERO);
+            txns.setWinAmount(BigDecimal.ZERO);
             txns.setBalance(balance);
             txns.setStatus("Running");
             txns.setMethod("Place Bet");
@@ -227,61 +395,81 @@ public class SboCallbackServiceImpl implements SboCallbackService {
     }
 
     //取消投注
-    public Object cancel(SboCallBackCancelReq sboCallBackCancelReq) {
+    public Object cancel(SboCallBackCancelReq sboCallBackCancelReq,String ip) {
 
-        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sboCallBackCancelReq.getUsername());
+
         SboCallBackCommResp sboCallBackCommResp = new SboCallBackCommResp();
         sboCallBackCommResp.setAccountName(sboCallBackCancelReq.getUsername());
+        if(null == sboCallBackCancelReq.getUsername() || "".equals(sboCallBackCancelReq.getUsername())){
+            sboCallBackCommResp.setErrorCode(3);
+            sboCallBackCommResp.setErrorMessage("Username empty");
+            return sboCallBackCommResp;
+        }
+        if(!verifyKey(sboCallBackCancelReq.getCompanyKey())){
+            sboCallBackCommResp.setErrorCode(4);
+            sboCallBackCommResp.setErrorMessage("CompanyKey Error");
+            return sboCallBackCommResp;
+        }
+        if(!checkIp(ip)){
+            sboCallBackCommResp.setErrorCode(2);
+            sboCallBackCommResp.setErrorMessage("Invalid Ip");
+            return sboCallBackCommResp;
+        }
+        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sboCallBackCancelReq.getUsername());
         if (null == memBaseinfo) {
             sboCallBackCommResp.setErrorCode(1);
             sboCallBackCommResp.setErrorMessage("Member not exist");
         } else {
+            BigDecimal balance = memBaseinfo.getBalance();
             LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
             wrapper.eq(Txns::getPlatformTxId, sboCallBackCancelReq.getTransferCode());
-            wrapper.eq(Txns::getUserId, sboCallBackCancelReq.getUsername());
-            wrapper.eq(Txns::getPlatform, sboCallBackCancelReq.getProductType());
-            wrapper.eq(Txns::getGameType, sboCallBackCancelReq.getGameType());
-            wrapper.orderByDesc(Txns::getId);
-            List<Txns> oldTxnsList = txnsMapper.selectList(wrapper);
+            wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Settle"));
+            wrapper.eq(Txns::getStatus, "Running");
+            wrapper.eq(Txns::getPlatformTxId, sboCallBackCancelReq.getTransferCode());
+            wrapper.eq(Txns::getRoundId, sboCallBackCancelReq.getTransactionId());
+            wrapper.eq(Txns::getPlatform, OpenAPIProperties.SBO_PLATFORM_CODE);
+//        wrapper.eq(Txns::getUserId, userId);
+            Txns oldTxns = txnsMapper.selectOne(wrapper);
+            if(null==oldTxns){
+                sboCallBackCommResp.setBalance(balance);
+                sboCallBackCommResp.setErrorCode(0);
+                sboCallBackCommResp.setErrorMessage("No Error");
+                return sboCallBackCommResp;
+            }
 
-            for(int i=0;i<oldTxnsList.size();i++) {
-                if(i==0) {
-                    Txns oldTxns = oldTxnsList.get(i);
-                    BigDecimal betAmount = oldTxns.getBetAmount();
-                    BigDecimal balance = BigDecimal.valueOf(0D);
-                    if ("Place Bet".equals(oldTxns.getMethod())&&"Running".equals(oldTxns.getStatus())) {
-                        balance = memBaseinfo.getBalance().add(betAmount);
-                        gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.CANCEL_BET, TradingEnum.INCOME);
-                    } else {
-                        if ("0".equals(oldTxns.getResultType())) {//赢
-                            BigDecimal realBetAmount = oldTxns.getWinAmount().subtract(betAmount);
-                            balance = memBaseinfo.getBalance().subtract(realBetAmount);
-                            gameCommonService.updateUserBalance(memBaseinfo, realBetAmount, GoldchangeEnum.CANCEL_BET, TradingEnum.SPENDING);
-                        }
-                        if ("1".equals(oldTxns.getResultType())) {//输
-                            balance = memBaseinfo.getBalance().add(oldTxns.getWinAmount());
-                            gameCommonService.updateUserBalance(memBaseinfo, oldTxns.getWinAmount(), GoldchangeEnum.CANCEL_BET, TradingEnum.INCOME);
-                        }
-                    }
+            BigDecimal betAmount = oldTxns.getBetAmount();
 
-                    sboCallBackCommResp.setBalance(balance);
-                    sboCallBackCommResp.setErrorCode(0);
-                    sboCallBackCommResp.setErrorMessage("No Error");
-
-                    Txns txns = new Txns();
-                    BeanUtils.copyProperties(oldTxns, txns);
-                    txns.setId(null);
-                    txns.setBalance(balance);
-                    txns.setStatus("Void");
-                    txns.setMethod("Cancel");
-                    String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
-                    txns.setCreateTime(dateStr);
-                    txnsMapper.insert(txns);
-                    oldTxns.setStatus("Cancel");
-                    oldTxns.setUpdateTime(dateStr);
-                    txnsMapper.updateById(oldTxns);
+            if ("Place Bet".equals(oldTxns.getMethod())) {
+                balance = balance.add(betAmount);
+                gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.CANCEL_BET, TradingEnum.INCOME);
+            } else {
+                if ("0".equals(oldTxns.getResultType())) {//赢
+                    BigDecimal realBetAmount = oldTxns.getWinAmount().subtract(betAmount);
+                    balance = balance.subtract(realBetAmount);
+                    gameCommonService.updateUserBalance(memBaseinfo, realBetAmount, GoldchangeEnum.CANCEL_BET, TradingEnum.SPENDING);
+                }
+                if ("1".equals(oldTxns.getResultType())) {//输
+                    balance = balance.add(oldTxns.getWinAmount());
+                    gameCommonService.updateUserBalance(memBaseinfo, oldTxns.getWinAmount(), GoldchangeEnum.CANCEL_BET, TradingEnum.INCOME);
                 }
             }
+
+            sboCallBackCommResp.setBalance(balance);
+            sboCallBackCommResp.setErrorCode(0);
+            sboCallBackCommResp.setErrorMessage("No Error");
+
+            Txns txns = new Txns();
+            BeanUtils.copyProperties(oldTxns, txns);
+            txns.setId(null);
+            txns.setBalance(balance);
+            txns.setStatus("Running");
+            txns.setMethod("Cancel");
+            String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
+            txns.setCreateTime(dateStr);
+            txnsMapper.insert(txns);
+            oldTxns.setStatus("Cancel");
+            oldTxns.setUpdateTime(dateStr);
+            txnsMapper.updateById(oldTxns);
         }
 
         return sboCallBackCommResp;
@@ -289,23 +477,58 @@ public class SboCallbackServiceImpl implements SboCallbackService {
     }
 
     //小费
-    public Object tip(SboCallBackTipReq sboCallBackTipReq) {
-        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sboCallBackTipReq.getUsername());
+    public Object tip(SboCallBackTipReq sboCallBackTipReq,String ip) {
+
         SboCallBackCommResp sboCallBackCommResp = new SboCallBackCommResp();
         sboCallBackCommResp.setAccountName(sboCallBackTipReq.getUsername());
+        if(null == sboCallBackTipReq.getUsername() || "".equals(sboCallBackTipReq.getUsername())){
+            sboCallBackCommResp.setErrorCode(3);
+            sboCallBackCommResp.setErrorMessage("Username empty");
+            return sboCallBackCommResp;
+        }
+        if(!verifyKey(sboCallBackTipReq.getCompanyKey())){
+            sboCallBackCommResp.setErrorCode(4);
+            sboCallBackCommResp.setErrorMessage("CompanyKey Error");
+            return sboCallBackCommResp;
+        }
+        if(!checkIp(ip)){
+            sboCallBackCommResp.setErrorCode(2);
+            sboCallBackCommResp.setErrorMessage("Invalid Ip");
+            return sboCallBackCommResp;
+        }
+        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sboCallBackTipReq.getUsername());
         if (null == memBaseinfo) {
             sboCallBackCommResp.setErrorCode(1);
             sboCallBackCommResp.setErrorMessage("Member not exist");
+            return sboCallBackCommResp;
         } else {
-            BigDecimal betAmount = sboCallBackTipReq.getAmount();
             BigDecimal balance = memBaseinfo.getBalance();
+            sboCallBackCommResp.setBalance(balance);
+            LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+            wrapper.eq(Txns::getStatus, "Running");
+            wrapper.eq(Txns::getMethod, "Tip");
+            wrapper.eq(Txns::getPlatformTxId, sboCallBackTipReq.getTransferCode());
+            Txns oldTxns = txnsMapper.selectOne(wrapper);
+            if(null!=oldTxns){
+                sboCallBackCommResp.setErrorCode(0);
+                sboCallBackCommResp.setErrorMessage("No Error");
+                return sboCallBackCommResp;
+            }
+            BigDecimal betAmount = sboCallBackTipReq.getAmount();
+
             if (memBaseinfo.getBalance().compareTo(betAmount) == -1) {
                 sboCallBackCommResp.setErrorCode(5);
                 sboCallBackCommResp.setErrorMessage("Not enough balance");
             } else {
                 String platformCode = this.getpPlatformCode(sboCallBackTipReq.getProductType());
                 balance = balance.subtract(betAmount);
-                GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(platformCode);
+                GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.SBO_PLATFORM_CODE);
+                GamePlatform gamePlatform;
+                if(OpenAPIProperties.SBO_IS_PLATFORM_LOGIN.equals("Y")){
+                    gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.SBO_PLATFORM_CODE,OpenAPIProperties.SBO_PLATFORM_CODE);
+                }else {
+                    gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platformCode, OpenAPIProperties.SBO_PLATFORM_CODE);
+                }
                 GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
                 gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.TIP, TradingEnum.SPENDING);
                 sboCallBackCommResp.setBalance(balance);
@@ -314,21 +537,36 @@ public class SboCallbackServiceImpl implements SboCallbackService {
 
                 Txns txns = new Txns();
                 txns.setUserId(sboCallBackTipReq.getUsername());
+                //玩家货币代码
+                txns.setCurrency(gameParentPlatform.getCurrencyType());
+                //平台代码
+                txns.setPlatform(gameParentPlatform.getPlatformCode());
+                //平台英文名称
+                txns.setPlatformEnName(gameParentPlatform.getPlatformEnName());
+                //平台中文名称
+                txns.setPlatformCnName(gameParentPlatform.getPlatformCnName());
+                //平台游戏类型
+                txns.setGameType(gameCategory.getGameType());
+                //游戏分类ID
+                txns.setCategoryId(gameCategory.getId());
+                //游戏分类名称
+                txns.setCategoryName(gameCategory.getGameName());
+                //平台游戏代码
+                txns.setGameCode(gamePlatform.getPlatformCode());
+                //游戏名称
+                txns.setGameName(gamePlatform.getPlatformEnName());
                 txns.setBetAmount(betAmount);
+                txns.setWinningAmount(betAmount.negate());
+                txns.setWinningAmount(betAmount);
                 txns.setPlatformTxId(sboCallBackTipReq.getTransferCode());
                 txns.setRoundId(sboCallBackTipReq.getTransactionId());
                 txns.setBetTime(sboCallBackTipReq.getTipTime());
-                txns.setPlatform(platformCode);
                 txns.setGameType(String.valueOf(sboCallBackTipReq.getGameType()));
                 txns.setBalance(balance);
                 txns.setStatus("Running");
                 txns.setMethod("Tip");
                 String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
                 txns.setCreateTime(dateStr);
-                txns.setPlatformCnName(gamePlatform.getPlatformCnName());
-                txns.setPlatformEnName(gamePlatform.getPlatformEnName());
-                txns.setCategoryId(gameCategory.getId());
-                txns.setCategoryName(gameCategory.getGameName());
                 txnsMapper.insert(txns);
             }
 
@@ -338,19 +576,53 @@ public class SboCallbackServiceImpl implements SboCallbackService {
     }
 
     //红利
-    public Object bonus(SboCallBackBonusReq sboCallBackBonusReq) {
-        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sboCallBackBonusReq.getUsername());
+    public Object bonus(SboCallBackBonusReq sboCallBackBonusReq,String ip) {
+
         SboCallBackCommResp sboCallBackCommResp = new SboCallBackCommResp();
         sboCallBackCommResp.setAccountName(sboCallBackBonusReq.getUsername());
+        if(null == sboCallBackBonusReq.getUsername() || "".equals(sboCallBackBonusReq.getUsername())){
+            sboCallBackCommResp.setErrorCode(3);
+            sboCallBackCommResp.setErrorMessage("Username empty");
+            return sboCallBackCommResp;
+        }
+        if(!verifyKey(sboCallBackBonusReq.getCompanyKey())){
+            sboCallBackCommResp.setErrorCode(4);
+            sboCallBackCommResp.setErrorMessage("CompanyKey Error");
+            return sboCallBackCommResp;
+        }
+        if(!checkIp(ip)){
+            sboCallBackCommResp.setErrorCode(2);
+            sboCallBackCommResp.setErrorMessage("Invalid Ip");
+            return sboCallBackCommResp;
+        }
+        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sboCallBackBonusReq.getUsername());
         if (null == memBaseinfo) {
             sboCallBackCommResp.setErrorCode(1);
             sboCallBackCommResp.setErrorMessage("Member not exist");
+            return sboCallBackCommResp;
         } else {
             BigDecimal betAmount = sboCallBackBonusReq.getAmount();
             BigDecimal balance = memBaseinfo.getBalance().add(betAmount);
+            sboCallBackCommResp.setBalance(balance);
+            LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+            wrapper.eq(Txns::getStatus, "Running");
+            wrapper.eq(Txns::getMethod, "Bonus");
+            wrapper.eq(Txns::getPlatformTxId, sboCallBackBonusReq.getTransferCode());
+            Txns oldTxns = txnsMapper.selectOne(wrapper);
+            if(null!=oldTxns){
+                sboCallBackCommResp.setErrorCode(0);
+                sboCallBackCommResp.setErrorMessage("No Error");
+                return sboCallBackCommResp;
+            }
             String platformCode = this.getpPlatformCode(sboCallBackBonusReq.getProductType());
 
-            GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(platformCode);
+            GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.SBO_PLATFORM_CODE);
+            GamePlatform gamePlatform;
+            if(OpenAPIProperties.SBO_IS_PLATFORM_LOGIN.equals("Y")){
+                gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.SBO_PLATFORM_CODE,OpenAPIProperties.SBO_PLATFORM_CODE);
+            }else {
+                gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platformCode, OpenAPIProperties.SBO_PLATFORM_CODE);
+            }
             GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
             gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.ACTIVITY_GIVE, TradingEnum.INCOME);
             sboCallBackCommResp.setBalance(balance);
@@ -359,21 +631,36 @@ public class SboCallbackServiceImpl implements SboCallbackService {
 
             Txns txns = new Txns();
             txns.setUserId(sboCallBackBonusReq.getUsername());
+            //玩家货币代码
+            txns.setCurrency(gameParentPlatform.getCurrencyType());
+            //平台代码
+            txns.setPlatform(gameParentPlatform.getPlatformCode());
+            //平台英文名称
+            txns.setPlatformEnName(gameParentPlatform.getPlatformEnName());
+            //平台中文名称
+            txns.setPlatformCnName(gameParentPlatform.getPlatformCnName());
+            //平台游戏类型
+            txns.setGameType(gameCategory.getGameType());
+            //游戏分类ID
+            txns.setCategoryId(gameCategory.getId());
+            //游戏分类名称
+            txns.setCategoryName(gameCategory.getGameName());
+            //平台游戏代码
+            txns.setGameCode(gamePlatform.getPlatformCode());
+            //游戏名称
+            txns.setGameName(gamePlatform.getPlatformEnName());
             txns.setBetAmount(betAmount);
+            txns.setWinningAmount(betAmount);
+            txns.setWinningAmount(betAmount);
             txns.setPlatformTxId(sboCallBackBonusReq.getTransferCode());
             txns.setRoundId(sboCallBackBonusReq.getTransactionId());
             txns.setBetTime(sboCallBackBonusReq.getBonusTime());
-            txns.setPlatform(platformCode);
             txns.setGameType(String.valueOf(sboCallBackBonusReq.getGameType()));
             txns.setBalance(balance);
             txns.setStatus("Running");
             txns.setMethod("Bonus");
             String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
             txns.setCreateTime(dateStr);
-            txns.setPlatformCnName(gamePlatform.getPlatformCnName());
-            txns.setPlatformEnName(gamePlatform.getPlatformEnName());
-            txns.setCategoryId(gameCategory.getId());
-            txns.setCategoryName(gameCategory.getGameName());
             txnsMapper.insert(txns);
 
         }
@@ -382,10 +669,26 @@ public class SboCallbackServiceImpl implements SboCallbackService {
     }
 
     //归还注额
-    public Object returnStake(SboCallBackReturnStakeReq sboCallBackBonusReq) {
-        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sboCallBackBonusReq.getUsername());
+    public Object returnStake(SboCallBackReturnStakeReq sboCallBackBonusReq,String ip) {
+
         SboCallBackCommResp sboCallBackCommResp = new SboCallBackCommResp();
         sboCallBackCommResp.setAccountName(sboCallBackBonusReq.getUsername());
+        if(null == sboCallBackBonusReq.getUsername() || "".equals(sboCallBackBonusReq.getUsername())){
+            sboCallBackCommResp.setErrorCode(3);
+            sboCallBackCommResp.setErrorMessage("Username empty");
+            return sboCallBackCommResp;
+        }
+        if(!verifyKey(sboCallBackBonusReq.getCompanyKey())){
+            sboCallBackCommResp.setErrorCode(4);
+            sboCallBackCommResp.setErrorMessage("CompanyKey Error");
+            return sboCallBackCommResp;
+        }
+        if(!checkIp(ip)){
+            sboCallBackCommResp.setErrorCode(2);
+            sboCallBackCommResp.setErrorMessage("Invalid Ip");
+            return sboCallBackCommResp;
+        }
+        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sboCallBackBonusReq.getUsername());
         if (null == memBaseinfo) {
             sboCallBackCommResp.setErrorCode(1);
             sboCallBackCommResp.setErrorMessage("Member not exist");
@@ -395,9 +698,9 @@ public class SboCallbackServiceImpl implements SboCallbackService {
             wrapper.eq(Txns::getStatus, "Running");
             wrapper.eq(Txns::getPlatformTxId, sboCallBackBonusReq.getTransferCode());
             wrapper.eq(Txns::getRoundId, sboCallBackBonusReq.getTransactionId());
-            wrapper.eq(Txns::getUserId, sboCallBackBonusReq.getUsername());
-            wrapper.eq(Txns::getPlatform, sboCallBackBonusReq.getProductType());
-            wrapper.eq(Txns::getGameType, sboCallBackBonusReq.getGameType());
+//            wrapper.eq(Txns::getUserId, sboCallBackBonusReq.getUsername());
+//            wrapper.eq(Txns::getPlatform, sboCallBackBonusReq.getProductType());
+//            wrapper.eq(Txns::getGameType, sboCallBackBonusReq.getGameType());
             Txns oldTxns = txnsMapper.selectOne(wrapper);
 
             BigDecimal betAmount = oldTxns.getBetAmount();
@@ -432,7 +735,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
     }
 
     //取得投注状态
-    public Object getBetStatus(SboCallBackGetBetStatusReq sboCallBackGetBetStatusReq) {
+    public Object getBetStatus(SboCallBackGetBetStatusReq sboCallBackGetBetStatusReq,String ip) {
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sboCallBackGetBetStatusReq.getUsername());
         SboCallBackGetBetStatusResp sboCallBackGetBetStatusResp = new SboCallBackGetBetStatusResp();
         sboCallBackGetBetStatusResp.setTransactionId(sboCallBackGetBetStatusReq.getTransactionId());
@@ -639,10 +942,26 @@ public class SboCallbackServiceImpl implements SboCallbackService {
 //    }
 
     //LiveCoin購買
-    public Object liveCoinTransaction(SboCallBackLiveCoinTransactionReq sboCallBackLiveCoinTransactionReq) {
-        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sboCallBackLiveCoinTransactionReq.getUsername());
+    public Object liveCoinTransaction(SboCallBackLiveCoinTransactionReq sboCallBackLiveCoinTransactionReq,String ip) {
+
         SboCallBackCommResp sboCallBackCommResp = new SboCallBackCommResp();
         sboCallBackCommResp.setAccountName(sboCallBackLiveCoinTransactionReq.getUsername());
+        if(null == sboCallBackLiveCoinTransactionReq.getUsername() || "".equals(sboCallBackLiveCoinTransactionReq.getUsername())){
+            sboCallBackCommResp.setErrorCode(3);
+            sboCallBackCommResp.setErrorMessage("Username empty");
+            return sboCallBackCommResp;
+        }
+        if(!verifyKey(sboCallBackLiveCoinTransactionReq.getCompanyKey())){
+            sboCallBackCommResp.setErrorCode(4);
+            sboCallBackCommResp.setErrorMessage("CompanyKey Error");
+            return sboCallBackCommResp;
+        }
+        if(!checkIp(ip)){
+            sboCallBackCommResp.setErrorCode(2);
+            sboCallBackCommResp.setErrorMessage("Invalid Ip");
+            return sboCallBackCommResp;
+        }
+        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sboCallBackLiveCoinTransactionReq.getUsername());
         if (null == memBaseinfo) {
             sboCallBackCommResp.setErrorCode(1);
             sboCallBackCommResp.setErrorMessage("Member not exist");
@@ -688,7 +1007,37 @@ public class SboCallbackServiceImpl implements SboCallbackService {
         return sboCallBackCommResp;
     }
 
+    private boolean verifyKey(String key){
+        if(null!=key && !"".equals(key)){
+            if(OpenAPIProperties.SBO_KEY.equals(key)){
+                return true;
+            }else {
+                return false;
+            }
+        }else {
+            return false;
+        }
+    }
+
+    private boolean checkIp(String ip) {
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.SBO_PLATFORM_CODE);
+        if (null == gameParentPlatform) {
+            return false;
+        } else if (null == gameParentPlatform.getIpAddr() || "".equals(gameParentPlatform.getIpAddr())) {
+            return true;
+        } else if (gameParentPlatform.getIpAddr().equals(ip)) {
+            return true;
+        }
+        return false;
+    }
+
     private String getpPlatformCode(int productType){
+//        1	Sports Book	体育博彩
+//        3	SBO Games	电子游戏
+//        5	Virtual Sports	虚拟运动
+//        7	SBO Live Casino	真人赌场
+//        9	Seamless Game Provider	无缝游戏
+//        10	Live Coin	線上貨幣
         String platformCode = "";
         if (1==productType){
             platformCode = "Sports Book";//体育博彩
