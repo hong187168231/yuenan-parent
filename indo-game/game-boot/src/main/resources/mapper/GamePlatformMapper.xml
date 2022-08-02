@@ -8,6 +8,7 @@
         t.platform_en_name as platform_game_en_name,
         t.platform_cn_name as platform_game_cn_name,
         t.picture_path as game_picture_path,
+        t.volatility,
         t.is_start,
         t.is_hot_show,
         t.parent_name,

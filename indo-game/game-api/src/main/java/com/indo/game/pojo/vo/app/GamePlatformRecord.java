@@ -54,4 +54,7 @@ public class GamePlatformRecord extends BaseEntity {
 
     @ApiModelProperty(value = "平台图片路径")
     private String picturePath;
+
+    @ApiModelProperty(value = "0：横竖版 1：横版 2：竖版")
+    private String volatility;
 }

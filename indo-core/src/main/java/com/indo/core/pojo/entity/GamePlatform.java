@@ -72,4 +72,7 @@ public class GamePlatform extends BaseEntity {
 
     @ApiModelProperty(value = "系统与厂商间的最小限制转帐金额")
     private double minTransfer ;
+
+    @ApiModelProperty(value = "0：横竖版 1：横版 2：竖版")
+    private String volatility;
 }

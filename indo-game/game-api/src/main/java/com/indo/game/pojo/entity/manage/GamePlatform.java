@@ -74,4 +74,7 @@ public class GamePlatform {
     private String createTime;
 
     private String updateTime;
+
+    @ApiModelProperty(value = "0：横竖版 1：横版 2：竖版")
+    private String volatility;
 }
