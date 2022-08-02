@@ -5,12 +5,14 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.indo.admin.modules.sys.mapper.SysUserMapper;
+import com.indo.admin.pojo.dto.ChangePasswordDto;
 import com.indo.admin.pojo.entity.SysUser;
 import com.indo.admin.pojo.entity.SysUserRole;
 import com.indo.admin.modules.sys.service.ISysUserRoleService;
 import com.indo.admin.modules.sys.service.ISysUserService;
 import com.indo.common.constant.GlobalConstants;
-import com.indo.common.result.PageResult;
+import com.indo.common.web.exception.BizException;
+import com.indo.common.web.util.JwtUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -83,6 +85,19 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     @Override
     public SysUser getByUsername(String username) {
         return this.baseMapper.getByUsername(username);
+    }
+
+    @Override
+    public void changePassword(ChangePasswordDto changePasswordDto) {
+        LambdaQueryWrapper<SysUser> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(SysUser::getUsername, JwtUtils.getUsername());
+        wrapper.eq(SysUser::getPassword,changePasswordDto.getUsedPassword());
+        SysUser sysUser = baseMapper.selectOne(wrapper);
+        if(sysUser==null){
+            throw new BizException("旧密码错误");
+        }
+        sysUser.setPassword(changePasswordDto.getNewPassword());
+        baseMapper.updateById(sysUser);
     }
 
 
