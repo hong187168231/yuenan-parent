@@ -337,7 +337,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
             BigDecimal balance = memBaseinfo.getBalance();
             LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
             wrapper.eq(Txns::getStatus, "Running");
-            wrapper.eq(Txns::getMethod, "settle");
+            wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Settle"));
             wrapper.eq(Txns::getPlatformTxId, sboCallBackRollbackReq.getTransferCode());
             wrapper.eq(Txns::getPlatform, OpenAPIProperties.SBO_PLATFORM_CODE);
 //            wrapper.eq(Txns::getUserId, sboCallBackRollbackReq.getUsername());
@@ -350,11 +350,22 @@ public class SboCallbackServiceImpl implements SboCallbackService {
                 sboCallBackCommResp.setErrorMessage("No Error");
                 return sboCallBackCommResp;
             }
+            if ("Place Bet".equals(oldTxns.getMethod())) {
+                sboCallBackCommResp.setBalance(balance);
+                sboCallBackCommResp.setErrorCode(2003);
+                sboCallBackCommResp.setErrorMessage("Bet Already Rollback");
+                return sboCallBackCommResp;
+            }
             BigDecimal winLoss = oldTxns.getWinAmount();
-
-            if (0==oldTxns.getResultType()||2==oldTxns.getResultType()) {//赢 或者 平手
+            if ("Place Bet".equals(oldTxns.getMethod())) {
+                winLoss = oldTxns.getBetAmount();
                 balance = balance.subtract(winLoss);
                 gameCommonService.updateUserBalance(memBaseinfo, winLoss, GoldchangeEnum.UNSETTLE, TradingEnum.SPENDING);
+            }else {
+                if (0 == oldTxns.getResultType() || 2 == oldTxns.getResultType()) {//赢 或者 平手
+                    balance = balance.subtract(winLoss);
+                    gameCommonService.updateUserBalance(memBaseinfo, winLoss, GoldchangeEnum.UNSETTLE, TradingEnum.SPENDING);
+                }
             }
 //            if ("1".equals(oldTxns.getResultType())) {//输
 //                BigDecimal realBetAmount = oldTxns.getWinAmount().subtract(betAmount);
