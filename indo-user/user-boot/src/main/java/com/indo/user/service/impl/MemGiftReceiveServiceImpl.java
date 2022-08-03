@@ -127,7 +127,7 @@ public class MemGiftReceiveServiceImpl extends ServiceImpl<MemGiftReceiveMapper,
                     if (count > 0) {
                         throw new BizException("您已领取过晋级奖励，请勿重复提交");
                     }
-                    if(BetMoney.compareTo(memLevel.getReward())<0){
+                    if(BetMoney.compareTo(memLevel.getNeedBet())<0){
                         throw new BizException("有效投注未达标");
                     }
                     req.setGiftAmount(memLevel.getReward());
@@ -144,7 +144,7 @@ public class MemGiftReceiveServiceImpl extends ServiceImpl<MemGiftReceiveMapper,
                 } else {
                     throw new BizException("您不能领取该奖励");
                 }
-                if(BetMoney.compareTo(memLevel.getEverydayGift())<0){
+                if(BetMoney.compareTo(memLevel.getNeedBet())<0){
                     throw new BizException("有效投注未达标");
                 }
                 req.setGiftAmount(memLevel.getEverydayGift());
@@ -157,7 +157,7 @@ public class MemGiftReceiveServiceImpl extends ServiceImpl<MemGiftReceiveMapper,
                 } else {
                     throw new BizException("您不能领取该奖励");
                 }
-                if(BetMoney.compareTo(memLevel.getWeekGift())<0){
+                if(BetMoney.compareTo(memLevel.getNeedBet())<0){
                     throw new BizException("有效投注未达标");
                 }
                 req.setGiftAmount(memLevel.getWeekGift());
@@ -170,7 +170,7 @@ public class MemGiftReceiveServiceImpl extends ServiceImpl<MemGiftReceiveMapper,
                 } else {
                     throw new BizException("您不能领取该奖励");
                 }
-                if(BetMoney.compareTo(memLevel.getMonthGift())<0){
+                if(BetMoney.compareTo(memLevel.getNeedBet())<0){
                     throw new BizException("有效投注未达标");
                 }
                 req.setGiftAmount(memLevel.getMonthGift());
@@ -183,7 +183,7 @@ public class MemGiftReceiveServiceImpl extends ServiceImpl<MemGiftReceiveMapper,
                 } else {
                     throw new BizException("您不能领取该奖励");
                 }
-                if(BetMoney.compareTo(memLevel.getYearGift())<0){
+                if(BetMoney.compareTo(memLevel.getNeedBet())<0){
                     throw new BizException("有效投注未达标");
                 }
                 req.setGiftAmount(memLevel.getYearGift());
@@ -196,7 +196,7 @@ public class MemGiftReceiveServiceImpl extends ServiceImpl<MemGiftReceiveMapper,
                 } else {
                     throw new BizException("您不能领取该奖励");
                 }
-                if(BetMoney.compareTo(memLevel.getBirthdayGift())<0){
+                if(BetMoney.compareTo(memLevel.getNeedBet())<0){
                     throw new BizException("有效投注未达标");
                 }
                 req.setGiftAmount(memLevel.getBirthdayGift());
