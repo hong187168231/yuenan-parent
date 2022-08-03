@@ -444,7 +444,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
                 sboCallBackCommResp.setErrorMessage("Bet not exists");
                 return sboCallBackCommResp;
             }
-            if ("Place Bet".equals(oldTxns.getMethod())) {
+            if ("Cancel Bet".equals(oldTxns.getMethod())) {
                 sboCallBackCommResp.setBalance(balance);
                 sboCallBackCommResp.setErrorCode(2002);
                 sboCallBackCommResp.setErrorMessage("Bet Already Canceled");
