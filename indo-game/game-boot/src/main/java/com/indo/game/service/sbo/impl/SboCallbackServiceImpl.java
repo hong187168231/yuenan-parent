@@ -357,7 +357,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
                 return sboCallBackCommResp;
             }
             BigDecimal winLoss = oldTxns.getWinAmount();
-            if ("Place Bet".equals(oldTxns.getMethod())) {
+            if ("Cancel Bet".equals(oldTxns.getMethod())) {
                 winLoss = oldTxns.getBetAmount();
                 balance = balance.subtract(winLoss);
                 gameCommonService.updateUserBalance(memBaseinfo, winLoss, GoldchangeEnum.UNSETTLE, TradingEnum.SPENDING);
