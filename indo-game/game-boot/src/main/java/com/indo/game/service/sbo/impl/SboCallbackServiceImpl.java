@@ -751,7 +751,10 @@ public class SboCallbackServiceImpl implements SboCallbackService {
             wrapper.eq(Txns::getGameType, sboCallBackGetBetStatusReq.getGameType());
             wrapper.orderByDesc(Txns::getId);
             List<Txns> oldTxnsList = txnsMapper.selectList(wrapper);
-
+            if(null==oldTxnsList || oldTxnsList.size()<=0){
+                sboCallBackGetBetStatusResp.setErrorCode(6);
+                sboCallBackGetBetStatusResp.setErrorMessage("Member not exist");
+            }
             for(int i=0;i<oldTxnsList.size();i++) {
                 if(i==0) {
                     Txns oldTxns = oldTxnsList.get(i);
