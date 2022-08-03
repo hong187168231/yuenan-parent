@@ -145,13 +145,13 @@ public class SboCallbackServiceImpl implements SboCallbackService {
                         sboCallBackCommResp.setErrorMessage("Bet With Same RefNo Exists");
                         return sboCallBackCommResp;
                     }else if(7==sboCallBackDeductReq.getProductType()) {
-                        if (betAmount.compareTo(oldTxns.getBetAmount()) == 1) {//真人赌场，相同的transferCode可以被扣除投注金额两次，但第二次扣除投注金额必须比第一次大。
+                        if (betAmount.compareTo(oldTxns.getBetAmount()) != 1) {//真人赌场，相同的transferCode可以被扣除投注金额两次，但第二次扣除投注金额必须比第一次大。
                             sboCallBackCommResp.setErrorCode(5003);
                             sboCallBackCommResp.setErrorMessage("Bet With Same RefNo Exists");
                             return sboCallBackCommResp;
                         }
                     }else if(3==sboCallBackDeductReq.getProductType()){
-                        if (betAmount.compareTo(oldTxns.getBetAmount()) == 1) {//电子游戏
+                        if (betAmount.compareTo(oldTxns.getBetAmount()) != 1) {//电子游戏
                             sboCallBackCommResp.setErrorCode(7);
                             sboCallBackCommResp.setErrorMessage("Internal Error");
                             return sboCallBackCommResp;
