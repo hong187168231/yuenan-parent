@@ -424,38 +424,43 @@ public class SboCallbackServiceImpl implements SboCallbackService {
             Txns oldTxns = txnsMapper.selectOne(wrapper);
             if(null==oldTxns){
                 sboCallBackCommResp.setBalance(balance);
-                sboCallBackCommResp.setErrorCode(0);
-                sboCallBackCommResp.setErrorMessage("No Error");
+                sboCallBackCommResp.setErrorCode(2002);
+                sboCallBackCommResp.setErrorMessage("Bet Already Canceled");
                 return sboCallBackCommResp;
             }
+            Txns txns = new Txns();
+            BeanUtils.copyProperties(oldTxns, txns);
 
             BigDecimal realBetAmount = oldTxns.getWinAmount();
             if ("Place Bet".equals(oldTxns.getMethod())) {
                 balance = balance.add(realBetAmount);
                 gameCommonService.updateUserBalance(memBaseinfo, realBetAmount, GoldchangeEnum.CANCEL_BET, TradingEnum.INCOME);
+                txns.setStatus("Running");
+                txns.setMethod("Cancel Bet");
             } else {
                 if (0==oldTxns.getResultType()||2==oldTxns.getResultType()) {//赢 或者 平手
-
+                    realBetAmount = realBetAmount.subtract(oldTxns.getBetAmount());
                     balance = balance.subtract(realBetAmount);
                     gameCommonService.updateUserBalance(memBaseinfo, realBetAmount, GoldchangeEnum.CANCEL_BET, TradingEnum.SPENDING);
                 }
                 if (1==oldTxns.getResultType()) {//输
+                    realBetAmount = realBetAmount.subtract(oldTxns.getBetAmount());
                     balance = balance.add(realBetAmount);
                     gameCommonService.updateUserBalance(memBaseinfo, realBetAmount, GoldchangeEnum.CANCEL_BET, TradingEnum.INCOME);
                 }
+                txns.setStatus("Running");
+                txns.setMethod("Place Bet");
             }
 
             sboCallBackCommResp.setBalance(balance);
             sboCallBackCommResp.setErrorCode(0);
             sboCallBackCommResp.setErrorMessage("No Error");
 
-            Txns txns = new Txns();
-            BeanUtils.copyProperties(oldTxns, txns);
+
             txns.setId(null);
             txns.setWinAmount(realBetAmount);
             txns.setBalance(balance);
-            txns.setStatus("Running");
-            txns.setMethod("Cancel Bet");
+
             String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
             txns.setCreateTime(dateStr);
             txnsMapper.insert(txns);
