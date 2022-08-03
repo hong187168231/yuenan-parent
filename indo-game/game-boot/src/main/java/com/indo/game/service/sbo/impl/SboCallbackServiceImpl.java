@@ -548,8 +548,8 @@ public class SboCallbackServiceImpl implements SboCallbackService {
             wrapper.eq(Txns::getPlatform, OpenAPIProperties.SBO_PLATFORM_CODE);
             Txns oldTxns = txnsMapper.selectOne(wrapper);
             if(null!=oldTxns){
-                sboCallBackCommResp.setErrorCode(0);
-                sboCallBackCommResp.setErrorMessage("No Error");
+                sboCallBackCommResp.setErrorCode(5003);
+                sboCallBackCommResp.setErrorMessage("Bet With Same RefNo Exists");
                 return sboCallBackCommResp;
             }
             BigDecimal betAmount = sboCallBackTipReq.getAmount();
@@ -649,8 +649,8 @@ public class SboCallbackServiceImpl implements SboCallbackService {
             wrapper.eq(Txns::getPlatform, OpenAPIProperties.SBO_PLATFORM_CODE);
             Txns oldTxns = txnsMapper.selectOne(wrapper);
             if(null!=oldTxns){
-                sboCallBackCommResp.setErrorCode(0);
-                sboCallBackCommResp.setErrorMessage("No Error");
+                sboCallBackCommResp.setErrorCode(5003);
+                sboCallBackCommResp.setErrorMessage("Bet With Same RefNo Exists");
                 return sboCallBackCommResp;
             }
             String platformCode = this.getpPlatformCode(sboCallBackBonusReq.getProductType());
