@@ -38,6 +38,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
     //取得用户的余额
     public Object getBalance(SboCallBackParentReq sboCallBackParentReq,String ip) {
         SboCallBackCommResp sboCallBackCommResp = new SboCallBackCommResp();
+        sboCallBackCommResp.setBalance(BigDecimal.ZERO);
         sboCallBackCommResp.setAccountName(sboCallBackParentReq.getUsername());
         if(null == sboCallBackParentReq.getUsername() || "".equals(sboCallBackParentReq.getUsername())){
             sboCallBackCommResp.setErrorCode(3);
@@ -72,6 +73,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
     public Object deduct(SboCallBackDeductReq sboCallBackDeductReq,String ip) {
 
         SboCallBackDeductResp sboCallBackCommResp = new SboCallBackDeductResp();
+        sboCallBackCommResp.setBalance(BigDecimal.ZERO);
         sboCallBackCommResp.setAccountName(sboCallBackDeductReq.getUsername());
         sboCallBackCommResp.setBetAmount(sboCallBackDeductReq.getAmount());
         if(null == sboCallBackDeductReq.getUsername() || "".equals(sboCallBackDeductReq.getUsername())){
@@ -214,6 +216,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
 
 
         SboCallBackCommResp sboCallBackCommResp = new SboCallBackCommResp();
+        sboCallBackCommResp.setBalance(BigDecimal.ZERO);
         sboCallBackCommResp.setAccountName(sboCallBackSettleReq.getUsername());
         if(null == sboCallBackSettleReq.getUsername() || "".equals(sboCallBackSettleReq.getUsername())){
             sboCallBackCommResp.setErrorCode(3);
@@ -312,6 +315,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
 
 
         SboCallBackCommResp sboCallBackCommResp = new SboCallBackCommResp();
+        sboCallBackCommResp.setBalance(BigDecimal.ZERO);
         sboCallBackCommResp.setAccountName(sboCallBackRollbackReq.getUsername());
         if(null == sboCallBackRollbackReq.getUsername() || "".equals(sboCallBackRollbackReq.getUsername())){
             sboCallBackCommResp.setErrorCode(3);
@@ -402,6 +406,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
 
 
         SboCallBackCommResp sboCallBackCommResp = new SboCallBackCommResp();
+        sboCallBackCommResp.setBalance(BigDecimal.ZERO);
         sboCallBackCommResp.setAccountName(sboCallBackCancelReq.getUsername());
         if(null == sboCallBackCancelReq.getUsername() || "".equals(sboCallBackCancelReq.getUsername())){
             sboCallBackCommResp.setErrorCode(3);
