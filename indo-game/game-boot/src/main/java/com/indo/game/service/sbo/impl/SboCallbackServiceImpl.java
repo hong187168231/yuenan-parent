@@ -187,7 +187,6 @@ public class SboCallbackServiceImpl implements SboCallbackService {
                 txns.setPlatformTxId(sboCallBackDeductReq.getTransferCode());
                 txns.setRoundId(sboCallBackDeductReq.getTransactionId());
                 txns.setBetTime(sboCallBackDeductReq.getBetTime());
-                txns.setPlatform(platformCode);
                 txns.setGameType(String.valueOf(sboCallBackDeductReq.getGameType()));
                 txns.setBalance(balance);
                 txns.setMethod("Place Bet");
@@ -344,6 +343,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
             wrapper.eq(Txns::getStatus, "Running");
             wrapper.eq(Txns::getMethod, "settle");
             wrapper.eq(Txns::getPlatformTxId, sboCallBackRollbackReq.getTransferCode());
+            wrapper.eq(Txns::getPlatform, OpenAPIProperties.SBO_PLATFORM_CODE);
 //            wrapper.eq(Txns::getUserId, sboCallBackRollbackReq.getUsername());
 //            wrapper.eq(Txns::getPlatform, sboCallBackRollbackReq.getProductType());
 //            wrapper.eq(Txns::getGameType, sboCallBackRollbackReq.getGameType());
@@ -508,6 +508,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
             wrapper.eq(Txns::getStatus, "Running");
             wrapper.eq(Txns::getMethod, "Tip");
             wrapper.eq(Txns::getPlatformTxId, sboCallBackTipReq.getTransferCode());
+            wrapper.eq(Txns::getPlatform, OpenAPIProperties.SBO_PLATFORM_CODE);
             Txns oldTxns = txnsMapper.selectOne(wrapper);
             if(null!=oldTxns){
                 sboCallBackCommResp.setErrorCode(0);
@@ -608,6 +609,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
             wrapper.eq(Txns::getStatus, "Running");
             wrapper.eq(Txns::getMethod, "Bonus");
             wrapper.eq(Txns::getPlatformTxId, sboCallBackBonusReq.getTransferCode());
+            wrapper.eq(Txns::getPlatform, OpenAPIProperties.SBO_PLATFORM_CODE);
             Txns oldTxns = txnsMapper.selectOne(wrapper);
             if(null!=oldTxns){
                 sboCallBackCommResp.setErrorCode(0);
@@ -698,6 +700,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
             wrapper.eq(Txns::getStatus, "Running");
             wrapper.eq(Txns::getPlatformTxId, sboCallBackBonusReq.getTransferCode());
             wrapper.eq(Txns::getRoundId, sboCallBackBonusReq.getTransactionId());
+            wrapper.eq(Txns::getPlatform, OpenAPIProperties.SBO_PLATFORM_CODE);
 //            wrapper.eq(Txns::getUserId, sboCallBackBonusReq.getUsername());
 //            wrapper.eq(Txns::getPlatform, sboCallBackBonusReq.getProductType());
 //            wrapper.eq(Txns::getGameType, sboCallBackBonusReq.getGameType());
