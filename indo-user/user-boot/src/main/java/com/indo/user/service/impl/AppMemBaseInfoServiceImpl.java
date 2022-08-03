@@ -314,7 +314,7 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
         loanWrapper.eq(LoanRecord::getMemId,vo.getId());
         loanWrapper.eq(LoanRecord::getStates,1);
         LoanRecord loanRecord = loanRecordMapper.selectOne(loanWrapper);
-        vo.setLoanAmount(loanRecord.getLoanAmount());
+        vo.setLoanAmount(loanRecord == null ? BigDecimal.ZERO : loanRecord.getLoanAmount());
         return vo;
     }
 
