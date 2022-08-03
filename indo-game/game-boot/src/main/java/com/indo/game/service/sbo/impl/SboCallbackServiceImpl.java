@@ -350,8 +350,8 @@ public class SboCallbackServiceImpl implements SboCallbackService {
             Txns oldTxns = txnsMapper.selectOne(wrapper);
             if(null==oldTxns){
                 sboCallBackCommResp.setBalance(balance);
-                sboCallBackCommResp.setErrorCode(0);
-                sboCallBackCommResp.setErrorMessage("No Error");
+                sboCallBackCommResp.setErrorCode(6);
+                sboCallBackCommResp.setErrorMessage("Bet not exists");
                 return sboCallBackCommResp;
             }
             if ("Place Bet".equals(oldTxns.getMethod())) {
@@ -431,7 +431,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
             BigDecimal balance = memBaseinfo.getBalance();
             LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
             wrapper.eq(Txns::getPlatformTxId, sboCallBackCancelReq.getTransferCode());
-            wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Settle"));
+            wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Settle").or().eq(Txns::getMethod, "Cancel Bet"));
             wrapper.eq(Txns::getStatus, "Running");
             wrapper.eq(Txns::getPlatformTxId, sboCallBackCancelReq.getTransferCode());
             wrapper.eq(Txns::getRoundId, sboCallBackCancelReq.getTransactionId());
@@ -440,9 +440,16 @@ public class SboCallbackServiceImpl implements SboCallbackService {
             Txns oldTxns = txnsMapper.selectOne(wrapper);
             if(null==oldTxns){
                 sboCallBackCommResp.setBalance(balance);
+                sboCallBackCommResp.setErrorCode(6);
+                sboCallBackCommResp.setErrorMessage("Bet not exists");
+                return sboCallBackCommResp;
+            }
+            if ("Place Bet".equals(oldTxns.getMethod())) {
+                sboCallBackCommResp.setBalance(balance);
                 sboCallBackCommResp.setErrorCode(2002);
                 sboCallBackCommResp.setErrorMessage("Bet Already Canceled");
                 return sboCallBackCommResp;
+
             }
             Txns txns = new Txns();
             BeanUtils.copyProperties(oldTxns, txns);
