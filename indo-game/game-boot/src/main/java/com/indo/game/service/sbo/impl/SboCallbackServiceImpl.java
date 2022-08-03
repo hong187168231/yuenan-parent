@@ -189,6 +189,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
                 txns.setBetAmount(betAmount);
                 //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
                 txns.setWinningAmount(betAmount.negate());
+                txns.setWinAmount(betAmount);
                 txns.setPlatformTxId(sboCallBackDeductReq.getTransferCode());
                 txns.setRoundId(sboCallBackDeductReq.getTransactionId());
                 txns.setBetTime(sboCallBackDeductReq.getBetTime());
@@ -269,7 +270,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
             txns.setId(null);
             txns.setUserId(sboCallBackSettleReq.getUsername());
             txns.setPlatformTxId(sboCallBackSettleReq.getTransferCode());
-            if (0==sboCallBackSettleReq.getResultType()||2==sboCallBackSettleReq.getResultType()) {//赢 或者 平手
+            if (0==sboCallBackSettleReq.getResultType()||2==sboCallBackSettleReq.getResultType()) {//赢 或者 平手   赢:0,输:1,平手:2
                 balance = balance.add(winLoss);
                 gameCommonService.updateUserBalance(memBaseinfo, winLoss, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
             }
