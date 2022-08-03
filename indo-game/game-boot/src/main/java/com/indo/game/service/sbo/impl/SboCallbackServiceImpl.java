@@ -248,8 +248,8 @@ public class SboCallbackServiceImpl implements SboCallbackService {
                     return sboCallBackCommResp;
                 }
                 if ("Settle".equals(oldTxns.getMethod())) {
-                    sboCallBackCommResp.setErrorCode(2002);
-                    sboCallBackCommResp.setErrorMessage("Bet Already Canceled");
+                    sboCallBackCommResp.setErrorCode(2001);
+                    sboCallBackCommResp.setErrorMessage("Bet Already Settled");
                     return sboCallBackCommResp;
                 }
             } else {
@@ -271,11 +271,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
             txns.setId(null);
             txns.setUserId(sboCallBackSettleReq.getUsername());
             txns.setPlatformTxId(sboCallBackSettleReq.getTransferCode());
-            if ("2".equals(sboCallBackSettleReq.getResultType())) {//平手
-                balance = balance.add(winLoss);
-                gameCommonService.updateUserBalance(memBaseinfo, winLoss, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
-            }
-            if ("0".equals(sboCallBackSettleReq.getResultType())) {//赢
+            if (0==sboCallBackSettleReq.getResultType()||2==sboCallBackSettleReq.getResultType()) {//赢 或者 平手
                 balance = balance.add(winLoss);
                 gameCommonService.updateUserBalance(memBaseinfo, winLoss, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
             }
@@ -291,7 +287,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
             sboCallBackCommResp.setErrorMessage("No Error");
 
 
-            if ("2".equals(sboCallBackSettleReq.getResultType())) {//平手 或 赢
+            if ("2".equals(sboCallBackSettleReq.getResultType())||"0".equals(sboCallBackSettleReq.getResultType())) {//平手 或 赢
                 txns.setWinningAmount(winLoss);
             } else {
                 txns.setWinAmount(winLoss.negate());
@@ -356,11 +352,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
             }
             BigDecimal winLoss = oldTxns.getWinningAmount();
 
-            if ("2".equals(oldTxns.getResultType())) {//平手
-                balance = balance.subtract(winLoss);
-                gameCommonService.updateUserBalance(memBaseinfo, winLoss, GoldchangeEnum.UNSETTLE, TradingEnum.SPENDING);
-            }
-            if ("0".equals(oldTxns.getResultType())) {//赢
+            if (0==oldTxns.getResultType()||2==oldTxns.getResultType()) {//赢 或者 平手
                 balance = balance.subtract(winLoss);
                 gameCommonService.updateUserBalance(memBaseinfo, winLoss, GoldchangeEnum.UNSETTLE, TradingEnum.SPENDING);
             }
@@ -443,12 +435,12 @@ public class SboCallbackServiceImpl implements SboCallbackService {
                 balance = balance.add(betAmount);
                 gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.CANCEL_BET, TradingEnum.INCOME);
             } else {
-                if ("0".equals(oldTxns.getResultType())) {//赢
+                if (0==oldTxns.getResultType()) {//赢
                     BigDecimal realBetAmount = oldTxns.getWinAmount().subtract(betAmount);
                     balance = balance.subtract(realBetAmount);
                     gameCommonService.updateUserBalance(memBaseinfo, realBetAmount, GoldchangeEnum.CANCEL_BET, TradingEnum.SPENDING);
                 }
-                if ("1".equals(oldTxns.getResultType())) {//输
+                if (1==oldTxns.getResultType()) {//输
                     balance = balance.add(oldTxns.getWinAmount());
                     gameCommonService.updateUserBalance(memBaseinfo, oldTxns.getWinAmount(), GoldchangeEnum.CANCEL_BET, TradingEnum.INCOME);
                 }
