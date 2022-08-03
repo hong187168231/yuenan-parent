@@ -248,11 +248,11 @@ public class SboCallbackServiceImpl implements SboCallbackService {
 //            wrapper.eq(Txns::getGameType, sboCallBackSettleReq.getGameType());
             Txns oldTxns = txnsMapper.selectOne(wrapper);
             if (null != oldTxns) {
-//                if ("Cancel Bet".equals(oldTxns.getMethod())) {
-//                    sboCallBackCommResp.setErrorCode(2002);
-//                    sboCallBackCommResp.setErrorMessage("Bet Already Canceled");
-//                    return sboCallBackCommResp;
-//                }
+                if ("Cancel Bet".equals(oldTxns.getMethod())) {
+                    sboCallBackCommResp.setErrorCode(2002);
+                    sboCallBackCommResp.setErrorMessage("Bet Already Canceled");
+                    return sboCallBackCommResp;
+                }
                 if ("Settle".equals(oldTxns.getMethod())) {
                     sboCallBackCommResp.setErrorCode(2001);
                     sboCallBackCommResp.setErrorMessage("Bet Already Settled");
