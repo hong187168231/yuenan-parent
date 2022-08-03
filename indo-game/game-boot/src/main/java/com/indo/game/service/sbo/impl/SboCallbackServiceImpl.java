@@ -239,7 +239,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
             wrapper.eq(Txns::getStatus, "Running");
             wrapper.eq(Txns::getPlatformTxId, sboCallBackSettleReq.getTransferCode());
 //            wrapper.eq(Txns::getUserId, sboCallBackSettleReq.getUsername());
-            wrapper.eq(Txns::getPlatform, platformCode);
+            wrapper.eq(Txns::getPlatform, OpenAPIProperties.SBO_PLATFORM_CODE);
 //            wrapper.eq(Txns::getGameType, sboCallBackSettleReq.getGameType());
             Txns oldTxns = txnsMapper.selectOne(wrapper);
             if (null != oldTxns) {
@@ -463,7 +463,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
             txns.setId(null);
             txns.setBalance(balance);
             txns.setStatus("Running");
-            txns.setMethod("Cancel");
+            txns.setMethod("Cancel Bet");
             String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
             txns.setCreateTime(dateStr);
             txnsMapper.insert(txns);
@@ -736,51 +736,56 @@ public class SboCallbackServiceImpl implements SboCallbackService {
 
     //取得投注状态
     public Object getBetStatus(SboCallBackGetBetStatusReq sboCallBackGetBetStatusReq,String ip) {
-        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sboCallBackGetBetStatusReq.getUsername());
         SboCallBackGetBetStatusResp sboCallBackGetBetStatusResp = new SboCallBackGetBetStatusResp();
         sboCallBackGetBetStatusResp.setTransactionId(sboCallBackGetBetStatusReq.getTransactionId());
         sboCallBackGetBetStatusResp.setTransferCode(sboCallBackGetBetStatusReq.getTransferCode());
+        if(null == sboCallBackGetBetStatusReq.getUsername() || "".equals(sboCallBackGetBetStatusReq.getUsername())){
+            sboCallBackGetBetStatusResp.setErrorCode(3);
+            sboCallBackGetBetStatusResp.setErrorMessage("Username empty");
+            return sboCallBackGetBetStatusResp;
+        }
+        if(!verifyKey(sboCallBackGetBetStatusReq.getCompanyKey())){
+            sboCallBackGetBetStatusResp.setErrorCode(4);
+            sboCallBackGetBetStatusResp.setErrorMessage("CompanyKey Error");
+            return sboCallBackGetBetStatusResp;
+        }
+        if(!checkIp(ip)){
+            sboCallBackGetBetStatusResp.setErrorCode(2);
+            sboCallBackGetBetStatusResp.setErrorMessage("Invalid Ip");
+            return sboCallBackGetBetStatusResp;
+        }
+        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sboCallBackGetBetStatusReq.getUsername());
+
         if (null == memBaseinfo) {
             sboCallBackGetBetStatusResp.setErrorCode(1);
             sboCallBackGetBetStatusResp.setErrorMessage("Member not exist");
         } else {
             LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+            wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Settle"));
+            wrapper.eq(Txns::getStatus, "Running");
             wrapper.eq(Txns::getPlatformTxId, sboCallBackGetBetStatusReq.getTransferCode());
-            wrapper.eq(Txns::getUserId, sboCallBackGetBetStatusReq.getUsername());
-            wrapper.eq(Txns::getPlatform, sboCallBackGetBetStatusReq.getProductType());
-            wrapper.eq(Txns::getGameType, sboCallBackGetBetStatusReq.getGameType());
-            wrapper.orderByDesc(Txns::getId);
-            List<Txns> oldTxnsList = txnsMapper.selectList(wrapper);
-            if(null==oldTxnsList || oldTxnsList.size()<=0){
+            wrapper.eq(Txns::getPlatform, OpenAPIProperties.SBO_PLATFORM_CODE);
+            Txns oldTxns = txnsMapper.selectOne(wrapper);
+            String status = "";
+            if (null == oldTxns) {
                 sboCallBackGetBetStatusResp.setErrorCode(6);
                 sboCallBackGetBetStatusResp.setErrorMessage("Member not exist");
-            }
-            for(int i=0;i<oldTxnsList.size();i++) {
-                if(i==0) {
-                    Txns oldTxns = oldTxnsList.get(i);
-
-                    String status = "";
-                    if (null == oldTxns) {
-                        sboCallBackGetBetStatusResp.setErrorCode(6);
-                        sboCallBackGetBetStatusResp.setErrorMessage("Member not exist");
-                    } else {
-                        if("Place Bet".equals(oldTxns.getMethod())){
-                            status = "running";
-                        }
-                        if("Settle".equals(oldTxns.getMethod())){
-                            status = "settled";
-                        }
-                        if("Cancel".equals(oldTxns.getMethod())){
-                            status = "void";
-                        }
-                        sboCallBackGetBetStatusResp.setStatus(status);
-                        sboCallBackGetBetStatusResp.setStake(null == oldTxns.getBetAmount() ? "" : oldTxns.getBetAmount().toString());
-                        sboCallBackGetBetStatusResp.setWinloss(null == oldTxns.getWinAmount() ? "" : oldTxns.getWinAmount().toString());
-                        sboCallBackGetBetStatusResp.setErrorCode(0);
-                        sboCallBackGetBetStatusResp.setErrorMessage("No Error");
-                    }
-
+                return sboCallBackGetBetStatusResp;
+            } else {
+                if("Place Bet".equals(oldTxns.getMethod())){
+                    status = "running";
                 }
+                if("Settle".equals(oldTxns.getMethod())){
+                    status = "settled";
+                }
+                if("Cancel Bet".equals(oldTxns.getMethod())){
+                    status = "void";
+                }
+                sboCallBackGetBetStatusResp.setStatus(status);
+                sboCallBackGetBetStatusResp.setStake(null == oldTxns.getBetAmount() ? "" : oldTxns.getBetAmount().toString());
+                sboCallBackGetBetStatusResp.setWinloss(null == oldTxns.getWinAmount() ? "" : oldTxns.getWinAmount().toString());
+                sboCallBackGetBetStatusResp.setErrorCode(0);
+                sboCallBackGetBetStatusResp.setErrorMessage("No Error");
             }
         }
 
