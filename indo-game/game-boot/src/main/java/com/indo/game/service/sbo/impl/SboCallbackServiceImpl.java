@@ -248,11 +248,11 @@ public class SboCallbackServiceImpl implements SboCallbackService {
 //            wrapper.eq(Txns::getGameType, sboCallBackSettleReq.getGameType());
             Txns oldTxns = txnsMapper.selectOne(wrapper);
             if (null != oldTxns) {
-                if ("Cancel Bet".equals(oldTxns.getMethod())) {
-                    sboCallBackCommResp.setErrorCode(2002);
-                    sboCallBackCommResp.setErrorMessage("Bet Already Canceled");
-                    return sboCallBackCommResp;
-                }
+//                if ("Cancel Bet".equals(oldTxns.getMethod())) {
+//                    sboCallBackCommResp.setErrorCode(2002);
+//                    sboCallBackCommResp.setErrorMessage("Bet Already Canceled");
+//                    return sboCallBackCommResp;
+//                }
                 if ("Settle".equals(oldTxns.getMethod())) {
                     sboCallBackCommResp.setErrorCode(2001);
                     sboCallBackCommResp.setErrorMessage("Bet Already Settled");
@@ -435,8 +435,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
             if ("Place Bet".equals(oldTxns.getMethod())) {
                 balance = balance.add(realBetAmount);
                 gameCommonService.updateUserBalance(memBaseinfo, realBetAmount, GoldchangeEnum.CANCEL_BET, TradingEnum.INCOME);
-                txns.setStatus("Running");
-                txns.setMethod("Cancel Bet");
+
             } else {
                 if (0==oldTxns.getResultType()||2==oldTxns.getResultType()) {//赢 或者 平手
                     realBetAmount = realBetAmount.subtract(oldTxns.getBetAmount());
@@ -448,9 +447,11 @@ public class SboCallbackServiceImpl implements SboCallbackService {
                     balance = balance.add(realBetAmount);
                     gameCommonService.updateUserBalance(memBaseinfo, realBetAmount, GoldchangeEnum.CANCEL_BET, TradingEnum.INCOME);
                 }
-                txns.setStatus("Running");
-                txns.setMethod("Place Bet");
+//                txns.setStatus("Running");
+//                txns.setMethod("Place Bet");
             }
+            txns.setStatus("Running");
+            txns.setMethod("Cancel Bet");
 
             sboCallBackCommResp.setBalance(balance);
             sboCallBackCommResp.setErrorCode(0);
