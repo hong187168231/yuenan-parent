@@ -498,14 +498,13 @@ public class SboCallbackServiceImpl implements SboCallbackService {
                 return sboCallBackCommResp;
 
             }
-            logger.info("cancel取消投注1 ProductType:{},Method:{}", sboCallBackCancelReq.getProductType(), oldTxns.getMethod());
             if(9==sboCallBackCancelReq.getProductType()&&"Settle".equals(oldTxns.getMethod())){
-                wrapper.eq(Txns::getMethod, "Settle");
-                wrapper.eq(Txns::getStatus, "Running");
-                wrapper.eq(Txns::getPlatformTxId, sboCallBackCancelReq.getTransferCode());
-                wrapper.eq(Txns::getPlatform, OpenAPIProperties.SBO_PLATFORM_CODE);
-                List<Txns> list = txnsMapper.selectList(wrapper);
-                logger.info("cancel取消投注2 ProductType:{},Method:{},size:{}", sboCallBackCancelReq.getProductType(), oldTxns.getMethod(),list.size());
+                LambdaQueryWrapper<Txns> wrapper1 = new LambdaQueryWrapper<>();
+                wrapper1.eq(Txns::getMethod, "Settle");
+                wrapper1.eq(Txns::getStatus, "Running");
+                wrapper1.eq(Txns::getPlatformTxId, sboCallBackCancelReq.getTransferCode());
+                wrapper1.eq(Txns::getPlatform, OpenAPIProperties.SBO_PLATFORM_CODE);
+                List<Txns> list = txnsMapper.selectList(wrapper1);
                 for (Txns oldTxns9 : list) {
                     Txns txns = new Txns();
                     BeanUtils.copyProperties(oldTxns9, txns);
