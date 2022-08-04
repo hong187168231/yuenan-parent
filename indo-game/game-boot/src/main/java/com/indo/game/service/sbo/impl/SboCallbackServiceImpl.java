@@ -476,7 +476,6 @@ public class SboCallbackServiceImpl implements SboCallbackService {
         } else {
             BigDecimal balance = memBaseinfo.getBalance();
             LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
-            wrapper.eq(Txns::getPlatformTxId, sboCallBackCancelReq.getTransferCode());
             wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Settle").or().eq(Txns::getMethod, "Cancel Bet"));
             wrapper.eq(Txns::getStatus, "Running");
             wrapper.eq(Txns::getPlatformTxId, sboCallBackCancelReq.getTransferCode());
@@ -498,12 +497,12 @@ public class SboCallbackServiceImpl implements SboCallbackService {
 
             }
             if(9==sboCallBackCancelReq.getProductType()&&"Settle".equals(oldTxns.getMethod())){
-                wrapper.eq(Txns::getPlatformTxId, sboCallBackCancelReq.getTransferCode());
                 wrapper.eq(Txns::getMethod, "Settle");
                 wrapper.eq(Txns::getStatus, "Running");
                 wrapper.eq(Txns::getPlatformTxId, sboCallBackCancelReq.getTransferCode());
                 wrapper.eq(Txns::getPlatform, OpenAPIProperties.SBO_PLATFORM_CODE);
                 List<Txns> list = txnsMapper.selectList(wrapper);
+                logger.info("cancel取消投注 ProductType:{},Method:{},size:{}", sboCallBackCancelReq.getProductType(), oldTxns.getMethod(),list.size());
                 for (Txns oldTxns9 : list) {
                     Txns txns = new Txns();
                     BeanUtils.copyProperties(oldTxns9, txns);
