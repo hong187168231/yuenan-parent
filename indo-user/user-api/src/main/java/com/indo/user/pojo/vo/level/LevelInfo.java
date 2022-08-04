@@ -23,13 +23,13 @@ public class LevelInfo {
     private Integer level;
 
     @ApiModelProperty(value = "所需存款")
-    private Integer needDeposit;
+    private BigDecimal needDeposit;
 
     @ApiModelProperty(value = "所需投注")
-    private Integer needBet;
+    private BigDecimal needBet;
 
     @ApiModelProperty(value = "促销奖金")
-    private Integer promotionGift;
+    private BigDecimal promotionGift;
 
     @ApiModelProperty(value = "专享福利")
     List<Gift> giftList;
