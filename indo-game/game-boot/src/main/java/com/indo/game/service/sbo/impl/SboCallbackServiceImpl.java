@@ -274,9 +274,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
                 sboCallBackCommResp.setErrorMessage("Bet not exists");
                 return sboCallBackCommResp;
             }
-            Txns oneOldTxns = new Txns();
             for (Txns oldTxns : list) {
-                oneOldTxns = oldTxns;
                 if ("Cancel Bet".equals(oldTxns.getMethod())) {
                     sboCallBackCommResp.setErrorCode(2002);
                     sboCallBackCommResp.setErrorMessage("Bet Already Canceled");
@@ -289,12 +287,6 @@ public class SboCallbackServiceImpl implements SboCallbackService {
                 }
             }
             BigDecimal winLoss = sboCallBackSettleReq.getWinLoss();
-
-            Txns txns = new Txns();
-            BeanUtils.copyProperties(oneOldTxns, txns);
-            txns.setId(null);
-            txns.setUserId(sboCallBackSettleReq.getUsername());
-            txns.setPlatformTxId(sboCallBackSettleReq.getTransferCode());
             if (0==sboCallBackSettleReq.getResultType()||2==sboCallBackSettleReq.getResultType()) {//赢 或者 平手   赢:0,输:1,平手:2
                 balance = balance.add(winLoss);
                 gameCommonService.updateUserBalance(memBaseinfo, winLoss, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
@@ -304,26 +296,38 @@ public class SboCallbackServiceImpl implements SboCallbackService {
 //                balance = memBaseinfo.getBalance().subtract(realBetAmount);
 //                gameCommonService.updateUserBalance(memBaseinfo, realBetAmount, GoldchangeEnum.SETTLE, TradingEnum.SPENDING);
 //            }
-            txns.setResultType(sboCallBackSettleReq.getResultType());
+            for (int i=0;i<list.size();i++) {
+                Txns oldTxns = list.get(i);
+                Txns txns = new Txns();
+                BeanUtils.copyProperties(oldTxns, txns);
+                txns.setId(null);
+                txns.setUserId(sboCallBackSettleReq.getUsername());
+                txns.setPlatformTxId(sboCallBackSettleReq.getTransferCode());
 
-            sboCallBackCommResp.setBalance(balance);
-            sboCallBackCommResp.setErrorCode(0);
-            sboCallBackCommResp.setErrorMessage("No Error");
+                txns.setResultType(sboCallBackSettleReq.getResultType());
 
+                sboCallBackCommResp.setBalance(balance);
+                sboCallBackCommResp.setErrorCode(0);
+                sboCallBackCommResp.setErrorMessage("No Error");
 
-            if ("2".equals(sboCallBackSettleReq.getResultType())||"0".equals(sboCallBackSettleReq.getResultType())) {//平手 或 赢
-                txns.setWinningAmount(winLoss);
-            } else {
-                txns.setWinningAmount(winLoss.negate());
-            }
-            txns.setWinAmount(winLoss);
-            txns.setBalance(balance);
-            txns.setStatus("Running");
-            txns.setMethod("Settle");
-            String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
-            txns.setCreateTime(dateStr);
-            txnsMapper.insert(txns);
-            for (Txns oldTxns : list) {
+                if (i==0){
+                    if ("2".equals(sboCallBackSettleReq.getResultType()) || "0".equals(sboCallBackSettleReq.getResultType())) {//平手 或 赢
+                        txns.setWinningAmount(winLoss);
+                    } else {
+                        txns.setWinningAmount(winLoss.negate());
+                    }
+                    txns.setWinAmount(winLoss);
+                }else {
+                    txns.setWinningAmount(BigDecimal.ZERO);
+                    txns.setWinAmount(BigDecimal.ZERO);
+                }
+                txns.setBalance(balance);
+                txns.setStatus("Running");
+                txns.setMethod("Settle");
+                String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
+                txns.setCreateTime(dateStr);
+                txnsMapper.insert(txns);
+
                 oldTxns.setStatus("Settle");
                 oldTxns.setUpdateTime(dateStr);
                 txnsMapper.updateById(oldTxns);
