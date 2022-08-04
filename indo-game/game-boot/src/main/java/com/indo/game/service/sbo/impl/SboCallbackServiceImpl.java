@@ -499,36 +499,25 @@ public class SboCallbackServiceImpl implements SboCallbackService {
             }
             if(9==sboCallBackCancelReq.getProductType()&&"Settle".equals(oldTxns.getMethod())){
                 wrapper.eq(Txns::getPlatformTxId, sboCallBackCancelReq.getTransferCode());
-                wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Settle").or().eq(Txns::getMethod, "Cancel Bet"));
+                wrapper.eq(Txns::getMethod, "Settle");
                 wrapper.eq(Txns::getStatus, "Running");
                 wrapper.eq(Txns::getPlatformTxId, sboCallBackCancelReq.getTransferCode());
                 wrapper.eq(Txns::getPlatform, OpenAPIProperties.SBO_PLATFORM_CODE);
                 List<Txns> list = txnsMapper.selectList(wrapper);
                 for (Txns oldTxns9 : list) {
-                    if ("Cancel Bet".equals(oldTxns9.getMethod())) {
-                        continue;
-                    }
                     Txns txns = new Txns();
                     BeanUtils.copyProperties(oldTxns9, txns);
 
                     BigDecimal realBetAmount = oldTxns9.getWinAmount();
-                    if ("Place Bet".equals(oldTxns9.getMethod())) {
+                    if (0 == oldTxns9.getResultType() || 2 == oldTxns9.getResultType()) {//赢 或者 平手
+                        realBetAmount = realBetAmount.subtract(oldTxns9.getBetAmount());
+                        balance = balance.subtract(realBetAmount);
+                        gameCommonService.updateUserBalance(memBaseinfo, realBetAmount, GoldchangeEnum.CANCEL_BET, TradingEnum.SPENDING);
+                    }
+                    if (1 == oldTxns9.getResultType()) {//输
+                        realBetAmount = realBetAmount.subtract(oldTxns9.getBetAmount());
                         balance = balance.add(realBetAmount);
                         gameCommonService.updateUserBalance(memBaseinfo, realBetAmount, GoldchangeEnum.CANCEL_BET, TradingEnum.INCOME);
-
-                    } else {
-                        if (0 == oldTxns9.getResultType() || 2 == oldTxns9.getResultType()) {//赢 或者 平手
-                            realBetAmount = realBetAmount.subtract(oldTxns9.getBetAmount());
-                            balance = balance.subtract(realBetAmount);
-                            gameCommonService.updateUserBalance(memBaseinfo, realBetAmount, GoldchangeEnum.CANCEL_BET, TradingEnum.SPENDING);
-                        }
-                        if (1 == oldTxns9.getResultType()) {//输
-                            realBetAmount = realBetAmount.subtract(oldTxns9.getBetAmount());
-                            balance = balance.add(realBetAmount);
-                            gameCommonService.updateUserBalance(memBaseinfo, realBetAmount, GoldchangeEnum.CANCEL_BET, TradingEnum.INCOME);
-                        }
-//                txns.setStatus("Running");
-//                txns.setMethod("Place Bet");
                     }
                     txns.setStatus("Running");
                     txns.setMethod("Cancel Bet");
