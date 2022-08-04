@@ -268,13 +268,20 @@ public class SboCallbackServiceImpl implements SboCallbackService {
 //            wrapper.eq(Txns::getGameType, sboCallBackSettleReq.getGameType());
             List<Txns> list = txnsMapper.selectList(wrapper);
 //            Txns oldTxns = txnsMapper.selectOne(wrapper);
+            if(9==sboCallBackSettleReq.getProductType()) {
+                for (Txns oldTxns : list) {
+                    if ("Cancel Bet".equals(oldTxns.getMethod()) || "Settle".equals(oldTxns.getMethod())) {
+                        list.remove(oldTxns);
+                    }
+                }
+            }
             if (null == list || list.size() <= 0) {
                 sboCallBackCommResp.setBalance(balance);
                 sboCallBackCommResp.setErrorCode(6);
                 sboCallBackCommResp.setErrorMessage("Bet not exists");
                 return sboCallBackCommResp;
             }
-            if(9!=sboCallBackSettleReq.getResultType()) {
+            if(9!=sboCallBackSettleReq.getProductType()) {
                 for (Txns oldTxns : list) {
                     if ("Cancel Bet".equals(oldTxns.getMethod())) {
                         sboCallBackCommResp.setErrorCode(2002);
@@ -289,21 +296,11 @@ public class SboCallbackServiceImpl implements SboCallbackService {
                 }
             }
             BigDecimal winLoss = sboCallBackSettleReq.getWinLoss();
-            if (0==sboCallBackSettleReq.getResultType()||2==sboCallBackSettleReq.getResultType()) {//赢 或者 平手   赢:0,输:1,平手:2
-                balance = balance.add(winLoss);
-                gameCommonService.updateUserBalance(memBaseinfo, winLoss, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
-            }
-//            if ("1".equals(sboCallBackSettleReq.getResultType())) {//输
-//                BigDecimal realBetAmount = sboCallBackSettleReq.getWinLoss().subtract(betAmount);
-//                balance = memBaseinfo.getBalance().subtract(realBetAmount);
-//                gameCommonService.updateUserBalance(memBaseinfo, realBetAmount, GoldchangeEnum.SETTLE, TradingEnum.SPENDING);
-//            }
-            boolean b = true;
+
+            Double average = winLoss.doubleValue()/list.size();
+            Double remainder = winLoss.doubleValue()%list.size();
             for (int i=0;i<list.size();i++) {
                 Txns oldTxns = list.get(i);
-                if ("Cancel Bet".equals(oldTxns.getMethod())||"Settle".equals(oldTxns.getMethod())) {
-                    continue;
-                }
                 Txns txns = new Txns();
                 BeanUtils.copyProperties(oldTxns, txns);
                 txns.setId(null);
@@ -315,19 +312,24 @@ public class SboCallbackServiceImpl implements SboCallbackService {
                 sboCallBackCommResp.setBalance(balance);
                 sboCallBackCommResp.setErrorCode(0);
                 sboCallBackCommResp.setErrorMessage("No Error");
-
-                if (true){
-                    b = false;
-                    if ("2".equals(sboCallBackSettleReq.getResultType()) || "0".equals(sboCallBackSettleReq.getResultType())) {//平手 或 赢
-                        txns.setWinningAmount(winLoss);
-                    } else {
-                        txns.setWinningAmount(winLoss.negate());
-                    }
-                    txns.setWinAmount(winLoss);
-                }else {
-                    txns.setWinningAmount(BigDecimal.ZERO);
-                    txns.setWinAmount(BigDecimal.ZERO);
+                if(i==list.size()-1){
+                    average = average + remainder;
                 }
+                if (0==sboCallBackSettleReq.getResultType()||2==sboCallBackSettleReq.getResultType()) {//赢 或者 平手   赢:0,输:1,平手:2
+                    balance = balance.add(BigDecimal.valueOf(average));
+                    gameCommonService.updateUserBalance(memBaseinfo, BigDecimal.valueOf(average), GoldchangeEnum.SETTLE, TradingEnum.INCOME);
+                }
+//            if ("1".equals(sboCallBackSettleReq.getResultType())) {//输
+//                BigDecimal realBetAmount = sboCallBackSettleReq.getWinLoss().subtract(betAmount);
+//                balance = memBaseinfo.getBalance().subtract(realBetAmount);
+//                gameCommonService.updateUserBalance(memBaseinfo, realBetAmount, GoldchangeEnum.SETTLE, TradingEnum.SPENDING);
+//            }
+                if ("2".equals(sboCallBackSettleReq.getResultType()) || "0".equals(sboCallBackSettleReq.getResultType())) {//平手 或 赢
+                    txns.setWinningAmount(BigDecimal.valueOf(average));
+                } else {
+                    txns.setWinningAmount(BigDecimal.valueOf(average).negate());
+                }
+                txns.setWinAmount(BigDecimal.valueOf(average));
                 txns.setBalance(balance);
                 txns.setStatus("Running");
                 txns.setMethod("Settle");
@@ -383,6 +385,13 @@ public class SboCallbackServiceImpl implements SboCallbackService {
 //            wrapper.eq(Txns::getPlatform, sboCallBackRollbackReq.getProductType());
 //            wrapper.eq(Txns::getGameType, sboCallBackRollbackReq.getGameType());
             List<Txns> list = txnsMapper.selectList(wrapper);
+            if(9==sboCallBackRollbackReq.getProductType()) {
+                for (Txns oldTxns : list) {
+                    if ("Place Bet".equals(oldTxns.getMethod())) {
+                        list.remove(oldTxns);
+                    }
+                }
+            }
 //            Txns oldTxns = txnsMapper.selectOne(wrapper);
             if (null == list || list.size() <= 0) {
                 sboCallBackCommResp.setBalance(balance);
