@@ -502,7 +502,6 @@ public class SboCallbackServiceImpl implements SboCallbackService {
                 wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Settle").or().eq(Txns::getMethod, "Cancel Bet"));
                 wrapper.eq(Txns::getStatus, "Running");
                 wrapper.eq(Txns::getPlatformTxId, sboCallBackCancelReq.getTransferCode());
-                wrapper.eq(Txns::getRoundId, sboCallBackCancelReq.getTransactionId());
                 wrapper.eq(Txns::getPlatform, OpenAPIProperties.SBO_PLATFORM_CODE);
                 List<Txns> list = txnsMapper.selectList(wrapper);
                 for (Txns oldTxns9 : list) {
