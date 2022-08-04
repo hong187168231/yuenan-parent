@@ -268,6 +268,21 @@ public class SboCallbackServiceImpl implements SboCallbackService {
 //            wrapper.eq(Txns::getGameType, sboCallBackSettleReq.getGameType());
             List<Txns> list = txnsMapper.selectList(wrapper);
 //            Txns oldTxns = txnsMapper.selectOne(wrapper);
+            if(9==sboCallBackSettleReq.getProductType()){
+                boolean b = false;
+                for (Txns oldTxns : list) {
+                    if (!"Cancel Bet".equals(oldTxns.getMethod())&&!"Settle".equals(oldTxns.getMethod())) {
+                        b = true;
+                    }
+                }
+                if(b){
+                    for (Txns oldTxns : list) {
+                        if ("Cancel Bet".equals(oldTxns.getMethod()) || "Settle".equals(oldTxns.getMethod())) {
+                            list.remove(oldTxns);
+                        }
+                    }
+                }
+            }
             if (null == list || list.size() <= 0) {
                 sboCallBackCommResp.setBalance(balance);
                 sboCallBackCommResp.setErrorCode(6);
