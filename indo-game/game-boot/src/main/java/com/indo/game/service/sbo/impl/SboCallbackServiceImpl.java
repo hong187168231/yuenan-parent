@@ -18,6 +18,8 @@ import com.indo.game.pojo.vo.callback.sbo.SboCallBackGetTransferStatusResp;
 import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.sbo.SboCallbackService;
 import com.indo.user.pojo.bo.MemTradingBO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,7 +30,7 @@ import java.util.List;
 
 @Service
 public class SboCallbackServiceImpl implements SboCallbackService {
-
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
     private GameCommonService gameCommonService;
 
