@@ -195,15 +195,15 @@ public class SboCallBackController {
     /**
      * LiveCoin購買
      */
-    @RequestMapping(value="/liveCoinTransaction",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
+    @RequestMapping(value="/LiveCoinTransaction",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object liveCoinTransaction(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("sboCallBack  getTransferStatus 回调,LiveCoin購買 params:{} IP:{}",jsonObject,ip);
+        logger.info("sboCallBack  LiveCoinTransaction 回调,LiveCoin購買 params:{} IP:{}",jsonObject,ip);
         SboCallBackLiveCoinTransactionReq sboCallBackLiveCoinTransactionReq = JSONObject.toJavaObject(jsonObject,SboCallBackLiveCoinTransactionReq.class);
         Object liveCoinTransaction = sboCallbackService.liveCoinTransaction(sboCallBackLiveCoinTransactionReq,ip);
-        logger.info("sboCallBack  getTransferStatus 回调返回数据,LiveCoin購買 params:{}",liveCoinTransaction);
+        logger.info("sboCallBack  LiveCoinTransaction 回调返回数据,LiveCoin購買 params:{}",liveCoinTransaction);
         return liveCoinTransaction;
     }
 }
