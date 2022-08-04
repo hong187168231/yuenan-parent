@@ -148,6 +148,7 @@ public class MemGiftReceiveServiceImpl extends ServiceImpl<MemGiftReceiveMapper,
                     throw new BizException("有效投注未达标");
                 }
                 req.setGiftAmount(memLevel.getEverydayGift());
+                break;
             case week:
                 if (memLevel.getLevel().equals(req.getLevel())) {
                     int countWeek = countWeekReceive(memId, giftNameEnum.name());
@@ -161,6 +162,7 @@ public class MemGiftReceiveServiceImpl extends ServiceImpl<MemGiftReceiveMapper,
                     throw new BizException("有效投注未达标");
                 }
                 req.setGiftAmount(memLevel.getWeekGift());
+                break;
             case month:
                 if (memLevel.getLevel().equals(req.getLevel())) {
                     int countMonth = countMonthReceive(memId, giftNameEnum.name());
@@ -174,6 +176,7 @@ public class MemGiftReceiveServiceImpl extends ServiceImpl<MemGiftReceiveMapper,
                     throw new BizException("有效投注未达标");
                 }
                 req.setGiftAmount(memLevel.getMonthGift());
+                break;
             case year:
                 if (memLevel.getLevel().equals(req.getLevel())) {
                     int countYear = countYearReceive(memId, giftNameEnum.name());
@@ -187,6 +190,7 @@ public class MemGiftReceiveServiceImpl extends ServiceImpl<MemGiftReceiveMapper,
                     throw new BizException("有效投注未达标");
                 }
                 req.setGiftAmount(memLevel.getYearGift());
+                break;
             case birthday:
                 if (memLevel.getLevel().equals(req.getLevel())) {
                     int countBirthday = countBirthdayReceive(memId, giftNameEnum.name());
@@ -258,7 +262,7 @@ public class MemGiftReceiveServiceImpl extends ServiceImpl<MemGiftReceiveMapper,
      */
     public Integer countTodayReceive(Long memId, String giftCode) {
         Date todayBeginTime = DateUtils.getDayBegin();
-        Date todayEndTime = DateUtils.getDayBegin();
+        Date todayEndTime = DateUtils.getDayEnd();
         int countToday = memGiftReceiveMapper.countVipTimeIntervalGift(memId, giftCode, todayBeginTime, todayEndTime);
         return countToday;
     }
