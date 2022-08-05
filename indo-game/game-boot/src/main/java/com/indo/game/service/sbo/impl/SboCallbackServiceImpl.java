@@ -30,7 +30,7 @@ import java.util.List;
 
 @Service
 public class SboCallbackServiceImpl implements SboCallbackService {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+//    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
     private GameCommonService gameCommonService;
 
@@ -799,6 +799,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
             sboCallBackCommResp.setErrorCode(1);
             sboCallBackCommResp.setErrorMessage("Member not exist");
         } else {
+            BigDecimal balance = memBaseinfo.getBalance();
             LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
             wrapper.eq(Txns::getMethod, "Place Bet");
             wrapper.eq(Txns::getStatus, "Running");
@@ -809,9 +810,14 @@ public class SboCallbackServiceImpl implements SboCallbackService {
 //            wrapper.eq(Txns::getPlatform, sboCallBackBonusReq.getProductType());
 //            wrapper.eq(Txns::getGameType, sboCallBackBonusReq.getGameType());
             Txns oldTxns = txnsMapper.selectOne(wrapper);
-
+            if(null==oldTxns){
+                sboCallBackCommResp.setBalance(balance);
+                sboCallBackCommResp.setErrorCode(6);
+                sboCallBackCommResp.setErrorMessage("Bet not exists");
+                return sboCallBackCommResp;
+            }
             BigDecimal betAmount = oldTxns.getBetAmount();
-            BigDecimal balance = memBaseinfo.getBalance();
+
             //真实返还金额
             BigDecimal realWinAmount = sboCallBackBonusReq.getCurrentStake();
             balance = balance.add(realWinAmount);
@@ -1086,7 +1092,8 @@ public class SboCallbackServiceImpl implements SboCallbackService {
             sboCallBackCommResp.setErrorMessage("Member not exist");
         } else {
             BigDecimal betAmount = BigDecimal.valueOf(Double.valueOf(sboCallBackLiveCoinTransactionReq.getAmount()));
-
+            BigDecimal balance = memBaseinfo.getBalance();
+            sboCallBackCommResp.setBalance(balance);
             if (memBaseinfo.getBalance().compareTo(betAmount) == -1) {
                 sboCallBackCommResp.setErrorCode(5);
                 sboCallBackCommResp.setErrorMessage("Not enough balance");
@@ -1113,7 +1120,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
                     gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platformCode, OpenAPIProperties.SBO_PLATFORM_CODE);
                 }
                 GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
-                BigDecimal balance = memBaseinfo.getBalance().subtract(betAmount);
+                balance = balance.subtract(betAmount);
                 gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.BETNSETTLE, TradingEnum.SPENDING);
                 sboCallBackCommResp.setBalance(balance);
                 sboCallBackCommResp.setErrorCode(0);
