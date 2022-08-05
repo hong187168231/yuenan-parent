@@ -801,7 +801,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
         } else {
             BigDecimal balance = memBaseinfo.getBalance();
             LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
-            wrapper.eq(Txns::getMethod, "Place Bet");
+            wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet"));
             wrapper.eq(Txns::getStatus, "Running");
             wrapper.eq(Txns::getPlatformTxId, sboCallBackBonusReq.getTransferCode());
             wrapper.eq(Txns::getRoundId, sboCallBackBonusReq.getTransactionId());
@@ -810,10 +810,20 @@ public class SboCallbackServiceImpl implements SboCallbackService {
 //            wrapper.eq(Txns::getPlatform, sboCallBackBonusReq.getProductType());
 //            wrapper.eq(Txns::getGameType, sboCallBackBonusReq.getGameType());
             Txns oldTxns = txnsMapper.selectOne(wrapper);
+            sboCallBackCommResp.setBalance(balance);
             if(null==oldTxns){
-                sboCallBackCommResp.setBalance(balance);
                 sboCallBackCommResp.setErrorCode(6);
                 sboCallBackCommResp.setErrorMessage("Bet not exists");
+                return sboCallBackCommResp;
+            }
+            if(oldTxns.getMethod().equals("Cancel Bet")){
+                sboCallBackCommResp.setErrorCode(5003);
+                sboCallBackCommResp.setErrorMessage("Bet With Same RefNo Exists");
+                return sboCallBackCommResp;
+            }
+            if(null!=oldTxns.getRealWinAmount()&&oldTxns.getRealWinAmount().compareTo(BigDecimal.ZERO) == 1){
+                sboCallBackCommResp.setErrorCode(5008);
+                sboCallBackCommResp.setErrorMessage("Bet Already Returned Stake");
                 return sboCallBackCommResp;
             }
             BigDecimal betAmount = oldTxns.getBetAmount();
@@ -833,6 +843,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
             txns.setBetAmount(betAmount.subtract(realWinAmount));
             txns.setWinningAmount(betAmount.subtract(realWinAmount).negate());
             txns.setWinAmount(betAmount.subtract(realWinAmount));
+            txns.setRealWinAmount(realWinAmount);
             txns.setBalance(balance);
             txns.setStatus("Running");
             txns.setMethod("Place Bet");
