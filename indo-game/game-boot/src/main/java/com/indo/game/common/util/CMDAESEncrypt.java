@@ -1,6 +1,7 @@
 package com.indo.game.common.util;
 
 import org.apache.commons.codec.binary.Base64;
+import sun.misc.BASE64Encoder;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
@@ -12,22 +13,28 @@ import javax.crypto.spec.SecretKeySpec;
 public class CMDAESEncrypt {
     public static String encrypt(String data, String key) {
         try {
-            // iv向量默认采用key反转
-            String iv = new StringBuilder(key).reverse().toString();
-            Cipher cipher = Cipher.getInstance("AES/CBC/NoPadding");
-            int blockSize = cipher.getBlockSize();
-            byte[] dataBytes = data.getBytes("UTF-8");
-            int plainTextLength = dataBytes.length;
-            if (plainTextLength % blockSize != 0) {
-                plainTextLength = plainTextLength + (blockSize - plainTextLength % blockSize);
-            }
-            byte[] plaintext = new byte[plainTextLength];
-            System.arraycopy(dataBytes, 0, plaintext, 0, dataBytes.length);
-            SecretKeySpec keyspec = new SecretKeySpec(key.getBytes(), "AES");
-            IvParameterSpec ivspec = new IvParameterSpec(iv.getBytes());
-            cipher.init(Cipher.ENCRYPT_MODE, keyspec, ivspec);
-            byte[] encrypted = cipher.doFinal(plaintext);
-            return Base64.encodeBase64URLSafeString(encrypted);
+            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+            byte[] raw = key.getBytes("UTF-8");
+            SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
+            cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
+            byte[] encrypted = cipher.doFinal(data.getBytes("UTF-8"));
+            return new BASE64Encoder().encode(encrypted);// 此处使用BASE64做转码
+//            // iv向量默认采用key反转
+//            String iv = new StringBuilder(key).reverse().toString();
+//            Cipher cipher = Cipher.getInstance("AES/CBC/NoPadding");
+//            int blockSize = cipher.getBlockSize();
+//            byte[] dataBytes = data.getBytes("UTF-8");
+//            int plainTextLength = dataBytes.length;
+//            if (plainTextLength % blockSize != 0) {
+//                plainTextLength = plainTextLength + (blockSize - plainTextLength % blockSize);
+//            }
+//            byte[] plaintext = new byte[plainTextLength];
+//            System.arraycopy(dataBytes, 0, plaintext, 0, dataBytes.length);
+//            SecretKeySpec keyspec = new SecretKeySpec(key.getBytes(), "AES");
+//            IvParameterSpec ivspec = new IvParameterSpec(iv.getBytes());
+//            cipher.init(Cipher.ENCRYPT_MODE, keyspec, ivspec);
+//            byte[] encrypted = cipher.doFinal(plaintext);
+//            return Base64.encodeBase64URLSafeString(encrypted);
         } catch (Exception e) {
             e.printStackTrace();
         }

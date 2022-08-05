@@ -260,7 +260,7 @@ public class V8ServiceImpl implements V8Service {
     private String getLoginUrl(String userAccount, String gameId, String ip,BigDecimal balance) throws Exception {
         long timestamp = System.currentTimeMillis();
         StringBuilder url = new StringBuilder();
-        url.append(OpenAPIProperties.V8_API_URL);
+        url.append(OpenAPIProperties.V8_API_URL+"");
         url.append("?agent=").append(OpenAPIProperties.V8_AGENT);
         url.append("&timestamp=").append(timestamp);
 
