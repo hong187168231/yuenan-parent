@@ -32,7 +32,7 @@ public class SboCallBackController {
         logger.info("sboCallBack GetBalance 回调,取得用户的余额 params:{} IP:{}",jsonObject,ip);
         SboCallBackParentReq sboCallBackParentReq = JSONObject.toJavaObject(jsonObject,SboCallBackParentReq.class);
         Object getBalance = sboCallbackService.getBalance(sboCallBackParentReq,ip);
-        logger.info("sboCallBack  GetBalance 回调返回数据,取得用户的余额 params:{}",getBalance);
+        logger.info("sboCallBack  GetBalance 回调返回数据,取得用户的余额 params:{}",JSONObject.toJSONString(getBalance));
         return getBalance;
     }
 
@@ -47,7 +47,7 @@ public class SboCallBackController {
         logger.info("sboCallBack  Deduct 回调,扣除投注金额 params:{} IP:{}",jsonObject,ip);
         SboCallBackDeductReq sboCallBackDeductReq = JSONObject.toJavaObject(jsonObject,SboCallBackDeductReq.class);
         Object deduct = sboCallbackService.deduct(sboCallBackDeductReq,ip);
-        logger.info("sboCallBack Deduct 回调返回数据,扣除投注金额 params:{}",deduct);
+        logger.info("sboCallBack Deduct 回调返回数据,扣除投注金额 params:{}",JSONObject.toJSONString(deduct));
         return deduct;
     }
 
@@ -62,7 +62,7 @@ public class SboCallBackController {
         logger.info("sboCallBack settle 回调,结算投注 params:{} IP:{}",jsonObject,ip);
         SboCallBackSettleReq sboCallBackSettleReq = JSONObject.toJavaObject(jsonObject,SboCallBackSettleReq.class);
         Object settle = sboCallbackService.settle(sboCallBackSettleReq,ip);
-        logger.info("sboCallBack settle 回调返回数据,结算投注 params:{}",settle);
+        logger.info("sboCallBack settle 回调返回数据,结算投注 params:{}",JSONObject.toJSONString(settle));
         return settle;
     }
 
@@ -77,7 +77,7 @@ public class SboCallBackController {
         logger.info("sboCallBack rollback 回调,回滚 params:{} IP:{}",jsonObject,ip);
         SboCallBackRollbackReq sboCallBackRollbackReq = JSONObject.toJavaObject(jsonObject,SboCallBackRollbackReq.class);
         Object rollback = sboCallbackService.rollback(sboCallBackRollbackReq,ip);
-        logger.info("sboCallBack rollback 回调返回数据,回滚 params:{}",rollback);
+        logger.info("sboCallBack rollback 回调返回数据,回滚 params:{}",JSONObject.toJSONString(rollback));
         return rollback;
     }
 
@@ -92,7 +92,7 @@ public class SboCallBackController {
         logger.info("sboCallBack Cancel 回调,回滚 params:{} IP:{}",jsonObject,ip);
         SboCallBackCancelReq sboCallBackCancelReq = JSONObject.toJavaObject(jsonObject,SboCallBackCancelReq.class);
         Object cancel = sboCallbackService.cancel(sboCallBackCancelReq,ip);
-        logger.info("sboCallBack Cancel 回调返回数据,回滚 params:{}",cancel);
+        logger.info("sboCallBack Cancel 回调返回数据,回滚 params:{}",JSONObject.toJSONString(cancel));
         return cancel;
     }
 
@@ -107,7 +107,7 @@ public class SboCallBackController {
         logger.info("sboCallBack tip 回调,小费 params:{} IP:{}",jsonObject,ip);
         SboCallBackTipReq sboCallBackTipReq = JSONObject.toJavaObject(jsonObject,SboCallBackTipReq.class);
         Object tip = sboCallbackService.tip(sboCallBackTipReq,ip);
-        logger.info("sboCallBack tip 回调返回数据,小费 params:{}",tip);
+        logger.info("sboCallBack tip 回调返回数据,小费 params:{}",JSONObject.toJSONString(tip));
         return tip;
     }
 
@@ -122,7 +122,7 @@ public class SboCallBackController {
         logger.info("sboCallBack  bonus 回调,红利 params:{} IP:{}",jsonObject,ip);
         SboCallBackBonusReq sboCallBackBonusReq = JSONObject.toJavaObject(jsonObject,SboCallBackBonusReq.class);
         Object bonus = sboCallbackService.bonus(sboCallBackBonusReq,ip);
-        logger.info("sboCallBack  bonus 回调返回数据,红利 params:{}",bonus);
+        logger.info("sboCallBack  bonus 回调返回数据,红利 params:{}",JSONObject.toJSONString(bonus));
         return bonus;
     }
 
@@ -137,7 +137,7 @@ public class SboCallBackController {
         logger.info("sboCallBack returnStake 回调,归还注额 params:{} IP:{}",jsonObject,ip);
         SboCallBackReturnStakeReq sboCallBackBonusReq = JSONObject.toJavaObject(jsonObject,SboCallBackReturnStakeReq.class);
         Object returnStake = sboCallbackService.returnStake(sboCallBackBonusReq,ip);
-        logger.info("sboCallBack returnStake 回调返回数据,归还注额 params:{}",returnStake);
+        logger.info("sboCallBack returnStake 回调返回数据,归还注额 params:{}",JSONObject.toJSONString(returnStake));
         return returnStake;
     }
 
@@ -152,7 +152,7 @@ public class SboCallBackController {
         logger.info("sboCallBack getBetStatus 回调,取得投注状态 params:{} IP:{}",jsonObject,ip);
         SboCallBackGetBetStatusReq sboCallBackGetBetStatusReq = JSONObject.toJavaObject(jsonObject,SboCallBackGetBetStatusReq.class);
         Object getBetStatus = sboCallbackService.getBetStatus(sboCallBackGetBetStatusReq,ip);
-        logger.info("sboCallBack  getBetStatus 回调返回数据,取得投注状态 params:{}",getBetStatus);
+        logger.info("sboCallBack  getBetStatus 回调返回数据,取得投注状态 params:{}",JSONObject.toJSONString(getBetStatus));
         return getBetStatus;
     }
 
@@ -203,7 +203,7 @@ public class SboCallBackController {
         logger.info("sboCallBack  LiveCoinTransaction 回调,LiveCoin購買 params:{} IP:{}",jsonObject,ip);
         SboCallBackLiveCoinTransactionReq sboCallBackLiveCoinTransactionReq = JSONObject.toJavaObject(jsonObject,SboCallBackLiveCoinTransactionReq.class);
         Object liveCoinTransaction = sboCallbackService.liveCoinTransaction(sboCallBackLiveCoinTransactionReq,ip);
-        logger.info("sboCallBack  LiveCoinTransaction 回调返回数据,LiveCoin購買 params:{}",liveCoinTransaction);
+        logger.info("sboCallBack  LiveCoinTransaction 回调返回数据,LiveCoin購買 params:{}",JSONObject.toJSONString(liveCoinTransaction));
         return liveCoinTransaction;
     }
 }
