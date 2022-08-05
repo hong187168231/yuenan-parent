@@ -7,6 +7,7 @@ import com.indo.common.redis.utils.GeneratorIdUtil;
 import com.indo.common.result.Result;
 import com.indo.common.utils.DateUtils;
 import com.indo.common.utils.GameUtil;
+import com.indo.common.utils.IPAddressUtil;
 import com.indo.common.utils.encrypt.MD5Encoder;
 import com.indo.game.common.util.V8Encrypt;
 import com.indo.game.mapper.TxnsMapper;
@@ -267,6 +268,7 @@ public class V8ServiceImpl implements V8Service {
         urlParams.append("s=0&account=").append(userAccount);
         urlParams.append("&money=").append(balance);
         urlParams.append("&orderid=").append(getOrderid(userAccount));
+        ip = IPAddressUtil.getRealIp();
         urlParams.append("&ip=").append(ip);
         urlParams.append("&lineCode=").append(OpenAPIProperties.V8_LINE_CODE);
         logger.info("v8Game getLoginUrl登录请求:lineCode:{},isPlatformLogin:{}",OpenAPIProperties.V8_LINE_CODE, OpenAPIProperties.V8_IS_PLATFORM_LOGIN);

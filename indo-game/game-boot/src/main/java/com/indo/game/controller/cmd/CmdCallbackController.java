@@ -35,7 +35,7 @@ public class CmdCallbackController {
     }
 
 
-    @RequestMapping(value = "/callBack/getBalance", method = RequestMethod.GET,produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/callBack/getBalance", method = RequestMethod.GET,produces = "text/plain;charset=UTF-8")
     @AllowAccess
     @ResponseBody
     public Object getBalance(@RequestParam("balancePackage") String balancePackage,
@@ -43,7 +43,7 @@ public class CmdCallbackController {
                              @RequestParam("dateSent") String dateSent,
                              HttpServletRequest request) {
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("cmdCallback getBalance 回调查询余额, params:{}", balancePackage);
+        logger.info("cmdCallback getBalance 回调查询余额, balancePackage:{}, packageId:{}, dateSent:{}", balancePackage, packageId, dateSent);
         Object object = cmdCallbackService.getBalance(balancePackage, packageId, dateSent, ip);
         logger.info("cmdCallback getBalance 回调查询余额返回数据 params:{}", object);
         return object;

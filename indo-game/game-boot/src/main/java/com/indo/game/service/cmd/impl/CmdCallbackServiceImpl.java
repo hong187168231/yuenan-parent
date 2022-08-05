@@ -94,14 +94,15 @@ public class CmdCallbackServiceImpl implements CmdCallbackService {
             if (null == memBaseinfo) {
                 return initFailureResponse(-97, "用户不存在");
             }
-            JSONObject respJson = new JSONObject();
-            respJson.put("ActionId", 1000);
-            respJson.put("SourceName", account);
 
-            JSONObject jsonObject = initSuccessResponse(respJson);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("StatusCode", 100);
+            jsonObject.put("StatusMessage", "Success");
+            jsonObject.put("DateSent", System.currentTimeMillis());
+            jsonObject.put("PackageId", packageId);
             jsonObject.put("Balance", memBaseinfo.getBalance());
             jsonObject.put("DateReceived", dateSent);
-            return jsonObject;
+            return encryptResp(jsonObject);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return initFailureResponse(-999, e.getMessage());
