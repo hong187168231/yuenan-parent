@@ -268,8 +268,7 @@ public class V8ServiceImpl implements V8Service {
         urlParams.append("s=0&account=").append(userAccount);
         urlParams.append("&money=").append(balance);
         urlParams.append("&orderid=").append(getOrderid(userAccount));
-        ip = IPAddressUtil.getRealIp();
-        urlParams.append("&ip=").append(ip);
+        urlParams.append("&ip=").append(OpenAPIProperties.PROXY_HOST_NAME);
         urlParams.append("&lineCode=").append(OpenAPIProperties.V8_LINE_CODE);
         logger.info("v8Game getLoginUrl登录请求:lineCode:{},isPlatformLogin:{}",OpenAPIProperties.V8_LINE_CODE, OpenAPIProperties.V8_IS_PLATFORM_LOGIN);
         if(OpenAPIProperties.V8_IS_PLATFORM_LOGIN.equals("Y")){
