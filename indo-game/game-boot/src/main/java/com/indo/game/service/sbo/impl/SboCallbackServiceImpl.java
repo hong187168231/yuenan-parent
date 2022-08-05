@@ -1086,7 +1086,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
             sboCallBackCommResp.setErrorMessage("Member not exist");
         } else {
             BigDecimal betAmount = BigDecimal.valueOf(Double.valueOf(sboCallBackLiveCoinTransactionReq.getAmount()));
-            BigDecimal balance = memBaseinfo.getBalance().subtract(betAmount);
+
             if (memBaseinfo.getBalance().compareTo(betAmount) == -1) {
                 sboCallBackCommResp.setErrorCode(5);
                 sboCallBackCommResp.setErrorMessage("Not enough balance");
@@ -1113,6 +1113,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
                     gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platformCode, OpenAPIProperties.SBO_PLATFORM_CODE);
                 }
                 GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
+                BigDecimal balance = memBaseinfo.getBalance().subtract(betAmount);
                 gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.BETNSETTLE, TradingEnum.SPENDING);
                 sboCallBackCommResp.setBalance(balance);
                 sboCallBackCommResp.setErrorCode(0);
@@ -1139,6 +1140,8 @@ public class SboCallbackServiceImpl implements SboCallbackService {
                 //游戏名称
                 txns.setGameName(gamePlatform.getPlatformEnName());
                 txns.setBetAmount(betAmount);
+                txns.setWinningAmount(betAmount.negate());
+                txns.setWinAmount(betAmount);
                 txns.setPlatformTxId(sboCallBackLiveCoinTransactionReq.getTransferCode());
                 txns.setRoundId(sboCallBackLiveCoinTransactionReq.getTransactionId());
                 txns.setBetTime(sboCallBackLiveCoinTransactionReq.getTranscationTime());
