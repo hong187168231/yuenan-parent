@@ -102,6 +102,7 @@ public class CmdCallbackServiceImpl implements CmdCallbackService {
             jsonObject.put("PackageId", packageId);
             jsonObject.put("Balance", memBaseinfo.getBalance());
             jsonObject.put("DateReceived", dateSent);
+            logger.info("cmdCallback getBalance 回调查询余额返回数据 params:{}", jsonObject);
             return encryptResp(jsonObject);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
