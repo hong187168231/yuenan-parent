@@ -1091,9 +1091,27 @@ public class SboCallbackServiceImpl implements SboCallbackService {
                 sboCallBackCommResp.setErrorCode(5);
                 sboCallBackCommResp.setErrorMessage("Not enough balance");
             } else {
+                LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+                wrapper.eq(Txns::getMethod, "Place Bet");
+                wrapper.eq(Txns::getStatus, "Running");
+                wrapper.eq(Txns::getPlatformTxId, sboCallBackLiveCoinTransactionReq.getTransferCode());
+                wrapper.eq(Txns::getRoundId, sboCallBackLiveCoinTransactionReq.getTransactionId());
+                wrapper.eq(Txns::getPlatform, OpenAPIProperties.SBO_PLATFORM_CODE);
+                Txns oldTxns = txnsMapper.selectOne(wrapper);
+                if(null!=oldTxns){
+                    sboCallBackCommResp.setErrorCode(5003);
+                    sboCallBackCommResp.setErrorMessage("Bet With Same RefNo Exists");
+                    return sboCallBackCommResp;
+                }
                 String platformCode = this.getpPlatformCode(sboCallBackLiveCoinTransactionReq.getProductType());
 
-                GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(platformCode);
+                GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.SBO_PLATFORM_CODE);
+                GamePlatform gamePlatform;
+                if(OpenAPIProperties.SBO_IS_PLATFORM_LOGIN.equals("Y")){
+                    gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.SBO_PLATFORM_CODE,OpenAPIProperties.SBO_PLATFORM_CODE);
+                }else {
+                    gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platformCode, OpenAPIProperties.SBO_PLATFORM_CODE);
+                }
                 GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
                 gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.BETNSETTLE, TradingEnum.SPENDING);
                 sboCallBackCommResp.setBalance(balance);
@@ -1102,22 +1120,34 @@ public class SboCallbackServiceImpl implements SboCallbackService {
 
                 Txns txns = new Txns();
                 txns.setUserId(sboCallBackLiveCoinTransactionReq.getUsername());
+                //玩家货币代码
+                txns.setCurrency(gameParentPlatform.getCurrencyType());
+                //平台代码
+                txns.setPlatform(gameParentPlatform.getPlatformCode());
+                //平台英文名称
+                txns.setPlatformEnName(gameParentPlatform.getPlatformEnName());
+                //平台中文名称
+                txns.setPlatformCnName(gameParentPlatform.getPlatformCnName());
+                //平台游戏类型
+                txns.setGameType(gameCategory.getGameType());
+                //游戏分类ID
+                txns.setCategoryId(gameCategory.getId());
+                //游戏分类名称
+                txns.setCategoryName(gameCategory.getGameName());
+                //平台游戏代码
+                txns.setGameCode(gamePlatform.getPlatformCode());
+                //游戏名称
+                txns.setGameName(gamePlatform.getPlatformEnName());
                 txns.setBetAmount(betAmount);
                 txns.setPlatformTxId(sboCallBackLiveCoinTransactionReq.getTransferCode());
                 txns.setRoundId(sboCallBackLiveCoinTransactionReq.getTransactionId());
                 txns.setBetTime(sboCallBackLiveCoinTransactionReq.getTranscationTime());
-                txns.setPlatform(platformCode);
                 txns.setGameType(String.valueOf(sboCallBackLiveCoinTransactionReq.getGameType()));
                 txns.setBalance(balance);
-                txns.setStatus("LiveCoin");
-                txns.setMethod("LiveCoin");
+                txns.setStatus("running");
+                txns.setMethod("Place Bet");
                 String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
                 txns.setCreateTime(dateStr);
-                txns.setCreateTime(dateStr);
-                txns.setPlatformCnName(gamePlatform.getPlatformCnName());
-                txns.setPlatformEnName(gamePlatform.getPlatformEnName());
-                txns.setCategoryId(gameCategory.getId());
-                txns.setCategoryName(gameCategory.getGameName());
                 txnsMapper.insert(txns);
             }
 
