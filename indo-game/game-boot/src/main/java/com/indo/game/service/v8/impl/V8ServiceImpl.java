@@ -266,7 +266,7 @@ public class V8ServiceImpl implements V8Service {
 
         StringBuilder urlParams = new StringBuilder();
         urlParams.append("s=0&account=").append(userAccount);
-//        urlParams.append("&money=").append(balance);
+        urlParams.append("&money=").append(BigDecimal.ZERO);
         urlParams.append("&orderid=").append(getOrderid(userAccount));
         urlParams.append("&ip=").append(OpenAPIProperties.PROXY_HOST_NAME);
         urlParams.append("&lineCode=").append(OpenAPIProperties.V8_LINE_CODE);

@@ -39,7 +39,7 @@ public class CMDAESEncrypt {
 
     // Sample
     public static void main(String[] args) throws Exception {
-        String encryptData = "{\"ActionId\":1000,\"SourceName\":\"swuserid\"}"; // $ { KEY }
+        String encryptData = "{\"DateSent\":1659768273680,\"PackageId\":\"4d2deca9-d022-4157-8b00-1710c35dfa58\",\"DateReceived\":\"637953938687177578\",\"StatusCode\":100,\"Balance\":1000344.00,\"StatusMessage\":\"Success\"}"; // $ { KEY }
         String key = "4023461570052130";
         String encryptStr = encrypt(encryptData, key);
         System.out.println("加密    "+encryptStr);
