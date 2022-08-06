@@ -49,7 +49,7 @@ public class CmdCallbackController {
         return object;
     }
 
-    @RequestMapping(value = "/callBack/deductBalance", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/callBack/deductBalance", method = RequestMethod.POST,produces = "text/plain;charset=UTF-8")
     @AllowAccess
     @ResponseBody
     public Object deductBalance(@RequestBody JSONObject params, HttpServletRequest request) {
