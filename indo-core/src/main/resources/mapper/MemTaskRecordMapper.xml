@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.indo.core.mapper.MemTaskRecordMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.indo.core.pojo.entity.MemTaskRecord">
+        <id column="id" property="id" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="task_id" property="taskId" />
+        <result column="type_id" property="typeId" />
+        <result column="mem_id" property="memId" />
+        <result column="states" property="states" />
+        <result column="pick_time" property="pickTime" />
+        <result column="remark" property="remark" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        create_time,
+        update_time,
+        id, task_id, type_id, mem_id, states, pick_time, remark
+    </sql>
+
+</mapper>
