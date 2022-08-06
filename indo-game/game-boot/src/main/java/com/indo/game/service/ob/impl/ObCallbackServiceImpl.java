@@ -202,7 +202,7 @@ public class ObCallbackServiceImpl implements ObCallbackService {
         JSONObject statusObject = new JSONObject();
         dataObject.put("code", "0000");
         dataObject.put("msg", "成功！");
-        statusObject.put("balance", memBaseinfo.getBalance());
+        statusObject.put("balance", balance);
         dataObject.put("data", statusObject);
         return dataObject;
     }

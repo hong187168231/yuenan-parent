@@ -113,34 +113,35 @@ public class MgCallbackServiceImpl implements MgCallbackService {
         if (null != oldTxns) {
         }
         Txns txns = new Txns();
+        BigDecimal amount = mgCallBackReq.getAmount();
         if ("CREDIT".equals(mgCallBackReq.getTxnType())) {//赢
-            balance = balance.add(mgCallBackReq.getAmount());
+            balance = balance.add(amount);
             if (null != oldTxns) {
                 txns.setBet(false);
-                gameCommonService.updateUserBalance(memBaseinfo, mgCallBackReq.getAmount(), GoldchangeEnum.SETTLE, TradingEnum.INCOME);
+                gameCommonService.updateUserBalance(memBaseinfo, amount, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
             }else {
                 txns.setBet(true);
-                gameCommonService.updateUserBalance(memBaseinfo, mgCallBackReq.getAmount(), GoldchangeEnum.PLACE_BET, TradingEnum.INCOME);
+                gameCommonService.updateUserBalance(memBaseinfo, amount, GoldchangeEnum.PLACE_BET, TradingEnum.INCOME);
             }
             //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
-            txns.setWinningAmount(mgCallBackReq.getAmount());
+            txns.setWinningAmount(amount);
         }
         if ("DEBIT".equals(mgCallBackReq.getTxnType())) {//输
-            if (memBaseinfo.getBalance().compareTo(mgCallBackReq.getAmount()) == -1) {
+            if (memBaseinfo.getBalance().compareTo(amount) == -1) {
                 dataJson.put("code", "402");
                 dataJson.put("message", "余额不足");
                 return dataJson;
             }
-            balance = balance.subtract(mgCallBackReq.getAmount());
+            balance = balance.subtract(amount);
             if (null != oldTxns) {
                 txns.setBet(false);
-                gameCommonService.updateUserBalance(memBaseinfo, mgCallBackReq.getAmount(), GoldchangeEnum.SETTLE, TradingEnum.SPENDING);
+                gameCommonService.updateUserBalance(memBaseinfo, amount, GoldchangeEnum.SETTLE, TradingEnum.SPENDING);
             }else {
                 txns.setBet(true);
-                gameCommonService.updateUserBalance(memBaseinfo, mgCallBackReq.getAmount(), GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
+                gameCommonService.updateUserBalance(memBaseinfo, amount, GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
             }
             //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
-            txns.setWinningAmount(mgCallBackReq.getAmount().negate());
+            txns.setWinningAmount(amount.negate());
         }
 
 
@@ -166,18 +167,16 @@ public class MgCallbackServiceImpl implements MgCallbackService {
         //平台游戏代码
         txns.setGameCode(gamePlatform.getPlatformCode());
 
-
-        //玩家下注时间
-        txns.setBetTime(DateUtils.formatByString(mgCallBackReq.getCreationTime(), DateUtils.newFormat));
+        txns.setWinAmount(amount);
         //真实下注金额,需增加在玩家的金额
-        txns.setRealBetAmount(mgCallBackReq.getAmount());
+        txns.setRealBetAmount(amount);
         //真实返还金额,游戏赢分
-        txns.setRealWinAmount(mgCallBackReq.getAmount());
+        txns.setRealWinAmount(amount);
         //返还金额 (包含下注金额)
         //赌注的结果 : 赢:0,输:1,平手:2
         int resultTyep;
         //有效投注金额 或 投注面值
-        txns.setTurnover(mgCallBackReq.getAmount());
+        txns.setTurnover(amount);
         //辨认交易时间依据
         txns.setTxTime(DateUtils.formatByString(mgCallBackReq.getCreationTime(),DateUtils.newFormat));
         //操作名称
