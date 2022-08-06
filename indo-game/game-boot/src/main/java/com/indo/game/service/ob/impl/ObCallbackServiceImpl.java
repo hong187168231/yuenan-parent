@@ -7,6 +7,7 @@ import com.indo.common.config.OpenAPIProperties;
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.common.utils.DateUtils;
+import com.indo.game.controller.ob.ObCallBackTransferstatusReq;
 import com.indo.game.mapper.TxnsMapper;
 import com.indo.game.pojo.dto.ob.ObCallBackParentReq;
 import com.indo.game.pojo.entity.manage.GameCategory;
@@ -20,6 +21,7 @@ import com.indo.user.pojo.bo.MemTradingBO;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -72,7 +74,7 @@ public class ObCallbackServiceImpl implements ObCallbackService {
         wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Settle"));
         wrapper.eq(Txns::getStatus, "Running");
         wrapper.eq(Txns::getPlatformTxId, obCallBackParentReq.getTransferId());
-        wrapper.eq(Txns::getUserId, memBaseinfo.getId());
+//        wrapper.eq(Txns::getUserId, memBaseinfo.getId());
         Txns oldTxns = txnsMapper.selectOne(wrapper);
         JSONObject dataJson = new JSONObject();
         if (null != oldTxns) {
@@ -206,17 +208,46 @@ public class ObCallbackServiceImpl implements ObCallbackService {
     }
 
     @Override
-    public Object transferStatus(ObCallBackParentReq obCallBackParentReq, String ip) {
-        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(obCallBackParentReq.getUserName());
-        BigDecimal balance = memBaseinfo.getBalance();
+    public Object transferStatus(ObCallBackTransferstatusReq obCallBackTransferstatusReq, String ip) {
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
         wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Adjust Bet"));
         wrapper.eq(Txns::getStatus, "Running");
-        wrapper.eq(Txns::getPlatformTxId, obCallBackParentReq.getTransferId());
-        wrapper.eq(Txns::getUserId, memBaseinfo.getId());
+        wrapper.eq(Txns::getPlatformTxId, obCallBackTransferstatusReq.getTransferId());
+        wrapper.eq(Txns::getPlatform, OpenAPIProperties.OB_PLATFORM_CODE);
         Txns oldTxns = txnsMapper.selectOne(wrapper);
         JSONObject dataJson = new JSONObject();
         if (null != oldTxns) {
+            if("0".equals(obCallBackTransferstatusReq.getStatus())){
+                Txns txns = new Txns();
+                BeanUtils.copyProperties(oldTxns, txns);
+                txns.setId(null);
+                MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(oldTxns.getUserId());
+                BigDecimal amount = oldTxns.getWinningAmount();
+                BigDecimal balance = memBaseinfo.getBalance();
+                BigDecimal WinAmount = amount;
+                if(amount.compareTo(BigDecimal.ZERO)==1) {
+                    balance = balance.subtract(amount.abs());
+                    WinAmount = amount.negate();
+                    gameCommonService.updateUserBalance(memBaseinfo, amount.abs(), GoldchangeEnum.VOID_BET, TradingEnum.SPENDING);
+                }
+                if(amount.compareTo(BigDecimal.ZERO)==-1) {
+                    balance = balance.add(amount.abs());
+                    WinAmount = amount.abs();
+                    gameCommonService.updateUserBalance(memBaseinfo, amount.abs(), GoldchangeEnum.VOID_BET, TradingEnum.INCOME);
+                }
+                txns.setWinningAmount(WinAmount);
+                txns.setWinAmount(amount);
+                txns.setBalance(balance);
+                txns.setStatus("Running");
+                txns.setMethod("Cancel Bet");
+                String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
+                txns.setCreateTime(dateStr);
+                txnsMapper.insert(txns);
+
+                oldTxns.setStatus("Cancel Bet");
+                oldTxns.setUpdateTime(dateStr);
+                txnsMapper.updateById(oldTxns);
+            }
             dataJson.put("code", "0000");
             dataJson.put("msg", "成功");
             dataJson.put("timestamp", System.currentTimeMillis() + "");

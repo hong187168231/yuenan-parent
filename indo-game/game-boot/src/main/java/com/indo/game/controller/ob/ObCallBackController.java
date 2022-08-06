@@ -65,11 +65,11 @@ public class ObCallBackController {
     @RequestMapping(value = "/transferstatus", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object transferStatus(ObCallBackParentReq obCallBackParentReq, HttpServletRequest request) {
+    public Object transferStatus(ObCallBackTransferstatusReq obCallBackTransferstatusReq, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("aeCallBack transferStatus回调,额度转换查询 params:{}", JSONObject.toJSONString(obCallBackParentReq));
-        Object object = obCallbackService.transferStatus(obCallBackParentReq, ip);
+        logger.info("aeCallBack transferStatus回调,额度转换查询 params:{}", JSONObject.toJSONString(obCallBackTransferstatusReq));
+        Object object = obCallbackService.transferStatus(obCallBackTransferstatusReq, ip);
         logger.info("aeCallBack transferStatus回调返回数据,额度转换查询 params:{}", object);
         return object;
     }
