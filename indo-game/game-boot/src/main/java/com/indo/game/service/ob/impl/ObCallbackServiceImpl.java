@@ -201,8 +201,8 @@ public class ObCallbackServiceImpl implements ObCallbackService {
         dataObject.put("code", "0000");
         dataObject.put("msg", "成功！");
         statusObject.put("balance", memBaseinfo.getBalance());
-        dataJson.put("data", dataObject);
-        return dataJson;
+        dataObject.put("data", statusObject);
+        return dataObject;
     }
 
     @Override
