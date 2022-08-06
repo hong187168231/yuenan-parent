@@ -22,6 +22,7 @@ import com.indo.game.service.cptopenmember.CptOpenMemberService;
 import com.indo.user.pojo.bo.MemTradingBO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
@@ -133,8 +134,6 @@ public class CmdCallbackServiceImpl implements CmdCallbackService {
             BigDecimal betAmount = paramJson.getBigDecimal("TransactionAmount");
             Long dateSent = params.getLong("dateSent");
 
-            GamePlatform gamePlatform = gameCommonService.getGamePlatformByParentName(OpenAPIProperties.CMD_PLATFORM_CODE).get(0);
-            GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
 
             // 查询订单
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(userName);
@@ -142,10 +141,11 @@ public class CmdCallbackServiceImpl implements CmdCallbackService {
                 return initFailureResponse(-97, "用户不存在");
             }
             BigDecimal balance = memBaseinfo.getBalance();
-            if (balance.compareTo(betAmount) < 0) {
+            if (balance.compareTo(betAmount.abs()) < 0) {
                 return initFailureResponse(-95, "玩家余额不足");
             }
-
+            GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.CMD_PLATFORM_CODE,OpenAPIProperties.CMD_PLATFORM_CODE);
+            GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
             Txns oldTxns = getTxns(gameParentPlatform, paySerialno);
             // 重复订单
             if (null != oldTxns) {
@@ -153,24 +153,22 @@ public class CmdCallbackServiceImpl implements CmdCallbackService {
             }
 
 
-            balance = balance.subtract(betAmount);
+            balance = balance.subtract(betAmount.abs());
             // 更新余额
-            gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
+            gameCommonService.updateUserBalance(memBaseinfo, betAmount.abs(), GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
 
             Txns txns = new Txns();
             //游戏商注单号
             txns.setPlatformTxId(paySerialno);
-
             //玩家 ID
             txns.setUserId(memBaseinfo.getAccount());
             //玩家货币代码
             txns.setCurrency(gameParentPlatform.getCurrencyType());
-//            txns.setOdds(kaCallbackPlayReq.getBetPerSelection());
-//            txns.setRoundId(cmdCallbackBetReq.getRound());
             //平台代码
             txns.setPlatform(gameParentPlatform.getPlatformCode());
-            //平台名称
+            //平台英文名称
             txns.setPlatformEnName(gameParentPlatform.getPlatformEnName());
+            //平台中文名称
             txns.setPlatformCnName(gameParentPlatform.getPlatformCnName());
             //平台游戏类型
             txns.setGameType(gameCategory.getGameType());
@@ -183,15 +181,16 @@ public class CmdCallbackServiceImpl implements CmdCallbackService {
             //游戏名称
             txns.setGameName(gamePlatform.getPlatformEnName());
             //下注金额
-            txns.setBetAmount(betAmount);
+            txns.setBetAmount(betAmount.abs());
             //游戏平台的下注项目
 //            txns.setBetType(cmdCallbackBetReq.getGame().toString());
             //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
-//            txns.setWinningAmount(winloseAmount);
+            txns.setWinningAmount(betAmount);
+            txns.setWinAmount(betAmount.abs());
             //玩家下注时间
             txns.setBetTime(DateUtils.formatByLong(dateSent, DateUtils.newFormat));
             //真实下注金额,需增加在玩家的金额
-            txns.setRealBetAmount(betAmount);
+            txns.setRealBetAmount(betAmount.abs());
             //真实返还金额,游戏赢分
 //            txns.setRealWinAmount(winloseAmount);
             //此交易是否是投注 true是投注 false 否
@@ -226,7 +225,7 @@ public class CmdCallbackServiceImpl implements CmdCallbackService {
             JSONObject jsonObject = initSuccessResponse(respJson);
             jsonObject.put("DateReceived", dateSent);
             jsonObject.put("Balance", balance);
-            return jsonObject;
+            return encryptResp(jsonObject);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return initFailureResponse(-999, e.getMessage());
@@ -254,7 +253,7 @@ public class CmdCallbackServiceImpl implements CmdCallbackService {
             String matchId = paramJson.getString("MatchID");
             JSONArray ticketDetails = paramJson.getJSONArray("TicketDetails");
 
-            GamePlatform gamePlatform = gameCommonService.getGamePlatformByParentName(OpenAPIProperties.CMD_PLATFORM_CODE).get(0);
+            GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.CMD_PLATFORM_CODE,OpenAPIProperties.CMD_PLATFORM_CODE);
             GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
             // 返回
             JSONArray respArr = new JSONArray();
@@ -274,7 +273,7 @@ public class CmdCallbackServiceImpl implements CmdCallbackService {
 
                 // 查询用户请求订单
                 Txns oldTxns = getTxns(platformGameParent, paySerialno);
-                if (null != oldTxns) {
+                if (null != oldTxns&&"Settle".equals(oldTxns.getMethod())) {
                     return initFailureResponse(-96, "该注单已承认");
                 }
 
@@ -289,37 +288,46 @@ public class CmdCallbackServiceImpl implements CmdCallbackService {
                     // 更新玩家余额
                     gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.SETTLE, TradingEnum.SPENDING);
                 }
-
+                //更新时间
+                String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
                 Txns txns = new Txns();
+                if(null!=oldTxns) {
+                    BeanUtils.copyProperties(oldTxns, txns);
+                    txns.setId(null);
+                    oldTxns.setStatus("Settle");
+                    oldTxns.setUpdateTime(dateStr);
+                    txnsMapper.updateById(oldTxns);
+                }else {
+
+                    //玩家货币代码
+                    txns.setCurrency(platformGameParent.getCurrencyType());
+                    //平台代码
+                    txns.setPlatform(platformGameParent.getPlatformCode());
+                    //平台英文名称
+                    txns.setPlatformEnName(platformGameParent.getPlatformEnName());
+                    //平台中文名称
+                    txns.setPlatformCnName(platformGameParent.getPlatformCnName());
+                    //平台游戏类型
+                    txns.setGameType(gameCategory.getGameType());
+                    //游戏分类ID
+                    txns.setCategoryId(gameCategory.getId());
+                    //游戏分类名称
+                    txns.setCategoryName(gameCategory.getGameName());
+                    //平台游戏代码
+                    txns.setGameCode(gamePlatform.getPlatformCode());
+                    //游戏名称
+                    txns.setGameName(gamePlatform.getPlatformEnName());
+                    //下注金额
+                    txns.setBetAmount(betAmount);
+
+                }
                 //游戏商注单号
                 txns.setPlatformTxId(paySerialno);
-
                 //玩家 ID
-                txns.setUserId(memBaseinfo.getAccount());;
-                //玩家货币代码
-                txns.setCurrency(platformGameParent.getCurrencyType());
-//            txns.setOdds(kaCallbackPlayReq.getBetPerSelection());
-//            txns.setRoundId(cmdCallbackBetReq.getRound());
-                //平台代码
-                txns.setPlatform(platformGameParent.getPlatformCode());
-                //平台名称
-                txns.setPlatformEnName(platformGameParent.getPlatformEnName());
-                txns.setPlatformCnName(platformGameParent.getPlatformCnName());
-                //平台游戏类型
-                txns.setGameType(gameCategory.getGameType());
-                //游戏分类ID
-                txns.setCategoryId(gameCategory.getId());
-                //游戏分类名称
-                txns.setCategoryName(gameCategory.getGameName());
-                //平台游戏代码
-                txns.setGameCode(gamePlatform.getPlatformCode());
-                //游戏名称
-                txns.setGameName(gamePlatform.getPlatformEnName());
+                txns.setUserId(memBaseinfo.getAccount());
                 //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
                 txns.setWinningAmount(betAmount);
                 txns.setWinAmount(betAmount);
-                //真实返还金额,游戏赢分
-                txns.setRealWinAmount(betAmount);
                 //辨认交易时间依据
                 txns.setTxTime(DateUtils.formatByLong(System.currentTimeMillis(), DateUtils.newFormat));
                 txns.setUpdateTime(DateUtils.formatByLong(System.currentTimeMillis(), DateUtils.newFormat));
@@ -338,9 +346,9 @@ public class CmdCallbackServiceImpl implements CmdCallbackService {
                 txns.setStatus("Running");
                 //余额
                 txns.setBalance(balance);
-                //更新时间
-                String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
+
                 txns.setUpdateTime(dateStr);
+                txns.setCreateTime(dateStr);
                 //投注 IP
                 txns.setBetIp(ip);//  string 是 投注 IP
                 txnsMapper.insert(txns);
@@ -358,7 +366,7 @@ public class CmdCallbackServiceImpl implements CmdCallbackService {
 
             JSONObject jsonObject = initSuccessResponse(respJson);
             jsonObject.put("DateReceived", dateSent);
-            return jsonObject;
+            return encryptResp(jsonObject);
 
 
         } catch (Exception e) {
@@ -377,8 +385,7 @@ public class CmdCallbackServiceImpl implements CmdCallbackService {
     private Txns getTxns(GameParentPlatform gameParentPlatform, String paySerialno) {
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
         wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet")
-                .or().eq(Txns::getMethod, "Cancel Bet")
-                .or().eq(Txns::getMethod, "Adjust Bet"));
+                .or().eq(Txns::getMethod, "Settle"));
         wrapper.eq(Txns::getStatus, "Running");
         wrapper.eq(Txns::getPlatformTxId, paySerialno);
         wrapper.eq(Txns::getPlatform, gameParentPlatform.getPlatformCode());
@@ -422,12 +429,12 @@ public class CmdCallbackServiceImpl implements CmdCallbackService {
      * @param description 错误描述
      * @return JSONObject
      */
-    private JSONObject initFailureResponse(Integer error, String description) {
+    private String initFailureResponse(Integer error, String description) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("StatusCode", error);
         jsonObject.put("StatusMessage", description);
         jsonObject.put("DateSent", System.currentTimeMillis());
-        return jsonObject;
+        return encryptResp(jsonObject);
     }
 
     private GameParentPlatform getGameParentPlatform() {
