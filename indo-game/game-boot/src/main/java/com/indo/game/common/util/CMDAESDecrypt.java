@@ -18,6 +18,10 @@ import java.security.Security;
  * CMD请求参数HASH解密
  */
 public class CMDAESDecrypt {
+    static {
+        //BouncyCastle是一个开源的加解密解决方案，主页在http://www.bouncycastle.org/
+        Security.addProvider(new BouncyCastleProvider());
+    }
     /**
      * 解密
      * @param data data
@@ -28,7 +32,7 @@ public class CMDAESDecrypt {
         try {
             // iv向量默认采用key反转
             String ivValue = new StringBuilder(key).reverse().toString();
-            Cipher cipher = Cipher.getInstance("AES/CBC/NoPadding");
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS7Padding");
             cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(key.getBytes(), "AES"),
                     new IvParameterSpec(ivValue.getBytes()));
             String decryptData = new String(cipher.doFinal(Base64.decodeBase64(data)));
@@ -61,7 +65,7 @@ public class CMDAESDecrypt {
     // Sample
     public static void main(String[] args) throws Exception {
 //        String encryptData = "jI11wfffPw1nlNQ9aTbeW1yrPHEWLgbkG0DR6jiEZ0s="; // $ { KEY }
-        String encryptData = "5SjjGztp5e4cBq0t2pzbJWmTu9SChsS7pdXZCVlfgH_hOW4LWDgBiHZuQqd1uQH56NZt_sRVWmR9C_oruA8NMN-6Wux09eW4YOQS-ak3MuxeEQkLYspZIPRQZy9fCdXBGQsGiUPQZ3OuuMEnjO55qFTndhNRUzapc_czT3trmg_YOGw3G2HysiEd62AhVPeLW24rVOI0XwG3ejTrgnSjIMbFnA0sGdlKNNawPpVhKg-jjVlVHadfhxXDd1upsHDb";
+        String encryptData = "mXJvA3INZxyh/smR7+LWpSRZL2jQMdMpzsUUOSoDs08whaZB+erSG30EGmm399CI";
 //        1401f25b871a838c05325e44329c63a0
         String key = "4023461570052130";
         String decryptStr = decrypt(encryptData, key);

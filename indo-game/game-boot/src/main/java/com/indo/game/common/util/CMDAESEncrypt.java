@@ -1,6 +1,5 @@
 package com.indo.game.common.util;
 
-import org.apache.commons.codec.binary.Base64;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import sun.misc.BASE64Encoder;
 
@@ -8,30 +7,30 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.Security;
+import java.util.Base64;
 
 /**
  * 加密
  */
 public class CMDAESEncrypt {
+    static {
+        //BouncyCastle是一个开源的加解密解决方案，主页在http://www.bouncycastle.org/
+        Security.addProvider(new BouncyCastleProvider());
+    }
     public static String encrypt(String data, String key){
         try {
+            SecretKeySpec keyspec = new SecretKeySpec(key.getBytes(), "AES");
             // iv向量默认采用key反转
             String iv = new StringBuilder(key).reverse().toString();
-            Cipher cipher = Cipher.getInstance("AES/CBC/NoPadding");
-            int blockSize = cipher.getBlockSize();
-            byte[] dataBytes = data.getBytes("UTF-8");
-            int plainTextLength = dataBytes.length;
-            if (plainTextLength % blockSize != 0) {
-                plainTextLength = plainTextLength + (blockSize - plainTextLength % blockSize);
-            }
-            byte[] plaintext = new byte[plainTextLength];
-            System.arraycopy(dataBytes, 0, plaintext, 0, dataBytes.length);
-            SecretKeySpec keyspec = new SecretKeySpec(key.getBytes(), "AES");
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS7Padding");
             IvParameterSpec ivspec = new IvParameterSpec(iv.getBytes());
             cipher.init(Cipher.ENCRYPT_MODE, keyspec, ivspec);
-            byte[] encrypted = cipher.doFinal(plaintext);
-            return Base64.encodeBase64URLSafeString(encrypted);
+            byte[] encrypted = cipher.doFinal(data.getBytes(StandardCharsets.UTF_8));
+            // Base64
+            java.util.Base64.Encoder encoder = Base64.getEncoder();
+            return encoder.encodeToString(encrypted);
         }catch (Exception e) {
             e.printStackTrace();
         }
@@ -42,7 +41,9 @@ public class CMDAESEncrypt {
     public static void main(String[] args) throws Exception {
         String encryptData = "{\"ActionId\":1000,\"SourceName\":\"swuserid\"}"; // $ { KEY }
         String key = "4023461570052130";
-//        System.out.println(encrypt(encryptData, key));
+        String encryptStr = encrypt(encryptData, key);
+        System.out.println("加密    "+encryptStr);
+        System.out.println("解密    "+CMDAESDecrypt.decrypt(encryptStr, key));
 //        String data2 = "{\"SourceName\":\"USER\",\"TransactionAmount\":-100.0,\"ReferenceNo\":\"HDP12345678\",\"ActionId\":1003}";
 //        System.out.println(encrypt(data2, key));
     }
