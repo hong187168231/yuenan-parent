@@ -129,7 +129,7 @@ public class DgCallbackServiceImpl implements DgCallbackService {
             }
             if (amount.compareTo(BigDecimal.ZERO) == 1) {//大于零
                 balance = balance.add(amount);
-                gameCommonService.updateUserBalance(memBaseinfo, amount, GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
+                gameCommonService.updateUserBalance(memBaseinfo, amount, GoldchangeEnum.PLACE_BET, TradingEnum.INCOME);
             }
             //游戏商注单号
             txns.setPlatformTxId(dgCallBackReq.getData());

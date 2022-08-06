@@ -93,7 +93,8 @@ public class PsCallbackServiceImpl implements PsCallbackService {
         }
         GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         BigDecimal balance = memBaseinfo.getBalance();
-        BigDecimal betAmount = new BigDecimal(psbetCallBackReq.getTotal_bet()).divide(new BigDecimal(100));
+//        BigDecimal betAmount = new BigDecimal(psbetCallBackReq.getTotal_bet()).divide(new BigDecimal(100));
+        BigDecimal betAmount = new BigDecimal(psbetCallBackReq.getTotal_bet());
         if (memBaseinfo.getBalance().compareTo(betAmount) == -1) {
             dataJson.put("status_code", "3");
             dataJson.put("message", "馀额不足");
@@ -148,6 +149,8 @@ public class PsCallbackServiceImpl implements PsCallbackService {
         txns.setGameName(gamePlatform.getPlatformEnName());
         //下注金额
         txns.setBetAmount(betAmount);
+        txns.setWinningAmount(betAmount.negate());
+        txns.setWinAmount(betAmount);
         //玩家下注时间
         txns.setBetTime(DateUtils.formatByString(psbetCallBackReq.getTs(), DateUtils.newFormat));
         //真实下注金额,需增加在玩家的金额
@@ -204,7 +207,8 @@ public class PsCallbackServiceImpl implements PsCallbackService {
         }
 //        BigDecimal money = new BigDecimal(psbetCallBackReq.getTotal_win()).subtract(new BigDecimal(psbetCallBackReq.getBonus_win()));
         BigDecimal money = new BigDecimal(psbetCallBackReq.getTotal_win());
-        BigDecimal winAmount = money.divide(new BigDecimal(100));
+//        BigDecimal winAmount = money.divide(new BigDecimal(100));
+        BigDecimal winAmount = money;
         BigDecimal balance = memBaseinfo.getBalance();
         balance = balance.add(winAmount);
         gameCommonService.updateUserBalance(memBaseinfo, winAmount, GoldchangeEnum.PLACE_BET, TradingEnum.INCOME);
@@ -217,6 +221,7 @@ public class PsCallbackServiceImpl implements PsCallbackService {
         txns.setPlatformTxId(psbetCallBackReq.getTxn_id());
         int resultTyep = 0;
         txns.setResultType(resultTyep);
+        txns.setWinningAmount(winAmount);
         txns.setWinAmount(winAmount);
         txns.setBalance(balance);
         txns.setStatus("Running");
@@ -262,6 +267,7 @@ public class PsCallbackServiceImpl implements PsCallbackService {
         BeanUtils.copyProperties(oldTxns, txns);
         //游戏商注单号
         txns.setPlatformTxId(psbetCallBackReq.getTxn_id());
+        txns.setWinningAmount(oldTxns.getAmount());
         //混合码
         txns.setBalance(balance);
         txns.setId(null);
@@ -297,7 +303,8 @@ public class PsCallbackServiceImpl implements PsCallbackService {
             return dataJson;
         }
         BigDecimal balance = memBaseinfo.getBalance();
-        BigDecimal amount = new BigDecimal(psbetCallBackReq.getBonus_reward()).divide(new BigDecimal(100));
+//        BigDecimal amount = new BigDecimal(psbetCallBackReq.getBonus_reward()).divide(new BigDecimal(100));
+        BigDecimal amount = new BigDecimal(psbetCallBackReq.getBonus_reward());
         balance = balance.add(amount);
         gameCommonService.updateUserBalance(memBaseinfo, amount, GoldchangeEnum.ACTIVITY_GIVE, TradingEnum.INCOME);
         String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
@@ -307,6 +314,7 @@ public class PsCallbackServiceImpl implements PsCallbackService {
         txns.setPlatformTxId(psbetCallBackReq.getTxn_id());
         //混合码
         txns.setRoundId(psbetCallBackReq.getTxn_id());
+        txns.setWinningAmount(amount);
         txns.setBalance(balance);
         txns.setMethod("Bonus");
         txns.setStatus("Running");
