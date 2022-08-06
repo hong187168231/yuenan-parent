@@ -31,7 +31,7 @@ public class CMDAESEncrypt {
             IvParameterSpec ivspec = new IvParameterSpec(iv.getBytes());
             cipher.init(Cipher.ENCRYPT_MODE, keyspec, ivspec);
             byte[] encrypted = cipher.doFinal(plaintext);
-            return CMDAESDecrypt.decrypt(Base64.encodeBase64URLSafeString(encrypted),key);
+            return Base64.encodeBase64URLSafeString(encrypted);
         }catch (Exception e) {
             e.printStackTrace();
         }

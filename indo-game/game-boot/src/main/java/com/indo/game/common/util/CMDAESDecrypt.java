@@ -68,7 +68,7 @@ public class CMDAESDecrypt {
         System.out.println("解密    "+decryptStr);
         // iv向量默认采用key反转
         String ivValue = new StringBuilder(key).reverse().toString();
-        String encryptStr = JDBAESEncrypt.encrypt(encryptData, key,ivValue);
+        String encryptStr = JDBAESEncrypt.encrypt(decryptStr, key,ivValue);
         System.out.println("加密    "+encryptStr);
         System.out.println("解密2    "+decrypt(encryptStr, key));
     }
