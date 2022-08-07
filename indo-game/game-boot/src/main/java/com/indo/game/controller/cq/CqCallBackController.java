@@ -62,12 +62,12 @@ public class CqCallBackController {
     @RequestMapping(value = "/callBack/transaction/game/bet", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object bet(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
+    public Object bet(CqBetCallBackReq cqApiRequestData, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
         String wtoken = request.getHeader("wtoken");
-        logger.info("cqCallBack  老虎機下注bet回调params:{},wtoken:{}", JSONObject.toJSONString(jsonObject), wtoken);
-        CqBetCallBackReq cqApiRequestData = JSONObject.toJavaObject(jsonObject,CqBetCallBackReq.class);
+        logger.info("cqCallBack  老虎機下注bet回调params:{},wtoken:{}", JSONObject.toJSONString(cqApiRequestData), wtoken);
+//        CqBetCallBackReq cqApiRequestData = JSONObject.toJavaObject(jsonObject,CqBetCallBackReq.class);
         Object object = cqCallbackService.cqBetCallback(cqApiRequestData, ip, wtoken);
         logger.info("cqCallBack  老虎機下注bet回调返回数据 params:{}", object);
         return object;
@@ -79,12 +79,12 @@ public class CqCallBackController {
     @RequestMapping(value = "/callBack/transaction/game/endround", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object endround(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
+    public Object endround(CqEndroundCallBackReq endroundDataCallBackReq, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
         String wtoken = request.getHeader("wtoken");
-        logger.info("cqCallBack  結束回合並統整該回合贏分endround回调params:{},wtoken:{}", JSONObject.toJSONString(jsonObject), wtoken);
-        CqEndroundCallBackReq endroundDataCallBackReq = JSONObject.toJavaObject(jsonObject,CqEndroundCallBackReq.class);
+        logger.info("cqCallBack  結束回合並統整該回合贏分endround回调params:{},wtoken:{}", JSONObject.toJSONString(endroundDataCallBackReq), wtoken);
+//        CqEndroundCallBackReq endroundDataCallBackReq = JSONObject.toJavaObject(jsonObject,CqEndroundCallBackReq.class);
         Object object = cqCallbackService.endround(endroundDataCallBackReq, ip, wtoken);
         logger.info("cqCallBack  結束回合並統整該回合贏分endround回调返回数据 params:{}", object);
         return object;
@@ -96,12 +96,12 @@ public class CqCallBackController {
     @RequestMapping(value = "/callBack/transaction/user/payoff", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object payOff(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
+    public Object payOff(CqBetCallBackReq cqApiRequestData, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
         String wtoken = request.getHeader("wtoken");
-        logger.info("cqCallBack  payOff回调,params:{},wtoken:{}", JSONObject.toJSONString(jsonObject), wtoken);
-        CqBetCallBackReq cqApiRequestData = JSONObject.toJavaObject(jsonObject,CqBetCallBackReq.class);
+        logger.info("cqCallBack  payOff回调,params:{},wtoken:{}", JSONObject.toJSONString(cqApiRequestData), wtoken);
+//        CqBetCallBackReq cqApiRequestData = JSONObject.toJavaObject(jsonObject,CqBetCallBackReq.class);
         Object object = cqCallbackService.cqPayOffCallback(cqApiRequestData, ip, wtoken);
         logger.info("cqCallBack  payOff回调返回数据 params:{}", object);
         return object;
@@ -113,12 +113,12 @@ public class CqCallBackController {
     @RequestMapping(value = "/callBack/transaction/game/bonus", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object bonus(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
+    public Object bonus(CqBetCallBackReq cqApiRequestData, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
         String wtoken = request.getHeader("wtoken");
-        logger.info("cqCallBack  bonus回调,params:{},wtoken:{}", JSONObject.toJSONString(jsonObject), wtoken);
-        CqBetCallBackReq cqApiRequestData = JSONObject.toJavaObject(jsonObject,CqBetCallBackReq.class);
+        logger.info("cqCallBack  bonus回调,params:{},wtoken:{}", JSONObject.toJSONString(cqApiRequestData), wtoken);
+//        CqBetCallBackReq cqApiRequestData = JSONObject.toJavaObject(jsonObject,CqBetCallBackReq.class);
         Object object = cqCallbackService.cqBonusCallback(cqApiRequestData, ip, wtoken);
         logger.info("cqCallBack  bonus回调返回数据 params:{}", object);
         return object;
@@ -131,12 +131,12 @@ public class CqCallBackController {
     @RequestMapping(value = "/callBack/transaction/game/credit", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object credit(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
+    public Object credit(CqBetCallBackReq cqApiRequestData, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
         String wtoken = request.getHeader("wtoken");
-        logger.info("cqCallBack  credit回调,params:{},wtoken:{}", JSONObject.toJSONString(jsonObject), wtoken);
-        CqBetCallBackReq cqApiRequestData = JSONObject.toJavaObject(jsonObject,CqBetCallBackReq.class);
+        logger.info("cqCallBack  credit回调,params:{},wtoken:{}", JSONObject.toJSONString(cqApiRequestData), wtoken);
+//        CqBetCallBackReq cqApiRequestData = JSONObject.toJavaObject(jsonObject,CqBetCallBackReq.class);
         Object object = cqCallbackService.cqCreditCallback(cqApiRequestData, ip, wtoken);
         logger.info("cqCallBack  credit回调返回数据 params:{}", object);
         return object;
@@ -148,12 +148,12 @@ public class CqCallBackController {
     @RequestMapping(value = "/callBack/transaction/game/debit", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object debit(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
+    public Object debit(CqBetCallBackReq cqApiRequestData, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
         String wtoken = request.getHeader("wtoken");
-        logger.info("cqCallBack  debit回调,params:{},wtoken:{}", JSONObject.toJSONString(jsonObject), wtoken);
-        CqBetCallBackReq cqApiRequestData = JSONObject.toJavaObject(jsonObject,CqBetCallBackReq.class);
+        logger.info("cqCallBack  debit回调,params:{},wtoken:{}", JSONObject.toJSONString(cqApiRequestData), wtoken);
+//        CqBetCallBackReq cqApiRequestData = JSONObject.toJavaObject(jsonObject,CqBetCallBackReq.class);
         Object object = cqCallbackService.cqDebitCallback(cqApiRequestData, ip, wtoken);
         logger.info("cqCallBack  debit回调返回数据 params:{}", object);
         return object;
@@ -166,12 +166,12 @@ public class CqCallBackController {
     @RequestMapping(value = "/callBack/transaction/game/rollin", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object rollin(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
+    public Object rollin(CqBetCallBackReq cqApiRequestData, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
         String wtoken = request.getHeader("wtoken");
-        logger.info("cqCallBack  rollin回调,params:{},wtoken:{}", JSONObject.toJSONString(jsonObject), wtoken);
-        CqBetCallBackReq cqApiRequestData = JSONObject.toJavaObject(jsonObject,CqBetCallBackReq.class);
+        logger.info("cqCallBack  rollin回调,params:{},wtoken:{}", JSONObject.toJSONString(cqApiRequestData), wtoken);
+//        CqBetCallBackReq cqApiRequestData = JSONObject.toJavaObject(jsonObject,CqBetCallBackReq.class);
         Object object = cqCallbackService.cqRollinCallback(cqApiRequestData, ip, wtoken);
         logger.info("cqCallBack  rollin回调返回数据 params:{}", object);
         return object;
