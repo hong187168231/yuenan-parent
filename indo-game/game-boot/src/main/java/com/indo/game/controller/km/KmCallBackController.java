@@ -37,9 +37,9 @@ public class KmCallBackController {
                              HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("kmCallBack getBalance 回调,下注params:{}", jsonObject);
+        logger.info("kmCallBack getBalance 回调,取得用户的余额params:{}", jsonObject);
         Object object = kmCallbackService.kmBalanceCallback(jsonObject, ip);
-        logger.info("kmCallBack getBalance 回调下注返回数据,取得用户的余额 params:{}", object);
+        logger.info("kmCallBack getBalance 回调返回数据,取得用户的余额 params:{}", object);
         return object;
     }
 
@@ -52,14 +52,14 @@ public class KmCallBackController {
     public Object debit(@RequestBody JSONObject jsonObject,
                            HttpServletRequest request) {
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("kmCallBack debit回调,params:{}", jsonObject, ip);
+        logger.info("kmCallBack debit扣款接口回调,params:{}", jsonObject, ip);
         Object object = kmCallbackService.kmDebitCallback(jsonObject, ip);
-        logger.info("kmCallBack debit回调返回数据, params:{}", object);
+        logger.info("kmCallBack debit扣款接口回调返回数据, params:{}", object);
         return object;
     }
 
     /**
-     * 扣款接口
+     * 加款接口
      */
     @RequestMapping(value = "/wallet/credit", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
@@ -67,9 +67,9 @@ public class KmCallBackController {
     public Object credit(@RequestBody JSONObject jsonObject,
                         HttpServletRequest request) {
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("kmCallBack credit回调,params:{}", jsonObject, ip);
+        logger.info("kmCallBack credit加款接口回调,params:{}", jsonObject, ip);
         Object object = kmCallbackService.kmCreditCallback(jsonObject, ip);
-        logger.info("kmCallBack credit回调返回数据, params:{}", object);
+        logger.info("kmCallBack credit加款接口回调返回数据, params:{}", object);
         return object;
     }
 
