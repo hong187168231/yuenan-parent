@@ -63,6 +63,7 @@ public class KaCallbackServiceImpl implements KaCallbackService {
             // 会员余额返回
             JSONObject jsonObject = initSuccessResponse();
             jsonObject.put("balance", getMultiplyBalance(memBaseinfo.getBalance()));
+//            jsonObject.put("balance", memBaseinfo.getBalance());
             jsonObject.put("currency", platformGameParent.getCurrencyType());
             jsonObject.put("playerId", memBaseinfo.getAccount());
             jsonObject.put("sessionId", commonReq.getSessionId());
@@ -98,13 +99,17 @@ public class KaCallbackServiceImpl implements KaCallbackService {
             // 下注金额
             BigDecimal betAmount = getDivideAmount(kaCallbackPlayReq.getBetAmount());
             BigDecimal freeWinAmount = getDivideAmount(kaCallbackPlayReq.getWinAmount());
+//            BigDecimal betAmount = BigDecimal.valueOf(kaCallbackPlayReq.getBetAmount());
+//            BigDecimal freeWinAmount = BigDecimal.valueOf(kaCallbackPlayReq.getWinAmount());
+            BigDecimal winAmount = freeWinAmount.subtract(betAmount);
             // 免费游戏
             if (kaCallbackPlayReq.getFreeGames()) {
-                kaCallbackPlayReq.setBetAmount(0L);
-                betAmount = BigDecimal.ZERO;
+//                kaCallbackPlayReq.setBetAmount(0L);
+//                betAmount = BigDecimal.ZERO;
                 if (freeWinAmount.compareTo(betAmount) > 0) {
+                    balance = balance.add(winAmount);
                     // 更新玩家余额
-                    gameCommonService.updateUserBalance(memBaseinfo, freeWinAmount, GoldchangeEnum.FREE_SPIN, TradingEnum.INCOME);
+                    gameCommonService.updateUserBalance(memBaseinfo, winAmount, GoldchangeEnum.FREE_SPIN, TradingEnum.INCOME);
                 }
             } else {
                 // 下注金额小于0
@@ -115,14 +120,18 @@ public class KaCallbackServiceImpl implements KaCallbackService {
                 if (balance.compareTo(betAmount) < 0) {
                     return initFailureResponse(200, "玩家没有足够余额以进行当前下注");
                 }
-                balance = balance.subtract(betAmount);
-
-                // 更新玩家余额
-                gameCommonService.updateUserBalance(memBaseinfo, freeWinAmount.subtract(betAmount),
-                        GoldchangeEnum.BETNSETTLE, TradingEnum.SPENDING);
+                if (winAmount.compareTo(BigDecimal.ZERO) != 0) {
+                    if (winAmount.compareTo(BigDecimal.ZERO) == 1) {
+                        balance = balance.add(winAmount);
+                        gameCommonService.updateUserBalance(memBaseinfo, winAmount, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
+                    }else {
+                        balance = balance.subtract(winAmount.abs());
+                        gameCommonService.updateUserBalance(memBaseinfo, winAmount.abs(), GoldchangeEnum.SETTLE, TradingEnum.SPENDING);
+                    }
+                }
 
             }
-            balance = balance.add(freeWinAmount);
+
 
             // 查询用户请求订单
             Txns oldTxns = getTxns(kaCallbackPlayReq.getTransactionId(), memBaseinfo.getId(), kaCallbackPlayReq.getRound());
@@ -168,7 +177,7 @@ public class KaCallbackServiceImpl implements KaCallbackService {
             //游戏平台的下注项目
             txns.setBetType(kaCallbackPlayReq.getGameId());
             //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
-            txns.setWinningAmount(freeWinAmount);
+            txns.setWinningAmount(winAmount);
             //玩家下注时间
             txns.setBetTime(DateUtils.formatByLong(kaCallbackPlayReq.getTimestamp(), DateUtils.newFormat));
             //真实下注金额,需增加在玩家的金额
@@ -213,6 +222,7 @@ public class KaCallbackServiceImpl implements KaCallbackService {
             // 会员余额返回
             JSONObject jsonObject = initSuccessResponse();
             jsonObject.put("balance", getMultiplyBalance(balance));
+//            jsonObject.put("balance", balance);
             jsonObject.put("currency", platformGameParent.getCurrencyType());
             jsonObject.put("playerId", memBaseinfo.getAccount());
             jsonObject.put("sessionId", kaCallbackPlayReq.getSessionId());
@@ -246,6 +256,7 @@ public class KaCallbackServiceImpl implements KaCallbackService {
             BigDecimal balance = memBaseinfo.getBalance();
             // 派奖金额
             BigDecimal amount = getDivideAmount(kaCallbackCreditReq.getAmount());
+//            BigDecimal amount = kaCallbackCreditReq.getAmount();
             // 派彩金额小于0
             if (amount.compareTo(BigDecimal.ZERO) < 0) {
                 return initFailureResponse(201, "派彩金额不能小0");
@@ -328,6 +339,7 @@ public class KaCallbackServiceImpl implements KaCallbackService {
             }
             JSONObject jsonObject = initSuccessResponse();
             jsonObject.put("balance", getMultiplyBalance(balance));
+//            jsonObject.put("balance", balance);
             jsonObject.put("currency", platformGameParent.getCurrencyType());
             jsonObject.put("playerId", memBaseinfo.getAccount());
             jsonObject.put("sessionId", kaCallbackCreditReq.getSessionId());
@@ -367,11 +379,18 @@ public class KaCallbackServiceImpl implements KaCallbackService {
             if ("Cancel Bet".equals(oldTxns.getStatus())) {
                 return initFailureResponse(401, "该笔交易不能注销");
             }
-
+            BigDecimal balance = memBaseinfo.getBalance();
             // 会员余额
-            BigDecimal cancelAmount = oldTxns.getBetAmount().subtract(oldTxns.getWinAmount());
-            BigDecimal balance = memBaseinfo.getBalance().add(cancelAmount);
-            gameCommonService.updateUserBalance(memBaseinfo, cancelAmount, GoldchangeEnum.CANCEL_BET, TradingEnum.INCOME);
+            BigDecimal cancelAmount = oldTxns.getWinningAmount();
+            if (cancelAmount.compareTo(BigDecimal.ZERO) != 0) {
+                if (cancelAmount.compareTo(BigDecimal.ZERO) == 1) {
+                    balance = balance.subtract(cancelAmount.abs());
+                    gameCommonService.updateUserBalance(memBaseinfo, cancelAmount.abs(), GoldchangeEnum.UNSETTLE, TradingEnum.SPENDING);
+                }else {
+                    balance = balance.add(cancelAmount);
+                    gameCommonService.updateUserBalance(memBaseinfo, cancelAmount, GoldchangeEnum.UNSETTLE, TradingEnum.INCOME);
+                }
+            }
             String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
 
             Txns txns = new Txns();
@@ -380,7 +399,7 @@ public class KaCallbackServiceImpl implements KaCallbackService {
             txns.setId(null);
             txns.setStatus("Running");
             txns.setRealWinAmount(cancelAmount);//真实返还金额
-            txns.setMethod("Adjust Bet");
+            txns.setMethod("Cancel Bet");
             txns.setCreateTime(dateStr);
             txnsMapper.insert(txns);
 
@@ -390,6 +409,7 @@ public class KaCallbackServiceImpl implements KaCallbackService {
 
             JSONObject jsonObject = initSuccessResponse();
             jsonObject.put("balance", getMultiplyBalance(balance));
+//            jsonObject.put("balance", balance);
             jsonObject.put("currency", platformGameParent.getCurrencyType());
             jsonObject.put("playerId", memBaseinfo.getAccount());
             jsonObject.put("sessionId", kaCallbackRevokeReq.getSessionId());
@@ -420,6 +440,7 @@ public class KaCallbackServiceImpl implements KaCallbackService {
             // 会员余额返回
             JSONObject jsonObject = initSuccessResponse();
             jsonObject.put("balance", getMultiplyBalance(memBaseinfo.getBalance()));
+//            jsonObject.put("balance", memBaseinfo.getBalance());
             jsonObject.put("currency", platformGameParent.getCurrencyType());
             jsonObject.put("playerId", memBaseinfo.getAccount());
             jsonObject.put("sessionId", kaCallbackCommonReq.getSessionId());

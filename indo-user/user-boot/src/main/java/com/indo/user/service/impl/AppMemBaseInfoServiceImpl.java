@@ -242,12 +242,15 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
      */
     public MemBaseinfo initRegister(MemBaseinfo memBaseinfo, MemInviteCode parentInviteCode) {
         Date nowDate = new Date();
-        memBaseinfo.setAccType(1);
+//        memBaseinfo.setAccType(1);
         memBaseinfo.setLastLoginTime(nowDate);
         this.baseMapper.insert(memBaseinfo);
         if (ObjectUtil.isNotNull(parentInviteCode)) {
             initMemAgent(memBaseinfo, parentInviteCode);
             initMemParentAgent(memBaseinfo, parentInviteCode);
+        }else{
+            //注册用户默认未填写邀请码为顶级代理
+            memBaseinfo.setAccType(2);
         }
         return memBaseinfo;
     }

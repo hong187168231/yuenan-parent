@@ -51,6 +51,7 @@ public class T9CallbackServiceImpl implements T9CallbackService {
         }
 
         JSONObject jsonObject = JSONObject.parseObject(callBackParam);
+        logger.info("t9_queryPoint t9Game paramJson:{}, ip:{}", JSONObject.toJSONString(jsonObject), ip);
         String playerID = jsonObject.getString("playerID");
         // 查询玩家是否存在
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(playerID);
@@ -74,7 +75,7 @@ public class T9CallbackServiceImpl implements T9CallbackService {
     // 提取点数
     @Override
     public Object withdrawal(String callBackParam, String ip) {
-        logger.info("t9_withdrawal t9Game paramJson:{}, ip:{}", callBackParam, ip);
+
         GameParentPlatform platformGameParent = getGameParentPlatform();
 
         // 校验IP
@@ -82,6 +83,7 @@ public class T9CallbackServiceImpl implements T9CallbackService {
             return initFailureResponse(70006, "No authorized to access.");
         }
         JSONObject jsonObject = JSONObject.parseObject(callBackParam);
+        logger.info("t9_withdrawal t9Game paramJson:{}, ip:{}", JSONObject.toJSONString(jsonObject), ip);
         String paySerialno = jsonObject.getString("paySerialno");   // 交易序号
         String playerID = jsonObject.getString("playerID");  // 玩家账号
         BigDecimal pointAmount = jsonObject.getBigDecimal("pointAmount");  // 提取金额
@@ -95,7 +97,7 @@ public class T9CallbackServiceImpl implements T9CallbackService {
         try {
             BigDecimal balance = memBaseinfo.getBalance();
 
-            if (memBaseinfo.getBalance().compareTo(balance) < 0) {
+            if (memBaseinfo.getBalance().compareTo(pointAmount) < 0) {
                 return initFailureResponse(1, "玩家余额不足");
             }
 
@@ -104,12 +106,12 @@ public class T9CallbackServiceImpl implements T9CallbackService {
             if (null != oldTxns) {
                 return initFailureResponse(70008, "游戏平台交易序号(paySerialno)已存在");
             }
-
+            balance = balance.subtract(pointAmount);
             // 更新余额
             gameCommonService.updateUserBalance(memBaseinfo, pointAmount, GoldchangeEnum.DSFYXZZ, TradingEnum.SPENDING);
 
             // 生成订单数据
-            Txns txns = getInitTxns(platformGameParent, paySerialno, playerID, pointAmount, balance, ip, "Settle");
+            Txns txns = getInitTxns(platformGameParent, paySerialno, playerID, pointAmount, balance, ip, "Place Bet");
             int num = txnsMapper.insert(txns);
             if (num <= 0) {
                 return initFailureResponse(70004, "会员余额不足");
@@ -132,7 +134,7 @@ public class T9CallbackServiceImpl implements T9CallbackService {
     // 存入点数
     @Override
     public Object deposit(String callBackParam, String ip) {
-        logger.info("t9_deposit t9Game paramJson:{}, ip:{}", callBackParam, ip);
+
         GameParentPlatform platformGameParent = getGameParentPlatform();
 
         // 校验IP
@@ -141,6 +143,7 @@ public class T9CallbackServiceImpl implements T9CallbackService {
         }
 
         JSONObject jsonObject = JSONObject.parseObject(callBackParam);
+        logger.info("t9_deposit t9Game paramJson:{}, ip:{}", JSONObject.toJSONString(jsonObject), ip);
         String paySerialno = jsonObject.getString("paySerialno");   // 交易序号
         String playerID = jsonObject.getString("playerID");  // 玩家账号
         BigDecimal pointAmount = jsonObject.getBigDecimal("pointAmount");  // 提取金额
@@ -152,6 +155,7 @@ public class T9CallbackServiceImpl implements T9CallbackService {
         }
         try {
             BigDecimal balance = memBaseinfo.getBalance();
+            balance = balance.add(pointAmount);
             // 更新余额
             gameCommonService.updateUserBalance(memBaseinfo, pointAmount, GoldchangeEnum.DSFYXZZ, TradingEnum.INCOME);
 
@@ -193,6 +197,7 @@ public class T9CallbackServiceImpl implements T9CallbackService {
         }
 
         JSONObject jsonObject = JSONObject.parseObject(callBackParam);
+        logger.info("t9_canceltransfer t9Game paramJson:{}, ip:{}", JSONObject.toJSONString(jsonObject), ip);
         String paySerialno = jsonObject.getString("paySerialno");   // 交易序号
 
         // 查询订单
@@ -313,6 +318,12 @@ public class T9CallbackServiceImpl implements T9CallbackService {
         txns.setGameName(gamePlatform.getPlatformEnName());
         //下注金额
         txns.setBetAmount(pointAmount);
+        if("Place Bet".equals(method)){
+            txns.setWinningAmount(pointAmount.negate());
+        }else {
+            txns.setWinningAmount(pointAmount);
+        }
+        txns.setWinAmount(pointAmount);
         //创建时间
         String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
         //玩家下注时间

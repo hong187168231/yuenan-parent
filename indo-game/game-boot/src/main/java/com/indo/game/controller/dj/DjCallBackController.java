@@ -30,7 +30,7 @@ public class DjCallBackController {
     /**
      * 获取余额
      */
-    @RequestMapping(value = "/get_balance.aspx", method = RequestMethod.GET,produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/Balance", method = RequestMethod.GET,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object getBalance(DjCallBackParentReq djCallBackParentReq, HttpServletRequest request) {

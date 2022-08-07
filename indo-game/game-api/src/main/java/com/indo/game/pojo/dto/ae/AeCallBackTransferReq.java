@@ -27,15 +27,15 @@ public class AeCallBackTransferReq extends AeCallBackParentReq {
     /**
      * 投注金额 (仅当txnTypeId = 100 (Bet)会传此栏位)
      */
-    private Double betAmount;
+    private BigDecimal betAmount;
     /**
      * 中奖金额 (仅当txnTypeId = 100 (Bet)会传此栏位)
      */
-    private Double winAmount;
+    private BigDecimal winAmount;
     /**
      * 转账金额，支持 2 位小数 (负数为扣款、正数为存款)
      */
-    private Double amount;
+    private BigDecimal amount;
     /**
      * 投注时间
      */

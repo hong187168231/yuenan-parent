@@ -3,6 +3,8 @@ package com.indo.game.pojo.dto.ob;
 
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @Data
 public class ObCallBackParentReq {
     /**
@@ -24,7 +26,7 @@ public class ObCallBackParentReq {
     /**
      * Double类型金额
      */
-    private String amount;
+    private BigDecimal amount;
 
     /**
      * 账变类型(1加款,2扣款)

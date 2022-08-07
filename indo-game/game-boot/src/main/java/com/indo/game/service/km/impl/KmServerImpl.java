@@ -132,7 +132,7 @@ public class KmServerImpl implements KmService {
 
     private JSONObject gameToken(LoginInfo loginUser, GameParentPlatform platformGameParent, String ip) {
         Map<String, String> map = new HashMap<>();
-        map.put("ipaddress", ip);
+        map.put("ipaddress", OpenAPIProperties.PROXY_HOST_NAME);
         map.put("username", loginUser.getAccount());
         map.put("userid", loginUser.getAccount());
         map.put("lang", platformGameParent.getLanguageType());
@@ -171,6 +171,9 @@ public class KmServerImpl implements KmService {
             logger.error("kmLog  logout请求 url:{},params:{},", builder.toString(),map);
             apiResponseData = commonRequest(builder.toString(), map, loginUser.getId().intValue(), "logout");
             logger.error("kmLog  logout返回 apiResponseData:{},", JSONObject.toJSONString(apiResponseData));
+            if(null==apiResponseData){
+                return Result.failed("g100104", "网络繁忙，请稍后重试！");
+            }
             if (apiResponseData.getBoolean("success")) {
                 return Result.success();
             }else {

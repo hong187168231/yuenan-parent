@@ -107,14 +107,14 @@ public class AeCallbackServiceImpl implements AeCallbackService {
             }
 
             //进行秘钥
-            StringBuilder builder = new StringBuilder();
-            builder.append(aeApiRequestData.getMerchantId()).append(aeApiRequestData.getCurrentTime());
-            builder.append(aeApiRequestData.getAccountId()).append(aeApiRequestData.getCurrency());
-            builder.append(aeApiRequestData.getTxnId()).append(aeApiRequestData.getTxnTypeId());
-            builder.append(aeApiRequestData.getGameId());
-            builder.append(Base64.getEncoder().encodeToString(OpenAPIProperties.AE_MERCHANT_KEY.getBytes()));
-            String sign = MD5.md5(builder.toString());
-            if (aeApiRequestData.getSign().equalsIgnoreCase(sign)) {
+//            StringBuilder builder = new StringBuilder();
+//            builder.append(aeApiRequestData.getMerchantId()).append(aeApiRequestData.getCurrentTime());
+//            builder.append(aeApiRequestData.getAccountId()).append(aeApiRequestData.getCurrency());
+//            builder.append(aeApiRequestData.getTxnId()).append(aeApiRequestData.getTxnTypeId());
+//            builder.append(aeApiRequestData.getGameId());
+//            builder.append(Base64.getEncoder().encodeToString(OpenAPIProperties.AE_MERCHANT_KEY.getBytes()));
+//            String sign = MD5.md5(builder.toString());
+//            if (aeApiRequestData.getSign().equalsIgnoreCase(sign)) {
                 //Bet(100), Adjust(200), LuckyDraw(300), Tournament(400)
                 if (aeApiRequestData.getTxnTypeId() == 100) {
                     //下注及直接结算
@@ -126,11 +126,11 @@ public class AeCallbackServiceImpl implements AeCallbackService {
                     //彩金
                     return luckyDraw(aeApiRequestData, memBaseinfo);
                 }
-            } else {
-                callBacekFail.setCode("9200");
-                callBacekFail.setMsg("MD5验证失败");
-                return JSONObject.toJSON(callBacekFail);
-            }
+//            } else {
+//                callBacekFail.setCode("9200");
+//                callBacekFail.setMsg("MD5验证失败");
+//                return JSONObject.toJSON(callBacekFail);
+//            }
         } catch (Exception e) {
             logger.error("aeTransfer error", e);
             e.printStackTrace();
@@ -143,7 +143,7 @@ public class AeCallbackServiceImpl implements AeCallbackService {
 
     private Object luckyDraw(AeCallBackTransferReq aeApiRequestData, MemTradingBO memBaseinfo) {
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Txns::getMethod, "Give");
+        wrapper.eq(Txns::getMethod, "Bonus");
         wrapper.eq(Txns::getStatus, "Running");
         wrapper.eq(Txns::getPromotionTxId, aeApiRequestData.getTxnId());
 //        wrapper.eq(Txns::getUserId, memBaseinfo.getAccount());
@@ -155,14 +155,14 @@ public class AeCallbackServiceImpl implements AeCallbackService {
             return JSONObject.toJSON(callBacekFail);
         }
         BigDecimal balance = memBaseinfo.getBalance();
-        BigDecimal amount = BigDecimal.valueOf(aeApiRequestData.getAmount());
+        BigDecimal amount = aeApiRequestData.getAmount();
         balance = balance.add(amount);
         gameCommonService.updateUserBalance(memBaseinfo, amount, GoldchangeEnum.ACTIVITY_GIVE, TradingEnum.INCOME);
         String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
         Txns txns = new Txns();
         BeanUtils.copyProperties(oldTxns, txns);
         txns.setBalance(balance);
-        txns.setMethod("Give");
+        txns.setMethod("Bonus");
         txns.setStatus("Running");
         txns.setCreateTime(dateStr);
         int number = txnsMapper.insert(txns);
@@ -206,7 +206,7 @@ public class AeCallbackServiceImpl implements AeCallbackService {
 
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Txns::getPlatformTxId, aeApiRequestData.getTxnId());
-        wrapper.eq(Txns::getPlatform, aeApiRequestData.getMerchantId());
+        wrapper.eq(Txns::getPlatform, OpenAPIProperties.AE_PLATFORM_CODE);
 //        wrapper.eq(Txns::getUserId, userId);
         Txns oldTxns = txnsMapper.selectOne(wrapper);
         if (null == oldTxns) {
@@ -222,7 +222,7 @@ public class AeCallbackServiceImpl implements AeCallbackService {
         AeGetBalanceResp data = new AeGetBalanceResp();
         data.setBalance(oldTxns.getBalance());
         data.setCurrency(aeApiRequestData.getCurrency());
-        data.setAmount(new BigDecimal(aeApiRequestData.getAmount()));
+        data.setAmount(aeApiRequestData.getAmount());
         data.setAccountId(aeApiRequestData.getAccountId());
         data.setTxnId(aeApiRequestData.getTxnId());
         data.setBonusBalance(new BigDecimal(0));
@@ -241,7 +241,10 @@ public class AeCallbackServiceImpl implements AeCallbackService {
         GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(aeApiRequestData.getGameId(),gameParentPlatform.getPlatformCode());
         GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         BigDecimal balance = memBaseinfo.getBalance();
-        BigDecimal betAmount = new BigDecimal(aeApiRequestData.getBetAmount());
+        BigDecimal betAmount = aeApiRequestData.getBetAmount();
+        BigDecimal winAmount = aeApiRequestData.getWinAmount();
+        BigDecimal amount = winAmount.subtract(betAmount);
+;
         if (memBaseinfo.getBalance().compareTo(betAmount) == -1) {
             AeCallBackRespFail callBacekFail = new AeCallBackRespFail();
             callBacekFail.setCode("1018");
@@ -249,10 +252,10 @@ public class AeCallbackServiceImpl implements AeCallbackService {
             return JSONObject.toJSON(callBacekFail);
         }
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
-        wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Adjust Bet"));
+        wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Settle"));
         wrapper.eq(Txns::getStatus, "Running");
         wrapper.eq(Txns::getPlatformTxId, aeApiRequestData.getTxnId());
-        wrapper.eq(Txns::getPlatform, aeApiRequestData.getMerchantId());
+        wrapper.eq(Txns::getPlatform, OpenAPIProperties.AE_PLATFORM_CODE);
 //        wrapper.eq(Txns::getUserId, userId);
         Txns oldTxns = txnsMapper.selectOne(wrapper);
         if (null != oldTxns) {
@@ -261,26 +264,23 @@ public class AeCallbackServiceImpl implements AeCallbackService {
                 callBacekFail.setCode("1043");
                 callBacekFail.setMsg("Bet has canceled");
                 return JSONObject.toJSON(callBacekFail);
-            } else {
-                AeCallBackRespFail callBacekFail = new AeCallBackRespFail();
-                callBacekFail.setCode("1038");
-                callBacekFail.setMsg("Duplicate transaction.");
-                return JSONObject.toJSON(callBacekFail);
+            } 
+        }
+        if (amount.compareTo(BigDecimal.ZERO) != 0) {
+            if (amount.compareTo(BigDecimal.ZERO) == 1) {//赢
+                balance = balance.add(amount);
+                gameCommonService.updateUserBalance(memBaseinfo, amount, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
+            }else {
+                if (memBaseinfo.getBalance().compareTo(amount.abs()) == -1) {
+                    AeCallBackRespFail callBacekFail = new AeCallBackRespFail();
+                    callBacekFail.setCode("1201");
+                    callBacekFail.setMsg("钱包余额过低");
+                    return JSONObject.toJSON(callBacekFail);
+                }
+                balance = balance.subtract(amount.abs());
+                gameCommonService.updateUserBalance(memBaseinfo, amount.abs(), GoldchangeEnum.SETTLE, TradingEnum.SPENDING);
             }
         }
-
-        if (new BigDecimal(aeApiRequestData.getWinAmount()).compareTo(BigDecimal.ZERO) == 1) {//赢
-            balance = balance.add(new BigDecimal(aeApiRequestData.getWinAmount()));
-            gameCommonService.updateUserBalance(memBaseinfo, new BigDecimal(aeApiRequestData.getWinAmount()), GoldchangeEnum.PLACE_BET, TradingEnum.INCOME);
-        }
-        if (memBaseinfo.getBalance().compareTo(betAmount.abs()) == -1) {
-            AeCallBackRespFail callBacekFail = new AeCallBackRespFail();
-            callBacekFail.setCode("1201");
-            callBacekFail.setMsg("钱包余额过低");
-            return JSONObject.toJSON(callBacekFail);
-        }
-        balance = balance.subtract(betAmount.abs());
-        gameCommonService.updateUserBalance(memBaseinfo, betAmount.abs(), GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
 
         Txns txns = new Txns();
         //游戏商注单号
@@ -307,26 +307,27 @@ public class AeCallbackServiceImpl implements AeCallbackService {
         //游戏名称
         txns.setGameName(gamePlatform.getPlatformEnName());
         //下注金额
-        txns.setBetAmount(new BigDecimal(aeApiRequestData.getBetAmount()));
+        txns.setBetAmount(betAmount);
         //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
-        txns.setWinningAmount(new BigDecimal(aeApiRequestData.getWinAmount()));
+        txns.setWinningAmount(amount);
+        txns.setWinAmount(amount);
         //玩家下注时间
         txns.setBetTime(DateUtils.format(aeApiRequestData.getBetTime(), DateUtils.newFormat));
         //真实下注金额,需增加在玩家的金额
-        txns.setRealBetAmount(new BigDecimal(aeApiRequestData.getAmount()));
+        txns.setRealBetAmount(betAmount);
         //真实返还金额,游戏赢分
-        txns.setRealWinAmount(new BigDecimal(aeApiRequestData.getWinAmount()));
+        txns.setRealWinAmount(winAmount);
         //返还金额 (包含下注金额)
         //赌注的结果 : 赢:0,输:1,平手:2
         int resultTyep;
-        if (new BigDecimal(aeApiRequestData.getWinAmount()).compareTo(BigDecimal.ZERO) == 1) {
+        if (winAmount.compareTo(BigDecimal.ZERO) == 1) {
             resultTyep = 0;
         } else {
             resultTyep = 1;
         }
         txns.setResultType(resultTyep);
         //有效投注金额 或 投注面值
-        txns.setTurnover(new BigDecimal(aeApiRequestData.getAmount()));
+        txns.setTurnover(aeApiRequestData.getAmount());
         //辨认交易时间依据
         txns.setTxTime(null != aeApiRequestData.getBetTime() ? DateUtils.format(aeApiRequestData.getBetTime(), DateUtils.newFormat) : "");
         //操作名称
@@ -339,10 +340,6 @@ public class AeCallbackServiceImpl implements AeCallbackService {
         txns.setCreateTime(dateStr);
         //投注 IP
         txns.setBetIp(ip);//  string 是 投注 IP
-        if (oldTxns != null) {
-            txns.setStatus("Settle");
-            txnsMapper.updateById(oldTxns);
-        }
         int num = txnsMapper.insert(txns);
         if (num <= 0) {
             AeCallBackRespFail callBacekFail = new AeCallBackRespFail();
@@ -369,7 +366,7 @@ public class AeCallbackServiceImpl implements AeCallbackService {
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Txns::getStatus, "Running");
         wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Adjust Bet"));
-        wrapper.eq(Txns::getPlatform, aeApiRequestData.getMerchantId());
+        wrapper.eq(Txns::getPlatform, OpenAPIProperties.AE_PLATFORM_CODE);
         wrapper.eq(Txns::getPlatformTxId, aeApiRequestData.getSourceTxnId());
 //        wrapper.eq(Txns::getUserId, memBaseinfo.getId());
         Txns oldTxns = txnsMapper.selectOne(wrapper);
@@ -385,7 +382,7 @@ public class AeCallbackServiceImpl implements AeCallbackService {
             return JSONObject.toJSON(callBacekFail);
         }
 
-        BigDecimal realWinAmount = BigDecimal.valueOf(Double.valueOf(aeApiRequestData.getAmount()));
+        BigDecimal realWinAmount = aeApiRequestData.getAmount();
         balance = balance.add(realWinAmount);
         gameCommonService.updateUserBalance(memBaseinfo, realWinAmount, GoldchangeEnum.ADJUST_BET, TradingEnum.INCOME);
         String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);

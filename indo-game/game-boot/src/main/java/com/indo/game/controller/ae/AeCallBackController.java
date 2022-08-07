@@ -52,10 +52,10 @@ public class AeCallBackController {
     public Object transfer(@RequestBody JSONObject jsonObject , HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("aeCallBack transfer 回调,取得用户的余额 params:{} IP:{}", JSONObject.toJSONString(jsonObject),ip);
+        logger.info("aeCallBack transfer 回调,额度转换 params:{} IP:{}", JSONObject.toJSONString(jsonObject),ip);
         AeCallBackTransferReq aeApiRequestData = JSONObject.toJavaObject(jsonObject,AeCallBackTransferReq.class);
         Object object = aeCallbackService.aeTransfer(aeApiRequestData, ip);
-        logger.info("aeCallBack transfer 回调返回数据,取得用户的余额 params:{}", object);
+        logger.info("aeCallBack transfer 回调返回数据,额度转换 params:{}", object);
         return object;
     }
 
@@ -68,10 +68,10 @@ public class AeCallBackController {
     public Object query(@RequestBody JSONObject jsonObject , HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("aeCallBack query 回调,取得用户的余额 params:{} IP:{}", JSONObject.toJSONString(jsonObject),ip);
+        logger.info("aeCallBack query 回调,额度转换查询 params:{} IP:{}", JSONObject.toJSONString(jsonObject),ip);
         AeCallBackTransferReq aeApiRequestData = JSONObject.toJavaObject(jsonObject,AeCallBackTransferReq.class);
         Object object = aeCallbackService.query(aeApiRequestData, ip);
-        logger.info("aeCallBack  query 回调返回数据,取得用户的余额 params:{}", object);
+        logger.info("aeCallBack  query 回调返回数据,额度转换查询 params:{}", object);
         return object;
     }
 }

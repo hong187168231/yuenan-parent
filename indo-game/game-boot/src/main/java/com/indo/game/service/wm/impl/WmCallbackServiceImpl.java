@@ -99,6 +99,7 @@ public class WmCallbackServiceImpl implements WmCallbackService {
             String paySerialno = wmCallBackReq.getDealid();
             String dateSent = wmCallBackReq.getRequestDate();
             BigDecimal betAmount = wmCallBackReq.getMoney();
+            BigDecimal payout =	wmCallBackReq.getPayout();//decimal	派彩金额(重对时發送)
             // 游戏项目_期数_局号_加扣点类型 例:101_112139999_88_2
             String type = wmCallBackReq.getType();
             String gtype = wmCallBackReq.getGtype();
@@ -118,21 +119,22 @@ public class WmCallbackServiceImpl implements WmCallbackService {
             BigDecimal balance = memBaseinfo.getBalance();
             Txns txns = new Txns();
             // 重复订单
-            if (null != oldTxns) {
+            if (null != oldTxns && "Place Bet".equals(oldTxns.getMethod())) {
                 method = "Settle";
-                BigDecimal winningAmount = BigDecimal.ZERO;
                 if (code.equals("2") || code.equals("4")) {// 扣钱
-                    if (balance.compareTo(betAmount) < 0) {
+                    if (balance.compareTo(betAmount.abs()) < 0) {
                         return initFailureResponse(10805, "转账失败，该账号余额不足");
                     }
-                    winningAmount = betAmount.negate();
+                    method = "Place Bet";
                     balance = balance.subtract(betAmount.abs());
-                    gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.SETTLE, TradingEnum.SPENDING);
+                    gameCommonService.updateUserBalance(memBaseinfo, betAmount.abs(), GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
 
 
-                } else if (code.equals("1") || code.equals("3")|| code.equals("5")) {
-                    balance = balance.add(betAmount.abs());
-                    winningAmount = betAmount.abs();
+                } else if (code.equals("0") || code.equals("1") || code.equals("3")|| code.equals("5")) {
+                    if(null!=payout&&payout.compareTo(BigDecimal.ZERO)!=0){
+                        betAmount = betAmount.add(payout);
+                    }
+                    balance = balance.add(betAmount);
                     gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
                 }
                 BeanUtils.copyProperties(oldTxns, txns);
@@ -142,7 +144,7 @@ public class WmCallbackServiceImpl implements WmCallbackService {
                 //操作名称
                 txns.setMethod(method);
                 txns.setStatus("Running");
-                txns.setWinningAmount(winningAmount);
+                txns.setWinningAmount(betAmount);
                 txns.setWinAmount(betAmount);
                 //余额
                 txns.setBalance(balance);
@@ -159,20 +161,21 @@ public class WmCallbackServiceImpl implements WmCallbackService {
                 oldTxns.setStatus(method);
                 txnsMapper.updateById(oldTxns);
             }else {
-                BigDecimal winningAmount = BigDecimal.ZERO;
                 if (code.equals("2") || code.equals("4")) {// 扣钱
-                    if (balance.compareTo(betAmount) < 0) {
+                    if (balance.compareTo(betAmount.abs()) < 0) {
                         return initFailureResponse(10805, "转账失败，该账号余额不足");
                     }
-                    winningAmount = betAmount.negate();
+                    method = "Place Bet";
                     balance = balance.subtract(betAmount.abs());
-                    gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
+                    gameCommonService.updateUserBalance(memBaseinfo, betAmount.abs(), GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
 
 
-                } else if (code.equals("1") || code.equals("3")|| code.equals("5")) {
-                    balance = balance.add(betAmount.abs());
-                    winningAmount = betAmount.abs();
-                    gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.PLACE_BET, TradingEnum.INCOME);
+                } else if (code.equals("0") || code.equals("1") || code.equals("3")|| code.equals("5")) {
+                    if(null!=payout&&payout.compareTo(BigDecimal.ZERO)!=0){
+                        betAmount = betAmount.add(payout);
+                    }
+                    balance = balance.add(betAmount);
+                    gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
                 }
                 //游戏商注单号
                 txns.setPlatformTxId(paySerialno);
@@ -204,12 +207,13 @@ public class WmCallbackServiceImpl implements WmCallbackService {
                 txns.setBetType(type);
                 //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
                 txns.setWinningAmount(betAmount);
+                txns.setWinAmount(betAmount);
                 //玩家下注时间
                 txns.setBetTime(DateUtils.formatByString(dateSent, DateUtils.newFormat));
                 //真实下注金额,需增加在玩家的金额
                 txns.setRealBetAmount(betAmount);
                 //真实返还金额,游戏赢分
-//            txns.setRealWinAmount(winloseAmount);
+            txns.setRealWinAmount(betAmount);
                 //此交易是否是投注 true是投注 false 否
                 txns.setBet(true);
                 //返还金额 (包含下注金额)
@@ -281,7 +285,7 @@ public class WmCallbackServiceImpl implements WmCallbackService {
             String gtype = wmCallBackReq.getGtype();
             // 加扣点类型 :加点 2:扣点
             String code = wmCallBackReq.getCode();
-            BigDecimal balance = memBaseinfo.getBalance().add(betAmount.abs());
+            BigDecimal balance = memBaseinfo.getBalance();
 
             Txns oldTxns = getTxns(gameParentPlatform, paySerialno);
             // 下注回滚
@@ -290,11 +294,14 @@ public class WmCallbackServiceImpl implements WmCallbackService {
                 if (null == oldTxns) {
                     return initFailureResponse(900, "该注单不存在");
                 }
-                if (oldTxns.getBetAmount().compareTo(betAmount) != 0) {
+                if (oldTxns.getBetAmount().compareTo(betAmount.abs()) != 0) {
                     return initFailureResponse(900, "取消金额和下注金额不一致");
+                }else {
+                    balance = balance.add(betAmount.abs());
+                    // 更新余额
+                    gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.CANCEL_BET, TradingEnum.INCOME);
                 }
-                // 更新余额
-                gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.CANCEL_BET, TradingEnum.INCOME);
+
 
             } else if (code.equals(1)) {
                 // 派彩回滚
@@ -304,8 +311,9 @@ public class WmCallbackServiceImpl implements WmCallbackService {
                 if (oldTxns.getBetAmount().compareTo(betAmount) != 0) {
                     return initFailureResponse(900, "取消金额和下注金额不一致");
                 }
+                balance = balance.subtract(betAmount);
                 // 更新余额
-                gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.UNSETTLE, TradingEnum.INCOME);
+                gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.UNSETTLE, TradingEnum.SPENDING);
 
             }
 
@@ -347,6 +355,7 @@ public class WmCallbackServiceImpl implements WmCallbackService {
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
         wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet")
                 .or().eq(Txns::getMethod, "Cancel Bet")
+                .or().eq(Txns::getMethod, "Bonus")
                 .or().eq(Txns::getMethod, "Settle"));
         wrapper.eq(Txns::getStatus, "Running");
         wrapper.eq(Txns::getPlatformTxId, paySerialno);

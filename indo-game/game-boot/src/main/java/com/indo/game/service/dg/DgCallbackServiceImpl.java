@@ -86,20 +86,24 @@ public class DgCallbackServiceImpl implements DgCallbackService {
         wrapper.eq(Txns::getPlatformTxId, dgCallBackReq.getData());
         
         Txns oldTxns = txnsMapper.selectOne(wrapper);
-        if (null != oldTxns) {
+        if (null != oldTxns&&"Settle".equals(oldTxns.getMethod())) {
             dataJson.put("codeId", "98");
             dataJson.put("message", "操作失败！");
             return dataJson;
         }
 
-
+        BigDecimal amount = dgMemberCallBackReq.getAmount();
 //创建时间
         String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
         Txns txns = new Txns();
-        if (oldTxns != null) {
-            if (dgMemberCallBackReq.getAmount().compareTo(BigDecimal.ZERO) != 0) {
-                balance = balance.add(dgMemberCallBackReq.getAmount());
-                gameCommonService.updateUserBalance(memBaseinfo, dgMemberCallBackReq.getAmount(), GoldchangeEnum.SETTLE, TradingEnum.INCOME);
+        if (oldTxns != null&&!"Cancel Bet".equals(oldTxns.getMethod())) {
+            if (amount.compareTo(BigDecimal.ZERO) == -1) {//小于零
+                balance = balance.subtract(amount.abs());
+                gameCommonService.updateUserBalance(memBaseinfo, amount.abs(), GoldchangeEnum.SETTLE, TradingEnum.SPENDING);
+            }
+            if (amount.compareTo(BigDecimal.ZERO) == 1) {//大于零
+                balance = balance.add(amount);
+                gameCommonService.updateUserBalance(memBaseinfo, amount, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
             }
             txns.setId(null);
             txns.setBalance(balance);
@@ -108,8 +112,8 @@ public class DgCallbackServiceImpl implements DgCallbackService {
             txns.setStatus("Running");
             oldTxns.setStatus("Settle");
             //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
-            txns.setWinningAmount(dgMemberCallBackReq.getAmount());
-            txns.setWinAmount(dgMemberCallBackReq.getAmount());
+            txns.setWinningAmount(amount);
+            txns.setWinAmount(amount);
             oldTxns.setUpdateTime(dateStr);
             txnsMapper.updateById(oldTxns);
             int num = txnsMapper.insert(txns);
@@ -119,8 +123,14 @@ public class DgCallbackServiceImpl implements DgCallbackService {
                 return dataJson;
             }
         }else {
-            balance = balance.add(dgMemberCallBackReq.getAmount());
-            gameCommonService.updateUserBalance(memBaseinfo, dgMemberCallBackReq.getAmount(), GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
+            if (amount.compareTo(BigDecimal.ZERO) == -1) {//小于零
+                balance = balance.subtract(amount.abs());
+                gameCommonService.updateUserBalance(memBaseinfo, amount.abs(), GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
+            }
+            if (amount.compareTo(BigDecimal.ZERO) == 1) {//大于零
+                balance = balance.add(amount);
+                gameCommonService.updateUserBalance(memBaseinfo, amount, GoldchangeEnum.PLACE_BET, TradingEnum.INCOME);
+            }
             //游戏商注单号
             txns.setPlatformTxId(dgCallBackReq.getData());
             //玩家 ID
@@ -146,19 +156,19 @@ public class DgCallbackServiceImpl implements DgCallbackService {
             //游戏名称
             txns.setGameName(gamePlatform.getPlatformEnName());
             //下注金额
-            txns.setBetAmount(dgMemberCallBackReq.getAmount());
+            txns.setBetAmount(amount);
             //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
-            txns.setWinningAmount(dgMemberCallBackReq.getAmount());
-            txns.setWinAmount(dgMemberCallBackReq.getAmount());
+            txns.setWinningAmount(amount);
+            txns.setWinAmount(amount);
             //真实下注金额,需增加在玩家的金额
-            txns.setRealBetAmount(dgMemberCallBackReq.getAmount());
+            txns.setRealBetAmount(amount);
             //真实返还金额,游戏赢分
-            txns.setRealWinAmount(dgMemberCallBackReq.getAmount());
+            txns.setRealWinAmount(amount);
             //返还金额 (包含下注金额)
             //赌注的结果 : 赢:0,输:1,平手:2
             int resultTyep;
             //有效投注金额 或 投注面值
-            txns.setTurnover(dgMemberCallBackReq.getAmount());
+            txns.setTurnover(amount);
             //操作名称
             txns.setMethod("Place Bet");
             txns.setStatus("Running");
@@ -181,7 +191,7 @@ public class DgCallbackServiceImpl implements DgCallbackService {
         dataJson.put("data", dgCallBackReq.getData());
         JSONObject memberJson = new JSONObject();
         memberJson.put("username", dgMemberCallBackReq.getUsername());
-        memberJson.put("amount", dgMemberCallBackReq.getAmount());
+        memberJson.put("amount", amount);
         memberJson.put("balance", balance);
         dataJson.put("member", memberJson);
         return dataJson;
