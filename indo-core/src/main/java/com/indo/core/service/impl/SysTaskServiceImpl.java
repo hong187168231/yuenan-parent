@@ -141,17 +141,34 @@ public class SysTaskServiceImpl extends ServiceImpl<SysTaskMapper, SysTask> impl
                 if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
                     continue;
                 }
+                BigDecimal condition = new BigDecimal(tl.getCondition());
+                if(amount.compareTo(condition)<=0){
+                    continue;
+                }
                 tl.setReceive(1);
                 memTaskRecordMapper.insert(memTaskRecord);
             }
             //电子打码达标
             if (tl.getCode().equals(TaskEnum.ELECTRONICSTANDARD.getCode())) {
-
+                BigDecimal amount = memTaskRecordMapper.findMemBetAmountByGameType(loginInfo.getId(),TaskEnum.SLOTS.getCode());
+                if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+                    continue;
+                }
+                BigDecimal condition = new BigDecimal(tl.getCondition());
+                if(amount.compareTo(condition)<=0){
+                    continue;
+                }
+                tl.setReceive(1);
+                memTaskRecordMapper.insert(memTaskRecord);
             }
             //真人打码达标
             if (tl.getCode().equals(TaskEnum.REALPERSONSTANDARD.getCode())) {
                 BigDecimal amount = memTaskRecordMapper.findMemBetAmountByGameType(loginInfo.getId(),TaskEnum.LIVE.getCode());
                 if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+                    continue;
+                }
+                BigDecimal condition = new BigDecimal(tl.getCondition());
+                if(amount.compareTo(condition)<=0){
                     continue;
                 }
                 tl.setReceive(1);
@@ -161,6 +178,10 @@ public class SysTaskServiceImpl extends ServiceImpl<SysTaskMapper, SysTask> impl
             if (tl.getCode().equals(TaskEnum.CHESSSTANDARD.getCode())) {
                 BigDecimal amount = memTaskRecordMapper.findMemBetAmountByGameType(loginInfo.getId(),TaskEnum.POKER.getCode());
                 if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+                    continue;
+                }
+                BigDecimal condition = new BigDecimal(tl.getCondition());
+                if(amount.compareTo(condition)<=0){
                     continue;
                 }
                 tl.setReceive(1);

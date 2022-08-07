@@ -19,6 +19,7 @@ public enum TaskEnum {
     FISHING("Fishing", "捕鱼"),
     LIVE("Live", "真人视讯"),
     POKER("Poker", "棋牌"),
+    SLOTS("Slots", "电子"),
     ;
 
     private String code;
