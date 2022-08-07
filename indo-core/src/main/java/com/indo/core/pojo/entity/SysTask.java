@@ -1,6 +1,7 @@
 package com.indo.core.pojo.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.indo.common.pojo.entity.BaseEntity;
 import io.swagger.annotations.ApiModel;
@@ -56,5 +57,16 @@ public class SysTask extends BaseEntity {
     @ApiModelProperty(value = "任务奖金")
     private BigDecimal bonusAmount;
 
+    @ApiModelProperty(value = "任务唯一标识码(新增任务时请咨询研发人员获取对应的标识码)")
+    private String code;
 
+    @ApiModelProperty(value = "多条件奖励金额Json 非打码{“1”:10000.00,“5”:20000.00......}")
+    private String conditionJson;
+
+    @ApiModelProperty(value = "单任务条件")
+    private String condition;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "领取状态：0不可领取，1可领取，2已经领取")
+    private Integer receive;
 }
