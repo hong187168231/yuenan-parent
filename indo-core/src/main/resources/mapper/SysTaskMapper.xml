@@ -16,13 +16,31 @@
         <result column="states" property="states" />
         <result column="create_user" property="createUser" />
         <result column="bonus_amount" property="bonusAmount" />
+        <result column="code" property="code" />
+        <result column="condition_json" property="conditionJson" />
+        <result column="condition" property="condition" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         create_time,
         update_time,
-        id, type_id, name, details, start_time, end_time, picture, states, create_user,bonus_amount
+        id, type_id, name, details, start_time, end_time, picture, states, create_user,bonus_amount,condition,condition_json
     </sql>
-
+    <!--查询用户今日转账充值金额-->
+    <select id="findMemAmountTransferredToday" resultType="java.math.BigDecimal">
+        select
+        sum(real_amount)
+        from pay_recharge
+        where mem_id=#{memId}
+        and TO_DAYS(create_time) = TO_DAYS(NOW())
+        and channel_type='BANK_TRANSFER'
+    </select>
+    <!--查询用户下级数量-->
+    <select id="findMemSubNum" resultType="java.lang.Integer">
+        select
+        team_num
+        from agent_relation
+        where mem_id=#{memId}
+    </select>
 </mapper>

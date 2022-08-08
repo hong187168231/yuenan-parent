@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
@@ -31,14 +32,20 @@ public class MemTaskRecord extends BaseEntity {
     @ApiModelProperty(value = "任务ID")
     private Integer taskId;
 
+    @ApiModelProperty(value = "任务唯一标识")
+    private String taskCode;
+
     @ApiModelProperty(value = "任务类型ID")
     private Integer typeId;
 
     @ApiModelProperty(value = "会员ID")
-    private Integer memId;
+    private Long memId;
 
     @ApiModelProperty(value = "状态：0待领取，1已领取")
     private Integer states;
+
+    @ApiModelProperty(value = "奖励奖金")
+    private BigDecimal rewardAmount;
 
     @ApiModelProperty(value = "领取时间")
     private LocalDateTime pickTime;
