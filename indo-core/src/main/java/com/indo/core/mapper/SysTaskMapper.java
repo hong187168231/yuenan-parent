@@ -22,7 +22,7 @@ public interface SysTaskMapper extends BaseMapper<SysTask> {
      * @param memId
      * @return
      */
-  BigDecimal findMemAmountTransferredToday(@Param("memId") Long memId);
+  BigDecimal findMemAmountTransferredToday(@Param("memId") Long memId,@Param("changeType") Integer changeType);
 
     /**
      * 查询用户下级数量
