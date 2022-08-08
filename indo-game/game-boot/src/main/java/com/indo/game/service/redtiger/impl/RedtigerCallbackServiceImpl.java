@@ -59,12 +59,10 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
                 return initFailureResponse(1049, "会员不存在");
             }
             String uuid = params.getString("uuid");
-            String sid;
-            if (!params.containsKey("sid") || null == params.get("sid")) {
+            String sid = params.getString("sid");
+            if (null == sid || "".equals(sid)) {
                 CptOpenMember cptOpenMember = externalService.getCptOpenMember(playerID, OpenAPIProperties.REDTIGER_PLATFORM_CODE);
                 sid = cptOpenMember.getPassword();
-            }else {
-                sid = params.getString("sid");
             }
             JSONObject jsonObject1 = initSuccessResponse(uuid);
             jsonObject1.put("sid",sid);
