@@ -47,8 +47,9 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             if (checkIp(ip, platformGameParent)) {
                 return initFailureResponse(1100, "非信任來源IP");
             }
-
-            if (!params.containsKey("userId") || null == params.get("userId")) {
+            String userId = params.getString("userId");
+            
+            if (null == userId || "".equals(userId)) {
                 return initFailureResponse(1049, "会员不存在");
             }
             String playerID = params.getString("userId");
@@ -83,8 +84,8 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             if (checkIp(ip, platformGameParent)) {
                 return initFailureResponse(1100, "非信任來源IP");
             }
-
-            if (!params.containsKey("userId") || null == params.get("userId")) {
+            String userId = params.getString("userId");
+            if (null == userId || "".equals(userId)) {
                 return initFailureResponse(1049, "会员不存在");
             }
             String playerID = params.getString("userId");
@@ -114,8 +115,8 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             if (checkIp(ip, platformGameParent)) {
                 return initFailureResponse(1100, "非信任來源IP");
             }
-
-            if (!params.containsKey("userId") || null == params.get("userId")) {
+            String userId = params.getString("userId");
+            if (null == userId || "".equals(userId)) {
                 return initFailureResponse(1049, "会员不存在");
             }
             String playerID = params.getString("userId");
@@ -266,7 +267,8 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             if (checkIp(ip, platformGameParent)) {
                 return initFailureResponse(1100, "非信任來源IP");
             }
-            if (!params.containsKey("userId") || null == params.get("userId")) {
+            String userId = params.getString("userId");
+            if (null == userId || "".equals(userId)) {
                 return initFailureResponse(1049, "会员不存在");
             }
             String playerID = params.getString("userId");
@@ -356,7 +358,8 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             if (checkIp(ip, platformGameParent)) {
                 return initFailureResponse(1100, "非信任來源IP");
             }
-            if (!params.containsKey("userId") || null == params.get("userId")) {
+            String userId = params.getString("userId");
+            if (null == userId || "".equals(userId)) {
                 return initFailureResponse(1049, "会员不存在");
             }
             String playerID = params.getString("userId");
@@ -418,7 +421,8 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             if (checkIp(ip, platformGameParent)) {
                 return initFailureResponse(1100, "非信任來源IP");
             }
-            if (!params.containsKey("userId") || null == params.get("userId")) {
+            String userId = params.getString("userId");
+            if (null == userId || "".equals(userId)) {
                 return initFailureResponse(1049, "会员不存在");
             }
             String playerID = params.getString("userId");
