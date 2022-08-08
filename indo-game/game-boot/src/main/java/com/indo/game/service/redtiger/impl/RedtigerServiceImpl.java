@@ -82,6 +82,7 @@ public class RedtigerServiceImpl implements RedtigerService {
                 cptOpenMember.setLoginTime(new Date());
                 cptOpenMember.setType(parentName);
                 //创建玩家
+                externalService.saveCptOpenMember(cptOpenMember);
 //                createMemberGame(cptOpenMember);
             } else {
                 cptOpenMember.setLoginTime(new Date());

@@ -62,7 +62,11 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             String sid = params.getString("sid");
             if (null == sid || "".equals(sid)) {
                 CptOpenMember cptOpenMember = externalService.getCptOpenMember(playerID, OpenAPIProperties.REDTIGER_PLATFORM_CODE);
-                sid = cptOpenMember.getPassword();
+                if(null!=cptOpenMember) {
+                    sid = cptOpenMember.getPassword();
+                }else {
+                    sid = uuid;
+                }
             }
             JSONObject jsonObject1 = initSuccessResponse(uuid);
             jsonObject1.put("sid",sid);
