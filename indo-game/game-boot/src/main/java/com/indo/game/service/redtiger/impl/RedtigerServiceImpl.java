@@ -135,7 +135,7 @@ public class RedtigerServiceImpl implements RedtigerService {
         player.put("group", group);
 
         session.put("id", cptOpenMember.getPassword());
-        session.put("ip", ip);
+        session.put("ip", OpenAPIProperties.PROXY_HOST_NAME);
         group.put("action", "assign");
         group.put("id", "");
 
