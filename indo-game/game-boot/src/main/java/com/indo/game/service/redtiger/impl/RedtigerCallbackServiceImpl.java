@@ -47,13 +47,12 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             if (checkIp(ip, platformGameParent)) {
                 return initFailureResponse(1100, "非信任來源IP");
             }
-            String userId = params.getString("userId");
-            
-            if (null == userId || "".equals(userId)) {
+
+            String playerID = params.getString("userId");
+            System.out.println("回调用户id:"+playerID);
+            if (null == playerID || "".equals(playerID)) {
                 return initFailureResponse(1049, "会员不存在");
             }
-            String playerID = params.getString("userId");
-
             // 查询玩家是否存在
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(playerID);
             if (null == memBaseinfo) {
@@ -84,11 +83,10 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             if (checkIp(ip, platformGameParent)) {
                 return initFailureResponse(1100, "非信任來源IP");
             }
-            String userId = params.getString("userId");
-            if (null == userId || "".equals(userId)) {
+            String playerID = params.getString("userId");
+            if (null == playerID || "".equals(playerID)) {
                 return initFailureResponse(1049, "会员不存在");
             }
-            String playerID = params.getString("userId");
 
             // 查询玩家是否存在
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(playerID);
@@ -115,11 +113,10 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             if (checkIp(ip, platformGameParent)) {
                 return initFailureResponse(1100, "非信任來源IP");
             }
-            String userId = params.getString("userId");
-            if (null == userId || "".equals(userId)) {
+            String playerID = params.getString("userId");
+            if (null == playerID || "".equals(playerID)) {
                 return initFailureResponse(1049, "会员不存在");
             }
-            String playerID = params.getString("userId");
 
             // 查询玩家是否存在
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(playerID);
@@ -150,6 +147,9 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
 
 //            JSONObject params = JSONObject.parseObject(String.valueOf(map));
             String playerID = params.getString("userId");
+            if (null == playerID || "".equals(playerID)) {
+                return initFailureResponse(1049, "会员不存在");
+            }
 
             JSONObject transaction = params.getJSONObject("transaction");
             String platformTxId = transaction.getString("id");
@@ -272,6 +272,9 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
                 return initFailureResponse(1049, "会员不存在");
             }
             String playerID = params.getString("userId");
+            if (null == playerID || "".equals(playerID)) {
+                return initFailureResponse(1049, "会员不存在");
+            }
 
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(playerID);
 
@@ -358,11 +361,10 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             if (checkIp(ip, platformGameParent)) {
                 return initFailureResponse(1100, "非信任來源IP");
             }
-            String userId = params.getString("userId");
-            if (null == userId || "".equals(userId)) {
+            String playerID = params.getString("userId");
+            if (null == playerID || "".equals(playerID)) {
                 return initFailureResponse(1049, "会员不存在");
             }
-            String playerID = params.getString("userId");
 
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(playerID);
 
@@ -421,11 +423,10 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             if (checkIp(ip, platformGameParent)) {
                 return initFailureResponse(1100, "非信任來源IP");
             }
-            String userId = params.getString("userId");
-            if (null == userId || "".equals(userId)) {
+            String playerID = params.getString("userId");
+            if (null == playerID || "".equals(playerID)) {
                 return initFailureResponse(1049, "会员不存在");
             }
-            String playerID = params.getString("userId");
 
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(playerID);
 
