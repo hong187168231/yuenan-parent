@@ -53,6 +53,7 @@ public class LoanRecordServiceImpl extends ServiceImpl<LoanRecordMapper, LoanRec
         Page<LoanRecord> page = new Page<>(loanRecordDTO.getPage(), loanRecordDTO.getLimit());
         LambdaQueryWrapper<LoanRecord> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(LoanRecord::getMemId,loginInfo.getId());
+        wrapper.orderByDesc(LoanRecord::getCreateTime);
         return baseMapper.selectPage(page,wrapper);
     }
 
