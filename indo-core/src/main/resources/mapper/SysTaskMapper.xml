@@ -30,11 +30,11 @@
     <!--查询用户今日转账充值金额-->
     <select id="findMemAmountTransferredToday" resultType="java.math.BigDecimal">
         select
-        sum(real_amount)
-        from pay_recharge
+        sum(amount)
+        from mem_gold_change
         where mem_id=#{memId}
         and TO_DAYS(create_time) = TO_DAYS(NOW())
-        and channel_type='BANK_TRANSFER'
+        and change_type=#{changeType}
     </select>
     <!--查询用户下级数量-->
     <select id="findMemSubNum" resultType="java.lang.Integer">

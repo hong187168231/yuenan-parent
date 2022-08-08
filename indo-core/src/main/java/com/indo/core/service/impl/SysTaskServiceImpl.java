@@ -92,7 +92,7 @@ public class SysTaskServiceImpl extends ServiceImpl<SysTaskMapper, SysTask> impl
             }
             //限时银行卡转账
             if (tl.getCode().equals(TaskEnum.BANKCARDTRANSFER.getCode())) {
-                BigDecimal amount = baseMapper.findMemAmountTransferredToday(loginInfo.getId());
+                BigDecimal amount = baseMapper.findMemAmountTransferredToday(loginInfo.getId(),GoldchangeEnum.YHZZ.getCode());
                 if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
                     continue;
                 }
