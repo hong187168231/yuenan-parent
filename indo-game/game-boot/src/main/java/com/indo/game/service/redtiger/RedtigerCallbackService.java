@@ -14,7 +14,7 @@ public interface RedtigerCallbackService {
      * @param ip  ip
      * @return Object
      */
-    Object check(JSONObject params, String ip);
+    Object check(JSONObject params,String authToken , String ip);
 
     /**
      * 查询玩家余额
@@ -23,7 +23,7 @@ public interface RedtigerCallbackService {
      * @param ip  ip
      * @return Object
      */
-    Object balance(JSONObject params, String ip);
+    Object balance(JSONObject params,String authToken , String ip);
 
     /**
      * 提取点数
@@ -32,7 +32,7 @@ public interface RedtigerCallbackService {
      * @param ip  ip
      * @return Object
      */
-    Object debit(JSONObject params, String ip);
+    Object debit(JSONObject params,String authToken , String ip);
 
     /**
      * 存入点数
@@ -41,7 +41,7 @@ public interface RedtigerCallbackService {
      * @param ip  ip
      * @return Object
      */
-    Object credit(JSONObject params, String ip);
+    Object credit(JSONObject params,String authToken , String ip);
 
     /**
      * 取消交易
@@ -50,7 +50,7 @@ public interface RedtigerCallbackService {
      * @param ip  ip
      * @return Object
      */
-    Object cancel(JSONObject params, String ip);
+    Object cancel(JSONObject params,String authToken , String ip);
 
     /**
      * 活动派奖
@@ -59,6 +59,6 @@ public interface RedtigerCallbackService {
      * @param ip  ip
      * @return Object
      */
-    Object promo_payout(JSONObject params, String ip);
+    Object promo_payout(JSONObject params,String authToken , String ip);
 
 }

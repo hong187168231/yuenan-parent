@@ -67,7 +67,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
     }
 
     @Override
-    public Object check(JSONObject params, String ip) {
+    public Object check(JSONObject params,String authToken , String ip) {
         logger.info("redtiger_check redtigerGame paramJson:{}, ip:{}", params, ip);
         try {
             GameParentPlatform platformGameParent = getGameParentPlatform();
@@ -98,7 +98,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
     }
 
     @Override
-    public Object balance(JSONObject params, String ip) {
+    public Object balance(JSONObject params,String authToken , String ip) {
         logger.info("redtiger_balance redtigerGame paramJson:{}, ip:{}", params, ip);
         try {
             GameParentPlatform platformGameParent = getGameParentPlatform();
@@ -129,7 +129,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
     }
 
     @Override
-    public Object debit(JSONObject params, String ip) {
+    public Object debit(JSONObject params,String authToken , String ip) {
         logger.info("redtiger_debit  redtigerGame paramJson:{}, ip:{}", params, ip);
 
         try {
@@ -249,7 +249,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
     }
 
     @Override
-    public Object credit(JSONObject params, String ip) {
+    public Object credit(JSONObject params,String authToken , String ip) {
         logger.info("redtiger_credit redtigerGame paramJson:{}, ip:{}", params, ip);
 
         try {
@@ -338,7 +338,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
     }
 
     @Override
-    public Object cancel(JSONObject params, String ip) {
+    public Object cancel(JSONObject params,String authToken , String ip) {
         logger.info("redtiger_cancel redtigerGame paramJson:{}, ip:{}", params, ip);
 
 
@@ -401,7 +401,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
     }
 
     @Override
-    public Object promo_payout(JSONObject params, String ip) {
+    public Object promo_payout(JSONObject params,String authToken , String ip) {
         logger.info("redtiger_promo_payout  redtigerGame paramJson:{}, ip:{}", params, ip);
 
         try {
