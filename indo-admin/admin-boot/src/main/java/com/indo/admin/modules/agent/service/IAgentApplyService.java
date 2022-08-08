@@ -6,6 +6,7 @@ import com.indo.admin.pojo.req.agnet.MemAgentApplyReq;
 import com.indo.admin.pojo.req.agnet.MemApplyAuditReq;
 import com.indo.admin.pojo.vo.agent.AgentApplyVO;
 import com.indo.core.pojo.entity.AgentApply;
+import com.indo.core.pojo.entity.MemBaseinfo;
 
 /**
  * <p>

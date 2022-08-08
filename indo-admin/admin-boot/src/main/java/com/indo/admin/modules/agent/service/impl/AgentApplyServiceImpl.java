@@ -48,8 +48,6 @@ public class AgentApplyServiceImpl extends ServiceImpl<AgentApplyMapper, AgentAp
     @Autowired
     private AgentRelationMapper agentRelationMapper;
     @Autowired
-    private MemInviteCodeMapper memInviteCodeMapper;
-    @Autowired
     private IMemBaseinfoService iMemBaseinfoService;
 
     @Override
@@ -76,7 +74,7 @@ public class AgentApplyServiceImpl extends ServiceImpl<AgentApplyMapper, AgentAp
             //更新代理关系
             modifyAgentRelation(memBaseinfo);
             //插入会员邀请码
-            saveMemInviteCode(memBaseinfo);
+            iMemBaseinfoService.saveMemInviteCode(memBaseinfo);
             //更新会员代理状态
             modifyMemAccType(memBaseinfo);
         } else {
@@ -107,22 +105,7 @@ public class AgentApplyServiceImpl extends ServiceImpl<AgentApplyMapper, AgentAp
         iMemBaseinfoService.refreshMemBaseInfo(memBaseInfoDTO, memBaseinfo.getAccount());
     }
 
-    /**
-     * 插入会员邀请码
-     *
-     * @param memBaseinfo
-     */
-    private void saveMemInviteCode(MemBaseinfo memBaseinfo) {
-        MemInviteCode memInviteCode = new MemInviteCode();
-        String code = ShareCodeUtil.inviteCode(memBaseinfo.getId());
-        memInviteCode.setMemId(memBaseinfo.getId());
-        memInviteCode.setAccount(memBaseinfo.getAccount());
-        memInviteCode.setInviteCode(code.toLowerCase());
-        boolean inviteFlag = memInviteCodeMapper.insert(memInviteCode) > 0;
-        if (!inviteFlag) {
-            throw new BizException("代理审核出错!");
-        }
-    }
+
 
     /**
      * 更新会员代理关系

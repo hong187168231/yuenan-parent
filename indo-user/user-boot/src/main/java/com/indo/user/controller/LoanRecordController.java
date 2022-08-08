@@ -16,9 +16,11 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 
 /**
  * <p>
@@ -47,14 +49,21 @@ public class LoanRecordController {
 
     @ApiOperation(value = "借款", httpMethod = "GET")
     @GetMapping(value = "/loanMoney")
-    public Result findLoanRecordPage(@LoginUser LoginInfo loginInfo) {
-        loanRecordService.loanMoney(loginInfo);
+    @ApiImplicitParam(name = "amount", value = "借款金额", dataType = "Decimal")
+    public Result findLoanRecordPage(@RequestParam BigDecimal amount, @LoginUser LoginInfo loginInfo) {
+        loanRecordService.loanMoney(amount,loginInfo);
         return Result.success();
     }
     @ApiOperation(value = "主动还款", httpMethod = "GET")
     @GetMapping(value = "/activeBackMoney")
-    public Result activeBackMoney(@LoginUser LoginInfo loginInfo) {
-        loanRecordService.activeBackMoney(loginInfo);
+    @ApiImplicitParam(name = "amount", value = "还款金额", dataType = "Decimal")
+    public Result activeBackMoney(@RequestParam BigDecimal amount,@LoginUser LoginInfo loginInfo) {
+        loanRecordService.activeBackMoney(amount,loginInfo);
         return Result.success();
+    }
+    @ApiOperation(value = "查询用户借款相关信息", httpMethod = "GET")
+    @GetMapping(value = "/findMemLoanInfo")
+    public Result findMemLoanInfo(@LoginUser LoginInfo loginInfo) {
+        return Result.success(loanRecordService.findMemLoanInfo(loginInfo));
     }
 }
