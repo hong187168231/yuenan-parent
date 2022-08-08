@@ -5,10 +5,12 @@ import com.alibaba.fastjson.JSONObject;
 import java.util.LinkedHashMap;
 
 public interface RedtigerCallbackService {
+
+    public Object sid(JSONObject params,String authToken , String ip);
     /**
      * 查询玩家余额
      *
-     * @param map {playerID玩家账号}
+     * @param params {playerID玩家账号}
      * @param ip  ip
      * @return Object
      */

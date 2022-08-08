@@ -35,7 +35,36 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
 
     @Autowired
     private TxnsMapper txnsMapper;
+    @Override
+    public Object sid(JSONObject params,String authToken ,String ip) {
+        logger.info("redtiger_check redtigerGame paramJson:{}, ip:{}", params, ip);
+        try {
+            GameParentPlatform platformGameParent = getGameParentPlatform();
+            // 校验IP
+            if (checkIp(ip, platformGameParent)) {
+                return initFailureResponse(1100, "非信任來源IP");
+            }
 
+            if (!params.containsKey("userId") || null == params.get("userId")) {
+                return initFailureResponse(1049, "会员不存在");
+            }
+            String playerID = params.getString("userId");
+
+            // 查询玩家是否存在
+            MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(playerID);
+            if (null == memBaseinfo) {
+                return initFailureResponse(1049, "会员不存在");
+            }
+
+            JSONObject jsonObject1 = initSuccessResponse(params.getString("uuid"));
+            jsonObject1.put("sid", params.get("sid"));
+
+            return jsonObject1;
+
+        } catch (Exception e) {
+            return initFailureResponse(1049, e.getMessage());
+        }
+    }
 
     @Override
     public Object check(JSONObject params, String ip) {
