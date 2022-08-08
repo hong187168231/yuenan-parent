@@ -26,7 +26,7 @@ public class RedTigerCallBackController {
     @RequestMapping(value = "/sid", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object sid(@RequestBody JSONObject params, @PathVariable(name = "authToken") String authToken, HttpServletRequest request) {
+    public Object sid(@RequestBody JSONObject params, @RequestParam(name = "authToken") String authToken, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
         logger.info("redtigerCallBack sid 测试回调,params:{},authToken:{},ip:{}", params,authToken, ip);
@@ -40,7 +40,7 @@ public class RedTigerCallBackController {
     @RequestMapping(value = "/check", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object check(@RequestBody JSONObject params,@PathVariable(name = "authToken") String authToken, HttpServletRequest request) {
+    public Object check(@RequestBody JSONObject params,@RequestParam(name = "authToken") String authToken, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
         logger.info("redtigerCallBack check 回调,params:{},authToken:{},ip:{}", params,authToken, ip);
@@ -55,7 +55,7 @@ public class RedTigerCallBackController {
     @RequestMapping(value = "/balance", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object balance(@RequestBody JSONObject params,@PathVariable(name = "authToken") String authToken, HttpServletRequest request) {
+    public Object balance(@RequestBody JSONObject params,@RequestParam(name = "authToken") String authToken, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
         logger.info("redtigerCallBack balance 回调,params:{},authToken:{},ip:{}", params,authToken, ip);
@@ -71,7 +71,7 @@ public class RedTigerCallBackController {
     @RequestMapping(value = "/debit", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object debit(@RequestBody JSONObject params,@PathVariable(name = "authToken") String authToken, HttpServletRequest request) {
+    public Object debit(@RequestBody JSONObject params,@RequestParam(name = "authToken") String authToken, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
         logger.info("redtigerCallBack debit 回调,params:{},authToken:{},ip:{}", params,authToken, ip);
@@ -86,7 +86,7 @@ public class RedTigerCallBackController {
     @RequestMapping(value = "/credit", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object credit(@RequestBody JSONObject params,@PathVariable(name = "authToken") String authToken, HttpServletRequest request) {
+    public Object credit(@RequestBody JSONObject params,@RequestParam(name = "authToken") String authToken, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
         logger.info("redtigerCallBack credit 回调,params:{},authToken:{},ip:{}", params,authToken, ip);
@@ -101,7 +101,7 @@ public class RedTigerCallBackController {
     @RequestMapping(value = "/cancel", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object cancel(@RequestBody JSONObject params,@PathVariable(name = "authToken") String authToken, HttpServletRequest request) {
+    public Object cancel(@RequestBody JSONObject params,@RequestParam(name = "authToken") String authToken, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
         logger.info("redtigerCallBack cancel 回调,params:{},authToken:{},ip:{}", params,authToken, ip);
@@ -116,7 +116,7 @@ public class RedTigerCallBackController {
     @RequestMapping(value = "/promo_payout", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object promo_payout(@RequestBody JSONObject params,@PathVariable(name = "authToken") String authToken, HttpServletRequest request) {
+    public Object promo_payout(@RequestBody JSONObject params,@RequestParam(name = "authToken") String authToken, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
         logger.info("redtigerCallBack promo_payout 回调,params:{},authToken:{},ip:{}", params,authToken, ip);
