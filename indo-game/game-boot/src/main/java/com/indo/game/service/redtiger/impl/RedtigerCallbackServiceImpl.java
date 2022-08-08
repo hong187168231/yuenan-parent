@@ -9,11 +9,13 @@ import com.indo.common.enums.TradingEnum;
 import com.indo.common.redis.utils.GeneratorIdUtil;
 import com.indo.common.utils.DateUtils;
 import com.indo.game.mapper.TxnsMapper;
+import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.game.pojo.entity.manage.GameCategory;
 import com.indo.game.pojo.entity.manage.GameParentPlatform;
 import com.indo.game.pojo.entity.manage.GamePlatform;
 import com.indo.game.pojo.entity.manage.Txns;
 import com.indo.game.service.common.GameCommonService;
+import com.indo.game.service.cptopenmember.CptOpenMemberService;
 import com.indo.game.service.redtiger.RedtigerCallbackService;
 import com.indo.user.pojo.bo.MemTradingBO;
 import org.slf4j.Logger;
@@ -29,7 +31,8 @@ import java.util.Date;
 @Service
 public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    @Resource
+    private CptOpenMemberService externalService;
     @Resource
     private GameCommonService gameCommonService;
 
@@ -55,9 +58,16 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             if (null == memBaseinfo) {
                 return initFailureResponse(1049, "会员不存在");
             }
-
-            JSONObject jsonObject1 = initSuccessResponse(params.getString("uuid"));
-            jsonObject1.put("sid", params.get("sid"));
+            String uuid = params.getString("uuid");
+            String sid;
+            if (!params.containsKey("sid") || null == params.get("sid")) {
+                CptOpenMember cptOpenMember = externalService.getCptOpenMember(playerID, OpenAPIProperties.REDTIGER_PLATFORM_CODE);
+                sid = cptOpenMember.getPassword();
+            }else {
+                sid = params.getString("sid");
+            }
+            JSONObject jsonObject1 = initSuccessResponse(uuid);
+            jsonObject1.put("sid",sid);
 
             return jsonObject1;
 
