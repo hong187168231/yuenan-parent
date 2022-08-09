@@ -30,7 +30,7 @@ public class DjCallBackController {
     /**
      * 获取余额
      */
-    @RequestMapping(value = "/Balance", method = RequestMethod.GET,produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/Balance", method = RequestMethod.POST,produces = "text/plain;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object getBalance(DjCallBackParentReq djCallBackParentReq, HttpServletRequest request) {
@@ -46,7 +46,7 @@ public class DjCallBackController {
     /**
      * 投注
      */
-    @RequestMapping(value = "/bet.aspx", method = RequestMethod.GET,produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/Bet", method = RequestMethod.GET,produces = "text/plain;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object bet(DjCallBackParentReq djCallBackParentReq, HttpServletRequest request) {
@@ -63,7 +63,7 @@ public class DjCallBackController {
     /**
      * 返还押注
      */
-    @RequestMapping(value = "/cancel_bet.aspx", method = RequestMethod.GET,produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/CancelBet.aspx", method = RequestMethod.GET,produces = "text/plain;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object refund(DjCallBackParentReq djCallBackParentReq, HttpServletRequest request) {

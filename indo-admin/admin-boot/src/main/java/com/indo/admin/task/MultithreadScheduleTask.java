@@ -51,7 +51,8 @@ public class MultithreadScheduleTask {
             AtomicReference<BigDecimal> rebateAmount = new AtomicReference<>();
             list.forEach(l->{
                 if(BeforeData.getRealBetAmount().intValue()>=l.getSubTotalBet()){
-                    rebateAmount.set(new BigDecimal(l.getRebateValue()));
+                    BigDecimal  ratio = new BigDecimal(l.getRebateValue()).divide(new BigDecimal(100));
+                    rebateAmount.set(new BigDecimal(l.getSubTotalBet()).multiply(ratio));
                 }
             });
             if(rebateAmount==null||rebateAmount.get().intValue()<=0){
