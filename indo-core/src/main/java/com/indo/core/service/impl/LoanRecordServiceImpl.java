@@ -209,11 +209,16 @@ public class LoanRecordServiceImpl extends ServiceImpl<LoanRecordMapper, LoanRec
         //借款金额
         BigDecimal loanAmount = new BigDecimal(0);
         loanRecord.forEach(l->{
-            backMoney.add(l.getBackMoney());
-            loanAmount.add(l.getLoanAmount());
+            if(l.getBackMoney()!=null){
+                backMoney.add(l.getBackMoney());
+            }
+            if(l.getLoanAmount()!=null){
+                loanAmount.add(l.getLoanAmount());
+            }
         });
 
         LoanRecordVo loanRecordVo = new LoanRecordVo();
+
         BigDecimal arrears = loanAmount.subtract(backMoney);
         loanRecordVo.setArrears(arrears);
         loanRecordVo.setBalance(money.subtract(arrears));
