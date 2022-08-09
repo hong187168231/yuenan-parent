@@ -220,6 +220,9 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             txns.setGameName(gamePlatform.getPlatformEnName());
             //下注金额
             txns.setBetAmount(betAmount);
+            //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
+            oldTxns.setWinningAmount(betAmount.negate());
+            oldTxns.setWinAmount(betAmount);
             //游戏平台的下注项目
             txns.setBetType(table.getString("id"));
             //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
