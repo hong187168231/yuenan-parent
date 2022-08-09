@@ -29,7 +29,6 @@ import com.indo.core.pojo.entity.*;
 import com.indo.core.service.IMemGoldChangeService;
 import com.indo.core.util.BusinessRedisUtils;
 import com.indo.user.common.util.UserBusinessRedisUtils;
-import com.indo.user.mapper.AgentRelationMapper;
 import com.indo.user.mapper.MemBaseInfoMapper;
 import com.indo.user.mapper.MemInviteCodeMapper;
 import com.indo.user.pojo.bo.MemTradingBO;
@@ -41,6 +40,7 @@ import com.indo.user.pojo.req.mem.UpdatePasswordReq;
 import com.indo.user.pojo.vo.AppLoginVo;
 import com.indo.user.pojo.vo.mem.MemBaseInfoVo;
 import com.indo.user.service.AppMemBaseInfoService;
+import com.indo.user.service.IMemAgentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +62,7 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
 
 
     @Autowired
-    private AgentRelationMapper memAgentMapper;
+    private IMemAgentService memAgentService;
 
     @Autowired
     private MemInviteCodeMapper memInviteCodeMapper;
@@ -243,7 +243,6 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
      */
     public MemBaseinfo initRegister(MemBaseinfo memBaseinfo, MemInviteCode parentInviteCode) {
         Date nowDate = new Date();
-//        memBaseinfo.setAccType(1);
         memBaseinfo.setLastLoginTime(nowDate);
         this.baseMapper.insert(memBaseinfo);
         if (ObjectUtil.isNotNull(parentInviteCode)) {
@@ -268,18 +267,17 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
         AgentRelation agentRelation = new AgentRelation();
         agentRelation.setMemId(memBaseinfo.getId());
         agentRelation.setAccount(memBaseinfo.getAccount());
-        agentRelation.setStatus(0);
+        agentRelation.setStatus(1);
         agentRelation.setParentId(parentInviteCode.getMemId());
         agentRelation.setSuperior(parentInviteCode.getAccount());
-        memAgentMapper.insert(agentRelation);
+        memAgentService.save(agentRelation);
     }
-
 
     public void initMemParentAgent(MemBaseinfo memBaseinfo, MemInviteCode parentInviteCode) {
         LambdaQueryWrapper<AgentRelation> wrapper = new LambdaQueryWrapper();
         wrapper.eq(AgentRelation::getMemId, parentInviteCode.getMemId())
                 .eq(AgentRelation::getStatus, 1);
-        AgentRelation parentAgent = memAgentMapper.selectOne(wrapper);
+        AgentRelation parentAgent = memAgentService.getOne(wrapper);
         if (ObjectUtil.isNull(parentAgent)) {
             throw new BizException("该邀请人未成为代理");
         }
@@ -287,7 +285,7 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
                 memBaseinfo.getId() + "" : parentAgent.getSubUserIds() + "," + memBaseinfo.getId();
         parentAgent.setSubUserIds(subUserIds);
         parentAgent.setTeamNum(parentAgent.getTeamNum() + 1);
-        memAgentMapper.updateById(parentAgent);
+        memAgentService.updateById(parentAgent);
 
     }
 
