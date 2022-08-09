@@ -179,8 +179,8 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             }
 
             // 查询用户请求订单
-            Txns oldTxns = getTxns(platformTxId, memBaseinfo.getId());
-            if (null != oldTxns) {
+            Txns oldTxns = getTxns(platformTxId, memBaseinfo.getAccount());
+            if (null != oldTxns&&"Place Bet".equals(oldTxns.getMethod())) {
                 return initFailureResponse(2001, "订单已经存在");
             }
 
@@ -221,8 +221,8 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             //下注金额
             txns.setBetAmount(betAmount);
             //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
-            oldTxns.setWinningAmount(betAmount.negate());
-            oldTxns.setWinAmount(betAmount);
+            txns.setWinningAmount(betAmount.negate());
+            txns.setWinAmount(betAmount);
             //游戏平台的下注项目
             txns.setBetType(table.getString("id"));
             //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
@@ -255,7 +255,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             }
 
             JSONObject jsonObject1 = initSuccessResponse(params.getString("uuid"));
-            jsonObject1.put("balance", memBaseinfo.getBalance());
+            jsonObject1.put("balance", balance);
             jsonObject1.put("bonus", 0);
             return jsonObject1;
         } catch (Exception e) {
@@ -289,7 +289,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             String platformTxId = transaction.getString("id");
             JSONObject game = params.getJSONObject("game");
             // 查询用户请求订单
-            Txns oldTxns = getTxns(platformTxId, memBaseinfo.getId());
+            Txns oldTxns = getTxns(platformTxId, memBaseinfo.getAccount());
             if (null == oldTxns) {
                 return initFailureResponse(10005, "BET_DOES_NOT_EXIST");
             }
@@ -382,7 +382,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
 
 
             // 查询用户请求订单
-            Txns oldTxns = getTxns(platformTxId, memBaseinfo.getId());
+            Txns oldTxns = getTxns(platformTxId, memBaseinfo.getAccount());
             if (null == oldTxns) {
                 return initFailureResponse(1005, "BET_DOES_NOT_EXIST");
             }
@@ -406,7 +406,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             txns.setCreateTime(dateStr);
             txnsMapper.insert(txns);
 
-            oldTxns.setStatus("Adjust");
+            oldTxns.setStatus("Cancel Bet");
             oldTxns.setUpdateTime(dateStr);
             txnsMapper.updateById(oldTxns);
 
@@ -500,7 +500,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             }
 
             // 查询用户请求订单
-            Txns txns = getTxns(platformTxId, memBaseinfo.getId());
+            Txns txns = getTxns(platformTxId, memBaseinfo.getAccount());
             if (null != txns) {
                 return initFailureResponse(10005, "BET_DOES_NOT_EXIST");
             }
@@ -561,7 +561,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             //辨认交易时间依据
             txns.setTxTime(DateUtils.formatByLong(System.currentTimeMillis(), DateUtils.newFormat));
             //操作名称
-            txns.setMethod("Settle");
+            txns.setMethod("Bonus");
             txns.setStatus("Running");
             //余额
             txns.setBalance(balance);
@@ -592,13 +592,15 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
      * @param userId    会员ID
      * @return 订单
      */
-    private Txns getTxns(String reference, Long userId) {
+    private Txns getTxns(String reference, String userId) {
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
         wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet")
                 .or().eq(Txns::getMethod, "Cancel Bet")
-                .or().eq(Txns::getMethod, "Adjust Bet"));
+                .or().eq(Txns::getMethod, "Bonus")
+                .or().eq(Txns::getMethod, "Settle"));
         wrapper.eq(Txns::getStatus, "Running");
         wrapper.eq(Txns::getPlatformTxId, reference);
+        wrapper.eq(Txns::getPlatform, OpenAPIProperties.REDTIGER_PLATFORM_CODE);
         wrapper.eq(Txns::getUserId, userId);
         return txnsMapper.selectOne(wrapper);
     }
