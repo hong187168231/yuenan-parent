@@ -275,7 +275,7 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
 
     public void initMemParentAgent(MemBaseinfo memBaseinfo, MemInviteCode parentInviteCode) {
         LambdaQueryWrapper<AgentRelation> wrapper = new LambdaQueryWrapper();
-        wrapper.eq(AgentRelation::getMemId, parentInviteCode.getMemId())
+        wrapper.eq(AgentRelation::getParentId, parentInviteCode.getMemId())
                 .eq(AgentRelation::getStatus, 1);
         AgentRelation parentAgent = memAgentService.getOne(wrapper);
         if (ObjectUtil.isNull(parentAgent)) {
