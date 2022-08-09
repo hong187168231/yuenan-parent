@@ -280,7 +280,7 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
         wrapper.eq(AgentRelation::getMemId, parentInviteCode.getMemId())
                 .eq(AgentRelation::getStatus, 1);
         AgentRelation parentAgent = memAgentMapper.selectOne(wrapper);
-        if (ObjectUtil.isNull(wrapper)) {
+        if (ObjectUtil.isNull(parentAgent)) {
             throw new BizException("该邀请人未成为代理");
         }
         String subUserIds = StringUtils.isBlank(parentAgent.getSubUserIds()) ?
