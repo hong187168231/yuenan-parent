@@ -24,6 +24,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -157,13 +161,29 @@ public class AppAgentServiceImpl extends SuperServiceImpl<AgentRelationMapper, A
 
     @Override
     public RebateStatVO rebateStat(String beginTime, String endTime, LoginInfo loginInfo) {
+        Date dNow = new Date();   //当前时间
+        Date dBefore = new Date();
+        Calendar calendar = Calendar.getInstance(); //得到日历
+        calendar.setTime(dNow);//把当前时间赋给日历
+        calendar.add(Calendar.MONTH, -3);  //设置为前3月
+        dBefore = calendar.getTime();   //得到前3月的时间
+        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //设置时间格式
+        beginTime = sdf.format(dBefore);    //格式化前3月的时间
+        endTime = sdf.format(dNow); //格式化当前时间
+
         RebateStatVO statVO = new RebateStatVO();
         BigDecimal rebate = agentRelationMapper.selectRebateByTime(loginInfo.getAccount(), beginTime, endTime);
         Integer teamNum = agentRelationMapper.selectTeamNum(loginInfo.getAccount());
         BigDecimal teamRecharge = agentRelationMapper.selectTeamRecharge(loginInfo.getAccount(), beginTime, endTime);
         Integer dayAdd = agentRelationMapper.selectDayAddNum(loginInfo.getAccount());
-        Integer monthAdd = agentRelationMapper.selectMonthAddNum(loginInfo.getAccount(), beginTime, endTime);
         BigDecimal teamBet = agentRelationMapper.selectTeamBet(loginInfo.getAccount(), beginTime, endTime);
+
+        calendar.setTime(dNow);
+        calendar.add(Calendar.MONTH, -1);  //设置为前1月
+        dBefore = calendar.getTime();   //得到前1月的时间
+        beginTime = sdf.format(dBefore);    //格式化前1月的时间
+        endTime = sdf.format(dNow); //格式化当前时间
+        Integer monthAdd = agentRelationMapper.selectMonthAddNum(loginInfo.getAccount(), beginTime, endTime);
 
         statVO.setRebateAmount(rebate);
         statVO.setTeamNum(teamNum == null ? 0 : teamNum);
@@ -173,6 +193,4 @@ public class AppAgentServiceImpl extends SuperServiceImpl<AgentRelationMapper, A
         statVO.setTeamBet(teamBet);
         return statVO;
     }
-
-
 }

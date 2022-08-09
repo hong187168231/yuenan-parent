@@ -25,7 +25,7 @@ public class RebateStatVO {
     @ApiModelProperty(value = "日新增")
     private Integer dayAddNum;
 
-    @ApiModelProperty(value = "日新增")
+    @ApiModelProperty(value = "月新增")
     private Integer monthAddNum;
 
 
