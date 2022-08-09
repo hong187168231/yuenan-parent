@@ -5,6 +5,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.core.pojo.dto.LoanRecordDTO;
 import com.indo.core.pojo.entity.LoanRecord;
+import com.indo.core.pojo.vo.LoanRecordVo;
+
+import java.math.BigDecimal;
 
 /**
  * <p>
@@ -24,15 +27,21 @@ public interface ILoanRecordService extends IService<LoanRecord> {
     /**
      * 借款
      */
-    void loanMoney(LoginInfo loginInfo);
+    void loanMoney(BigDecimal amount,LoginInfo loginInfo);
 
-    /**
-     * 自动还款
-     */
-    void automaticbBackMoney();
+//    /**
+//     * 自动还款
+//     */
+//    void automaticbBackMoney();
 
     /**
      * 主动还款
      */
-    void activeBackMoney(LoginInfo loginInfo);
+    void activeBackMoney(BigDecimal amount,LoginInfo loginInfo);
+
+    /**
+     * 查询用户借款相关信息
+     * @return
+     */
+    LoanRecordVo findMemLoanInfo(LoginInfo loginInfo);
 }

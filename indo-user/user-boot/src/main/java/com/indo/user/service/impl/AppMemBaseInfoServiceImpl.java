@@ -15,6 +15,7 @@ import com.indo.common.enums.TradingEnum;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
 import com.indo.common.utils.DeviceInfoUtil;
+import com.indo.common.utils.ShareCodeUtil;
 import com.indo.common.utils.StringUtils;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
@@ -252,6 +253,13 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
             //注册用户默认未填写邀请码为顶级代理
             memBaseinfo.setAccType(2);
         }
+        MemInviteCode memInviteCode = new MemInviteCode();
+        memInviteCode.setAccount(memBaseinfo.getAccount());
+        String code = ShareCodeUtil.inviteCode(memBaseinfo.getId());
+        memInviteCode.setInviteCode(code.toLowerCase());
+        memInviteCode.setMemId(memBaseinfo.getId());
+        memInviteCode.setStatus(1);
+        memInviteCodeMapper.insert(memInviteCode);
         return memBaseinfo;
     }
 

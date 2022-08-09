@@ -11,6 +11,8 @@ import com.indo.admin.common.enums.AccountTypeEnum;
 import com.indo.admin.common.util.AdminBusinessRedisUtils;
 import com.indo.admin.modules.agent.mapper.AgentRelationMapper;
 import com.indo.admin.modules.mem.mapper.MemBaseinfoMapper;
+import com.indo.admin.modules.mem.mapper.MemInviteCodeMapper;
+import com.indo.common.utils.ShareCodeUtil;
 import com.indo.core.mapper.MemLevelMapper;
 import com.indo.admin.modules.mem.service.IMemBaseinfoService;
 import com.indo.common.constant.AppConstants;
@@ -30,10 +32,12 @@ import com.indo.core.pojo.bo.MemBaseInfoBO;
 import com.indo.core.pojo.dto.MemBaseInfoDTO;
 import com.indo.core.pojo.entity.AgentRelation;
 import com.indo.core.pojo.entity.MemBaseinfo;
+import com.indo.core.pojo.entity.MemInviteCode;
 import com.indo.core.pojo.entity.MemLevel;
 import com.indo.core.util.BusinessRedisUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,7 +63,8 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
     private AgentRelationMapper agentRelationMapper;
     @Resource
     private MemLevelMapper memLevelMapper;
-
+    @Resource
+    private MemInviteCodeMapper memInviteCodeMapper;
     @Override
     public Page<MemBaseInfoVo> queryList(MemBaseInfoReq req) {
         Page<MemBaseInfoVo> page = new Page<>(req.getPage(), req.getLimit());
@@ -105,6 +110,7 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
         memBaseinfo.setPasswordMd5(MD5.md5(req.getPassword()));
         memBaseinfo.setAccType(AccountTypeEnum.AGENT.getValue());
         if (baseMapper.insert(memBaseinfo) > 0) {
+            saveMemInviteCode(memBaseinfo);
             memAgent.setMemId(memBaseinfo.getId());
             memAgent.setAccount(memBaseinfo.getAccount());
             if(supperMem!=null){
@@ -124,7 +130,24 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
             }
         }
     }
-
+    /**
+     * 插入会员邀请码
+     *
+     * @param memBaseinfo
+     */
+    @Override
+    public void saveMemInviteCode(MemBaseinfo memBaseinfo) {
+        MemInviteCode memInviteCode = new MemInviteCode();
+        String code = ShareCodeUtil.inviteCode(memBaseinfo.getId());
+        memInviteCode.setMemId(memBaseinfo.getId());
+        memInviteCode.setAccount(memBaseinfo.getAccount());
+        memInviteCode.setInviteCode(code.toLowerCase());
+        memInviteCode.setStatus(1);
+        boolean inviteFlag = memInviteCodeMapper.insert(memInviteCode) > 0;
+        if (!inviteFlag) {
+            throw new BizException("邀请码生成错误!");
+        }
+    }
 
     public void initMemParentAgent(MemBaseinfo memBaseinfo, Long parentId) {
         LambdaQueryWrapper<AgentRelation> wrapper = new LambdaQueryWrapper();

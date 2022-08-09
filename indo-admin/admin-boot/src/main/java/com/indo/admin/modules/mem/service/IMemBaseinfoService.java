@@ -83,4 +83,9 @@ public interface IMemBaseinfoService extends SuperService<MemBaseinfo> {
      */
     Page findIpRepeatPage(MemBaseInfoReq req);
 
+    /**
+     * 邀请码
+     * @param memBaseinfo
+     */
+    void saveMemInviteCode(MemBaseinfo memBaseinfo);
 }
