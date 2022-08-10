@@ -109,7 +109,7 @@ public class GameManageServiceImpl implements IGameManageService {
         GameInfoPageImpReq gameInfoPageImpReq = new GameInfoPageImpReq();
         BeanUtils.copyProperties(req, gameInfoPageImpReq);
         List agentAcctList = new ArrayList();
-        if(null!=req && !"".equals(req.getAgentAcct())){
+        if(null!=req && null!=req.getAgentAcct() && !"".equals(req.getAgentAcct())){
             MemTradingBO memTradingBO = gameCommonService.getMemTradingInfo(req.getAgentAcct());
             List<AgentRelation> agentRelationList = txnsMapper.queryAgentRelationByUserId(String.valueOf(loginUser.getId()),String.valueOf(memTradingBO.getId()));
             if(null!=agentRelationList && agentRelationList.size()>0){

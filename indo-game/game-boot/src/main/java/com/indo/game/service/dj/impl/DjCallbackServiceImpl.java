@@ -102,25 +102,39 @@ public class DjCallbackServiceImpl implements DjCallbackService {
             return dataJson;
         }
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
-        wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Adjust Bet"));
+        wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Settle"));
         wrapper.eq(Txns::getStatus, "Running");
         wrapper.eq(Txns::getPromotionTxId, djCallBackParentReq.getTicket_id());
 
         Txns oldTxns = txnsMapper.selectOne(wrapper);
         if (null != oldTxns) {
-            if ("Cancel Bet".equals(oldTxns.getMethod())) {
-                dataJson.put("status_code", "2");
-                dataJson.put("message", "单号无效");
-                return dataJson;
-            } else {
+            if ("Cancel Bet".equals(oldTxns.getMethod())||"Settle".equals(oldTxns.getMethod())) {
                 dataJson.put("status_code", "2");
                 dataJson.put("message", "单号无效");
                 return dataJson;
             }
         }
-
-        balance = balance.subtract(betAmount);
-        gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
+        if (null != oldTxns) {
+            if (betAmount.compareTo(BigDecimal.ZERO) != 0) {
+                if (betAmount.compareTo(BigDecimal.ZERO) == -1) {
+                    balance = balance.subtract(betAmount.abs());
+                    gameCommonService.updateUserBalance(memBaseinfo, betAmount.abs(), GoldchangeEnum.SETTLE, TradingEnum.SPENDING);
+                } else {
+                    balance = balance.add(betAmount);
+                    gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
+                }
+            }
+        }else {
+            if (betAmount.compareTo(BigDecimal.ZERO) != 0) {
+                if (betAmount.compareTo(BigDecimal.ZERO) == -1) {
+                    balance = balance.subtract(betAmount.abs());
+                    gameCommonService.updateUserBalance(memBaseinfo, betAmount.abs(), GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
+                } else {
+                    balance = balance.add(betAmount);
+                    gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.PLACE_BET, TradingEnum.INCOME);
+                }
+            }
+        }
 
         Txns txns = new Txns();
         //游戏商注单号
@@ -150,6 +164,8 @@ public class DjCallbackServiceImpl implements DjCallbackService {
         txns.setGameName(gamePlatform.getPlatformEnName());
         //下注金额
         txns.setBetAmount(betAmount);
+        txns.setWinningAmount(betAmount);
+        txns.setWinAmount(betAmount);
         //玩家下注时间
         txns.setBetTime(DateUtils.formatByString(djCallBackParentReq.getCreated_datetime(), DateUtils.newFormat));
         //真实下注金额,需增加在玩家的金额
@@ -170,8 +186,9 @@ public class DjCallbackServiceImpl implements DjCallbackService {
         //投注 IP
         txns.setBetIp(ip);//  string 是 投注 IP
         if (oldTxns != null) {
-            txns.setStatus("Settle");
+            oldTxns.setStatus("Settle");
             txnsMapper.updateById(oldTxns);
+            txns.setMethod("Settle");
         }
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("<?xml version=\"1.0\" ?>").append("<bet>").append("<status_code>");
@@ -183,7 +200,7 @@ public class DjCallbackServiceImpl implements DjCallbackService {
         }
         stringBuilder.append(">00</status_code>").append("<status_text>OK</status_text>");
         stringBuilder.append("<ref_id>").append(memBaseinfo.getId()).append("</ref_id>").append("<balance>");
-        stringBuilder.append(memBaseinfo.getBalance()).append("</balance></bet>");
+        stringBuilder.append(balance).append("</balance></bet>");
 
         return dataJson;
     }
@@ -212,8 +229,38 @@ public class DjCallbackServiceImpl implements DjCallbackService {
             stringBuilder.append("</cancel_bet>");
             return stringBuilder;
         }
-        BigDecimal balance = memBaseinfo.getBalance().add(oldTxns.getAmount());
-        gameCommonService.updateUserBalance(memBaseinfo, oldTxns.getAmount(), GoldchangeEnum.REFUND, TradingEnum.INCOME);
+        if (null != oldTxns) {
+            if ("Cancel Bet".equals(oldTxns.getMethod())) {
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append("<?xml version=\"1.0\" ?>").append("<cancel_bet>>").append("<status_code>");
+                stringBuilder.append(">99</status_code>").append("<status_text>fail</status_text>");
+                stringBuilder.append("</cancel_bet>");
+                return stringBuilder;
+            }
+        }
+        BigDecimal balance = memBaseinfo.getBalance();
+        BigDecimal amount = oldTxns.getWinningAmount();
+        if ("Place Bet".equals(oldTxns.getMethod())) {
+            if (amount.compareTo(BigDecimal.ZERO) != 0) {
+                if (amount.compareTo(BigDecimal.ZERO) == -1) {//小于0
+                    balance = balance.add(amount.abs());
+                    gameCommonService.updateUserBalance(memBaseinfo, amount.abs(), GoldchangeEnum.CANCEL_BET, TradingEnum.INCOME);
+                } else {//大于0
+                    balance = balance.add(amount);
+                    gameCommonService.updateUserBalance(memBaseinfo, amount, GoldchangeEnum.CANCEL_BET, TradingEnum.SPENDING);
+                }
+            }
+        }else {
+            if (amount.compareTo(BigDecimal.ZERO) != 0) {
+                if (amount.compareTo(BigDecimal.ZERO) == -1) {//小于0
+                    balance = balance.add(amount.abs());
+                    gameCommonService.updateUserBalance(memBaseinfo, amount.abs(), GoldchangeEnum.UNSETTLE, TradingEnum.INCOME);
+                } else {//大于0
+                    balance = balance.add(amount);
+                    gameCommonService.updateUserBalance(memBaseinfo, amount, GoldchangeEnum.UNSETTLE, TradingEnum.SPENDING);
+                }
+            }
+        }
         String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
 
         Txns txns = new Txns();

@@ -63,7 +63,7 @@ public class DjCallBackController {
     /**
      * 返还押注
      */
-    @RequestMapping(value = "/CancelBet.aspx", method = RequestMethod.GET,produces = "text/plain;charset=UTF-8")
+    @RequestMapping(value = "/CancelBet", method = RequestMethod.GET,produces = "text/plain;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object refund(DjCallBackParentReq djCallBackParentReq, HttpServletRequest request) {
