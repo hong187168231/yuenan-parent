@@ -320,6 +320,8 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
 
             Txns txns = new Txns();
             BeanUtils.copyProperties(oldTxns, txns);
+            //游戏商注单号
+            txns.setPlatformTxId(platformTxId);
             txns.setBalance(balance);
             txns.setId(null);
             //更新时间
@@ -406,6 +408,8 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
 
             Txns txns = new Txns();
             BeanUtils.copyProperties(oldTxns, txns);
+            //游戏商注单号
+            txns.setPlatformTxId(platformTxId);
             txns.setBalance(balance);
             txns.setId(null);
             txns.setStatus("Running");
