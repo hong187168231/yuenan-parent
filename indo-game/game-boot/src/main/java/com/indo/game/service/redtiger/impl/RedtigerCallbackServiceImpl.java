@@ -161,6 +161,9 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             JSONObject table = game.getJSONObject("details").getJSONObject("table");
 
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(playerID);
+            if (null == memBaseinfo) {
+                return initFailureResponse(1049, "会员不存在");
+            }
             GamePlatform gamePlatform;
             if("Y".equals(OpenAPIProperties.REDTIGER_IS_PLATFORM_LOGIN)){
                 gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platformGameParent.getPlatformCode(),platformGameParent.getPlatformCode());
@@ -202,7 +205,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             //玩家货币代码
             txns.setCurrency(platformGameParent.getCurrencyType());
             txns.setGameInfo(game.getString("type"));
-            txns.setRoundId(game.getString("type"));
+            txns.setRoundId(transaction.getString("refId"));
             //平台代码
             txns.setPlatform(platformGameParent.getPlatformCode());
             //平台名称
@@ -284,12 +287,20 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             }
 
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(playerID);
-
+            if (null == memBaseinfo) {
+                return initFailureResponse(1049, "会员不存在");
+            }
+            BigDecimal balance = memBaseinfo.getBalance();
             JSONObject transaction = params.getJSONObject("transaction");
             String platformTxId = transaction.getString("id");
+            String refId = transaction.getString("refId");
             JSONObject game = params.getJSONObject("game");
+            Txns oldTxns1 = getTxns(platformTxId, memBaseinfo.getAccount());
+            if(null!=oldTxns1){
+                return initFailureResponse(2001, "订单已经存在");
+            }
             // 查询用户请求订单
-            Txns oldTxns = getTxns(platformTxId, memBaseinfo.getAccount());
+            Txns oldTxns = getTxnsByRoundId(refId, memBaseinfo.getAccount());
             if (null == oldTxns) {
                 return initFailureResponse(10005, "BET_DOES_NOT_EXIST");
             }
@@ -300,28 +311,22 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             if (betAmount.compareTo(BigDecimal.ZERO) < 0) {
                 return initFailureResponse(1001, "中奖金额不能小0");
             }
+            if (betAmount.compareTo(BigDecimal.ZERO) == 0) {
+                // 会员余额
+                balance =balance.add(betAmount);
+                // 更新玩家余额
+                gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
+            }
 
-            // 会员余额
-            BigDecimal balance = memBaseinfo.getBalance().add(betAmount);
-            // 更新玩家余额
-            gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
-
-            //游戏商注单号
-            oldTxns.setPlatformTxId(platformTxId);
-            //玩家 ID
-            oldTxns.setUserId(memBaseinfo.getAccount());
-            //玩家货币代码
-            oldTxns.setCurrency(platformGameParent.getCurrencyType());
-            oldTxns.setGameInfo(game.getString("type"));
-            oldTxns.setRoundId(game.getString("type"));
+            Txns txns = new Txns();
+            BeanUtils.copyProperties(oldTxns, txns);
+            txns.setBalance(balance);
+            txns.setId(null);
+            //更新时间
+            String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
             //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
             oldTxns.setWinningAmount(betAmount);
             oldTxns.setWinAmount(betAmount);
-            //真实返还金额,游戏赢分
-            oldTxns.setRealWinAmount(betAmount);
-            //辨认交易时间依据
-            oldTxns.setTxTime(DateUtils.formatByLong(System.currentTimeMillis(), DateUtils.newFormat));
-            oldTxns.setUpdateTime(DateUtils.formatByLong(System.currentTimeMillis(), DateUtils.newFormat));
             //赌注的结果 : 赢:0,输:1,平手:2
             int resultTyep;
             if (betAmount.compareTo(BigDecimal.ZERO) == 0) {
@@ -333,19 +338,14 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             }
             oldTxns.setResultType(resultTyep);
             //操作名称
-            oldTxns.setMethod("Settle");
-            oldTxns.setStatus("Running");
-            //余额
-            oldTxns.setBalance(balance);
-            //更新时间
-            String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
+            txns.setMethod("Settle");
+            txns.setStatus("Running");
+            txns.setCreateTime(dateStr);
+            txnsMapper.insert(txns);
+
+            oldTxns.setStatus("Cancel Bet");
             oldTxns.setUpdateTime(dateStr);
-            //投注 IP
-            oldTxns.setBetIp(ip);//  string 是 投注 IP
-            int num = txnsMapper.updateById(oldTxns);
-            if (num <= 0) {
-                return initFailureResponse(1001, "订单派奖请求失败");
-            }
+            txnsMapper.updateById(oldTxns);
 
             JSONObject jsonObject1 = initSuccessResponse(params.getString("uuid"));
             jsonObject1.put("balance", balance);
@@ -374,17 +374,25 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             }
 
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(playerID);
-
+            if (null == memBaseinfo) {
+                return initFailureResponse(1049, "会员不存在");
+            }
             JSONObject transaction = params.getJSONObject("transaction");
             String platformTxId = transaction.getString("id");
+            String refId = transaction.getString("refId");
 //            JSONObject game = params.getJSONObject("game");
 //            JSONObject table = game.getJSONObject("details").getJSONObject("table");
 
 
             // 查询用户请求订单
-            Txns oldTxns = getTxns(platformTxId, memBaseinfo.getAccount());
+            Txns oldTxns1 = getTxns(platformTxId, memBaseinfo.getAccount());
+            if(null!=oldTxns1){
+                return initFailureResponse(2001, "订单已经存在");
+            }
+            // 查询用户请求订单
+            Txns oldTxns = getTxnsByRoundId(refId, memBaseinfo.getAccount());
             if (null == oldTxns) {
-                return initFailureResponse(1005, "BET_DOES_NOT_EXIST");
+                return initFailureResponse(10005, "BET_DOES_NOT_EXIST");
             }
 
             // 如果订单已经取消
@@ -401,6 +409,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             txns.setBalance(balance);
             txns.setId(null);
             txns.setStatus("Running");
+            txns.setWinAmount(amount);
             txns.setRealWinAmount(amount);//真实返还金额
             txns.setMethod("Cancel Bet");
             txns.setCreateTime(dateStr);
@@ -436,7 +445,9 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             }
 
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(playerID);
-
+            if (null == memBaseinfo) {
+                return initFailureResponse(1049, "会员不存在");
+            }
             JSONObject promoTransaction = params.getJSONObject("promoTransaction");
             String platformTxId = promoTransaction.getString("id");
             JSONObject game = params.getJSONObject("game");
@@ -601,7 +612,19 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
         wrapper.eq(Txns::getStatus, "Running");
         wrapper.eq(Txns::getPlatformTxId, reference);
         wrapper.eq(Txns::getPlatform, OpenAPIProperties.REDTIGER_PLATFORM_CODE);
-        wrapper.eq(Txns::getUserId, userId);
+//        wrapper.eq(Txns::getUserId, userId);
+        return txnsMapper.selectOne(wrapper);
+    }
+    private Txns getTxnsByRoundId(String roundId, String userId) {
+        LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+        wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet")
+                .or().eq(Txns::getMethod, "Cancel Bet")
+                .or().eq(Txns::getMethod, "Bonus")
+                .or().eq(Txns::getMethod, "Settle"));
+        wrapper.eq(Txns::getStatus, "Running");
+        wrapper.eq(Txns::getRoundId, roundId);
+        wrapper.eq(Txns::getPlatform, OpenAPIProperties.REDTIGER_PLATFORM_CODE);
+//        wrapper.eq(Txns::getUserId, userId);
         return txnsMapper.selectOne(wrapper);
     }
 
