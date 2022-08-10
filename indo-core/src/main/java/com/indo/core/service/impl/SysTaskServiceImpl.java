@@ -141,7 +141,7 @@ public class SysTaskServiceImpl extends ServiceImpl<SysTaskMapper, SysTask> impl
                 if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
                     continue;
                 }
-                BigDecimal condition = new BigDecimal(tl.getCondition());
+                BigDecimal condition = new BigDecimal(tl.getConditions());
                 if(amount.compareTo(condition)<=0){
                     continue;
                 }
@@ -154,7 +154,7 @@ public class SysTaskServiceImpl extends ServiceImpl<SysTaskMapper, SysTask> impl
                 if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
                     continue;
                 }
-                BigDecimal condition = new BigDecimal(tl.getCondition());
+                BigDecimal condition = new BigDecimal(tl.getConditions());
                 if(amount.compareTo(condition)<=0){
                     continue;
                 }
@@ -167,7 +167,7 @@ public class SysTaskServiceImpl extends ServiceImpl<SysTaskMapper, SysTask> impl
                 if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
                     continue;
                 }
-                BigDecimal condition = new BigDecimal(tl.getCondition());
+                BigDecimal condition = new BigDecimal(tl.getConditions());
                 if(amount.compareTo(condition)<=0){
                     continue;
                 }
@@ -180,7 +180,7 @@ public class SysTaskServiceImpl extends ServiceImpl<SysTaskMapper, SysTask> impl
                 if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
                     continue;
                 }
-                BigDecimal condition = new BigDecimal(tl.getCondition());
+                BigDecimal condition = new BigDecimal(tl.getConditions());
                 if(amount.compareTo(condition)<=0){
                     continue;
                 }

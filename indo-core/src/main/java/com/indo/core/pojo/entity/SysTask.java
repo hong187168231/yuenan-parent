@@ -64,7 +64,7 @@ public class SysTask extends BaseEntity {
     private String conditionJson;
 
     @ApiModelProperty(value = "单任务条件")
-    private String condition;
+    private String conditions;
 
     @TableField(exist = false)
     @ApiModelProperty(value = "领取状态：0不可领取，1可领取，2已经领取")
