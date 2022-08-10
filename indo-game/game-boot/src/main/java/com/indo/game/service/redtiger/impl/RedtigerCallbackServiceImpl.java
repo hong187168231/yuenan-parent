@@ -490,18 +490,21 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             JSONObject promoTransaction = params.getJSONObject("promoTransaction");
             String platformTxId = promoTransaction.getString("id");
             JSONObject game = params.getJSONObject("game");
-            JSONObject table = game.getJSONObject("details").getJSONObject("table");
+            JSONObject table = new JSONObject();
+            if(null!=game){
+                table = game.getJSONObject("details").getJSONObject("table");
+            }
+
             // 赢奖金额
             BigDecimal betAmount = BigDecimal.ZERO;
             String roundId = null, promotionId = null, promoType = promoTransaction.getString("type");
             GamePlatform gamePlatform;
             if("Y".equals(OpenAPIProperties.REDTIGER_IS_PLATFORM_LOGIN)){
                 gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platformGameParent.getPlatformCode(),platformGameParent.getPlatformCode());
-            }else {
+            }else if(null!=table){
                 gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(table.getString("id"), platformGameParent.getPlatformCode());
 
-            }
-            if (null == gamePlatform) {
+            }else {
                 gamePlatform = gameCommonService.getGamePlatformByParentName(OpenAPIProperties.REDTIGER_PLATFORM_CODE).get(0);
             }
             GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
