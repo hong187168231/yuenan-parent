@@ -96,12 +96,19 @@ public class SysTaskServiceImpl extends ServiceImpl<SysTaskMapper, SysTask> impl
                 if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
                     continue;
                 }
+                BigDecimal condition = new BigDecimal(tl.getConditions());
+                tl.setProgress(amount);
+                if(amount.compareTo(condition)<0){
+                    continue;
+                }
+
                 tl.setReceive(1);
                 memTaskRecordMapper.insert(memTaskRecord);
             }
             //全民推广
             if (tl.getCode().equals(TaskEnum.MEMPOPULARIZED.getCode())) {
                 Integer num = baseMapper.findMemSubNum(loginInfo.getId());
+                tl.setProgress(new BigDecimal(num));
                 JSONObject json = JSONObject.parseObject(tl.getConditionJson());
                 List<MemTaskRecord> extensionList = memTaskRecordMapper.findTaskRecordByCode(loginInfo.getId(),tl.getCode());
                 AtomicReference<Integer> unclaimed= new AtomicReference<>(0);
@@ -142,7 +149,8 @@ public class SysTaskServiceImpl extends ServiceImpl<SysTaskMapper, SysTask> impl
                     continue;
                 }
                 BigDecimal condition = new BigDecimal(tl.getConditions());
-                if(amount.compareTo(condition)<=0){
+                tl.setProgress(amount);
+                if(amount.compareTo(condition)<0){
                     continue;
                 }
                 tl.setReceive(1);
@@ -155,7 +163,8 @@ public class SysTaskServiceImpl extends ServiceImpl<SysTaskMapper, SysTask> impl
                     continue;
                 }
                 BigDecimal condition = new BigDecimal(tl.getConditions());
-                if(amount.compareTo(condition)<=0){
+                tl.setProgress(amount);
+                if(amount.compareTo(condition)<0){
                     continue;
                 }
                 tl.setReceive(1);
@@ -168,7 +177,8 @@ public class SysTaskServiceImpl extends ServiceImpl<SysTaskMapper, SysTask> impl
                     continue;
                 }
                 BigDecimal condition = new BigDecimal(tl.getConditions());
-                if(amount.compareTo(condition)<=0){
+                tl.setProgress(amount);
+                if(amount.compareTo(condition)<0){
                     continue;
                 }
                 tl.setReceive(1);
@@ -181,7 +191,8 @@ public class SysTaskServiceImpl extends ServiceImpl<SysTaskMapper, SysTask> impl
                     continue;
                 }
                 BigDecimal condition = new BigDecimal(tl.getConditions());
-                if(amount.compareTo(condition)<=0){
+                tl.setProgress(amount);
+                if(amount.compareTo(condition)<0){
                     continue;
                 }
                 tl.setReceive(1);
