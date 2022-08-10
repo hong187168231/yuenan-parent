@@ -69,4 +69,8 @@ public class SysTask extends BaseEntity {
     @TableField(exist = false)
     @ApiModelProperty(value = "领取状态：0不可领取，1可领取，2已经领取")
     private Integer receive;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "当前进度数")
+    private BigDecimal progress =BigDecimal.ZERO;
 }
