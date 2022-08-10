@@ -409,9 +409,17 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             if ("Cancel Bet".equals(oldTxns.getMethod())) {
                 return initFailureResponse("BET_ALREADY_EXIST", "Bet already exists in third party system.");
             }
+            BigDecimal betAmount = transaction.getBigDecimal("amount");
             BigDecimal amount = oldTxns.getBetAmount();
-            BigDecimal balance = memBaseinfo.getBalance().add(amount);
-            gameCommonService.updateUserBalance(memBaseinfo, amount, GoldchangeEnum.REFUND, TradingEnum.INCOME);
+            BigDecimal balance = memBaseinfo.getBalance();
+            // 取消金额大于下注金额
+            if (betAmount.compareTo(amount) == 1) {
+                return initFailureResponse("INSUFFICIENT_FUNDS", "You do not have sufficient funds to place this bet.");
+            }else {
+                balance = balance.add(betAmount);
+                gameCommonService.updateUserBalance(memBaseinfo, amount, GoldchangeEnum.REFUND, TradingEnum.INCOME);
+            }
+
             String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
 
             Txns txns = new Txns();
@@ -425,11 +433,29 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             txns.setRealWinAmount(amount);//真实返还金额
             txns.setMethod("Cancel Bet");
             txns.setCreateTime(dateStr);
+            if (betAmount.compareTo(amount) == 1) {
+                Txns txns2 = new Txns();
+                BeanUtils.copyProperties(oldTxns, txns2);
+                //游戏商注单号
+                txns2.setPlatformTxId(platformTxId);
+                txns2.setBalance(balance);
+                txns2.setId(null);
+                txns2.setStatus("Running");
+                txns2.setWinningAmount(amount.subtract(betAmount).negate());
+                txns2.setWinAmount(amount);
+                txns2.setRealWinAmount(amount);//真实返还金额
+                txns2.setMethod("Place Bet");
+                txns2.setCreateTime(dateStr);
+                txnsMapper.insert(txns2);
+                txns.setStatus("Place Bet");
+            }
             txnsMapper.insert(txns);
 
             oldTxns.setStatus("Cancel Bet");
             oldTxns.setUpdateTime(dateStr);
             txnsMapper.updateById(oldTxns);
+            // 中奖金额小于0
+
 
             JSONObject jsonObject1 = initSuccessResponse(params.getString("uuid"));
             jsonObject1.put("balance", balance);
@@ -475,6 +501,9 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
                 gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(table.getString("id"), platformGameParent.getPlatformCode());
 
             }
+            if (null == gamePlatform) {
+                gamePlatform = gameCommonService.getGamePlatformByParentName(OpenAPIProperties.REDTIGER_PLATFORM_CODE).get(0);
+            }
             GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
             // 免费回合游戏
             if ("FreeRoundPlayableSpent".equals(promoType)) {
@@ -512,10 +541,6 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
                 betAmount = promoTransaction.getBigDecimal("amount");
                 roundId = game.getJSONObject("details").getJSONObject("table").getString("id");
                 promotionId = roundId;
-            }
-
-            if (null == gamePlatform) {
-                gamePlatform = gameCommonService.getGamePlatformByParentName(OpenAPIProperties.REDTIGER_PLATFORM_CODE).get(0);
             }
 
             // 赢奖金额小于0
