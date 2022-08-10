@@ -18,14 +18,14 @@
         <result column="bonus_amount" property="bonusAmount" />
         <result column="code" property="code" />
         <result column="condition_json" property="conditionJson" />
-        <result column="condition" property="condition" />
+        <result column="conditions" property="conditions" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         create_time,
         update_time,
-        id, type_id, name, details, start_time, end_time, picture, states, create_user,bonus_amount,condition,condition_json
+        id, type_id, name, details, start_time, end_time, picture, states, create_user,bonus_amount,conditions,condition_json
     </sql>
     <!--查询用户今日转账充值金额-->
     <select id="findMemAmountTransferredToday" resultType="java.math.BigDecimal">
