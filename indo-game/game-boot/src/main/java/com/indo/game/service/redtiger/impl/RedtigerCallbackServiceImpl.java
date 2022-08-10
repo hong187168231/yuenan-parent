@@ -490,7 +490,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             JSONObject promoTransaction = params.getJSONObject("promoTransaction");
             String platformTxId = promoTransaction.getString("id");
             JSONObject game = params.getJSONObject("game");
-            JSONObject table = new JSONObject();
+            JSONObject table = null;
             if(null!=game){
                 table = game.getJSONObject("details").getJSONObject("table");
             }
