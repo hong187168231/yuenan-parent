@@ -311,7 +311,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             if (betAmount.compareTo(BigDecimal.ZERO) < 0) {
                 return initFailureResponse(1001, "中奖金额不能小0");
             }
-            if (betAmount.compareTo(BigDecimal.ZERO) == 0) {
+            if (betAmount.compareTo(BigDecimal.ZERO) != 0) {
                 // 会员余额
                 balance =balance.add(betAmount);
                 // 更新玩家余额
@@ -343,7 +343,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             txns.setCreateTime(dateStr);
             txnsMapper.insert(txns);
 
-            oldTxns.setStatus("Cancel Bet");
+            oldTxns.setStatus("Settle");
             oldTxns.setUpdateTime(dateStr);
             txnsMapper.updateById(oldTxns);
 
