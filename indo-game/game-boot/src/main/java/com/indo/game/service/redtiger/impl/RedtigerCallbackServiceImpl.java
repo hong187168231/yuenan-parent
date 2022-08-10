@@ -45,18 +45,18 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             GameParentPlatform platformGameParent = getGameParentPlatform();
             // 校验IP
             if (checkIp(ip, platformGameParent)) {
-                return initFailureResponse(1100, "非信任來源IP");
+                return initFailureResponse("INVALID_TOKEN_ID", "There has been a problem with the casino. User authentication failed or your session may be expired, please close the browser and try again. Error Code: EV01");
             }
 
             String playerID = params.getString("userId");
             System.out.println("回调用户id:"+playerID);
             if (null == playerID || "".equals(playerID)) {
-                return initFailureResponse(1049, "会员不存在");
+                return initFailureResponse("INVALID_TOKEN_ID", "There has been a problem with the casino. User authentication failed or your session may be expired, please close the browser and try again. Error Code: EV01");
             }
             // 查询玩家是否存在
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(playerID);
             if (null == memBaseinfo) {
-                return initFailureResponse(1049, "会员不存在");
+                return initFailureResponse("INVALID_TOKEN_ID", "There has been a problem with the casino. User authentication failed or your session may be expired, please close the browser and try again. Error Code: EV01");
             }
             String uuid = params.getString("uuid");
             String sid = params.getString("sid");
@@ -74,7 +74,8 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             return jsonObject1;
 
         } catch (Exception e) {
-            return initFailureResponse(1049, e.getMessage());
+            e.printStackTrace();
+            return initFailureResponse("UNKNOWN_ERROR","Please contact Customer Support for assistance.");
         }
     }
 
@@ -85,17 +86,17 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             GameParentPlatform platformGameParent = getGameParentPlatform();
             // 校验IP
             if (checkIp(ip, platformGameParent)) {
-                return initFailureResponse(1100, "非信任來源IP");
+                return initFailureResponse("INVALID_TOKEN_ID", "There has been a problem with the casino. User authentication failed or your session may be expired, please close the browser and try again. Error Code: EV01");
             }
             String playerID = params.getString("userId");
             if (null == playerID || "".equals(playerID)) {
-                return initFailureResponse(1049, "会员不存在");
+                return initFailureResponse("INVALID_TOKEN_ID", "There has been a problem with the casino. User authentication failed or your session may be expired, please close the browser and try again. Error Code: EV01");
             }
 
             // 查询玩家是否存在
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(playerID);
             if (null == memBaseinfo) {
-                return initFailureResponse(1049, "会员不存在");
+                return initFailureResponse("INVALID_TOKEN_ID", "There has been a problem with the casino. User authentication failed or your session may be expired, please close the browser and try again. Error Code: EV01");
             }
 
             JSONObject jsonObject1 = initSuccessResponse(params.getString("uuid"));
@@ -104,7 +105,8 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             return jsonObject1;
 
         } catch (Exception e) {
-            return initFailureResponse(1049, e.getMessage());
+            e.printStackTrace();
+            return initFailureResponse("UNKNOWN_ERROR","Please contact Customer Support for assistance.");
         }
     }
 
@@ -115,17 +117,17 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             GameParentPlatform platformGameParent = getGameParentPlatform();
             // 校验IP
             if (checkIp(ip, platformGameParent)) {
-                return initFailureResponse(1100, "非信任來源IP");
+                return initFailureResponse("INVALID_TOKEN_ID", "There has been a problem with the casino. User authentication failed or your session may be expired, please close the browser and try again. Error Code: EV01");
             }
             String playerID = params.getString("userId");
             if (null == playerID || "".equals(playerID)) {
-                return initFailureResponse(1049, "会员不存在");
+                return initFailureResponse("INVALID_TOKEN_ID", "There has been a problem with the casino. User authentication failed or your session may be expired, please close the browser and try again. Error Code: EV01");
             }
 
             // 查询玩家是否存在
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(playerID);
             if (null == memBaseinfo) {
-                return initFailureResponse(1049, "会员不存在");
+                return initFailureResponse("INVALID_TOKEN_ID", "There has been a problem with the casino. User authentication failed or your session may be expired, please close the browser and try again. Error Code: EV01");
             }
 
             // 会员余额返回
@@ -134,7 +136,8 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             jsonObject1.put("bonus", 0);
             return jsonObject1;
         } catch (Exception e) {
-            return initFailureResponse(1049, e.getMessage());
+            e.printStackTrace();
+            return initFailureResponse("UNKNOWN_ERROR","Please contact Customer Support for assistance.");
         }
     }
 
@@ -146,13 +149,13 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             GameParentPlatform platformGameParent = getGameParentPlatform();
             // 校验IP
             if (checkIp(ip, platformGameParent)) {
-                return initFailureResponse(1100, "非信任來源IP");
+                return initFailureResponse("INVALID_TOKEN_ID", "There has been a problem with the casino. User authentication failed or your session may be expired, please close the browser and try again. Error Code: EV01");
             }
 
 //            JSONObject params = JSONObject.parseObject(String.valueOf(map));
             String playerID = params.getString("userId");
             if (null == playerID || "".equals(playerID)) {
-                return initFailureResponse(1049, "会员不存在");
+                return initFailureResponse("INVALID_TOKEN_ID", "There has been a problem with the casino. User authentication failed or your session may be expired, please close the browser and try again. Error Code: EV01");
             }
 
             JSONObject transaction = params.getJSONObject("transaction");
@@ -162,7 +165,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
 
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(playerID);
             if (null == memBaseinfo) {
-                return initFailureResponse(1049, "会员不存在");
+                return initFailureResponse("INVALID_TOKEN_ID", "There has been a problem with the casino. User authentication failed or your session may be expired, please close the browser and try again. Error Code: EV01");
             }
             GamePlatform gamePlatform;
             if("Y".equals(OpenAPIProperties.REDTIGER_IS_PLATFORM_LOGIN)){
@@ -178,18 +181,18 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             // 下注金额
             BigDecimal betAmount = transaction.getBigDecimal("amount");
             if (memBaseinfo.getBalance().compareTo(betAmount) < 0) {
-                return initFailureResponse(10008, "INSUFFICIENT_FUNDS");
+                return initFailureResponse("INSUFFICIENT_FUNDS", "You do not have sufficient funds to place this bet.");
             }
 
             // 查询用户请求订单
             Txns oldTxns = getTxns(platformTxId, memBaseinfo.getAccount());
             if (null != oldTxns&&"Place Bet".equals(oldTxns.getMethod())) {
-                return initFailureResponse(2001, "订单已经存在");
+                return initFailureResponse("BET_ALREADY_EXIST", "订单已经存在");
             }
 
             // 下注金额小于0
             if (betAmount.compareTo(BigDecimal.ZERO) < 0) {
-                return initFailureResponse(10002, "下注金额不能小0");
+                return initFailureResponse("INSUFFICIENT_FUNDS", "You do not have sufficient funds to place this bet.");
             }
             balance = balance.subtract(betAmount);
             // 更新玩家余额
@@ -254,7 +257,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             txns.setBetIp(ip);//  string 是 投注 IP
             int num = txnsMapper.insert(txns);
             if (num <= 0) {
-                return initFailureResponse(1049, "订单入库请求失败");
+                return initFailureResponse("UNKNOWN_ERROR","Please contact Customer Support for assistance.");
             }
 
             JSONObject jsonObject1 = initSuccessResponse(params.getString("uuid"));
@@ -263,7 +266,8 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             return jsonObject1;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            return initFailureResponse(1049, e.getMessage());
+            e.printStackTrace();
+            return initFailureResponse("UNKNOWN_ERROR","Please contact Customer Support for assistance.");
         }
     }
 
@@ -275,20 +279,20 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             GameParentPlatform platformGameParent = getGameParentPlatform();
             // 校验IP
             if (checkIp(ip, platformGameParent)) {
-                return initFailureResponse(1100, "非信任來源IP");
+                return initFailureResponse("INVALID_TOKEN_ID", "There has been a problem with the casino. User authentication failed or your session may be expired, please close the browser and try again. Error Code: EV01");
             }
             String userId = params.getString("userId");
             if (null == userId || "".equals(userId)) {
-                return initFailureResponse(1049, "会员不存在");
+                return initFailureResponse("INVALID_TOKEN_ID", "There has been a problem with the casino. User authentication failed or your session may be expired, please close the browser and try again. Error Code: EV01");
             }
             String playerID = params.getString("userId");
             if (null == playerID || "".equals(playerID)) {
-                return initFailureResponse(1049, "会员不存在");
+                return initFailureResponse("INVALID_TOKEN_ID", "There has been a problem with the casino. User authentication failed or your session may be expired, please close the browser and try again. Error Code: EV01");
             }
 
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(playerID);
             if (null == memBaseinfo) {
-                return initFailureResponse(1049, "会员不存在");
+                return initFailureResponse("INVALID_TOKEN_ID", "There has been a problem with the casino. User authentication failed or your session may be expired, please close the browser and try again. Error Code: EV01");
             }
             BigDecimal balance = memBaseinfo.getBalance();
             JSONObject transaction = params.getJSONObject("transaction");
@@ -297,19 +301,22 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             JSONObject game = params.getJSONObject("game");
             Txns oldTxns1 = getTxns(platformTxId, memBaseinfo.getAccount());
             if(null!=oldTxns1){
-                return initFailureResponse(2001, "订单已经存在");
+                return initFailureResponse("BET_ALREADY_EXIST", "订单已经存在");
             }
             // 查询用户请求订单
             Txns oldTxns = getTxnsByRoundId(refId, memBaseinfo.getAccount());
             if (null == oldTxns) {
-                return initFailureResponse(10005, "BET_DOES_NOT_EXIST");
+                return initFailureResponse("BET_DOES_NOT_EXIST", "Please contact Customer Support for assistance.");
             }
-
+            // 如果订单已经取消
+            if ("Cancel Bet".equals(oldTxns.getMethod())) {
+                return initFailureResponse("BET_ALREADY_EXIST", "Bet already exists in third party system.");
+            }
             // 中奖金额
             BigDecimal betAmount = transaction.getBigDecimal("amount");
             // 中奖金额小于0
             if (betAmount.compareTo(BigDecimal.ZERO) < 0) {
-                return initFailureResponse(1001, "中奖金额不能小0");
+                return initFailureResponse("INSUFFICIENT_FUNDS", "You do not have sufficient funds to place this bet.");
             }
             if (betAmount.compareTo(BigDecimal.ZERO) != 0) {
                 // 会员余额
@@ -355,7 +362,8 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             return jsonObject1;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            return initFailureResponse(1001, e.getMessage());
+            e.printStackTrace();
+            return initFailureResponse("UNKNOWN_ERROR","Please contact Customer Support for assistance.");
         }
     }
 
@@ -368,16 +376,16 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             GameParentPlatform platformGameParent = getGameParentPlatform();
             // 校验IP
             if (checkIp(ip, platformGameParent)) {
-                return initFailureResponse(1100, "非信任來源IP");
+                return initFailureResponse("INVALID_TOKEN_ID", "There has been a problem with the casino. User authentication failed or your session may be expired, please close the browser and try again. Error Code: EV01");
             }
             String playerID = params.getString("userId");
             if (null == playerID || "".equals(playerID)) {
-                return initFailureResponse(1049, "会员不存在");
+                return initFailureResponse("INVALID_TOKEN_ID", "There has been a problem with the casino. User authentication failed or your session may be expired, please close the browser and try again. Error Code: EV01");
             }
 
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(playerID);
             if (null == memBaseinfo) {
-                return initFailureResponse(1049, "会员不存在");
+                return initFailureResponse("INVALID_TOKEN_ID", "There has been a problem with the casino. User authentication failed or your session may be expired, please close the browser and try again. Error Code: EV01");
             }
             JSONObject transaction = params.getJSONObject("transaction");
             String platformTxId = transaction.getString("id");
@@ -389,17 +397,17 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             // 查询用户请求订单
             Txns oldTxns1 = getTxns(platformTxId, memBaseinfo.getAccount());
             if(null!=oldTxns1){
-                return initFailureResponse(2001, "订单已经存在");
+                return initFailureResponse("BET_ALREADY_EXIST", "订单已经存在");
             }
             // 查询用户请求订单
             Txns oldTxns = getTxnsByRoundId(refId, memBaseinfo.getAccount());
             if (null == oldTxns) {
-                return initFailureResponse(10005, "BET_DOES_NOT_EXIST");
+                return initFailureResponse("BET_DOES_NOT_EXIST", "Please contact Customer Support for assistance.");
             }
 
             // 如果订单已经取消
             if ("Cancel Bet".equals(oldTxns.getMethod())) {
-                return initFailureResponse(2001, "订单已经取消");
+                return initFailureResponse("BET_ALREADY_EXIST", "Bet already exists in third party system.");
             }
             BigDecimal amount = oldTxns.getBetAmount();
             BigDecimal balance = memBaseinfo.getBalance().add(amount);
@@ -429,7 +437,8 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             return jsonObject1;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            return initFailureResponse(1001, e.getMessage());
+            e.printStackTrace();
+            return initFailureResponse("UNKNOWN_ERROR","Please contact Customer Support for assistance.");
         }
     }
 
@@ -441,16 +450,16 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             GameParentPlatform platformGameParent = getGameParentPlatform();
             // 校验IP
             if (checkIp(ip, platformGameParent)) {
-                return initFailureResponse(1100, "非信任來源IP");
+                return initFailureResponse("INVALID_TOKEN_ID", "There has been a problem with the casino. User authentication failed or your session may be expired, please close the browser and try again. Error Code: EV01");
             }
             String playerID = params.getString("userId");
             if (null == playerID || "".equals(playerID)) {
-                return initFailureResponse(1049, "会员不存在");
+                return initFailureResponse("INVALID_TOKEN_ID", "There has been a problem with the casino. User authentication failed or your session may be expired, please close the browser and try again. Error Code: EV01");
             }
 
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(playerID);
             if (null == memBaseinfo) {
-                return initFailureResponse(1049, "会员不存在");
+                return initFailureResponse("INVALID_TOKEN_ID", "There has been a problem with the casino. User authentication failed or your session may be expired, please close the browser and try again. Error Code: EV01");
             }
             JSONObject promoTransaction = params.getJSONObject("promoTransaction");
             String platformTxId = promoTransaction.getString("id");
@@ -511,13 +520,13 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
 
             // 赢奖金额小于0
             if (betAmount.compareTo(BigDecimal.ZERO) < 0) {
-                return initFailureResponse(1001, "中奖金额不能小0");
+                return initFailureResponse("INSUFFICIENT_FUNDS", "You do not have sufficient funds to place this bet.");
             }
 
             // 查询用户请求订单
             Txns txns = getTxns(platformTxId, memBaseinfo.getAccount());
             if (null != txns) {
-                return initFailureResponse(10005, "BET_DOES_NOT_EXIST");
+                return initFailureResponse("BET_DOES_NOT_EXIST", "Please contact Customer Support for assistance.");
             }
             txns = new Txns();
             // 会员余额
@@ -587,7 +596,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             txns.setBetIp(ip);//  string 是 投注 IP
             int num = txnsMapper.insert(txns);
             if (num <= 0) {
-                return initFailureResponse(100, "活动派奖订单入库请求失败");
+                return initFailureResponse("UNKNOWN_ERROR","Please contact Customer Support for assistance.");
             }
 
             JSONObject jsonObject1 = initSuccessResponse(params.getString("uuid"));
@@ -596,7 +605,8 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             return jsonObject1;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            return initFailureResponse(1001, e.getMessage());
+            e.printStackTrace();
+            return initFailureResponse("UNKNOWN_ERROR","Please contact Customer Support for assistance.");
         }
     }
 
@@ -668,7 +678,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
      * @param description 错误描述
      * @return JSONObject
      */
-    private JSONObject initFailureResponse(Integer error, String description) {
+    private JSONObject initFailureResponse(String error, String description) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("status", error);
         jsonObject.put("message", description);
