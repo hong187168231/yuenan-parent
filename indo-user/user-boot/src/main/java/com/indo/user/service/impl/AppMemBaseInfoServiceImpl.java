@@ -247,7 +247,6 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
         this.baseMapper.insert(memBaseinfo);
         if (ObjectUtil.isNotNull(parentInviteCode)) {
             initMemAgent(memBaseinfo, parentInviteCode);
-            initMemParentAgent(memBaseinfo, parentInviteCode);
         }else{
             //注册用户默认未填写邀请码为顶级代理
             memBaseinfo.setAccType(2);
@@ -264,31 +263,27 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
 
 
     public void initMemAgent(MemBaseinfo memBaseinfo, MemInviteCode parentInviteCode) {
-        AgentRelation agentRelation = new AgentRelation();
-        agentRelation.setMemId(memBaseinfo.getId());
-        agentRelation.setAccount(memBaseinfo.getAccount());
-        agentRelation.setStatus(1);
-        agentRelation.setParentId(parentInviteCode.getMemId());
-        agentRelation.setSuperior(parentInviteCode.getAccount());
-        memAgentService.save(agentRelation);
-    }
-
-    public void initMemParentAgent(MemBaseinfo memBaseinfo, MemInviteCode parentInviteCode) {
         LambdaQueryWrapper<AgentRelation> wrapper = new LambdaQueryWrapper();
         wrapper.eq(AgentRelation::getParentId, parentInviteCode.getMemId())
-                .eq(AgentRelation::getStatus, 1);
+            .eq(AgentRelation::getStatus, 1);
         AgentRelation parentAgent = memAgentService.getOne(wrapper);
-        if (ObjectUtil.isNull(parentAgent)) {
-            throw new BizException("该邀请人未成为代理");
-        }
-        String subUserIds = StringUtils.isBlank(parentAgent.getSubUserIds()) ?
+        if (parentAgent == null) {
+            AgentRelation agentRelation = new AgentRelation();
+            agentRelation.setMemId(memBaseinfo.getId());
+            agentRelation.setAccount(memBaseinfo.getAccount());
+            agentRelation.setStatus(1);
+            agentRelation.setTeamNum(1);
+            agentRelation.setParentId(parentInviteCode.getMemId());
+            agentRelation.setSuperior(parentInviteCode.getAccount());
+            memAgentService.save(agentRelation);
+        } else {
+            String subUserIds = StringUtils.isBlank(parentAgent.getSubUserIds()) ?
                 memBaseinfo.getId() + "" : parentAgent.getSubUserIds() + "," + memBaseinfo.getId();
-        parentAgent.setSubUserIds(subUserIds);
-        parentAgent.setTeamNum(parentAgent.getTeamNum() + 1);
-        memAgentService.updateById(parentAgent);
-
+            parentAgent.setSubUserIds(subUserIds);
+            parentAgent.setTeamNum(parentAgent.getTeamNum() + 1);
+            memAgentService.updateById(parentAgent);
+        }
     }
-
 
     @Override
     @Transactional

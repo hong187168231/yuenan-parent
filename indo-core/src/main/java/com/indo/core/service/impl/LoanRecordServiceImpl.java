@@ -19,8 +19,6 @@ import com.indo.core.pojo.entity.MemLevel;
 import com.indo.core.pojo.vo.LoanRecordVo;
 import com.indo.core.service.ILoanRecordService;
 import com.indo.core.service.IMemGoldChangeService;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +28,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * <p>
@@ -77,11 +76,17 @@ public class LoanRecordServiceImpl extends ServiceImpl<LoanRecordMapper, LoanRec
         loanWrapper.eq(LoanRecord::getMemId,loginInfo.getId());
         loanWrapper.eq(LoanRecord::getStates,1).or().eq(LoanRecord::getStates,3);
         List<LoanRecord> loanRecord = baseMapper.selectList(loanWrapper);
-        BigDecimal backMoney = new BigDecimal(0);
+        AtomicReference<BigDecimal> backMoney = new AtomicReference<>(new BigDecimal(0));
+        AtomicReference<BigDecimal> loanAmount = new AtomicReference<>(new BigDecimal(0));
         loanRecord.forEach(l->{
-            backMoney.add(l.getBackMoney());
+            if(l.getBackMoney()!=null){
+                backMoney.set(backMoney.get().add(l.getBackMoney()));
+            }
+            if(l.getLoanAmount()!=null){
+                loanAmount.set(loanAmount.get().add(l.getLoanAmount()));
+            }
         });
-        if((money.subtract(backMoney)).compareTo(amount)==-1){
+        if((money.subtract((loanAmount.get().subtract(backMoney.get())))).compareTo(amount)==-1){
             throw new BizException("额度不足，拒绝提供服务");
         }
         LoanRecord lr = new LoanRecord();
@@ -157,6 +162,7 @@ public class LoanRecordServiceImpl extends ServiceImpl<LoanRecordMapper, LoanRec
             }else{
                 ls.setBackMoney(ls.getBackMoney().add((amount.add(surplus))));
                 ls.setUpdateTime(new Date());
+                amount=BigDecimal.ZERO;
             }
             baseMapper.updateById(ls);
         }
@@ -175,11 +181,17 @@ public class LoanRecordServiceImpl extends ServiceImpl<LoanRecordMapper, LoanRec
                 l.setBackMoney(l.getBackMoney().add((amount.add(surplus))));
                 l.setStates(3);
                 l.setUpdateTime(new Date());
+                amount=BigDecimal.ZERO;
             }
             baseMapper.updateById(l);
         }
         MemGoldChangeDTO agentRebateChange = new MemGoldChangeDTO();
-        agentRebateChange.setChangeAmount(repayment);
+        if(amount.compareTo(BigDecimal.ZERO)==0){
+            agentRebateChange.setChangeAmount(repayment);
+        }
+        if(amount.compareTo(BigDecimal.ZERO)>0){
+            agentRebateChange.setChangeAmount(repayment.subtract(amount));
+        }
         agentRebateChange.setTradingEnum(TradingEnum.SPENDING);
         agentRebateChange.setGoldchangeEnum(GoldchangeEnum.LOAN);
         agentRebateChange.setUserId(loginInfo.getId());
@@ -205,16 +217,21 @@ public class LoanRecordServiceImpl extends ServiceImpl<LoanRecordMapper, LoanRec
         loanWrapper.eq(LoanRecord::getStates,1).or().eq(LoanRecord::getStates,3);
         List<LoanRecord> loanRecord = baseMapper.selectList(loanWrapper);
         //已还金额
-        BigDecimal backMoney = new BigDecimal(0);
+        AtomicReference<BigDecimal> backMoney = new AtomicReference<>(new BigDecimal(0));
         //借款金额
-        BigDecimal loanAmount = new BigDecimal(0);
+        AtomicReference<BigDecimal> loanAmount = new AtomicReference<>(new BigDecimal(0));
         loanRecord.forEach(l->{
-            backMoney.add(l.getBackMoney());
-            loanAmount.add(l.getLoanAmount());
+            if(l.getBackMoney()!=null){
+                backMoney.set(backMoney.get().add(l.getBackMoney()));
+            }
+            if(l.getLoanAmount()!=null){
+                loanAmount.set(loanAmount.get().add(l.getLoanAmount()));
+            }
         });
 
         LoanRecordVo loanRecordVo = new LoanRecordVo();
-        BigDecimal arrears = loanAmount.subtract(backMoney);
+
+        BigDecimal arrears = loanAmount.get().subtract(backMoney.get());
         loanRecordVo.setArrears(arrears);
         loanRecordVo.setBalance(money.subtract(arrears));
         return loanRecordVo;

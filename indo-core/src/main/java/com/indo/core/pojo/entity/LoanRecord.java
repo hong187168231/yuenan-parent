@@ -33,10 +33,10 @@ public class LoanRecord extends BaseEntity {
     private Long memId;
 
     @ApiModelProperty(value = "借款金额")
-    private BigDecimal loanAmount;
+    private BigDecimal loanAmount = new BigDecimal(0);
 
     @ApiModelProperty(value = "还款金额")
-    private BigDecimal backMoney;
+    private BigDecimal backMoney = new BigDecimal(0);
 
     @ApiModelProperty(value = "状态：1未还，2已还，3还部分")
     private Integer states;
