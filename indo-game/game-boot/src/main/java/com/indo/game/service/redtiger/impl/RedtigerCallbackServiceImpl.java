@@ -327,8 +327,8 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             //更新时间
             String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
             //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
-            oldTxns.setWinningAmount(betAmount);
-            oldTxns.setWinAmount(betAmount);
+            txns.setWinningAmount(betAmount);
+            txns.setWinAmount(betAmount);
             //赌注的结果 : 赢:0,输:1,平手:2
             int resultTyep;
             if (betAmount.compareTo(BigDecimal.ZERO) == 0) {
