@@ -36,9 +36,9 @@ public class JdbCallBackController {
             logger.info("jdbCallBack {} callBack 解密失败",e);
         }
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("jdbCallBack {} callBack 回调,IP:"+ip+" params:{}",jsonStr);
+        logger.info("jdbCallBack  callBack 回调,IP:"+ip+" params:{}",jsonStr);
         Object object = jdbCallbackService.jdbCallback(jsonStr,ip);
-        logger.info("jdbCallBack {} callBack 回调返回数据, params:{}",object);
+        logger.info("jdbCallBack callBack 回调返回数据, params:{}",object);
         return object;
     }
 }

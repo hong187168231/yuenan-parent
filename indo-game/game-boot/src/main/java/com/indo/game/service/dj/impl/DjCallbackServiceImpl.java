@@ -71,12 +71,12 @@ public class DjCallbackServiceImpl implements DjCallbackService {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("<?xml version=\"1.0\" ?>").append("<get_balance>").append("<status_code>");
         if (cptOpenMember == null) {
-            stringBuilder.append(">99</status_code>").append("<status_text>OK</status_text>").append("<balance>");
+            stringBuilder.append("99</status_code>").append("<status_text>OK</status_text>").append("<balance>");
             stringBuilder.append("0").append("</balance></get_balance>");
             return stringBuilder;
         }
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cptOpenMember.getUserName());
-        stringBuilder.append(">00</status_code>").append("<status_text>OK</status_text>").append("<balance>");
+        stringBuilder.append("00</status_code>").append("<status_text>OK</status_text>").append("<balance>");
         stringBuilder.append(memBaseinfo.getBalance()).append("</balance></get_balance>");
         return stringBuilder;
     }
@@ -84,34 +84,33 @@ public class DjCallbackServiceImpl implements DjCallbackService {
     @Override
     public Object djBetCallback(DjCallBackParentReq djCallBackParentReq, String ip) {
         CptOpenMember cptOpenMember = externalService.getCptOpenMember(Integer.parseInt(djCallBackParentReq.getLogin_id()), OpenAPIProperties.DJ_PLATFORM_CODE);
-        JSONObject dataJson = new JSONObject();
-        if (cptOpenMember == null) {
-            dataJson.put("status_code", "1");
-            dataJson.put("message", "Token 无效");
-            return dataJson;
-        }
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("<?xml version=\"1.0\" ?>").append("<bet>").append("<status_code>");
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.DJ_PLATFORM_CODE);
         GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.DJ_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
         GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cptOpenMember.getUserName());
         BigDecimal balance = memBaseinfo.getBalance();
         BigDecimal betAmount = djCallBackParentReq.getStake_money();
-        if (memBaseinfo.getBalance().compareTo(betAmount) == -1) {
-            dataJson.put("status_code", "3");
-            dataJson.put("message", "馀额不足");
-            return dataJson;
+        if (betAmount.compareTo(BigDecimal.ZERO) == -1 && memBaseinfo.getBalance().compareTo(betAmount) == -1) {
+            stringBuilder.append("88</status_code>").append("<status_text>Insufficient fund to bet </status_text>");
+            stringBuilder.append("<ref_id>").append(djCallBackParentReq.getTicket_id()).append("</ref_id>").append("<balance>");
+            stringBuilder.append(balance).append("</balance></bet>");
+            return stringBuilder;
         }
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
         wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Settle"));
         wrapper.eq(Txns::getStatus, "Running");
-        wrapper.eq(Txns::getPromotionTxId, djCallBackParentReq.getTicket_id());
+        wrapper.eq(Txns::getPlatformTxId, djCallBackParentReq.getTicket_id());
+        wrapper.eq(Txns::getPlatform, OpenAPIProperties.DJ_PLATFORM_CODE);
 
         Txns oldTxns = txnsMapper.selectOne(wrapper);
         if (null != oldTxns) {
             if ("Cancel Bet".equals(oldTxns.getMethod())||"Settle".equals(oldTxns.getMethod())) {
-                dataJson.put("status_code", "2");
-                dataJson.put("message", "单号无效");
-                return dataJson;
+                stringBuilder.append("All Other Code</status_code>").append("<status_text>General error </status_text>");
+                stringBuilder.append("<ref_id>").append(djCallBackParentReq.getTicket_id()).append("</ref_id>").append("<balance>");
+                stringBuilder.append(balance).append("</balance></bet>");
+                return stringBuilder;
             }
         }
         if (null != oldTxns) {
@@ -190,54 +189,47 @@ public class DjCallbackServiceImpl implements DjCallbackService {
             txnsMapper.updateById(oldTxns);
             txns.setMethod("Settle");
         }
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("<?xml version=\"1.0\" ?>").append("<bet>").append("<status_code>");
+
         int num = txnsMapper.insert(txns);
         if (num <= 0) {
-            dataJson.put("status_code", "2");
-            dataJson.put("message", "单号无效");
-            return dataJson;
+            stringBuilder.append("All Other Code</status_code>").append("<status_text>General error </status_text>");
+            stringBuilder.append("<ref_id>").append(djCallBackParentReq.getTicket_id()).append("</ref_id>").append("<balance>");
+            stringBuilder.append(balance).append("</balance></bet>");
+            return stringBuilder;
         }
-        stringBuilder.append(">00</status_code>").append("<status_text>OK</status_text>");
-        stringBuilder.append("<ref_id>").append(memBaseinfo.getId()).append("</ref_id>").append("<balance>");
+        stringBuilder.append("00</status_code>").append("<status_text>OK</status_text>");
+        stringBuilder.append("<ref_id>").append(djCallBackParentReq.getTicket_id()).append("</ref_id>").append("<balance>");
         stringBuilder.append(balance).append("</balance></bet>");
 
-        return dataJson;
+        return stringBuilder;
     }
 
     @Override
     public Object djRefundtCallback(DjCallBackParentReq djCallBackParentReq, String ip) {
-        CptOpenMember cptOpenMember = externalService.getCptOpenMember(Integer.parseInt(djCallBackParentReq.getLogin_id()), OpenAPIProperties.DJ_PLATFORM_CODE);
-        if (cptOpenMember == null) {
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append("<?xml version=\"1.0\" ?>").append("<cancel_bet>>").append("<status_code>");
-            stringBuilder.append(">99</status_code>").append("<status_text>fail</status_text>");
-            stringBuilder.append("</cancel_bet>");
-            return stringBuilder;
-        }
-        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cptOpenMember.getUserName());
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
         wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Settle"));
         wrapper.eq(Txns::getStatus, "Running");
-        wrapper.eq(Txns::getPromotionTxId, djCallBackParentReq.getTicket_id());
+        wrapper.eq(Txns::getPlatformTxId, djCallBackParentReq.getTicket_id());
+        wrapper.eq(Txns::getPlatform, OpenAPIProperties.DJ_PLATFORM_CODE);
         
         Txns oldTxns = txnsMapper.selectOne(wrapper);
         if (null == oldTxns) {
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append("<?xml version=\"1.0\" ?>").append("<cancel_bet>>").append("<status_code>");
-            stringBuilder.append(">99</status_code>").append("<status_text>fail</status_text>");
+            stringBuilder.append("<?xml version=\"1.0\" ?>").append("<cancel_bet>").append("<status_code>");
+            stringBuilder.append("All Other Code</status_code>").append("<status_text>General error </status_text>");
             stringBuilder.append("</cancel_bet>");
             return stringBuilder;
         }
         if (null != oldTxns) {
             if ("Cancel Bet".equals(oldTxns.getMethod())) {
                 StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append("<?xml version=\"1.0\" ?>").append("<cancel_bet>>").append("<status_code>");
-                stringBuilder.append(">99</status_code>").append("<status_text>fail</status_text>");
+                stringBuilder.append("<?xml version=\"1.0\" ?>").append("<cancel_bet>").append("<status_code>");
+                stringBuilder.append("All Other Code</status_code>").append("<status_text>General error </status_text>");
                 stringBuilder.append("</cancel_bet>");
                 return stringBuilder;
             }
         }
+        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(oldTxns.getUserId());
         BigDecimal balance = memBaseinfo.getBalance();
         BigDecimal amount = oldTxns.getWinningAmount();
         if ("Place Bet".equals(oldTxns.getMethod())) {
@@ -276,8 +268,8 @@ public class DjCallbackServiceImpl implements DjCallbackService {
         txnsMapper.insert(txns);
 
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("<?xml version=\"1.0\" ?>").append("<cancel_bet>>").append("<status_code>");
-        stringBuilder.append(">00</status_code>").append("<status_text>OK</status_text>");
+        stringBuilder.append("<?xml version=\"1.0\" ?>").append("<cancel_bet>").append("<status_code>");
+        stringBuilder.append("00</status_code>").append("<status_text>OK</status_text>");
         stringBuilder.append("</cancel_bet>");
         return stringBuilder;
     }
