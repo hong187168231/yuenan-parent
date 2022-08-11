@@ -202,6 +202,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
 
             JSONObject transaction = params.getJSONObject("transaction");
             String platformTxId = transaction.getString("id");
+            String refId = transaction.getString("refId");
             JSONObject game = params.getJSONObject("game");
             JSONObject table = game.getJSONObject("details").getJSONObject("table");
 
@@ -233,7 +234,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             }
 
             // 查询用户请求订单
-            Txns oldTxns = getTxns(platformTxId, memBaseinfo.getAccount());
+            Txns oldTxns = getTxnsByRoundId(refId, memBaseinfo.getAccount());
             if (null != oldTxns&&"Place Bet".equals(oldTxns.getMethod())) {
                 jsonObject.put("balance", balance);
                 jsonObject.put("bonus", 0);
@@ -262,7 +263,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             //玩家货币代码
             txns.setCurrency(platformGameParent.getCurrencyType());
             txns.setGameInfo(game.getString("type"));
-            txns.setRoundId(transaction.getString("refId"));
+            txns.setRoundId(refId);
             //平台代码
             txns.setPlatform(platformGameParent.getPlatformCode());
             //平台名称
@@ -366,13 +367,13 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             String platformTxId = transaction.getString("id");
             String refId = transaction.getString("refId");
             JSONObject game = params.getJSONObject("game");
-            Txns oldTxns1 = getTxns(platformTxId, memBaseinfo.getAccount());
-            if(null!=oldTxns1){
-                jsonObject.put("balance", balance);
-                jsonObject.put("bonus", 0);
-                jsonObject.put("status", "BET_ALREADY_EXIST");
-                return jsonObject;
-            }
+//            Txns oldTxns1 = getTxns(platformTxId, memBaseinfo.getAccount());
+//            if(null!=oldTxns1){
+//                jsonObject.put("balance", balance);
+//                jsonObject.put("bonus", 0);
+//                jsonObject.put("status", "BET_ALREADY_EXIST");
+//                return jsonObject;
+//            }
             // 查询用户请求订单
             Txns oldTxns = getTxnsByRoundId(refId, memBaseinfo.getAccount());
             if (null == oldTxns) {
@@ -382,7 +383,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
                 return jsonObject;
             }
             // 如果订单已经取消
-            if ("Cancel Bet".equals(oldTxns.getMethod())) {
+            if ("Cancel Bet".equals(oldTxns.getMethod())||"Settle".equals(oldTxns.getMethod())) {
                 jsonObject.put("balance", balance);
                 jsonObject.put("bonus", 0);
                 jsonObject.put("status", "BET_ALREADY_EXIST");
@@ -488,14 +489,14 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
 
 
             // 查询用户请求订单
-            Txns oldTxns1 = getTxns(platformTxId, memBaseinfo.getAccount());
+//            Txns oldTxns1 = getTxns(platformTxId, memBaseinfo.getAccount());
             BigDecimal balance = memBaseinfo.getBalance();
-            if(null!=oldTxns1){
-                jsonObject.put("balance", balance);
-                jsonObject.put("bonus", 0);
-                jsonObject.put("status", "BET_ALREADY_EXIST");
-                return jsonObject;
-            }
+//            if(null!=oldTxns1){
+//                jsonObject.put("balance", balance);
+//                jsonObject.put("bonus", 0);
+//                jsonObject.put("status", "BET_ALREADY_EXIST");
+//                return jsonObject;
+//            }
             // 查询用户请求订单
             Txns oldTxns = getTxnsByRoundId(refId, memBaseinfo.getAccount());
             if (null == oldTxns) {
@@ -506,7 +507,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             }
 
             // 如果订单已经取消
-            if ("Cancel Bet".equals(oldTxns.getMethod())) {
+            if ("Cancel Bet".equals(oldTxns.getMethod())||"Settle".equals(oldTxns.getMethod())) {
                 jsonObject.put("balance", balance);
                 jsonObject.put("bonus", 0);
                 jsonObject.put("status", "BET_ALREADY_EXIST");
