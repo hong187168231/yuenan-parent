@@ -65,7 +65,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             // 查询玩家是否存在
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(playerID);
             if (null == memBaseinfo) {
-                jsonObject.put("status", "INSUFFICIENT_FUNDS");
+                jsonObject.put("status", "INVALID_PARAMETER");
                 return jsonObject;
             }
 
@@ -114,7 +114,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             // 查询玩家是否存在
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(playerID);
             if (null == memBaseinfo) {
-                jsonObject.put("status", "INSUFFICIENT_FUNDS");
+                jsonObject.put("status", "INVALID_PARAMETER");
                 return jsonObject;
             }
 
@@ -157,7 +157,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             if (null == memBaseinfo) {
                 jsonObject.put("balance", BigDecimal.ZERO);
                 jsonObject.put("bonus", 0);
-                jsonObject.put("status", "INSUFFICIENT_FUNDS");
+                jsonObject.put("status", "INVALID_PARAMETER");
                 return jsonObject;
             }
 
@@ -210,7 +210,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             if (null == memBaseinfo) {
                 jsonObject.put("balance", BigDecimal.ZERO);
                 jsonObject.put("bonus", 0);
-                jsonObject.put("status", "INSUFFICIENT_FUNDS");
+                jsonObject.put("status", "INVALID_PARAMETER");
                 return jsonObject;
             }
             GamePlatform gamePlatform;
@@ -238,7 +238,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             if (null != oldTxns&&"Place Bet".equals(oldTxns.getMethod())) {
                 jsonObject.put("balance", balance);
                 jsonObject.put("bonus", 0);
-                jsonObject.put("status", "BET_ALREADY_EXIST");
+                jsonObject.put("status", "BET_ALREADY_SETTLED");
                 return jsonObject;
             }
 
@@ -359,7 +359,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             if (null == memBaseinfo) {
                 jsonObject.put("balance", BigDecimal.ZERO);
                 jsonObject.put("bonus", 0);
-                jsonObject.put("status", "INSUFFICIENT_FUNDS");
+                jsonObject.put("status", "INVALID_PARAMETER");
                 return jsonObject;
             }
             BigDecimal balance = memBaseinfo.getBalance();
@@ -386,7 +386,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             if ("Cancel Bet".equals(oldTxns.getMethod())||"Settle".equals(oldTxns.getMethod())) {
                 jsonObject.put("balance", balance);
                 jsonObject.put("bonus", 0);
-                jsonObject.put("status", "BET_ALREADY_EXIST");
+                jsonObject.put("status", "BET_ALREADY_SETTLED");
                 return jsonObject;
             }
             // 中奖金额
@@ -478,7 +478,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             if (null == memBaseinfo) {
                 jsonObject.put("balance", BigDecimal.ZERO);
                 jsonObject.put("bonus", 0);
-                jsonObject.put("status", "INSUFFICIENT_FUNDS");
+                jsonObject.put("status", "INVALID_PARAMETER");
                 return jsonObject;
             }
             JSONObject transaction = params.getJSONObject("transaction");
@@ -510,7 +510,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             if ("Cancel Bet".equals(oldTxns.getMethod())||"Settle".equals(oldTxns.getMethod())) {
                 jsonObject.put("balance", balance);
                 jsonObject.put("bonus", 0);
-                jsonObject.put("status", "BET_ALREADY_EXIST");
+                jsonObject.put("status", "BET_ALREADY_SETTLED");
                 return jsonObject;
             }
             BigDecimal betAmount = transaction.getBigDecimal("amount");
@@ -605,7 +605,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             if (null == memBaseinfo) {
                 jsonObject.put("balance", BigDecimal.ZERO);
                 jsonObject.put("bonus", 0);
-                jsonObject.put("status", "INSUFFICIENT_FUNDS");
+                jsonObject.put("status", "INVALID_PARAMETER");
                 return jsonObject;
             }
             JSONObject promoTransaction = params.getJSONObject("promoTransaction");
