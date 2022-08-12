@@ -1,7 +1,6 @@
-package com.indo.admin.common.enums;
+package com.indo.common.enums;
 
 import lombok.Getter;
-import lombok.Setter;
 
 /**
  * @author justin

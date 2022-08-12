@@ -7,11 +7,11 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
-import com.indo.admin.common.enums.AccountTypeEnum;
 import com.indo.admin.common.util.AdminBusinessRedisUtils;
 import com.indo.admin.modules.agent.mapper.AgentRelationMapper;
 import com.indo.admin.modules.mem.mapper.MemBaseinfoMapper;
 import com.indo.admin.modules.mem.mapper.MemInviteCodeMapper;
+import com.indo.common.enums.AccountTypeEnum;
 import com.indo.common.utils.ShareCodeUtil;
 import com.indo.core.mapper.MemLevelMapper;
 import com.indo.admin.modules.mem.service.IMemBaseinfoService;
@@ -37,7 +37,6 @@ import com.indo.core.pojo.entity.MemLevel;
 import com.indo.core.util.BusinessRedisUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
