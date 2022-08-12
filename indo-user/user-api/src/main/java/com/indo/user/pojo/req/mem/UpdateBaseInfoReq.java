@@ -23,4 +23,10 @@ public class UpdateBaseInfoReq {
 
     @ApiModelProperty(value = "whatsapp")
     private String whatsapp;
+
+    @ApiModelProperty(value = "邮箱")
+    private String email;
+
+    @ApiModelProperty(value = "真实姓名")
+    private String realUserName;
 }

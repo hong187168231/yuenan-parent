@@ -34,6 +34,9 @@ public class RegisterReq {
     @ApiModelProperty(value = "邮箱")
     private String email;
 
+    @ApiModelProperty(value = "真实姓名")
+    private String realUserName;
+
     @ApiModelProperty(value = "邀请码")
     private String inviteCode;
 

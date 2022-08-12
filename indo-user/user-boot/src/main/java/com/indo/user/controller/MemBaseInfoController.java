@@ -37,8 +37,7 @@ public class MemBaseInfoController {
     @ApiImplicitParam(name = "account", value = "账号", required = true, paramType = "query", dataType = "string")
     @AllowAccess
     public Result check(@RequestParam("account") String account) {
-        boolean flag = memBaseInfoService.checkAccount(account);
-        return Result.success(flag);
+        return Result.success(memBaseInfoService.checkAccount(account));
     }
 
     @ApiOperation(value = "登录接口", httpMethod = "POST")
@@ -70,16 +69,14 @@ public class MemBaseInfoController {
     @ApiOperation(value = "更改密码", httpMethod = "POST")
     @PostMapping(value = "/updatePassword")
     public Result updatePassword(@RequestBody UpdatePasswordReq req, @LoginUser LoginInfo loginUser) {
-        boolean flag = memBaseInfoService.updatePassword(req, loginUser);
-        return Result.judge(flag);
+        return Result.judge(memBaseInfoService.updatePassword(req, loginUser));
     }
 
     @ApiOperation(value = "修改头像", httpMethod = "POST")
     @PostMapping(value = "/updateHeadImage")
     @ApiImplicitParam(name = "headImage", value = "头像地址", required = true, paramType = "query", dataType = "String")
     public Result updateHeadImage(@RequestParam("headImage") String headImage, @LoginUser LoginInfo loginUser) {
-        boolean flag = memBaseInfoService.updateHeadImage(headImage, loginUser);
-        return Result.judge(flag);
+        return Result.judge(memBaseInfoService.updateHeadImage(headImage, loginUser));
     }
 
 
