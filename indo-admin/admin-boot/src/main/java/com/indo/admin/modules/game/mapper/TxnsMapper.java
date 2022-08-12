@@ -6,7 +6,7 @@ import com.indo.admin.pojo.dto.BeforeDayDTO;
 import com.indo.admin.pojo.dto.game.manage.GameInfoPageReq;
 import com.indo.admin.pojo.vo.game.manage.GameInfoRecord;
 import com.indo.admin.pojo.vo.game.manage.GameStatiRecord;
-import com.indo.game.pojo.entity.manage.Txns;
+import com.indo.core.pojo.entity.game.Txns;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

@@ -9,11 +9,11 @@ import com.indo.common.utils.RandomUtil;
 import com.indo.common.utils.SignMd5Utils;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
 import com.indo.game.pojo.entity.CptOpenMember;
-import com.indo.game.pojo.entity.manage.GameParentPlatform;
-import com.indo.game.pojo.entity.manage.GamePlatform;
+import com.indo.core.pojo.entity.game.GameParentPlatform;
+import com.indo.core.pojo.entity.game.GamePlatform;
 import com.indo.game.pojo.vo.callback.bl.BlResponseParentData;
 import com.indo.game.service.bl.BlService;
-import com.indo.game.service.common.GameCommonService;
+import com.indo.core.service.game.common.GameCommonService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
 
 import org.apache.commons.lang3.StringUtils;

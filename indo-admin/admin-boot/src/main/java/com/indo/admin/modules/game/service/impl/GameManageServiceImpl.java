@@ -7,7 +7,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.common.util.AdminBusinessRedisUtils;
 import com.indo.admin.modules.game.mapper.*;
 import com.indo.admin.modules.game.service.IGameManageService;
-import com.indo.admin.pojo.criteria.GameDownloadQueryCriteria;
 import com.indo.admin.pojo.dto.game.manage.GameInfoPageReq;
 import com.indo.admin.pojo.dto.game.manage.GameParentPlatformPageReq;
 import com.indo.admin.pojo.dto.game.manage.GamePlatformPageReq;
@@ -16,9 +15,7 @@ import com.indo.admin.pojo.vo.game.manage.GameStatiRecord;
 import com.indo.common.constant.RedisConstants;
 import com.indo.common.redis.utils.RedisUtils;
 import com.indo.common.result.Result;
-import com.indo.common.utils.QueryHelpPlus;
-import com.indo.core.pojo.entity.GameDownload;
-import com.indo.game.pojo.entity.manage.*;
+import com.indo.core.pojo.entity.game.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -8,9 +8,9 @@ import com.indo.common.utils.GameUtil;
 import com.indo.game.common.util.SnowflakeId;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
 import com.indo.game.pojo.entity.CptOpenMember;
-import com.indo.game.pojo.entity.manage.GameParentPlatform;
-import com.indo.game.pojo.entity.manage.GamePlatform;
-import com.indo.game.service.common.GameCommonService;
+import com.indo.core.pojo.entity.game.GameParentPlatform;
+import com.indo.core.pojo.entity.game.GamePlatform;
+import com.indo.core.service.game.common.GameCommonService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
 import com.indo.game.service.km.KmService;
 

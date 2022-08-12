@@ -1,7 +1,7 @@
 package com.indo.admin.modules.game.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.indo.game.pojo.entity.manage.GameCategory;
+import com.indo.core.pojo.entity.game.GameCategory;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper

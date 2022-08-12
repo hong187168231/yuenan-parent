@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.pojo.dto.PlatformReportDTO;
 import com.indo.admin.pojo.dto.game.manage.GameParentPlatformPageReq;
 import com.indo.admin.pojo.vo.game.PlatformReportVo;
-import com.indo.game.pojo.entity.manage.GameParentPlatform;
+import com.indo.core.pojo.entity.game.GameParentPlatform;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

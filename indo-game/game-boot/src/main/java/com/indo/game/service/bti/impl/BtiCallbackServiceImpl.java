@@ -2,24 +2,23 @@ package com.indo.game.service.bti.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.indo.common.config.OpenAPIProperties;
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.common.redis.utils.GeneratorIdUtil;
 import com.indo.common.utils.DateUtils;
 import com.indo.common.utils.StringUtils;
-import com.indo.game.mapper.TxnsMapper;
+import com.indo.core.mapper.game.TxnsMapper;
 import com.indo.game.pojo.dto.bti.*;
 import com.indo.game.pojo.entity.CptOpenMember;
-import com.indo.game.pojo.entity.manage.GameCategory;
-import com.indo.game.pojo.entity.manage.GameParentPlatform;
-import com.indo.game.pojo.entity.manage.GamePlatform;
-import com.indo.game.pojo.entity.manage.Txns;
+import com.indo.core.pojo.entity.game.GameCategory;
+import com.indo.core.pojo.entity.game.GameParentPlatform;
+import com.indo.core.pojo.entity.game.GamePlatform;
+import com.indo.core.pojo.entity.game.Txns;
 import com.indo.game.service.bti.BtiCallbackService;
-import com.indo.game.service.common.GameCommonService;
+import com.indo.core.service.game.common.GameCommonService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
-import com.indo.user.pojo.bo.MemTradingBO;
+import com.indo.core.pojo.bo.MemTradingBO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -30,7 +29,6 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class BtiCallbackServiceImpl implements BtiCallbackService {

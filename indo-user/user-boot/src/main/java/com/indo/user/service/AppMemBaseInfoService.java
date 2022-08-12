@@ -6,7 +6,7 @@ import com.indo.common.result.Result;
 import com.indo.core.base.service.SuperService;
 import com.indo.core.pojo.bo.MemBaseInfoBO;
 import com.indo.core.pojo.entity.MemBaseinfo;
-import com.indo.user.pojo.bo.MemTradingBO;
+import com.indo.core.pojo.bo.MemTradingBO;
 import com.indo.user.pojo.req.LogOutReq;
 import com.indo.user.pojo.req.LoginReq;
 import com.indo.user.pojo.req.RegisterReq;
@@ -14,8 +14,6 @@ import com.indo.user.pojo.req.mem.UpdateBaseInfoReq;
 import com.indo.user.pojo.req.mem.UpdatePasswordReq;
 import com.indo.user.pojo.vo.AppLoginVo;
 import com.indo.user.pojo.vo.mem.MemBaseInfoVo;
-import com.indo.user.pojo.vo.mem.MemTradingVo;
-import org.apache.ibatis.annotations.Param;
 
 public interface AppMemBaseInfoService extends SuperService<MemBaseinfo> {
 

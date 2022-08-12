@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.indo.game.mapper.TxnsMapper">
-    <select id="queryAllGameInfoCount" resultType="com.indo.game.pojo.vo.app.GameStatiRecord">
+<mapper namespace="com.indo.core.mapper.game.TxnsMapper">
+    <select id="queryAllGameInfoCount" resultType="com.indo.core.pojo.vo.game.app.GameStatiRecord">
         SELECT count(t.id) AS betCount,
                SUM(t.bet_amount) AS betAmount,
                SUM(t.winning_amount) AS winningAmount,t.platform
@@ -28,7 +28,7 @@
         </if>
          GROUP BY t.platform
     </select>
-    <select id="queryAllGameInfo" resultType="com.indo.game.pojo.vo.app.GameInfoRecord">
+    <select id="queryAllGameInfo" resultType="com.indo.core.pojo.vo.game.app.GameInfoRecord">
         SELECT t.platform_en_name,
         t.game_name,
         t.bet_amount,t.winning_amount
@@ -68,7 +68,7 @@
         WHERE
             t.platform = #{platform}
     </select>
-    <select id="queryAllAgentGameInfo" resultType="com.indo.game.pojo.vo.app.GameInfoAgentRecord">
+    <select id="queryAllAgentGameInfo" resultType="com.indo.core.pojo.vo.game.app.GameInfoAgentRecord">
         SELECT t.platform_en_name,m.account as user_acct,
         t.game_name,
         t.bet_amount,t.winning_amount,a.account as account,t.round_id,t.bet_time,t.odds,t.method,t.balance,t.platform_tx_id

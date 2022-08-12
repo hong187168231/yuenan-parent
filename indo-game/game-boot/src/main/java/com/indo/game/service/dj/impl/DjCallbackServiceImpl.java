@@ -1,48 +1,30 @@
 package com.indo.game.service.dj.impl;
 
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.indo.common.config.OpenAPIProperties;
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
-import com.indo.common.pojo.bo.LoginInfo;
-import com.indo.common.result.Result;
 import com.indo.common.utils.DateUtils;
-import com.indo.common.web.util.http.HttpUtils;
-import com.indo.game.common.util.SnowflakeId;
-import com.indo.game.mapper.TxnsMapper;
-import com.indo.game.pojo.dto.comm.ApiResponseData;
+import com.indo.core.mapper.game.TxnsMapper;
 import com.indo.game.pojo.dto.dj.DjCallBackParentReq;
-import com.indo.game.pojo.dto.ps.PsCallBackParentReq;
 import com.indo.game.pojo.entity.CptOpenMember;
-import com.indo.game.pojo.entity.manage.GameCategory;
-import com.indo.game.pojo.entity.manage.GameParentPlatform;
-import com.indo.game.pojo.entity.manage.GamePlatform;
-import com.indo.game.pojo.entity.manage.Txns;
-import com.indo.game.service.common.GameCommonService;
+import com.indo.core.pojo.entity.game.GameCategory;
+import com.indo.core.pojo.entity.game.GameParentPlatform;
+import com.indo.core.pojo.entity.game.GamePlatform;
+import com.indo.core.pojo.entity.game.Txns;
+import com.indo.core.service.game.common.GameCommonService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
 import com.indo.game.service.dj.DjCallbackService;
-import com.indo.game.service.dj.DjService;
-import com.indo.user.pojo.bo.MemTradingBO;
+import com.indo.core.pojo.bo.MemTradingBO;
 
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
 
-import java.io.StringReader;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -129,8 +111,8 @@ public class DjCallbackServiceImpl implements DjCallbackService {
                     balance = balance.subtract(betAmount.abs());
                     gameCommonService.updateUserBalance(memBaseinfo, betAmount.abs(), GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
                 } else {
-                    balance = balance.add(betAmount);
-                    gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.PLACE_BET, TradingEnum.INCOME);
+                    balance = balance.subtract(betAmount);
+                    gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
                 }
             }
         }
@@ -163,7 +145,15 @@ public class DjCallbackServiceImpl implements DjCallbackService {
         txns.setGameName(gamePlatform.getPlatformEnName());
         //下注金额
         txns.setBetAmount(betAmount);
-        txns.setWinningAmount(betAmount);
+        if (null != oldTxns) {
+            txns.setWinningAmount(betAmount);
+        }else {
+            if (betAmount.compareTo(BigDecimal.ZERO) == -1) {
+                txns.setWinningAmount(betAmount);
+            }else {
+                txns.setWinningAmount(betAmount.negate());
+            }
+        }
         txns.setWinAmount(betAmount);
         //玩家下注时间
         txns.setBetTime(DateUtils.formatByString(djCallBackParentReq.getCreated_datetime(), DateUtils.newFormat));

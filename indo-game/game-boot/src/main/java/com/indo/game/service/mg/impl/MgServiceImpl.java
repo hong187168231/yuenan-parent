@@ -1,23 +1,18 @@
 package com.indo.game.service.mg.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.indo.common.config.OpenAPIProperties;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
-import com.indo.common.result.ResultCode;
 import com.indo.common.utils.GameUtil;
-import com.indo.game.common.util.RandomGUID;
 import com.indo.game.common.util.SnowflakeId;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
-import com.indo.game.pojo.dto.pg.PgApiResponseData;
 import com.indo.game.pojo.entity.CptOpenMember;
-import com.indo.game.pojo.entity.manage.GameParentPlatform;
-import com.indo.game.pojo.entity.manage.GamePlatform;
-import com.indo.game.service.common.GameCommonService;
+import com.indo.core.pojo.entity.game.GameParentPlatform;
+import com.indo.core.pojo.entity.game.GamePlatform;
+import com.indo.core.service.game.common.GameCommonService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
 import com.indo.game.service.mg.MgService;
-import com.indo.game.service.pg.PgService;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

@@ -1,7 +1,7 @@
 package com.indo.user.rpc;
 
 import com.indo.common.result.Result;
-import com.indo.user.pojo.bo.MemTradingBO;
+import com.indo.core.pojo.bo.MemTradingBO;
 import com.indo.user.service.AppMemBaseInfoService;
 import org.springframework.web.bind.annotation.*;
 

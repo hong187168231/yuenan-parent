@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.indo.admin.modules.game.service.ILotteryManageService;
 import com.indo.admin.pojo.dto.game.manage.*;
 import com.indo.common.result.Result;
-import com.indo.core.pojo.entity.GameLotteryWinningNumber;
+import com.indo.core.pojo.entity.game.GameLotteryWinningNumber;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;

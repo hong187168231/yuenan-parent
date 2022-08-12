@@ -1,7 +1,7 @@
 package com.indo.admin.modules.game.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.indo.game.pojo.entity.manage.GameType;
+import com.indo.core.pojo.entity.game.GameType;
 
 /**
  * <p>

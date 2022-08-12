@@ -29,7 +29,7 @@ import com.indo.pay.pojo.req.TakeCashApplyReq;
 import com.indo.pay.pojo.vo.TakeCashRecordVO;
 import com.indo.pay.service.ITakeCashService;
 import com.indo.user.api.MemBaseInfoFeignClient;
-import com.indo.user.pojo.bo.MemTradingBO;
+import com.indo.core.pojo.bo.MemTradingBO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.BeanUtils;
