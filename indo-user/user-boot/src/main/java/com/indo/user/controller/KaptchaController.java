@@ -35,7 +35,7 @@ public class KaptchaController {
 
     @ApiOperation(value = "获取验证码接口", httpMethod = "GET")
     @AllowAccess
-    @GetMapping("kaptcha.jpg")
+    @GetMapping("kaptcha")
     public Result kaptcha() {
         // 获取运算的结果
         Captcha captcha = loginProperties.getCaptcha();
