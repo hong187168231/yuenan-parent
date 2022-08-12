@@ -108,6 +108,9 @@ public class SysTaskServiceImpl extends ServiceImpl<SysTaskMapper, SysTask> impl
             //全民推广
             if (tl.getCode().equals(TaskEnum.MEMPOPULARIZED.getCode())) {
                 Integer num = baseMapper.findMemSubNum(loginInfo.getId());
+                if(num==null){
+                    num=0;
+                }
                 tl.setProgress(new BigDecimal(num));
                 JSONObject json = JSONObject.parseObject(tl.getConditionJson());
                 List<MemTaskRecord> extensionList = memTaskRecordMapper.findTaskRecordByCode(loginInfo.getId(),tl.getCode());
@@ -127,6 +130,7 @@ public class SysTaskServiceImpl extends ServiceImpl<SysTaskMapper, SysTask> impl
                 if(Received.get()>0){
                     tl.setReceive(2);
                 }
+                Integer finalNum = num;
                 json.keySet().forEach(j -> {
                     AtomicReference<Boolean> un = new AtomicReference<>(true);
                     extensionList.forEach(l->{
@@ -134,7 +138,7 @@ public class SysTaskServiceImpl extends ServiceImpl<SysTaskMapper, SysTask> impl
                             un.set(false);
                         }
                     });
-                    if (num>=Integer.valueOf(j)&&un.get()) {
+                    if (finalNum >=Integer.valueOf(j)&&un.get()) {
                         tl.setReceive(1);
                         memTaskRecord.setRemark(j);
                         memTaskRecord.setRewardAmount(json.getBigDecimal(j));
@@ -144,7 +148,7 @@ public class SysTaskServiceImpl extends ServiceImpl<SysTaskMapper, SysTask> impl
             }
             //捕鱼打码达标
             if (tl.getCode().equals(TaskEnum.FISHINGSTANDARD.getCode())) {
-                BigDecimal amount = memTaskRecordMapper.findMemBetAmountByGameType(loginInfo.getId(),TaskEnum.FISHING.getCode());
+                BigDecimal amount = memTaskRecordMapper.findMemBetAmountByGameType(loginInfo.getAccount(),TaskEnum.FISHING.getCode());
                 if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
                     continue;
                 }
@@ -158,7 +162,7 @@ public class SysTaskServiceImpl extends ServiceImpl<SysTaskMapper, SysTask> impl
             }
             //电子打码达标
             if (tl.getCode().equals(TaskEnum.ELECTRONICSTANDARD.getCode())) {
-                BigDecimal amount = memTaskRecordMapper.findMemBetAmountByGameType(loginInfo.getId(),TaskEnum.SLOTS.getCode());
+                BigDecimal amount = memTaskRecordMapper.findMemBetAmountByGameType(loginInfo.getAccount(),TaskEnum.SLOTS.getCode());
                 if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
                     continue;
                 }
@@ -172,7 +176,7 @@ public class SysTaskServiceImpl extends ServiceImpl<SysTaskMapper, SysTask> impl
             }
             //真人打码达标
             if (tl.getCode().equals(TaskEnum.REALPERSONSTANDARD.getCode())) {
-                BigDecimal amount = memTaskRecordMapper.findMemBetAmountByGameType(loginInfo.getId(),TaskEnum.LIVE.getCode());
+                BigDecimal amount = memTaskRecordMapper.findMemBetAmountByGameType(loginInfo.getAccount(),TaskEnum.LIVE.getCode());
                 if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
                     continue;
                 }
@@ -186,7 +190,7 @@ public class SysTaskServiceImpl extends ServiceImpl<SysTaskMapper, SysTask> impl
             }
             //棋牌打码达标
             if (tl.getCode().equals(TaskEnum.CHESSSTANDARD.getCode())) {
-                BigDecimal amount = memTaskRecordMapper.findMemBetAmountByGameType(loginInfo.getId(),TaskEnum.POKER.getCode());
+                BigDecimal amount = memTaskRecordMapper.findMemBetAmountByGameType(loginInfo.getAccount(),TaskEnum.POKER.getCode());
                 if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
                     continue;
                 }

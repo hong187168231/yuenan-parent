@@ -3,6 +3,7 @@ package com.indo.core.pojo.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.indo.common.pojo.entity.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -40,9 +41,11 @@ public class SysTask extends BaseEntity {
     private String details;
 
     @ApiModelProperty(value = "任务开始时间")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime startTime;
 
     @ApiModelProperty(value = "任务结束时间(为空则永久)")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endTime;
 
     @ApiModelProperty(value = "任务图片")

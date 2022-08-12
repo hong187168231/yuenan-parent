@@ -31,9 +31,9 @@ public interface MemTaskRecordMapper extends BaseMapper<MemTaskRecord> {
 
     /**
      * 查询会员当天各游戏类型下注金额
-     * @param memId
+     * @param account
      * @param gameType
      * @return
      */
-   BigDecimal findMemBetAmountByGameType(@Param("memId") Long memId,@Param("gameType")String gameType);
+   BigDecimal findMemBetAmountByGameType(@Param("account") String account,@Param("gameType")String gameType);
 }
