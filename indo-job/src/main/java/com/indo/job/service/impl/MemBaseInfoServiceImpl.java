@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.indo.common.rabbitmq.bo.Message;
 import com.indo.core.base.service.impl.SuperServiceImpl;
 import com.indo.core.pojo.entity.MemBaseinfo;
-import com.indo.job.mapper.MemBaseInfoMapper;
+import com.indo.job.mapper.JobMemBaseInfoMapper;
 import com.indo.job.service.IMemBaseinfoService;
 import com.indo.job.service.IMemLevelService;
 import lombok.RequiredArgsConstructor;
@@ -17,10 +17,10 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class MemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, MemBaseinfo> implements IMemBaseinfoService {
+public class MemBaseInfoServiceImpl extends SuperServiceImpl<JobMemBaseInfoMapper, MemBaseinfo> implements IMemBaseinfoService {
 
     @Resource
-    private MemBaseInfoMapper memBaseInfoMapper;
+    private JobMemBaseInfoMapper jobMemBaseInfoMapper;
 
     @Autowired
     private IMemLevelService iMemLevelService;

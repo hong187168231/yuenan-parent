@@ -13,6 +13,6 @@ import org.apache.ibatis.annotations.Mapper;
  * @since 2021-11-09
  */
 @Mapper
-public interface StatUserRetentionMapper extends BaseMapper<StatUserRetention> {
+public interface JobStatUserRetentionMapper extends BaseMapper<StatUserRetention> {
 
 }

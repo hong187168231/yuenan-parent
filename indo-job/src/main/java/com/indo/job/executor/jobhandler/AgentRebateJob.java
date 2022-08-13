@@ -1,6 +1,5 @@
 package com.indo.job.executor.jobhandler;
 
-import com.indo.admin.pojo.vo.mem.MemBetVo;
 import com.indo.common.constant.RedisKeys;
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
@@ -9,9 +8,10 @@ import com.indo.common.utils.StringUtils;
 import com.indo.common.utils.ViewUtil;
 import com.indo.core.pojo.dto.MemGoldChangeDTO;
 import com.indo.core.pojo.entity.AgentRebateRecord;
+import com.indo.core.pojo.vo.mem.MemBetVo;
 import com.indo.core.service.IMemGoldChangeService;
 import com.indo.job.common.util.DateUtil;
-import com.indo.job.mapper.AgentRebateRecordMapper;
+import com.indo.job.mapper.JobAgentRebateRecordMapper;
 import com.indo.job.mapper.GameTxnsMapper;
 import com.indo.job.pojo.dto.BeforeDayBetDTO;
 import com.xxl.job.core.handler.annotation.XxlJob;
@@ -34,7 +34,7 @@ public class AgentRebateJob {
     private GameTxnsMapper gameTxnsMapper;
 
     @Autowired
-    private AgentRebateRecordMapper agentRebateRecordMapper;
+    private JobAgentRebateRecordMapper agentRebateRecordMapper;
 
     @Autowired
     private IMemGoldChangeService iMemGoldChangeService;

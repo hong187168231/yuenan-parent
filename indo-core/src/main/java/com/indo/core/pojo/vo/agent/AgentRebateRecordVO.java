@@ -1,4 +1,4 @@
-package com.indo.admin.pojo.vo.agent;
+package com.indo.core.pojo.vo.agent;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;

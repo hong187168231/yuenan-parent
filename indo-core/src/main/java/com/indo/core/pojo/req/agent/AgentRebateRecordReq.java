@@ -1,13 +1,9 @@
-package com.indo.admin.pojo.req.agnet;
+package com.indo.core.pojo.req.agent;
 
-import com.alibaba.fastjson.annotation.JSONField;
 import com.indo.common.base.BaseDTO;
-import com.indo.common.pojo.param.QueryParam;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
-import java.util.Date;
 
 @Data
 @ApiModel

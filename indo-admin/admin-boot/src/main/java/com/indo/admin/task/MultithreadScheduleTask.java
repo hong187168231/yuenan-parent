@@ -4,7 +4,7 @@ import com.indo.admin.common.util.DateUtil;
 import com.indo.admin.modules.agent.mapper.AgentRebateRecordMapper;
 import com.indo.admin.modules.game.mapper.AdminTxnsMapper;
 import com.indo.admin.pojo.dto.BeforeDayDTO;
-import com.indo.admin.pojo.vo.mem.MemBetVo;
+import com.indo.core.pojo.vo.mem.MemBetVo;
 import com.indo.common.constant.RedisKeys;
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
