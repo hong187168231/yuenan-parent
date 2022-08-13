@@ -1,7 +1,7 @@
 package com.indo.job.executor.jobhandler;
 
 import com.indo.common.utils.DateUtils;
-import com.indo.core.service.game.s128.IS128TaskService;
+import com.indo.job.service.game.s128.IS128TaskService;
 import com.xxl.job.core.handler.annotation.XxlJob;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;

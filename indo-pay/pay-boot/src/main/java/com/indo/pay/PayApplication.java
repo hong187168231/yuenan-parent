@@ -7,7 +7,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.ApplicationContext;
 
-@EnableFeignClients(basePackages = "com.indo.*.api")
+@EnableFeignClients(basePackages = "com.indo.core.pojo.user.api")
 @SpringBootApplication
 @EnableDiscoveryClient
 public class PayApplication {

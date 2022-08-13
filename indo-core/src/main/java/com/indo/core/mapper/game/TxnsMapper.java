@@ -29,4 +29,5 @@ public interface TxnsMapper extends BaseMapper<Txns> {
     List<AgentRelation> queryAgentRelationByUserId( @Param("userId") String userId,@Param("agentAcct") String agentAcct);
 
     String getMaxSortNo(@Param("platform") String platform);
+
 }

@@ -15,7 +15,7 @@ import com.indo.game.mapper.lottery.GameLotteryRuleMapper;
 import com.indo.game.mapper.lottery.GameLotteryWinningNumberMapper;
 import com.indo.game.pojo.dto.lottery.GameLotteryOrderDto;
 import com.indo.game.pojo.entity.lottery.GameLotteryOrder;
-import com.indo.core.service.game.common.GameCommonService;
+import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.lottery.YxxService;
 import com.indo.core.pojo.bo.MemTradingBO;
 import org.slf4j.Logger;

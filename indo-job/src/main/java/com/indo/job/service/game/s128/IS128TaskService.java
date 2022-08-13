@@ -1,4 +1,4 @@
-package com.indo.core.service.game.s128;
+package com.indo.job.service.game.s128;
 
 
 public interface IS128TaskService {

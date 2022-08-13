@@ -1,4 +1,4 @@
-package com.indo.game.mapper.frontend;
+package com.indo.core.mapper.game;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.indo.core.pojo.entity.game.GameParentPlatform;

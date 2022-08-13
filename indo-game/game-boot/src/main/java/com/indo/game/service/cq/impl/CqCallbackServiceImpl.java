@@ -16,7 +16,7 @@ import com.indo.core.pojo.entity.game.GamePlatform;
 import com.indo.core.pojo.entity.game.Txns;
 import com.indo.game.pojo.vo.callback.ae.AeCallBackRespFail;
 import com.indo.game.pojo.vo.callback.cq.*;
-import com.indo.core.service.game.common.GameCommonService;
+import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.cq.CqCallbackService;
 import com.indo.core.pojo.bo.MemTradingBO;
 

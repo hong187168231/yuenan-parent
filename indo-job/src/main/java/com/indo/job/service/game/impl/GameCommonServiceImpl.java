@@ -1,4 +1,4 @@
-package com.indo.game.service.common.impl;
+package com.indo.job.service.game.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.indo.common.constant.RedisConstants;
@@ -11,15 +11,15 @@ import com.indo.common.web.exception.BizException;
 import com.indo.core.mapper.game.GameCategoryMapper;
 import com.indo.core.mapper.game.GameParentPlatformMapper;
 import com.indo.core.mapper.game.GamePlatformMapper;
+import com.indo.core.pojo.bo.MemTradingBO;
 import com.indo.core.pojo.dto.MemGoldChangeDTO;
-import com.indo.core.service.IMemGoldChangeService;
-import com.indo.game.common.util.GameBusinessRedisUtils;
 import com.indo.core.pojo.entity.game.GameCategory;
 import com.indo.core.pojo.entity.game.GameParentPlatform;
 import com.indo.core.pojo.entity.game.GamePlatform;
-import com.indo.game.service.common.GameCommonService;
+import com.indo.core.service.IMemGoldChangeService;
+import com.indo.core.util.BusinessRedisUtils;
+import com.indo.job.service.game.GameCommonService;
 import com.indo.user.api.MemBaseInfoFeignClient;
-import com.indo.core.pojo.bo.MemTradingBO;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -146,7 +146,7 @@ public class GameCommonServiceImpl implements GameCommonService {
 
     @Override
     public GameCategory getGameCategoryById(Long id) {
-        GameCategory gameCategory = (GameCategory) GameBusinessRedisUtils.hget(RedisConstants.GAME_CATEGORY_KEY, id + "");
+        GameCategory gameCategory = (GameCategory) BusinessRedisUtils.hget(RedisConstants.GAME_CATEGORY_KEY, id + "");
         if (null == gameCategory) {
             gameCategory = gameCategoryMapper.selectById(id);
         }

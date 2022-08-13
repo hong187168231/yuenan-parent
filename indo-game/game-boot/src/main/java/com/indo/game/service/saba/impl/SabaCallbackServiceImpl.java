@@ -9,7 +9,7 @@ import com.indo.core.mapper.game.TxnsMapper;
 import com.indo.game.pojo.dto.saba.*;
 import com.indo.core.pojo.entity.game.Txns;
 import com.indo.game.pojo.vo.callback.saba.*;
-import com.indo.core.service.game.common.GameCommonService;
+import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.saba.SabaCallbackService;
 import com.indo.core.pojo.bo.MemTradingBO;
 import org.springframework.beans.BeanUtils;

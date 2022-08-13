@@ -14,7 +14,7 @@ import com.indo.core.pojo.entity.game.GameCategory;
 import com.indo.core.pojo.entity.game.GameParentPlatform;
 import com.indo.core.pojo.entity.game.GamePlatform;
 import com.indo.core.pojo.entity.game.Txns;
-import com.indo.core.service.game.common.GameCommonService;
+import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.sa.SaCallbackService;
 import com.indo.core.pojo.bo.MemTradingBO;
 import org.slf4j.Logger;

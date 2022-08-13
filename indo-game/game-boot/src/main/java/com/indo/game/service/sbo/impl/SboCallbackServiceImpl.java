@@ -14,7 +14,7 @@ import com.indo.core.pojo.entity.game.Txns;
 import com.indo.game.pojo.vo.callback.sbo.SboCallBackCommResp;
 import com.indo.game.pojo.vo.callback.sbo.SboCallBackDeductResp;
 import com.indo.game.pojo.vo.callback.sbo.SboCallBackGetBetStatusResp;
-import com.indo.core.service.game.common.GameCommonService;
+import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.sbo.SboCallbackService;
 import com.indo.core.pojo.bo.MemTradingBO;
 import org.springframework.beans.BeanUtils;

@@ -1,4 +1,4 @@
-package com.indo.core.service.game.common;
+package com.indo.job.service.game;
 
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;

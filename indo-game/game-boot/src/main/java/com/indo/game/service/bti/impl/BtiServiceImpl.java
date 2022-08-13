@@ -9,7 +9,7 @@ import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.core.pojo.entity.game.GameParentPlatform;
 import com.indo.core.pojo.entity.game.GamePlatform;
 import com.indo.game.service.bti.BtiService;
-import com.indo.core.service.game.common.GameCommonService;
+import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

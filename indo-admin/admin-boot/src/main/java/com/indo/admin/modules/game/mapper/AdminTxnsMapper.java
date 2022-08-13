@@ -14,11 +14,12 @@ import java.util.List;
 
 
 @Mapper
-public interface TxnsMapper extends BaseMapper<Txns> {
+public interface AdminTxnsMapper extends BaseMapper<Txns> {
 
     List<GameStatiRecord> queryAllGameInfoCount(@Param("page") IPage<GameStatiRecord> page, @Param("req") GameInfoPageReq req);
 
     List<GameInfoRecord> queryAllGameInfo(@Param("page") IPage<GameInfoRecord> page, @Param("req") GameInfoPageReq req);
 
     List<BeforeDayDTO> beforeDayBetList(@Param("startTime") String startTime, @Param("endTime") String endTime);
+
 }

@@ -19,7 +19,7 @@ import com.indo.game.pojo.vo.callback.ae.AeCallBackRespFail;
 import com.indo.game.pojo.vo.callback.ae.AeGetBalanceResp;
 import com.indo.game.pojo.vo.callback.ae.AeGetBalanceRespSuccess;
 import com.indo.game.service.ae.AeCallbackService;
-import com.indo.core.service.game.common.GameCommonService;
+import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
 import com.indo.core.pojo.bo.MemTradingBO;
 

@@ -10,7 +10,7 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 @Mapper
-public interface GamePlatformMapper extends BaseMapper<GamePlatform> {
+public interface AdminGamePlatformMapper extends BaseMapper<GamePlatform> {
 
     List<GamePlatform> queryAllGamePlatform(@Param("page") IPage<GamePlatform> page, @Param("req") GamePlatformPageReq req);
 }

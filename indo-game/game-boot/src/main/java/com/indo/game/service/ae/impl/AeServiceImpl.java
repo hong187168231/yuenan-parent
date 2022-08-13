@@ -13,7 +13,7 @@ import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.core.pojo.entity.game.GameParentPlatform;
 import com.indo.core.pojo.entity.game.GamePlatform;
 import com.indo.game.service.ae.AeService;
-import com.indo.core.service.game.common.GameCommonService;
+import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
 
 import org.apache.commons.lang3.StringUtils;

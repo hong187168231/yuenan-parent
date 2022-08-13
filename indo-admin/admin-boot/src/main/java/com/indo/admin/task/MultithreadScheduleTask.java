@@ -2,7 +2,7 @@ package com.indo.admin.task;
 
 import com.indo.admin.common.util.DateUtil;
 import com.indo.admin.modules.agent.mapper.AgentRebateRecordMapper;
-import com.indo.admin.modules.game.mapper.TxnsMapper;
+import com.indo.admin.modules.game.mapper.AdminTxnsMapper;
 import com.indo.admin.pojo.dto.BeforeDayDTO;
 import com.indo.admin.pojo.vo.mem.MemBetVo;
 import com.indo.common.constant.RedisKeys;
@@ -32,7 +32,7 @@ public class MultithreadScheduleTask {
     @Resource
     private AgentRebateRecordMapper agentRebateRecordMapper;
     @Resource
-    private TxnsMapper txnsMapper;
+    private AdminTxnsMapper adminTxnsMapper;
     @Resource
     private IMemGoldChangeService iMemGoldChangeService;
 
@@ -43,7 +43,7 @@ public class MultithreadScheduleTask {
     @Scheduled(cron = "0 0 1 * * ?")
     public void agentRebateJob() {
         List<MemBetVo> list = RedisUtils.get(RedisKeys.SYS_REBATE_KEY);
-        List<BeforeDayDTO> dataList = txnsMapper.beforeDayBetList(DateUtil.yesterdayFirstDate(),DateUtil.yesterdayLastDate());
+        List<BeforeDayDTO> dataList = adminTxnsMapper.beforeDayBetList(DateUtil.yesterdayFirstDate(),DateUtil.yesterdayLastDate());
         for(BeforeDayDTO BeforeData:dataList){
             if(StringUtils.isEmpty(BeforeData.getSuperior())){
                 continue;

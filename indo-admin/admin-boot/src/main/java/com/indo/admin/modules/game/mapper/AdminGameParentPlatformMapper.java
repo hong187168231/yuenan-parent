@@ -13,7 +13,7 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 @Mapper
-public interface GameParentPlatformMapper extends BaseMapper<GameParentPlatform> {
+public interface AdminGameParentPlatformMapper extends BaseMapper<GameParentPlatform> {
     List<GameParentPlatform> queryAllGameParentPlatform(@Param("page") IPage<GameParentPlatform> page, @Param("req") GameParentPlatformPageReq req);
 
     /**

@@ -18,7 +18,7 @@ import com.indo.core.pojo.entity.game.GamePlatform;
 import com.indo.core.pojo.entity.game.Txns;
 import com.indo.game.pojo.vo.callback.jdb.JdbApiResponseData;
 import com.indo.game.pojo.vo.callback.jdb.JdbApiResponseError;
-import com.indo.core.service.game.common.GameCommonService;
+import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.jdb.JdbCallbackService;
 import com.indo.core.pojo.bo.MemTradingBO;
 import org.slf4j.Logger;

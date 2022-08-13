@@ -17,8 +17,8 @@ import com.indo.pay.mapper.RechargeMapper;
 import com.indo.pay.pojo.criteria.PayWayQueryCriteria;
 import com.indo.pay.pojo.vo.PayWayVO;
 import com.indo.pay.service.IPayWayService;
-import com.indo.user.api.MemBaseInfoFeignClient;
 import com.indo.core.pojo.bo.MemTradingBO;
+import com.indo.user.api.MemBaseInfoFeignClient;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

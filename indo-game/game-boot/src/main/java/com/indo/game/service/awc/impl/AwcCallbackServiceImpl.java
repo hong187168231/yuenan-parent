@@ -18,7 +18,7 @@ import com.indo.game.pojo.vo.callback.awc.AwcCallBackParentRespSuccess;
 import com.indo.game.pojo.vo.callback.awc.AwcCallBackRespFail;
 import com.indo.game.pojo.vo.callback.awc.AwcCallBackRespSuccess;
 import com.indo.game.pojo.vo.callback.awc.AwcGetBalanceRespSuccess;
-import com.indo.core.service.game.common.GameCommonService;
+import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.awc.AwcCallbackService;
 import com.indo.core.pojo.bo.MemTradingBO;
 import org.slf4j.Logger;
