@@ -9,6 +9,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+@EnableFeignClients(basePackages = "com.indo.*.api")
 @EnableDiscoveryClient
 @SpringBootApplication(exclude = {ValidationConfig.class})
 public class IndoJobApplication {

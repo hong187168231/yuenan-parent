@@ -9,7 +9,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
 
-@EnableFeignClients(basePackages = "com.indo.core.pojo.user.api")
+@EnableFeignClients(basePackages = "com.indo.*.api")
 @SpringBootApplication
 @EnableDiscoveryClient
 @Import({OpenAPIProperties.class})
