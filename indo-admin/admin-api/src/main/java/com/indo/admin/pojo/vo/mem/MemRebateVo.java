@@ -1,5 +1,6 @@
 package com.indo.admin.pojo.vo.mem;
 
+import com.indo.core.pojo.vo.mem.MemBetVo;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 

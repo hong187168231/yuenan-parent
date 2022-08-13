@@ -52,7 +52,11 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>com.indo</groupId>
+            <artifactId>indo-core</artifactId>
+            <version>${indo.version}</version>
+        </dependency>
         <!-- easyexcel -->
         <dependency>
             <groupId>com.alibaba</groupId>
