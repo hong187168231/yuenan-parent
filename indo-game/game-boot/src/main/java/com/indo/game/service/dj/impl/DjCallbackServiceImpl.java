@@ -49,15 +49,16 @@ public class DjCallbackServiceImpl implements DjCallbackService {
 
     @Override
     public Object getBalance(DjCallBackParentReq djCallBackParentReq, String ip) {
-        CptOpenMember cptOpenMember = externalService.getCptOpenMember(Integer.parseInt(djCallBackParentReq.getLogin_id()), OpenAPIProperties.DJ_PLATFORM_CODE);
+//        CptOpenMember cptOpenMember = externalService.getCptOpenMember(Integer.parseInt(djCallBackParentReq.getLogin_id()), OpenAPIProperties.DJ_PLATFORM_CODE);
         StringBuilder stringBuilder = new StringBuilder();
+        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(djCallBackParentReq.getLogin_id());
         stringBuilder.append("<?xml version=\"1.0\" ?>").append("<get_balance>").append("<status_code>");
-        if (cptOpenMember == null) {
+        if (memBaseinfo == null) {
             stringBuilder.append("99</status_code>").append("<status_text>OK</status_text>").append("<balance>");
             stringBuilder.append("0").append("</balance></get_balance>");
             return stringBuilder;
         }
-        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cptOpenMember.getUserName());
+
         stringBuilder.append("00</status_code>").append("<status_text>OK</status_text>").append("<balance>");
         stringBuilder.append(memBaseinfo.getBalance()).append("</balance></get_balance>");
         return stringBuilder;
@@ -65,13 +66,13 @@ public class DjCallbackServiceImpl implements DjCallbackService {
 
     @Override
     public Object djBetCallback(DjCallBackParentReq djCallBackParentReq, String ip) {
-        CptOpenMember cptOpenMember = externalService.getCptOpenMember(Integer.parseInt(djCallBackParentReq.getLogin_id()), OpenAPIProperties.DJ_PLATFORM_CODE);
+//        CptOpenMember cptOpenMember = externalService.getCptOpenMember(Integer.parseInt(djCallBackParentReq.getLogin_id()), OpenAPIProperties.DJ_PLATFORM_CODE);
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("<?xml version=\"1.0\" ?>").append("<bet>").append("<status_code>");
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.DJ_PLATFORM_CODE);
         GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.DJ_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
         GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
-        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cptOpenMember.getUserName());
+        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(djCallBackParentReq.getLogin_id());
         BigDecimal balance = memBaseinfo.getBalance();
         BigDecimal betAmount = djCallBackParentReq.getStake_money();
         if (betAmount.compareTo(BigDecimal.ZERO) == -1 && memBaseinfo.getBalance().compareTo(betAmount) == -1) {

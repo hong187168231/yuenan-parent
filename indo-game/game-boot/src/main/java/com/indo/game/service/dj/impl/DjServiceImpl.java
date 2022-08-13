@@ -160,7 +160,7 @@ public class DjServiceImpl implements DjService {
         Map<String, String> params = new HashMap<String, String>();
         params.put("api_key", OpenAPIProperties.DJ_API_KEY);
         params.put("agent_code", OpenAPIProperties.DJ_AGENT_CODE);
-        params.put("login_id", cptOpenMember.getUserId() + "");
+        params.put("login_id", cptOpenMember.getUserName() + "");
         params.put("name", cptOpenMember.getUserName());
         try {
             StringBuilder apiUrl = new StringBuilder();
@@ -185,7 +185,7 @@ public class DjServiceImpl implements DjService {
         Map<String, String> params = new HashMap<String, String>();
         params.put("api_key", OpenAPIProperties.DJ_API_KEY);
         params.put("agent_code", OpenAPIProperties.DJ_AGENT_CODE);
-        params.put("login_id", cptOpenMember.getUserId() + "");
+        params.put("login_id", cptOpenMember.getUserName() + "");
         try {
             StringBuilder apiUrl = new StringBuilder();
             apiUrl.append(OpenAPIProperties.DJ_API_URL).append("/active_player.aspx");
@@ -219,7 +219,7 @@ public class DjServiceImpl implements DjService {
             Map<String, String> params = new HashMap<String, String>();
             params.put("api_key", OpenAPIProperties.DJ_API_KEY);
             params.put("agent_code", OpenAPIProperties.DJ_AGENT_CODE);
-            params.put("login_id", loginUser.getId() + "");
+            params.put("login_id", loginUser.getAccount() + "");
             apiUrl.append(OpenAPIProperties.DJ_API_URL).append("/kickout_player.aspx");
             String result = commonRequest(apiUrl.toString(), params, loginUser.getId().intValue(), "gameLogin");
             if (!StringUtils.isEmpty(result)) {
