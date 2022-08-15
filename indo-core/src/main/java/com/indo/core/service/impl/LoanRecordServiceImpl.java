@@ -97,7 +97,7 @@ public class LoanRecordServiceImpl extends ServiceImpl<LoanRecordMapper, LoanRec
         lr.setBackTime(LocalDateTime.now().minus(-30, ChronoUnit.DAYS));
         baseMapper.insert(lr);
         MemGoldChangeDTO agentRebateChange = new MemGoldChangeDTO();
-        agentRebateChange.setChangeAmount(money);
+        agentRebateChange.setChangeAmount(amount);
         agentRebateChange.setTradingEnum(TradingEnum.INCOME);
         agentRebateChange.setGoldchangeEnum(GoldchangeEnum.LOAN);
         agentRebateChange.setUserId(loginInfo.getId());
