@@ -42,7 +42,7 @@ public class GameManageController {
     @ResponseBody
     public Result<List<GameCategory>> queryAllGameCategory() {
         Result<List<GameCategory>> result = Result.success(iGameManageService.queryAllGameCategory());
-        log.info("查询所有游戏类别queryAllGameCategory返回 result:{}", JSONObject.toJSONString(result));
+        log.info("查询所有游戏类别queryAllGameCategory返回 result:{}", result);
         return result;
     }
 
@@ -52,7 +52,7 @@ public class GameManageController {
     @ResponseBody
     public Result<List<GamePlatformRecord>> queryAllGamePlatform() {
         Result<List<GamePlatformRecord>> result = Result.success(iGameManageService.queryAllGamePlatform());
-        log.info("查询所有平台游戏queryAllGamePlatform返回 result:{}", JSONObject.toJSONString(result));
+        log.info("查询所有平台游戏queryAllGamePlatform返回 result:{}", result);
         return result;
     }
 
@@ -62,7 +62,7 @@ public class GameManageController {
     @ResponseBody
     public Result<List<GamePlatformRecord>> queryHotGamePlatform() {
         Result<List<GamePlatformRecord>> result = Result.success(iGameManageService.queryHotGamePlatform());
-        log.info("查询热门游戏queryHotGamePlatform返回 result:{}", JSONObject.toJSONString(result));
+        log.info("查询热门游戏queryHotGamePlatform返回 result:{}", result);
         return result;
     }
 
@@ -76,7 +76,7 @@ public class GameManageController {
     public Result<List<GamePlatformRecord>> queryGamePlatformByCategory(@RequestParam("categoryId") Long categoryId) {
         log.info("依据类别查询平台游戏queryGamePlatformByCategory 请求 categoryId:{}", JSONObject.toJSONString(categoryId));
         Result<List<GamePlatformRecord>> result = Result.success(iGameManageService.queryGamePlatformByCategory(categoryId));
-        log.info("依据类别查询平台游戏queryGamePlatformByCategory返回 result:{}", JSONObject.toJSONString(result));
+        log.info("依据类别查询平台游戏queryGamePlatformByCategory返回 result:{}", result);
         return result;
     }
 
@@ -90,7 +90,7 @@ public class GameManageController {
         req.setUserAcct(loginUser.getAccount());
         log.info("查询所有平台记录allGameInfoCount 请求 req:{}", JSONObject.toJSONString(req));
         IPage<GameStatiRecord> result = iGameManageService.queryAllGameInfoCount(req);
-        log.info("查询所有平台记录queryAllGameInfoCount返回 result:{}", JSONObject.toJSONString(result));
+        log.info("查询所有平台记录queryAllGameInfoCount返回 result:{}", result);
         return Result.success(result.getRecords(), result.getTotal());
     }
 
@@ -104,7 +104,7 @@ public class GameManageController {
         req.setUserAcct(loginUser.getAccount());
         log.info("查询所有游戏记录queryAllGameInfo请求 req:{}", JSONObject.toJSONString(req));
         IPage<GameInfoRecord> result = iGameManageService.queryAllGameInfo(req);
-        log.info("查询所有游戏记录queryAllGameInfo返回 result:{}", JSONObject.toJSONString(result));
+        log.info("查询所有游戏记录queryAllGameInfo返回 result:{}", result);
         return Result.success(result.getRecords(), result.getTotal());
     }
 
@@ -118,7 +118,7 @@ public class GameManageController {
         req.setUserAcct(loginUser.getAccount());
         log.info("查询代理游戏记录queryAllAgentGameInfo请求 req:{}", JSONObject.toJSONString(req));
         Result<List<GameInfoAgentRecord>> result = iGameManageService.queryAllAgentGameInfo(loginUser,req);
-        log.info("查询代理游戏记录queryAllAgentGameInfo返回 result:{}", JSONObject.toJSONString(result));
+        log.info("查询代理游戏记录queryAllAgentGameInfo返回 result:{}", result);
         return result;
     }
 
@@ -128,7 +128,7 @@ public class GameManageController {
     @ResponseBody
     public Result<List<GameParentPlatform>> queryAllGameParentPlatform() {
         Result<List<GameParentPlatform>> result = Result.success(iGameManageService.queryAllGameParentPlatform());
-        log.info("查询所有平台queryAllGameParentPlatform返回 result:{}", JSONObject.toJSONString(result));
+        log.info("查询所有平台queryAllGameParentPlatform返回 result:{}", result);
         return result;
     }
 
@@ -138,7 +138,7 @@ public class GameManageController {
     @ResponseBody
     public Result<List<GameParentPlatform>> queryHotGameParentPlatform() {
         Result<List<GameParentPlatform>> result = Result.success(iGameManageService.queryHotGameParentPlatform());
-        log.info("查询热门平台queryHotGameParentPlatform返回 result:{}", JSONObject.toJSONString(result));
+        log.info("查询热门平台queryHotGameParentPlatform返回 result:{}", result);
         return result;
     }
 
