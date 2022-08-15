@@ -91,8 +91,5 @@ public class MemBaseInfoVo {
     @ApiModelProperty("禁止充值 ,是0，否是1")
     private Integer prohibitRecharge;
 
-    @ApiModelProperty("借款金额")
-    private BigDecimal loanAmount;
-
     private static final long serialVersionUID = -2839025782308943736L;
 }

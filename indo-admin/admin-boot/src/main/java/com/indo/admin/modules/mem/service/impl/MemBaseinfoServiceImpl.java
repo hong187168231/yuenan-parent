@@ -65,9 +65,6 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
     @Resource
     private MemInviteCodeMapper memInviteCodeMapper;
 
-    @Resource
-    private ILoanRecordService loanRecordService;
-
     @Override
     public Page<MemBaseInfoVo> queryList(MemBaseInfoReq req) {
         Page<MemBaseInfoVo> page = new Page<>(req.getPage(), req.getLimit());
@@ -85,10 +82,6 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
                if(memLevel!=null){
                    item.setLevel(memLevel.getLevel());
                }
-            }
-            LoanRecord loanRecord = loanRecordService.findLoanRecordPageByMemId(item.getId());
-            if (loanRecord != null) {
-                item.setLoanAmount(loanRecord.getLoanAmount());
             }
         });
 
