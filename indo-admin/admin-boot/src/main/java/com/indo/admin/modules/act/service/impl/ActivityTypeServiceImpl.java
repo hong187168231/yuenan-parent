@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.indo.admin.common.util.AdminBusinessRedisUtils;
+import com.indo.admin.modules.act.mapper.ActivityMapper;
 import com.indo.admin.modules.act.mapper.ActivityTypeMapper;
 import com.indo.admin.modules.act.service.IActivityTypeService;
 import com.indo.admin.pojo.dto.ActivityTypeDTO;
@@ -14,6 +15,7 @@ import com.indo.common.result.Result;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
 import com.indo.common.web.util.JwtUtils;
+import com.indo.core.pojo.entity.Activity;
 import com.indo.core.pojo.entity.ActivityType;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -35,6 +37,8 @@ public class ActivityTypeServiceImpl extends ServiceImpl<ActivityTypeMapper, Act
     @Resource
     private DozerUtil dozerUtil;
 
+    @Resource
+    private ActivityMapper activityMapper;
 
     @Override
     public Result<List<ActivityTypeVO>> queryList(Integer page, Integer limit) {
@@ -81,5 +85,17 @@ public class ActivityTypeServiceImpl extends ServiceImpl<ActivityTypeMapper, Act
     @Override
     public boolean updateActNum(Long actTypeId, Integer actNum) {
       return SqlHelper.retBool(this.baseMapper.updateActNum(actTypeId, actNum));
+    }
+
+    /**
+     * 删除活动类型及旗下所有活动
+     * @param id
+     */
+    @Override
+    public void deleteActivityType(Integer id) {
+        LambdaQueryWrapper<Activity> activityWrapper = new LambdaQueryWrapper<>();
+        activityWrapper.eq(Activity::getActTypeId,id);
+        activityMapper.delete(activityWrapper);
+        baseMapper.deleteById(id);
     }
 }

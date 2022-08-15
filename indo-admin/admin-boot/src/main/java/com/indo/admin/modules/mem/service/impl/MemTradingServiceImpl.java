@@ -17,6 +17,7 @@ import com.indo.core.pojo.entity.MemGiftReceive;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -32,7 +33,7 @@ import java.util.Set;
 @Service
 public class MemTradingServiceImpl implements IMemTradingService {
 
-    @Autowired
+    @Resource
     private MemCapitalMapper memCapitalMapper;
 
 
@@ -46,12 +47,9 @@ public class MemTradingServiceImpl implements IMemTradingService {
         }
         Page<MemTradingVO> page = new Page<>(queryDto.getPage(), queryDto.getLimit());
         List<MemTradingVO> list = memCapitalMapper.capitalList(page, queryDto);
-//        list.forEach(item -> {
-//            if (ObjectUtil.isNotNull(queryDto.getChangeCategory())) {
-//                item.setTradingType();
-//            }
-//
-//        });
+        list.forEach(l->{
+           l.setTradingType(ChangeCategoryEnum.findEnumByCode(Integer.valueOf(l.getTradingType())));
+        });
         page.setRecords(list);
         return page;
     }

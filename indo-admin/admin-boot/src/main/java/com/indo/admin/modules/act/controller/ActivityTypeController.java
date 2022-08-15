@@ -54,6 +54,12 @@ public class ActivityTypeController {
         return Result.judge(iActivityTypeService.edit(activityTypeDTO));
     }
 
-
+    @ApiOperation(value = "删除活动类型及旗下所有活动")
+    @GetMapping(value = "/deleteActivityType")
+    @ApiImplicitParam(name = "id", value = "活动类型ID", required = true,dataType = "int")
+    public Result deleteActivityType(@RequestParam Integer id) {
+        iActivityTypeService.deleteActivityType(id);
+        return Result.success();
+    }
 
 }
