@@ -1,16 +1,16 @@
 package com.indo.user.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.indo.admin.pojo.req.agnet.AgentRebateRecordReq;
+import com.indo.core.pojo.req.agent.AgentRebateRecordReq;
 import com.indo.admin.pojo.vo.agent.*;
-import com.indo.admin.pojo.vo.mem.MemBetVo;
+import com.indo.core.pojo.vo.agent.AgentRebateRecordVO;
+import com.indo.core.pojo.vo.mem.MemBetVo;
 import com.indo.common.annotation.AllowAccess;
 import com.indo.common.annotation.LoginUser;
 import com.indo.common.constant.RedisKeys;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.redis.utils.RedisUtils;
 import com.indo.common.result.Result;
-import com.indo.common.web.util.DozerUtil;
 import com.indo.user.pojo.req.mem.MemAgentApplyReq;
 import com.indo.user.pojo.req.mem.SubordinateAppReq;
 import com.indo.user.service.IMemAgentService;

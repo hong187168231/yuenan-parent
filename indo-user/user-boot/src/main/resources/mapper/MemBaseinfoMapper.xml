@@ -45,7 +45,7 @@
     </sql>
 
 
-    <select id="tradingInfo" resultType="com.indo.user.pojo.bo.MemTradingBO">
+    <select id="tradingInfo" resultType="com.indo.core.pojo.bo.MemTradingBO">
         select mb.id                as id,
                mb.account           as account,
                mb.nick_name         as nickName,

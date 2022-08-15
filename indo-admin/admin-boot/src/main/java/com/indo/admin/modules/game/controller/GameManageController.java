@@ -8,17 +8,13 @@ import com.indo.admin.pojo.dto.game.manage.GameParentPlatformPageReq;
 import com.indo.admin.pojo.dto.game.manage.GamePlatformPageReq;
 import com.indo.admin.pojo.vo.game.manage.GameInfoRecord;
 import com.indo.admin.pojo.vo.game.manage.GameStatiRecord;
-import com.indo.common.annotation.AllowAccess;
 import com.indo.common.result.Result;
 import com.indo.common.utils.DateUtils;
-import com.indo.common.utils.i18n.MessageUtils;
-import com.indo.game.pojo.entity.manage.*;
+import com.indo.core.pojo.entity.game.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

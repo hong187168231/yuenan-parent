@@ -13,7 +13,7 @@ import com.indo.common.constant.RedisConstants;
 import com.indo.common.redis.utils.RedisUtils;
 import com.indo.common.utils.DateUtils;
 import com.indo.common.utils.QueryHelpPlus;
-import com.indo.core.pojo.entity.GameLotteryWinningNumber;
+import com.indo.core.pojo.entity.game.GameLotteryWinningNumber;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 

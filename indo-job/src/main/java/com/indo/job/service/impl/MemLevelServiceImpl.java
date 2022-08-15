@@ -5,8 +5,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.indo.common.constant.RedisKeys;
 import com.indo.common.redis.utils.RedisUtils;
 import com.indo.common.utils.CollectionUtil;
+import com.indo.core.mapper.MemLevelMapper;
 import com.indo.core.pojo.entity.MemLevel;
-import com.indo.job.mapper.MemLevelMapper;
 import com.indo.job.service.IMemLevelService;
 import org.springframework.stereotype.Service;
 

@@ -3,7 +3,7 @@
 <mapper namespace="com.indo.admin.modules.agent.mapper.AgentRebateRecordMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.indo.admin.pojo.vo.agent.AgentRebateRecordVO">
+    <resultMap id="BaseResultMap" type="com.indo.core.pojo.vo.agent.AgentRebateRecordVO">
         <id column="id" property="id"/>
         <result column="create_time" property="createTime"/>
         <result column="mem_id" property="memId"/>

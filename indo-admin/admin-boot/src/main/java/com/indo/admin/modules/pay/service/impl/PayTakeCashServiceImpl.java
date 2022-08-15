@@ -20,7 +20,6 @@ import com.indo.core.pojo.entity.PayTakeCash;
 import com.indo.pay.api.WithdrawFeignClient;
 import com.indo.pay.pojo.bo.PayTakeCashBO;
 import com.indo.pay.pojo.req.PayTakeCashReq;
-import com.indo.user.pojo.bo.MemTradingBO;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

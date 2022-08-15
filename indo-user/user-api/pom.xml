@@ -54,6 +54,17 @@
             <version>2.2.1</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>com.indo</groupId>
+            <artifactId>common-core</artifactId>
+            <version>${indo.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.indo</groupId>
+            <artifactId>indo-core</artifactId>
+            <version>${indo.version}</version>
+        </dependency>
 
     </dependencies>
 </project>

@@ -7,7 +7,7 @@ import com.indo.admin.common.util.AdminBusinessRedisUtils;
 import com.indo.admin.modules.mem.mapper.MemRebateMapper;
 import com.indo.admin.pojo.req.mem.MemRebateAddReq;
 import com.indo.admin.modules.mem.service.IMemRebateService;
-import com.indo.admin.pojo.vo.mem.MemBetVo;
+import com.indo.core.pojo.vo.mem.MemBetVo;
 import com.indo.admin.pojo.vo.mem.MemRebateVo;
 import com.indo.common.constant.RedisKeys;
 import com.indo.core.pojo.entity.AgentRebateConfig;

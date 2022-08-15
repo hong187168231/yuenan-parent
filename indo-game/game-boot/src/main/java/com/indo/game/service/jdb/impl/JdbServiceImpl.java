@@ -4,19 +4,18 @@ import com.alibaba.fastjson.JSONObject;
 import com.indo.common.config.OpenAPIProperties;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
-import com.indo.common.utils.DateUtils;
 import com.indo.common.utils.GameUtil;
 import com.indo.game.common.util.JDBAESEncrypt;
-import com.indo.game.mapper.frontend.GameCategoryMapper;
-import com.indo.game.mapper.frontend.GamePlatformMapper;
+import com.indo.core.mapper.game.GameCategoryMapper;
+import com.indo.core.mapper.game.GamePlatformMapper;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
 import com.indo.game.pojo.dto.jdb.JdbApiRequestGetTokenDto;
 import com.indo.game.pojo.dto.jdb.JdbApiRequestGetTryTokenDto;
 import com.indo.game.pojo.dto.jdb.JdbApiRequestParentDto;
 import com.indo.game.pojo.entity.CptOpenMember;
-import com.indo.game.pojo.entity.manage.GameCategory;
-import com.indo.game.pojo.entity.manage.GameParentPlatform;
-import com.indo.game.pojo.entity.manage.GamePlatform;
+import com.indo.core.pojo.entity.game.GameCategory;
+import com.indo.core.pojo.entity.game.GameParentPlatform;
+import com.indo.core.pojo.entity.game.GamePlatform;
 import com.indo.game.pojo.vo.callback.jdb.JdbApiIsGameingInfoRequestBack;
 import com.indo.game.pojo.vo.callback.jdb.JdbApiIsGameingRequestBack;
 import com.indo.game.pojo.vo.callback.jdb.JdbApiRequestBack;
@@ -30,7 +29,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**

@@ -3,14 +3,13 @@ package com.indo.game.service.app;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
-import com.indo.game.pojo.dto.manage.GameInfoPageReq;
-import com.indo.game.pojo.entity.manage.GameCategory;
-import com.indo.game.pojo.entity.manage.GameParentPlatform;
-import com.indo.game.pojo.entity.manage.GamePlatform;
-import com.indo.game.pojo.vo.app.GameInfoAgentRecord;
-import com.indo.game.pojo.vo.app.GameInfoRecord;
-import com.indo.game.pojo.vo.app.GamePlatformRecord;
-import com.indo.game.pojo.vo.app.GameStatiRecord;
+import com.indo.core.pojo.dto.game.manage.GameInfoPageReq;
+import com.indo.core.pojo.entity.game.GameCategory;
+import com.indo.core.pojo.entity.game.GameParentPlatform;
+import com.indo.core.pojo.vo.game.app.GameInfoAgentRecord;
+import com.indo.core.pojo.vo.game.app.GameInfoRecord;
+import com.indo.core.pojo.vo.game.app.GamePlatformRecord;
+import com.indo.core.pojo.vo.game.app.GameStatiRecord;
 
 import java.util.List;
 

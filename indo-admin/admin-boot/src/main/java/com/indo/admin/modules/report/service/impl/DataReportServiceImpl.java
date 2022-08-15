@@ -2,7 +2,7 @@ package com.indo.admin.modules.report.service.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.modules.agent.mapper.AgentRelationMapper;
-import com.indo.admin.modules.game.mapper.GameParentPlatformMapper;
+import com.indo.admin.modules.game.mapper.AdminGameParentPlatformMapper;
 import com.indo.admin.modules.mem.mapper.MemBankMapper;
 import com.indo.admin.modules.pay.mapper.PayRechargeMapper;
 import com.indo.admin.modules.report.service.DataReportService;
@@ -27,7 +27,7 @@ public class DataReportServiceImpl implements DataReportService {
     @Resource
     private PayRechargeMapper payRechargeMapper;
     @Resource
-    private GameParentPlatformMapper gameParentPlatformMapper;
+    private AdminGameParentPlatformMapper adminGameParentPlatformMapper;
     @Override
     public Page<AgentReportVo> findAgentReportPage(AgentReportDTO agentReportDTO) {
         if(StringUtils.isEmpty(agentReportDTO.getBeginTime())||StringUtils.isEmpty(agentReportDTO.getEndTime())){
@@ -61,7 +61,7 @@ public class DataReportServiceImpl implements DataReportService {
             throw new BizException("查询时间不可为空");
         }
         Page<PlatformReportVo> page = new Page<>(platformReportDTO.getPage(), platformReportDTO.getLimit());
-        return gameParentPlatformMapper.findPlatformReport(page,platformReportDTO);
+        return adminGameParentPlatformMapper.findPlatformReport(page,platformReportDTO);
     }
 
     @Override

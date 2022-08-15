@@ -6,18 +6,17 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.indo.common.config.OpenAPIProperties;
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
-import com.indo.common.redis.utils.GeneratorIdUtil;
 import com.indo.common.utils.DateUtils;
-import com.indo.game.mapper.TxnsMapper;
+import com.indo.core.mapper.game.TxnsMapper;
 import com.indo.game.pojo.entity.CptOpenMember;
-import com.indo.game.pojo.entity.manage.GameCategory;
-import com.indo.game.pojo.entity.manage.GameParentPlatform;
-import com.indo.game.pojo.entity.manage.GamePlatform;
-import com.indo.game.pojo.entity.manage.Txns;
+import com.indo.core.pojo.entity.game.GameCategory;
+import com.indo.core.pojo.entity.game.GameParentPlatform;
+import com.indo.core.pojo.entity.game.GamePlatform;
+import com.indo.core.pojo.entity.game.Txns;
 import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
 import com.indo.game.service.redtiger.RedtigerCallbackService;
-import com.indo.user.pojo.bo.MemTradingBO;
+import com.indo.core.pojo.bo.MemTradingBO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -139,15 +138,15 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             GameParentPlatform platformGameParent = getGameParentPlatform();
             // 校验IP
             if (checkIp(ip, platformGameParent)) {
-                jsonObject.put("balance", BigDecimal.ZERO);
-                jsonObject.put("bonus", 0);
+//                jsonObject.put("balance", BigDecimal.ZERO);
+//                jsonObject.put("bonus", 0);
                 jsonObject.put("status", "INVALID_TOKEN_ID");
                 return jsonObject;
             }
             String playerID = params.getString("userId");
             if (null == playerID || "".equals(playerID)) {
-                jsonObject.put("balance", BigDecimal.ZERO);
-                jsonObject.put("bonus", 0);
+//                jsonObject.put("balance", BigDecimal.ZERO);
+//                jsonObject.put("bonus", 0);
                 jsonObject.put("status", "TEMPORARY_ERROR");
                 return jsonObject;
             }
@@ -155,8 +154,8 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             // 查询玩家是否存在
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(playerID);
             if (null == memBaseinfo) {
-                jsonObject.put("balance", BigDecimal.ZERO);
-                jsonObject.put("bonus", 0);
+//                jsonObject.put("balance", BigDecimal.ZERO);
+//                jsonObject.put("bonus", 0);
                 jsonObject.put("status", "INVALID_PARAMETER");
                 return jsonObject;
             }
@@ -185,8 +184,8 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             GameParentPlatform platformGameParent = getGameParentPlatform();
             // 校验IP
             if (checkIp(ip, platformGameParent)) {
-                jsonObject.put("balance", BigDecimal.ZERO);
-                jsonObject.put("bonus", 0);
+//                jsonObject.put("balance", BigDecimal.ZERO);
+//                jsonObject.put("bonus", 0);
                 jsonObject.put("status", "INVALID_TOKEN_ID");
                 return jsonObject;
             }
@@ -194,8 +193,8 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
 //            JSONObject params = JSONObject.parseObject(String.valueOf(map));
             String playerID = params.getString("userId");
             if (null == playerID || "".equals(playerID)) {
-                jsonObject.put("balance", BigDecimal.ZERO);
-                jsonObject.put("bonus", 0);
+//                jsonObject.put("balance", BigDecimal.ZERO);
+//                jsonObject.put("bonus", 0);
                 jsonObject.put("status", "TEMPORARY_ERROR");
                 return jsonObject;
             }
@@ -208,8 +207,8 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
 
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(playerID);
             if (null == memBaseinfo) {
-                jsonObject.put("balance", BigDecimal.ZERO);
-                jsonObject.put("bonus", 0);
+//                jsonObject.put("balance", BigDecimal.ZERO);
+//                jsonObject.put("bonus", 0);
                 jsonObject.put("status", "INVALID_PARAMETER");
                 return jsonObject;
             }
@@ -238,7 +237,12 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             if (null != oldTxns&&"Place Bet".equals(oldTxns.getMethod())) {
                 jsonObject.put("balance", balance);
                 jsonObject.put("bonus", 0);
-                jsonObject.put("status", "BET_ALREADY_SETTLED");
+//                jsonObject.put("status", "BET_ALREADY_SETTLED");
+                return jsonObject;
+            }else if (null != oldTxns){
+                jsonObject.put("balance", balance);
+                jsonObject.put("bonus", 0);
+                jsonObject.put("status", "FINAL_ERROR_ACTION_FAILED");
                 return jsonObject;
             }
 
@@ -342,23 +346,23 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             GameParentPlatform platformGameParent = getGameParentPlatform();
             // 校验IP
             if (checkIp(ip, platformGameParent)) {
-                jsonObject.put("balance", BigDecimal.ZERO);
-                jsonObject.put("bonus", 0);
+//                jsonObject.put("balance", BigDecimal.ZERO);
+//                jsonObject.put("bonus", 0);
                 jsonObject.put("status", "INVALID_TOKEN_ID");
                 return jsonObject;
             }
             String playerID = params.getString("userId");
             if (null == playerID || "".equals(playerID)) {
-                jsonObject.put("balance", BigDecimal.ZERO);
-                jsonObject.put("bonus", 0);
+//                jsonObject.put("balance", BigDecimal.ZERO);
+//                jsonObject.put("bonus", 0);
                 jsonObject.put("status", "TEMPORARY_ERROR");
                 return jsonObject;
             }
 
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(playerID);
             if (null == memBaseinfo) {
-                jsonObject.put("balance", BigDecimal.ZERO);
-                jsonObject.put("bonus", 0);
+//                jsonObject.put("balance", BigDecimal.ZERO);
+//                jsonObject.put("bonus", 0);
                 jsonObject.put("status", "INVALID_PARAMETER");
                 return jsonObject;
             }
@@ -461,23 +465,23 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             GameParentPlatform platformGameParent = getGameParentPlatform();
             // 校验IP
             if (checkIp(ip, platformGameParent)) {
-                jsonObject.put("balance", BigDecimal.ZERO);
-                jsonObject.put("bonus", 0);
+//                jsonObject.put("balance", BigDecimal.ZERO);
+//                jsonObject.put("bonus", 0);
                 jsonObject.put("status", "INVALID_TOKEN_ID");
                 return jsonObject;
             }
             String playerID = params.getString("userId");
             if (null == playerID || "".equals(playerID)) {
-                jsonObject.put("balance", BigDecimal.ZERO);
-                jsonObject.put("bonus", 0);
+//                jsonObject.put("balance", BigDecimal.ZERO);
+//                jsonObject.put("bonus", 0);
                 jsonObject.put("status", "TEMPORARY_ERROR");
                 return jsonObject;
             }
 
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(playerID);
             if (null == memBaseinfo) {
-                jsonObject.put("balance", BigDecimal.ZERO);
-                jsonObject.put("bonus", 0);
+//                jsonObject.put("balance", BigDecimal.ZERO);
+//                jsonObject.put("bonus", 0);
                 jsonObject.put("status", "INVALID_PARAMETER");
                 return jsonObject;
             }
@@ -588,23 +592,23 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             GameParentPlatform platformGameParent = getGameParentPlatform();
             // 校验IP
             if (checkIp(ip, platformGameParent)) {
-                jsonObject.put("balance", BigDecimal.ZERO);
-                jsonObject.put("bonus", 0);
+//                jsonObject.put("balance", BigDecimal.ZERO);
+//                jsonObject.put("bonus", 0);
                 jsonObject.put("status", "INVALID_TOKEN_ID");
                 return jsonObject;
             }
             String playerID = params.getString("userId");
             if (null == playerID || "".equals(playerID)) {
-                jsonObject.put("balance", BigDecimal.ZERO);
-                jsonObject.put("bonus", 0);
+//                jsonObject.put("balance", BigDecimal.ZERO);
+//                jsonObject.put("bonus", 0);
                 jsonObject.put("status", "TEMPORARY_ERROR");
                 return jsonObject;
             }
 
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(playerID);
             if (null == memBaseinfo) {
-                jsonObject.put("balance", BigDecimal.ZERO);
-                jsonObject.put("bonus", 0);
+//                jsonObject.put("balance", BigDecimal.ZERO);
+//                jsonObject.put("bonus", 0);
                 jsonObject.put("status", "INVALID_PARAMETER");
                 return jsonObject;
             }
@@ -666,6 +670,9 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
                 betAmount = promoTransaction.getBigDecimal("amount");
                 roundId = game.getJSONObject("details").getJSONObject("table").getString("id");
                 promotionId = roundId;
+            }else {
+                betAmount = promoTransaction.getBigDecimal("amount");
+                roundId = game.getJSONObject("details").getJSONObject("table").getString("id");
             }
 
             // 赢奖金额小于0
@@ -681,7 +688,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             if (null != txns) {
                 jsonObject.put("balance", balance);
                 jsonObject.put("bonus", 0);
-                jsonObject.put("status", "BET_DOES_NOT_EXIST");
+//                jsonObject.put("status", "BET_DOES_NOT_EXIST");
                 return jsonObject;
             }
             txns = new Txns();

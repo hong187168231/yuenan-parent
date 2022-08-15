@@ -96,11 +96,6 @@
             <version>${indo.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.indo</groupId>
-            <artifactId>admin-api</artifactId>
-            <version>${indo.version}</version>
-        </dependency>
 
         <dependency>
             <groupId>com.indo</groupId>

@@ -3,8 +3,8 @@ package com.indo.admin.modules.agent.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.modules.agent.service.IAgentRebateRecordService;
-import com.indo.admin.pojo.req.agnet.AgentRebateRecordReq;
-import com.indo.admin.pojo.vo.agent.AgentRebateRecordVO;
+import com.indo.core.pojo.req.agent.AgentRebateRecordReq;
+import com.indo.core.pojo.vo.agent.AgentRebateRecordVO;
 import com.indo.common.result.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

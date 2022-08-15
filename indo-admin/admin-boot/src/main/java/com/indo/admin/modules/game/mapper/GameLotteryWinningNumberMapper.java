@@ -1,7 +1,7 @@
 package com.indo.admin.modules.game.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.indo.core.pojo.entity.GameLotteryWinningNumber;
+import com.indo.core.pojo.entity.game.GameLotteryWinningNumber;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper

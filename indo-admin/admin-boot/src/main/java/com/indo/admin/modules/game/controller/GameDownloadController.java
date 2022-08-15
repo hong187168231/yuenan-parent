@@ -5,7 +5,7 @@ import com.indo.admin.pojo.dto.game.manage.GameDownloadAddDto;
 import com.indo.admin.pojo.dto.game.manage.GameDownloadModifyDto;
 import com.indo.common.result.Result;
 import com.indo.common.utils.DateUtils;
-import com.indo.core.pojo.entity.GameDownload;
+import com.indo.core.pojo.entity.game.GameDownload;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
