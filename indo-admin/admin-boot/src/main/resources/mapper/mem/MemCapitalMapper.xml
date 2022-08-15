@@ -10,8 +10,8 @@
         mgc.amount AS amount,
         mgc.before_amount AS beforeAmount,
         mgc.after_amount AS afterAmount,
-        mgc.ref_no AS refNo,
-        mgc.serial_no AS serialNo,
+        mgc.change_type AS tradingType,
+        mgc.serial_no AS refNo,
         mgc.create_time
         FROM
         mem_gold_change mgc
@@ -22,10 +22,9 @@
         <if test="dto.memId !=null">
             and mgc.mem_id = #{dto.memId}
         </if>
-        <if test="dto.changeTypes !=null and changeTypes.size() > 0 ">
+        <if test="dto.changeTypes !=null and dto.changeTypes.size() > 0 ">
             and mgc.change_type in
-            <foreach collection="dto.changeTypes" item="type" index="index"
-                     open="(" close=")" separator=",">
+            <foreach collection="dto.changeTypes" item='type' open='(' separator=',' close=')'>
                 #{type}
             </foreach>
         </if>

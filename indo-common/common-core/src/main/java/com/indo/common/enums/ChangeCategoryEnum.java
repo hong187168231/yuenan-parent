@@ -53,6 +53,9 @@ public enum ChangeCategoryEnum {
     year(306, "每年礼金"),
     register(307, "注册送好礼"),
     SUPERLOTTO(309, "国年大乐透"),
+    LOAN(310, "借呗"),
+    SIGNIN(311, "签到"),
+    TASK(312, "任务"),
 
     TXKK(401, "提现扣款"),
     JJTC(407, "奖金提出"),
@@ -77,5 +80,32 @@ public enum ChangeCategoryEnum {
         }
         return list;
     }
-
+    /**
+     * 根据name查找
+     * @param name 枚举name
+     * @return 枚举对象
+     */
+    public static Integer findEnumByName(String name) {
+        for (ChangeCategoryEnum statusEnum : ChangeCategoryEnum.values()) {
+            if (statusEnum.getName().equals(name)) {
+                //如果需要直接返回code则更改返回类型为String,return statusEnum.code;
+                return statusEnum.code;
+            }
+        }
+        throw new IllegalArgumentException("name is invalid");
+    }
+    /**
+     * 根据code查找
+     * @param code 枚举code
+     * @return 枚举对象
+     */
+    public static String findEnumByCode(Integer code) {
+        for (ChangeCategoryEnum statusEnum : ChangeCategoryEnum.values()) {
+            if (statusEnum.getCode()==code) {
+                //如果需要直接返回name则更改返回类型为String,return statusEnum.name;
+                return statusEnum.name;
+            }
+        }
+        throw new IllegalArgumentException("code is invalid");
+    }
 }

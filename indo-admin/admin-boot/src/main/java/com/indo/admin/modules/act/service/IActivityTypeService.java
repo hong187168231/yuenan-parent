@@ -44,5 +44,11 @@ public interface IActivityTypeService extends IService<ActivityType> {
      */
     boolean edit(ActivityTypeDTO activityTypeDTO);
 
-	  boolean updateActNum(Long actTypeId, Integer actNum);
+    boolean updateActNum(Long actTypeId, Integer actNum);
+
+    /**
+     * 删除活动类型及旗下所有活动
+     * @param id
+     */
+    void deleteActivityType(Integer id);
 }

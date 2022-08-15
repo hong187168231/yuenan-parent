@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -28,7 +29,7 @@ public class CapitalDTO extends BaseDTO {
     private String endTime;
 
     @ApiModelProperty(hidden = true)
-    private Set<Integer> changeTypes;
+    private Set<Integer> changeTypes = new HashSet<>();
 
     @ApiModelProperty(value = "会员ID")
     private Long memId;
