@@ -87,7 +87,7 @@ public class GameManageServiceImpl implements IGameManageService {
 
     @Override
     public IPage<GameStatiRecord> queryAllGameInfoCount(GameInfoPageReq req) {
-        IPage<GameStatiRecord> page = new Page<>(req.getPage(), req.getLimit());
+        IPage<GameStatiRecord> page = new Page<>(null!=req.getPage()?req.getPage():1, null!=req.getLimit()?req.getLimit():10);
         page.setRecords(txnsMapper.queryAllGameInfoCount(page, req));
         return page;
     }
@@ -125,7 +125,7 @@ public class GameManageServiceImpl implements IGameManageService {
             agentAcctList.add(loginUser.getAccount());
         }
         gameInfoPageImpReq.setAgentAcctList(agentAcctList);
-        IPage<GameInfoAgentRecord> page = new Page<>(gameInfoPageImpReq.getPage(), gameInfoPageImpReq.getLimit());
+        IPage<GameInfoAgentRecord> page = new Page<>(null!=gameInfoPageImpReq.getPage()?gameInfoPageImpReq.getPage():1, null!=gameInfoPageImpReq.getLimit()?gameInfoPageImpReq.getLimit():10);
         page.setRecords(txnsMapper.queryAllAgentGameInfo(page, gameInfoPageImpReq));
         return Result.success(page.getRecords(), page.getTotal());
     }
