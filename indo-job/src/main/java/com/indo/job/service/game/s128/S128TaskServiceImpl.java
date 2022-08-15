@@ -73,8 +73,8 @@ public class S128TaskServiceImpl implements IS128TaskService {
             System.out.println("当前时间："+ DateUtils.format(DateUtils.getDate(totalMilliSeconds),DateUtils.newFormat2));
             System.out.println("开始："+ DateUtils.format(DateUtils.getDate(totalMilliSeconds-fiveMilli),DateUtils.newFormat2));
             System.out.println("结束："+ DateUtils.format(DateUtils.getDate(totalMilliSeconds+thirtyMilli),DateUtils.newFormat2));
-            params.put("start_datetime", "2022-08-11 18:30");
-            params.put("end_datetime", "2022-08-11 19:00");
+            params.put("start_datetime", DateUtils.format(DateUtils.getDate(totalMilliSeconds-fiveMilli),DateUtils.newFormat2));
+            params.put("end_datetime", DateUtils.format(DateUtils.getDate(totalMilliSeconds+thirtyMilli),DateUtils.newFormat2));
             apiUrl.append(OpenAPIProperties.DJ_API_URL).append("/get_cockfight_processed_ticket_by_bet_time.aspx");
 //            apiUrl.append("https://api8745.cfb2.net").append("/get_cockfight_processed_ticket_by_bet_time.aspx");
             String result = commonRequest(apiUrl.toString(), params, 0, "gameLogin");
