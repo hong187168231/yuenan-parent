@@ -101,6 +101,10 @@
         </dependency>
         <dependency>
             <groupId>com.indo</groupId>
+            <artifactId>common-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.indo</groupId>
             <artifactId>common-es</artifactId>
         </dependency>
 

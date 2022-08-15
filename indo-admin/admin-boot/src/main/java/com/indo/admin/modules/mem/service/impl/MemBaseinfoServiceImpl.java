@@ -13,6 +13,8 @@ import com.indo.admin.modules.mem.mapper.MemBaseinfoMapper;
 import com.indo.admin.modules.mem.mapper.MemInviteCodeMapper;
 import com.indo.common.enums.AccountTypeEnum;
 import com.indo.common.utils.ShareCodeUtil;
+import com.indo.common.web.exception.BizException;
+import com.indo.common.web.util.DozerUtil;
 import com.indo.core.mapper.MemLevelMapper;
 import com.indo.admin.modules.mem.service.IMemBaseinfoService;
 import com.indo.common.constant.AppConstants;
@@ -25,15 +27,12 @@ import com.indo.admin.pojo.req.mem.MemEditStatusReq;
 import com.indo.admin.pojo.req.mem.MemEditReq;
 import com.indo.admin.pojo.vo.mem.MemBaseInfoVo;
 import com.indo.admin.pojo.vo.mem.MemBaseDetailVO;
-import com.indo.common.web.exception.BizException;
-import com.indo.common.web.util.DozerUtil;
 import com.indo.core.base.service.impl.SuperServiceImpl;
 import com.indo.core.pojo.bo.MemBaseInfoBO;
 import com.indo.core.pojo.dto.MemBaseInfoDTO;
-import com.indo.core.pojo.entity.AgentRelation;
-import com.indo.core.pojo.entity.MemBaseinfo;
-import com.indo.core.pojo.entity.MemInviteCode;
-import com.indo.core.pojo.entity.MemLevel;
+import com.indo.core.pojo.entity.*;
+import com.indo.core.service.ILoanRecordService;
+import com.indo.core.service.impl.LoanRecordServiceImpl;
 import com.indo.core.util.BusinessRedisUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -41,6 +40,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -64,6 +64,10 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
     private MemLevelMapper memLevelMapper;
     @Resource
     private MemInviteCodeMapper memInviteCodeMapper;
+
+    @Resource
+    private ILoanRecordService loanRecordService;
+
     @Override
     public Page<MemBaseInfoVo> queryList(MemBaseInfoReq req) {
         Page<MemBaseInfoVo> page = new Page<>(req.getPage(), req.getLimit());
@@ -81,6 +85,10 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
                if(memLevel!=null){
                    item.setLevel(memLevel.getLevel());
                }
+            }
+            LoanRecord loanRecord = loanRecordService.findLoanRecordPageByMemId(item.getId());
+            if (loanRecord != null) {
+                item.setLoanAmount(loanRecord.getLoanAmount());
             }
         });
 

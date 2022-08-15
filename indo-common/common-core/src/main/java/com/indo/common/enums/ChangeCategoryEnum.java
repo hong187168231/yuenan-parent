@@ -58,7 +58,13 @@ public enum ChangeCategoryEnum {
     JJTC(407, "奖金提出"),
 
 
-    DLFY(501, "代理返佣");
+    DLFY(501, "代理返佣"),
+
+    // 交易类型增加签到金额、借呗金额、代客充值、代客充值后扣款
+    SIGN_MONEY(601, "签到金额"),
+    LOAN(602, "借呗金额"),
+    MANUAL_RECHARGE(603, "代客充值"),
+    MANUAL_RECHARGE_AFTER_CHARGEBACK(604, "代客充值后扣款");
 
     private int code;
     private String name;

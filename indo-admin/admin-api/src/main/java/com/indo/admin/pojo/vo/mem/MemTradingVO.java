@@ -38,4 +38,7 @@ public class MemTradingVO {
     @ApiModelProperty(value = "会员ID")
     private Long memId;
 
+    @ApiModelProperty(value = "借款金额")
+    private BigDecimal loanAmount;
+
 }
