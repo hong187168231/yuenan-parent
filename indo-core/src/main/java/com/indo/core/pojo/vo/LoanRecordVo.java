@@ -8,8 +8,8 @@ import java.math.BigDecimal;
 @Data
 public class LoanRecordVo {
     @ApiModelProperty(value = "可用金额")
-    private BigDecimal balance;
+    private BigDecimal balance=BigDecimal.ZERO;
 
     @ApiModelProperty(value = "欠款金额")
-    private BigDecimal arrears;
+    private BigDecimal arrears=BigDecimal.ZERO;
 }

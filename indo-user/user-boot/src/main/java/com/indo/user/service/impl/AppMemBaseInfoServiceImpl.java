@@ -28,6 +28,8 @@ import com.indo.core.pojo.bo.MemTradingBO;
 import com.indo.core.pojo.dto.MemBaseInfoDTO;
 import com.indo.core.pojo.dto.MemGoldChangeDTO;
 import com.indo.core.pojo.entity.*;
+import com.indo.core.pojo.vo.LoanRecordVo;
+import com.indo.core.service.ILoanRecordService;
 import com.indo.core.service.IMemGoldChangeService;
 import com.indo.core.util.BusinessRedisUtils;
 import com.indo.user.common.util.UserBusinessRedisUtils;
@@ -78,7 +80,7 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
 	private IMemGoldChangeService iMemGoldChangeService;
 
 	@Resource
-	private LoanRecordMapper loanRecordMapper;
+	private ILoanRecordService loanRecordService;
 
 	@Value("${google.client_id}")
 	private String googleClientId;
@@ -318,11 +320,11 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
 		wrapper.eq(MemLevel::getId, vo.getMemLevel());
 		MemLevel memLevel = memLevelMapper.selectOne(wrapper);
 		vo.setLevel((memLevel == null || memLevel.getLevel() == null) ? 0 : memLevel.getLevel());
-		LambdaQueryWrapper<LoanRecord> loanWrapper = new LambdaQueryWrapper<>();
-		loanWrapper.eq(LoanRecord::getMemId, vo.getId());
-		loanWrapper.eq(LoanRecord::getStates, 1);
-		LoanRecord loanRecord = loanRecordMapper.selectOne(loanWrapper);
-		vo.setLoanAmount(loanRecord == null ? BigDecimal.ZERO : loanRecord.getLoanAmount());
+		LoginInfo loginInfo = new LoginInfo();
+		loginInfo.setId(cacheMemBaseInfo.getId());
+		loginInfo.setMemLevel(memLevel.getId().intValue());
+		LoanRecordVo loanRecordVo = loanRecordService.findMemLoanInfo(loginInfo);
+		vo.setLoanAmount(loanRecordVo == null ? BigDecimal.ZERO : loanRecordVo.getArrears());
 		return vo;
 	}
 
