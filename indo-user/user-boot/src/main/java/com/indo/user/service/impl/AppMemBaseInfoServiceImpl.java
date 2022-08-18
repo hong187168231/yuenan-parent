@@ -319,10 +319,10 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
 		LambdaQueryWrapper<MemLevel> wrapper = new LambdaQueryWrapper();
 		wrapper.eq(MemLevel::getId, vo.getMemLevel());
 		MemLevel memLevel = memLevelMapper.selectOne(wrapper);
-		vo.setLevel((memLevel == null || memLevel.getLevel() == null) ? 0 : memLevel.getLevel());
+		vo.setLevel((memLevel == null || memLevel.getLevel() == null) ? 1 : memLevel.getLevel());
 		LoginInfo loginInfo = new LoginInfo();
 		loginInfo.setId(cacheMemBaseInfo.getId());
-		loginInfo.setMemLevel(memLevel.getId().intValue());
+		loginInfo.setMemLevel(memLevel == null ? 11 : memLevel.getId().intValue());
 		LoanRecordVo loanRecordVo = loanRecordService.findMemLoanInfo(loginInfo);
 		vo.setLoanAmount(loanRecordVo == null ? BigDecimal.ZERO : loanRecordVo.getArrears());
 		return vo;
