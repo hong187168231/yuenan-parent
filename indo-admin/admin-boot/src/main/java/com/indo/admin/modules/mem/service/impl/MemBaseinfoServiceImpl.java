@@ -251,11 +251,7 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
     @Override
     public Page findIpRepeatPage(MemBaseInfoReq req) {
         Page<MemBaseInfoBO> page = new Page<>(req.getPage(), req.getLimit());
-        if(StringUtils.isEmpty(req.getAccount())){
-            page = baseMapper.findIpRepeatAll(page);
-        }else{
-            page =baseMapper.findIpRepeatByAccount(page,req);
-        }
+        page = baseMapper.findIpRepeatAll(page,req);
         return page;
     }
 

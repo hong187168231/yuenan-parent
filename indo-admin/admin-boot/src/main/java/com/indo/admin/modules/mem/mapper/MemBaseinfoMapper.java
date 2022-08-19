@@ -28,8 +28,5 @@ public interface MemBaseinfoMapper extends BaseMapper<MemBaseinfo> {
 
     MemBaseInfoBO findMemBaseInfoByAccount(@Param("account") String account);
 
-    Page<MemBaseInfoBO> findIpRepeatAll(@Param("page") Page<MemBaseInfoBO> page);
-
-    Page<MemBaseInfoBO> findIpRepeatByAccount(@Param("page") Page<MemBaseInfoBO> page,@Param("dto") MemBaseInfoReq dto);
-
+    Page<MemBaseInfoBO> findIpRepeatAll(@Param("page") Page<MemBaseInfoBO> page,@Param("dto") MemBaseInfoReq dto);
 }
