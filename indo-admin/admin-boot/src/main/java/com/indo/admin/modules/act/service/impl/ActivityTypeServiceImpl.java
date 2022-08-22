@@ -84,6 +84,7 @@ public class ActivityTypeServiceImpl extends ServiceImpl<ActivityTypeMapper, Act
      */
     @Override
     public boolean updateActNum(Long actTypeId, Integer actNum) {
+        AdminBusinessRedisUtils.del(RedisConstants.ACTIVITY_TYPE_KEY);
       return SqlHelper.retBool(this.baseMapper.updateActNum(actTypeId, actNum));
     }
 
@@ -97,5 +98,6 @@ public class ActivityTypeServiceImpl extends ServiceImpl<ActivityTypeMapper, Act
         activityWrapper.eq(Activity::getActTypeId,id);
         activityMapper.delete(activityWrapper);
         baseMapper.deleteById(id);
+        AdminBusinessRedisUtils.del(RedisConstants.ACTIVITY_TYPE_KEY);
     }
 }
