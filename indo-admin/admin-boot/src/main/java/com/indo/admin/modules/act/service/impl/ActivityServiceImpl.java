@@ -54,7 +54,7 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> i
         Page<Activity> pageList = this.baseMapper.selectPage(activityPage, wrapper);
         List<ActivityVo> result = dozerUtil.convert(pageList.getRecords(), ActivityVo.class);
         if(!AdminBusinessRedisUtils.hasKey(RedisConstants.ACTIVITY_KEY)){
-            result.forEach(l->{
+            pageList.getRecords().forEach(l->{
                 AdminBusinessRedisUtils.hset(RedisConstants.ACTIVITY_KEY, l.getActTypeId() + "", l);
             });
         }
