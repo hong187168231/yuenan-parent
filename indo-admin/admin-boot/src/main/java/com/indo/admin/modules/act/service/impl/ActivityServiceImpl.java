@@ -53,6 +53,11 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> i
         wrapper.orderByDesc(Activity::getUpdateTime);
         Page<Activity> pageList = this.baseMapper.selectPage(activityPage, wrapper);
         List<ActivityVo> result = dozerUtil.convert(pageList.getRecords(), ActivityVo.class);
+        if(!AdminBusinessRedisUtils.hasKey(RedisConstants.ACTIVITY_KEY)){
+            result.forEach(l->{
+                AdminBusinessRedisUtils.hset(RedisConstants.ACTIVITY_KEY, l.getActTypeId() + "", l);
+            });
+        }
         return Result.success(result, activityPage.getTotal());
     }
 
@@ -80,7 +85,7 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> i
         }
         BeanUtils.copyProperties(activityDTO, activity);
         if (baseMapper.updateById(activity) > 0) {
-            AdminBusinessRedisUtils.hset(RedisConstants.ACTIVITY_KEY, activity.getActId() + "", activity);
+            AdminBusinessRedisUtils.del(RedisConstants.ACTIVITY_KEY);
             return true;
         }
 
@@ -94,7 +99,7 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> i
         Activity activity = findActivityById(actId);
         if (this.baseMapper.deleteById(actId) > 0) {
             activityTypeService.updateActNum(activity.getActTypeId(), -1);
-            AdminBusinessRedisUtils.hdel(RedisConstants.ACTIVITY_KEY, actId + "");
+            AdminBusinessRedisUtils.del(RedisConstants.ACTIVITY_KEY);
             return true;
         }
         return false;
