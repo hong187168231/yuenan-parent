@@ -35,4 +35,6 @@ public class MemBaseInfoReq extends BaseDTO {
     private Date startTime;
     @ApiModelProperty("注册结束时间")
     private Date endTime;
+    @ApiModelProperty(value = "ip地址")
+    private String clientIp;
 }

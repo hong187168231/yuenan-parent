@@ -3,7 +3,14 @@
 <mapper namespace="com.indo.admin.modules.stat.mapper.StatUserRetentionMapper">
 
     <select id="queryList" resultType="com.indo.admin.modules.stat.vo.UserRetentionVo">
-        SELECT * FROM stat_user_retention s
+        SELECT
+        s.new_users as newUsers,
+        s.next_day as nextDay,
+        s.three_day as threeDay,
+        s.sevev_day as sevevDay,
+        s.thirty_day as thirtyDay,
+        s.create_time as currentDate
+        FROM stat_user_retention s
         <where>
             <if test="req.startTime != null ">
                 and s.create_time &gt;= #{req.startTime}

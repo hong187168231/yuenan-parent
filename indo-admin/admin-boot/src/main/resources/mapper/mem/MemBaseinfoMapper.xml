@@ -135,20 +135,11 @@
             b1.create_time AS createTime
         FROM
             mem_baseinfo b1
-            INNER JOIN mem_baseinfo b2 ON b1.client_ip = b2.client_ip
-        WHERE
-            b1.client_ip IS NOT NULL
+            INNER JOIN mem_baseinfo b2 ON b1.id = b2.id
+        WHERE b1.client_ip IS NOT NULL
+		AND b1.client_ip = b2.client_ip
+		<if test="dto.clientIp !=null and dto.clientIp !=''">
+            AND client_ip=#{dto.clientIp}
+        </if>
     </select>
-    <!--根据用户账户查询IP重复-->
-    <select id="findIpRepeatByAccount" resultType="com.indo.core.pojo.bo.MemBaseInfoBO">
-        SELECT
-            client_ip AS clientIp ,
-            account AS account,
-            create_time AS createTime
-        FROM
-            mem_baseinfo
-        WHERE client_ip IS NOT NULL
-		AND client_ip=(SELECT client_ip FROM mem_baseinfo WHERE account=#{dto.account})
-    </select>
-
 </mapper>

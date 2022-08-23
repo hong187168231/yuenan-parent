@@ -1,5 +1,6 @@
 package com.indo.core.pojo.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -46,6 +47,7 @@ public class SysTask extends BaseEntity {
 
     @ApiModelProperty(value = "任务结束时间(为空则永久)")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @TableField(value = "END_TIME", fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime endTime;
 
     @ApiModelProperty(value = "任务图片")

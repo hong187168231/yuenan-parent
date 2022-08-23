@@ -48,6 +48,11 @@ public class ActivityTypeServiceImpl extends ServiceImpl<ActivityTypeMapper, Act
 
         Page<ActivityType> pageList = this.baseMapper.selectPage(agentApplyPage, wrapper);
         List<ActivityTypeVO> result = dozerUtil.convert(pageList.getRecords(), ActivityTypeVO.class);
+        if(!AdminBusinessRedisUtils.hasKey(RedisConstants.ACTIVITY_TYPE_KEY)){
+            result.forEach(l->{
+                AdminBusinessRedisUtils.hset(RedisConstants.ACTIVITY_TYPE_KEY, l.getActTypeId() + "", l);
+            });
+        }
         return Result.success(result, agentApplyPage.getTotal());
     }
 
@@ -84,6 +89,7 @@ public class ActivityTypeServiceImpl extends ServiceImpl<ActivityTypeMapper, Act
      */
     @Override
     public boolean updateActNum(Long actTypeId, Integer actNum) {
+        AdminBusinessRedisUtils.del(RedisConstants.ACTIVITY_TYPE_KEY);
       return SqlHelper.retBool(this.baseMapper.updateActNum(actTypeId, actNum));
     }
 
@@ -97,5 +103,7 @@ public class ActivityTypeServiceImpl extends ServiceImpl<ActivityTypeMapper, Act
         activityWrapper.eq(Activity::getActTypeId,id);
         activityMapper.delete(activityWrapper);
         baseMapper.deleteById(id);
+        AdminBusinessRedisUtils.del(RedisConstants.ACTIVITY_TYPE_KEY);
+        AdminBusinessRedisUtils.del(RedisConstants.ACTIVITY_KEY);
     }
 }
