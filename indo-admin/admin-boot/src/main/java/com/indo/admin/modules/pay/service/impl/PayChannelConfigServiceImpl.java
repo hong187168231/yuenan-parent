@@ -27,7 +27,8 @@ import java.util.List;
  * @since 2021-12-20
  */
 @Service
-public class PayChannelConfigServiceImpl extends ServiceImpl<PayChannelConfigMapper, PayChannelConfig> implements IPayChannelConfigService {
+public class PayChannelConfigServiceImpl extends ServiceImpl<PayChannelConfigMapper, PayChannelConfig> implements
+    IPayChannelConfigService {
 
     @Autowired
     private PayChannelConfigMapper payChannelConfigMapper;
@@ -65,5 +66,10 @@ public class PayChannelConfigServiceImpl extends ServiceImpl<PayChannelConfigMap
             return true;
         }
         return false;
+    }
+
+    @Override
+    public List<PayChannelConfig> queryByIds(List<Long> ids) {
+        return this.baseMapper.selectBatchIds(ids);
     }
 }

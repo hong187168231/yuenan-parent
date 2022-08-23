@@ -7,6 +7,8 @@ import com.indo.admin.pojo.dto.PayChannelQueryDTO;
 import com.indo.admin.pojo.vo.pay.PayChannelConfigVO;
 import com.indo.core.pojo.entity.PayChannelConfig;
 
+import java.util.List;
+
 /**
  * <p>
  * 支付渠道配置 服务类
@@ -24,4 +26,5 @@ public interface IPayChannelConfigService extends IService<PayChannelConfig> {
 
     boolean edit(PayChannelDTO editDto);
 
+	  List<PayChannelConfig> queryByIds(List<Long> ids);
 }
