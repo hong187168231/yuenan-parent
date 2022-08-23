@@ -36,21 +36,23 @@
 
     <select id="receiveList" resultMap="Base2ResultMap">
         SELECT
-        mb.id,
+        mb.id as mem_id,
+        mb.account,
         mb.mem_level,
         mgr.gift_type,
         mgr.gift_name,
+        mgr.gift_code,
         mgr.gift_amount,
         mgr.create_time
         FROM
         mem_gift_receive mgr
         LEFT JOIN mem_baseinfo mb ON mgr.mem_id = mb.id
         where 1=1
-        <if test="dto.memId !=null">
-            and mb.id = #{dto.memId)
+        <if test="dto.account !=null and dto.account != ''">
+            and mb.account = #{dto.account}
         </if>
         <if test="dto.giftType !=null">
-            and mgr.gift_type = #{dto.giftType)
+            and mgr.gift_type = #{dto.giftType}
         </if>
         <if test="dto.startTime != null and dto.startTime != ''"><!-- 开始时间检索 -->
             and date_format(create_time,'%y%m%d') &gt;= date_format(#{dto.startTime},'%y%m%d')

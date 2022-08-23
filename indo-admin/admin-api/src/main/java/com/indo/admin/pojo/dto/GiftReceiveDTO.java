@@ -14,6 +14,9 @@ public class GiftReceiveDTO extends BaseDTO {
     @ApiModelProperty(value = "用户id")
     private Long memId;
 
+    @ApiModelProperty(value = "用户账号")
+    private String account;
+
     @ApiModelProperty(value = "礼金类型")
     private GiftTypeEnum giftTypeEnum;
 
