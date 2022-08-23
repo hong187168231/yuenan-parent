@@ -14,6 +14,7 @@ import com.indo.common.web.util.DozerUtil;
 import com.indo.core.pojo.entity.PayBank;
 import com.indo.core.pojo.entity.PayChannelConfig;
 import com.indo.pay.pojo.vo.PayBankVO;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -51,16 +52,19 @@ public class PayBankServiceImpl extends ServiceImpl<PayBankMapper, PayBank> impl
             wrapper.like(PayBank::getBankName, queryReq.getBankName());
         }
         Page<PayBank> pageList = baseMapper.selectPage(page, wrapper);
-        List<Long> payChannelIdList = pageList.getRecords().stream().map(PayBank::getPayChannelId).collect(Collectors.toList());
-        List<PayChannelConfig> channelConfigList = payChannelConfigService.queryByIds(payChannelIdList);
-        Map<Long, PayChannelConfig> payChannelConfigMap = channelConfigList.stream().collect(Collectors.toMap(PayChannelConfig::getPayChannelId, a -> a,(k1,k2)->k1));
         List<PayBankVO> payBankVOList = DozerUtil.convert(pageList.getRecords(), PayBankVO.class);
-        for (PayBankVO payBankVO : payBankVOList) {
-            PayChannelConfig channelConfig = payChannelConfigMap.get(payBankVO.getPayChannelId());
-            payBankVO.setPayChannelName(channelConfig.getChannelName());
-            payBankVO.setPayChannelCode(channelConfig.getChannelCode());
+        if (CollectionUtils.isNotEmpty(payBankVOList)) {
+            List<Long> payChannelIdList = payBankVOList.stream().map(PayBankVO::getPayChannelId).collect(Collectors.toList());
+            List<PayChannelConfig> channelConfigList = payChannelConfigService.queryByIds(payChannelIdList);
+            if (CollectionUtils.isNotEmpty(channelConfigList)) {
+                Map<Long, PayChannelConfig> payChannelConfigMap = channelConfigList.stream().collect(Collectors.toMap(PayChannelConfig::getPayChannelId, a -> a,(k1,k2)->k1));
+                for (PayBankVO payBankVO : payBankVOList) {
+                    PayChannelConfig channelConfig = payChannelConfigMap.get(payBankVO.getPayChannelId());
+                    payBankVO.setPayChannelName(channelConfig.getChannelName());
+                    payBankVO.setPayChannelCode(channelConfig.getChannelCode());
+                }
+            }
         }
-
         return Result.success(payBankVOList, page.getTotal());
     }
 
