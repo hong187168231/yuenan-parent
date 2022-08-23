@@ -1,13 +1,7 @@
 package com.indo.pay.pojo.vo;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.indo.common.pojo.entity.BaseEntity;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-
-import java.util.Date;
 
 /**
  * 银行支付配置返回
@@ -30,5 +24,12 @@ public class PayBankVO {
     @ApiModelProperty(value = "创建时间")
     private String createTime;
 
+    @ApiModelProperty(value = "支付平台ID")
+    private Long payChannelId;
 
+    @ApiModelProperty(value = "支付渠道ID")
+    private String payChannelName;
+
+    @ApiModelProperty(value = "支付渠道编码")
+    private String payChannelCode;
 }

@@ -35,4 +35,8 @@ public class PayBank extends BaseEntity {
 
     @ApiModelProperty(value = "银行名称")
     private Integer status;
+
+    @ApiModelProperty(value = "支付渠道ID")
+    private Long payChannelId;
+
 }
