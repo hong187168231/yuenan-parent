@@ -7,12 +7,14 @@ import com.indo.core.pojo.entity.StatUserRetention;
 import com.indo.job.service.IMemBaseinfoService;
 import com.indo.job.service.IUserRetentionService;
 import com.xxl.job.core.handler.annotation.XxlJob;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
+@Slf4j
 @Component
 public class RetentionJob {
 
@@ -24,24 +26,26 @@ public class RetentionJob {
 
 
     /**
-     * 1、简单任务示例（Bean模式）
+     * 1、用户留存，每天晚上凌晨1点执行
      */
     @XxlJob("RetentionJob")
     public void demoJobHandler() throws Exception {
-        System.err.println("执行静态定时任务时间: " + LocalDateTime.now());
+        log.info("执行用户留存任务时间: " + LocalDateTime.now());
         Date yesterday = DateUtils.addDay(new Date(), -1);
-
-        DateUtils.format(yesterday, DateUtils.shortFormat);
-        Set<Object> idSet = RedisUtils.sGet(AppConstants.USER_DAILY_VISIT_LOG + yesterday);
+        String today = DateUtils.format(yesterday, DateUtils.shortFormat);
+        Set<Object> idSet = RedisUtils.sGet(AppConstants.USER_DAILY_VISIT_LOG + today);
+        StatUserRetention statUserRetention = new StatUserRetention();
         if (idSet == null || idSet.size() == 0) {
-            System.err.println("用户留存从redis未查到数据");
+            log.info("用户留存从redis未查到数据");
+            List<Long> idListBeforeYesterday0Day = iMemBaseinfoService.findIdListByCreateTime(DateUtils.addDay(yesterday, 0));
+            statUserRetention.setNewUsers(idListBeforeYesterday0Day.size());
+            iUserRetentionService.save(statUserRetention);
             return;
         }
         List<Long> memIds = new ArrayList<>();
         for (Object memId : idSet) {
             memIds.add((Long) memId);
         }
-        StatUserRetention statUserRetention = new StatUserRetention();
         List<Long> idListBeforeYesterday0Day = iMemBaseinfoService.findIdListByCreateTime(DateUtils.addDay(yesterday, 0));
         statUserRetention.setNewUsers(idListBeforeYesterday0Day.size());
         List<Long> idListBeforeYesterday1Day = iMemBaseinfoService.findIdListByCreateTime(DateUtils.addDay(yesterday, -1));
@@ -54,10 +58,15 @@ public class RetentionJob {
         statUserRetention.setThirtyDay(Double.valueOf(receiveCollectionList(memIds, idListBeforeYesterday30Day).size()) / Double.valueOf(memIds.size()));
 
         iUserRetentionService.save(statUserRetention);
-        System.err.println("留存任务结束");
+        log.info("留存任务结束");
     }
 
-
+    public static void main(String[] args) {
+        Date yesterday = DateUtils.addDay(new Date(), -1);
+        String today = DateUtils.format(yesterday, DateUtils.shortFormat);
+        System.out.println(today);
+        System.out.println(DateUtils.addDay(yesterday, 0));
+    }
     /**
      * @param firstArrayList  第一个ArrayList
      * @param secondArrayList 第二个ArrayList

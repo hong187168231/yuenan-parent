@@ -13,9 +13,9 @@ public class UserRetentionVo {
     @ApiModelProperty(value = "主键")
     private Long id;
 
-    @ApiModelProperty(value = "当前时间")
+    @ApiModelProperty(value = "日期")
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
-    private Date currentDate = new Date();
+    private Date currentDate;
 
     @ApiModelProperty(value = "新增用户数")
     private Integer newUsers;

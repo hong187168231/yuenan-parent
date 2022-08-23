@@ -39,45 +39,45 @@ public class MultithreadScheduleTask {
     /**
      * 每天凌晨1点结算前一天代理返佣（因JOB目前处于不可使用的情况所以先在此处理）
      */
-    @Async
-    @Scheduled(cron = "0 0 1 * * ?")
-    public void agentRebateJob() {
-        List<MemBetVo> list = RedisUtils.get(RedisKeys.SYS_REBATE_KEY);
-        List<BeforeDayDTO> dataList = adminTxnsMapper.beforeDayBetList(DateUtil.yesterdayFirstDate(),DateUtil.yesterdayLastDate());
-        for(BeforeDayDTO BeforeData:dataList){
-            if(StringUtils.isEmpty(BeforeData.getSuperior())){
-                continue;
-            }
-            AtomicReference<BigDecimal> rebateAmount = new AtomicReference<>();
-            list.forEach(l->{
-                if(BeforeData.getRealBetAmount().intValue()>=l.getSubTotalBet()){
-                    BigDecimal  ratio = new BigDecimal(l.getRebateValue()).divide(new BigDecimal(100));
-                    rebateAmount.set(new BigDecimal(l.getSubTotalBet()).multiply(ratio));
-                }
-            });
-            if(rebateAmount==null||rebateAmount.get().intValue()<=0){
-                continue;
-            }
-            BigDecimal amount = ViewUtil.getTradeOffAmount(rebateAmount.get());
-
-            AgentRebateRecord agentRebateRecord = new AgentRebateRecord();
-            agentRebateRecord.setMemId(BeforeData.getParentId());
-            agentRebateRecord.setAccount(BeforeData.getAccount());
-            agentRebateRecord.setCreateUser("job");
-            agentRebateRecord.setRebateAmout(amount);
-            agentRebateRecord.setMemLevel(BeforeData.getMemLevel());
-            agentRebateRecord.setRealName(BeforeData.getRealName());
-            agentRebateRecord.setSuperior(BeforeData.getSuperior());
-            agentRebateRecord.setTeamNum(BeforeData.getTeamNum());
-            agentRebateRecord.setTeamAmout(BeforeData.getRealBetAmount());
-            agentRebateRecordMapper.insert(agentRebateRecord);
-
-            MemGoldChangeDTO agentRebateChange = new MemGoldChangeDTO();
-            agentRebateChange.setChangeAmount(amount);
-            agentRebateChange.setTradingEnum(TradingEnum.INCOME);
-            agentRebateChange.setGoldchangeEnum(GoldchangeEnum.DLFY);
-            agentRebateChange.setUserId(BeforeData.getParentId());
-            iMemGoldChangeService.updateMemGoldChange(agentRebateChange);
-        }
-    }
+//    @Async
+//    @Scheduled(cron = "0 0 1 * * ?")
+//    public void agentRebateJob() {
+//        List<MemBetVo> list = RedisUtils.get(RedisKeys.SYS_REBATE_KEY);
+//        List<BeforeDayDTO> dataList = adminTxnsMapper.beforeDayBetList(DateUtil.yesterdayFirstDate(),DateUtil.yesterdayLastDate());
+//        for(BeforeDayDTO BeforeData:dataList){
+//            if(StringUtils.isEmpty(BeforeData.getSuperior())){
+//                continue;
+//            }
+//            AtomicReference<BigDecimal> rebateAmount = new AtomicReference<>();
+//            list.forEach(l->{
+//                if(BeforeData.getRealBetAmount().intValue()>=l.getSubTotalBet()){
+//                    BigDecimal  ratio = new BigDecimal(l.getRebateValue()).divide(new BigDecimal(100));
+//                    rebateAmount.set(new BigDecimal(l.getSubTotalBet()).multiply(ratio));
+//                }
+//            });
+//            if(rebateAmount==null||rebateAmount.get().intValue()<=0){
+//                continue;
+//            }
+//            BigDecimal amount = ViewUtil.getTradeOffAmount(rebateAmount.get());
+//
+//            AgentRebateRecord agentRebateRecord = new AgentRebateRecord();
+//            agentRebateRecord.setMemId(BeforeData.getParentId());
+//            agentRebateRecord.setAccount(BeforeData.getAccount());
+//            agentRebateRecord.setCreateUser("job");
+//            agentRebateRecord.setRebateAmout(amount);
+//            agentRebateRecord.setMemLevel(BeforeData.getMemLevel());
+//            agentRebateRecord.setRealName(BeforeData.getRealName());
+//            agentRebateRecord.setSuperior(BeforeData.getSuperior());
+//            agentRebateRecord.setTeamNum(BeforeData.getTeamNum());
+//            agentRebateRecord.setTeamAmout(BeforeData.getRealBetAmount());
+//            agentRebateRecordMapper.insert(agentRebateRecord);
+//
+//            MemGoldChangeDTO agentRebateChange = new MemGoldChangeDTO();
+//            agentRebateChange.setChangeAmount(amount);
+//            agentRebateChange.setTradingEnum(TradingEnum.INCOME);
+//            agentRebateChange.setGoldchangeEnum(GoldchangeEnum.DLFY);
+//            agentRebateChange.setUserId(BeforeData.getParentId());
+//            iMemGoldChangeService.updateMemGoldChange(agentRebateChange);
+//        }
+//    }
 }
