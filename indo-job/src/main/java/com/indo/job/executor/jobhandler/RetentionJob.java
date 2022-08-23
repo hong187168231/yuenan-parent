@@ -35,10 +35,14 @@ public class RetentionJob {
         String today = DateUtils.format(yesterday, DateUtils.shortFormat);
         Set<Object> idSet = RedisUtils.sGet(AppConstants.USER_DAILY_VISIT_LOG + today);
         StatUserRetention statUserRetention = new StatUserRetention();
-        if (idSet == null || idSet.size() == 0) {
+        if (idSet.isEmpty()) {
             log.info("用户留存从redis未查到数据");
             List<Long> idListBeforeYesterday0Day = iMemBaseinfoService.findIdListByCreateTime(DateUtils.addDay(yesterday, 0));
-            statUserRetention.setNewUsers(idListBeforeYesterday0Day.size());
+            if(idListBeforeYesterday0Day.isEmpty()){
+                statUserRetention.setNewUsers(0);
+            }else{
+                statUserRetention.setNewUsers(idListBeforeYesterday0Day.size());
+            }
             iUserRetentionService.save(statUserRetention);
             return;
         }
@@ -47,16 +51,27 @@ public class RetentionJob {
             memIds.add((Long) memId);
         }
         List<Long> idListBeforeYesterday0Day = iMemBaseinfoService.findIdListByCreateTime(DateUtils.addDay(yesterday, 0));
-        statUserRetention.setNewUsers(idListBeforeYesterday0Day.size());
+        if(idListBeforeYesterday0Day.isEmpty()){
+            statUserRetention.setNewUsers(0);
+        }else{
+            statUserRetention.setNewUsers(idListBeforeYesterday0Day.size());
+        }
         List<Long> idListBeforeYesterday1Day = iMemBaseinfoService.findIdListByCreateTime(DateUtils.addDay(yesterday, -1));
-        statUserRetention.setNextDay(Double.valueOf(receiveCollectionList(memIds, idListBeforeYesterday1Day).size()) / Double.valueOf(memIds.size()));
+        if(!idListBeforeYesterday1Day.isEmpty()){
+            statUserRetention.setNextDay(Double.valueOf(receiveCollectionList(memIds, idListBeforeYesterday1Day).size()) / Double.valueOf(memIds.size()));
+        }
         List<Long> idListBeforeYesterday3Day = iMemBaseinfoService.findIdListByCreateTime(DateUtils.addDay(yesterday, -3));
-        statUserRetention.setThreeDay(Double.valueOf(receiveCollectionList(memIds, idListBeforeYesterday3Day).size()) / Double.valueOf(memIds.size()));
+        if(!idListBeforeYesterday3Day.isEmpty()){
+            statUserRetention.setThreeDay(Double.valueOf(receiveCollectionList(memIds, idListBeforeYesterday3Day).size()) / Double.valueOf(memIds.size()));
+        }
         List<Long> idListBeforeYesterday7Day = iMemBaseinfoService.findIdListByCreateTime(DateUtils.addDay(yesterday, -7));
-        statUserRetention.setSevevDay(Double.valueOf(receiveCollectionList(memIds, idListBeforeYesterday7Day).size()) / Double.valueOf(memIds.size()));
+        if(!idListBeforeYesterday7Day.isEmpty()){
+            statUserRetention.setSevevDay(Double.valueOf(receiveCollectionList(memIds, idListBeforeYesterday7Day).size()) / Double.valueOf(memIds.size()));
+        }
         List<Long> idListBeforeYesterday30Day = iMemBaseinfoService.findIdListByCreateTime(DateUtils.addDay(yesterday, -30));
-        statUserRetention.setThirtyDay(Double.valueOf(receiveCollectionList(memIds, idListBeforeYesterday30Day).size()) / Double.valueOf(memIds.size()));
-
+        if(!idListBeforeYesterday30Day.isEmpty()){
+            statUserRetention.setThirtyDay(Double.valueOf(receiveCollectionList(memIds, idListBeforeYesterday30Day).size()) / Double.valueOf(memIds.size()));
+        }
         iUserRetentionService.save(statUserRetention);
         log.info("留存任务结束");
     }
