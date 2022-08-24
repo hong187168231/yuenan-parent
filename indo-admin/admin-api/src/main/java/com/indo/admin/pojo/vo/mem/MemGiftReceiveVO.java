@@ -42,4 +42,7 @@ public class MemGiftReceiveVO {
     @ApiModelProperty(value = "备注")
     private String remark;
 
+    @ApiModelProperty(value = "用户账号")
+    private String account;
+
 }

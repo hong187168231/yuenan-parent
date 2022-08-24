@@ -91,12 +91,17 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     public void changePassword(ChangePasswordDto changePasswordDto) {
         LambdaQueryWrapper<SysUser> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(SysUser::getUsername, JwtUtils.getUsername());
-        wrapper.eq(SysUser::getPassword,changePasswordDto.getUsedPassword());
+//        wrapper.eq(SysUser::getPassword,encode);
         SysUser sysUser = baseMapper.selectOne(wrapper);
-        if(sysUser==null){
+
+        Boolean isEqual = passwordEncoder.matches(changePasswordDto.getUsedPassword(),sysUser.getPassword());
+
+        if(!isEqual){
             throw new BizException("旧密码错误");
         }
-        sysUser.setPassword(changePasswordDto.getNewPassword());
+        
+        String encodeNew = passwordEncoder.encode(changePasswordDto.getNewPassword());
+        sysUser.setPassword(encodeNew);
         baseMapper.updateById(sysUser);
     }
 
