@@ -2,6 +2,7 @@ package com.indo.job.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.indo.common.rabbitmq.bo.Message;
+import com.indo.common.utils.DateUtils;
 import com.indo.core.base.service.impl.SuperServiceImpl;
 import com.indo.core.pojo.entity.MemBaseinfo;
 import com.indo.job.mapper.JobMemBaseInfoMapper;
@@ -43,6 +44,7 @@ public class MemBaseInfoServiceImpl extends SuperServiceImpl<JobMemBaseInfoMappe
 
     @Override
     public List<Long> findIdListByCreateTime(Date addDay) {
-        return null;
+        String time = DateUtils.format(addDay, DateUtils.shortFormat);
+        return baseMapper.findIdListByCreateTime(time);
     }
 }

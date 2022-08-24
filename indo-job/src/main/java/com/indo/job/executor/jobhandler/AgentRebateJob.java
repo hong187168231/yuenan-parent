@@ -19,7 +19,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,17 +32,20 @@ import java.util.concurrent.atomic.AtomicReference;
 public class AgentRebateJob {
 
 
-    @Autowired
+    @Resource
     private GameTxnsMapper gameTxnsMapper;
 
-    @Autowired
+    @Resource
     private JobAgentRebateRecordMapper agentRebateRecordMapper;
 
-    @Autowired
+    @Resource
     private IMemGoldChangeService iMemGoldChangeService;
-
+    /**
+     * 每天凌晨1点结算前一天代理返佣（因JOB目前处于不可使用的情况所以先在此处理）
+     */
     @XxlJob("agentRebateJob")
     public void agentRebateJob() {
+        log.info("执行代理返佣任务时间: " + LocalDateTime.now());
         List<MemBetVo> list = RedisUtils.get(RedisKeys.SYS_REBATE_KEY);
         List<BeforeDayBetDTO> dataList = gameTxnsMapper.beforeDayBetList(DateUtil.yesterdayFirstDate(),DateUtil.yesterdayLastDate());
         for(BeforeDayBetDTO BeforeData:dataList){
@@ -50,7 +55,8 @@ public class AgentRebateJob {
             AtomicReference<BigDecimal> rebateAmount = new AtomicReference<>();
             list.forEach(l->{
                 if(BeforeData.getRealBetAmount().intValue()>=l.getSubTotalBet()){
-                    rebateAmount.set(new BigDecimal(l.getRebateValue()));
+                    BigDecimal  ratio = new BigDecimal(l.getRebateValue()).divide(new BigDecimal(100));
+                    rebateAmount.set(new BigDecimal(l.getSubTotalBet()).multiply(ratio));
                 }
             });
             if(rebateAmount==null||rebateAmount.get().intValue()<=0){
@@ -76,6 +82,7 @@ public class AgentRebateJob {
             agentRebateChange.setGoldchangeEnum(GoldchangeEnum.DLFY);
             agentRebateChange.setUserId(BeforeData.getParentId());
             iMemGoldChangeService.updateMemGoldChange(agentRebateChange);
+            log.info("代理返佣任务结束");
         }
     }
 
