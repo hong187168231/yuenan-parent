@@ -142,4 +142,17 @@
             AND client_ip=#{dto.clientIp}
         </if>
     </select>
+    <select id="findMemBetInfo" resultType="com.indo.admin.pojo.vo.mem.MemBetInfoVo">
+        SELECT
+        mb.id AS memId,
+        mb.account AS memAccount,
+        (SELECT IFNULL(SUM(pr.real_amount),0) FROM pay_recharge pr WHERE pr.mem_id=mb.id) AS totalRechargeAmount,
+        (SELECT IFNULL(SUM(abs(gt.bet_amount)),0)  FROM game_txns gt WHERE gt.user_id=mb.account) AS totalBetAmount,
+        (SELECT IFNULL(SUM(gift_amount),0)  FROM mem_gift_receive mgr WHERE mgr.mem_id=mb.id) AS totalGiftAmount
+        FROM mem_baseinfo mb
+        WHERE 1=1
+        <if test="dto.memAccount !=null and dto.memAccount !=''">
+            AND mb.account=#{dto.memAccount}
+        </if>
+    </select>
 </mapper>
