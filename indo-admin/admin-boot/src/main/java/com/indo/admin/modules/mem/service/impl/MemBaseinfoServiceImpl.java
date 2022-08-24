@@ -111,6 +111,8 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
         memBaseinfo.setAccType(AccountTypeEnum.AGENT.getValue());
         if (baseMapper.insert(memBaseinfo) > 0) {
             saveMemInviteCode(memBaseinfo);
+            memAgent.setMemId(memBaseinfo.getId());
+            memAgent.setAccount(memBaseinfo.getAccount());
             memAgent.setTeamNum(1);
             memAgent.setSubUserIds(memBaseinfo.getId() + "");
             if(supperMem!=null){

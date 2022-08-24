@@ -278,6 +278,7 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
 			agentRelation.setMemId(memBaseinfo.getId());
 			agentRelation.setAccount(memBaseinfo.getAccount());
 			agentRelation.setStatus(1);
+			agentRelation.setSubUserIds(memBaseinfo.getId() + "");
 			agentRelation.setTeamNum(1);
 			agentRelation.setParentId(parentInviteCode.getMemId());
 			agentRelation.setSuperior(parentInviteCode.getAccount());
