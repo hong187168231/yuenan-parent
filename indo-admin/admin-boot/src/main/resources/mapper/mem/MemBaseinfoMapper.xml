@@ -86,7 +86,7 @@
         FROM
         mem_baseinfo mb
         LEFT JOIN mem_invite_code mic ON mb.id = mic.mem_id
-        LEFT JOIN agent_relation ar ON mb.id = ar.mem_id
+        LEFT JOIN agent_relation ar ON mb.id = ar.parent_id
 
         <where>
             <if test="dto.account !=null and dto.account != '' ">
