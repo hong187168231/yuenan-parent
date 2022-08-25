@@ -48,20 +48,21 @@
         mb.real_name AS realName,
         mb.acc_type AS accType,
         mb.total_deposit AS totalDeposit,
-        mb.total_enchashment AS totalWithdraw,
+        mb.total_enchashment AS totalEnchashment,
         mb.total_bet AS totalBet,
         mb.create_time AS registerTime,
-        ar.agent_id AS agentId,
-        ar.superior AS superior,
-        ar.team_num AS teamNum
+        ma.agent_id AS agent_id,
+        ma.superior AS superior,
+        ma.team_num AS teamNum,
+        ma.sub_user_ids AS subUserIds
         FROM
-        agent_relation ar
-        INNER JOIN mem_baseinfo mb ON ar.mem_id = mb.id
-        <if test="req.superior !=null and req.superior !='' ">
-            and ar.superior = #{req.superior}
-        </if>
-        ORDER BY
-        ar.create_time DESC
+        mem_baseinfo mb
+        left JOIN  agent_relation ma ON ma.parent_id = mb.id
+        where mb.id in
+        <foreach collection="memIds" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+        ORDER BY ma.create_time DESC
     </select>
     <select id="findAgentReport" resultType="com.indo.admin.pojo.vo.agent.AgentReportVo">
         SELECT

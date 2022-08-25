@@ -18,11 +18,10 @@
         ma.team_num AS teamNum,
         ma.sub_user_ids AS subUserIds
         FROM
-        agent_relation ma
-        INNER JOIN mem_baseinfo mb ON ma.parent_id = mb.id
-        and mb.id in IN
-        <foreach collection="memIds" item="id" index="index"
-                 open="(" close=")" separator=",">
+        mem_baseinfo mb
+        left JOIN  agent_relation ma ON ma.parent_id = mb.id
+        where mb.id in
+        <foreach collection="memIds" item="id" index="index" open="(" close=")" separator=",">
             #{id}
         </foreach>
         ORDER BY ma.create_time DESC
