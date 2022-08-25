@@ -11,6 +11,8 @@ import com.indo.admin.common.util.AdminBusinessRedisUtils;
 import com.indo.admin.modules.agent.mapper.AgentRelationMapper;
 import com.indo.admin.modules.mem.mapper.MemBaseinfoMapper;
 import com.indo.admin.modules.mem.mapper.MemInviteCodeMapper;
+import com.indo.admin.pojo.dto.MemBetInfoDTO;
+import com.indo.admin.pojo.vo.mem.MemBetInfoVo;
 import com.indo.common.enums.AccountTypeEnum;
 import com.indo.common.utils.ShareCodeUtil;
 import com.indo.common.web.exception.BizException;
@@ -149,6 +151,21 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
         if (!inviteFlag) {
             throw new BizException("邀请码生成错误!");
         }
+    }
+
+    @Override
+    public Page<MemBetInfoVo> findMemBetInfoPage(MemBetInfoDTO memBetInfoDTO) {
+        Page<MemBetInfoVo> page = new Page<>(memBetInfoDTO.getPage(), memBetInfoDTO.getLimit());
+        page =memBaseInfoMapper.findMemBetInfo(page,memBetInfoDTO);
+        page.getRecords().forEach(l->{
+            l.setWithdrawalBetAmount(l.getTotalBetAmount().add(l.getTotalGiftAmount()));
+            if((l.getTotalBetAmount().subtract(l.getWithdrawalBetAmount())).compareTo(BigDecimal.ZERO)>=0){
+                l.setLack(BigDecimal.ZERO);
+            }else{
+                l.setLack(l.getTotalBetAmount().subtract(l.getWithdrawalBetAmount()).abs());
+            }
+        });
+        return page;
     }
 
     public void initMemParentAgent(MemBaseinfo memBaseinfo, Long parentId) {

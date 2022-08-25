@@ -3,7 +3,9 @@ package com.indo.admin.modules.mem.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.modules.mem.service.IMemBaseinfoService;
+import com.indo.admin.pojo.dto.MemBetInfoDTO;
 import com.indo.admin.pojo.vo.mem.MemBaseDetailVO;
+import com.indo.admin.pojo.vo.mem.MemBetInfoVo;
 import com.indo.common.result.Result;
 import com.indo.admin.pojo.req.mem.MemAddReq;
 import com.indo.admin.pojo.req.mem.MemBaseInfoReq;
@@ -104,5 +106,16 @@ public class MemBaseinfoController {
     @PostMapping(value = "/findIpRepeatPage")
     public Result findIpRepeatPage(@RequestBody MemBaseInfoReq baseInfoPageReq) {
         return Result.success(memBaseinfoService.findIpRepeatPage(baseInfoPageReq));
+    }
+
+    @ApiOperation(value = "会员打码量信息查询")
+    @GetMapping(value = "/findMemBetInfoPage")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page", value = "当前页", required = true, paramType = "query", dataType = "int"),
+            @ApiImplicitParam(name = "limit", value = "每页数量", required = true, paramType = "query", dataType = "int"),
+            @ApiImplicitParam(name = "memAccount", value = "会员账号", required = false, paramType = "query", dataType = "String")
+    })
+    public Result<Page<MemBetInfoVo>> findMemBetInfoPage(MemBetInfoDTO memBetInfoDTO) {
+        return Result.success(memBaseinfoService.findMemBetInfoPage(memBetInfoDTO));
     }
 }

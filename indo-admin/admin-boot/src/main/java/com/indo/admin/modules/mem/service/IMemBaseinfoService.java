@@ -1,12 +1,14 @@
 package com.indo.admin.modules.mem.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.indo.admin.pojo.dto.MemBetInfoDTO;
 import com.indo.admin.pojo.req.mem.MemAddReq;
 import com.indo.admin.pojo.req.mem.MemBaseInfoReq;
 import com.indo.admin.pojo.req.mem.MemEditStatusReq;
 import com.indo.admin.pojo.req.mem.MemEditReq;
 import com.indo.admin.pojo.vo.mem.MemBaseInfoVo;
 import com.indo.admin.pojo.vo.mem.MemBaseDetailVO;
+import com.indo.admin.pojo.vo.mem.MemBetInfoVo;
 import com.indo.core.base.service.SuperService;
 import com.indo.core.pojo.dto.MemBaseInfoDTO;
 import com.indo.core.pojo.entity.MemBaseinfo;
@@ -88,4 +90,12 @@ public interface IMemBaseinfoService extends SuperService<MemBaseinfo> {
      * @param memBaseinfo
      */
     void saveMemInviteCode(MemBaseinfo memBaseinfo);
+
+    /**
+     * 会员打码量信息查询
+     * @param memBetInfoDTO
+     * @return
+     */
+    Page<MemBetInfoVo> findMemBetInfoPage(MemBetInfoDTO memBetInfoDTO);
+
 }

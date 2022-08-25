@@ -41,19 +41,19 @@ public class GameManageServiceImpl implements IGameManageService {
 
     public Result queryAllGameCategory() {
         Map<Object, Object> map = RedisUtils.hmget(RedisConstants.GAME_CATEGORY_KEY);
-        List<GameCategory> categoryList;
+        LambdaQueryWrapper<GameCategory> wrapper = new LambdaQueryWrapper<>();
+        List<GameCategory> categoryList = gameCategoryMapper.selectList(wrapper);
         if(ObjectUtil.isEmpty(map)){
-            LambdaQueryWrapper<GameCategory> wrapper = new LambdaQueryWrapper<>();
-            categoryList = gameCategoryMapper.selectList(wrapper);
-        }else {
-            categoryList = new ArrayList(map.values());
+            categoryList.forEach(l->{
+                AdminBusinessRedisUtils.hset(RedisConstants.GAME_CATEGORY_KEY, l.getId() + "", l);
+            });
         }
         return Result.success(categoryList);
     }
 
     public boolean addGameCategory(GameCategory category) {
         if (gameCategoryMapper.insert(category) > 0) {
-            AdminBusinessRedisUtils.hset(RedisConstants.GAME_CATEGORY_KEY, category.getId() + "", category);
+            AdminBusinessRedisUtils.del(RedisConstants.GAME_CATEGORY_KEY);
             return true;
         }
         return false;
@@ -61,9 +61,7 @@ public class GameManageServiceImpl implements IGameManageService {
 
     public boolean deleteBatchGameCategory(List<String> list) {
         if (gameCategoryMapper.deleteBatchIds(list) > 0) {
-            list.forEach(id -> {
-                AdminBusinessRedisUtils.hdel(RedisConstants.GAME_CATEGORY_KEY, id + "");
-            });
+            AdminBusinessRedisUtils.del(RedisConstants.GAME_CATEGORY_KEY);
             return true;
         }
         return false;
@@ -71,7 +69,7 @@ public class GameManageServiceImpl implements IGameManageService {
 
     public boolean modifyGameCategory(GameCategory category) {
         if (gameCategoryMapper.updateById(category) > 0) {
-            AdminBusinessRedisUtils.hset(RedisConstants.GAME_CATEGORY_KEY, category.getId() + "", category);
+            AdminBusinessRedisUtils.del(RedisConstants.GAME_CATEGORY_KEY);
             return true;
         }
         return false;
