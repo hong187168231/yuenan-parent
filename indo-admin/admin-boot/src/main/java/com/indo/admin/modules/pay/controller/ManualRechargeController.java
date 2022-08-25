@@ -57,10 +57,11 @@ public class ManualRechargeController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "operateType", value = "操作类型 1 加款 2 减款", required = true, paramType = "query", dataType = "int"),
             @ApiImplicitParam(name = "memId", value = "会员id", required = true, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "amount", value = "金额", required = true, paramType = "query", dataType = "float")
+            @ApiImplicitParam(name = "amount", value = "金额", required = true, paramType = "query", dataType = "float"),
+            @ApiImplicitParam(name = "remarks", value = "备注", required = true, paramType = "query", dataType = "String"),
     })
-    public Result operateRecharge(@Param("operateType") Integer operateType, @Param("memId") Long memId, @Param("amount") Float amount) {
-        boolean flag = iPayManualRechargeService.operateRecharge(operateType, memId, amount);
+    public Result operateRecharge(@Param("operateType") Integer operateType, @Param("memId") Long memId, @Param("amount") Float amount,@Param("remarks") String remarks) {
+        boolean flag = iPayManualRechargeService.operateRecharge(operateType, memId, amount,remarks);
         return Result.judge(flag);
     }
 
