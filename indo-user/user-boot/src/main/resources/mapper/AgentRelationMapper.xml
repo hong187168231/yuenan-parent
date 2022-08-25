@@ -15,15 +15,16 @@
         mb.create_time AS registerTime,
         ma.agent_id AS agent_id,
         ma.superior AS superior,
-        ma.team_num AS teamNum
+        ma.team_num AS teamNum,
+        ma.sub_user_ids AS subUserIds
         FROM
         agent_relation ma
-        INNER JOIN mem_baseinfo mb ON ma.mem_id = mb.id
-        and ma.superior = #{req.superior}
-        <if test="req.subAccount !=null and req.subAccount !='' ">
-            and ma.account = #{req.subAccount}
-        </if>
-        ORDER BY
-        ma.create_time DESC
+        INNER JOIN mem_baseinfo mb ON ma.parent_id = mb.id
+        and mb.id in IN
+        <foreach collection="memIds" item="id" index="index"
+                 open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+        ORDER BY ma.create_time DESC
     </select>
 </mapper>

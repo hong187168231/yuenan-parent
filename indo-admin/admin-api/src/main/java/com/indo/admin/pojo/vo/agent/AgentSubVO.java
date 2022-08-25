@@ -47,5 +47,7 @@ public class AgentSubVO {
     @ApiModelProperty(value = "注册时间")
     private String registerTime;
 
+    @ApiModelProperty(value = "下级ID列表,用逗号分开")
+    private String subUserIds;
 
 }

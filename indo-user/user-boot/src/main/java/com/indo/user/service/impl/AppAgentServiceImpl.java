@@ -3,30 +3,34 @@ package com.indo.user.service.impl;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.indo.core.pojo.req.agent.AgentRebateRecordReq;
 import com.indo.admin.pojo.vo.agent.AgentRebateInfoVO;
-import com.indo.core.pojo.vo.agent.AgentRebateRecordVO;
 import com.indo.admin.pojo.vo.agent.AgentSubVO;
 import com.indo.admin.pojo.vo.agent.RebateStatVO;
 import com.indo.common.constant.GlobalConstants;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.web.exception.BizException;
 import com.indo.core.base.service.impl.SuperServiceImpl;
+import com.indo.core.pojo.bo.MemBaseInfoBO;
 import com.indo.core.pojo.entity.*;
+import com.indo.core.pojo.req.agent.AgentRebateRecordReq;
+import com.indo.core.pojo.vo.agent.AgentRebateRecordVO;
 import com.indo.user.common.util.UserBusinessRedisUtils;
 import com.indo.user.mapper.*;
 import com.indo.user.pojo.req.mem.MemAgentApplyReq;
 import com.indo.user.pojo.req.mem.SubordinateAppReq;
 import com.indo.user.service.IMemAgentService;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -52,7 +56,8 @@ public class AppAgentServiceImpl extends SuperServiceImpl<AgentRelationMapper, A
     private AgentCashApplyMapper agentCashApplyMapper;
     @Autowired
     private MemBankRelationMapper memBankRelationMapper;
-
+    @Autowired
+    private MemBaseInfoMapper memBaseInfoMapper;
 
     @Override
     public boolean apply(MemAgentApplyReq req, LoginInfo loginInfo) {
@@ -125,10 +130,24 @@ public class AppAgentServiceImpl extends SuperServiceImpl<AgentRelationMapper, A
 
     @Override
     public Page<AgentSubVO> subordinatePage(SubordinateAppReq req, LoginInfo loginInfo) {
-        req.setSuperior(loginInfo.getAccount());
         Page<AgentSubVO> page = new Page<>(req.getPage(), req.getLimit());
-        List<AgentSubVO> agentList = agentRelationMapper.subordinateList(page, req);
-        page.setRecords(agentList);
+        List<AgentSubVO> agentSubVOList = agentRelationMapper.subordinateList(page, Arrays.asList(loginInfo.getId()));
+        if (CollectionUtils.isEmpty(agentSubVOList)) {
+            return page;
+        }
+
+        AgentSubVO agentSubVO = agentSubVOList.get(0);
+        if (StringUtils.isNotEmpty(req.getSubAccount())) {
+            MemBaseInfoBO memBaseInfoBO = memBaseInfoMapper.findMemBaseInfoByAccount(req.getSubAccount());
+            if (memBaseInfoBO == null) {
+                return page;
+            }
+            agentSubVOList = agentRelationMapper.subordinateList(page, Arrays.asList(memBaseInfoBO.getId()));
+        } else {
+            List<Long> memIds = Arrays.asList(agentSubVO.getSubUserIds() .split(",")).stream().map(Long::parseLong).collect(Collectors.toList());
+            agentSubVOList = agentRelationMapper.subordinateList(page, memIds);
+        }
+        page.setRecords(agentSubVOList);
         return page;
     }
 

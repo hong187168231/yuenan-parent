@@ -6,6 +6,7 @@ import com.indo.admin.pojo.vo.agent.AgentSubVO;
 import com.indo.core.pojo.entity.AgentRelation;
 import com.indo.user.pojo.req.mem.SubordinateAppReq;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import java.math.BigDecimal;
@@ -22,7 +23,7 @@ import java.util.List;
 @Mapper
 public interface AgentRelationMapper extends BaseMapper<AgentRelation> {
 
-    List<AgentSubVO> subordinateList(Page<AgentSubVO> page, SubordinateAppReq req);
+    List<AgentSubVO> subordinateList(Page<AgentSubVO> page, @Param("memIds") List<Long> memIds);
 
     @Select("SELECT IFNULL(ar.team_num, 0) from agent_relation ar  WHERE  ar.`status` = 1 and ar.account = #{account}")
     Integer selectTeamNum(String account);

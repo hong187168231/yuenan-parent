@@ -12,9 +12,6 @@ import java.util.Date;
 @ApiModel(value = "代理申请参数类")
 public class SubordinateAppReq extends BaseDTO {
 
-    @ApiModelProperty(value = "下级账号", hidden = true)
-    private String superior;
-
     @ApiModelProperty(value = "下级账号")
     private String subAccount;
 
