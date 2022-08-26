@@ -139,13 +139,14 @@ public class AppAgentServiceImpl extends SuperServiceImpl<AgentRelationMapper, A
         AgentSubVO agentSubVO = agentSubVOList.get(0);
         if (StringUtils.isNotEmpty(req.getSubAccount())) {
             MemBaseInfoBO memBaseInfoBO = memBaseInfoMapper.findMemBaseInfoByAccount(req.getSubAccount());
-            if (memBaseInfoBO == null) {
-                return page;
+            if (memBaseInfoBO != null) {
+                agentSubVOList = agentRelationMapper.subordinateList(page, Arrays.asList(memBaseInfoBO.getId()));
             }
-            agentSubVOList = agentRelationMapper.subordinateList(page, Arrays.asList(memBaseInfoBO.getId()));
         } else {
-            List<Long> memIds = Arrays.asList(agentSubVO.getSubUserIds() .split(",")).stream().map(Long::parseLong).collect(Collectors.toList());
-            agentSubVOList = agentRelationMapper.subordinateList(page, memIds);
+            if (StringUtils.isBlank(agentSubVO.getSubUserIds())) {
+                List<Long> memIds = Arrays.asList(agentSubVO.getSubUserIds() .split(",")).stream().map(Long::parseLong).collect(Collectors.toList());
+                agentSubVOList = agentRelationMapper.subordinateList(page, memIds);
+            }
         }
         page.setRecords(agentSubVOList);
         return page;
