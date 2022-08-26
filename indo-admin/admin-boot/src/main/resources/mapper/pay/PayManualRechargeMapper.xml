@@ -25,7 +25,8 @@
         pmr.after_amount AS afterAmount,
         pmr.operate_type AS operateType,
         pmr.create_user AS createUser,
-        pmr.create_time ascreateTime
+        pmr.create_time AS ascreateTime,
+        pmr.remarks AS remarks
         FROM
         pay_manual_recharge pmr
         <where>

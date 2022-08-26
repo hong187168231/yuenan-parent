@@ -35,4 +35,6 @@ public class ManualRechargeRecordVO {
     @ApiModelProperty(value = "操作类型 1 加款 2 减款")
     private String createTime;
 
+    @ApiModelProperty(value = "备注")
+    private String remarks;
 }

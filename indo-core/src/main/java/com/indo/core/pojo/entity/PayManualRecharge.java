@@ -58,5 +58,6 @@ public class PayManualRecharge extends BaseEntity {
     @ApiModelProperty(value = "最后修改人_后台")
     private String updateUser;
 
-
+    @ApiModelProperty(value = "备注")
+    private String remarks;
 }

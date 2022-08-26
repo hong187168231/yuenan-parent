@@ -59,14 +59,12 @@ public interface GlobalConstants {
 
 
     /**
-     * 提现订单类型   1待处理 2已锁定 3 已确定 4 已取消 5 已拒绝 6 已成功
+     * 提现订单类型   -1已拒绝0申请中1打款中2已打款
      */
-    public static final Integer PAY_CASH_STATUS_PENDING = 1;
-    public static final Integer PAY_CASH_STATUS_LOCK = 2;
-    public static final Integer PAY_CASH_STATUS_OK = 3;
-    public static final Integer PAY_CASH_STATUS_CANCEL = 4;
-    public static final Integer PAY_CASH_STATUS_REJECT = 5;
-    public static final Integer PAY_CASH_STATUS_SUCCEED = 6;
+    public static final Integer PAY_CASH_STATUS_PENDING = 0;
+    public static final Integer PAY_CASH_STATUS_OK = 1;
+    public static final Integer PAY_CASH_STATUS_CANCEL = 2;
+    public static final Integer PAY_CASH_STATUS_REJECT = -1;
 
     /**
      * 代理申请状态   状态0 待审核 1 已通过，2 拒绝

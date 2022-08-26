@@ -57,7 +57,7 @@ public class PayManualRechargeServiceImpl extends SuperServiceImpl<PayManualRech
 
     @Override
     @Transactional
-    public boolean operateRecharge(Integer operateType, Long memId, Float amount) {
+    public boolean operateRecharge(Integer operateType, Long memId, Float amount,String remarks) {
         MemBaseinfo memBaseinfo = memBaseinfoMapper.selectById(memId);
         if (null == memBaseinfo) {
             throw new BizException("该用户不存在");
@@ -81,6 +81,7 @@ public class PayManualRechargeServiceImpl extends SuperServiceImpl<PayManualRech
             payManualRecharge.setOperateType(operateType);
             payManualRecharge.setBeforAmount(memBaseinfo.getBalance());
             payManualRecharge.setCreateUser(JwtUtils.getUsername());
+            payManualRecharge.setRemarks(remarks);
             if (baseMapper.insert(payManualRecharge) > 0) {
                 MemGoldChangeDTO goldChangeDO = new MemGoldChangeDTO();
                 goldChangeDO.setChangeAmount(rechargeOrder.getRealAmount());

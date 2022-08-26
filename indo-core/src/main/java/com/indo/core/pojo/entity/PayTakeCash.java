@@ -37,7 +37,7 @@ public class PayTakeCash extends BaseEntity {
     @ApiModelProperty(value = "订单编号")
     private String orderNo;
 
-    @ApiModelProperty(value = "订单编号")
+    @ApiModelProperty(value = "订单编号(弃用)")
     private String transactionNo;
 
     @ApiModelProperty(value = "会员ID")
@@ -69,7 +69,7 @@ public class PayTakeCash extends BaseEntity {
     @ApiModelProperty(value = "银行卡分行")
     private String bankBranch;
 
-    @ApiModelProperty(value = "省")
+    @ApiModelProperty(value = "省(弃用)")
     private String bankProvince;
 
     @ApiModelProperty(value = "银行开户城市")
@@ -81,6 +81,7 @@ public class PayTakeCash extends BaseEntity {
     @ApiModelProperty(value = "打款时间")
     private Date remitTime;
 
+    @ApiModelProperty(value = "提现状态 -1已拒绝0申请中1打款中2已打款")
     private Integer cashStatus;
 
     @ApiModelProperty(value = "订单备注")
