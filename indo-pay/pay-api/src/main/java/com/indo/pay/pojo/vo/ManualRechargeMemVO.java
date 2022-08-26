@@ -26,5 +26,6 @@ public class ManualRechargeMemVO {
     @ApiModelProperty(value = "上级代理")
     private String superior;
 
-
+    @ApiModelProperty(value = "用户账号")
+    private String account;
 }
