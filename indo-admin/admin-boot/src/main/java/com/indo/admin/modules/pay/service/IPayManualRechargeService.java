@@ -20,7 +20,7 @@ public interface IPayManualRechargeService extends SuperService<PayManualRecharg
     Page<ManualRechargeMemVO> memList(Long page, Long limit, String account);
 
 
-    boolean operateRecharge(Integer operateType, Long memId, Float amount);
+    boolean operateRecharge(Integer operateType, Long memId, Float amount,String remarks);
 
 
     Page<ManualRechargeRecordVO> queryList(Integer page, Integer limit, String account, Integer operateType);
