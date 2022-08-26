@@ -48,37 +48,39 @@
         mb.real_name AS realName,
         mb.acc_type AS accType,
         mb.total_deposit AS totalDeposit,
-        mb.total_enchashment AS totalEnchashment,
+        mb.total_enchashment AS totalWithdraw,
         mb.total_bet AS totalBet,
         mb.create_time AS registerTime,
-        ma.agent_id AS agent_id,
-        ma.superior AS superior,
-        ma.team_num AS teamNum,
-        ma.sub_user_ids AS subUserIds
+        ar.agent_id AS agentId,
+        ar.superior AS superior,
+        ar.team_num AS teamNum
         FROM
-        mem_baseinfo mb
-        left JOIN  agent_relation ma ON ma.parent_id = mb.id
-        where mb.id in
-        <foreach collection="memIds" item="id" index="index" open="(" close=")" separator=",">
-            #{id}
-        </foreach>
-        ORDER BY ma.create_time DESC
+        agent_relation ar
+        INNER JOIN mem_baseinfo mb ON ar.mem_id = mb.id
+        <if test="req.superior !=null and req.superior !='' ">
+            and ar.superior = #{req.superior}
+        </if>
+        ORDER BY
+        ar.create_time DESC
     </select>
     <select id="findAgentReport" resultType="com.indo.admin.pojo.vo.agent.AgentReportVo">
         SELECT
-        c.datelist as dataTime,
-        (SELECT COUNT(1) FROM agent_relation) as agentTotalQuantity,
-        COUNT(ar.agent_id) as agentNewQuantity,
-        SUM(arr.team_amout) as teamAmout,
-        SUM(arr.rebate_amout) as totalRebateAmount,
-        (SELECT SUM(acr.remit_amount)FROM agent_cash_record acr WHERE DATE_FORMAT(acr.create_time,'%Y-%m-%d')=c.datelist )as totalWithdrawalAmount
+            c.datelist as dataTime,
+            (SELECT COUNT(1) FROM agent_relation) as agentTotalQuantity,
+            COUNT(ar.agent_id) as agentNewQuantity,
+            SUM(arr.team_amout) as teamAmout,
+            SUM(arr.rebate_amout) as totalRebateAmount,
+            (SELECT SUM(acr.remit_amount)FROM agent_cash_record acr WHERE DATE_FORMAT(acr.create_time,'%Y-%m-%d')=c.datelist )as totalWithdrawalAmount
         from calendar c
-        LEFT JOIN agent_relation  ar on c.datelist=ar.create_time
-        LEFT JOIN agent_rebate_record arr on DATE_FORMAT(arr.create_time,'%Y-%m-%d')=c.datelist
+                 LEFT JOIN agent_relation  ar on c.datelist=ar.create_time
+                 LEFT JOIN agent_rebate_record arr on DATE_FORMAT(arr.create_time,'%Y-%m-%d')=c.datelist
         where 1=1
-        and c.datelist &gt;=#{dto.beginTime}
-        and c.datelist &lt;=#{dto.endTime}
+          and c.datelist &gt;=#{beginTime}
+          and c.datelist &lt;=#{endTime}
+          and c.datelist &gt;=#{dto.beginTime}
+          and c.datelist &lt;=#{dto.endTime}
         GROUP BY c.datelist
         ORDER BY c.datelist DESC
     </select>
 </mapper>
+
