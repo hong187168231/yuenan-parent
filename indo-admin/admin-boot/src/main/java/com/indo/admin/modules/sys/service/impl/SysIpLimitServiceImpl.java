@@ -7,10 +7,9 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.indo.admin.modules.sys.mapper.SysIpLimitMapper;
 import com.indo.admin.modules.sys.service.ISysIpLimitService;
 import com.indo.admin.pojo.dto.SysIpLimitDTO;
-import com.indo.admin.pojo.entity.SysIpLimit;
+import com.indo.core.pojo.entity.SysIpLimit;
 import com.indo.common.utils.StringUtils;
 import com.indo.common.web.exception.BizException;
-import com.indo.common.web.util.JwtUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

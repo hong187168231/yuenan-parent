@@ -2,7 +2,6 @@ package com.indo.game.controller.app;
 
 import com.alibaba.fastjson.JSONObject;
 import com.indo.admin.api.SysIpLimitClient;
-import com.indo.admin.pojo.entity.SysIpLimit;
 import com.indo.common.annotation.LoginUser;
 import com.indo.common.config.OpenAPIProperties;
 import com.indo.common.pojo.bo.LoginInfo;
@@ -11,7 +10,9 @@ import com.indo.common.result.ResultCode;
 import com.indo.common.utils.IPAddressUtil;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.IPUtils;
+import com.indo.core.pojo.entity.SysIpLimit;
 import com.indo.game.service.ae.AeService;
+import com.indo.game.service.ag.AgService;
 import com.indo.game.service.awc.AwcService;
 import com.indo.game.service.bl.BlService;
 import com.indo.game.service.bti.BtiService;
@@ -35,7 +36,6 @@ import com.indo.game.service.rich.Rich88Service;
 import com.indo.game.service.sa.SaService;
 import com.indo.game.service.saba.SabaService;
 import com.indo.game.service.sbo.SboService;
-import com.indo.game.service.sgwin.SGWinService;
 import com.indo.game.service.t9.T9Service;
 import com.indo.game.service.tp.TpService;
 import com.indo.game.service.ug.UgService;
@@ -123,6 +123,8 @@ public class GameController {
     private SaService saService;
     @Autowired
     private TpService tpService;
+    @Autowired
+    private AgService agService;
 //    @Autowired
 //    private SGWinService sgWinService;
     @Autowired
@@ -271,6 +273,9 @@ public class GameController {
                     if (!"1".equals(isMobileLogin))
                         loginType = "web";
                     resultInfo = tpService.tpGame(loginUser, loginType, ip, platform, parentName);
+                }
+                if (OpenAPIProperties.AG_PLATFORM_CODE.equals(parentName)) {
+                    resultInfo = agService.agGame(loginUser, isMobileLogin, ip, platform, parentName);
                 }
 
 

@@ -1,4 +1,4 @@
-package com.indo.job.executor.jobhandler;
+package com.indo.job.executor.jobhandler.games;
 
 import com.indo.common.utils.DateUtils;
 import com.indo.job.service.game.s128.IS128TaskService;

@@ -639,6 +639,34 @@ public class OpenAPIProperties implements InitializingBean {
     @Value("${tp.isPlatformLogin}")
     private String tpIsPlatformLogin;
 
+    //AG
+    public static String AG_API_URL;
+    public static String AG_SESSION_URL;
+    public static String AG_LOGIN_URL;
+    public static String AG_RETURN_URL;
+    public static String AG_SID_KEY;
+    public static String AG_API_KEY;
+    public static String AG_CAGENT;
+    public static String AG_PLATFORM_CODE;
+    public static String AG_IS_PLATFORM_LOGIN;
+    @Value("${ag.agApiurl}")
+    private String agApiurl;
+    @Value("${ag.agSessionurl}")
+    private String agSessionurl;
+    @Value("${ag.agLoginurl}")
+    private String agLoginurl;
+    @Value("${ag.agReturnurl}")
+    private String agReturnurl;
+    @Value("${ag.agSidKey}")
+    private String agSidKey;
+    @Value("${ag.agApiKey}")
+    private String agApiKey;
+    @Value("${ag.agCagent}")
+    private String agCagent;
+    @Value("${ag.platformCode}")
+    private String agPlatformCode;
+    @Value("${ag.isPlatformLogin}")
+    private String agIsPlatformLogin;
 
     @Override
     public void afterPropertiesSet() {
@@ -868,5 +896,16 @@ public class OpenAPIProperties implements InitializingBean {
         TP_API_URL = tpApiurl;
         TP_API_TOKEN = tpApiToken;
         TP_API_KEY = tpApiKey;
+
+
+        AG_PLATFORM_CODE = agPlatformCode;
+        AG_IS_PLATFORM_LOGIN = agIsPlatformLogin;
+        AG_API_URL = agApiurl;
+        AG_SESSION_URL = agSessionurl;
+        AG_RETURN_URL = agReturnurl;
+        AG_LOGIN_URL = agLoginurl;
+        AG_API_KEY = agApiKey;
+        AG_SID_KEY = agSidKey;
+        AG_CAGENT = agCagent;
     }
 }

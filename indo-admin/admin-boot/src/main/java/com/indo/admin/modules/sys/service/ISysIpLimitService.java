@@ -3,7 +3,7 @@ package com.indo.admin.modules.sys.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.indo.admin.pojo.dto.SysIpLimitDTO;
-import com.indo.admin.pojo.entity.SysIpLimit;
+import com.indo.core.pojo.entity.SysIpLimit;
 
 import java.util.List;
 

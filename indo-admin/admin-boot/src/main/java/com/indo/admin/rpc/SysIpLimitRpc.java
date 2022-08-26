@@ -1,9 +1,8 @@
 package com.indo.admin.rpc;
 
 import com.indo.admin.modules.sys.service.ISysIpLimitService;
-import com.indo.admin.pojo.entity.SysIpLimit;
+import com.indo.core.pojo.entity.SysIpLimit;
 import com.indo.common.result.Result;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
