@@ -65,6 +65,7 @@ public interface GlobalConstants {
     public static final Integer PAY_CASH_STATUS_OK = 1;
     public static final Integer PAY_CASH_STATUS_CANCEL = 2;
     public static final Integer PAY_CASH_STATUS_REJECT = -1;
+    public static final Integer PAY_CASH_STATUS_SUCCEED = 6;
 
     /**
      * 代理申请状态   状态0 待审核 1 已通过，2 拒绝
