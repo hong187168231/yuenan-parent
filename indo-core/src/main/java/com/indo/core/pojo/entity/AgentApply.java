@@ -37,7 +37,7 @@ public class AgentApply extends BaseEntity {
     @ApiModelProperty(value = "手机号")
     private String mobile;
 
-    @ApiModelProperty(value = "状态0 待审核 1 已通过，2 拒绝")
+    @ApiModelProperty(value = "状态 -1已拒绝0申请中1打款中2已打款")
     private Integer status;
 
     @ApiModelProperty(value = "拒绝理由")
