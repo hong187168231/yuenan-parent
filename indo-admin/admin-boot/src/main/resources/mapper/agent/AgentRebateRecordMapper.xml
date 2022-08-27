@@ -14,11 +14,16 @@
         <result column="team_num" property="teamNum"/>
         <result column="team_amout" property="teamAmout"/>
         <result column="create_user" property="createUser"/>
+        <result column="level" property="level"/>
+        <result column="account" property="account"/>
     </resultMap>
 
 
     <select id="queryList" resultMap="BaseResultMap">
-        SELECT * FROM agent_rebate_record m
+        SELECT
+        m.*,
+        (SELECT level FROM mem_level ml WHERE ml.id=m.mem_level) as level
+        FROM agent_rebate_record m
         <where>
             <if test="req.account !=null">
                 and m.account = #{req.account}
