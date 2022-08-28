@@ -33,6 +33,9 @@ public class AgentRebateRecordVO implements Serializable {
     @ApiModelProperty(value = "会员等级")
     private Integer memLevel;
 
+    @ApiModelProperty(value = "会员等级")
+    private Integer level;
+
     @ApiModelProperty(value = "真实姓名")
     private String realName;
 
@@ -60,4 +63,6 @@ public class AgentRebateRecordVO implements Serializable {
     @ApiModelProperty(value = "团队投注金额")
     private BigDecimal teamAmout;
 
+    @ApiModelProperty(value = "账号")
+    private String account;
 }
