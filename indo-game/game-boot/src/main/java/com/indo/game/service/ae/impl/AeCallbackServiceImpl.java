@@ -8,32 +8,30 @@ import com.indo.common.enums.TradingEnum;
 import com.indo.common.utils.DateUtils;
 import com.indo.common.utils.encrypt.MD5;
 import com.indo.core.mapper.game.TxnsMapper;
-import com.indo.game.pojo.dto.ae.AeCallBackParentReq;
-import com.indo.game.pojo.dto.ae.AeCallBackTransferReq;
-import com.indo.game.pojo.entity.CptOpenMember;
+import com.indo.core.pojo.bo.MemTradingBO;
 import com.indo.core.pojo.entity.game.GameCategory;
 import com.indo.core.pojo.entity.game.GameParentPlatform;
 import com.indo.core.pojo.entity.game.GamePlatform;
 import com.indo.core.pojo.entity.game.Txns;
+import com.indo.game.pojo.dto.ae.AeCallBackParentReq;
+import com.indo.game.pojo.dto.ae.AeCallBackTransferReq;
+import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.game.pojo.vo.callback.ae.AeCallBackRespFail;
 import com.indo.game.pojo.vo.callback.ae.AeGetBalanceResp;
 import com.indo.game.pojo.vo.callback.ae.AeGetBalanceRespSuccess;
 import com.indo.game.service.ae.AeCallbackService;
 import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
-import com.indo.core.pojo.bo.MemTradingBO;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Base64;
 import java.util.Date;
-
-import javax.annotation.Resource;
 
 
 /**
@@ -71,11 +69,12 @@ public class AeCallbackServiceImpl implements AeCallbackService {
                 callBacekFail.setMsg("用户帐号参数错误");
                 return JSONObject.toJSON(callBacekFail);
             } else {
+                GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.AE_PLATFORM_CODE);
                 AeGetBalanceRespSuccess getBalanceSuccess = new AeGetBalanceRespSuccess();
                 getBalanceSuccess.setCode("0");
                 getBalanceSuccess.setMsg("成功");
                 AeGetBalanceResp data = new AeGetBalanceResp();
-                data.setBalance(memBaseinfo.getBalance());
+                data.setBalance(memBaseinfo.getBalance().divide(gameParentPlatform.getCurrencyPro()));
                 data.setCurrency(aeApiRequestData.getCurrency());
                 data.setBonusBalance(new BigDecimal(0));
                 getBalanceSuccess.setData(data);
@@ -154,13 +153,16 @@ public class AeCallbackServiceImpl implements AeCallbackService {
             callBacekFail.setMsg("Duplicate transaction.");
             return JSONObject.toJSON(callBacekFail);
         }
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.AE_PLATFORM_CODE);
         BigDecimal balance = memBaseinfo.getBalance();
-        BigDecimal amount = aeApiRequestData.getAmount();
+        BigDecimal amount = null!=aeApiRequestData.getAmount()?aeApiRequestData.getAmount().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
         balance = balance.add(amount);
         gameCommonService.updateUserBalance(memBaseinfo, amount, GoldchangeEnum.ACTIVITY_GIVE, TradingEnum.INCOME);
         String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
         Txns txns = new Txns();
         BeanUtils.copyProperties(oldTxns, txns);
+        txns.setWinningAmount(amount);
+        txns.setWinAmount(amount);
         txns.setBalance(balance);
         txns.setMethod("Bonus");
         txns.setStatus("Running");
@@ -177,7 +179,7 @@ public class AeCallbackServiceImpl implements AeCallbackService {
         getBalanceSuccess.setCode("0");
         AeGetBalanceResp data = new AeGetBalanceResp();
         data.setCurrency(aeApiRequestData.getCurrency());
-        data.setBalance(balance);
+        data.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
         data.setTxnId(aeApiRequestData.getTxnId());
         data.setBonusBalance(new BigDecimal(0));
         data.setEventTime(dateStr);
@@ -203,7 +205,7 @@ public class AeCallbackServiceImpl implements AeCallbackService {
             callBacekFail.setMsg("用户帐号参数错误");
             return JSONObject.toJSON(callBacekFail);
         }
-
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.AE_PLATFORM_CODE);
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Txns::getPlatformTxId, aeApiRequestData.getTxnId());
         wrapper.eq(Txns::getPlatform, OpenAPIProperties.AE_PLATFORM_CODE);
@@ -220,7 +222,7 @@ public class AeCallbackServiceImpl implements AeCallbackService {
         getBalanceSuccess.setCode("0");
         getBalanceSuccess.setMsg("成功");
         AeGetBalanceResp data = new AeGetBalanceResp();
-        data.setBalance(oldTxns.getBalance());
+        data.setBalance(oldTxns.getBalance().divide(gameParentPlatform.getCurrencyPro()));
         data.setCurrency(aeApiRequestData.getCurrency());
         data.setAmount(aeApiRequestData.getAmount());
         data.setAccountId(aeApiRequestData.getAccountId());
@@ -241,8 +243,8 @@ public class AeCallbackServiceImpl implements AeCallbackService {
         GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(aeApiRequestData.getGameId(),gameParentPlatform.getPlatformCode());
         GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         BigDecimal balance = memBaseinfo.getBalance();
-        BigDecimal betAmount = aeApiRequestData.getBetAmount();
-        BigDecimal winAmount = aeApiRequestData.getWinAmount();
+        BigDecimal betAmount = null!=aeApiRequestData.getBetAmount()?aeApiRequestData.getBetAmount().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
+        BigDecimal winAmount = null!=aeApiRequestData.getWinAmount()?aeApiRequestData.getWinAmount().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
         BigDecimal amount = winAmount.subtract(betAmount);
 ;
         if (memBaseinfo.getBalance().compareTo(betAmount) == -1) {
@@ -309,7 +311,7 @@ public class AeCallbackServiceImpl implements AeCallbackService {
         //下注金额
         txns.setBetAmount(betAmount);
         //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
-        txns.setWinningAmount(amount);
+        txns.setWinningAmount(amount.negate());
         txns.setWinAmount(amount);
         //玩家下注时间
         txns.setBetTime(DateUtils.format(aeApiRequestData.getBetTime(), DateUtils.newFormat));
@@ -351,7 +353,7 @@ public class AeCallbackServiceImpl implements AeCallbackService {
         getBalanceSuccess.setCode("0");
         getBalanceSuccess.setMsg("成功");
         AeGetBalanceResp data = new AeGetBalanceResp();
-        data.setBalance(balance);
+        data.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
         data.setCurrency(aeApiRequestData.getCurrency());
         data.setTxnId(aeApiRequestData.getTxnId());
         data.setBonusBalance(new BigDecimal(0));
@@ -381,8 +383,8 @@ public class AeCallbackServiceImpl implements AeCallbackService {
             callBacekFail.setMsg("Bet has canceled.");
             return JSONObject.toJSON(callBacekFail);
         }
-
-        BigDecimal realWinAmount = aeApiRequestData.getAmount();
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.AE_PLATFORM_CODE);
+        BigDecimal realWinAmount = null!=aeApiRequestData.getAmount()?aeApiRequestData.getAmount().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
         balance = balance.add(realWinAmount);
         gameCommonService.updateUserBalance(memBaseinfo, realWinAmount, GoldchangeEnum.ADJUST_BET, TradingEnum.INCOME);
         String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
@@ -405,7 +407,7 @@ public class AeCallbackServiceImpl implements AeCallbackService {
         getBalanceSuccess.setCode("0");
         getBalanceSuccess.setMsg("成功");
         AeGetBalanceResp data = new AeGetBalanceResp();
-        data.setBalance(balance);
+        data.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
         data.setCurrency(aeApiRequestData.getCurrency());
         data.setBonusBalance(new BigDecimal(0));
         data.setTxnId(aeApiRequestData.getTxnId());

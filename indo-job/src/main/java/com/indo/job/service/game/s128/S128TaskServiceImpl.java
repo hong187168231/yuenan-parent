@@ -8,6 +8,7 @@ import com.indo.common.utils.DateUtils;
 import com.indo.common.utils.GameUtil;
 import com.indo.core.mapper.game.TxnsMapper;
 import com.indo.core.pojo.bo.MemTradingBO;
+import com.indo.core.pojo.entity.game.GameParentPlatform;
 import com.indo.core.pojo.entity.game.Txns;
 import com.indo.job.service.game.GameCommonService;
 import lombok.extern.slf4j.Slf4j;
@@ -78,6 +79,7 @@ public class S128TaskServiceImpl implements IS128TaskService {
             apiUrl.append(OpenAPIProperties.DJ_API_URL).append("/get_cockfight_processed_ticket_by_bet_time.aspx");
 //            apiUrl.append("https://api8745.cfb2.net").append("/get_cockfight_processed_ticket_by_bet_time.aspx");
             String result = commonRequest(apiUrl.toString(), params, 0, "gameLogin");
+            GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.DJ_PLATFORM_CODE);
             logger.info("is128SettleTask斗鸡定时拉取结算任务 result:{}", result);
             if (!StringUtils.isEmpty(result)) {
                 Document doc = commonXml(result);
@@ -132,8 +134,8 @@ public class S128TaskServiceImpl implements IS128TaskService {
                             if(null!=oldTxns){
                                 MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(oldTxns.getUserId());
                                 BigDecimal balance = memBaseinfo.getBalance();
-                                BigDecimal betAmount = BigDecimal.valueOf(null!=stake&&!"".equals(stake)?Double.valueOf(stake):0L)
-                                        .add(BigDecimal.valueOf(null!=stake_money&&!"".equals(stake_money)?Double.valueOf(stake_money):0L));
+                                BigDecimal betAmount = BigDecimal.valueOf(null!=stake&&!"".equals(stake)?Double.valueOf(stake):0L).multiply(gameParentPlatform.getCurrencyPro())
+                                        .add(BigDecimal.valueOf(null!=stake_money&&!"".equals(stake_money)?Double.valueOf(stake_money):0L).multiply(gameParentPlatform.getCurrencyPro()));
 
                                 if (betAmount.compareTo(BigDecimal.ZERO) != 0) {
                                     if (betAmount.compareTo(BigDecimal.ZERO) == -1) {
