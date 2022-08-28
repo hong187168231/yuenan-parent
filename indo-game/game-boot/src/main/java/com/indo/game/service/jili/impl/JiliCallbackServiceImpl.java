@@ -62,7 +62,7 @@ public class JiliCallbackServiceImpl implements JiliCallbackService {
             }
             JSONObject jsonObject = initSuccessResponse();
             jsonObject.put("username", cptOpenMember.getUserName());
-            jsonObject.put("balance", memBaseinfo.getBalance());
+            jsonObject.put("balance", memBaseinfo.getBalance().divide(platformGameParent.getCurrencyPro()));
             jsonObject.put("currency", platformGameParent.getCurrencyType());
             return jsonObject;
 
@@ -101,8 +101,8 @@ public class JiliCallbackServiceImpl implements JiliCallbackService {
                 return initFailureResponse(4, "Api access token 已过期或无效");
             }
             BigDecimal balance = memBaseinfo.getBalance();
-            BigDecimal amount = jiliCallbackBetReq.getBetAmount();
-            BigDecimal winloseAmount = jiliCallbackBetReq.getWinloseAmount();
+            BigDecimal amount = null!=jiliCallbackBetReq.getBetAmount()?jiliCallbackBetReq.getBetAmount().multiply(platformGameParent.getCurrencyPro()):BigDecimal.ZERO;
+            BigDecimal winloseAmount = null!=jiliCallbackBetReq.getWinloseAmount()?jiliCallbackBetReq.getWinloseAmount().multiply(platformGameParent.getCurrencyPro()):BigDecimal.ZERO;
 
             // 重复订单
             if (null != oldTxns) {
@@ -196,7 +196,7 @@ public class JiliCallbackServiceImpl implements JiliCallbackService {
 
             JSONObject jsonObject = initSuccessResponse();
             jsonObject.put("username", cptOpenMember.getUserName());
-            jsonObject.put("balance", balance);
+            jsonObject.put("balance", balance.divide(platformGameParent.getCurrencyPro()));
             jsonObject.put("currency", platformGameParent.getCurrencyType());
             return jsonObject;
         } catch (Exception e) {
@@ -257,7 +257,7 @@ public class JiliCallbackServiceImpl implements JiliCallbackService {
 
             JSONObject jsonObject = initSuccessResponse();
             jsonObject.put("username", cptOpenMember.getUserName());
-            jsonObject.put("balance", balance);
+            jsonObject.put("balance", balance.divide(platformGameParent.getCurrencyPro()));
             jsonObject.put("currency", platformGameParent.getCurrencyType());
             return jsonObject;
         } catch (Exception e) {
@@ -408,7 +408,7 @@ public class JiliCallbackServiceImpl implements JiliCallbackService {
 
             JSONObject jsonObject = initSuccessResponse();
             jsonObject.put("username", userName);
-            jsonObject.put("balance", balance);
+            jsonObject.put("balance", balance.divide(platformGameParent.getCurrencyPro()));
             jsonObject.put("currency", platformGameParent.getCurrencyType());
             return jsonObject;
 
@@ -469,7 +469,7 @@ public class JiliCallbackServiceImpl implements JiliCallbackService {
 
             JSONObject jsonObject = initSuccessResponse();
             jsonObject.put("username", cptOpenMember.getUserName());
-            jsonObject.put("balance", balance);
+            jsonObject.put("balance", balance.divide(platformGameParent.getCurrencyPro()));
             jsonObject.put("currency", platformGameParent.getCurrencyType());
             return jsonObject;
         } catch (Exception e) {

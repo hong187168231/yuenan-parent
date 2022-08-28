@@ -44,23 +44,18 @@ public class JdbCallbackServiceImpl implements JdbCallbackService {
     public Object jdbCallback(String jsonStr, String ip) {
         JSONObject jsonObject = JSONObject.parseObject(jsonStr);
         Integer action = Integer.valueOf(jsonObject.getString("action"));
-        if (!checkIp(ip)) {
-            JdbApiResponseError callBackFail = new JdbApiResponseError();
-            callBackFail.setStatus("9001");
-            callBackFail.setErr_text("No authorized to access.");
-            return callBackFail;
-        }
+
         try {//Get Balance 取得玩家余额
             if (6==action) {
-                return getBalance(jsonStr);
+                return getBalance(jsonStr,ip);
             }
             //Place Bet 下注信息及游戏结果
             if (8==action) {
-                return bet(jsonStr);
+                return bet(jsonStr,ip);
             }
             //Cancel Bet 取消下注
             if (4==action) {
-                return cancelBet(jsonStr);
+                return cancelBet(jsonStr,ip);
             }
 
         } catch (Exception e) {
@@ -75,7 +70,14 @@ public class JdbCallbackServiceImpl implements JdbCallbackService {
     }
 
     //Get Balance 取得玩家余额
-    private Object getBalance(String jsonStr) {
+    private Object getBalance(String jsonStr,String ip) {
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.JDB_PLATFORM_CODE);
+        if (!checkIp(gameParentPlatform,ip)) {
+            JdbApiResponseError callBackFail = new JdbApiResponseError();
+            callBackFail.setStatus("9001");
+            callBackFail.setErr_text("No authorized to access.");
+            return callBackFail;
+        }
         JdbApiGetBalanceRequestData apiRequestData = JSON.parseObject(jsonStr,new TypeReference<JdbApiGetBalanceRequestData>() {
         });
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(apiRequestData.getUid());
@@ -87,7 +89,7 @@ public class JdbCallbackServiceImpl implements JdbCallbackService {
         } else {
             JdbApiResponseData getBalanceSuccess = new JdbApiResponseData();
             getBalanceSuccess.setStatus("0000");
-            getBalanceSuccess.setBalance(memBaseinfo.getBalance());
+            getBalanceSuccess.setBalance(memBaseinfo.getBalance().divide(gameParentPlatform.getCurrencyPro()));
 
             return getBalanceSuccess;
         }
@@ -95,13 +97,18 @@ public class JdbCallbackServiceImpl implements JdbCallbackService {
 
 
     //Place Bet 下注
-    private Object bet(String jsonStr) {
+    private Object bet(String jsonStr,String ip) {
         JdbApiBetRequestData apiRequestData = JSON.parseObject(jsonStr, new TypeReference<JdbApiBetRequestData>() {
         });
-
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.JDB_PLATFORM_CODE);
+        if (!checkIp(gameParentPlatform,ip)) {
+            JdbApiResponseError callBackFail = new JdbApiResponseError();
+            callBackFail.setStatus("9001");
+            callBackFail.setErr_text("No authorized to access.");
+            return callBackFail;
+        }
         BigDecimal balance = BigDecimal.ZERO;
         String userId = apiRequestData.getUid();
-        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.JDB_PLATFORM_CODE);
         GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(apiRequestData.getMType().toString(),gameParentPlatform.getPlatformCode());
         GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(userId);
@@ -112,7 +119,7 @@ public class JdbCallbackServiceImpl implements JdbCallbackService {
             callBackFail.setErr_text("User ID cannot be found.");
             return callBackFail;
         }
-        BigDecimal betAmount = apiRequestData.getNetWin();
+        BigDecimal betAmount = null!=apiRequestData.getNetWin()?apiRequestData.getNetWin().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
 
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
         wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Settle"));
@@ -122,11 +129,11 @@ public class JdbCallbackServiceImpl implements JdbCallbackService {
         wrapper.eq(Txns::getUserId, apiRequestData.getUid());
         Txns oldTxns = txnsMapper.selectOne(wrapper);
 
-        if(apiRequestData.getNetWin().compareTo(BigDecimal.ZERO)==1){//赢
+        if(betAmount.compareTo(BigDecimal.ZERO)==1){//赢
             balance = balance.add(betAmount);
             gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.PLACE_BET, TradingEnum.INCOME);
         }
-        if(apiRequestData.getNetWin().compareTo(BigDecimal.ZERO)==-1){//输
+        if(betAmount.compareTo(BigDecimal.ZERO)==-1){//输
 
             if (memBaseinfo.getBalance().compareTo(betAmount.abs()) == -1) {
                 JdbApiResponseError callBackFail = new JdbApiResponseError();
@@ -167,7 +174,7 @@ public class JdbCallbackServiceImpl implements JdbCallbackService {
         //下注金额
         txns.setBetAmount(apiRequestData.getBet());
         //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
-        txns.setWinningAmount(apiRequestData.getNetWin());
+        txns.setWinningAmount(betAmount);
         //玩家下注时间
         txns.setBetTime(DateUtils.formatByString(apiRequestData.getGameDate(), DateUtils.newFormat));
         //游戏商的回合识别码
@@ -184,9 +191,9 @@ public class JdbCallbackServiceImpl implements JdbCallbackService {
 //        txns.setWinAmount();
         //赌注的结果 : 赢:0,输:1,平手:2
         int resultTyep;
-        if (apiRequestData.getNetWin().compareTo(BigDecimal.ZERO)==0){
+        if (betAmount.compareTo(BigDecimal.ZERO)==0){
             resultTyep = 2;
-        }else if(apiRequestData.getNetWin().compareTo(BigDecimal.ZERO)==1){
+        }else if(betAmount.compareTo(BigDecimal.ZERO)==1){
             resultTyep = 0;
         }else {
             resultTyep = 1;
@@ -274,17 +281,23 @@ public class JdbCallbackServiceImpl implements JdbCallbackService {
         txnsMapper.insert(txns);
         JdbApiResponseData jdbApiResponseData = new JdbApiResponseData();
         jdbApiResponseData.setStatus("0000");
-        jdbApiResponseData.setBalance(balance);
+        jdbApiResponseData.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
         return jdbApiResponseData;
     }
 
 //        gameCommonService.inOrOutBalanceCommon(GoldchangeEnum.AWCAESEXYBCRT_IN.getValue(), balance, memBaseinfo, content, cptOpenMember, Constants.AWC_AESEXYBCRT_ACCOUNT_TYPE);
 
     //Cancel Bet 取消注单
-    private Object cancelBet(String jsonStr) {
+    private Object cancelBet(String jsonStr,String ip) {
         JdbApiCancelBetRequestData apiRequestData = JSON.parseObject(jsonStr,new TypeReference<JdbApiCancelBetRequestData>() {
         });
-
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.JDB_PLATFORM_CODE);
+        if (!checkIp(gameParentPlatform,ip)) {
+            JdbApiResponseError callBackFail = new JdbApiResponseError();
+            callBackFail.setStatus("9001");
+            callBackFail.setErr_text("No authorized to access.");
+            return callBackFail;
+        }
 
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(apiRequestData.getUid());
         if (null == memBaseinfo) {
@@ -329,13 +342,13 @@ public class JdbCallbackServiceImpl implements JdbCallbackService {
         }
         JdbApiResponseData jdbApiResponseData = new JdbApiResponseData();
         jdbApiResponseData.setStatus("0000");
-        jdbApiResponseData.setBalance(balance);
+        jdbApiResponseData.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
         return jdbApiResponseData;
     }
 
 
-    private boolean checkIp(String ip) {
-        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.JDB_PLATFORM_CODE);
+    private boolean checkIp(GameParentPlatform gameParentPlatform,String ip) {
+
         if (null == gameParentPlatform) {
             return false;
         } else if (null == gameParentPlatform.getIpAddr() || "".equals(gameParentPlatform.getIpAddr())) {
