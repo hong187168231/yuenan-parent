@@ -41,6 +41,7 @@ public class PayTakeCashServiceImpl extends ServiceImpl<PayTakeCashMapper, PayTa
     public Page<PayTakeCash> cashApplyList(PayTakeCashReq req) {
         Page<PayTakeCash> applyPage = new Page<>(req.getPage(), req.getLimit());
         LambdaQueryWrapper<PayTakeCash> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.orderByDesc(PayTakeCash::getCreateTime);
         return baseMapper.selectPage(applyPage, queryWrapper);
     }
 
