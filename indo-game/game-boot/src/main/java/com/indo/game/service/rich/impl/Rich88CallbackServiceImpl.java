@@ -87,7 +87,7 @@ public class Rich88CallbackServiceImpl implements Rich88CallbackService {
 
         JSONObject jsonObject = initSuccessResponse();
         JSONObject data = new JSONObject();
-        data.put("balance", memBaseinfo.getBalance());
+        data.put("balance", memBaseinfo.getBalance().divide(gameParentPlatform.getCurrencyPro()));
         jsonObject.put("data", data);
         return jsonObject;
     }
@@ -129,7 +129,7 @@ public class Rich88CallbackServiceImpl implements Rich88CallbackService {
             Txns oldTxns = getTxns(gameParentPlatform, paySerialno, rich88TransferReq.getAccount());
 
             BigDecimal balance = memBaseinfo.getBalance();
-            BigDecimal amount = rich88TransferReq.getMoney();
+            BigDecimal amount = null!=rich88TransferReq.getMoney()?rich88TransferReq.getMoney().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
 
             String txnsMethod;
             // 提款：withdraw
@@ -219,7 +219,7 @@ public class Rich88CallbackServiceImpl implements Rich88CallbackService {
             GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
 
             // 赢奖金额
-            BigDecimal betAmount = rich88ActivityReq.getMoney();
+            BigDecimal betAmount = null!=rich88ActivityReq.getMoney()?rich88ActivityReq.getMoney().multiply(platformGameParent.getCurrencyPro()):BigDecimal.ZERO;
 
             // 赢奖金额小于0
             if (betAmount.compareTo(BigDecimal.ZERO) <= 0) {
@@ -268,17 +268,17 @@ public class Rich88CallbackServiceImpl implements Rich88CallbackService {
             //下注金额
             txns.setBetAmount(BigDecimal.ZERO);
             //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
-            txns.setWinningAmount(rich88ActivityReq.getMoney());
+            txns.setWinningAmount(betAmount);
             //玩家下注时间
             txns.setBetTime(DateUtils.formatByLong(System.currentTimeMillis(), DateUtils.newFormat));
             //真实下注金额,需增加在玩家的金额
             txns.setRealBetAmount(BigDecimal.ZERO);
             //真实返还金额,游戏赢分
-            txns.setRealWinAmount(rich88ActivityReq.getMoney());
+            txns.setRealWinAmount(betAmount);
             //返还金额 (包含下注金额)
-            txns.setWinAmount(rich88ActivityReq.getMoney());
+            txns.setWinAmount(betAmount);
             // 活动派彩
-            txns.setAmount(rich88ActivityReq.getMoney());
+            txns.setAmount(betAmount);
             // 活动ID
             txns.setPromotionId(rich88ActivityReq.getEvent_id());
             // 活动类型ID

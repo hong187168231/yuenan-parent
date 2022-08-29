@@ -6,29 +6,26 @@ import com.indo.common.config.OpenAPIProperties;
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.common.utils.DateUtils;
-import com.indo.game.controller.ob.ObCallBackTransferstatusReq;
 import com.indo.core.mapper.game.TxnsMapper;
-import com.indo.game.pojo.dto.ob.ObCallBackParentReq;
+import com.indo.core.pojo.bo.MemTradingBO;
 import com.indo.core.pojo.entity.game.GameCategory;
 import com.indo.core.pojo.entity.game.GameParentPlatform;
 import com.indo.core.pojo.entity.game.GamePlatform;
 import com.indo.core.pojo.entity.game.Txns;
+import com.indo.game.controller.ob.ObCallBackTransferstatusReq;
+import com.indo.game.pojo.dto.ob.ObCallBackParentReq;
 import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
 import com.indo.game.service.ob.ObCallbackService;
-import com.indo.core.pojo.bo.MemTradingBO;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
-
-import javax.annotation.Resource;
 
 
 /**
@@ -57,9 +54,10 @@ public class ObCallbackServiceImpl implements ObCallbackService {
             dataJson.put("msg", "无效请求");
             return dataJson;
         }
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.OB_PLATFORM_CODE);
         dataJson.put("code", "0000");
         dataJson.put("msg", "成功");
-        dataJson.put("data", memBaseinfo.getBalance());
+        dataJson.put("data", memBaseinfo.getBalance().divide(gameParentPlatform.getCurrencyPro()));
         dataJson.put("serverTime", System.currentTimeMillis());
         dataJson.put("status", true);
         return dataJson;
@@ -86,7 +84,7 @@ public class ObCallbackServiceImpl implements ObCallbackService {
         GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         String bizType = obCallBackParentReq.getBizType();
         String transferType = obCallBackParentReq.getTransferType();//账变类型(1加款,2扣款)
-        BigDecimal amount = obCallBackParentReq.getAmount();
+        BigDecimal amount = null!=obCallBackParentReq.getAmount()?obCallBackParentReq.getAmount().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
         if ("1".equals(transferType)) {//加款
             balance = balance.add(amount);
             //bizType	Y	String	业务类型,账变来源(1投注,2结算派彩,3撤单,4撤单回滚,5结算回滚,6拒单)
@@ -201,7 +199,7 @@ public class ObCallbackServiceImpl implements ObCallbackService {
         JSONObject statusObject = new JSONObject();
         dataObject.put("code", "0000");
         dataObject.put("msg", "成功！");
-        statusObject.put("balance", balance);
+        statusObject.put("balance", balance.divide(gameParentPlatform.getCurrencyPro()));
         dataObject.put("data", statusObject);
         return dataObject;
     }

@@ -161,7 +161,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             }
 
             // 会员余额返回
-            jsonObject.put("balance", memBaseinfo.getBalance());
+            jsonObject.put("balance", memBaseinfo.getBalance().divide(platformGameParent.getCurrencyPro()));
             jsonObject.put("bonus", 0);
             return jsonObject;
         } catch (Exception e) {
@@ -224,9 +224,9 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             // 会员余额
             BigDecimal balance = memBaseinfo.getBalance();
             // 下注金额
-            BigDecimal betAmount = transaction.getBigDecimal("amount");
+            BigDecimal betAmount = null!=transaction.getBigDecimal("amount")?transaction.getBigDecimal("amount").multiply(platformGameParent.getCurrencyPro()):BigDecimal.ZERO;
             if (memBaseinfo.getBalance().compareTo(betAmount) < 0) {
-                jsonObject.put("balance", balance);
+                jsonObject.put("balance", balance.divide(platformGameParent.getCurrencyPro()));
                 jsonObject.put("bonus", 0);
                 jsonObject.put("status", "INSUFFICIENT_FUNDS");
                 return jsonObject;
@@ -235,12 +235,12 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             // 查询用户请求订单
             Txns oldTxns = getTxnsByRoundId(refId, memBaseinfo.getAccount());
             if (null != oldTxns&&"Place Bet".equals(oldTxns.getMethod())) {
-                jsonObject.put("balance", balance);
+                jsonObject.put("balance", balance.divide(platformGameParent.getCurrencyPro()));
                 jsonObject.put("bonus", 0);
 //                jsonObject.put("status", "BET_ALREADY_SETTLED");
                 return jsonObject;
             }else if (null != oldTxns){
-                jsonObject.put("balance", balance);
+                jsonObject.put("balance", balance.divide(platformGameParent.getCurrencyPro()));
                 jsonObject.put("bonus", 0);
                 jsonObject.put("status", "FINAL_ERROR_ACTION_FAILED");
                 return jsonObject;
@@ -248,7 +248,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
 
             // 下注金额小于0
             if (betAmount.compareTo(BigDecimal.ZERO) < 0) {
-                jsonObject.put("balance", balance);
+                jsonObject.put("balance", balance.divide(platformGameParent.getCurrencyPro()));
                 jsonObject.put("bonus", 0);
                 jsonObject.put("status", "INSUFFICIENT_FUNDS");
                 return jsonObject;
@@ -316,13 +316,13 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             txns.setBetIp(ip);//  string 是 投注 IP
             int num = txnsMapper.insert(txns);
             if (num <= 0) {
-                jsonObject.put("balance", balance);
+                jsonObject.put("balance", balance.divide(platformGameParent.getCurrencyPro()));
                 jsonObject.put("bonus", 0);
                 jsonObject.put("status", "INVALID_TOKEN_ID");
                 return jsonObject;
             }
 
-            jsonObject.put("balance", balance);
+            jsonObject.put("balance", balance.divide(platformGameParent.getCurrencyPro()));
             jsonObject.put("bonus", 0);
             return jsonObject;
         } catch (Exception e) {
@@ -381,23 +381,23 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             // 查询用户请求订单
             Txns oldTxns = getTxnsByRoundId(refId, memBaseinfo.getAccount());
             if (null == oldTxns) {
-                jsonObject.put("balance", balance);
+                jsonObject.put("balance", balance.divide(platformGameParent.getCurrencyPro()));
                 jsonObject.put("bonus", 0);
                 jsonObject.put("status", "BET_DOES_NOT_EXIST");
                 return jsonObject;
             }
             // 如果订单已经取消
             if ("Cancel Bet".equals(oldTxns.getMethod())||"Settle".equals(oldTxns.getMethod())) {
-                jsonObject.put("balance", balance);
+                jsonObject.put("balance", balance.divide(platformGameParent.getCurrencyPro()));
                 jsonObject.put("bonus", 0);
                 jsonObject.put("status", "BET_ALREADY_SETTLED");
                 return jsonObject;
             }
             // 中奖金额
-            BigDecimal betAmount = transaction.getBigDecimal("amount");
+            BigDecimal betAmount = null!=transaction.getBigDecimal("amount")?transaction.getBigDecimal("amount").multiply(platformGameParent.getCurrencyPro()):BigDecimal.ZERO;
             // 中奖金额小于0
             if (betAmount.compareTo(BigDecimal.ZERO) < 0) {
-                jsonObject.put("balance", balance);
+                jsonObject.put("balance", balance.divide(platformGameParent.getCurrencyPro()));
                 jsonObject.put("bonus", 0);
                 jsonObject.put("status", "INSUFFICIENT_FUNDS");
                 return jsonObject;
@@ -440,7 +440,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             oldTxns.setUpdateTime(dateStr);
             txnsMapper.updateById(oldTxns);
 
-            jsonObject.put("balance", balance);
+            jsonObject.put("balance", balance.divide(platformGameParent.getCurrencyPro()));
             jsonObject.put("bonus", 0);
             return jsonObject;
         } catch (Exception e) {
@@ -504,7 +504,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             // 查询用户请求订单
             Txns oldTxns = getTxnsByRoundId(refId, memBaseinfo.getAccount());
             if (null == oldTxns) {
-                jsonObject.put("balance", balance);
+                jsonObject.put("balance", balance.divide(platformGameParent.getCurrencyPro()));
                 jsonObject.put("bonus", 0);
                 jsonObject.put("status", "BET_DOES_NOT_EXIST");
                 return jsonObject;
@@ -512,17 +512,17 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
 
             // 如果订单已经取消
             if ("Cancel Bet".equals(oldTxns.getMethod())||"Settle".equals(oldTxns.getMethod())) {
-                jsonObject.put("balance", balance);
+                jsonObject.put("balance", balance.divide(platformGameParent.getCurrencyPro()));
                 jsonObject.put("bonus", 0);
                 jsonObject.put("status", "BET_ALREADY_SETTLED");
                 return jsonObject;
             }
-            BigDecimal betAmount = transaction.getBigDecimal("amount");
+            BigDecimal betAmount = null!=transaction.getBigDecimal("amount")?transaction.getBigDecimal("amount").multiply(platformGameParent.getCurrencyPro()):BigDecimal.ZERO;
             BigDecimal amount = oldTxns.getBetAmount();
 
             // 取消金额大于下注金额
             if (betAmount.compareTo(amount) == 1) {
-                jsonObject.put("balance", balance);
+                jsonObject.put("balance", balance.divide(platformGameParent.getCurrencyPro()));
                 jsonObject.put("bonus", 0);
                 jsonObject.put("status", "INSUFFICIENT_FUNDS");
                 return jsonObject;
@@ -568,7 +568,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             // 中奖金额小于0
 
 
-            jsonObject.put("balance", balance);
+            jsonObject.put("balance", balance.divide(platformGameParent.getCurrencyPro()));
             jsonObject.put("bonus", 0);
             return jsonObject;
         } catch (Exception e) {
@@ -636,7 +636,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             BigDecimal balance = memBaseinfo.getBalance();
             // 免费回合游戏
             if ("FreeRoundPlayableSpent".equals(promoType)) {
-                betAmount = promoTransaction.getBigDecimal("amount");
+                betAmount = null!=promoTransaction.getBigDecimal("amount")?promoTransaction.getBigDecimal("amount").multiply(platformGameParent.getCurrencyPro()):BigDecimal.ZERO;
                 roundId = promoTransaction.getString("voucherId");
             } else if ("JackpotWin".equals(promoType)) {
                 // 免费回合头奖
@@ -645,39 +645,39 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
                 JSONArray jsonArray = promoTransaction.getJSONArray("jackpots");
                 for (int i = 0; i < jsonArray.size(); i++) {
                     JSONObject jsonObject1 = jsonArray.getJSONObject(i);
-                    betAmount.add(jsonObject1.getBigDecimal("winAmount"));
+                    betAmount.add(null!=jsonObject1.getBigDecimal("winAmount")?jsonObject1.getBigDecimal("winAmount").multiply(platformGameParent.getCurrencyPro()):BigDecimal.ZERO);
                 }
             } else if ("RewardGamePlayableSpent".equals(promoType)) {
                 // 由于花费了所有奖励游戏代金券可玩余额而发放了促销支出
-                betAmount = promoTransaction.getBigDecimal("amount");
+                betAmount = null!=promoTransaction.getBigDecimal("amount")?promoTransaction.getBigDecimal("amount").multiply(platformGameParent.getCurrencyPro()):BigDecimal.ZERO;
                 roundId = promoTransaction.getString("voucherId");
             } else if ("RewardGameWinCapReached".equals(promoType)) {
                 // 由于达到奖励游戏的最大可能奖金而发放了促销支出
-                betAmount = promoTransaction.getBigDecimal("amount");
+                betAmount = null!=promoTransaction.getBigDecimal("amount")?promoTransaction.getBigDecimal("amount").multiply(platformGameParent.getCurrencyPro()):BigDecimal.ZERO;;
                 roundId = promoTransaction.getString("voucherId");
             } else if ("RewardGameMinBetLimitReached".equals(promoType)) {
 
                 // 由于奖励游戏可玩余额达到当前牌桌的最小下注限制，因此发放了促销奖金。
-                betAmount = promoTransaction.getBigDecimal("amount");
+                betAmount = null!=promoTransaction.getBigDecimal("amount")?promoTransaction.getBigDecimal("amount").multiply(platformGameParent.getCurrencyPro()):BigDecimal.ZERO;;
                 roundId = promoTransaction.getString("voucherId");
             } else if ("RtrMonetaryReward".equals(promoType)) {
                 // 由于游戏回合中的某些配置事件而发放了促销支出。
-                betAmount = promoTransaction.getBigDecimal("amount");
+                betAmount = null!=promoTransaction.getBigDecimal("amount")?promoTransaction.getBigDecimal("amount").multiply(platformGameParent.getCurrencyPro()):BigDecimal.ZERO;;
                 roundId = promoTransaction.getString("bonusConfigId");
             } else if ("roulette".equals(promoType)) {
 
                 // 因在游戏回合中获胜而发放促销奖金。
-                betAmount = promoTransaction.getBigDecimal("amount");
+                betAmount = null!=promoTransaction.getBigDecimal("amount")?promoTransaction.getBigDecimal("amount").multiply(platformGameParent.getCurrencyPro()):BigDecimal.ZERO;;
                 roundId = game.getJSONObject("details").getJSONObject("table").getString("id");
                 promotionId = roundId;
             }else {
-                betAmount = promoTransaction.getBigDecimal("amount");
+                betAmount = null!=promoTransaction.getBigDecimal("amount")?promoTransaction.getBigDecimal("amount").multiply(platformGameParent.getCurrencyPro()):BigDecimal.ZERO;;
                 roundId = game.getJSONObject("details").getJSONObject("table").getString("id");
             }
 
             // 赢奖金额小于0
             if (betAmount.compareTo(BigDecimal.ZERO) < 0) {
-                jsonObject.put("balance", balance);
+                jsonObject.put("balance", balance.divide(platformGameParent.getCurrencyPro()));
                 jsonObject.put("bonus", 0);
                 jsonObject.put("status", "INSUFFICIENT_FUNDS");
                 return jsonObject;
@@ -686,7 +686,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             // 查询用户请求订单
             Txns txns = getTxns(platformTxId, memBaseinfo.getAccount());
             if (null != txns) {
-                jsonObject.put("balance", balance);
+                jsonObject.put("balance", balance.divide(platformGameParent.getCurrencyPro()));
                 jsonObject.put("bonus", 0);
 //                jsonObject.put("status", "BET_DOES_NOT_EXIST");
                 return jsonObject;
@@ -759,13 +759,13 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             txns.setBetIp(ip);//  string 是 投注 IP
             int num = txnsMapper.insert(txns);
             if (num <= 0) {
-                jsonObject.put("balance", BigDecimal.ZERO);
+                jsonObject.put("balance", balance.divide(platformGameParent.getCurrencyPro()));
                 jsonObject.put("bonus", 0);
                 jsonObject.put("status", "INVALID_TOKEN_ID");
                 return jsonObject;
             }
 
-            jsonObject.put("balance", balance);
+            jsonObject.put("balance", balance.divide(platformGameParent.getCurrencyPro()));
             jsonObject.put("bonus", 0);
             return jsonObject;
         } catch (Exception e) {

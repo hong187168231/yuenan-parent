@@ -8,25 +8,23 @@ import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.common.utils.DateUtils;
 import com.indo.core.mapper.game.TxnsMapper;
+import com.indo.core.pojo.bo.MemTradingBO;
 import com.indo.core.pojo.entity.game.GameCategory;
 import com.indo.core.pojo.entity.game.GameParentPlatform;
 import com.indo.core.pojo.entity.game.GamePlatform;
 import com.indo.core.pojo.entity.game.Txns;
 import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.km.KmCallbackService;
-import com.indo.core.pojo.bo.MemTradingBO;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-
-import javax.annotation.Resource;
 
 
 /**
@@ -48,6 +46,7 @@ public class KmCallbackServiceImpl implements KmCallbackService {
     public Object kmBalanceCallback(JSONObject jsonObject, String ip) {
         JSONArray array =  jsonObject.getJSONArray("users");
         JSONArray jsonArray = new JSONArray();
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.KM_PLATFORM_CODE);
         if (array.size() > 0) {
             for (int i = 0; i < array.size(); i++) {
                 JSONObject json = array.getJSONObject(i);
@@ -61,10 +60,10 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                     JSONArray arrayList = new JSONArray();
                     JSONObject object = new JSONObject();
                     object.put("code", json.getString("walletcode"));
-                    object.put("bal", memBaseinfo.getBalance());
+                    object.put("bal", memBaseinfo.getBalance().divide(gameParentPlatform.getCurrencyPro()));
                     object.put("cur", json.getString("cur"));
                     object.put("name", memBaseinfo.getAccount());
-                    object.put("desc", memBaseinfo.getBalance());
+                    object.put("desc", memBaseinfo.getBalance().divide(gameParentPlatform.getCurrencyPro()));
                     arrayList.add(object);
                     dataJson.put("userid", json.getString("userid"));
                     dataJson.put("wallets", arrayList);
@@ -81,11 +80,12 @@ public class KmCallbackServiceImpl implements KmCallbackService {
     public Object kmDebitCallback(JSONObject jsonObject, String ip) {
         JSONArray array = jsonObject.getJSONArray("transactions");
         JSONArray jsonArray = new JSONArray();
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.KM_PLATFORM_CODE);
         if (array.size() > 0) {
             for (int i = 0; i < array.size(); i++) {
                 JSONObject json = array.getJSONObject(i);
                 logger.info("kmDebitCallback json=="+i+":{}", JSONObject.toJSONString(json));
-                BigDecimal amt = json.getBigDecimal("amt");
+                BigDecimal amt = null!=json.getBigDecimal("amt")?json.getBigDecimal("amt").multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
                 if(null==amt){
                     amt = BigDecimal.ZERO;
                 }
@@ -97,7 +97,7 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                     dataJson.put("errdesc", "Token has expired");
                     jsonArray.add(dataJson);
                 }
-                GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.KM_PLATFORM_CODE);
+
                 GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.KM_PLATFORM_CODE,gameParentPlatform.getPlatformCode());;
                 GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
                 if ("Gao_Gae".equals(json.getString("gamecode")) || "Kingmaker_Pok_Deng".equals(json.getString("gamecode"))
@@ -106,7 +106,7 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                     if ("500".equals(json.getString("txtype")) || "530".equals(json.getString("txtype")) || "540".equals(json.getString("txtype"))) {
                         dataJson.put("txid", json.getString("ptxid"));
                         dataJson.put("ptxid", json.getString("ptxid"));
-                        dataJson.put("bal", balance);
+                        dataJson.put("bal", balance.divide(gameParentPlatform.getCurrencyPro()));
                         dataJson.put("cur", json.getString("cur"));
                         dataJson.put("dup", "false");
                         jsonArray.add(dataJson);
@@ -216,7 +216,7 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                 int num = txnsMapper.insert(txns);
                 if (num <= 0) {
                     dataJson.put("txid", json.getString("ptxid"));
-                    dataJson.put("bal", balance);
+                    dataJson.put("bal", balance.divide(gameParentPlatform.getCurrencyPro()));
                     dataJson.put("ptxid", json.getString("ptxid"));
                     dataJson.put("cur", json.getString("cur"));
                     dataJson.put("dup", "false");
@@ -241,12 +241,13 @@ public class KmCallbackServiceImpl implements KmCallbackService {
     public Object kmCreditCallback(JSONObject jsonObject, String ip) {
         JSONArray array = jsonObject.getJSONArray("transactions");
         JSONArray jsonArray = new JSONArray();
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.KM_PLATFORM_CODE);
         if (array.size() > 0) {
             for (int i = 0; i < array.size(); i++) {
                 Txns oldTxns = new Txns();
                 JSONObject json = array.getJSONObject(i);
                 logger.info("kmCreditCallback json=="+i+":{}", JSONObject.toJSONString(json));
-                BigDecimal amt = json.getBigDecimal("amt");
+                BigDecimal amt = null!=json.getBigDecimal("amt")?json.getBigDecimal("amt").multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
                 if(null==amt){
                     amt = BigDecimal.ZERO;
                 }
@@ -258,7 +259,7 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                     dataJson.put("errdesc", "Token has expired");
                     jsonArray.add(dataJson);
                 }
-                GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.KM_PLATFORM_CODE);
+
                 GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.KM_PLATFORM_CODE,gameParentPlatform.getPlatformCode());;
                 GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
                 if ("Gao_Gae".equals(json.getString("gamecode")) || "Kingmaker_Pok_Deng".equals(json.getString("gamecode"))
@@ -267,7 +268,7 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                     if ("510".equals(json.getString("txtype")) || "540".equals(json.getString("txtype"))) {
                         dataJson.put("txid", json.getString("ptxid"));
                         dataJson.put("ptxid", json.getString("ptxid"));
-                        dataJson.put("bal", memBaseinfo.getBalance());
+                        dataJson.put("bal", balance.divide(gameParentPlatform.getCurrencyPro()));
                         dataJson.put("cur", json.getString("cur"));
                         dataJson.put("dup", "false");
                         jsonArray.add(dataJson);
@@ -324,7 +325,7 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                 } else {
                     if ("530".equals(json.getString("txtype")) || "540".equals(json.getString("txtype"))) {
                         dataJson.put("txid", json.getString("ptxid"));
-                        dataJson.put("bal", balance);
+                        dataJson.put("bal", balance.divide(gameParentPlatform.getCurrencyPro()));
                         dataJson.put("ptxid", json.getString("ptxid"));
                         dataJson.put("cur", json.getString("cur"));
                         dataJson.put("dup", "false");
@@ -380,7 +381,7 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                 int num = txnsMapper.insert(txns);
                 if (num <= 0) {
                     dataJson.put("txid", json.getString("ptxid"));
-                    dataJson.put("bal", balance);
+                    dataJson.put("bal", balance.divide(gameParentPlatform.getCurrencyPro()));
                     dataJson.put("ptxid", json.getString("ptxid"));
                     dataJson.put("cur", json.getString("cur"));
                     dataJson.put("dup", "false");

@@ -62,7 +62,7 @@ public class KaCallbackServiceImpl implements KaCallbackService {
 
             // 会员余额返回
             JSONObject jsonObject = initSuccessResponse();
-            jsonObject.put("balance", getMultiplyBalance(memBaseinfo.getBalance()));
+            jsonObject.put("balance", getMultiplyBalance(memBaseinfo.getBalance()).divide(platformGameParent.getCurrencyPro()));
 //            jsonObject.put("balance", memBaseinfo.getBalance());
             jsonObject.put("currency", platformGameParent.getCurrencyType());
             jsonObject.put("playerId", memBaseinfo.getAccount());
@@ -177,7 +177,7 @@ public class KaCallbackServiceImpl implements KaCallbackService {
             //游戏平台的下注项目
             txns.setBetType(kaCallbackPlayReq.getGameId());
             //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
-            txns.setWinningAmount(winAmount);
+            txns.setWinningAmount(winAmount.negate());
             //玩家下注时间
             txns.setBetTime(DateUtils.formatByLong(kaCallbackPlayReq.getTimestamp(), DateUtils.newFormat));
             //真实下注金额,需增加在玩家的金额
@@ -205,7 +205,7 @@ public class KaCallbackServiceImpl implements KaCallbackService {
             //辨认交易时间依据
             txns.setTxTime(DateUtils.formatByLong(kaCallbackPlayReq.getTimestamp(), DateUtils.newFormat));
             //操作名称
-            txns.setMethod("Settle");
+            txns.setMethod("Place Bet");
             txns.setStatus("Running");
             //余额
             txns.setBalance(balance);
@@ -221,7 +221,7 @@ public class KaCallbackServiceImpl implements KaCallbackService {
 
             // 会员余额返回
             JSONObject jsonObject = initSuccessResponse();
-            jsonObject.put("balance", getMultiplyBalance(balance));
+            jsonObject.put("balance", getMultiplyBalance(balance).divide(platformGameParent.getCurrencyPro()));
 //            jsonObject.put("balance", balance);
             jsonObject.put("currency", platformGameParent.getCurrencyType());
             jsonObject.put("playerId", memBaseinfo.getAccount());
@@ -338,7 +338,7 @@ public class KaCallbackServiceImpl implements KaCallbackService {
                 return initFailureResponse(1, "订单写入失败");
             }
             JSONObject jsonObject = initSuccessResponse();
-            jsonObject.put("balance", getMultiplyBalance(balance));
+            jsonObject.put("balance", getMultiplyBalance(balance).divide(platformGameParent.getCurrencyPro()));
 //            jsonObject.put("balance", balance);
             jsonObject.put("currency", platformGameParent.getCurrencyType());
             jsonObject.put("playerId", memBaseinfo.getAccount());
@@ -408,7 +408,7 @@ public class KaCallbackServiceImpl implements KaCallbackService {
             txnsMapper.updateById(oldTxns);
 
             JSONObject jsonObject = initSuccessResponse();
-            jsonObject.put("balance", getMultiplyBalance(balance));
+            jsonObject.put("balance", getMultiplyBalance(balance).divide(platformGameParent.getCurrencyPro()));
 //            jsonObject.put("balance", balance);
             jsonObject.put("currency", platformGameParent.getCurrencyType());
             jsonObject.put("playerId", memBaseinfo.getAccount());
@@ -439,7 +439,7 @@ public class KaCallbackServiceImpl implements KaCallbackService {
 
             // 会员余额返回
             JSONObject jsonObject = initSuccessResponse();
-            jsonObject.put("balance", getMultiplyBalance(memBaseinfo.getBalance()));
+            jsonObject.put("balance", getMultiplyBalance(memBaseinfo.getBalance()).divide(platformGameParent.getCurrencyPro()));
 //            jsonObject.put("balance", memBaseinfo.getBalance());
             jsonObject.put("currency", platformGameParent.getCurrencyType());
             jsonObject.put("playerId", memBaseinfo.getAccount());
@@ -493,8 +493,8 @@ public class KaCallbackServiceImpl implements KaCallbackService {
      * @param balance 余额
      * @return 乘以100 转换货币
      */
-    private Long getMultiplyBalance(BigDecimal balance) {
-        return balance.multiply(BigDecimal.valueOf(100L)).longValue();
+    private BigDecimal getMultiplyBalance(BigDecimal balance) {
+        return balance.multiply(BigDecimal.valueOf(100L));
     }
 
     /**

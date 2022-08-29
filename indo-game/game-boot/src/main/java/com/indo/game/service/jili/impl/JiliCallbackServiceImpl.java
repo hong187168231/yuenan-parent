@@ -295,9 +295,14 @@ public class JiliCallbackServiceImpl implements JiliCallbackService {
                 return initFailureResponse(4, "Api access token 已过期或无效");
             }
             BigDecimal balance = memBaseinfo.getBalance();
-            BigDecimal amount = addBig(jiliCallbackSessionBetReq.getBetAmount(), jiliCallbackSessionBetReq.getJpContribute());
-            amount = addBig(amount, jiliCallbackSessionBetReq.getPreserve());
-            BigDecimal winloseAmount = addBig(jiliCallbackSessionBetReq.getWinloseAmount(), jiliCallbackSessionBetReq.getJpWin());
+            BigDecimal betAmount = null!=jiliCallbackSessionBetReq.getBetAmount()?jiliCallbackSessionBetReq.getBetAmount().multiply(platformGameParent.getCurrencyPro()):BigDecimal.ZERO;
+            BigDecimal jpContribute = null!=jiliCallbackSessionBetReq.getJpContribute()?jiliCallbackSessionBetReq.getJpContribute().multiply(platformGameParent.getCurrencyPro()):BigDecimal.ZERO;
+            BigDecimal preserve = null!=jiliCallbackSessionBetReq.getPreserve()?jiliCallbackSessionBetReq.getPreserve().multiply(platformGameParent.getCurrencyPro()):BigDecimal.ZERO;
+            BigDecimal getWinloseAmount = null!=jiliCallbackSessionBetReq.getWinloseAmount()?jiliCallbackSessionBetReq.getWinloseAmount().multiply(platformGameParent.getCurrencyPro()):BigDecimal.ZERO;
+            BigDecimal jpWin = null!=jiliCallbackSessionBetReq.getJpWin()?jiliCallbackSessionBetReq.getJpWin().multiply(platformGameParent.getCurrencyPro()):BigDecimal.ZERO;
+            BigDecimal amount = addBig(betAmount, jpContribute);
+            amount = addBig(amount, preserve);
+            BigDecimal winloseAmount = addBig(getWinloseAmount, jpWin);
 
             // 查询订单
             Txns oldTxns = getTxns(platformGameParent, paySerialno);

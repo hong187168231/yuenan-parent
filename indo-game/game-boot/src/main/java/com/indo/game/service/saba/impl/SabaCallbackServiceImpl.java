@@ -1,11 +1,15 @@
 package com.indo.game.service.saba.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.indo.common.config.OpenAPIProperties;
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.common.redis.utils.GeneratorIdUtil;
 import com.indo.common.utils.DateUtils;
 import com.indo.core.mapper.game.TxnsMapper;
+import com.indo.core.pojo.entity.game.GameCategory;
+import com.indo.core.pojo.entity.game.GameParentPlatform;
+import com.indo.core.pojo.entity.game.GamePlatform;
 import com.indo.game.pojo.dto.saba.*;
 import com.indo.core.pojo.entity.game.Txns;
 import com.indo.game.pojo.vo.callback.saba.*;
@@ -42,7 +46,8 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
         } else {
             sabaCallBackGetBalanceResp.setStatus("0");
             sabaCallBackGetBalanceResp.setMsg("Success");
-            sabaCallBackGetBalanceResp.setBalance(memBaseinfo.getBalance());
+            GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.SABA_PLATFORM_CODE);
+            sabaCallBackGetBalanceResp.setBalance(memBaseinfo.getBalance().divide(gameParentPlatform.getCurrencyPro()));
             sabaCallBackGetBalanceResp.setBalanceTs(DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT1));
             sabaCallBackGetBalanceResp.setUserId(sabaCallBackParentReq.getUserId());
         }
@@ -62,7 +67,10 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
             sabaCallBackRespError.setMsg("Account Existed");
             return sabaCallBackRespError;
         } else {
-            BigDecimal betAmount = sabaCallBackPlaceBetReq.getActualAmount();
+            GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.SABA_PLATFORM_CODE);
+            GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(gameParentPlatform.getPlatformCode(),gameParentPlatform.getPlatformCode());
+            GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
+            BigDecimal betAmount = null!=sabaCallBackPlaceBetReq.getActualAmount()?sabaCallBackPlaceBetReq.getActualAmount().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
             if (memBaseinfo.getBalance().compareTo(betAmount) == -1) {
                 sabaCallBackRespError.setStatus("502");
                 sabaCallBackRespError.setMsg("Player Has Insufficient Funds");
@@ -72,10 +80,40 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
                 gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
                 sabaCallBackPlaceBetResp.setStatus("0");
                 sabaCallBackPlaceBetResp.setRefId(sabaCallBackPlaceBetReq.getRefId());
-                sabaCallBackPlaceBetResp.setLicenseeTxId(GeneratorIdUtil.generateId());
+                String rePlatformTxId = GeneratorIdUtil.generateId();
+                sabaCallBackPlaceBetResp.setLicenseeTxId(rePlatformTxId);
 
                 Txns txns = new Txns();
                 BeanUtils.copyProperties(sabaCallBackPlaceBetReq, txns);
+                //游戏商注单号
+                txns.setPlatformTxId(sabaCallBackPlaceBetReq.getRefId());
+                txns.setRePlatformTxId(rePlatformTxId);
+//                //此交易是否是投注 true是投注 false 否
+////        txns.setbet();
+//                //玩家 ID
+//                txns.setUserId(apiRequestData.getUid());
+//                //玩家货币代码
+//                txns.setCurrency(apiRequestData.getCurrency());
+                //平台代码
+                txns.setPlatform(gameParentPlatform.getPlatformCode());
+                //平台英文名称
+                txns.setPlatformEnName(gameParentPlatform.getPlatformEnName());
+                //平台中文名称
+                txns.setPlatformCnName(gameParentPlatform.getPlatformCnName());
+                //平台游戏类型
+                txns.setGameType(gameCategory.getGameType());
+                //游戏分类ID
+                txns.setCategoryId(gameCategory.getId());
+                //游戏分类名称
+                txns.setCategoryName(gameCategory.getGameName());
+                //平台游戏代码
+                txns.setGameCode(gamePlatform.getPlatformCode());
+                //游戏名称
+                txns.setGameName(gamePlatform.getPlatformEnName());
+                //下注金额
+                txns.setBetAmount(betAmount);
+                txns.setWinningAmount(betAmount.negate());
+                txns.setWinAmount(betAmount);
                 String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
                 txns.setCreateTime(dateStr);
                 txns.setMethod("PlaceBet");
@@ -90,7 +128,7 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
         SabaCallBackConfirmBetReq<TicketInfoReq> sabaCallBackConfirmBetReq = sabaCallBackReq.getMessage();
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sabaCallBackConfirmBetReq.getUserId());
         SabaCallBackRespError sabaCallBackRespError = new SabaCallBackRespError();
-
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.SABA_PLATFORM_CODE);
         if (null == memBaseinfo) {
             sabaCallBackRespError.setStatus("203");
             sabaCallBackRespError.setMsg("Account Existed");
@@ -120,7 +158,7 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
             }
             SabaCallBackConfirmBetResp sabaCallBackConfirmBetResp = new SabaCallBackConfirmBetResp();
             sabaCallBackConfirmBetResp.setStatus("0");
-            sabaCallBackConfirmBetResp.setBalance(balance);
+            sabaCallBackConfirmBetResp.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
             return sabaCallBackConfirmBetResp;
         }
     }
@@ -131,7 +169,7 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
         SabaCallBackCancelBetReq<TradingInfoReq> sabaCallBackCancelBetReq = sabaCallBackReq.getMessage();
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sabaCallBackCancelBetReq.getUserId());
         SabaCallBackRespError sabaCallBackRespError = new SabaCallBackRespError();
-
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.SABA_PLATFORM_CODE);
         if (null == memBaseinfo) {
             sabaCallBackRespError.setStatus("203");
             sabaCallBackRespError.setMsg("Account Existed");
@@ -157,7 +195,7 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
             }
             SabaCallBackConfirmBetResp sabaCallBackConfirmBetResp = new SabaCallBackConfirmBetResp();
             sabaCallBackConfirmBetResp.setStatus("0");
-            sabaCallBackConfirmBetResp.setBalance(balance);
+            sabaCallBackConfirmBetResp.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
             return sabaCallBackConfirmBetResp;
         }
 
