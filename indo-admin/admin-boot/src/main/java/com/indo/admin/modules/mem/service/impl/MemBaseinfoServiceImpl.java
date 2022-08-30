@@ -14,6 +14,7 @@ import com.indo.admin.modules.mem.mapper.MemInviteCodeMapper;
 import com.indo.admin.pojo.dto.MemBetInfoDTO;
 import com.indo.admin.pojo.vo.mem.MemBetInfoVo;
 import com.indo.common.enums.AccountTypeEnum;
+import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.utils.ShareCodeUtil;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
@@ -33,6 +34,7 @@ import com.indo.core.base.service.impl.SuperServiceImpl;
 import com.indo.core.pojo.bo.MemBaseInfoBO;
 import com.indo.core.pojo.dto.MemBaseInfoDTO;
 import com.indo.core.pojo.entity.*;
+import com.indo.core.pojo.vo.LoanRecordVo;
 import com.indo.core.service.ILoanRecordService;
 import com.indo.core.service.impl.LoanRecordServiceImpl;
 import com.indo.core.util.BusinessRedisUtils;
@@ -66,7 +68,8 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
     private MemLevelMapper memLevelMapper;
     @Resource
     private MemInviteCodeMapper memInviteCodeMapper;
-
+    @Resource
+    private ILoanRecordService loanRecordService;
     @Override
     public Page<MemBaseInfoVo> queryList(MemBaseInfoReq req) {
         Page<MemBaseInfoVo> page = new Page<>(req.getPage(), req.getLimit());
@@ -84,6 +87,13 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
                if(memLevel!=null){
                    item.setLevel(memLevel.getLevel());
                }
+            }
+            LoginInfo loginInfo = new LoginInfo();
+            loginInfo.setMemLevel(Integer.valueOf(item.getMemLevel()));
+            loginInfo.setId(item.getId());
+            LoanRecordVo loanRecordVo = loanRecordService.findMemLoanInfo(loginInfo);
+            if(loanRecordVo!=null){
+                item.setLoanRecordVo(loanRecordVo);
             }
         });
 

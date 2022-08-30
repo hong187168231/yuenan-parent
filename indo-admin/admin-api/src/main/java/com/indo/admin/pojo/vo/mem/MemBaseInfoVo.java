@@ -2,6 +2,7 @@ package com.indo.admin.pojo.vo.mem;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.indo.core.pojo.vo.LoanRecordVo;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -90,6 +91,10 @@ public class MemBaseInfoVo {
     private Integer prohibitDisbursement;
     @ApiModelProperty("禁止充值 ,是0，否是1")
     private Integer prohibitRecharge;
+
+    /*********************借呗*****************************/
+    @ApiModelProperty("用户借款情况")
+    private LoanRecordVo loanRecordVo;
 
     private static final long serialVersionUID = -2839025782308943736L;
 }
