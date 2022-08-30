@@ -150,6 +150,7 @@ public class TakeCashServiceImpl extends SuperServiceImpl<TakeCashMapper, PayTak
         Page<PayTakeCash> cashPage = new Page<>(page, limit);
         LambdaQueryWrapper<PayTakeCash> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(PayTakeCash::getMemId, loginInfo.getId());
+        wrapper.orderByDesc(PayTakeCash::getCreateTime);
         Page<PayTakeCash> pageList = baseMapper.selectPage(cashPage, wrapper);
         List<TakeCashRecordVO> result = DozerUtil.convert(pageList.getRecords(), TakeCashRecordVO.class);
         return Result.success(result, cashPage.getTotal());
