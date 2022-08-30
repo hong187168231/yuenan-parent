@@ -41,14 +41,14 @@ public class AgCallbackServiceImpl implements AgCallbackService {
         String platformCode = agCallBackTransfer.getGameCode();
         TransferResponse transferResponse = new TransferResponse();
         transferResponse.setResponseCode("OK");
-        if (!checkIp(ip)) {
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.AG_PLATFORM_CODE);
+        if (!checkIp(gameParentPlatform,ip)) {
             transferResponse.setResponseCode("INVALID_DATA");
             return transferResponse;
         }
         String playname = agCallBackTransfer.getPlayname();
         int sp = playname.split(agCallBackTransfer.getAgentCode()).length;
         String userId = playname.substring(sp,playname.length());
-        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.AG_PLATFORM_CODE);
         if(OpenAPIProperties.AG_IS_PLATFORM_LOGIN.equals("Y")){//平台登录Y 游戏登录N
             gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.AG_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
         }else {
@@ -62,8 +62,8 @@ public class AgCallbackServiceImpl implements AgCallbackService {
         }
         BigDecimal balance = memBaseinfo.getBalance();
 
-        BigDecimal betAmount = agCallBackTransfer.getValue();
-        if (memBaseinfo.getBalance().compareTo(betAmount) == -1) {
+        BigDecimal betAmount = null!=agCallBackTransfer.getValue()?agCallBackTransfer.getValue().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
+        if (balance.compareTo(betAmount) == -1) {
             transferResponse.setResponseCode("INSUFFICIENT_FUNDS");
             return transferResponse;
         }
@@ -74,7 +74,7 @@ public class AgCallbackServiceImpl implements AgCallbackService {
         wrapper.eq(Txns::getPlatform, OpenAPIProperties.AG_PLATFORM_CODE);
         Txns oldTxns = txnsMapper.selectOne(wrapper);
         if (null != oldTxns) {
-            transferResponse.setBalance(balance);
+            transferResponse.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
             return transferResponse;
         }
 
@@ -113,7 +113,7 @@ public class AgCallbackServiceImpl implements AgCallbackService {
         txns.setGameName(gamePlatform.getPlatformEnName());
         txnsMapper.insert(txns);
 
-        transferResponse.setBalance(balance);
+        transferResponse.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
         return transferResponse;
     }
     //赢
@@ -123,14 +123,15 @@ public class AgCallbackServiceImpl implements AgCallbackService {
         String platformCode = agCallBackTransfer.getGameCode();
         TransferResponse transferResponse = new TransferResponse();
         transferResponse.setResponseCode("OK");
-        if (!checkIp(ip)) {
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.AG_PLATFORM_CODE);
+        if (!checkIp(gameParentPlatform,ip)) {
             transferResponse.setResponseCode("INVALID_DATA");
             return transferResponse;
         }
         String playname = agCallBackTransfer.getPlayname();
         int sp = playname.split(agCallBackTransfer.getAgentCode()).length;
         String userId = playname.substring(sp,playname.length());
-        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.AG_PLATFORM_CODE);
+
         if(OpenAPIProperties.AG_IS_PLATFORM_LOGIN.equals("Y")){//平台登录Y 游戏登录N
             gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.AG_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
         }else {
@@ -144,8 +145,8 @@ public class AgCallbackServiceImpl implements AgCallbackService {
         }
         BigDecimal balance = memBaseinfo.getBalance();
 
-        BigDecimal betAmount = agCallBackTransfer.getValue();
-        if (memBaseinfo.getBalance().compareTo(betAmount) == -1) {
+        BigDecimal betAmount = null!=agCallBackTransfer.getValue()?agCallBackTransfer.getValue().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
+        if (balance.compareTo(betAmount) == -1) {
             transferResponse.setResponseCode("INSUFFICIENT_FUNDS");
             return transferResponse;
         }
@@ -156,7 +157,7 @@ public class AgCallbackServiceImpl implements AgCallbackService {
         wrapper.eq(Txns::getPlatform, OpenAPIProperties.AG_PLATFORM_CODE);
         Txns oldTxns = txnsMapper.selectOne(wrapper);
         if (null != oldTxns) {
-            transferResponse.setBalance(balance);
+            transferResponse.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
             return transferResponse;
         }
 
@@ -195,13 +196,12 @@ public class AgCallbackServiceImpl implements AgCallbackService {
         txns.setGameName(gamePlatform.getPlatformEnName());
         txnsMapper.insert(txns);
 
-        transferResponse.setBalance(balance);
+        transferResponse.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
         return transferResponse;
     }
 
 
-    private boolean checkIp(String ip) {
-        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.AG_PLATFORM_CODE);
+    private boolean checkIp(GameParentPlatform gameParentPlatform,String ip) {
         if (null == gameParentPlatform) {
             return false;
         } else if (null == gameParentPlatform.getIpAddr() || "".equals(gameParentPlatform.getIpAddr())) {

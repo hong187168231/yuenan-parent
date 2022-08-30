@@ -57,7 +57,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cqApiRequestData.getAccount());
         GamePlatform gamePlatform = new GamePlatform();
         if(OpenAPIProperties.CQ_IS_PLATFORM_LOGIN.equals("Y")){
-            gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.CQ_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
+            gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.CQ_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
         }else {
             gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(cqApiRequestData.getGamecode(), gameParentPlatform.getPlatformCode());
         }
@@ -156,7 +156,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         }
         GamePlatform gamePlatform = new GamePlatform();
         if (OpenAPIProperties.CQ_IS_PLATFORM_LOGIN.equals("Y")) {
-            gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.CQ_PLATFORM_CODE, gameParentPlatform.getPlatformCode());
+            gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.CQ_PLATFORM_CODE, gameParentPlatform.getPlatformCode());
         } else {
             gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(endroundDataCallBackReq.getGamecode(), gameParentPlatform.getPlatformCode());
         }
@@ -242,7 +242,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
 
         GamePlatform gamePlatform = new GamePlatform();
         if(OpenAPIProperties.CQ_IS_PLATFORM_LOGIN.equals("Y")){
-            gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.CQ_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
+            gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.CQ_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
         }else {
             gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(cqApiRequestData.getGamecode(), gameParentPlatform.getPlatformCode());
         }
@@ -294,7 +294,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         }
         GamePlatform gamePlatform = new GamePlatform();
         if(OpenAPIProperties.CQ_IS_PLATFORM_LOGIN.equals("Y")){
-            gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.CQ_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
+            gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.CQ_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
         }else {
             gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(cqApiRequestData.getGamecode(), gameParentPlatform.getPlatformCode());
         }
@@ -342,7 +342,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         }
         GamePlatform gamePlatform = new GamePlatform();
         if(OpenAPIProperties.CQ_IS_PLATFORM_LOGIN.equals("Y")){
-            gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.CQ_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
+            gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.CQ_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
         }else {
             gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(cqApiRequestData.getGamecode(), gameParentPlatform.getPlatformCode());
         }
@@ -392,7 +392,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
 
         GamePlatform gamePlatform = new GamePlatform();
         if(OpenAPIProperties.CQ_IS_PLATFORM_LOGIN.equals("Y")){
-            gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.CQ_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
+            gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.CQ_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
         }else {
             gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(cqApiRequestData.getGamecode(), gameParentPlatform.getPlatformCode());
         }
@@ -442,7 +442,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         }
         GamePlatform gamePlatform = new GamePlatform();
         if(OpenAPIProperties.CQ_IS_PLATFORM_LOGIN.equals("Y")){
-            gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.CQ_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
+            gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.CQ_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
         }else {
             gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(cqApiRequestData.getGamecode(), gameParentPlatform.getPlatformCode());
         }
