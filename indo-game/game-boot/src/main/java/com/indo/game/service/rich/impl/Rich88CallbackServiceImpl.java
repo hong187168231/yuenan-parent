@@ -8,25 +8,27 @@ import com.indo.common.enums.TradingEnum;
 import com.indo.common.redis.utils.GeneratorIdUtil;
 import com.indo.common.utils.DateUtils;
 import com.indo.common.utils.StringUtils;
-import com.indo.game.common.util.RichSHAEncrypt;
 import com.indo.core.mapper.game.TxnsMapper;
-import com.indo.game.pojo.dto.rich.Rich88ActivityReq;
-import com.indo.game.pojo.dto.rich.Rich88TransferReq;
+import com.indo.core.pojo.bo.MemTradingBO;
 import com.indo.core.pojo.entity.game.GameCategory;
 import com.indo.core.pojo.entity.game.GameParentPlatform;
 import com.indo.core.pojo.entity.game.GamePlatform;
 import com.indo.core.pojo.entity.game.Txns;
+import com.indo.game.common.util.RichSHAEncrypt;
+import com.indo.game.pojo.dto.rich.Rich88ActivityReq;
+import com.indo.game.pojo.dto.rich.Rich88TransferReq;
 import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.rich.Rich88CallbackService;
-import com.indo.core.pojo.bo.MemTradingBO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 
 @Service
@@ -114,6 +116,7 @@ public class Rich88CallbackServiceImpl implements Rich88CallbackService {
         String paySerialno = StringUtils.isNotEmpty(rich88TransferReq.getTransfer_no())
                 ? rich88TransferReq.getTransfer_no()
                 : rich88TransferReq.getRecord_id();
+        String rountId = rich88TransferReq.getRound_id();
         if (StringUtils.isBlank(paySerialno)) {
             return initFailureResponse(20008, "交易序号不能为空");
         }
@@ -126,7 +129,7 @@ public class Rich88CallbackServiceImpl implements Rich88CallbackService {
 
             }
             // 查询订单
-            Txns oldTxns = getTxns(gameParentPlatform, paySerialno, rich88TransferReq.getAccount());
+            Txns repeatTxns = getTxns(gameParentPlatform, paySerialno, rich88TransferReq.getAccount());
 
             BigDecimal balance = memBaseinfo.getBalance();
             BigDecimal amount = null!=rich88TransferReq.getMoney()?rich88TransferReq.getMoney().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
@@ -135,7 +138,7 @@ public class Rich88CallbackServiceImpl implements Rich88CallbackService {
             // 提款：withdraw
             if ("withdraw".equals(rich88TransferReq.getAction())) {
                 // 重复订单
-                if (null != oldTxns) {
+                if (null != repeatTxns) {
                     return initFailureResponse(20008, "提款交易重复");
                 }
                 if (memBaseinfo.getBalance().compareTo(amount) < 0) {
@@ -144,53 +147,79 @@ public class Rich88CallbackServiceImpl implements Rich88CallbackService {
                 balance = balance.subtract(amount);
                 txnsMethod = "Place Bet";
                 // 更新余额
-                gameCommonService.updateUserBalance(memBaseinfo, amount, GoldchangeEnum.DSFYXZZ, TradingEnum.SPENDING);
+                gameCommonService.updateUserBalance(memBaseinfo, amount, GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
+                // 生成订单数据
+                Txns txns = getInitTxns(gamePlatform, gameParentPlatform, paySerialno,
+                        rich88TransferReq.getAccount(), amount, balance, ip, txnsMethod,rountId);
+                txnsMapper.insert(txns);
             } else if ("deposit".equals(rich88TransferReq.getAction())) {   // 存款
                 // 重复订单
-                if (null != oldTxns) {
+                if (null != repeatTxns) {
                     return initFailureResponse(20008, "存款交易重复");
                 }
                 balance = balance.add(amount);
                 txnsMethod = "Settle";
                 // 更新余额
-                gameCommonService.updateUserBalance(memBaseinfo, amount, GoldchangeEnum.DSFYXZZ, TradingEnum.INCOME);
+                gameCommonService.updateUserBalance(memBaseinfo, amount, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
+                List<Txns> oldTxnsList = getTxnsByRoundId(gameParentPlatform, rountId, rich88TransferReq.getAccount());
+                BigDecimal oldBetAmout = BigDecimal.ZERO;
+                boolean b = true;
+                // 生成订单数据
+                Txns txns = new Txns();
+                for(Txns oldTxns:oldTxnsList){
+                    oldBetAmout = oldBetAmout.add(oldTxns.getBetAmount());
+                    if(b){
+                        BeanUtils.copyProperties(oldTxns, txns);
+                        txns.setId(null);
+                    }
+                    b = false;
+                    // 更新提款订单
+                    oldTxns.setStatus("Settle");
+                    oldTxns.setUpdateTime(DateUtils.format(new Date(), DateUtils.newFormat));
+                    txnsMapper.updateById(oldTxns);
+                }
+                txns.setBetAmount(oldBetAmout);
+                int num = txnsMapper.insert(txns);
+                if (num <= 0) {
+                    return initFailureResponse(22008, "單⼀錢包平台發⽣錯誤");
+                }
+
             } else {   // rollback 取消提款
                 // 取消提款订单不存在
-                if (null == oldTxns) {
+                if (null == repeatTxns) {
                     return initFailureResponse(22005, "單⼀錢包交易記錄不存在");
                 }
                 // 比对金额和提款订单金额要一致
-                if (oldTxns.getBetAmount().compareTo(amount) != 0) {
+                if (repeatTxns.getBetAmount().compareTo(amount) != 0) {
                     return initFailureResponse(20008, "取消提款不正确");
                 }
 
                 balance = balance.add(amount);
                 txnsMethod = "Cancel Bet";
                 // 取消订单号需要重新生成
-                paySerialno = GoldchangeEnum.DSFYXZZ.name() + GeneratorIdUtil.generateId();
+                paySerialno = GoldchangeEnum.CANCEL_BET.name() + GeneratorIdUtil.generateId();
                 // 更新余额
-                gameCommonService.updateUserBalance(memBaseinfo, amount, GoldchangeEnum.DSFYXZZ, TradingEnum.INCOME);
+                gameCommonService.updateUserBalance(memBaseinfo, amount, GoldchangeEnum.CANCEL_BET, TradingEnum.INCOME);
+                // 生成订单数据
+                Txns txns = new Txns();
+                if(null!=repeatTxns){
+                    BeanUtils.copyProperties(repeatTxns, txns);
+                    txns.setId(null);
+                }else {
+                    txns = getInitTxns(gamePlatform, gameParentPlatform, paySerialno,
+                            rich88TransferReq.getAccount(), amount, balance, ip, txnsMethod,rountId);
+                }
+                int num = txnsMapper.insert(txns);
+                if (num <= 0) {
+                    return initFailureResponse(22008, "單⼀錢包平台發⽣錯誤");
+                }
+                // 更新提款订单
+                repeatTxns.setStatus("Cancel");
+                repeatTxns.setUpdateTime(DateUtils.format(new Date(), DateUtils.newFormat));
+                txnsMapper.updateById(repeatTxns);
             }
 
-            // 生成订单数据
-            Txns txns = getInitTxns(gamePlatform, gameParentPlatform, paySerialno,
-                    rich88TransferReq.getAccount(), amount, balance, ip, txnsMethod);
-            int num = txnsMapper.insert(txns);
-            if (num <= 0) {
-                return initFailureResponse(22008, "單⼀錢包平台發⽣錯誤");
-            }
 
-            if ("rollback".equals(rich88TransferReq.getAction()) && null != oldTxns) {
-                // 更新提款订单
-                oldTxns.setStatus("Cancel");
-                oldTxns.setUpdateTime(DateUtils.format(new Date(), DateUtils.newFormat));
-                txnsMapper.updateById(oldTxns);
-            }else if ("deposit".equals(rich88TransferReq.getAction()) && null != oldTxns) {
-                // 更新提款订单
-                oldTxns.setStatus("Settle");
-                oldTxns.setUpdateTime(DateUtils.format(new Date(), DateUtils.newFormat));
-                txnsMapper.updateById(oldTxns);
-            }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return initFailureResponse(22008, "單⼀錢包平台發⽣錯誤");
@@ -356,7 +385,7 @@ public class Rich88CallbackServiceImpl implements Rich88CallbackService {
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
         wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet")
                 .or().eq(Txns::getMethod, "Cancel Bet")
-                .or().eq(Txns::getMethod, "Adjust Bet"));
+                .or().eq(Txns::getMethod, "Bonus"));
         wrapper.eq(Txns::getStatus, "Running");
         wrapper.eq(Txns::getPlatformTxId, paySerialno);
         wrapper.eq(Txns::getPlatform, gameParentPlatform.getPlatformCode());
@@ -364,6 +393,19 @@ public class Rich88CallbackServiceImpl implements Rich88CallbackService {
             wrapper.eq(Txns::getUserId, playerID);
         }
         return txnsMapper.selectOne(wrapper);
+    }
+    private List<Txns> getTxnsByRoundId(GameParentPlatform gameParentPlatform, String roundId, String playerID) {
+        LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+        wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet")
+                .or().eq(Txns::getMethod, "Cancel Bet")
+                .or().eq(Txns::getMethod, "Bonus"));
+        wrapper.eq(Txns::getStatus, "Running");
+        wrapper.eq(Txns::getRoundId, roundId);
+        wrapper.eq(Txns::getPlatform, gameParentPlatform.getPlatformCode());
+        if (StringUtils.isNoneBlank(playerID)) {
+            wrapper.eq(Txns::getUserId, playerID);
+        }
+        return txnsMapper.selectList(wrapper);
     }
 
     /**
@@ -376,7 +418,7 @@ public class Rich88CallbackServiceImpl implements Rich88CallbackService {
      */
     private Txns getActivityTxns(GameParentPlatform gameParentPlatform, String paySerialno, String playerID) {
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
-        wrapper.and(c -> c.eq(Txns::getMethod, "Settle"));
+        wrapper.and(c -> c.eq(Txns::getMethod, "Bonus"));
         wrapper.eq(Txns::getStatus, "Running");
         wrapper.eq(Txns::getPlatformTxId, paySerialno);
         wrapper.eq(Txns::getPlatform, gameParentPlatform.getPlatformCode());
@@ -400,11 +442,12 @@ public class Rich88CallbackServiceImpl implements Rich88CallbackService {
      * @return Txns
      */
     private Txns getInitTxns(GamePlatform gamePlatform, GameParentPlatform gameParentPlatform,
-                             String paySerialno, String playerID, BigDecimal pointAmount, BigDecimal balance, String ip, String method) {
+                             String paySerialno, String playerID, BigDecimal pointAmount, BigDecimal balance, String ip, String method,String rounId) {
         GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         Txns txns = new Txns();
         //游戏商注单号
         txns.setPlatformTxId(paySerialno);
+        txns.setRoundId(rounId);
         //此交易是否是投注 true是投注 false 否
         txns.setBet(false);
         //玩家 ID
