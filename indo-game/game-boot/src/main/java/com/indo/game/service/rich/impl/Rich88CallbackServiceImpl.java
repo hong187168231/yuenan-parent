@@ -160,7 +160,7 @@ public class Rich88CallbackServiceImpl implements Rich88CallbackService {
                     return initFailureResponse(22005, "單⼀錢包交易記錄不存在");
                 }
                 // 比对金额和提款订单金额要一致
-                if (oldTxns.getAmount().compareTo(amount) != 0) {
+                if (oldTxns.getBetAmount().compareTo(amount) != 0) {
                     return initFailureResponse(20008, "取消提款不正确");
                 }
 
@@ -427,8 +427,16 @@ public class Rich88CallbackServiceImpl implements Rich88CallbackService {
         txns.setGameCode(gamePlatform.getPlatformCode());
         //游戏名称
         txns.setGameName(gamePlatform.getPlatformEnName());
-        //下注金额
-        txns.setBetAmount(pointAmount);
+
+        if("Place Bet".equals(method)){
+            //下注金额
+            txns.setBetAmount(pointAmount);
+            txns.setWinAmount(pointAmount);
+            txns.setWinningAmount(pointAmount.negate());
+        }else {
+            txns.setWinAmount(pointAmount);
+            txns.setWinningAmount(pointAmount);
+        }
         //创建时间
         String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
         //玩家下注时间
