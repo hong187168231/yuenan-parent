@@ -21,11 +21,12 @@
         SELECT
         pmr.mem_id AS memId,
         pmr.amount AS amount,
-        pmr.before_amount AS beforeAmount,
+        pmr.account as account,
+        pmr.befor_amount AS beforeAmount,
         pmr.after_amount AS afterAmount,
         pmr.operate_type AS operateType,
         pmr.create_user AS createUser,
-        pmr.create_time AS ascreateTime,
+        pmr.create_time AS createTime,
         pmr.remarks AS remarks
         FROM
         pay_manual_recharge pmr
