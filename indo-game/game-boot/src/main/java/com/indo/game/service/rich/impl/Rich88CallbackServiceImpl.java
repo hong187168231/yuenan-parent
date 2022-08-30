@@ -185,9 +185,15 @@ public class Rich88CallbackServiceImpl implements Rich88CallbackService {
                 oldTxns.setStatus("Cancel");
                 oldTxns.setUpdateTime(DateUtils.format(new Date(), DateUtils.newFormat));
                 txnsMapper.updateById(oldTxns);
+            }else if ("deposit".equals(rich88TransferReq.getAction()) && null != oldTxns) {
+                // 更新提款订单
+                oldTxns.setStatus("Settle");
+                oldTxns.setUpdateTime(DateUtils.format(new Date(), DateUtils.newFormat));
+                txnsMapper.updateById(oldTxns);
             }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
+            return initFailureResponse(22008, "單⼀錢包平台發⽣錯誤");
         }
 
         return initSuccessResponse();
@@ -288,7 +294,7 @@ public class Rich88CallbackServiceImpl implements Rich88CallbackService {
             //辨认交易时间依据
             txns.setTxTime(DateUtils.formatByLong(System.currentTimeMillis(), DateUtils.newFormat));
             //操作名称
-            txns.setMethod("Settle");
+            txns.setMethod("Bonus");
             txns.setStatus("Running");
             //余额
             txns.setBalance(balance);
