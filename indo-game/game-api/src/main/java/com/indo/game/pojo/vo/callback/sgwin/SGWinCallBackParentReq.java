@@ -1,4 +1,4 @@
-package com.indo.game.pojo.dto.sgwin;
+package com.indo.game.pojo.vo.callback.sgwin;
 
 import com.alibaba.fastjson.annotation.JSONField;
 

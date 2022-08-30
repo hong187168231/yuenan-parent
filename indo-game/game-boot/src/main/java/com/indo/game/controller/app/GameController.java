@@ -36,6 +36,7 @@ import com.indo.game.service.rich.Rich88Service;
 import com.indo.game.service.sa.SaService;
 import com.indo.game.service.saba.SabaService;
 import com.indo.game.service.sbo.SboService;
+import com.indo.game.service.sgwin.SGWinService;
 import com.indo.game.service.t9.T9Service;
 import com.indo.game.service.tp.TpService;
 import com.indo.game.service.ug.UgService;
@@ -125,8 +126,8 @@ public class GameController {
     private TpService tpService;
     @Autowired
     private AgService agService;
-//    @Autowired
-//    private SGWinService sgWinService;
+    @Autowired
+    private SGWinService sgWinService;
     @Autowired
     private RedissonClient redissonClient;
     @Resource
@@ -277,6 +278,9 @@ public class GameController {
                 if (OpenAPIProperties.AG_PLATFORM_CODE.equals(parentName)) {
                     resultInfo = agService.agGame(loginUser, isMobileLogin, ip, platform, parentName);
                 }
+                if (OpenAPIProperties.SGWIN_PLATFORM_CODE.equals(parentName)) {
+                    resultInfo = sgWinService.sgwinGame(loginUser, isMobileLogin, ip, platform, parentName);
+                }
 
 
                 if (resultInfo == null) {
@@ -409,9 +413,9 @@ public class GameController {
             if (OpenAPIProperties.TP_PLATFORM_CODE.equals(platform)) {
                 resultInfo = tpService.logout(loginUser, ip);
             }
-//            if (OpenAPIProperties.SGWIN_PLATFORM_CODE.equals(platform)) {
-//                resultInfo = sgWinService.logout(loginUser, platform, ip);
-//            }
+            if (OpenAPIProperties.SGWIN_PLATFORM_CODE.equals(platform)) {
+                resultInfo = sgWinService.logout(loginUser, platform, ip);
+            }
             if (resultInfo == null) {
                 log.info("退出平台log {} loginPlatform result is null. params:{},ip:{}", loginUser.getId(), params, ip);
                 return Result.failed("g100104", "网络繁忙，请稍后重试！");

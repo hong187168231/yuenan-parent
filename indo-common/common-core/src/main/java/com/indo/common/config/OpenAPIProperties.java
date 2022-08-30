@@ -607,20 +607,26 @@ public class OpenAPIProperties implements InitializingBean {
     //SGWin
     public static String SGWIN_API_TOKEN;
     public static String SGWIN_API_URL;
+    public static String SGWIN_LOGIN_URL;
     public static String SGWIN_AGENT_ID;
     public static String SGWIN_AGENT;
     public static String SGWIN_PLATFORM_CODE;
+    public static String SGWIN_IS_PLATFORM_LOGIN;
 
-    //@Value("${sgwin.apiUrl}")
+    @Value("${sgwin.apiUrl}")
     private String sgwinApiurl;
-    //@Value("${sgwin.sgwinToken}")
+    @Value("${sgwin.sgwinLoginurl}")
+    private String sgwinLoginurl;
+    @Value("${sgwin.sgwinToken}")
     private String sgwinToken;
-    //@Value("${sgwin.sgwinAgentId}")
+    @Value("${sgwin.sgwinAgentId}")
     private String sgwinAgentId;
-    //@Value("${sgwin.sgwinAgent}")
+    @Value("${sgwin.sgwinAgent}")
     private String sgwinAgent;
-    //@Value("${sgwin.platformCode}")
+    @Value("${sgwin.platformCode}")
     private String sgwinPlatformCode;
+    @Value("${sgwin.isPlatformLogin}")
+    private String sgwinIsPlatformLogin;
 
     //TP
     public static String TP_API_URL;
@@ -887,9 +893,11 @@ public class OpenAPIProperties implements InitializingBean {
 
         SGWIN_API_TOKEN = sgwinToken;
         SGWIN_API_URL = sgwinApiurl;
+        SGWIN_LOGIN_URL = sgwinLoginurl;
         SGWIN_AGENT_ID= sgwinAgentId;
         SGWIN_AGENT = sgwinAgent;
         SGWIN_PLATFORM_CODE = sgwinPlatformCode;
+        SGWIN_IS_PLATFORM_LOGIN = sgwinIsPlatformLogin;
 
         TP_PLATFORM_CODE = tpPlatformCode;
         TP_IS_PLATFORM_LOGIN = tpIsPlatformLogin;
