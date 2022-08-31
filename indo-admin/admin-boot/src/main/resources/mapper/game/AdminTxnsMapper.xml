@@ -34,7 +34,7 @@
         t.bet_amount,t.winning_amount,a.account as account,t.round_id,t.bet_time,t.odds,t.method,t.balance,t.platform_tx_id
         FROM game_txns t left join mem_baseinfo m on t.user_id=m.account left join agent_relation a on LOCATE(m.id,a.sub_user_ids)
         WHERE
-         ((t.method = 'Settle' and t.status = 'Running') or (t.method = 'Place Bet' and t.status = 'Running'))
+        t.method = 'Settle' and t.status = 'Running'
         <if test='req.userAcct != null and req.userAcct.trim() neq ""'>
             and  t.user_id = #{req.userAcct}
         </if>
