@@ -208,7 +208,7 @@ public class AppAgentServiceImpl extends SuperServiceImpl<AgentRelationMapper, A
 
 		AgentRelation agentRelation = this.findBySuperior(loginInfo.getAccount());
 		int dayAdd = 0;
-		if (StringUtils.isNotEmpty(agentRelation.getSubUserIds())) {
+		if (agentRelation != null && StringUtils.isNotEmpty(agentRelation.getSubUserIds())) {
 			String yesterday = DateUtils.format(DateUtils.addDay(new Date(), -1), DateUtils.shortFormat);;
 			dayAdd = memBaseInfoMapper.countByIdsAndCreateTime(agentRelation.getSubUserIds(), yesterday);
 		}
