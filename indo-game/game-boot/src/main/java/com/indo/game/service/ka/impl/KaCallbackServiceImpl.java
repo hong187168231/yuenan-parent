@@ -455,7 +455,7 @@ public class KaCallbackServiceImpl implements KaCallbackService {
 
             // 会员余额返回
             JSONObject jsonObject = initSuccessResponse();
-            jsonObject.put("balance", getMultiplyBalance(memBaseinfo.getBalance()).divide(platformGameParent.getCurrencyPro()));
+            jsonObject.put("balance", format.format(getMultiplyBalance(memBaseinfo.getBalance()).divide(platformGameParent.getCurrencyPro())));
 //            jsonObject.put("balance", memBaseinfo.getBalance());
             jsonObject.put("currency", platformGameParent.getCurrencyType());
             jsonObject.put("playerId", memBaseinfo.getAccount());
