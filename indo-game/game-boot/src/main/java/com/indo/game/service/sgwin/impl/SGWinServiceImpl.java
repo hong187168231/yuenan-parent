@@ -1,216 +1,225 @@
-//package com.indo.game.service.sgwin.impl;
-//
-//import com.alibaba.fastjson.JSON;
-//import com.alibaba.fastjson.JSONObject;
-//import com.indo.common.config.OpenAPIProperties;
-//import com.indo.common.pojo.bo.LoginInfo;
-//import com.indo.common.redis.utils.GeneratorIdUtil;
-//import com.indo.common.result.Result;
-//import com.indo.common.utils.DateUtils;
-//import com.indo.common.utils.GameUtil;
-//import com.indo.common.utils.RandomUtil;
-//import com.indo.common.utils.SignMd5Utils;
-//import com.indo.common.utils.encrypt.MD5;
-//import com.indo.game.common.util.FCHashAESEncrypt;
-//import com.indo.game.common.util.SAJEncryption;
-//import com.indo.game.common.util.XmlUtil;
-//import com.indo.game.pojo.dto.ae.AeApiResponseData;
-//import com.indo.game.pojo.dto.comm.ApiResponseData;
-//import com.indo.game.pojo.dto.sa.SaKickUserResp;
-//import com.indo.game.pojo.dto.sa.SaLoginResp;
-//import com.indo.game.pojo.entity.CptOpenMember;
-//import com.indo.core.pojo.entity.game.GameParentPlatform;
-//import com.indo.core.pojo.entity.game.GamePlatform;
-//import com.indo.game.service.common.GameCommonService;
-//import com.indo.game.service.cptopenmember.CptOpenMemberService;
-//import com.indo.game.service.sgwin.SGWinService;
-//import org.apache.commons.lang3.StringUtils;
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
-//import org.springframework.stereotype.Service;
-//
-//import javax.annotation.Resource;
-//import java.math.BigDecimal;
-//import java.util.*;
-//
-//@Service
-//public class SGWinServiceImpl implements SGWinService {
-//
-//    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-//    @Resource
-//    private CptOpenMemberService externalService;
-//    @Resource
-//    private GameCommonService gameCommonService;
-//
-//
-//    @Override
-//    public Result sgwinGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName) {
-//        logger.info("SGWinlog  {} SGWinGame account:{}, pgCodeId:{}", loginUser.getId(), loginUser.getNickName(), platform);
-//        // 是否开售校验
-//        GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(parentName);
-//        if (null == platformGameParent) {
-//            return Result.failed("(" + parentName + ")游戏平台不存在");
-//        }
-//        if ("0".equals(platformGameParent.getIsStart())) {
-//            return Result.failed("g" + "100101", "游戏平台未启用");
-//        }
-//        if ("1".equals(platformGameParent.getIsOpenMaintenance())) {
-//            return Result.failed("g000001", platformGameParent.getMaintenanceContent());
-//        }
-//        GamePlatform gamePlatform = new GamePlatform();
-//        if (!platform.equals(parentName)) {
-//            // 是否开售校验
-//            gamePlatform = gameCommonService.getGamePlatformByplatformCode(platform);
-//            if (null == gamePlatform) {
-//                return Result.failed("(" + platform + ")平台游戏不存在");
-//            }
-//            if ("0".equals(gamePlatform.getIsStart())) {
-//                return Result.failed("g" + "100102", "游戏未启用");
-//            }
-//            if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
-//                return Result.failed("g091047", gamePlatform.getMaintenanceContent());
-//            }
-//        }
-//        BigDecimal balance = loginUser.getBalance();
-//        //验证站点棋牌余额
-//        if (null == balance || BigDecimal.ZERO.equals(balance)) {
-//            logger.info("站点PG余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
-//            //站点棋牌余额不足
-//            return Result.failed("g300004", "会员余额不足");
-//        }
-//        try {
-//
-//            // 验证且绑定（AE-CPT第三方会员关系）
-//            CptOpenMember cptOpenMember = externalService.getCptOpenMember(loginUser.getId().intValue(), parentName);
-//            if (cptOpenMember == null) {
-//                cptOpenMember = new CptOpenMember();
-//                cptOpenMember.setUserName(loginUser.getAccount());
-//                cptOpenMember.setUserId(loginUser.getId().intValue());
-//                cptOpenMember.setCreateTime(new Date());
-//                cptOpenMember.setLoginTime(new Date());
-//                cptOpenMember.setType(parentName);
-//                //创建玩家
-//                externalService.saveCptOpenMember(cptOpenMember);
-//            } else {
-//                CptOpenMember updateCptOpenMember = new CptOpenMember();
-//                updateCptOpenMember.setId(cptOpenMember.getId());
-//                updateCptOpenMember.setLoginTime(new Date());
-//                externalService.updateCptOpenMember(updateCptOpenMember);
-//                logout(loginUser, platform, ip);
-//            }
-//
-//            JSONObject apiResponseData = gameLogin(platformGameParent, cptOpenMember);
-//            if (null == apiResponseData || !"200".equals(apiResponseData.getJSONObject("resp_msg").getString("code"))) {
-//                return Result.failed("g091087", "第三方请求异常！");
-//            }
-//            //登录
-//            ApiResponseData responseData = new ApiResponseData();
-//            responseData.setPathUrl(apiResponseData.getJSONObject("resp_data").getString("url"));
-//            return Result.success(responseData);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return Result.failed("g100104", "网络繁忙，请稍后重试！");
-//        }
-//    }
-//
-//    /**
-//     * {
-//     *    "defaultGame": "HK6",
-//     *    "defaultBgColor":"black",
-//     *    "defaultColor":"pink",
-//     *    "backButton": true,
-//     *    "backUrl": "https://www.xxxx.com",
-//     *    "range":"A",
-//     *    "editRange":false,
-//     *    "tesing":1
-//     * }
-//     * @param platformGameParent
-//     * @param cptOpenMember
-//     * @return
-//     */
-//    /**
-//     * 调用API登录
-//     */
-//    private AeApiResponseData gameLogin(GameParentPlatform platformGameParent, GamePlatform gamePlatform,
-//                                        CptOpenMember cptOpenMember, String isMobileLogin) {
-//        StringBuilder urlParams = new StringBuilder();
-//        urlParams.append("agentID").append("=").append(OpenAPIProperties.SGWIN_AGENT_ID);
-//        urlParams.append("root").append("=").append(OpenAPIProperties.SGWIN_AGENT);
-//        urlParams.append("username").append("=").append(cptOpenMember.getUserName().toUpperCase(Locale.ROOT));
-//        urlParams.append("hash").append(MD5.md5("agentID="));
-//
-//        // 加密
-//        StringBuilder builder = new StringBuilder();
-//        builder.append(OpenAPIProperties.AE_MERCHANT_ID).append(platformGameParent.getCurrencyType()).append(currentTime);
-//        builder.append(cptOpenMemberm.getUserName()).append("0").append(params.get("device")).append(gamePlatform.getPlatformCode());
-//        builder.append(platformGameParent.getLanguageType()).append(Base64.getEncoder().encodeToString(OpenAPIProperties.AE_MERCHANT_KEY.getBytes()));
-//
-//        String sign = MD5.md5(builder.toString());
-//        params.put("gameId", gamePlatform.getPlatformCode());
-//        params.put("hash", sign);
-//        params.put("language", platformGameParent.getLanguageType());
-//        String jsonStr = JSON.toJSONString(params);
-//        AeApiResponseData aeApiResponseData = null;
-//        try {
-//            StringBuilder apiUrl = new StringBuilder();
-//            apiUrl.append(OpenAPIProperties.SGWIN_API_URL).append("/api/login").append("?");
-//            aeApiResponseData = commonRequest(apiUrl.toString(), jsonStr, cptOpenMemberm.getUserId(), "gameLogin");
-//        } catch (Exception e) {
-//            logger.error("aelog aeGameLogin:{}", e);
-//            e.printStackTrace();
-//        }
-//        return aeApiResponseData;
-//    }
-//
-//
-//
-//    /**
-//     * 强迫登出玩家
-//     */
-//    @Override
-//    public Result logout(LoginInfo loginUser, String platform, String ip) {
-//        try {
-//            Map<String, String> map = new HashMap<String, String>();
-//            Long dataTime =  System.currentTimeMillis() / 1000;
-//            Integer random = RandomUtil.getRandomOne(7);
-//            StringBuilder stringBuilder = new StringBuilder();
-//            stringBuilder.append(OpenAPIProperties.BL_KEY_SECRET).append(random).append(dataTime);
-//            String sign = SignMd5Utils.getSha1(stringBuilder.toString()).toLowerCase();
-//            map.put("player_account", loginUser.getAccount());
-//            map.put("AccessKeyId", OpenAPIProperties.BL_KEY_ID);
-//            map.put("Nonce", random + "");
-//            map.put("Sign", sign);
-//            StringBuilder apiUrl = new StringBuilder();
-//            apiUrl.append(OpenAPIProperties.BL_API_URL).append("/v1/player/logout");
-//            JSONObject apiResponseData = commonRequest(apiUrl.toString(), map, loginUser.getId().intValue(), "BLlogout");
-//            if (null == apiResponseData || !"200".equals(apiResponseData.getJSONObject("resp_msg").getString("code"))) {
-//                return Result.failed("g091087", "第三方请求异常！");
-//            }
-//            if ("200".equals(apiResponseData.getJSONObject("resp_msg").getString("code"))) {
-//                return Result.success();
-//            }
-//        } catch (Exception e) {
-//            logger.error("BLlog  BLlogout:{}", e);
-//            e.printStackTrace();
-//            return Result.failed();
-//        }
-//        return Result.failed();
-//    }
-//
-//    /**
-//     * 公共请求
-//     */
-//    public AeApiResponseData commonRequest(String apiUrl, String jsonStr, Integer userId, String type) throws Exception {
-//        logger.info("sgwinlog {} commonRequest userId:{},paramsMap:{}", userId, jsonStr);
-//        AeApiResponseData aeApiResponseData = null;
-//        String resultString = GameUtil.doProxyPostJson(OpenAPIProperties.PROXY_HOST_NAME, OpenAPIProperties.PROXY_PORT, OpenAPIProperties.PROXY_TCP,
-//            apiUrl, jsonStr, type, userId);
-//        logger.info("aelog apiResponse:" + resultString);
-//        if (StringUtils.isNotEmpty(resultString)) {
-//            aeApiResponseData = JSONObject.parseObject(resultString, AeApiResponseData.class);
-//            logger.info("aelog {}:commonRequest type:{}, operateFlag:{}, hostName:{}, params:{}, result:{}, awcApiResponse:{}",
-//                userId, type, null, jsonStr, resultString, JSONObject.toJSONString(aeApiResponseData));
-//        }
-//        return aeApiResponseData;
-//    }
-//}
+package com.indo.game.service.sgwin.impl;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.indo.common.config.OpenAPIProperties;
+import com.indo.common.pojo.bo.LoginInfo;
+import com.indo.common.result.Result;
+import com.indo.common.utils.GameUtil;
+import com.indo.common.utils.encrypt.MD5;
+import com.indo.core.pojo.entity.game.GameParentPlatform;
+import com.indo.core.pojo.entity.game.GamePlatform;
+import com.indo.game.pojo.dto.comm.ApiResponseData;
+import com.indo.game.pojo.dto.sgwin.SgwinApiResp;
+import com.indo.game.pojo.dto.sgwin.SgwinLoginRequest;
+import com.indo.game.pojo.entity.CptOpenMember;
+import com.indo.game.service.common.GameCommonService;
+import com.indo.game.service.cptopenmember.CptOpenMemberService;
+import com.indo.game.service.sgwin.SGWinService;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.Locale;
+
+@Service
+public class SGWinServiceImpl implements SGWinService {
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    @Resource
+    private CptOpenMemberService externalService;
+    @Resource
+    private GameCommonService gameCommonService;
+
+
+    @Override
+    public Result sgwinGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName) {
+        logger.info("SGWinlog  {} SGWinGame account:{}, pgCodeId:{}", loginUser.getId(), loginUser.getNickName(), platform);
+        // 是否开售校验
+        GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(parentName);
+        if (null == platformGameParent) {
+            return Result.failed("(" + parentName + ")游戏平台不存在");
+        }
+        if ("0".equals(platformGameParent.getIsStart())) {
+            return Result.failed("g" + "100101", "游戏平台未启用");
+        }
+        if ("1".equals(platformGameParent.getIsOpenMaintenance())) {
+            return Result.failed("g000001", platformGameParent.getMaintenanceContent());
+        }
+        GamePlatform gamePlatform = new GamePlatform();
+        if (!platform.equals(parentName)) {
+            // 是否开售校验
+            gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
+            if (null == gamePlatform) {
+                return Result.failed("(" + platform + ")平台游戏不存在");
+            }
+            if ("0".equals(gamePlatform.getIsStart())) {
+                return Result.failed("g" + "100102", "游戏未启用");
+            }
+            if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
+                return Result.failed("g091047", gamePlatform.getMaintenanceContent());
+            }
+        }
+        BigDecimal balance = loginUser.getBalance();
+        //验证站点棋牌余额
+        if (null == balance || BigDecimal.ZERO.equals(balance)) {
+            logger.info("站点SGWin余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
+            //站点棋牌余额不足
+            return Result.failed("g300004", "会员余额不足");
+        }
+        try {
+
+            // 验证且绑定（AE-CPT第三方会员关系）
+            CptOpenMember cptOpenMember = externalService.getCptOpenMember(loginUser.getId().intValue(), parentName);
+            if (cptOpenMember == null) {
+                cptOpenMember = new CptOpenMember();
+                cptOpenMember.setUserName(loginUser.getAccount());
+                cptOpenMember.setUserId(loginUser.getId().intValue());
+                cptOpenMember.setCreateTime(new Date());
+                cptOpenMember.setLoginTime(new Date());
+                cptOpenMember.setType(parentName);
+                //创建玩家
+                externalService.saveCptOpenMember(cptOpenMember);
+            } else {
+                cptOpenMember.setLoginTime(new Date());
+                externalService.updateCptOpenMember(cptOpenMember);
+                logout(loginUser, platform, ip);
+            }
+
+            SgwinApiResp sgwinApiResp = gameLogin( cptOpenMember);
+            if(sgwinApiResp.getSuccess()){
+                JSONObject jsonObject = JSONObject.parseObject(sgwinApiResp.getResult());
+                //登录
+                ApiResponseData responseData = new ApiResponseData();
+                String session = jsonObject.getString("session");
+                String url = "";
+                if(!"1".equals(isMobileLogin)){//1：手机 0:PC
+                    url = OpenAPIProperties.SGWIN_LOGIN_URL+"/member/index?_OLID_="+session;
+                }else {
+                    url = OpenAPIProperties.SGWIN_LOGIN_URL+"/mobile/member/index?_OLID_="+session;
+                }
+
+                responseData.setPathUrl(url);
+                return Result.success(responseData);
+            }else {
+                return this.errorCode(sgwinApiResp.getError(),sgwinApiResp.getMessage());
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.failed("g100104", "网络繁忙，请稍后重试！");
+        }
+    }
+
+    /**
+     * @return
+     */
+    /**
+     * 调用API登录
+     */
+    private SgwinApiResp gameLogin(CptOpenMember cptOpenMember) {
+//        登录接口调用：
+//        md5(“agentID=xxxxroot=apitest&username=xxx&1234567890abcdef”)
+//        其中，agentID为分公司账号，root为公司账号，1234567890abcdef为加密密钥，username为会员账号。
+        StringBuilder params = new StringBuilder();
+        params.append("agentID").append("=").append(OpenAPIProperties.SGWIN_AGENT_ID);
+        params.append("&root").append("=").append(OpenAPIProperties.SGWIN_AGENT);
+        params.append("&username").append("=").append(cptOpenMember.getUserName().toUpperCase(Locale.ROOT));
+        String sign = MD5.md5(params.toString()+"&"+OpenAPIProperties.SGWIN_API_TOKEN);
+        StringBuilder urlParams = new StringBuilder();
+        urlParams.append(params+"&hash").append(sign);
+        SgwinLoginRequest sgwinLoginRequest = new SgwinLoginRequest();
+        sgwinLoginRequest.setDefaultBgColor("black");
+
+        String jsonStr = JSON.toJSONString(sgwinLoginRequest);
+        SgwinApiResp sgwinApiResp = null;
+        try {
+            StringBuilder apiUrl = new StringBuilder();
+            apiUrl.append(OpenAPIProperties.SGWIN_API_URL).append("/api/login").append("?");
+            apiUrl.append(urlParams);
+            logger.info("SGWin  gameLogin登录请求apiUrl:{}, params:{}, user:{}", apiUrl, jsonStr, cptOpenMember);
+            sgwinApiResp = commonRequest(apiUrl.toString(), jsonStr, cptOpenMember.getUserId(), "gameLogin");
+            logger.info("SGWin  gameLogin登录返回resultString:{}", JSON.toJSONString(sgwinApiResp));
+        } catch (Exception e) {
+            logger.error("aelog aeGameLogin:{}", e);
+            e.printStackTrace();
+        }
+        return sgwinApiResp;
+    }
+
+
+
+    /**
+     * 强迫登出玩家
+     */
+    @Override
+    public Result logout(LoginInfo loginUser, String platform, String ip) {
+        try {
+            StringBuilder params = new StringBuilder();
+            params.append("agentID").append("=").append(OpenAPIProperties.SGWIN_AGENT_ID);
+            params.append("&root").append("=").append(OpenAPIProperties.SGWIN_AGENT);
+            params.append("&username").append("=").append(loginUser.getAccount().toUpperCase(Locale.ROOT));
+            String sign = MD5.md5(params.toString()+"&"+OpenAPIProperties.SGWIN_API_TOKEN);
+            StringBuilder urlParams = new StringBuilder();
+            urlParams.append(params+"&hash").append(sign);
+            SgwinApiResp sgwinApiResp = null;
+            StringBuilder apiUrl = new StringBuilder();
+            apiUrl.append(OpenAPIProperties.SGWIN_API_URL).append("/api/logout").append("?");
+            apiUrl.append(urlParams);
+            logger.info("SGWin  logout注销请求apiUrl:{}, params:{}, user:{}", apiUrl, null, loginUser);
+            sgwinApiResp = commonRequest(apiUrl.toString(), "", loginUser.getId().intValue(), "logout");
+            logger.info("SGWin  logout注销返回resultString:{}", JSON.toJSONString(sgwinApiResp));
+            if(sgwinApiResp.getSuccess()){
+                return Result.success();
+            }else {
+                return this.errorCode(sgwinApiResp.getError(),sgwinApiResp.getMessage());
+            }
+        } catch (Exception e) {
+            logger.error("BLlog  BLlogout:{}", e);
+            e.printStackTrace();
+            return Result.failed();
+        }
+    }
+
+    /**
+     * 公共请求
+     */
+    public SgwinApiResp commonRequest(String apiUrl, String jsonStr, Integer userId, String type) throws Exception {
+        SgwinApiResp sgwinApiResp = null;
+        String resultString = GameUtil.doProxyPostJson(OpenAPIProperties.PROXY_HOST_NAME, OpenAPIProperties.PROXY_PORT, OpenAPIProperties.PROXY_TCP,
+            apiUrl, jsonStr, type, userId);
+        if (StringUtils.isNotEmpty(resultString)) {
+            sgwinApiResp = JSONObject.parseObject(resultString, SgwinApiResp.class);
+        }
+        return sgwinApiResp;
+    }
+    public Result errorCode(String errorCode, String errorMessage) {
+        if ("E0016.member.offline".equals(errorCode)) {//会员不在线
+            return Result.failed("g091088", errorMessage);
+        }else if ("E0003.user.not.found".equals(errorCode)) {//用户不存在
+            return Result.failed("g010001", errorMessage);
+        }else  if ("E0015.validate.username".equals(errorCode)) {//请输入帐号
+            return Result.failed("g000007", errorMessage);
+        }else  if ("E0003.user.not.found".equals(errorCode)) {//只输入英文字母和数字
+            return Result.failed("g100002", errorMessage);
+        }else  if ("E0018.validate.username.length".equals(errorCode)) {//用户名要最少2个字位
+            return Result.failed("g100002", errorMessage);
+        }else  if ("E0019.validate.username.length.max.32".equals(errorCode)) {//帐号最多32位
+            return Result.failed("g100002", errorMessage);
+        }else  if ("E0020.validate.account.exist".equals(errorCode)) {//帐号已存在
+            return Result.failed("g100003", errorMessage);
+        }else  if ("E0025.validate.users.range".equals(errorCode)) {//盘口不能为空
+            return Result.failed("g000007", errorMessage);
+        }else  if ("E0015.login.error.status.5".equals(errorCode)) {//抱歉!你的帐号被停用了。
+            return Result.failed("g200002", errorMessage);
+        }else  if ("E0022.validate.users.range".equals(errorCode)) {//盘口{X}不可使用。{X}为 A, B, C, D
+            return Result.failed("g100110", errorMessage);
+        }else{
+            return Result.failed("g009999", errorMessage);
+        }
+    }
+}

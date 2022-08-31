@@ -68,7 +68,7 @@ public class SaCallbackServiceImpl implements SaCallbackService {
                 return initFailureResponse(1000, "查无此帐号,请检查");
             }
 
-            return initSuccessResponse(account, gameParentPlatform.getCurrencyType(), memBaseinfo.getBalance());
+            return initSuccessResponse(account, gameParentPlatform.getCurrencyType(), memBaseinfo.getBalance().divide(gameParentPlatform.getCurrencyPro()));
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return initFailureResponse(9999, e.getMessage());
@@ -106,7 +106,7 @@ public class SaCallbackServiceImpl implements SaCallbackService {
             // 会员余额
             BigDecimal balance = memBaseinfo.getBalance();
             // 下注金额
-            BigDecimal betAmount = jsonObject.getBigDecimal("amount");
+            BigDecimal betAmount = null!=jsonObject.getBigDecimal("amount")?jsonObject.getBigDecimal("amount").multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
             // 下注金额小于0
             if (betAmount.compareTo(BigDecimal.ZERO) < 0) {
                 return initFailureResponse(1002, "下注金额不能小0");
@@ -171,7 +171,7 @@ public class SaCallbackServiceImpl implements SaCallbackService {
             //游戏平台的下注项目
             txns.setBetType(gametype);
             //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
-//            txns.setWinningAmount(freeWinAmount);
+            txns.setWinningAmount(betAmount.negate());
             //玩家下注时间
             txns.setBetTime(DateUtils.format(timestamp, DateUtils.newFormat));
             //真实下注金额,需增加在玩家的金额
@@ -179,7 +179,7 @@ public class SaCallbackServiceImpl implements SaCallbackService {
             //真实返还金额,游戏赢分
 //            txns.setRealWinAmount(freeWinAmount);
             //返还金额 (包含下注金额)
-//            txns.setWinAmount(freeWinAmount);
+            txns.setWinAmount(betAmount);
             //有效投注金额 或 投注面值
             txns.setTurnover(betAmount);
             //辨认交易时间依据
@@ -199,7 +199,7 @@ public class SaCallbackServiceImpl implements SaCallbackService {
                 return initFailureResponse(9999, "订单写入失败");
             }
 
-            return initSuccessResponse(memBaseinfo.getAccount(), gameParentPlatform.getCurrencyType(), memBaseinfo.getBalance());
+            return initSuccessResponse(memBaseinfo.getAccount(), gameParentPlatform.getCurrencyType(), memBaseinfo.getBalance().divide(gameParentPlatform.getCurrencyPro()));
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return initFailureResponse(9999, e.getMessage());
@@ -237,7 +237,7 @@ public class SaCallbackServiceImpl implements SaCallbackService {
             // 会员余额
             BigDecimal balance = memBaseinfo.getBalance();
             // 派奖金额
-            BigDecimal amount = jsonObject.getBigDecimal("amount");
+            BigDecimal amount = null!=jsonObject.getBigDecimal("amount")?jsonObject.getBigDecimal("amount").multiply(platformGameParent.getCurrencyPro()):BigDecimal.ZERO;
             // 派彩金额小于0
             if (amount.compareTo(BigDecimal.ZERO) < 0) {
                 return initFailureResponse(1005, "派彩金额不能小0");
@@ -257,14 +257,8 @@ public class SaCallbackServiceImpl implements SaCallbackService {
             BeanUtils.copyProperties(oldTxns, txns);
             //赌注的结果 : 赢:0,输:1,平手:2
             int resultTyep = 0;
-            if (oldTxns.getBetAmount().compareTo(amount) == 0) {//和
-                resultTyep = 2;
-                //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
-                txns.setWinningAmount(BigDecimal.ZERO);
-            }else {//赢
-                //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
-                txns.setWinningAmount(amount);
-            }
+            //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
+            txns.setWinningAmount(amount);
             txns.setResultType(resultTyep);
 
             //真实返还金额,游戏赢分
@@ -285,7 +279,7 @@ public class SaCallbackServiceImpl implements SaCallbackService {
                 return initFailureResponse(1, "订单写入失败");
             }
             txnsMapper.insert(txns);
-            return initSuccessResponse(memBaseinfo.getAccount(), platformGameParent.getCurrencyType(), balance);
+            return initSuccessResponse(memBaseinfo.getAccount(), platformGameParent.getCurrencyType(), balance.divide(platformGameParent.getCurrencyPro()));
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return initFailureResponse(9999, e.getMessage());
@@ -353,7 +347,7 @@ public class SaCallbackServiceImpl implements SaCallbackService {
                 return initFailureResponse(1, "订单写入失败");
             }
             txnsMapper.insert(txns);
-            return initSuccessResponse(memBaseinfo.getAccount(), platformGameParent.getCurrencyType(), balance);
+            return initSuccessResponse(memBaseinfo.getAccount(), platformGameParent.getCurrencyType(), balance.divide(platformGameParent.getCurrencyPro()));
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return initFailureResponse(9999, e.getMessage());
@@ -421,7 +415,7 @@ public class SaCallbackServiceImpl implements SaCallbackService {
             }
             txnsMapper.insert(txns);
 
-            return initSuccessResponse(memBaseinfo.getAccount(), platformGameParent.getCurrencyType(), balance);
+            return initSuccessResponse(memBaseinfo.getAccount(), platformGameParent.getCurrencyType(), balance.divide(platformGameParent.getCurrencyPro()));
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return initFailureResponse(9999, e.getMessage());

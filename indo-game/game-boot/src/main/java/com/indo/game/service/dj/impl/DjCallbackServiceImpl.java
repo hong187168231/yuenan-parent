@@ -6,26 +6,23 @@ import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.common.utils.DateUtils;
 import com.indo.core.mapper.game.TxnsMapper;
-import com.indo.game.pojo.dto.dj.DjCallBackParentReq;
+import com.indo.core.pojo.bo.MemTradingBO;
 import com.indo.core.pojo.entity.game.GameCategory;
 import com.indo.core.pojo.entity.game.GameParentPlatform;
 import com.indo.core.pojo.entity.game.GamePlatform;
 import com.indo.core.pojo.entity.game.Txns;
+import com.indo.game.pojo.dto.dj.DjCallBackParentReq;
 import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
 import com.indo.game.service.dj.DjCallbackService;
-import com.indo.core.pojo.bo.MemTradingBO;
-
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
-
-import javax.annotation.Resource;
-
-import lombok.extern.slf4j.Slf4j;
 
 
 /**
@@ -51,6 +48,7 @@ public class DjCallbackServiceImpl implements DjCallbackService {
 //        CptOpenMember cptOpenMember = externalService.getCptOpenMember(Integer.parseInt(djCallBackParentReq.getLogin_id()), OpenAPIProperties.DJ_PLATFORM_CODE);
         StringBuilder stringBuilder = new StringBuilder();
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(djCallBackParentReq.getLogin_id());
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.DJ_PLATFORM_CODE);
         stringBuilder.append("<?xml version=\"1.0\" ?>").append("<get_balance>").append("<status_code>");
         if (memBaseinfo == null) {
             stringBuilder.append("99</status_code>").append("<status_text>OK</status_text>").append("<balance>");
@@ -59,7 +57,7 @@ public class DjCallbackServiceImpl implements DjCallbackService {
         }
 
         stringBuilder.append("00</status_code>").append("<status_text>OK</status_text>").append("<balance>");
-        stringBuilder.append(memBaseinfo.getBalance()).append("</balance></get_balance>");
+        stringBuilder.append(memBaseinfo.getBalance().divide(gameParentPlatform.getCurrencyPro())).append("</balance></get_balance>");
         return stringBuilder;
     }
 
@@ -73,11 +71,11 @@ public class DjCallbackServiceImpl implements DjCallbackService {
         GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(djCallBackParentReq.getLogin_id());
         BigDecimal balance = memBaseinfo.getBalance();
-        BigDecimal betAmount = djCallBackParentReq.getStake_money();
+        BigDecimal betAmount = null!=djCallBackParentReq.getStake_money()?djCallBackParentReq.getStake_money().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
         if (betAmount.compareTo(BigDecimal.ZERO) == -1 && memBaseinfo.getBalance().compareTo(betAmount) == -1) {
             stringBuilder.append("88</status_code>").append("<status_text>Insufficient fund to bet </status_text>");
             stringBuilder.append("<ref_id>").append(djCallBackParentReq.getTicket_id()).append("</ref_id>").append("<balance>");
-            stringBuilder.append(balance).append("</balance></bet>");
+            stringBuilder.append(balance.divide(gameParentPlatform.getCurrencyPro())).append("</balance></bet>");
             return stringBuilder;
         }
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
@@ -91,7 +89,7 @@ public class DjCallbackServiceImpl implements DjCallbackService {
             if ("Cancel Bet".equals(oldTxns.getMethod())||"Settle".equals(oldTxns.getMethod())) {
                 stringBuilder.append("All Other Code</status_code>").append("<status_text>General error </status_text>");
                 stringBuilder.append("<ref_id>").append(djCallBackParentReq.getTicket_id()).append("</ref_id>").append("<balance>");
-                stringBuilder.append(balance).append("</balance></bet>");
+                stringBuilder.append(balance.divide(gameParentPlatform.getCurrencyPro())).append("</balance></bet>");
                 return stringBuilder;
             }
         }
@@ -184,12 +182,12 @@ public class DjCallbackServiceImpl implements DjCallbackService {
         if (num <= 0) {
             stringBuilder.append("All Other Code</status_code>").append("<status_text>General error </status_text>");
             stringBuilder.append("<ref_id>").append(djCallBackParentReq.getTicket_id()).append("</ref_id>").append("<balance>");
-            stringBuilder.append(balance).append("</balance></bet>");
+            stringBuilder.append(balance.divide(gameParentPlatform.getCurrencyPro())).append("</balance></bet>");
             return stringBuilder;
         }
         stringBuilder.append("00</status_code>").append("<status_text>OK</status_text>");
         stringBuilder.append("<ref_id>").append(djCallBackParentReq.getTicket_id()).append("</ref_id>").append("<balance>");
-        stringBuilder.append(balance).append("</balance></bet>");
+        stringBuilder.append(balance.divide(gameParentPlatform.getCurrencyPro())).append("</balance></bet>");
 
         return stringBuilder;
     }

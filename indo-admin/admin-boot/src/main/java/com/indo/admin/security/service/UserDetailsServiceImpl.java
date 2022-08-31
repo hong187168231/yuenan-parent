@@ -1,15 +1,11 @@
 package com.indo.admin.security.service;
 
-import com.indo.admin.api.UserFeignClient;
 import com.indo.admin.common.enums.OAuthClientEnum;
 import com.indo.admin.modules.sys.mapper.SysUserMapper;
-import com.indo.admin.modules.sys.service.ISysUserService;
 import com.indo.admin.pojo.entity.SysUser;
 import com.indo.admin.security.domain.OAuthUserDetails;
-import com.indo.common.result.Result;
 import com.indo.common.result.ResultCode;
 import com.indo.common.web.util.JwtUtils;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AccountExpiredException;

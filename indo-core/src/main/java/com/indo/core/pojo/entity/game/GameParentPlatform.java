@@ -1,15 +1,14 @@
 package com.indo.core.pojo.entity.game;
 
-import com.baomidou.mybatisplus.annotation.*;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.indo.common.pojo.entity.BaseEntity;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
-import java.util.Date;
+import java.math.BigDecimal;
 
 @Data
 @TableName("game_parent_platform")
@@ -54,6 +53,9 @@ public class GameParentPlatform {
 
     @ApiModelProperty(value = "支持币种")
     private String currencyType;
+
+    @ApiModelProperty(value = "币种比例 1:1 1:1000")
+    private BigDecimal currencyPro;
 
     @ApiModelProperty(value = "城市")
     private String city;

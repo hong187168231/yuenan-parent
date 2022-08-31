@@ -63,7 +63,7 @@ public class T9CallbackServiceImpl implements T9CallbackService {
         if (memBaseinfo.getBalance().compareTo(BigDecimal.ZERO) > 0) {
             JSONObject jsonObject1 = initSuccessResponse();
             JSONObject balance = new JSONObject();
-            balance.put("balance", memBaseinfo.getBalance());
+            balance.put("balance", memBaseinfo.getBalance().divide(platformGameParent.getCurrencyPro()));
             jsonObject1.put("data", balance);
             return jsonObject1;
         }
@@ -86,7 +86,7 @@ public class T9CallbackServiceImpl implements T9CallbackService {
         logger.info("t9_withdrawal t9Game paramJson:{}, ip:{}", JSONObject.toJSONString(jsonObject), ip);
         String paySerialno = jsonObject.getString("paySerialno");   // 交易序号
         String playerID = jsonObject.getString("playerID");  // 玩家账号
-        BigDecimal pointAmount = jsonObject.getBigDecimal("pointAmount");  // 提取金额
+        BigDecimal pointAmount = null!=jsonObject.getBigDecimal("pointAmount")?jsonObject.getBigDecimal("pointAmount").multiply(platformGameParent.getCurrencyPro()):BigDecimal.ZERO;  // 提取金额
 
         // 查询玩家是否存在
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(playerID);
@@ -97,7 +97,7 @@ public class T9CallbackServiceImpl implements T9CallbackService {
         try {
             BigDecimal balance = memBaseinfo.getBalance();
 
-            if (memBaseinfo.getBalance().compareTo(pointAmount) < 0) {
+            if (balance.compareTo(pointAmount) < 0) {
                 return initFailureResponse(1, "玩家余额不足");
             }
 
@@ -120,7 +120,7 @@ public class T9CallbackServiceImpl implements T9CallbackService {
             JSONObject jsonObject1 = initSuccessResponse();
             JSONObject dataJson = new JSONObject();
             dataJson.put("transferID", paySerialno);
-            dataJson.put("pointAmount", pointAmount);
+            dataJson.put("pointAmount", pointAmount.divide(platformGameParent.getCurrencyPro()));
             jsonObject1.put("data", dataJson);
             return jsonObject1;
 
@@ -146,7 +146,7 @@ public class T9CallbackServiceImpl implements T9CallbackService {
         logger.info("t9_deposit t9Game paramJson:{}, ip:{}", JSONObject.toJSONString(jsonObject), ip);
         String paySerialno = jsonObject.getString("paySerialno");   // 交易序号
         String playerID = jsonObject.getString("playerID");  // 玩家账号
-        BigDecimal pointAmount = jsonObject.getBigDecimal("pointAmount");  // 提取金额
+        BigDecimal pointAmount = null!=jsonObject.getBigDecimal("pointAmount")?jsonObject.getBigDecimal("pointAmount").multiply(platformGameParent.getCurrencyPro()):BigDecimal.ZERO;  // 提取金额
 
         // 查询玩家是否存在
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(playerID);
@@ -175,7 +175,7 @@ public class T9CallbackServiceImpl implements T9CallbackService {
             JSONObject jsonObject1 = initSuccessResponse();
             JSONObject dataJson = new JSONObject();
             dataJson.put("transferID", paySerialno);
-            dataJson.put("pointAmount", pointAmount);
+            dataJson.put("pointAmount", pointAmount.divide(platformGameParent.getCurrencyPro()));
             jsonObject1.put("data", dataJson);
             return jsonObject1;
         } catch (Exception e) {

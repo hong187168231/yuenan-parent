@@ -12,6 +12,7 @@ import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.redis.utils.GeneratorIdUtil;
 import com.indo.common.redis.utils.RedisUtils;
 import com.indo.common.result.Result;
+import com.indo.common.utils.StringUtils;
 import com.indo.common.utils.ViewUtil;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
@@ -69,9 +70,9 @@ public class TakeCashServiceImpl extends SuperServiceImpl<TakeCashMapper, PayTak
         // 业务逻辑参数校验
         logicConditionCheck(loginUser, cashApplyReq, bridgeMemBank);
         // 保存提现申请
-        Long applyId = saveCashOrder(loginUser, cashApplyReq, bridgeMemBank);
+        saveCashOrder(loginUser, cashApplyReq, bridgeMemBank);
         // 更新账变信息
-        updateCashGoldChange(loginUser, cashApplyReq, applyId);
+        //updateCashGoldChange(loginUser, cashApplyReq, applyId);
         return true;
     }
 
@@ -149,6 +150,7 @@ public class TakeCashServiceImpl extends SuperServiceImpl<TakeCashMapper, PayTak
         Page<PayTakeCash> cashPage = new Page<>(page, limit);
         LambdaQueryWrapper<PayTakeCash> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(PayTakeCash::getMemId, loginInfo.getId());
+        wrapper.orderByDesc(PayTakeCash::getCreateTime);
         Page<PayTakeCash> pageList = baseMapper.selectPage(cashPage, wrapper);
         List<TakeCashRecordVO> result = DozerUtil.convert(pageList.getRecords(), TakeCashRecordVO.class);
         return Result.success(result, cashPage.getTotal());
@@ -204,14 +206,21 @@ public class TakeCashServiceImpl extends SuperServiceImpl<TakeCashMapper, PayTak
     public Long saveCashOrder(LoginInfo loginUser, TakeCashApplyReq cashApplyReq, MemBank memBank) {
         PayTakeCash orderCash = new PayTakeCash();
         orderCash.setMemId(loginUser.getId());
+        orderCash.setAccount(loginUser.getAccount());
         orderCash.setMemBankId(memBank.getMemBankId());
         orderCash.setApplyAmount(cashApplyReq.getTakeCashAmount());
         orderCash.setBankName(memBank.getBankName());
         orderCash.setBankCardNo(memBank.getBankCardNo());
         orderCash.setBankCity(memBank.getCity());
+        orderCash.setBankAccount(memBank.getUserName());
+        orderCash.setBankBranch(memBank.getBankBranch());
+        if(StringUtils.isNotEmpty(memBank.getIfsc())){
+            orderCash.setIfscCode(memBank.getIfsc());
+        }
         orderCash.setOrderNo(GeneratorIdUtil.generateId());
         orderCash.setApplyTime(new Date());
         orderCash.setCreateUser(loginUser.getAccount());
+        orderCash.setCashStatus(0);
         boolean cashFlag = this.baseMapper.insert(orderCash) > 0;
         if (cashFlag) {
             return orderCash.getTakeCashId();

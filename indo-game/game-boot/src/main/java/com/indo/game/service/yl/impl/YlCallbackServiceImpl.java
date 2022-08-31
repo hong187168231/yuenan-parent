@@ -7,24 +7,22 @@ import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.common.utils.DateUtils;
 import com.indo.core.mapper.game.TxnsMapper;
+import com.indo.core.pojo.bo.MemTradingBO;
 import com.indo.core.pojo.entity.game.GameCategory;
 import com.indo.core.pojo.entity.game.GameParentPlatform;
 import com.indo.core.pojo.entity.game.GamePlatform;
 import com.indo.core.pojo.entity.game.Txns;
 import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.yl.YlCallbackService;
-import com.indo.core.pojo.bo.MemTradingBO;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
-
-import javax.annotation.Resource;
 
 
 /**
@@ -51,8 +49,9 @@ public class YlCallbackServiceImpl implements YlCallbackService {
             dataJson.put("msg", "system busy");
             return dataJson;
         }
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.YL_PLATFORM_CODE);
         dataJson.put("status", 200);
-        dataJson.put("balance", memBaseinfo.getBalance());
+        dataJson.put("balance", memBaseinfo.getBalance().divide(gameParentPlatform.getCurrencyPro()));
         return dataJson;
     }
 
@@ -70,9 +69,9 @@ public class YlCallbackServiceImpl implements YlCallbackService {
                 gamePlatform = gameCommonService.getGamePlatformByplatformCode(jsonObject.getString("gameId"));
             }
             GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
-            BigDecimal betMoney = jsonObject.getBigDecimal("requireAmount");
+            BigDecimal betMoney = null!=jsonObject.getBigDecimal("requireAmount")?jsonObject.getBigDecimal("requireAmount").multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
             BigDecimal balance = memBaseinfo.getBalance();
-            BigDecimal betAmount = jsonObject.getBigDecimal("validbet");
+            BigDecimal betAmount = null!=jsonObject.getBigDecimal("validbet")?jsonObject.getBigDecimal("validbet").multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
             if (memBaseinfo.getBalance().compareTo(betMoney) == -1) {
                 dataJson.put("status", 500);
                 dataJson.put("msg", "code:9003");
@@ -181,7 +180,7 @@ public class YlCallbackServiceImpl implements YlCallbackService {
                 return dataJson;
             }
             dataJson.put("status", 200);
-            dataJson.put("balance", balance);
+            dataJson.put("balance", balance.divide(gameParentPlatform.getCurrencyPro()));
             return dataJson;
         } catch (Exception e) {
             logger.error("YL捕鱼回调处理异常：", e);
@@ -196,6 +195,7 @@ public class YlCallbackServiceImpl implements YlCallbackService {
     public Object ylVoidFishBetCallback(JSONObject jsonObject) {
         JSONObject dataJson = new JSONObject();
         try {
+            GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.YL_PLATFORM_CODE);
             String txId = jsonObject.getString("txId");
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(jsonObject.getString("userId"));
             LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
@@ -225,7 +225,7 @@ public class YlCallbackServiceImpl implements YlCallbackService {
 
             txnsMapper.insert(txns);
             dataJson.put("status", 200);
-            dataJson.put("balance", balance);
+            dataJson.put("balance", balance.divide(gameParentPlatform.getCurrencyPro()));
             return dataJson;
         } catch (Exception e) {
             logger.error("YL捕鱼取消捕鱼注單回调处理异常：", e);

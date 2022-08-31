@@ -15,6 +15,7 @@ import com.indo.common.result.Result;
 import com.indo.common.utils.StringUtils;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
+import com.indo.common.web.util.JwtUtils;
 import com.indo.core.pojo.entity.MemBaseinfo;
 import com.indo.core.pojo.entity.PayTakeCash;
 import com.indo.pay.api.WithdrawFeignClient;
@@ -23,11 +24,12 @@ import com.indo.pay.pojo.req.PayTakeCashReq;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 
 /**
  * <p>
- * 服务实现类
+ * 提现服务实现类
  * </p>
  *
  * @author puff
@@ -35,24 +37,16 @@ import java.util.List;
  */
 @Service
 public class PayTakeCashServiceImpl extends ServiceImpl<PayTakeCashMapper, PayTakeCash> implements IPayTakeCashService {
-
-    @Resource
-    private DozerUtil dozerUtil;
-    @Resource
-    private WithdrawFeignClient withdrawFeignClient;
-    @Resource
-    private MemBaseinfoMapper memBaseinfoMapper;
-
     @Override
-    public Page<PayTakeCashApplyVO> cashApplyList(PayTakeCashReq req) {
-        Page<PayTakeCashApplyVO> applyPage = new Page<>(req.getPage(), req.getLimit());
-        List<PayTakeCashApplyVO> list = this.baseMapper.cashApplyList(applyPage, req);
-        applyPage.setRecords(list);
-        return applyPage;
+    public Page<PayTakeCash> cashApplyList(PayTakeCashReq req) {
+        Page<PayTakeCash> applyPage = new Page<>(req.getPage(), req.getLimit());
+        LambdaQueryWrapper<PayTakeCash> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.orderByDesc(PayTakeCash::getCreateTime);
+        return baseMapper.selectPage(applyPage, queryWrapper);
     }
 
     @Override
-    public Result<List<PayTakeCashRecordVO>> cashRecordList(PayTakeCashReq cashOrderDTO) {
+    public Page<PayTakeCash> cashRecordList(PayTakeCashReq cashOrderDTO) {
         Page<PayTakeCash> page = new Page<>(cashOrderDTO.getPage(), cashOrderDTO.getLimit());
         LambdaQueryWrapper<PayTakeCash> wrapper = new LambdaQueryWrapper<>();
         if (StringUtils.isNotEmpty(cashOrderDTO.getOrderNo())) {
@@ -62,12 +56,7 @@ public class PayTakeCashServiceImpl extends ServiceImpl<PayTakeCashMapper, PayTa
             wrapper.eq(PayTakeCash::getCashStatus, cashOrderDTO.getOrderStatus());
         }
         if (cashOrderDTO.getAccount() != null) {
-            LambdaQueryWrapper<MemBaseinfo> baseinfoWrapper = new LambdaQueryWrapper<>();
-            baseinfoWrapper.eq(MemBaseinfo::getAccount,cashOrderDTO.getAccount());
-            MemBaseinfo memBaseinfo =memBaseinfoMapper.selectOne(baseinfoWrapper);
-            if(memBaseinfo!=null){
-                wrapper.eq(PayTakeCash::getMemId, memBaseinfo.getId());
-            }
+            wrapper.eq(PayTakeCash::getAccount,cashOrderDTO.getAccount());
         }
         if (cashOrderDTO.getBeginAmount() != null) {
             wrapper.ge(PayTakeCash::getActualAmount, cashOrderDTO.getBeginAmount());
@@ -81,9 +70,7 @@ public class PayTakeCashServiceImpl extends ServiceImpl<PayTakeCashMapper, PayTa
         if (cashOrderDTO.getEndTime() != null) {
             wrapper.le(PayTakeCash::getCreateTime, cashOrderDTO.getEndTime());
         }
-        Page<PayTakeCash> pageList = baseMapper.selectPage(page, wrapper);
-        List<PayTakeCashRecordVO> result = dozerUtil.convert(pageList.getRecords(), PayTakeCashRecordVO.class);
-        return Result.success(result, page.getTotal());
+        return baseMapper.selectPage(page, wrapper);
     }
 
     @Override
@@ -92,28 +79,24 @@ public class PayTakeCashServiceImpl extends ServiceImpl<PayTakeCashMapper, PayTa
         if (ObjectUtil.isEmpty(payTakeCash)) {
             throw new BizException("提现订单不存在");
         }
-        if (!payTakeCash.getCashStatus().equals(GlobalConstants.PAY_CASH_STATUS_PENDING)) {
+        if(StringUtils.isNotEmpty(payTakeCash.getOperatorUser())){
+            if(!payTakeCash.getOperatorUser().equals(JwtUtils.getUsername())){
+                throw new BizException("该订单已有处理人,需由处理人继续完成后续操作");
+            }
+        }
+        if (payTakeCash.getCashStatus().equals(GlobalConstants.PAY_CASH_STATUS_REJECT)) {
             throw new BizException("提现订单状态错误");
         }
-        if (audiTypeEnum.name().equals(AudiTypeEnum.reject)) {
-            payTakeCash.setCashStatus(GlobalConstants.PAY_CASH_STATUS_REJECT);
-        } else {
-            payTakeCash.setCashStatus(GlobalConstants.PAY_CASH_STATUS_OK);
-            PayTakeCashBO payTakeCashBO = new PayTakeCashBO();
-            DozerUtil.map(payTakeCash, payTakeCashBO);
-            Result<Boolean> result = withdrawFeignClient.withdrawRequest(payTakeCashBO);
-            if (Result.success().getCode().equals(result.getCode())) {
-                Boolean flag = result.getData();
-                if (!flag.equals(true)) {
-                    throw new BizException("提现处理失败!");
-                } else {
-                    return true;
-                }
-            } else {
-                throw new BizException("takeCashOpera No client with requested ");
-            }
-
+        if (payTakeCash.getCashStatus().equals(GlobalConstants.PAY_CASH_STATUS_CANCEL)) {
+            throw new BizException("提现订单状态错误");
         }
+        if(audiTypeEnum.getStatus().equals(GlobalConstants.PAY_CASH_STATUS_CANCEL)){
+            payTakeCash.setRemitTime(new Date());
+        }
+        payTakeCash.setCashStatus(audiTypeEnum.getStatus());
+        payTakeCash.setOperatorUser(JwtUtils.getUsername());
+        payTakeCash.setUpdateUser(JwtUtils.getUsername());
+        payTakeCash.setUpdateTime(new Date());
         return this.baseMapper.updateById(payTakeCash) > 0;
     }
 }

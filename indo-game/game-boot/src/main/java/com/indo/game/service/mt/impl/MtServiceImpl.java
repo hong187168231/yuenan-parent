@@ -161,18 +161,19 @@ public class MtServiceImpl implements MtService {
             if (null == jsonObject) {
                 return Result.failed("g091087", "第三方请求异常！");
             }
+            GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.MT_PLATFORM_CODE);
             if (jsonObject.getInteger("resultCode").equals(1)) {
                 // 返回交易编码
                 String transId = jsonObject.getString("transId");
                 // 提出金额
-                BigDecimal transCoins = jsonObject.getBigDecimal("transCoins");
+                BigDecimal transCoins = null!=jsonObject.getBigDecimal("transCoins")?jsonObject.getBigDecimal("transCoins").multiply(platformGameParent.getCurrencyPro()):BigDecimal.ZERO;
                 // 提出时间
                 Date date = jsonObject.getDate("date");
 
                 MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(loginUser.getAccount());
                 GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(platform);
                 GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
-                GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.MT_PLATFORM_CODE);
+
 
                 BigDecimal balance = memBaseinfo.getBalance().add(transCoins);
                 Txns txns = new Txns();
@@ -282,11 +283,11 @@ public class MtServiceImpl implements MtService {
             if (memBaseinfo.getBalance().compareTo(coins) < 0) {
                 return Result.failed("g300004", "会员余额不足！");
             }
-
+            GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.MT_PLATFORM_CODE);
             String transactionId = GoldchangeEnum.DSFYXZZ.name() + GeneratorIdUtil.generateId();
 
             // 充值
-            JSONObject jsonObject = commonRequest(getDepositUrl(loginUser.getAccount(), transactionId, coins));
+            JSONObject jsonObject = commonRequest(getDepositUrl(loginUser.getAccount(), transactionId, coins.divide(platformGameParent.getCurrencyPro())));
             if (null == jsonObject) {
                 return Result.failed("g091087", "第三方请求异常！");
             }
@@ -298,7 +299,7 @@ public class MtServiceImpl implements MtService {
 
                 GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(platform);
                 GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
-                GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.MT_PLATFORM_CODE);
+
 
                 // 会员平台扣款
                 gameCommonService.updateUserBalance(memBaseinfo, coins, GoldchangeEnum.DSFYXZZ, TradingEnum.SPENDING);
@@ -381,9 +382,10 @@ public class MtServiceImpl implements MtService {
     public Result withdraw(LoginInfo loginUser, String platform, String ip, BigDecimal coins) {
         logger.info("mt_withdraw mtGame account:{},code:{}", loginUser.getAccount(), platform);
         try {
+            GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.MT_PLATFORM_CODE);
             String transactionId = GoldchangeEnum.DSFYXZZ.name() + GeneratorIdUtil.generateId();
             // 提取
-            JSONObject jsonObject = commonRequest(getWithdrawUrl(loginUser.getAccount(), transactionId, coins));
+            JSONObject jsonObject = commonRequest(getWithdrawUrl(loginUser.getAccount(), transactionId, coins.divide(platformGameParent.getCurrencyPro())));
             if (null == jsonObject) {
                 return Result.failed("g091087", "第三方请求异常！");
             }
@@ -396,7 +398,7 @@ public class MtServiceImpl implements MtService {
                 MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(loginUser.getAccount());
                 GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(platform);
                 GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
-                GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.MT_PLATFORM_CODE);
+
 
                 // 会员平台加款
                 gameCommonService.updateUserBalance(memBaseinfo, coins, GoldchangeEnum.DSFYXZZ, TradingEnum.SPENDING);

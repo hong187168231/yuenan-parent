@@ -62,15 +62,20 @@ public class AgentApplyServiceImpl extends ServiceImpl<AgentApplyMapper, AgentAp
     @Transactional
     public synchronized boolean applyAudit(MemApplyAuditReq req) {
         AgentApply memAgentApply = baseMapper.selectById(req.getAgentApplyId());
-        if (ObjectUtil.isEmpty(memAgentApply) ||
-                !AudiTypeEnum.wait.getStatus().equals(memAgentApply.getStatus())) {
+        if (ObjectUtil.isEmpty(memAgentApply)) {
             throw new BizException("代理审核申请不存在");
+        }
+        if (memAgentApply.getStatus().equals(GlobalConstants.PAY_CASH_STATUS_REJECT)) {
+            throw new BizException("提现订单状态错误");
+        }
+        if (memAgentApply.getStatus().equals(GlobalConstants.PAY_CASH_STATUS_CANCEL)) {
+            throw new BizException("提现订单状态错误");
         }
         MemBaseinfo memBaseinfo = iMemBaseinfoService.getMemBaseInfo(memAgentApply.getMemId());
         if (ProhibitStatusEnum.invite.getStatus().equals(memBaseinfo.getProhibitInvite())) {
             throw new BizException("该邀请人已被禁止发展下级");
         }
-        if (req.getAudiType().name().equals(AudiTypeEnum.agree.name())) {
+        if (req.getAudiType().name().equals(AudiTypeEnum.reject.name())) {
             //更新代理关系
             modifyAgentRelation(memBaseinfo);
             //插入会员邀请码

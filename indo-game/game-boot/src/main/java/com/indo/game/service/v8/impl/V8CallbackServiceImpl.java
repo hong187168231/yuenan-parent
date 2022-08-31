@@ -66,12 +66,11 @@ public class V8CallbackServiceImpl implements V8CallbackService {
             if (null == memBaseinfo) {
                 return initResponse(s,2,account,BigDecimal.ZERO);
             }
-
             // 会员余额返回
             if (memBaseinfo.getBalance().compareTo(BigDecimal.ZERO) > 0) {
-                return initResponse(s,0,account,memBaseinfo.getBalance());
+                return initResponse(s,0,account,memBaseinfo.getBalance().divide(platformGameParent.getCurrencyPro()));
             }else {
-                return initResponse(s,1,account,memBaseinfo.getBalance());
+                return initResponse(s,1,account,memBaseinfo.getBalance().divide(platformGameParent.getCurrencyPro()));
             }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -117,11 +116,12 @@ public class V8CallbackServiceImpl implements V8CallbackService {
             wrapper.eq(Txns::getPlatformTxId, orderId);
             wrapper.eq(Txns::getPlatform, platformGameParent.getPlatformCode());
             Txns oldTxns = txnsMapper.selectOne(wrapper);
+            money = money.multiply(platformGameParent.getCurrencyPro());
             if(null!=oldTxns){
-                return initResponse(s,0,account,memBaseinfo.getBalance());
+                return initResponse(s,0,account,balance.divide(platformGameParent.getCurrencyPro()));
             }
-            if (memBaseinfo.getBalance().compareTo(balance) < 0) {
-                return initResponse(s, 1, account, memBaseinfo.getBalance());
+            if (balance.compareTo(balance) < 0) {
+                return initResponse(s, 1, account, balance.divide(platformGameParent.getCurrencyPro()));
             } else{
 
                 if(BigDecimal.ZERO.compareTo(money)!=0){
@@ -133,7 +133,7 @@ public class V8CallbackServiceImpl implements V8CallbackService {
                 Txns txns = getInitTxns(platformGameParent, orderId, account, money, balance, ip);
                 int num = txnsMapper.insert(txns);
 
-                return initResponse(s,0,account,memBaseinfo.getBalance());
+                return initResponse(s,0,account,balance.divide(platformGameParent.getCurrencyPro()));
 
             }
         } catch (Exception e) {
@@ -172,7 +172,7 @@ public class V8CallbackServiceImpl implements V8CallbackService {
             if (null == memBaseinfo) {
                 return initResponse(s, 2, account, BigDecimal.ZERO);
             }
-
+            money = money.multiply(platformGameParent.getCurrencyPro());
             BigDecimal balance = memBaseinfo.getBalance();
             LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
             wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Settle"));
@@ -181,10 +181,10 @@ public class V8CallbackServiceImpl implements V8CallbackService {
             wrapper.eq(Txns::getPlatform, platformGameParent.getPlatformCode());
             Txns oldTxns = txnsMapper.selectOne(wrapper);
             if(null!=oldTxns&&"Settle".equals(oldTxns.getMethod())){
-                return initResponse(s,0,account,memBaseinfo.getBalance());
+                return initResponse(s,0,account,balance.divide(platformGameParent.getCurrencyPro()));
             }
-            if (memBaseinfo.getBalance().compareTo(balance) < 0) {
-                return initResponse(s, 1, account, memBaseinfo.getBalance());
+            if (balance.compareTo(balance) < 0) {
+                return initResponse(s, 1, account, balance.divide(platformGameParent.getCurrencyPro()));
             } else{
 
                 if(BigDecimal.ZERO.compareTo(money)!=0){
@@ -212,7 +212,7 @@ public class V8CallbackServiceImpl implements V8CallbackService {
                 // 生成订单数据
                 int num = txnsMapper.insert(txns);
 
-                return initResponse(s,0,account,memBaseinfo.getBalance());
+                return initResponse(s,0,account,balance.divide(platformGameParent.getCurrencyPro()));
 
             }
         } catch (Exception e) {
@@ -299,7 +299,7 @@ public class V8CallbackServiceImpl implements V8CallbackService {
             if (null == memBaseinfo) {
                 return initResponse(s, 2, 5);
             }
-
+            money = money.multiply(platformGameParent.getCurrencyPro());
             BigDecimal balance = memBaseinfo.getBalance();
             LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
             wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Settle").or().eq(Txns::getMethod, "Cancel Bet"));

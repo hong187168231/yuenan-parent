@@ -7,26 +7,24 @@ import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.common.utils.DateUtils;
 import com.indo.core.mapper.game.TxnsMapper;
-import com.indo.game.pojo.dto.mg.MgCallBackReq;
+import com.indo.core.pojo.bo.MemTradingBO;
 import com.indo.core.pojo.entity.game.GameCategory;
 import com.indo.core.pojo.entity.game.GameParentPlatform;
 import com.indo.core.pojo.entity.game.GamePlatform;
 import com.indo.core.pojo.entity.game.Txns;
+import com.indo.game.pojo.dto.mg.MgCallBackReq;
 import com.indo.game.pojo.vo.callback.pg.PgCallBackResponse;
 import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.mg.MgCallbackService;
-import com.indo.core.pojo.bo.MemTradingBO;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
-
-import javax.annotation.Resource;
 
 
 /**
@@ -54,7 +52,7 @@ public class MgCallbackServiceImpl implements MgCallbackService {
             dataJson.put("message", "API 令牌過期或無效");
             return dataJson;
         } else {
-            dataJson.put("balance", memBaseinfo.getBalance());
+            dataJson.put("balance", memBaseinfo.getBalance().divide(platformGameParent.getCurrencyPro()));
             dataJson.put("currency", platformGameParent.getCurrencyType());
             return dataJson;
         }
@@ -83,7 +81,7 @@ public class MgCallbackServiceImpl implements MgCallbackService {
             dataJson.put("message", "API 令牌過期或無效");
             return dataJson;
         }
-        dataJson.put("balance", memBaseinfo.getBalance());
+        dataJson.put("balance", memBaseinfo.getBalance().divide(platformGameParent.getCurrencyPro()));
         dataJson.put("currency", platformGameParent.getCurrencyType());
         return dataJson;
     }
@@ -113,7 +111,7 @@ public class MgCallbackServiceImpl implements MgCallbackService {
         if (null != oldTxns) {
         }
         Txns txns = new Txns();
-        BigDecimal amount = mgCallBackReq.getAmount();
+        BigDecimal amount = null!=mgCallBackReq.getAmount()?mgCallBackReq.getAmount().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
         if ("CREDIT".equals(mgCallBackReq.getTxnType())) {//赢
             balance = balance.add(amount);
             if (null != oldTxns) {
@@ -200,7 +198,7 @@ public class MgCallbackServiceImpl implements MgCallbackService {
             txnsMapper.updateById(oldTxns);
         }else {
             //下注金额
-            txns.setBetAmount(mgCallBackReq.getAmount());
+            txns.setBetAmount(amount);
         }
         int num = txnsMapper.insert(txns);
         if (num <= 0) {
@@ -209,7 +207,7 @@ public class MgCallbackServiceImpl implements MgCallbackService {
             return dataJson;
         }
         dataJson.put("currency", mgCallBackReq.getCurrency());
-        dataJson.put("balance_amount", balance);
+        dataJson.put("balance_amount", balance.divide(gameParentPlatform.getCurrencyPro()));
         return dataJson;
     }
 
@@ -273,7 +271,7 @@ public class MgCallbackServiceImpl implements MgCallbackService {
             return dataJson;
         }
         dataJson.put("currency", mgCallBackReq.getCurrency());
-        dataJson.put("balance_amount", balance);
+        dataJson.put("balance_amount", balance.divide(gameParentPlatform.getCurrencyPro()));
         return dataJson;
     }
 }

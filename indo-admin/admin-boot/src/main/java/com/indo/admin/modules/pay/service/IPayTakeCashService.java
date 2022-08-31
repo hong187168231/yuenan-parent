@@ -22,9 +22,9 @@ import java.util.List;
 public interface IPayTakeCashService extends IService<PayTakeCash> {
 
 
-    Page<PayTakeCashApplyVO> cashApplyList(PayTakeCashReq cashOrderDTO);
+    Page<PayTakeCash> cashApplyList(PayTakeCashReq cashOrderDTO);
 
-    Result<List<PayTakeCashRecordVO>> cashRecordList(PayTakeCashReq payTakeCashReq);
+    Page<PayTakeCash> cashRecordList(PayTakeCashReq payTakeCashReq);
 
     boolean takeCashOpera(AudiTypeEnum audiTypeEnum, Long takeCashId);
 }

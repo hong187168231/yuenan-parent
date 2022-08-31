@@ -3,9 +3,8 @@ package com.indo.admin.modules.sys.controller;
 
 import com.indo.admin.modules.sys.service.ISysIpLimitService;
 import com.indo.admin.pojo.dto.SysIpLimitDTO;
-import com.indo.admin.pojo.entity.SysIpLimit;
+import com.indo.core.pojo.entity.SysIpLimit;
 import com.indo.common.result.Result;
-import com.indo.core.pojo.req.SysParameterReq;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

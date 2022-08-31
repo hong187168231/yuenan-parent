@@ -3,7 +3,7 @@ package com.indo.admin.modules.oauth;
 import cn.hutool.json.JSONObject;
 import com.indo.admin.common.enums.OAuthClientEnum;
 import com.indo.admin.modules.sys.service.ISysIpLimitService;
-import com.indo.admin.pojo.entity.SysIpLimit;
+import com.indo.core.pojo.entity.SysIpLimit;
 import com.indo.common.constant.AuthConstants;
 import com.indo.common.result.Result;
 import com.indo.common.web.exception.BizException;

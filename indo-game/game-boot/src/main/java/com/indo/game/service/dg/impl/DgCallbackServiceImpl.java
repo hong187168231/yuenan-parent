@@ -1,4 +1,4 @@
-package com.indo.game.service.dg;
+package com.indo.game.service.dg.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -8,27 +8,25 @@ import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.common.utils.DateUtils;
 import com.indo.core.mapper.game.TxnsMapper;
-import com.indo.game.pojo.dto.dg.DgCallBackReq;
-import com.indo.game.pojo.dto.dg.DgMemberCallBackReq;
+import com.indo.core.pojo.bo.MemTradingBO;
 import com.indo.core.pojo.entity.game.GameCategory;
 import com.indo.core.pojo.entity.game.GameParentPlatform;
 import com.indo.core.pojo.entity.game.GamePlatform;
 import com.indo.core.pojo.entity.game.Txns;
+import com.indo.game.pojo.dto.dg.DgCallBackReq;
+import com.indo.game.pojo.dto.dg.DgMemberCallBackReq;
 import com.indo.game.service.common.GameCommonService;
-import com.indo.core.pojo.bo.MemTradingBO;
-
+import com.indo.game.service.dg.DgCallbackService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-
-import javax.annotation.Resource;
 
 
 /**
@@ -51,6 +49,7 @@ public class DgCallbackServiceImpl implements DgCallbackService {
         DgMemberCallBackReq dgMemberCallBackReq = JSONObject.toJavaObject(JSONObject.parseObject(JSONObject.toJSONString(dgCallBackReq.getMember())),DgMemberCallBackReq.class);
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(dgMemberCallBackReq.getUsername());
         JSONObject dataJson = new JSONObject();
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.DG_PLATFORM_CODE);
         if (null == memBaseinfo) {
             dataJson.put("codeId", "1");
             dataJson.put("token", dgCallBackReq.getToken());
@@ -60,7 +59,7 @@ public class DgCallbackServiceImpl implements DgCallbackService {
             dataJson.put("token", dgCallBackReq.getToken());
             JSONObject memberJson = new JSONObject();
             memberJson.put("username", dgMemberCallBackReq.getUsername());
-            memberJson.put("balance", memBaseinfo.getBalance());
+            memberJson.put("balance", memBaseinfo.getBalance().divide(gameParentPlatform.getCurrencyPro()));
             dataJson.put("member", memberJson);
             return dataJson;
         }
@@ -92,7 +91,7 @@ public class DgCallbackServiceImpl implements DgCallbackService {
             return dataJson;
         }
 
-        BigDecimal amount = dgMemberCallBackReq.getAmount();
+        BigDecimal amount = null!=dgMemberCallBackReq.getAmount()?dgMemberCallBackReq.getAmount().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
 //创建时间
         String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
         Txns txns = new Txns();
@@ -191,8 +190,8 @@ public class DgCallbackServiceImpl implements DgCallbackService {
         dataJson.put("data", dgCallBackReq.getData());
         JSONObject memberJson = new JSONObject();
         memberJson.put("username", dgMemberCallBackReq.getUsername());
-        memberJson.put("amount", amount);
-        memberJson.put("balance", balance);
+        memberJson.put("amount", amount.divide(gameParentPlatform.getCurrencyPro()));
+        memberJson.put("balance", balance.divide(gameParentPlatform.getCurrencyPro()));
         dataJson.put("member", memberJson);
         return dataJson;
     }
@@ -219,6 +218,7 @@ public class DgCallbackServiceImpl implements DgCallbackService {
     public Object djInformCallback(DgCallBackReq<DgMemberCallBackReq> dgCallBackReq, String ip, String agentName) {
         DgMemberCallBackReq dgMemberCallBackReq = JSONObject.toJavaObject(JSONObject.parseObject(JSONObject.toJSONString(dgCallBackReq.getMember())),DgMemberCallBackReq.class);
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(dgMemberCallBackReq.getUsername());
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.DG_PLATFORM_CODE);
         JSONObject dataJson = new JSONObject();
         BigDecimal balance = memBaseinfo.getBalance();
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
@@ -227,30 +227,31 @@ public class DgCallbackServiceImpl implements DgCallbackService {
         wrapper.eq(Txns::getPlatformTxId, dgCallBackReq.getData());
         
         Txns oldTxns = txnsMapper.selectOne(wrapper);
-        if (dgMemberCallBackReq.getAmount().compareTo(BigDecimal.ZERO) == -1) {
+        BigDecimal amount = null!=dgMemberCallBackReq.getAmount()?dgMemberCallBackReq.getAmount().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
+        if (amount.compareTo(BigDecimal.ZERO) == -1) {
             if (null != oldTxns) {
-                balance = balance.add(dgMemberCallBackReq.getAmount());
-                gameCommonService.updateUserBalance(memBaseinfo, dgMemberCallBackReq.getAmount(), GoldchangeEnum.PLACE_BET, TradingEnum.INCOME);
+                balance = balance.add(amount);
+                gameCommonService.updateUserBalance(memBaseinfo, amount, GoldchangeEnum.PLACE_BET, TradingEnum.INCOME);
             } else {
                 dataJson.put("codeId", "0");
                 dataJson.put("token", dgCallBackReq.getToken());
                 dataJson.put("data", dgCallBackReq.getData());
                 JSONObject memberJson = new JSONObject();
                 memberJson.put("username", dgMemberCallBackReq.getUsername());
-                memberJson.put("balance", balance);
+                memberJson.put("balance", balance.divide(gameParentPlatform.getCurrencyPro()));
                 dataJson.put("member", memberJson);
                 return dataJson;
             }
-        } else if (dgMemberCallBackReq.getAmount().compareTo(BigDecimal.ZERO) == 1) {
+        } else if (amount.compareTo(BigDecimal.ZERO) == 1) {
             if (null == oldTxns) {
-                balance = balance.add(dgMemberCallBackReq.getAmount());
-                gameCommonService.updateUserBalance(memBaseinfo, dgMemberCallBackReq.getAmount(), GoldchangeEnum.PLACE_BET, TradingEnum.INCOME);
+                balance = balance.add(amount);
+                gameCommonService.updateUserBalance(memBaseinfo, amount, GoldchangeEnum.PLACE_BET, TradingEnum.INCOME);
             } else {
                 dataJson.put("codeId", "0");
                 dataJson.put("data", dgCallBackReq.getData());
                 dataJson.put("token", dgCallBackReq.getToken());
                 JSONObject memberJson = new JSONObject();
-                memberJson.put("balance", balance);
+                memberJson.put("balance", balance.divide(gameParentPlatform.getCurrencyPro()));
                 memberJson.put("username", dgMemberCallBackReq.getUsername());
                 dataJson.put("member", memberJson);
                 return dataJson;
@@ -274,7 +275,7 @@ public class DgCallbackServiceImpl implements DgCallbackService {
         dataJson.put("token", dgCallBackReq.getToken());
         dataJson.put("data", dgCallBackReq.getData());
         JSONObject memberJson = new JSONObject();
-        memberJson.put("balance", balance);
+        memberJson.put("balance", balance.divide(gameParentPlatform.getCurrencyPro()));
         memberJson.put("username", dgMemberCallBackReq.getUsername());
         dataJson.put("member", memberJson);
         return dataJson;
@@ -287,7 +288,7 @@ public class DgCallbackServiceImpl implements DgCallbackService {
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(dgMemberCallBackReq.getUsername());
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Txns::getRoundId, dgCallBackReq.getTicketId());
-        
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.DG_PLATFORM_CODE);
         List<Txns> oldTxns = txnsMapper.selectList(wrapper);
         JSONArray jsonArray = new JSONArray();
         if (oldTxns.size() > 0) {
@@ -296,7 +297,7 @@ public class DgCallbackServiceImpl implements DgCallbackService {
                 json.put("username", memBaseinfo.getAccount());
                 json.put("ticketId", dgCallBackReq.getTicketId());
                 json.put("serial", txns.getPlatformTxId());
-                json.put("amount", txns.getBetAmount());
+                json.put("amount", txns.getBetAmount().divide(gameParentPlatform.getCurrencyPro()));
                 jsonArray.add(json);
             }
             dataJson.put("codeId", "0");

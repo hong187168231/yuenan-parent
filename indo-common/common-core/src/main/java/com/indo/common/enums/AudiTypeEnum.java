@@ -13,9 +13,10 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum AudiTypeEnum {
 
-    wait(0),
-    agree(1),
-    reject(2);
+    PENDING(0),
+    OK(1),
+    CANCEL(2),
+    reject(-1);
 
     private Integer status;
 }

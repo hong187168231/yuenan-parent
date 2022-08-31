@@ -120,6 +120,9 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
         set.add("/bti");
         set.add("/yabo");
         set.add("/sa");
+        set.add("/ag");
+        set.add("/SGWin");
+        set.add("/TCG");
         List<String> result = set.stream().filter(a -> uri.contains(a)).collect(Collectors.toList());
         return !CollectionUtils.isEmpty(result);
     }

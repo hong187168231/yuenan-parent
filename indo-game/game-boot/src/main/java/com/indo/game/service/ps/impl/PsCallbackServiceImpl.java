@@ -7,28 +7,26 @@ import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.common.utils.DateUtils;
 import com.indo.core.mapper.game.TxnsMapper;
-import com.indo.game.pojo.dto.ps.PsCallBackParentReq;
-import com.indo.game.pojo.entity.CptOpenMember;
+import com.indo.core.pojo.bo.MemTradingBO;
 import com.indo.core.pojo.entity.game.GameCategory;
 import com.indo.core.pojo.entity.game.GameParentPlatform;
 import com.indo.core.pojo.entity.game.GamePlatform;
 import com.indo.core.pojo.entity.game.Txns;
+import com.indo.game.pojo.dto.ps.PsCallBackParentReq;
+import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
 import com.indo.game.service.ps.PsCallbackService;
-import com.indo.core.pojo.bo.MemTradingBO;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.Date;
-
-import javax.annotation.Resource;
 
 
 /**
@@ -64,7 +62,8 @@ public class PsCallbackServiceImpl implements PsCallbackService {
             dataJson.put("message", "Token 无效");
             return dataJson;
         }
-        String signPrice = format.format(memBaseinfo.getBalance().multiply(new BigDecimal(100)));
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.PS_PLATFORM_CODE);
+        String signPrice = format.format(memBaseinfo.getBalance().divide(gameParentPlatform.getCurrencyPro()).multiply(new BigDecimal(100)));
         dataJson.put("status_code", 0);
         dataJson.put("member_id", cptOpenMember.getId() + "");
         dataJson.put("member_name", cptOpenMember.getUserName());
@@ -92,8 +91,8 @@ public class PsCallbackServiceImpl implements PsCallbackService {
         }
         GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         BigDecimal balance = memBaseinfo.getBalance();
-//        BigDecimal betAmount = new BigDecimal(psbetCallBackReq.getTotal_bet()).divide(new BigDecimal(100));
-        BigDecimal betAmount = new BigDecimal(psbetCallBackReq.getTotal_bet());
+        BigDecimal betAmount = new BigDecimal(psbetCallBackReq.getTotal_bet()).divide(new BigDecimal(100)).multiply(gameParentPlatform.getCurrencyPro());
+//        BigDecimal betAmount = new BigDecimal(psbetCallBackReq.getTotal_bet()).multiply(gameParentPlatform.getCurrencyPro());
         if (memBaseinfo.getBalance().compareTo(betAmount) == -1) {
             dataJson.put("status_code", "3");
             dataJson.put("message", "馀额不足");
@@ -179,7 +178,7 @@ public class PsCallbackServiceImpl implements PsCallbackService {
             dataJson.put("message", "单号无效");
             return dataJson;
         }
-        String signPrice = format.format(balance);
+        String signPrice = format.format(balance.divide(gameParentPlatform.getCurrencyPro()).multiply(new BigDecimal(100)));
         dataJson.put("status_code", 0);
         dataJson.put("balance", Integer.parseInt(signPrice));
         return dataJson;
@@ -194,6 +193,7 @@ public class PsCallbackServiceImpl implements PsCallbackService {
             dataJson.put("message", "Token 无效");
             return dataJson;
         }
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.PS_PLATFORM_CODE);
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cptOpenMember.getUserName());
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Txns::getPlatformTxId, psbetCallBackReq.getTxn_id());
@@ -205,7 +205,7 @@ public class PsCallbackServiceImpl implements PsCallbackService {
             return dataJson;
         }
 //        BigDecimal money = new BigDecimal(psbetCallBackReq.getTotal_win()).subtract(new BigDecimal(psbetCallBackReq.getBonus_win()));
-        BigDecimal money = new BigDecimal(psbetCallBackReq.getTotal_win());
+        BigDecimal money = new BigDecimal(psbetCallBackReq.getTotal_win()).divide(new BigDecimal(100)).multiply(gameParentPlatform.getCurrencyPro());
 //        BigDecimal winAmount = money.divide(new BigDecimal(100));
         BigDecimal winAmount = money;
         BigDecimal balance = memBaseinfo.getBalance();
@@ -231,7 +231,7 @@ public class PsCallbackServiceImpl implements PsCallbackService {
         oldTxns.setStatus("Settle");
         oldTxns.setUpdateTime(dateStr);
         txnsMapper.updateById(oldTxns);
-        String signPrice = format.format(balance);
+        String signPrice = format.format(balance.divide(gameParentPlatform.getCurrencyPro()).multiply(new BigDecimal(100)));
         dataJson.put("status_code", 0);
         dataJson.put("balance", Integer.parseInt(signPrice));
         return dataJson;
@@ -247,6 +247,7 @@ public class PsCallbackServiceImpl implements PsCallbackService {
             dataJson.put("message", "Token 无效");
             return dataJson;
         }
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.PS_PLATFORM_CODE);
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cptOpenMember.getUserName());
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Txns::getStatus, "Running");
@@ -274,7 +275,7 @@ public class PsCallbackServiceImpl implements PsCallbackService {
         txns.setStatus("Running");
         txns.setCreateTime(dateStr);
         txnsMapper.insert(txns);
-        String signPrice = format.format(balance);
+        String signPrice = format.format(balance.divide(gameParentPlatform.getCurrencyPro()).multiply(new BigDecimal(100)));
         dataJson.put("status_code", 0);
         dataJson.put("balance", Integer.parseInt(signPrice));
         return dataJson;
@@ -289,6 +290,7 @@ public class PsCallbackServiceImpl implements PsCallbackService {
             dataJson.put("message", "Token 无效");
             return dataJson;
         }
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.PS_PLATFORM_CODE);
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cptOpenMember.getUserName());
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Txns::getMethod, "Give");
@@ -303,7 +305,7 @@ public class PsCallbackServiceImpl implements PsCallbackService {
         }
         BigDecimal balance = memBaseinfo.getBalance();
 //        BigDecimal amount = new BigDecimal(psbetCallBackReq.getBonus_reward()).divide(new BigDecimal(100));
-        BigDecimal amount = new BigDecimal(psbetCallBackReq.getBonus_reward());
+        BigDecimal amount = new BigDecimal(psbetCallBackReq.getBonus_reward()).divide(new BigDecimal(100)).multiply(gameParentPlatform.getCurrencyPro());
         balance = balance.add(amount);
         gameCommonService.updateUserBalance(memBaseinfo, amount, GoldchangeEnum.ACTIVITY_GIVE, TradingEnum.INCOME);
         String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
@@ -324,7 +326,7 @@ public class PsCallbackServiceImpl implements PsCallbackService {
             dataJson.put("message", "单号无效");
             return dataJson;
         }
-        String signPrice = format.format(balance);
+        String signPrice = format.format(balance.divide(gameParentPlatform.getCurrencyPro()).multiply(new BigDecimal(100)));
         dataJson.put("status_code", 0);
         dataJson.put("balance", Integer.parseInt(signPrice));
         return dataJson;
@@ -340,7 +342,8 @@ public class PsCallbackServiceImpl implements PsCallbackService {
             return dataJson;
         }
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cptOpenMember.getUserName());
-        String signPrice = format.format(memBaseinfo.getBalance().multiply(new BigDecimal(100)));
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.PS_PLATFORM_CODE);
+        String signPrice = format.format(memBaseinfo.getBalance().divide(gameParentPlatform.getCurrencyPro()).multiply(new BigDecimal(100)));
         dataJson.put("status_code", 0);
         dataJson.put("balance", Integer.parseInt(signPrice));
         return dataJson;

@@ -66,7 +66,7 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             builder.append("error_code=0\n");
             builder.append("error_message=No error\n");
             builder.append("cust_id=").append(memBaseinfo.getAccount()).append("\n");
-            builder.append("balance=").append(memBaseinfo.getBalance()).append("\n");
+            builder.append("balance=").append(memBaseinfo.getBalance().divide(gameParentPlatform.getCurrencyPro())).append("\n");
             builder.append("cust_login=").append(memBaseinfo.getAccount()).append("\n");
             builder.append("city=").append(gameParentPlatform.getCity()).append("\n");
             builder.append("country=").append(gameParentPlatform.getCountry()).append("\n");
@@ -83,23 +83,24 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
     public Object reserve(BtiReserveRequst btiReserveRequst, String ip) {
 
         try {
+            GameParentPlatform gameParentPlatform = getGameParentPlatform();
             String paySerialno = btiReserveRequst.getReserve_id();
             String userName = btiReserveRequst.getCust_id();
-            BigDecimal betAmount = btiReserveRequst.getAmount();
+            BigDecimal betAmount = null!=btiReserveRequst.getAmount()?btiReserveRequst.getAmount().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
 
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(userName);
             if (null == memBaseinfo) {
                 return initFailureResponse(-2, "用户不存在",BigDecimal.ZERO,paySerialno);
             }
             BigDecimal balance = memBaseinfo.getBalance();
-            GameParentPlatform gameParentPlatform = getGameParentPlatform();
+
             // 校验IP
             if (checkIp(ip, gameParentPlatform)) {
-                return initFailureResponse(-6, "非信任來源IP",balance,paySerialno);
+                return initFailureResponse(-6, "非信任來源IP",balance.divide(gameParentPlatform.getCurrencyPro()),paySerialno);
             }
 
             if (balance.compareTo(betAmount) < 0) {
-                return initFailureResponse(-4, "玩家余额不足",balance,paySerialno);
+                return initFailureResponse(-4, "玩家余额不足",balance.divide(gameParentPlatform.getCurrencyPro()),paySerialno);
             }
             // 查询订单
             Txns oldTxns = getReserveTxns(gameParentPlatform, paySerialno);
@@ -109,12 +110,12 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
                 builder.append("error_code=0\n");
                 builder.append("error_message=repeated submit\n");
                 builder.append("trx_id=").append(paySerialno).append("\n");
-                builder.append("balance=").append(balance);
+                builder.append("balance=").append(balance.divide(gameParentPlatform.getCurrencyPro()));
                 return builder.toString();
             }
             GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(gameParentPlatform.getPlatformCode(),gameParentPlatform.getPlatformCode());
             if (null == gamePlatform) {
-                return initFailureResponse(-4, "游戏不存在",balance,paySerialno);
+                return initFailureResponse(-4, "游戏不存在",balance.divide(gameParentPlatform.getCurrencyPro()),paySerialno);
             }
             GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
 
@@ -206,7 +207,7 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             builder.append("error_code=0\n");
             builder.append("error_message=No error\n");
             builder.append("trx_id=").append(paySerialno).append("\n");
-            builder.append("balance=").append(balance);
+            builder.append("balance=").append(balance.divide(gameParentPlatform.getCurrencyPro()));
             return builder.toString();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -218,9 +219,11 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
     public Object debitReserve(BtiDebitReserveRequst btiDebitReserveRequst, String ip) {
 
         try {
+            GameParentPlatform gameParentPlatform = getGameParentPlatform();
             String paySerialno = btiDebitReserveRequst.getReserve_id();
             String userName = btiDebitReserveRequst.getCust_id();
             String reqId = btiDebitReserveRequst.getReq_id();
+            BigDecimal amount = null!=btiDebitReserveRequst.getAmount()?btiDebitReserveRequst.getAmount().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
 
             // 查询订单
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(userName);
@@ -228,22 +231,22 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
                 return initFailureResponse(0, "用户不存在",BigDecimal.ZERO,paySerialno);
             }
             BigDecimal balance = memBaseinfo.getBalance();
-            GameParentPlatform gameParentPlatform = getGameParentPlatform();
+
             // 校验IP
             if (checkIp(ip, gameParentPlatform)) {
-                return initFailureResponse(0, "非信任來源IP",balance,paySerialno);
+                return initFailureResponse(0, "非信任來源IP",balance.divide(gameParentPlatform.getCurrencyPro()),paySerialno);
             }
 
             // reserve_id 查询是否存在
             Txns oldTxnsReserve = getReserveTxns(gameParentPlatform, paySerialno);
             if (null == oldTxnsReserve) {
-                return initFailureResponse(0, "reserve_id not found",balance,paySerialno);
+                return initFailureResponse(0, "reserve_id not found",balance.divide(gameParentPlatform.getCurrencyPro()),paySerialno);
             }
 
             // req_id 查询是否存在
             Txns oldReqTxnsReserve = getDebitReserveTxns(gameParentPlatform, paySerialno, reqId);
             if (null != oldReqTxnsReserve) {
-                return initFailureResponse(0, "repeated submit",balance,paySerialno);
+                return initFailureResponse(0, "repeated submit",balance.divide(gameParentPlatform.getCurrencyPro()),paySerialno);
             }
 
             // // 写入新的debit订单，用于后续commit进行下注金额比对
@@ -253,10 +256,11 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             txns.setRePlatformTxId(reqId);
             txns.setBalance(balance);
             txns.setId(null);
-            txns.setTurnover(btiDebitReserveRequst.getAmount());
-            txns.setBetAmount(btiDebitReserveRequst.getAmount());
-            txns.setWinningAmount(btiDebitReserveRequst.getAmount().negate());
-            txns.setRealBetAmount(btiDebitReserveRequst.getAmount());
+            txns.setTurnover(amount);
+            txns.setBetAmount(amount);
+            txns.setWinningAmount(amount.negate());
+            txns.setWinAmount(amount);
+            txns.setRealBetAmount(amount);
             txns.setMethod("Place Bet");
             //操作名称
             txns.setStatus("Reserve");
@@ -270,7 +274,7 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             builder.append("error_code=0\n");
             builder.append("error_message=No error\n");
             builder.append("trx_id=").append(reqId).append("\n");
-            builder.append("balance=").append(balance);
+            builder.append("balance=").append(balance.divide(gameParentPlatform.getCurrencyPro()));
             return builder.toString();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -301,7 +305,7 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
                 StringBuilder builder = new StringBuilder();
                 builder.append("error_code=0\n");
                 builder.append("error_message=").append("repeated submit").append("\n");
-                builder.append("balance=").append(balance);
+                builder.append("balance=").append(balance.divide(platformGameParent.getCurrencyPro()));
                 return builder.toString();
             }
             // 查询用户请求订单
@@ -310,7 +314,7 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
                 StringBuilder builder = new StringBuilder();
                 builder.append("error_code=0\n");
                 builder.append("error_message=").append("Reserve was not found").append("\n");
-                builder.append("balance=").append(memBaseinfo.getBalance());
+                builder.append("balance=").append(balance.divide(platformGameParent.getCurrencyPro()));
                 return builder.toString();
             }
 
@@ -341,7 +345,7 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             StringBuilder builder = new StringBuilder();
             builder.append("error_code=0\n");
             builder.append("error_message=No error\n");
-            builder.append("balance=").append(balance);
+            builder.append("balance=").append(balance.divide(platformGameParent.getCurrencyPro()));
             return builder.toString();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -375,13 +379,13 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
                 builder.append("error_code=0\n");
                 builder.append("error_message=repeated submit\n");
                 builder.append("trx_id=").append(paySerialno).append("\n");
-                builder.append("balance=").append(balance);
+                builder.append("balance=").append(balance.divide(gameParentPlatform.getCurrencyPro()));
                 return builder.toString();
             }
             // reserve_id 查询是否存在
             Txns oldTxnsReserve = getReserveTxns(gameParentPlatform, paySerialno);
             if (null == oldTxnsReserve) {
-                return initFailureResponse(0, "reserve_id not found",balance,paySerialno);
+                return initFailureResponse(0, "reserve_id not found",balance.divide(gameParentPlatform.getCurrencyPro()),paySerialno);
             }
 
             // 预扣款金额
@@ -421,7 +425,7 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             builder.append("error_code=0\n");
             builder.append("error_message=No error\n");
             builder.append("trx_id=").append(paySerialno).append("\n");
-            builder.append("balance=").append(balance);
+            builder.append("balance=").append(balance.divide(gameParentPlatform.getCurrencyPro()));
             return builder.toString();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -455,12 +459,12 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
                 builder.append("error_code=0\n");
                 builder.append("error_message=No error\n");
                 builder.append("trx_id=").append(reqId).append("\n");
-                builder.append("balance=").append(balance);
+                builder.append("balance=").append(balance.divide(gameParentPlatform.getCurrencyPro()));
                 return builder.toString();
             }
 
             // 扣款
-            BigDecimal betAmount = btiDebitCustomerRequst.getAmount();
+            BigDecimal betAmount = null!=btiDebitCustomerRequst.getAmount()?btiDebitCustomerRequst.getAmount().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
 
             GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(gameParentPlatform.getPlatformCode(),gameParentPlatform.getPlatformCode());
             GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
@@ -537,7 +541,7 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             builder.append("error_code=0\n");
             builder.append("error_message=No error\n");
             builder.append("trx_id=").append(reqId).append("\n");
-            builder.append("balance=").append(balance);
+            builder.append("balance=").append(balance.divide(gameParentPlatform.getCurrencyPro()));
             return builder.toString();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -574,18 +578,18 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
                 builder.append("error_code=0\n");
                 builder.append("error_message=No errorrepeated submit\n");
                 builder.append("trx_id=").append(reqId).append("\n");
-                builder.append("balance=").append(balance);
+                builder.append("balance=").append(balance.divide(gameParentPlatform.getCurrencyPro()));
                 return builder.toString();
             }
 
             // 所有中奖金额
-            BigDecimal winAmount = btiCreditCustomerRequst.getAmount();
+            BigDecimal winAmount = null!=btiCreditCustomerRequst.getAmount()?btiCreditCustomerRequst.getAmount().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
 
             GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(gameParentPlatform.getPlatformCode(),gameParentPlatform.getPlatformCode());
             GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
 
             if(winAmount.compareTo(BigDecimal.ZERO)!=0) {
-                balance = memBaseinfo.getBalance().add(winAmount);
+                balance = balance.add(winAmount);
                 // 更新余额
                 gameCommonService.updateUserBalance(memBaseinfo, winAmount, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
             }
@@ -653,7 +657,7 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             builder.append("error_code=0\n");
             builder.append("error_message=No error\n");
             builder.append("trx_id=").append(reqId).append("\n");
-            builder.append("balance=").append(balance);
+            builder.append("balance=").append(balance.divide(gameParentPlatform.getCurrencyPro()));
             return builder.toString();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -830,7 +834,7 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             dataJson.put("token",token);
             dataJson.put("status","real");
             dataJson.put("message","success");
-            dataJson.put("balance",String.valueOf(memBaseinfo.getBalance()));
+            dataJson.put("balance",String.valueOf(memBaseinfo.getBalance().divide(gameParentPlatform.getCurrencyPro())));
             return dataJson;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -861,7 +865,7 @@ public class BtiCallbackServiceImpl implements BtiCallbackService {
             }
             dataJson.put("status","success");
             dataJson.put("message","success");
-            dataJson.put("balance",String.valueOf(memBaseinfo.getBalance()));
+            dataJson.put("balance",String.valueOf(memBaseinfo.getBalance().divide(gameParentPlatform.getCurrencyPro())));
             return dataJson;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

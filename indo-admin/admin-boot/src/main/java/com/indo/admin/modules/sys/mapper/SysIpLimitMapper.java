@@ -2,7 +2,7 @@ package com.indo.admin.modules.sys.mapper;
 
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.indo.admin.pojo.entity.SysIpLimit;
+import com.indo.core.pojo.entity.SysIpLimit;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

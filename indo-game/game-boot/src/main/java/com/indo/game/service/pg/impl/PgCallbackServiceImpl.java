@@ -7,31 +7,29 @@ import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.common.utils.DateUtils;
 import com.indo.core.mapper.game.TxnsMapper;
+import com.indo.core.pojo.bo.MemTradingBO;
+import com.indo.core.pojo.entity.game.GameCategory;
+import com.indo.core.pojo.entity.game.GameParentPlatform;
+import com.indo.core.pojo.entity.game.GamePlatform;
+import com.indo.core.pojo.entity.game.Txns;
 import com.indo.game.pojo.dto.pg.PgAdjustmentOutCallBackReq;
 import com.indo.game.pojo.dto.pg.PgGetBalanceCallBackReq;
 import com.indo.game.pojo.dto.pg.PgTransferInOutCallBackReq;
 import com.indo.game.pojo.dto.pg.PgVerifySessionCallBackReq;
 import com.indo.game.pojo.entity.CptOpenMember;
-import com.indo.core.pojo.entity.game.GameCategory;
-import com.indo.core.pojo.entity.game.GameParentPlatform;
-import com.indo.core.pojo.entity.game.GamePlatform;
-import com.indo.core.pojo.entity.game.Txns;
 import com.indo.game.pojo.vo.callback.pg.PgCallBackResponse;
 import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
 import com.indo.game.service.pg.PgCallbackService;
-import com.indo.core.pojo.bo.MemTradingBO;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
-
-import javax.annotation.Resource;
 
 
 /**
@@ -68,7 +66,7 @@ public class PgCallbackServiceImpl implements PgCallbackService {
         } else {
             long currentTime = System.currentTimeMillis();
             dataJson.put("updated_time", currentTime);
-            dataJson.put("balance_amount", memBaseinfo.getBalance());
+            dataJson.put("balance_amount", memBaseinfo.getBalance().divide(platformGameParent.getCurrencyPro()));
             dataJson.put("currency_code", platformGameParent.getCurrencyType());
             pgCallBackRespFail.setData(dataJson);
             pgCallBackRespFail.setError(null);
@@ -91,8 +89,8 @@ public class PgCallbackServiceImpl implements PgCallbackService {
         JSONObject dataJson = new JSONObject();
         JSONObject errorJson = new JSONObject();
         BigDecimal balance = memBaseinfo.getBalance();
-        BigDecimal transferAmount = pgTransferInOutCallBackReq.getTransfer_amount();
-        BigDecimal betAmount = pgTransferInOutCallBackReq.getBet_amount();
+        BigDecimal transferAmount = null!=pgTransferInOutCallBackReq.getTransfer_amount()?pgTransferInOutCallBackReq.getTransfer_amount().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
+        BigDecimal betAmount = null!=pgTransferInOutCallBackReq.getBet_amount()?pgTransferInOutCallBackReq.getBet_amount().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
         if (memBaseinfo.getBalance().compareTo(transferAmount) == -1) {
             errorJson.put("code", "3202");
             errorJson.put("message", "ot Enough Balance");
@@ -175,9 +173,9 @@ public class PgCallbackServiceImpl implements PgCallbackService {
         //玩家下注时间
         txns.setBetTime(DateUtils.formatByLong(pgTransferInOutCallBackReq.getUpdated_time(), DateUtils.newFormat));
         //真实下注金额,需增加在玩家的金额
-        txns.setRealBetAmount(pgTransferInOutCallBackReq.getBet_amount());
+        txns.setRealBetAmount(betAmount);
         //真实返还金额,游戏赢分
-        txns.setRealWinAmount(pgTransferInOutCallBackReq.getTransfer_amount());
+        txns.setRealWinAmount(transferAmount);
         //返还金额 (包含下注金额)
         //赌注的结果 : 赢:0,输:1,平手:2
         int resultTyep;
@@ -190,7 +188,7 @@ public class PgCallbackServiceImpl implements PgCallbackService {
         }
         txns.setResultType(resultTyep);
         //有效投注金额 或 投注面值
-        txns.setTurnover(pgTransferInOutCallBackReq.getBet_amount());
+        txns.setTurnover(betAmount);
         //辨认交易时间依据
         txns.setTxTime(DateUtils.formatByLong(pgTransferInOutCallBackReq.getUpdated_time(), DateUtils.newFormat));
 
@@ -212,7 +210,7 @@ public class PgCallbackServiceImpl implements PgCallbackService {
         }
 
         dataJson.put("currency_code", pgTransferInOutCallBackReq.getCurrency_code());
-        dataJson.put("balance_amount", balance);
+        dataJson.put("balance_amount", balance.divide(gameParentPlatform.getCurrencyPro()));
         dataJson.put("updated_time", System.currentTimeMillis());
         pgCallBackRespFail.setData(dataJson);
         pgCallBackRespFail.setError(null);
@@ -243,7 +241,7 @@ public class PgCallbackServiceImpl implements PgCallbackService {
         JSONObject dataJson = new JSONObject();
         JSONObject errorJson = new JSONObject();
 
-        BigDecimal realWinAmount = pgAdjustmentOutCallBackReq.getTransfer_amount();
+        BigDecimal realWinAmount = null!=pgAdjustmentOutCallBackReq.getTransfer_amount()?pgAdjustmentOutCallBackReq.getTransfer_amount().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
         if (realWinAmount.compareTo(BigDecimal.ZERO) != 0) {
             balance = balance.add(realWinAmount);
             if (realWinAmount.compareTo(BigDecimal.ZERO) == 1) {//赢
@@ -256,9 +254,9 @@ public class PgCallbackServiceImpl implements PgCallbackService {
 
         Txns txns = new Txns();
         if(null!=oldTxns) {
-            dataJson.put("adjust_amount", realWinAmount);
-            dataJson.put("balance_before", money);
-            dataJson.put("balance_after", balance);
+            dataJson.put("adjust_amount", realWinAmount.divide(gameParentPlatform.getCurrencyPro()));
+            dataJson.put("balance_before", money.divide(gameParentPlatform.getCurrencyPro()));
+            dataJson.put("balance_after", balance.divide(gameParentPlatform.getCurrencyPro()));
             dataJson.put("updated_time", System.currentTimeMillis());
             pgCallBackRespFail.setData(dataJson);
             pgCallBackRespFail.setError(null);
@@ -309,9 +307,9 @@ public class PgCallbackServiceImpl implements PgCallbackService {
 
 
 
-        dataJson.put("adjust_amount", realWinAmount);
-        dataJson.put("balance_before", money);
-        dataJson.put("balance_after", balance);
+        dataJson.put("adjust_amount", realWinAmount.divide(gameParentPlatform.getCurrencyPro()));
+        dataJson.put("balance_before", money.divide(gameParentPlatform.getCurrencyPro()));
+        dataJson.put("balance_after", balance.divide(gameParentPlatform.getCurrencyPro()));
         dataJson.put("updated_time", System.currentTimeMillis());
         pgCallBackRespFail.setData(dataJson);
         pgCallBackRespFail.setError(null);

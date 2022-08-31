@@ -7,6 +7,7 @@ import com.indo.admin.pojo.vo.pay.PayTakeCashApplyVO;
 import com.indo.admin.pojo.vo.pay.PayTakeCashRecordVO;
 import com.indo.common.enums.AudiTypeEnum;
 import com.indo.common.result.Result;
+import com.indo.core.pojo.entity.PayTakeCash;
 import com.indo.pay.pojo.req.PayTakeCashReq;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
@@ -36,28 +37,25 @@ public class PayTakeCashController {
 
     @ApiOperation(value = "提现申请列表")
     @GetMapping(value = "/applyList")
-    public Result<List<PayTakeCashApplyVO>> applyList(PayTakeCashReq cashOrderDTO) {
-        Page<PayTakeCashApplyVO> result = iPayCashOrderService.cashApplyList(cashOrderDTO);
+    public Result<List<PayTakeCash>> applyList(PayTakeCashReq cashOrderDTO) {
+        Page<PayTakeCash> result = iPayCashOrderService.cashApplyList(cashOrderDTO);
         return Result.success(result.getRecords(), result.getTotal());
     }
 
 
     @ApiOperation(value = "提现记录")
     @GetMapping(value = "/recordList")
-    public Result<List<PayTakeCashRecordVO>> cashList(PayTakeCashReq cashOrderDTO) {
-        return iPayCashOrderService.cashRecordList(cashOrderDTO);
+    public Result<Page<PayTakeCash>> cashList(PayTakeCashReq cashOrderDTO) {
+        return Result.success(iPayCashOrderService.cashRecordList(cashOrderDTO));
     }
-
-    @ApiModelProperty(value = "审核类型")
-    private AudiTypeEnum audiType;
 
     @ApiOperation(value = "提现状态操作")
     @PostMapping("/takeCashOpera")
     public Result takeCashOpera(
             @ApiParam("操作状态  agree=同意 reject=拒绝") @RequestParam(value = "audiType") AudiTypeEnum audiType,
             @ApiParam("提现id") @RequestParam(value = "takeCashId") Long takeCashId) {
-        boolean flag = iPayCashOrderService.takeCashOpera(audiType, takeCashId);
-        return Result.judge(flag);
+        iPayCashOrderService.takeCashOpera(audiType, takeCashId);
+        return Result.success();
     }
 
 

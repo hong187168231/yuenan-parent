@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -78,9 +79,12 @@ public class PayManualRechargeServiceImpl extends SuperServiceImpl<PayManualRech
             payManualRecharge.setMemId(memId);
             payManualRecharge.setGoldChangeId(null);
             payManualRecharge.setAccount(memBaseinfo.getAccount());
+            payManualRecharge.setAmount(operateAmount);
             payManualRecharge.setOperateType(operateType);
             payManualRecharge.setBeforAmount(memBaseinfo.getBalance());
+            payManualRecharge.setAfterAmount(memBaseinfo.getBalance().add(operateAmount));
             payManualRecharge.setCreateUser(JwtUtils.getUsername());
+            payManualRecharge.setCreateTime(new Date());
             payManualRecharge.setRemarks(remarks);
             if (baseMapper.insert(payManualRecharge) > 0) {
                 MemGoldChangeDTO goldChangeDO = new MemGoldChangeDTO();

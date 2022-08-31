@@ -36,6 +36,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
 
     //取得用户的余额
     public Object getBalance(SboCallBackParentReq sboCallBackParentReq,String ip) {
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.SBO_PLATFORM_CODE);
         SboCallBackCommResp sboCallBackCommResp = new SboCallBackCommResp();
         sboCallBackCommResp.setBalance(BigDecimal.ZERO);
         sboCallBackCommResp.setAccountName(sboCallBackParentReq.getUsername());
@@ -59,7 +60,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
             sboCallBackCommResp.setErrorCode(1);
             sboCallBackCommResp.setErrorMessage("Member not exist");
         } else {
-            sboCallBackCommResp.setBalance(memBaseinfo.getBalance());
+            sboCallBackCommResp.setBalance(memBaseinfo.getBalance().divide(gameParentPlatform.getCurrencyPro()));
             sboCallBackCommResp.setErrorCode(0);
             sboCallBackCommResp.setErrorMessage("No Error");
         }
@@ -70,7 +71,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
 
     //扣除投注金额
     public Object deduct(SboCallBackDeductReq sboCallBackDeductReq,String ip) {
-
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.SBO_PLATFORM_CODE);
         SboCallBackDeductResp sboCallBackCommResp = new SboCallBackDeductResp();
         sboCallBackCommResp.setBalance(BigDecimal.ZERO);
         sboCallBackCommResp.setAccountName(sboCallBackDeductReq.getUsername());
@@ -96,9 +97,9 @@ public class SboCallbackServiceImpl implements SboCallbackService {
             sboCallBackCommResp.setErrorMessage("Member not exist");
             return sboCallBackCommResp;
         } else {
-            BigDecimal betAmount = sboCallBackDeductReq.getAmount();
+            BigDecimal betAmount = null!=sboCallBackDeductReq.getAmount()?sboCallBackDeductReq.getAmount().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
             BigDecimal balance = memBaseinfo.getBalance();
-            sboCallBackCommResp.setBalance(balance);
+            sboCallBackCommResp.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
             if (memBaseinfo.getBalance().compareTo(betAmount) == -1) {
                 sboCallBackCommResp.setErrorCode(5);
                 sboCallBackCommResp.setErrorMessage("Not enough balance");
@@ -158,7 +159,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
                     }
                 }
                 String platformCode = this.getpPlatformCode(sboCallBackDeductReq.getProductType());
-                GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.SBO_PLATFORM_CODE);
+
                 GamePlatform gamePlatform;
                 if(OpenAPIProperties.SBO_IS_PLATFORM_LOGIN.equals("Y")){
                     gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.SBO_PLATFORM_CODE,OpenAPIProperties.SBO_PLATFORM_CODE);
@@ -173,7 +174,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
                     balance = balance.subtract(betAmount);
                     gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
                 }
-                sboCallBackCommResp.setBalance(balance);
+                sboCallBackCommResp.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
                 sboCallBackCommResp.setErrorCode(0);
                 sboCallBackCommResp.setErrorMessage("No Error");
 
@@ -229,7 +230,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
     public Object settle(SboCallBackSettleReq sboCallBackSettleReq,String ip) {
         //同一个赌注发出多次API请求,这意味着我们要求该次赌注重新结算
 
-
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.SBO_PLATFORM_CODE);
         SboCallBackCommResp sboCallBackCommResp = new SboCallBackCommResp();
         sboCallBackCommResp.setBalance(BigDecimal.ZERO);
         sboCallBackCommResp.setAccountName(sboCallBackSettleReq.getUsername());
@@ -255,7 +256,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
             return sboCallBackCommResp;
         } else {
             BigDecimal balance = memBaseinfo.getBalance();
-            sboCallBackCommResp.setBalance(balance);
+            sboCallBackCommResp.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
             String platformCode = this.getpPlatformCode(sboCallBackSettleReq.getProductType());
             LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
             wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Settle"));
@@ -300,7 +301,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
                     return sboCallBackCommResp;
                 }
             }
-            BigDecimal winLoss = sboCallBackSettleReq.getWinLoss();
+            BigDecimal winLoss = null!=sboCallBackSettleReq.getWinLoss()?sboCallBackSettleReq.getWinLoss().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
 
             Double average = winLoss.doubleValue()/list.size();
             Double remainder = winLoss.doubleValue()%list.size();
@@ -343,7 +344,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
                 oldTxns.setUpdateTime(dateStr);
                 txnsMapper.updateById(oldTxns);
             }
-            sboCallBackCommResp.setBalance(balance);
+            sboCallBackCommResp.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
             sboCallBackCommResp.setErrorCode(0);
             sboCallBackCommResp.setErrorMessage("No Error");
         }
@@ -355,7 +356,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
     //回滚
     public Object rollback(SboCallBackRollbackReq sboCallBackRollbackReq,String ip) {
 
-
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.SBO_PLATFORM_CODE);
         SboCallBackCommResp sboCallBackCommResp = new SboCallBackCommResp();
         sboCallBackCommResp.setBalance(BigDecimal.ZERO);
         sboCallBackCommResp.setAccountName(sboCallBackRollbackReq.getUsername());
@@ -392,14 +393,14 @@ public class SboCallbackServiceImpl implements SboCallbackService {
             List<Txns> list = txnsMapper.selectList(wrapper);
 //            Txns oldTxns = txnsMapper.selectOne(wrapper);
             if (null == list || list.size() <= 0) {
-                sboCallBackCommResp.setBalance(balance);
+                sboCallBackCommResp.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
                 sboCallBackCommResp.setErrorCode(6);
                 sboCallBackCommResp.setErrorMessage("Bet not exists");
                 return sboCallBackCommResp;
             }
             for (Txns oldTxns : list) {
                 if ("Place Bet".equals(oldTxns.getMethod())) {
-                    sboCallBackCommResp.setBalance(balance);
+                    sboCallBackCommResp.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
                     sboCallBackCommResp.setErrorCode(2003);
                     sboCallBackCommResp.setErrorMessage("Bet Already Rollback");
                     return sboCallBackCommResp;
@@ -421,7 +422,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
 //                gameCommonService.updateUserBalance(memBaseinfo, realBetAmount, GoldchangeEnum.UNSETTLE, TradingEnum.INCOME);
 //            }
 
-                sboCallBackCommResp.setBalance(balance);
+                sboCallBackCommResp.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
                 sboCallBackCommResp.setErrorCode(0);
                 sboCallBackCommResp.setErrorMessage("No Error");
 
@@ -449,7 +450,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
     //取消投注
     public Object cancel(SboCallBackCancelReq sboCallBackCancelReq,String ip) {
 
-
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.SBO_PLATFORM_CODE);
         SboCallBackCommResp sboCallBackCommResp = new SboCallBackCommResp();
         sboCallBackCommResp.setBalance(BigDecimal.ZERO);
         sboCallBackCommResp.setAccountName(sboCallBackCancelReq.getUsername());
@@ -483,13 +484,13 @@ public class SboCallbackServiceImpl implements SboCallbackService {
 //        wrapper.eq(Txns::getUserId, userId);
             Txns oldTxns = txnsMapper.selectOne(wrapper);
             if(null==oldTxns){
-                sboCallBackCommResp.setBalance(balance);
+                sboCallBackCommResp.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
                 sboCallBackCommResp.setErrorCode(6);
                 sboCallBackCommResp.setErrorMessage("Bet not exists");
                 return sboCallBackCommResp;
             }
             if ("Cancel Bet".equals(oldTxns.getMethod())) {
-                sboCallBackCommResp.setBalance(balance);
+                sboCallBackCommResp.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
                 sboCallBackCommResp.setErrorCode(2002);
                 sboCallBackCommResp.setErrorMessage("Bet Already Canceled");
                 return sboCallBackCommResp;
@@ -568,7 +569,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
                 oldTxns.setUpdateTime(dateStr);
                 txnsMapper.updateById(oldTxns);
             }
-            sboCallBackCommResp.setBalance(balance);
+            sboCallBackCommResp.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
             sboCallBackCommResp.setErrorCode(0);
             sboCallBackCommResp.setErrorMessage("No Error");
         }
@@ -579,7 +580,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
 
     //小费
     public Object tip(SboCallBackTipReq sboCallBackTipReq,String ip) {
-
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.SBO_PLATFORM_CODE);
         SboCallBackCommResp sboCallBackCommResp = new SboCallBackCommResp();
         sboCallBackCommResp.setAccountName(sboCallBackTipReq.getUsername());
         if(null == sboCallBackTipReq.getUsername() || "".equals(sboCallBackTipReq.getUsername())){
@@ -604,7 +605,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
             return sboCallBackCommResp;
         } else {
             BigDecimal balance = memBaseinfo.getBalance();
-            sboCallBackCommResp.setBalance(balance);
+            sboCallBackCommResp.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
             LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
             wrapper.eq(Txns::getStatus, "Running");
             wrapper.eq(Txns::getMethod, "Tip");
@@ -616,7 +617,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
                 sboCallBackCommResp.setErrorMessage("Bet With Same RefNo Exists");
                 return sboCallBackCommResp;
             }
-            BigDecimal betAmount = sboCallBackTipReq.getAmount();
+            BigDecimal betAmount = null!=sboCallBackTipReq.getAmount()?sboCallBackTipReq.getAmount().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
 
             if (memBaseinfo.getBalance().compareTo(betAmount) == -1) {
                 sboCallBackCommResp.setErrorCode(5);
@@ -624,7 +625,6 @@ public class SboCallbackServiceImpl implements SboCallbackService {
             } else {
                 String platformCode = this.getpPlatformCode(sboCallBackTipReq.getProductType());
                 balance = balance.subtract(betAmount);
-                GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.SBO_PLATFORM_CODE);
                 GamePlatform gamePlatform;
                 if(OpenAPIProperties.SBO_IS_PLATFORM_LOGIN.equals("Y")){
                     gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.SBO_PLATFORM_CODE,OpenAPIProperties.SBO_PLATFORM_CODE);
@@ -633,7 +633,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
                 }
                 GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
                 gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.TIP, TradingEnum.SPENDING);
-                sboCallBackCommResp.setBalance(balance);
+                sboCallBackCommResp.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
                 sboCallBackCommResp.setErrorCode(0);
                 sboCallBackCommResp.setErrorMessage("No Error");
 
@@ -679,7 +679,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
 
     //红利
     public Object bonus(SboCallBackBonusReq sboCallBackBonusReq,String ip) {
-
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.SBO_PLATFORM_CODE);
         SboCallBackCommResp sboCallBackCommResp = new SboCallBackCommResp();
         sboCallBackCommResp.setAccountName(sboCallBackBonusReq.getUsername());
         if(null == sboCallBackBonusReq.getUsername() || "".equals(sboCallBackBonusReq.getUsername())){
@@ -703,7 +703,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
             sboCallBackCommResp.setErrorMessage("Member not exist");
             return sboCallBackCommResp;
         } else {
-            BigDecimal betAmount = sboCallBackBonusReq.getAmount();
+            BigDecimal betAmount = null!=sboCallBackBonusReq.getAmount()?sboCallBackBonusReq.getAmount().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
             BigDecimal balance = memBaseinfo.getBalance().add(betAmount);
             sboCallBackCommResp.setBalance(balance);
             LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
@@ -719,7 +719,6 @@ public class SboCallbackServiceImpl implements SboCallbackService {
             }
             String platformCode = this.getpPlatformCode(sboCallBackBonusReq.getProductType());
 
-            GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.SBO_PLATFORM_CODE);
             GamePlatform gamePlatform;
             if(OpenAPIProperties.SBO_IS_PLATFORM_LOGIN.equals("Y")){
                 gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.SBO_PLATFORM_CODE,OpenAPIProperties.SBO_PLATFORM_CODE);
@@ -728,7 +727,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
             }
             GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
             gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.ACTIVITY_GIVE, TradingEnum.INCOME);
-            sboCallBackCommResp.setBalance(balance);
+            sboCallBackCommResp.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
             sboCallBackCommResp.setErrorCode(0);
             sboCallBackCommResp.setErrorMessage("No Error");
 
@@ -773,7 +772,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
 
     //归还注额
     public Object returnStake(SboCallBackReturnStakeReq sboCallBackBonusReq,String ip) {
-
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.SBO_PLATFORM_CODE);
         SboCallBackCommResp sboCallBackCommResp = new SboCallBackCommResp();
         sboCallBackCommResp.setAccountName(sboCallBackBonusReq.getUsername());
         if(null == sboCallBackBonusReq.getUsername() || "".equals(sboCallBackBonusReq.getUsername())){
@@ -807,7 +806,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
 //            wrapper.eq(Txns::getPlatform, sboCallBackBonusReq.getProductType());
 //            wrapper.eq(Txns::getGameType, sboCallBackBonusReq.getGameType());
             Txns oldTxns = txnsMapper.selectOne(wrapper);
-            sboCallBackCommResp.setBalance(balance);
+            sboCallBackCommResp.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
             if(null==oldTxns){
                 sboCallBackCommResp.setErrorCode(6);
                 sboCallBackCommResp.setErrorMessage("Bet not exists");
@@ -826,11 +825,11 @@ public class SboCallbackServiceImpl implements SboCallbackService {
             BigDecimal betAmount = oldTxns.getBetAmount();
 
             //真实返还金额
-            BigDecimal realWinAmount = sboCallBackBonusReq.getCurrentStake();
+            BigDecimal realWinAmount = null!=sboCallBackBonusReq.getCurrentStake()?sboCallBackBonusReq.getCurrentStake().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
             balance = balance.add(realWinAmount);
             gameCommonService.updateUserBalance(memBaseinfo, realWinAmount, GoldchangeEnum.REFUND, TradingEnum.INCOME);
 
-            sboCallBackCommResp.setBalance(balance);
+            sboCallBackCommResp.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
             sboCallBackCommResp.setErrorCode(0);
             sboCallBackCommResp.setErrorMessage("No Error");
 
@@ -1076,7 +1075,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
 
     //LiveCoin購買
     public Object liveCoinTransaction(SboCallBackLiveCoinTransactionReq sboCallBackLiveCoinTransactionReq,String ip) {
-
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.SBO_PLATFORM_CODE);
         SboCallBackCommResp sboCallBackCommResp = new SboCallBackCommResp();
         sboCallBackCommResp.setAccountName(sboCallBackLiveCoinTransactionReq.getUsername());
         if(null == sboCallBackLiveCoinTransactionReq.getUsername() || "".equals(sboCallBackLiveCoinTransactionReq.getUsername())){
@@ -1099,9 +1098,9 @@ public class SboCallbackServiceImpl implements SboCallbackService {
             sboCallBackCommResp.setErrorCode(1);
             sboCallBackCommResp.setErrorMessage("Member not exist");
         } else {
-            BigDecimal betAmount = BigDecimal.valueOf(Double.valueOf(sboCallBackLiveCoinTransactionReq.getAmount()));
+            BigDecimal betAmount = BigDecimal.valueOf(Double.valueOf(sboCallBackLiveCoinTransactionReq.getAmount())).multiply(gameParentPlatform.getCurrencyPro());
             BigDecimal balance = memBaseinfo.getBalance();
-            sboCallBackCommResp.setBalance(balance);
+            sboCallBackCommResp.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
             if (memBaseinfo.getBalance().compareTo(betAmount) == -1) {
                 sboCallBackCommResp.setErrorCode(5);
                 sboCallBackCommResp.setErrorMessage("Not enough balance");
@@ -1120,7 +1119,6 @@ public class SboCallbackServiceImpl implements SboCallbackService {
                 }
                 String platformCode = this.getpPlatformCode(sboCallBackLiveCoinTransactionReq.getProductType());
 
-                GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.SBO_PLATFORM_CODE);
                 GamePlatform gamePlatform;
                 if(OpenAPIProperties.SBO_IS_PLATFORM_LOGIN.equals("Y")){
                     gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.SBO_PLATFORM_CODE,OpenAPIProperties.SBO_PLATFORM_CODE);
@@ -1130,7 +1128,7 @@ public class SboCallbackServiceImpl implements SboCallbackService {
                 GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
                 balance = balance.subtract(betAmount);
                 gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.BETNSETTLE, TradingEnum.SPENDING);
-                sboCallBackCommResp.setBalance(balance);
+                sboCallBackCommResp.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
                 sboCallBackCommResp.setErrorCode(0);
                 sboCallBackCommResp.setErrorMessage("No Error");
 

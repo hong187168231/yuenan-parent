@@ -101,7 +101,7 @@ public class CmdCallbackServiceImpl implements CmdCallbackService {
             jsonObject.put("StatusMessage", "Success");
             jsonObject.put("DateSent", System.currentTimeMillis());
             jsonObject.put("PackageId", packageId);
-            jsonObject.put("Balance", memBaseinfo.getBalance());
+            jsonObject.put("Balance", memBaseinfo.getBalance().divide(gameParentPlatform.getCurrencyPro()));
             jsonObject.put("DateReceived", Long.valueOf(dateSent));
             logger.info("cmdCallback getBalance 回调查询余额返回数据 params:{}", jsonObject);
             return encryptResp(jsonObject);
@@ -131,7 +131,7 @@ public class CmdCallbackServiceImpl implements CmdCallbackService {
             JSONObject paramJson = JSONObject.parseObject(decryptParams);
             String paySerialno = paramJson.getString("ReferenceNo");
             String userName = paramJson.getString("SourceName");
-            BigDecimal betAmount = paramJson.getBigDecimal("TransactionAmount");
+            BigDecimal betAmount = null!=paramJson.getBigDecimal("TransactionAmount")?paramJson.getBigDecimal("TransactionAmount").multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
             Long dateSent = params.getLong("dateSent");
 
 
@@ -219,12 +219,12 @@ public class CmdCallbackServiceImpl implements CmdCallbackService {
             JSONObject respJson = new JSONObject();
             respJson.put("ActionId", 1003);
             respJson.put("SourceName", userName);
-            respJson.put("TransactionAmount", balance);
+            respJson.put("TransactionAmount", betAmount.divide(gameParentPlatform.getCurrencyPro()));
             respJson.put("ReferenceNo", paySerialno);
 
             JSONObject jsonObject = initSuccessResponse(respJson);
             jsonObject.put("DateReceived", dateSent);
-            jsonObject.put("Balance", balance);
+            jsonObject.put("Balance", balance.divide(gameParentPlatform.getCurrencyPro()));
             return encryptResp(jsonObject);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -262,7 +262,7 @@ public class CmdCallbackServiceImpl implements CmdCallbackService {
                 JSONObject json = ticketDetails.getJSONObject(i);
                 String paySerialno = json.getString("ReferenceNo");
                 String userName = json.getString("SourceName");
-                BigDecimal betAmount = json.getBigDecimal("TransactionAmount");
+                BigDecimal betAmount = null!=json.getBigDecimal("TransactionAmount")?json.getBigDecimal("TransactionAmount").multiply(platformGameParent.getCurrencyPro()):BigDecimal.ZERO;
 
                 // 查询订单
                 MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(userName);

@@ -607,20 +607,26 @@ public class OpenAPIProperties implements InitializingBean {
     //SGWin
     public static String SGWIN_API_TOKEN;
     public static String SGWIN_API_URL;
+    public static String SGWIN_LOGIN_URL;
     public static String SGWIN_AGENT_ID;
     public static String SGWIN_AGENT;
     public static String SGWIN_PLATFORM_CODE;
+    public static String SGWIN_IS_PLATFORM_LOGIN;
 
-    //@Value("${sgwin.apiUrl}")
+    @Value("${sgwin.apiUrl}")
     private String sgwinApiurl;
-    //@Value("${sgwin.sgwinToken}")
+    @Value("${sgwin.sgwinLoginurl}")
+    private String sgwinLoginurl;
+    @Value("${sgwin.sgwinToken}")
     private String sgwinToken;
-    //@Value("${sgwin.sgwinAgentId}")
+    @Value("${sgwin.sgwinAgentId}")
     private String sgwinAgentId;
-    //@Value("${sgwin.sgwinAgent}")
+    @Value("${sgwin.sgwinAgent}")
     private String sgwinAgent;
-    //@Value("${sgwin.platformCode}")
+    @Value("${sgwin.platformCode}")
     private String sgwinPlatformCode;
+    @Value("${sgwin.isPlatformLogin}")
+    private String sgwinIsPlatformLogin;
 
     //TP
     public static String TP_API_URL;
@@ -639,6 +645,34 @@ public class OpenAPIProperties implements InitializingBean {
     @Value("${tp.isPlatformLogin}")
     private String tpIsPlatformLogin;
 
+    //AG
+    public static String AG_API_URL;
+    public static String AG_SESSION_URL;
+    public static String AG_LOGIN_URL;
+    public static String AG_RETURN_URL;
+    public static String AG_SID_KEY;
+    public static String AG_API_KEY;
+    public static String AG_CAGENT;
+    public static String AG_PLATFORM_CODE;
+    public static String AG_IS_PLATFORM_LOGIN;
+    @Value("${ag.agApiurl}")
+    private String agApiurl;
+    @Value("${ag.agSessionurl}")
+    private String agSessionurl;
+    @Value("${ag.agLoginurl}")
+    private String agLoginurl;
+    @Value("${ag.agReturnurl}")
+    private String agReturnurl;
+    @Value("${ag.agSidKey}")
+    private String agSidKey;
+    @Value("${ag.agApiKey}")
+    private String agApiKey;
+    @Value("${ag.agCagent}")
+    private String agCagent;
+    @Value("${ag.platformCode}")
+    private String agPlatformCode;
+    @Value("${ag.isPlatformLogin}")
+    private String agIsPlatformLogin;
 
     @Override
     public void afterPropertiesSet() {
@@ -859,14 +893,27 @@ public class OpenAPIProperties implements InitializingBean {
 
         SGWIN_API_TOKEN = sgwinToken;
         SGWIN_API_URL = sgwinApiurl;
+        SGWIN_LOGIN_URL = sgwinLoginurl;
         SGWIN_AGENT_ID= sgwinAgentId;
         SGWIN_AGENT = sgwinAgent;
         SGWIN_PLATFORM_CODE = sgwinPlatformCode;
+        SGWIN_IS_PLATFORM_LOGIN = sgwinIsPlatformLogin;
 
         TP_PLATFORM_CODE = tpPlatformCode;
         TP_IS_PLATFORM_LOGIN = tpIsPlatformLogin;
         TP_API_URL = tpApiurl;
         TP_API_TOKEN = tpApiToken;
         TP_API_KEY = tpApiKey;
+
+
+        AG_PLATFORM_CODE = agPlatformCode;
+        AG_IS_PLATFORM_LOGIN = agIsPlatformLogin;
+        AG_API_URL = agApiurl;
+        AG_SESSION_URL = agSessionurl;
+        AG_RETURN_URL = agReturnurl;
+        AG_LOGIN_URL = agLoginurl;
+        AG_API_KEY = agApiKey;
+        AG_SID_KEY = agSidKey;
+        AG_CAGENT = agCagent;
     }
 }

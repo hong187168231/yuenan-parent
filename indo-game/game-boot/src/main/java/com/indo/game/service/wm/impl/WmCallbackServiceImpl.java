@@ -60,7 +60,7 @@ public class WmCallbackServiceImpl implements WmCallbackService {
             }
             JSONObject respJson = new JSONObject();
             respJson.put("user", memBaseinfo.getAccount());
-            respJson.put("money", memBaseinfo.getBalance());
+            respJson.put("money", memBaseinfo.getBalance().divide(gameParentPlatform.getCurrencyPro()));
 
             return initSuccessResponse(respJson);
         } catch (Exception e) {
@@ -97,8 +97,8 @@ public class WmCallbackServiceImpl implements WmCallbackService {
 
             String paySerialno = wmCallBackReq.getDealid();
             String dateSent = wmCallBackReq.getRequestDate();
-            BigDecimal betAmount = wmCallBackReq.getMoney();
-            BigDecimal payout =	wmCallBackReq.getPayout();//decimal	派彩金额(重对时發送)
+            BigDecimal betAmount = null!=wmCallBackReq.getMoney()?wmCallBackReq.getMoney().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
+            BigDecimal payout =	null!=wmCallBackReq.getPayout()?wmCallBackReq.getPayout().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;//decimal	派彩金额(重对时發送)
             // 游戏项目_期数_局号_加扣点类型 例:101_112139999_88_2
             String type = wmCallBackReq.getType();
             String gtype = wmCallBackReq.getGtype();
@@ -238,8 +238,8 @@ public class WmCallbackServiceImpl implements WmCallbackService {
             }
 
             JSONObject respJson = new JSONObject();
-            respJson.put("money", betAmount);
-            respJson.put("cash", balance);
+            respJson.put("money", betAmount.divide(gameParentPlatform.getCurrencyPro()));
+            respJson.put("cash", balance.divide(gameParentPlatform.getCurrencyPro()));
             respJson.put("dealid", paySerialno);
 
             return initSuccessResponse(respJson);
@@ -278,7 +278,7 @@ public class WmCallbackServiceImpl implements WmCallbackService {
 
             String paySerialno = wmCallBackReq.getDealid();
             String dateSent = wmCallBackReq.getRequestDate();
-            BigDecimal betAmount = wmCallBackReq.getMoney();
+            BigDecimal betAmount = null!=wmCallBackReq.getMoney()?wmCallBackReq.getMoney().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
             // 游戏项目_期数_局号_加扣点类型 例:101_112139999_88_2
             String type = wmCallBackReq.getType();
             String gtype = wmCallBackReq.getGtype();
@@ -332,8 +332,8 @@ public class WmCallbackServiceImpl implements WmCallbackService {
             txnsMapper.updateById(oldTxns);
 
             JSONObject respJson = new JSONObject();
-            respJson.put("money", betAmount);
-            respJson.put("cash", balance);
+            respJson.put("money", betAmount.divide(gameParentPlatform.getCurrencyPro()));
+            respJson.put("cash", balance.divide(gameParentPlatform.getCurrencyPro()));
             respJson.put("dealid", paySerialno);
 
             return initSuccessResponse(respJson);

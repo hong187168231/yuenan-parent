@@ -53,7 +53,7 @@ public class FCCallbackServiceImpl implements FCCallbackService {
 
             // 会员余额返回
             JSONObject jsonObject = initSuccessResponse();
-            jsonObject.put("MainPoints", memBaseinfo.getBalance());
+            jsonObject.put("MainPoints", memBaseinfo.getBalance().divide(gameParentPlatform.getCurrencyPro()));
             return jsonObject;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -83,8 +83,9 @@ public class FCCallbackServiceImpl implements FCCallbackService {
             // 会员余额
             BigDecimal balance = memBaseinfo.getBalance();
             // 下注金额
-            BigDecimal betAmount = fcBetCallbackReq.getBet();
-            BigDecimal winAmount = fcBetCallbackReq.getWin();
+            BigDecimal betAmount = null!=fcBetCallbackReq.getBet()?fcBetCallbackReq.getBet().multiply(platformGameParent.getCurrencyPro()):BigDecimal.ZERO;
+            BigDecimal winAmount = null!=fcBetCallbackReq.getWin()?fcBetCallbackReq.getWin().multiply(platformGameParent.getCurrencyPro()):BigDecimal.ZERO;
+            BigDecimal netWin = null!=fcBetCallbackReq.getNetWin()?fcBetCallbackReq.getNetWin().multiply(platformGameParent.getCurrencyPro()):BigDecimal.ZERO;
             if (null != fcBetCallbackReq.getRequireAmt()) {
                 betAmount = fcBetCallbackReq.getRequireAmt();
             }
@@ -92,13 +93,13 @@ public class FCCallbackServiceImpl implements FCCallbackService {
                 return initFailureResponse(203, "玩家余额不足");
             }
 
-            if (fcBetCallbackReq.getNetWin().compareTo(BigDecimal.ZERO) > 0) {
-                balance = balance.add(fcBetCallbackReq.getNetWin());
+            if (netWin.compareTo(BigDecimal.ZERO) > 0) {
+                balance = balance.add(netWin);
                 // 更新玩家余额
-                gameCommonService.updateUserBalance(memBaseinfo, fcBetCallbackReq.getNetWin(), GoldchangeEnum.BETNSETTLE, TradingEnum.INCOME);
-            } else if (fcBetCallbackReq.getNetWin().compareTo(BigDecimal.ZERO) < 0) {
-                balance = balance.subtract(fcBetCallbackReq.getNetWin());
-                gameCommonService.updateUserBalance(memBaseinfo, fcBetCallbackReq.getNetWin(), GoldchangeEnum.BETNSETTLE, TradingEnum.SPENDING);
+                gameCommonService.updateUserBalance(memBaseinfo, netWin, GoldchangeEnum.BETNSETTLE, TradingEnum.INCOME);
+            } else if (netWin.compareTo(BigDecimal.ZERO) < 0) {
+                balance = balance.subtract(netWin);
+                gameCommonService.updateUserBalance(memBaseinfo, netWin, GoldchangeEnum.BETNSETTLE, TradingEnum.SPENDING);
             }
 
 
@@ -142,7 +143,7 @@ public class FCCallbackServiceImpl implements FCCallbackService {
             //游戏平台的下注项目
             txns.setBetType(fcBetCallbackReq.getGameId());
             //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
-            txns.setWinningAmount(fcBetCallbackReq.getNetWin());
+            txns.setWinningAmount(netWin);
             //玩家下注时间
             txns.setBetTime(DateUtils.format(fcBetCallbackReq.getCreateDate(), DateUtils.newFormat));
             //真实下注金额,需增加在玩家的金额
@@ -150,18 +151,18 @@ public class FCCallbackServiceImpl implements FCCallbackService {
             // 实际中奖金额
             txns.setRealWinAmount(winAmount.add(fcBetCallbackReq.getJpPrize()));
             //真实返还金额,游戏赢分
-            txns.setRealWinAmount(fcBetCallbackReq.getNetWin());
+            txns.setRealWinAmount(netWin);
             // 彩金中奖金额算派彩
             txns.setAmount(fcBetCallbackReq.getJpPrize());
             //返还金额 (包含下注金额)
-            txns.setWinAmount(fcBetCallbackReq.getNetWin());
+            txns.setWinAmount(netWin);
             //此交易是否是投注 true是投注 false 否
             txns.setBet(true);
             //赌注的结果 : 赢:0,输:1,平手:2
             int resultTyep;
-            if (fcBetCallbackReq.getNetWin().compareTo(BigDecimal.ZERO) == 0) {
+            if (netWin.compareTo(BigDecimal.ZERO) == 0) {
                 resultTyep = 2;
-            } else if (fcBetCallbackReq.getNetWin().compareTo(BigDecimal.ZERO) > 0) {
+            } else if (netWin.compareTo(BigDecimal.ZERO) > 0) {
                 resultTyep = 0;
             } else {
                 resultTyep = 1;
@@ -188,7 +189,7 @@ public class FCCallbackServiceImpl implements FCCallbackService {
             }
 
             JSONObject jsonObject = initSuccessResponse();
-            jsonObject.put("MainPoints", balance);
+            jsonObject.put("MainPoints", balance.divide(platformGameParent.getCurrencyPro()));
             return jsonObject;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -254,7 +255,7 @@ public class FCCallbackServiceImpl implements FCCallbackService {
             txnsMapper.updateById(oldTxns);
 
             JSONObject jsonObject = initSuccessResponse();
-            jsonObject.put("MainPoints", balance);
+            jsonObject.put("MainPoints", balance.divide(platformGameParent.getCurrencyPro()));
             return jsonObject;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

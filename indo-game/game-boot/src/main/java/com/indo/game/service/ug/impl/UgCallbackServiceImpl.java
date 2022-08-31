@@ -72,8 +72,9 @@ public class UgCallbackServiceImpl implements UgCallbackService {
             ugCallBackGetBalanceResp.setCode("100001");
             ugCallBackGetBalanceResp.setMsg("MEMBER ACCOUNT IS NOT EXIST");
         } else {
+            GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.UG_PLATFORM_CODE);
             ugCallBackGetBalanceResp.setCode("000000");
-            ugCallBackGetBalanceResp.setData(memBaseinfo.getBalance());
+            ugCallBackGetBalanceResp.setData(memBaseinfo.getBalance().divide(gameParentPlatform.getCurrencyPro()));
             ugCallBackGetBalanceResp.setMsg("SUCCESS");
         }
 
@@ -126,7 +127,7 @@ public class UgCallbackServiceImpl implements UgCallbackService {
                 ugCallBackBalanceResp.setMsg("MEMBER ACCOUNT IS NOT EXIST");
             } else {
 
-                BigDecimal betAmount = ugCallBackTransactionItemReq.getAmount();
+                BigDecimal betAmount = null!=ugCallBackTransactionItemReq.getAmount()?ugCallBackTransactionItemReq.getAmount().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
                 if (balance.compareTo(betAmount) == -1) {
                     ugCallBackSubBalanceResp.setCode("300004");
                     ugCallBackSubBalanceResp.setMsg("INSUFFICIENT BALANCE");
@@ -134,13 +135,13 @@ public class UgCallbackServiceImpl implements UgCallbackService {
                 } else {
 
                     if (ugCallBackTransactionItemReq.isBet()) {//此交易是否是投注
-                        if (BigDecimal.valueOf(0).compareTo(ugCallBackTransactionItemReq.getAmount()) == -1) {
+                        if (BigDecimal.valueOf(0).compareTo(betAmount) == -1) {
                             gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.PLACE_BET, TradingEnum.INCOME);
                         } else {
                             gameCommonService.updateUserBalance(memBaseinfo, betAmount.abs(), GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
                         }
                     } else {
-                        if (BigDecimal.valueOf(0).compareTo(ugCallBackTransactionItemReq.getAmount()) == -1) {
+                        if (BigDecimal.valueOf(0).compareTo(betAmount) == -1) {
                             gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.BETNSETTLE, TradingEnum.INCOME);
                         } else {
                             gameCommonService.updateUserBalance(memBaseinfo, betAmount.abs(), GoldchangeEnum.BETNSETTLE, TradingEnum.SPENDING);
@@ -148,7 +149,7 @@ public class UgCallbackServiceImpl implements UgCallbackService {
                     }
 
                     balance = balance.add(betAmount);
-                    ugCallBackSubBalanceResp.setBalance(balance.doubleValue());
+                    ugCallBackSubBalanceResp.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
 
                     Txns txns = new Txns();
                     //游戏商注单号
@@ -183,14 +184,14 @@ public class UgCallbackServiceImpl implements UgCallbackService {
                     //游戏商的回合识别码
                     txns.setRoundId(ugCallBackTransactionItemReq.getTxnId());
                     //下注金额
-                    txns.setBetAmount(ugCallBackTransactionItemReq.getAmount());
+                    txns.setBetAmount(betAmount);
 
                     //真实下注金额,需增加在玩家的金额
-                    txns.setRealBetAmount(ugCallBackTransactionItemReq.getAmount());
+                    txns.setRealBetAmount(betAmount);
                     //真实返还金额,游戏赢分
-                    txns.setRealWinAmount(ugCallBackTransactionItemReq.getAmount());
+                    txns.setRealWinAmount(betAmount);
                     //返还金额 (包含下注金额)
-                    txns.setWinAmount(ugCallBackTransactionItemReq.getAmount());
+                    txns.setWinAmount(betAmount);
                     if(oldTxns!=null) {
                         txnsMapper.updateById(oldTxns);
                         BeanUtils.copyProperties(oldTxns, txns);
@@ -215,7 +216,7 @@ public class UgCallbackServiceImpl implements UgCallbackService {
                         txns.setMethod("Place Bet");
                     }else {
                         //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
-                        txns.setWinningAmount(ugCallBackTransactionItemReq.getAmount());
+                        txns.setWinningAmount(betAmount);
                         txns.setMethod("Settle");
                     }
 

@@ -1,7 +1,7 @@
 package com.indo.admin.api;
 
 import com.indo.admin.api.fallback.SysIpLimitFeignFallback;
-import com.indo.admin.pojo.entity.SysIpLimit;
+import com.indo.core.pojo.entity.SysIpLimit;
 import com.indo.common.constant.ServiceIdConstant;
 import com.indo.common.result.Result;
 import org.springframework.cloud.openfeign.FeignClient;
