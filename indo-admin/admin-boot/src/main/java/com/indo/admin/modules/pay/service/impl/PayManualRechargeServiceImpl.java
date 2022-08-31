@@ -65,17 +65,22 @@ public class PayManualRechargeServiceImpl extends SuperServiceImpl<PayManualRech
         }
         BigDecimal operateAmount = new BigDecimal(amount);
         PayRecharge rechargeOrder = new PayRecharge();
-        rechargeOrder.setMemId(memId);
-        rechargeOrder.setOrderNo(GeneratorIdUtil.generateId());
-        //实际金额
-        rechargeOrder.setOldAmount(operateAmount);
-        rechargeOrder.setTotalAmount(operateAmount);
-        rechargeOrder.setRealAmount(operateAmount);
-        rechargeOrder.setOrderStatus(GlobalConstants.PAY_RECHARGE_STATUS_PROCESS);
-        int row = payRechargeOrderMapper.insert(rechargeOrder);
-        if (row > 0) {
+        if(operateType.equals(1)){
+            rechargeOrder.setMemId(memId);
+            rechargeOrder.setOrderNo(GeneratorIdUtil.generateId());
+            //实际金额
+            rechargeOrder.setOldAmount(operateAmount);
+            rechargeOrder.setTotalAmount(operateAmount);
+            rechargeOrder.setRealAmount(operateAmount);
+            rechargeOrder.setOrderStatus(GlobalConstants.PAY_RECHARGE_STATUS_PROCESS);
+            payRechargeOrderMapper.insert(rechargeOrder);
+        }
             PayManualRecharge payManualRecharge = new PayManualRecharge();
-            payManualRecharge.setRechargeId(rechargeOrder.getRechargeId());
+            if(rechargeOrder.getRechargeId()!=null){
+                payManualRecharge.setRechargeId(rechargeOrder.getRechargeId());
+            }else {
+                payManualRecharge.setRechargeId(null);
+            }
             payManualRecharge.setMemId(memId);
             payManualRecharge.setGoldChangeId(null);
             payManualRecharge.setAccount(memBaseinfo.getAccount());
@@ -106,9 +111,7 @@ public class PayManualRechargeServiceImpl extends SuperServiceImpl<PayManualRech
                 iMemGoldChangeService.updateMemGoldChange(goldChangeDO);
                 return true;
             }
-            throw new RuntimeException("系统错误");
-        }
-        return false;
+        throw new RuntimeException("系统错误");
     }
 
     @Override
