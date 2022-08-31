@@ -8,6 +8,7 @@ import com.indo.admin.pojo.vo.agent.AgentSubVO;
 import com.indo.admin.pojo.vo.agent.RebateStatVO;
 import com.indo.common.constant.GlobalConstants;
 import com.indo.common.pojo.bo.LoginInfo;
+import com.indo.common.utils.DateUtils;
 import com.indo.common.web.exception.BizException;
 import com.indo.core.base.service.impl.SuperServiceImpl;
 import com.indo.core.pojo.bo.MemBaseInfoBO;
@@ -203,8 +204,14 @@ public class AppAgentServiceImpl extends SuperServiceImpl<AgentRelationMapper, A
 		BigDecimal rebate = agentRelationMapper.selectRebateByTime(loginInfo.getAccount(), beginTime, endTime);
 		Integer teamNum = agentRelationMapper.selectTeamNum(loginInfo.getAccount());
 		BigDecimal teamRecharge = agentRelationMapper.selectTeamRecharge(loginInfo.getAccount(), beginTime, endTime);
-		Integer dayAdd = agentRelationMapper.selectDayAddNum(loginInfo.getAccount());
 		BigDecimal teamBet = agentRelationMapper.selectTeamBet(loginInfo.getAccount(), beginTime, endTime);
+
+		AgentRelation agentRelation = this.findBySuperior(loginInfo.getAccount());
+		int dayAdd = 0;
+		if (StringUtils.isNotEmpty(agentRelation.getSubUserIds())) {
+			String yesterday = DateUtils.format(DateUtils.addDay(new Date(), -1), DateUtils.shortFormat);;
+			dayAdd = memBaseInfoMapper.countByIdsAndCreateTime(agentRelation.getSubUserIds(), yesterday);
+		}
 
 		calendar.setTime(dNow);
 		calendar.add(Calendar.MONTH, -1);  //设置为前1月
@@ -220,5 +227,11 @@ public class AppAgentServiceImpl extends SuperServiceImpl<AgentRelationMapper, A
 		statVO.setMonthAddNum(monthAdd);
 		statVO.setTeamBet(teamBet);
 		return statVO;
+	}
+
+	public AgentRelation findBySuperior(String superior) {
+		LambdaQueryWrapper<AgentRelation> wrapper = new LambdaQueryWrapper<>();
+		wrapper.eq(AgentRelation::getSuperior, superior);
+		return baseMapper.selectOne(wrapper);
 	}
 }

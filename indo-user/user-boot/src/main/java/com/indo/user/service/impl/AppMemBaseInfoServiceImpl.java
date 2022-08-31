@@ -21,13 +21,15 @@ import com.indo.common.utils.StringUtils;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
 import com.indo.core.base.service.impl.SuperServiceImpl;
-import com.indo.core.mapper.LoanRecordMapper;
 import com.indo.core.mapper.MemLevelMapper;
 import com.indo.core.pojo.bo.MemBaseInfoBO;
 import com.indo.core.pojo.bo.MemTradingBO;
 import com.indo.core.pojo.dto.MemBaseInfoDTO;
 import com.indo.core.pojo.dto.MemGoldChangeDTO;
-import com.indo.core.pojo.entity.*;
+import com.indo.core.pojo.entity.AgentRelation;
+import com.indo.core.pojo.entity.MemBaseinfo;
+import com.indo.core.pojo.entity.MemInviteCode;
+import com.indo.core.pojo.entity.MemLevel;
 import com.indo.core.pojo.vo.LoanRecordVo;
 import com.indo.core.service.ILoanRecordService;
 import com.indo.core.service.IMemGoldChangeService;
@@ -272,8 +274,8 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
 		LambdaQueryWrapper<AgentRelation> wrapper = new LambdaQueryWrapper();
 		wrapper.eq(AgentRelation::getParentId, parentInviteCode.getMemId())
 				.eq(AgentRelation::getStatus, 1);
-		AgentRelation parentAgent = memAgentService.getOne(wrapper);
-		if (parentAgent == null) {
+		AgentRelation parentRelationAgent = memAgentService.getOne(wrapper);
+		if (parentRelationAgent == null) {
 			AgentRelation agentRelation = new AgentRelation();
 			agentRelation.setMemId(memBaseinfo.getId());
 			agentRelation.setAccount(memBaseinfo.getAccount());
@@ -282,13 +284,15 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
 			agentRelation.setTeamNum(1);
 			agentRelation.setParentId(parentInviteCode.getMemId());
 			agentRelation.setSuperior(parentInviteCode.getAccount());
+			agentRelation.setUpdateTime(new Date());
 			memAgentService.save(agentRelation);
 		} else {
-			String subUserIds = StringUtils.isBlank(parentAgent.getSubUserIds()) ?
-					memBaseinfo.getId() + "" : parentAgent.getSubUserIds() + "," + memBaseinfo.getId();
-			parentAgent.setSubUserIds(subUserIds);
-			parentAgent.setTeamNum(parentAgent.getTeamNum() + 1);
-			memAgentService.updateById(parentAgent);
+			String subUserIds = StringUtils.isBlank(parentRelationAgent.getSubUserIds()) ?
+					memBaseinfo.getId() + "" : parentRelationAgent.getSubUserIds() + "," + memBaseinfo.getId();
+			parentRelationAgent.setSubUserIds(subUserIds);
+			parentRelationAgent.setTeamNum(parentRelationAgent.getTeamNum() + 1);
+			parentRelationAgent.setUpdateTime(new Date());
+			memAgentService.updateById(parentRelationAgent);
 		}
 	}
 

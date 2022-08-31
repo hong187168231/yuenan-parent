@@ -25,7 +25,7 @@ public interface AgentRelationMapper extends BaseMapper<AgentRelation> {
 
     List<AgentSubVO> subordinateList(Page<AgentSubVO> page, @Param("memIds") List<Long> memIds);
 
-    @Select("SELECT IFNULL(ar.team_num, 0) from agent_relation ar  WHERE  ar.`status` = 1 and ar.account = #{account}")
+    @Select("SELECT IFNULL(ar.team_num, 0) from agent_relation ar  WHERE  ar.`status` = 1 and ar.superior = #{account}")
     Integer selectTeamNum(String account);
 
 
