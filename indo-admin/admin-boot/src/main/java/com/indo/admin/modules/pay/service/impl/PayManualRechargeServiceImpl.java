@@ -65,8 +65,8 @@ public class PayManualRechargeServiceImpl extends SuperServiceImpl<PayManualRech
         }
         BigDecimal operateAmount = new BigDecimal(amount);
         PayRecharge rechargeOrder = new PayRecharge();
+        rechargeOrder.setMemId(memId);
         if(operateType.equals(1)){
-            rechargeOrder.setMemId(memId);
             rechargeOrder.setOrderNo(GeneratorIdUtil.generateId());
             //实际金额
             rechargeOrder.setOldAmount(operateAmount);
@@ -93,7 +93,7 @@ public class PayManualRechargeServiceImpl extends SuperServiceImpl<PayManualRech
             if(operateType.equals(2)){
                 payManualRecharge.setAfterAmount(memBaseinfo.getBalance().subtract(operateAmount));
             }
-            payManualRecharge.setCreateUser(JwtUtils.getUsername());
+            payManualRecharge.setCreateUser("JwtUtils.getUsername()");
             payManualRecharge.setCreateTime(new Date());
             payManualRecharge.setRemarks(remarks);
             if (baseMapper.insert(payManualRecharge) > 0) {

@@ -168,7 +168,7 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
         Page<MemBetInfoVo> page = new Page<>(memBetInfoDTO.getPage(), memBetInfoDTO.getLimit());
         page =memBaseInfoMapper.findMemBetInfo(page,memBetInfoDTO);
         page.getRecords().forEach(l->{
-            l.setWithdrawalBetAmount(l.getTotalRechargeAmount().add(l.getTotalGiftAmount()));
+            l.setWithdrawalBetAmount(l.getTotalRechargeAmount().add(l.getTotalGiftAmount()).add(l.getOtherAmount()));
             if((l.getWithdrawalBetAmount().subtract(l.getTotalBetAmount())).compareTo(BigDecimal.ZERO)>=0){
                 l.setLack(l.getTotalBetAmount().subtract(l.getWithdrawalBetAmount()));
             }else{
