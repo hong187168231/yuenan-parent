@@ -44,7 +44,7 @@
         SELECT
         mb.id AS memId,
         mb.account AS account,
-        mb.mem_level AS memLevel,
+        ml.level AS memLevel,
         mb.real_name AS realName,
         mb.acc_type AS accType,
         mb.total_deposit AS totalDeposit,
@@ -57,6 +57,7 @@
         FROM
         agent_relation ar
         INNER JOIN mem_baseinfo mb ON ar.mem_id = mb.id
+        left join mem_level ml on ml.id=mb.mem_level
         <if test="req.superior !=null and req.superior !='' ">
             and ar.superior = #{req.superior}
         </if>

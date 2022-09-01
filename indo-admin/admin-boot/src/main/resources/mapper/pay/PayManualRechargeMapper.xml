@@ -5,11 +5,12 @@
     <select id="memList" resultType="com.indo.pay.pojo.vo.ManualRechargeMemVO">
         SELECT mb.id as memId,
         mb.account as account,
-        mb.mem_level AS memLevel,
+        ml.level AS memLevel,
         mb.balance as balance,
         ma.superior as superior
         FROM mem_baseinfo mb
         LEFT JOIN agent_relation ma ON mb.id = ma.mem_id
+        left join mem_level ml on ml.id=mb.mem_level
         AND mb.`status` = 0
         <if test="account != null and account != '' ">
             where mb.account = #{account}
