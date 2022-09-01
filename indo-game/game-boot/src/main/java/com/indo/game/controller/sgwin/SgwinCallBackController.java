@@ -23,10 +23,11 @@ public class SgwinCallBackController {
     @RequestMapping(value = "/VerifyApi", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object VerifyApi(SGWinVerifyApiCallBackReq sgWinVerifyApiCallBackReq, HttpServletRequest request) {
+    public Object VerifyApi(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("SgwinCallBack  VerifyApi回调params:{},wtoken:{}", JSONObject.toJSONString(sgWinVerifyApiCallBackReq));
+        logger.info("SgwinCallBack  VerifyApi回调params:{},wtoken:{}", jsonObject);
+        SGWinVerifyApiCallBackReq sgWinVerifyApiCallBackReq = JSONObject.toJavaObject(jsonObject,SGWinVerifyApiCallBackReq.class);
         Object object = sgWinCallbackService.getVerifyApi(sgWinVerifyApiCallBackReq, ip);
         logger.info("SgwinCallBack  VerifyApi回调返回数据 params:{}", object);
         return object;
@@ -35,10 +36,11 @@ public class SgwinCallBackController {
     @RequestMapping(value = "/GetBalance", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object getBalance(SGWinGetBalanceCallBackReq sgWinGetBalanceCallBackParentReq, HttpServletRequest request) {
+    public Object getBalance(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("SgwinCallBack  获取余额getBalance回调params:{},wtoken:{}", JSONObject.toJSONString(sgWinGetBalanceCallBackParentReq));
+        logger.info("SgwinCallBack  获取余额getBalance回调params:{},wtoken:{}", jsonObject);
+        SGWinGetBalanceCallBackReq sgWinGetBalanceCallBackParentReq = JSONObject.toJavaObject(jsonObject,SGWinGetBalanceCallBackReq.class);
         Object object = sgWinCallbackService.getUserBalance(sgWinGetBalanceCallBackParentReq, ip);
         logger.info("SgwinCallBack  获取余额getBalance回调返回数据 params:{}", object);
         return object;
@@ -50,10 +52,11 @@ public class SgwinCallBackController {
     @RequestMapping(value = "/PlaceBet", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object bets(SGWinBetsCallBackReq sgWinBetsCallBackParentReq, HttpServletRequest request) {
+    public Object bets(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("SgwinCallBack  下注PlaceBet回调params:{},wtoken:{}", JSONObject.toJSONString(sgWinBetsCallBackParentReq));
+        logger.info("SgwinCallBack  下注PlaceBet回调params:{},wtoken:{}", jsonObject);
+        SGWinBetsCallBackReq sgWinBetsCallBackParentReq = JSONObject.toJavaObject(jsonObject,SGWinBetsCallBackReq.class);
         Object object = sgWinCallbackService.sgwinBetCallback(sgWinBetsCallBackParentReq, ip);
         logger.info("SgwinCallBack  下注PlaceBet回调返回数据 params:{}", object);
         return object;
@@ -62,10 +65,11 @@ public class SgwinCallBackController {
     @RequestMapping(value = "/NotifySettle", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object notifySettle(SGWinNotifySettleCallBackReq sgWinNotifySettleCallBackReq, HttpServletRequest request) {
+    public Object notifySettle(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("SgwinCallBack  结算notifySettle回调params:{},wtoken:{}", JSONObject.toJSONString(sgWinNotifySettleCallBackReq));
+        logger.info("SgwinCallBack  结算notifySettle回调params:{},wtoken:{}", jsonObject);
+        SGWinNotifySettleCallBackReq sgWinNotifySettleCallBackReq = JSONObject.toJavaObject(jsonObject,SGWinNotifySettleCallBackReq.class);
         Object object = sgWinCallbackService.notifySettle(sgWinNotifySettleCallBackReq, ip);
         logger.info("SgwinCallBack  结算notifySettle回调返回数据 params:{}", object);
         return object;
@@ -74,10 +78,11 @@ public class SgwinCallBackController {
     @RequestMapping(value = "/Refund", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object refund(SGWinRefundCallBackReq<SGWinTransactionsCallBackReq> sgWinRefundCallBackReq, HttpServletRequest request) {
+    public Object refund(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("SgwinCallBack  refund回调params:{},wtoken:{}", JSONObject.toJSONString(sgWinRefundCallBackReq));
+        logger.info("SgwinCallBack  refund回调params:{},wtoken:{}", jsonObject);
+        SGWinRefundCallBackReq<SGWinTransactionsCallBackReq> sgWinRefundCallBackReq = JSONObject.toJavaObject(jsonObject,SGWinRefundCallBackReq.class);
         Object object = sgWinCallbackService.refund(sgWinRefundCallBackReq, ip);
         logger.info("SgwinCallBack  refund回调返回数据 params:{}", object);
         return object;
