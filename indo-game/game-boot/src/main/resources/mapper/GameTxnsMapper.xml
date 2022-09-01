@@ -7,7 +7,7 @@
                SUM(t.winning_amount) AS winningAmount,t.platform
         FROM game_txns t
         WHERE
-         t.user_id = #{req.userAcct} and ((t.method = 'Settle' and t.status = 'Running') or (t.method = 'Place Bet' and t.status = 'Running'))
+         t.user_id = #{req.userAcct} and t.method = 'Settle' and t.status = 'Running'
         <if test='req.platform != null and req.platform.size()>0'>
              and t.platform IN
             <foreach collection='req.platform' item='role' open='(' separator=',' close=')'>
@@ -34,7 +34,7 @@
         t.bet_amount,t.winning_amount
         FROM game_txns t
         WHERE
-        t.user_id = #{req.userAcct} and ((t.method = 'Settle' and t.status = 'Running') or (t.method = 'Place Bet' and t.status = 'Running'))
+        t.user_id = #{req.userAcct} and t.method = 'Settle' and t.status = 'Running'
         <if test='req.platform != null and req.platform.size()>0'>
             and t.platform IN
             <foreach collection='req.platform' item='role' open='(' separator=',' close=')'>
@@ -74,7 +74,7 @@
         t.bet_amount,t.winning_amount,a.account as account,t.round_id,t.bet_time,t.odds,t.method,t.balance,t.platform_tx_id
         FROM game_txns t left join mem_baseinfo m on t.user_id=m.account left join agent_relation a on LOCATE(m.id,a.sub_user_ids)
         WHERE
-        ((t.method = 'Settle' and t.status = 'Running') or (t.method = 'Place Bet' and t.status = 'Running'))
+        t.method = 'Settle' and t.status = 'Running'
         <if test='req.agentAcctList != null and req.agentAcctList.size()>0'>
             and t.platform IN
             <foreach collection='req.agentAcctList' item='agentAcct' open='(' separator=',' close=')'>
