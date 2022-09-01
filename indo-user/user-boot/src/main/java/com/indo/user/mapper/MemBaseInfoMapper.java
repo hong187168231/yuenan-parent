@@ -27,6 +27,23 @@ public interface MemBaseInfoMapper extends SuperMapper<MemBaseinfo> {
     BigDecimal findUserBetMoney(@Param("account") String account);
 
 
-    @Select("SELECT count(*) FROM mem_baseinfo where id in (#{memIds}) AND DATE_FORMAT(create_time, \"%Y%m%d\") = #{date}")
-    Integer countByIdsAndCreateTime(@Param("memIds") String memIds, @Param("date") String date);
+    @Select({"<script> "
+        +" SELECT count(*) FROM mem_baseinfo where id in"
+        +" <foreach item='item' index='index' collection='memIds' open='(' separator=',' close=')'>"
+        +"   #{item}"
+        +" </foreach> AND DATE_FORMAT(create_time, \"%Y%m%d\") = #{date}"
+        + "</script>"
+    })
+    Integer countByIdsAndCreateTime(@Param("memIds") List<Long> memIds, @Param("date") String date);
+
+
+    @Select({"<script> "
+        +" SELECT count(*) FROM mem_baseinfo where id in"
+        +" <foreach item='item' index='index' collection='memIds' open='(' separator=',' close=')'>"
+        +"   #{item}"
+        +" </foreach> " +
+        "AND DATE_FORMAT(create_time, \"%Y%m\") = #{date}"
+        + "</script>"
+    })
+    Integer countMonthAddNumByIdsAndCreateTime(@Param("memIds") List<Long> memIds, @Param("date") String date);
 }

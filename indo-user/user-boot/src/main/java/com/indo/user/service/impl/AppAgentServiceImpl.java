@@ -208,17 +208,18 @@ public class AppAgentServiceImpl extends SuperServiceImpl<AgentRelationMapper, A
 
 		AgentRelation agentRelation = this.findBySuperior(loginInfo.getAccount());
 		int dayAdd = 0;
+		int	monthAdd = 0;
 		if (agentRelation != null && StringUtils.isNotEmpty(agentRelation.getSubUserIds())) {
-			String yesterday = DateUtils.format(DateUtils.addDay(new Date(), -1), DateUtils.shortFormat);;
-			dayAdd = memBaseInfoMapper.countByIdsAndCreateTime(agentRelation.getSubUserIds(), yesterday);
+			String yesterday = DateUtils.format(DateUtils.addDay(new Date(), -1), DateUtils.shortFormat);
+			List<Long> memIds = Arrays.asList(agentRelation.getSubUserIds().split(",")).stream().map(Long::parseLong).collect(Collectors.toList());
+			dayAdd = memBaseInfoMapper.countByIdsAndCreateTime(memIds, yesterday);
+
+			String month = DateUtils.formatMonth(new Date());
+			monthAdd = memBaseInfoMapper.countMonthAddNumByIdsAndCreateTime(memIds, month);
 		}
 
-		calendar.setTime(dNow);
-		calendar.add(Calendar.MONTH, -1);  //设置为前1月
-		dBefore = calendar.getTime();   //得到前1月的时间
-		beginTime = sdf.format(dBefore);    //格式化前1月的时间
-		endTime = sdf.format(dNow); //格式化当前时间
-		Integer monthAdd = agentRelationMapper.selectMonthAddNum(loginInfo.getAccount(), beginTime, endTime);
+
+		//Integer monthAdd = agentRelationMapper.selectMonthAddNum(loginInfo.getAccount(), beginTime, endTime);
 
 		statVO.setRebateAmount(rebate);
 		statVO.setTeamNum(teamNum == null ? 0 : teamNum);
@@ -233,5 +234,10 @@ public class AppAgentServiceImpl extends SuperServiceImpl<AgentRelationMapper, A
 		LambdaQueryWrapper<AgentRelation> wrapper = new LambdaQueryWrapper<>();
 		wrapper.eq(AgentRelation::getSuperior, superior);
 		return baseMapper.selectOne(wrapper);
+	}
+
+	public static void main(String[] args) {
+		String yesterday = DateUtils.format(DateUtils.addDay(new Date(), -1), DateUtils.shortFormat);;
+		System.out.println(yesterday);
 	}
 }
