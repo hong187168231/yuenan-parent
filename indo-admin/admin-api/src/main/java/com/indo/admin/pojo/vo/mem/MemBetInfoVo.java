@@ -25,6 +25,9 @@ public class MemBetInfoVo {
     @ApiModelProperty(value = "提现所需打码量")
     private BigDecimal withdrawalBetAmount;
 
+    @ApiModelProperty(value = "其他金额（借呗、签到、任务）")
+    private BigDecimal otherAmount;
+
     @ApiModelProperty(value = "差额")
     private BigDecimal lack;
 }
