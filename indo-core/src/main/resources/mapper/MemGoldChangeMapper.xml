@@ -31,18 +31,18 @@
                 ),
             m.total_deposit     = (
                 CASE
-                    WHEN m.total_deposit + #{rechargeAmount} > 0 THEN
-                        m.total_deposit + #{rechargeAmount}
-                    WHEN m.total_deposit + #{rechargeAmount} <= 0 THEN
-                        m.total_deposit + #{rechargeAmount}
+                    WHEN m.total_deposit + #{balance} > 0 THEN
+                        m.total_deposit + #{balance}
+                    WHEN m.total_deposit + #{balance} <= 0 THEN
+                        m.total_deposit + #{balance}
                     END
                 ),
             m.total_enchashment = (
                 CASE
-                    WHEN m.total_enchashment + #{cashAmount} > 0 THEN
-                        m.total_enchashment + #{cashAmount}
-                    WHEN m.total_enchashment + #{cashAmount} <= 0 THEN
-                        m.total_enchashment + #{cashAmount}
+                    WHEN m.total_enchashment + #{balance} > 0 THEN
+                        m.total_enchashment + #{balance}
+                    WHEN m.total_enchashment + #{balance} <= 0 THEN
+                        m.total_enchashment + #{balance}
                     END
                 ),
             m.deposit_num       = (

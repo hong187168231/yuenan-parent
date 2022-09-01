@@ -13,8 +13,7 @@ import com.indo.core.pojo.entity.game.GameParentPlatform;
 import com.indo.core.pojo.entity.game.GamePlatform;
 import com.indo.core.pojo.entity.game.Txns;
 import com.indo.game.common.util.SnowflakeId;
-import com.indo.game.pojo.dto.cq.CqBetCallBackReq;
-import com.indo.game.pojo.dto.cq.CqEndroundCallBackReq;
+import com.indo.game.pojo.dto.cq.*;
 import com.indo.game.pojo.vo.callback.ae.AeCallBackRespFail;
 import com.indo.game.pojo.vo.callback.cq.*;
 import com.indo.game.service.common.GameCommonService;
@@ -52,9 +51,12 @@ public class CqCallbackServiceImpl implements CqCallbackService {
     public Object cqBetCallback(CqBetCallBackReq cqApiRequestData, String ip, String wtoken) {
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.CQ_PLATFORM_CODE);
         if (!checkIp(gameParentPlatform,ip) && !OpenAPIProperties.CQ_API_TOKEN.equals(wtoken)) {
-            return commonReturnFail();
+            return commonReturnFail("1100","伺服器錯誤時回傳該編碼");
         }
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cqApiRequestData.getAccount());
+        if (null == memBaseinfo) {
+            return commonReturnFail("1006","查無玩家時回傳該編碼");
+        }
         GamePlatform gamePlatform = new GamePlatform();
         if(OpenAPIProperties.CQ_IS_PLATFORM_LOGIN.equals("Y")){
             gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.CQ_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
@@ -65,7 +67,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         BigDecimal balance = memBaseinfo.getBalance();
         BigDecimal betAmount = new BigDecimal(cqApiRequestData.getAmount()).multiply(gameParentPlatform.getCurrencyPro());
         if (memBaseinfo.getBalance().compareTo(betAmount) == -1) {
-            return commonReturnFail();
+            return commonReturnFail("1005","餘額不足時回傳該編碼");
         }
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
         wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Adjust Bet"));
@@ -76,9 +78,9 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         Txns oldTxns = txnsMapper.selectOne(wrapper);
         if (null != oldTxns) {
             if ("Cancel Bet".equals(oldTxns.getMethod())) {
-                return commonReturnFail();
+                return commonReturnFail("1015","當該mtcode已經被refund時回傳該錯誤編碼");
             } else {
-                return commonReturnFail();
+                return commonReturnFail("2009","MTCode重複時回傳該編碼");
             }
         }
 
@@ -141,7 +143,217 @@ public class CqCallbackServiceImpl implements CqCallbackService {
 //        }
         int num = txnsMapper.insert(txns);
         if (num <= 0) {
-            return commonReturnFail();
+            return commonReturnFail("1100","伺服器錯誤時回傳該編碼");
+        }
+
+        return commonReturnSuccess(balance.divide(gameParentPlatform.getCurrencyPro()),gameParentPlatform.getCurrencyType());
+
+    }
+
+    /**
+     * 此API是為牌桌及漁機遊戲，轉出一定額度金額至牌桌或漁機遊戲而調用
+     */
+    public Object cqRolloutCallback(CqBetCallBackReq cqApiRequestData, String ip, String wtoken) {
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.CQ_PLATFORM_CODE);
+        if (!checkIp(gameParentPlatform,ip) && !OpenAPIProperties.CQ_API_TOKEN.equals(wtoken)) {
+            return commonReturnFail("1100","伺服器錯誤時回傳該編碼");
+        }
+        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cqApiRequestData.getAccount());
+        if (null == memBaseinfo) {
+            return commonReturnFail("1006","查無玩家時回傳該編碼");
+        }
+        GamePlatform gamePlatform = new GamePlatform();
+        if(OpenAPIProperties.CQ_IS_PLATFORM_LOGIN.equals("Y")){
+            gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.CQ_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
+        }else {
+            gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(cqApiRequestData.getGamecode(), gameParentPlatform.getPlatformCode());
+        }
+        GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
+        BigDecimal balance = memBaseinfo.getBalance();
+        BigDecimal betAmount = new BigDecimal(cqApiRequestData.getAmount()).multiply(gameParentPlatform.getCurrencyPro());
+        if (memBaseinfo.getBalance().compareTo(betAmount) == -1) {
+            return commonReturnFail("1005","餘額不足時回傳該編碼");
+        }
+        LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+        wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Adjust Bet"));
+        wrapper.eq(Txns::getStatus, "Running");
+        wrapper.eq(Txns::getPromotionTxId, cqApiRequestData.getMtcode());
+        wrapper.eq(Txns::getPlatform, gameParentPlatform.getPlatformCode());
+        wrapper.eq(Txns::getUserId, memBaseinfo.getAccount());
+        Txns oldTxns = txnsMapper.selectOne(wrapper);
+        if (null != oldTxns) {
+            if ("Cancel Bet".equals(oldTxns.getMethod())) {
+                return commonReturnFail("1015","當該mtcode已經被refund時回傳該錯誤編碼");
+            } else {
+                return commonReturnFail("2009","MTCode重複時回傳該編碼");
+            }
+        }
+
+        balance = balance.subtract(betAmount);
+        gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
+
+        Txns txns = new Txns();
+        //混合码
+        txns.setPlatformTxId(cqApiRequestData.getMtcode());
+        //游戏商注单号
+        txns.setRoundId(cqApiRequestData.getRoundid());
+        //此交易是否是投注 true是投注 false 否
+        //玩家 ID
+        txns.setUserId(memBaseinfo.getAccount());
+        //玩家货币代码
+        txns.setCurrency(gameParentPlatform.getCurrencyType());
+        //平台代码
+        txns.setPlatform(gameParentPlatform.getPlatformCode());
+        //平台英文名称
+        txns.setPlatformEnName(gameParentPlatform.getPlatformEnName());
+        //平台中文名称
+        txns.setPlatformCnName(gameParentPlatform.getPlatformCnName());
+        //平台游戏类型
+        txns.setGameType(gameCategory.getGameType());
+        //游戏分类ID
+        txns.setCategoryId(gameCategory.getId());
+        //游戏分类名称
+        txns.setCategoryName(gameCategory.getGameName());
+        //平台游戏代码
+        txns.setGameCode(gamePlatform.getPlatformCode());
+        //游戏名称
+        txns.setGameName(gamePlatform.getPlatformEnName());
+        //下注金额
+        txns.setBetAmount(betAmount);
+        txns.setWinningAmount(betAmount.negate());
+        txns.setWinAmount(betAmount);
+        //玩家下注时间
+        txns.setBetTime(DateUtils.formatByString(cqApiRequestData.getEventTime(), DateUtils.newFormat));
+        //真实下注金额,需增加在玩家的金额
+        txns.setRealBetAmount(betAmount);
+        //返还金额 (包含下注金额)
+        //有效投注金额 或 投注面值
+        txns.setTurnover(betAmount);
+        //辨认交易时间依据
+        txns.setTxTime(null != cqApiRequestData.getEventTime() ? DateUtils.formatByString(cqApiRequestData.getEventTime(), DateUtils.newFormat) : "");
+        //操作名称
+        txns.setMethod("Place Bet");
+        txns.setStatus("Running");
+        //余额
+        txns.setBalance(balance);
+        txns.setGameMethod("rollout");
+        //创建时间
+        String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
+        txns.setCreateTime(dateStr);
+        //投注 IP
+        txns.setBetIp(ip);//  string 是 投注 IP
+//        if (oldTxns != null) {
+//            txns.setStatus("Settle");
+//            txnsMapper.updateById(oldTxns);
+//        }
+        int num = txnsMapper.insert(txns);
+        if (num <= 0) {
+            return commonReturnFail("1100","伺服器錯誤時回傳該編碼");
+        }
+
+        return commonReturnSuccess(balance.divide(gameParentPlatform.getCurrencyPro()),gameParentPlatform.getCurrencyType());
+
+    }
+
+    /**
+     * 此API是為牌桌及漁機遊戲，轉出一定額度金額至牌桌或漁機遊戲而調用
+     */
+    public Object cqTakeallCallback(CqBetCallBackReq cqApiRequestData, String ip, String wtoken) {
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.CQ_PLATFORM_CODE);
+        if (!checkIp(gameParentPlatform,ip) && !OpenAPIProperties.CQ_API_TOKEN.equals(wtoken)) {
+            return commonReturnFail("1100","伺服器錯誤時回傳該編碼");
+        }
+        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cqApiRequestData.getAccount());
+        if (null == memBaseinfo) {
+            return commonReturnFail("1006","查無玩家時回傳該編碼");
+        }
+        GamePlatform gamePlatform = new GamePlatform();
+        if(OpenAPIProperties.CQ_IS_PLATFORM_LOGIN.equals("Y")){
+            gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.CQ_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
+        }else {
+            gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(cqApiRequestData.getGamecode(), gameParentPlatform.getPlatformCode());
+        }
+        GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
+        BigDecimal balance = memBaseinfo.getBalance();
+//        BigDecimal betAmount = new BigDecimal(cqApiRequestData.getAmount()).multiply(gameParentPlatform.getCurrencyPro());
+//        if (memBaseinfo.getBalance().compareTo(betAmount) == -1) {
+//            return commonReturnFail("1005","餘額不足時回傳該編碼");
+//        }
+        LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+        wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Adjust Bet"));
+        wrapper.eq(Txns::getStatus, "Running");
+        wrapper.eq(Txns::getPromotionTxId, cqApiRequestData.getMtcode());
+        wrapper.eq(Txns::getPlatform, gameParentPlatform.getPlatformCode());
+        wrapper.eq(Txns::getUserId, memBaseinfo.getAccount());
+        Txns oldTxns = txnsMapper.selectOne(wrapper);
+        if (null != oldTxns) {
+            if ("Cancel Bet".equals(oldTxns.getMethod())) {
+                return commonReturnFail("1015","當該mtcode已經被refund時回傳該錯誤編碼");
+            } else {
+                return commonReturnFail("2009","MTCode重複時回傳該編碼");
+            }
+        }
+
+        balance = balance.subtract(balance);
+        gameCommonService.updateUserBalance(memBaseinfo, balance, GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
+
+        Txns txns = new Txns();
+        //混合码
+        txns.setPlatformTxId(cqApiRequestData.getMtcode());
+        //游戏商注单号
+        txns.setRoundId(cqApiRequestData.getRoundid());
+        //此交易是否是投注 true是投注 false 否
+        //玩家 ID
+        txns.setUserId(memBaseinfo.getAccount());
+        //玩家货币代码
+        txns.setCurrency(gameParentPlatform.getCurrencyType());
+        //平台代码
+        txns.setPlatform(gameParentPlatform.getPlatformCode());
+        //平台英文名称
+        txns.setPlatformEnName(gameParentPlatform.getPlatformEnName());
+        //平台中文名称
+        txns.setPlatformCnName(gameParentPlatform.getPlatformCnName());
+        //平台游戏类型
+        txns.setGameType(gameCategory.getGameType());
+        //游戏分类ID
+        txns.setCategoryId(gameCategory.getId());
+        //游戏分类名称
+        txns.setCategoryName(gameCategory.getGameName());
+        //平台游戏代码
+        txns.setGameCode(gamePlatform.getPlatformCode());
+        //游戏名称
+        txns.setGameName(gamePlatform.getPlatformEnName());
+        //下注金额
+        txns.setBetAmount(balance);
+        txns.setWinningAmount(balance.negate());
+        txns.setWinAmount(balance);
+        //玩家下注时间
+        txns.setBetTime(DateUtils.formatByString(cqApiRequestData.getEventTime(), DateUtils.newFormat));
+        //真实下注金额,需增加在玩家的金额
+        txns.setRealBetAmount(balance);
+        //返还金额 (包含下注金额)
+        //有效投注金额 或 投注面值
+        txns.setTurnover(balance);
+        //辨认交易时间依据
+        txns.setTxTime(null != cqApiRequestData.getEventTime() ? DateUtils.formatByString(cqApiRequestData.getEventTime(), DateUtils.newFormat) : "");
+        //操作名称
+        txns.setMethod("Place Bet");
+        txns.setStatus("Running");
+        //余额
+        txns.setBalance(balance);
+        txns.setGameMethod("takeall");
+        //创建时间
+        String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
+        txns.setCreateTime(dateStr);
+        //投注 IP
+        txns.setBetIp(ip);//  string 是 投注 IP
+//        if (oldTxns != null) {
+//            txns.setStatus("Settle");
+//            txnsMapper.updateById(oldTxns);
+//        }
+        int num = txnsMapper.insert(txns);
+        if (num <= 0) {
+            return commonReturnFail("1100","伺服器錯誤時回傳該編碼");
         }
 
         return commonReturnSuccess(balance.divide(gameParentPlatform.getCurrencyPro()),gameParentPlatform.getCurrencyType());
@@ -152,7 +364,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
     public Object endround(CqEndroundCallBackReq endroundDataCallBackReq, String ip, String wtoken) {
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.CQ_PLATFORM_CODE);
         if (!checkIp(gameParentPlatform,ip) && !OpenAPIProperties.CQ_API_TOKEN.equals(wtoken)) {
-            return commonReturnFail();
+            return commonReturnFail("1100","伺服器錯誤時回傳該編碼");
         }
         GamePlatform gamePlatform = new GamePlatform();
         if (OpenAPIProperties.CQ_IS_PLATFORM_LOGIN.equals("Y")) {
@@ -162,19 +374,24 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         }
         GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
 
-        String dataStr = endroundDataCallBackReq.getData();
+//        String dataStr = endroundDataCallBackReq.getData();
 //        for(int i=0;i<dataStr.length;i++) {
-        String replaceStr = dataStr.replace("[", "").replace("]", "");
-        JSONObject tokenJson = JSONObject.parseObject(replaceStr);
-        logger.info("CQ9Game 回调endround:tokenJson:{}", tokenJson);
+//        String replaceStr = dataStr.replace("[", "").replace("]", "");
+//        JSONObject tokenJson = JSONObject.parseObject(replaceStr);
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(endroundDataCallBackReq.getAccount());
+        if (null == memBaseinfo) {
+            return commonReturnFail("1006","查無玩家時回傳該編碼");
+        }
         BigDecimal balance = memBaseinfo.getBalance();
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
-        String mtcode = tokenJson.getString("mtcode");
-        wrapper.eq(Txns::getPromotionTxId, mtcode);
+//        String mtcode = tokenJson.getString("mtcode");
+//        wrapper.eq(Txns::getPromotionTxId, mtcode);
         wrapper.eq(Txns::getRoundId, endroundDataCallBackReq.getRoundid());
         Txns oldTxns = txnsMapper.selectOne(wrapper);
-        BigDecimal amount = null!=tokenJson.getBigDecimal("amount")?tokenJson.getBigDecimal("amount").multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
+        BigDecimal amount = null!=endroundDataCallBackReq.getJackpot()?endroundDataCallBackReq.getJackpot().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
+        if(BigDecimal.ZERO.compareTo(amount)==0){
+            return commonReturnSuccess(balance.divide(gameParentPlatform.getCurrencyPro()), gameParentPlatform.getCurrencyType());
+        }
         balance = balance.add(amount);
         gameCommonService.updateUserBalance(memBaseinfo, amount, GoldchangeEnum.REFUND, TradingEnum.INCOME);
         String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
@@ -183,7 +400,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         if (null != oldTxns) {
             BeanUtils.copyProperties(oldTxns, txns);
         } else{ //混合码
-            txns.setPlatformTxId(mtcode);
+//            txns.setPlatformTxId(mtcode);
             //游戏商注单号
             txns.setRoundId(endroundDataCallBackReq.getRoundid());
             //此交易是否是投注 true是投注 false 否
@@ -213,7 +430,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         txns.setWinningAmount(amount);
         txns.setWinAmount(amount);
         //游戏商注单号
-        txns.setPlatformTxId(mtcode);
+//        txns.setPlatformTxId(mtcode);
         //混合码
         txns.setRoundId(endroundDataCallBackReq.getRoundid());
         txns.setBalance(balance);
@@ -237,7 +454,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
     public Object cqPayOffCallback(CqBetCallBackReq cqApiRequestData, String ip, String wtoken) {
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.CQ_PLATFORM_CODE);
         if (!checkIp(gameParentPlatform,ip) && !OpenAPIProperties.CQ_API_TOKEN.equals(wtoken)) {
-            return commonReturnFail();
+            return commonReturnFail("1100","伺服器錯誤時回傳該編碼");
         }
 
         GamePlatform gamePlatform = new GamePlatform();
@@ -248,13 +465,16 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         }
         GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cqApiRequestData.getAccount());
+        if (null == memBaseinfo) {
+            return commonReturnFail("1006","查無玩家時回傳該編碼");
+        }
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Txns::getStatus, "Running");
         wrapper.eq(Txns::getMethod, "Give");
         wrapper.eq(Txns::getPromotionTxId, cqApiRequestData.getMtcode());
         Txns oldTxns = txnsMapper.selectOne(wrapper);
         if (null != oldTxns) {
-            return commonReturnFail();
+            return commonReturnFail("2009","MTCode重複時回傳該編碼");
         }
         BigDecimal balance = memBaseinfo.getBalance();
         BigDecimal amount = BigDecimal.valueOf(cqApiRequestData.getAmount()).multiply(gameParentPlatform.getCurrencyPro());
@@ -290,7 +510,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
     public Object cqBonusCallback(CqBetCallBackReq cqApiRequestData, String ip, String wtoken) {
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.CQ_PLATFORM_CODE);
         if (!checkIp(gameParentPlatform,ip) && !OpenAPIProperties.CQ_API_TOKEN.equals(wtoken)) {
-            return commonReturnFail();
+            return commonReturnFail("1100","伺服器錯誤時回傳該編碼");
         }
         GamePlatform gamePlatform = new GamePlatform();
         if(OpenAPIProperties.CQ_IS_PLATFORM_LOGIN.equals("Y")){
@@ -300,13 +520,16 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         }
         GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cqApiRequestData.getAccount());
+        if (null == memBaseinfo) {
+            return commonReturnFail("1006","查無玩家時回傳該編碼");
+        }
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Txns::getMethod, "Give");
         wrapper.eq(Txns::getStatus, "Running");
         wrapper.eq(Txns::getPromotionTxId, cqApiRequestData.getMtcode());
         Txns oldTxns = txnsMapper.selectOne(wrapper);
         if (null != oldTxns) {
-            return commonReturnFail();
+            return commonReturnFail("2009","MTCode重複時回傳該編碼");
         }
         BigDecimal balance = memBaseinfo.getBalance();
         BigDecimal amount = BigDecimal.valueOf(cqApiRequestData.getAmount()).multiply(gameParentPlatform.getCurrencyPro());
@@ -329,7 +552,54 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         txns.setGameMethod("bonus");
         int number = txnsMapper.insert(txns);
         if (number <= 0) {
-            return commonReturnFail();
+            return commonReturnFail("1100","伺服器錯誤時回傳該編碼");
+        }
+        return commonReturnSuccess(balance.divide(gameParentPlatform.getCurrencyPro()), gameParentPlatform.getCurrencyType());
+    }
+
+    @Override
+    public Object cqRefundCallback(CqBetCallBackReq cqApiRequestData, String ip, String wtoken) {
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.CQ_PLATFORM_CODE);
+        if (!checkIp(gameParentPlatform,ip) && !OpenAPIProperties.CQ_API_TOKEN.equals(wtoken)) {
+            return commonReturnFail("1100","伺服器錯誤時回傳該編碼");
+        }
+        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cqApiRequestData.getAccount());
+        if (null == memBaseinfo) {
+            return commonReturnFail("1006","查無玩家時回傳該編碼");
+        }
+        LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Txns::getMethod, "Place Bet");
+        wrapper.eq(Txns::getStatus, "Running");
+        wrapper.eq(Txns::getPromotionTxId, cqApiRequestData.getMtcode());
+        Txns oldTxns = txnsMapper.selectOne(wrapper);
+        if (null == oldTxns) {
+            return commonReturnFail("1014","當未查詢到紀錄時回傳該錯誤編碼");
+        }
+        BigDecimal balance = memBaseinfo.getBalance();
+        BigDecimal amount = oldTxns.getBetAmount();
+        balance = balance.subtract(amount);
+        gameCommonService.updateUserBalance(memBaseinfo, amount, GoldchangeEnum.CANCEL_BET, TradingEnum.SPENDING);
+        String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
+        Txns txns = new Txns();
+        BeanUtils.copyProperties(oldTxns, txns);
+        //游戏商注单号
+        txns.setPlatformTxId(cqApiRequestData.getMtcode());
+        //混合码
+        txns.setRoundId(cqApiRequestData.getRoundid());
+        txns.setBetAmount(amount);
+        txns.setWinningAmount(amount.negate());
+        txns.setWinAmount(amount);
+        txns.setBalance(balance);
+        txns.setMethod("Cancel Bet");
+        txns.setStatus("Running");
+        txns.setCreateTime(dateStr);
+        txns.setGameMethod("refund");
+        int number = txnsMapper.insert(txns);
+        oldTxns.setUpdateTime(dateStr);
+        oldTxns.setStatus("Cancel");
+        txnsMapper.updateById(oldTxns);
+        if (number <= 0) {
+            return commonReturnFail("1100","伺服器錯誤時回傳該編碼");
         }
         return commonReturnSuccess(balance.divide(gameParentPlatform.getCurrencyPro()), gameParentPlatform.getCurrencyType());
     }
@@ -338,7 +608,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
     public Object cqCreditCallback(CqBetCallBackReq cqApiRequestData, String ip, String wtoken) {
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.CQ_PLATFORM_CODE);
         if (!checkIp(gameParentPlatform,ip) && !OpenAPIProperties.CQ_API_TOKEN.equals(wtoken)) {
-            return commonReturnFail();
+            return commonReturnFail("1100","伺服器錯誤時回傳該編碼");
         }
         GamePlatform gamePlatform = new GamePlatform();
         if(OpenAPIProperties.CQ_IS_PLATFORM_LOGIN.equals("Y")){
@@ -348,12 +618,15 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         }
         GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cqApiRequestData.getAccount());
+        if (null == memBaseinfo) {
+            return commonReturnFail("1006","查無玩家時回傳該編碼");
+        }
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Txns::getStatus, "Running");
         wrapper.eq(Txns::getPromotionTxId, cqApiRequestData.getMtcode());
         Txns oldTxns = txnsMapper.selectOne(wrapper);
         if (null != oldTxns) {
-            return commonReturnFail();
+            return commonReturnFail("2009","MTCode重複時回傳該編碼");
         }
         BigDecimal amount = BigDecimal.valueOf(cqApiRequestData.getAmount()).multiply(gameParentPlatform.getCurrencyPro());
         BigDecimal balance = memBaseinfo.getBalance().add(amount);
@@ -387,7 +660,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
     public Object cqDebitCallback(CqBetCallBackReq cqApiRequestData, String ip, String wtoken) {
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.CQ_PLATFORM_CODE);
         if (!checkIp(gameParentPlatform,ip) && !OpenAPIProperties.CQ_API_TOKEN.equals(wtoken)) {
-            return commonReturnFail();
+            return commonReturnFail("1100","伺服器錯誤時回傳該編碼");
         }
 
         GamePlatform gamePlatform = new GamePlatform();
@@ -398,13 +671,16 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         }
         GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cqApiRequestData.getAccount());
+        if (null == memBaseinfo) {
+            return commonReturnFail("1006","查無玩家時回傳該編碼");
+        }
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
         wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Adjust Bet"));
         wrapper.eq(Txns::getStatus, "Running");
         wrapper.eq(Txns::getPromotionTxId, cqApiRequestData.getMtcode());
         Txns oldTxns = txnsMapper.selectOne(wrapper);
         if (null != oldTxns) {
-            return commonReturnFail();
+            return commonReturnFail("2009","MTCode重複時回傳該編碼");
         }
         BigDecimal amount = BigDecimal.valueOf(cqApiRequestData.getAmount()).multiply(gameParentPlatform.getCurrencyPro());
         BigDecimal balance = memBaseinfo.getBalance().subtract(amount);
@@ -438,7 +714,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
     public Object cqRollinCallback(CqBetCallBackReq cqApiRequestData, String ip, String wtoken) {
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.CQ_PLATFORM_CODE);
         if (!checkIp(gameParentPlatform,ip) && !OpenAPIProperties.CQ_API_TOKEN.equals(wtoken)) {
-            return commonReturnFail();
+            return commonReturnFail("1100","伺服器錯誤時回傳該編碼");
         }
         GamePlatform gamePlatform = new GamePlatform();
         if(OpenAPIProperties.CQ_IS_PLATFORM_LOGIN.equals("Y")){
@@ -448,6 +724,9 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         }
         GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cqApiRequestData.getAccount());
+        if (null == memBaseinfo) {
+            return commonReturnFail("1006","查無玩家時回傳該編碼");
+        }
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Txns::getMethod, "Place Bet");
         wrapper.eq(Txns::getStatus, "Running");
@@ -462,7 +741,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         }
         if (new BigDecimal(cqApiRequestData.getWin()).compareTo(BigDecimal.ZERO) == -1) {//输
             if (memBaseinfo.getBalance().compareTo(betAmount.abs()) == -1) {
-                return commonReturnFail();
+                return commonReturnFail("1005","餘額不足時回傳該編碼");
             }
             balance = balance.subtract(betAmount.abs());
             gameCommonService.updateUserBalance(memBaseinfo, betAmount.abs(), GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
@@ -504,11 +783,11 @@ public class CqCallbackServiceImpl implements CqCallbackService {
     public Object cqBalanceCallback(String account, String ip, String wtoken) {
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.CQ_PLATFORM_CODE);
         if (!checkIp(gameParentPlatform,ip) && !OpenAPIProperties.CQ_API_TOKEN.equals(wtoken)) {
-            return commonReturnFail();
+            return commonReturnFail("1100","伺服器錯誤時回傳該編碼");
         }
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(account);
         if (null == memBaseinfo) {
-            return commonReturnFail();
+            return commonReturnFail("1006","查無玩家時回傳該編碼");
         } else {
             return commonReturnSuccess(memBaseinfo.getBalance().divide(gameParentPlatform.getCurrencyPro()), gameParentPlatform.getCurrencyType());
         }
@@ -518,11 +797,20 @@ public class CqCallbackServiceImpl implements CqCallbackService {
     public Object cqCheckPlayerCallback(String account, String ip, String wtoken) {
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.CQ_PLATFORM_CODE);
         if (!checkIp(gameParentPlatform,ip) && !OpenAPIProperties.CQ_API_TOKEN.equals(wtoken)) {
-            return commonReturnFail();
+            return commonReturnFail("1100","伺服器錯誤時回傳該編碼");
         }
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(account);
         if (null == memBaseinfo) {
-            return commonReturnFail();
+            String dataStr = DateUtils.format(new Date(), DateUtils.RFC3339_DATE_FORMAT);
+            JSONObject jsonStruts = new JSONObject();
+            jsonStruts.put("code", "0");
+            jsonStruts.put("message", "Success");
+            jsonStruts.put("datetime", dataStr);
+
+            JSONObject jsonData = new JSONObject();
+            jsonData.put("data", false);
+            jsonData.put("status", jsonStruts);
+            return jsonData;
         } else {
             String dataStr = DateUtils.format(new Date(), DateUtils.RFC3339_DATE_FORMAT);
             JSONObject jsonStruts = new JSONObject();
@@ -541,7 +829,7 @@ public class CqCallbackServiceImpl implements CqCallbackService {
     public Object cqRecordCallback(String mtcode, String ip, String wtoken) {
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.CQ_PLATFORM_CODE);
         if (!checkIp(gameParentPlatform,ip) && !OpenAPIProperties.CQ_API_TOKEN.equals(wtoken)) {
-            return commonReturnFail();
+            return commonReturnFail("1100","伺服器錯誤時回傳該編碼");
         }
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Txns::getPlatformTxId, mtcode);
@@ -622,18 +910,473 @@ public class CqCallbackServiceImpl implements CqCallbackService {
         return getBalanceSuccess;
     }
 
-    private Object commonReturnFail() {
+    private Object commonReturnFail(String code,String message) {
         //返回
         CqRespSuccess getBalanceSuccess = new CqRespSuccess();
         CqStatusResp statusResp = new CqStatusResp();
-        statusResp.setCode("1");
-        statusResp.setMessage("FAIL");
+        statusResp.setCode(code);
+        statusResp.setMessage(message);
         String dataStr = DateUtils.format(new Date(), DateUtils.RFC3339_DATE_FORMAT);
         statusResp.setDatetime(dataStr);
-        CqDataResp dataResp = new CqDataResp();
-        getBalanceSuccess.setData(dataResp);
+//        CqDataResp dataResp = new CqDataResp();
+//        getBalanceSuccess.setData(dataResp);
         getBalanceSuccess.setStatus(statusResp);
         return getBalanceSuccess;
+    }
+
+
+    /**
+     * 專用於體彩批次下注
+     */
+    public Object cqBetsCallback(CqSportsCallBackReq<CqSportsInfoCallBackReq> cqSportsCallBackReq, String ip, String wtoken) {
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.CQ_PLATFORM_CODE);
+        if (!checkIp(gameParentPlatform,ip) && !OpenAPIProperties.CQ_API_TOKEN.equals(wtoken)) {
+            return commonReturnFail("1100","伺服器錯誤時回傳該編碼");
+        }
+        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cqSportsCallBackReq.getAccount());
+        if (null == memBaseinfo) {
+            return commonReturnFail("1006","查無玩家時回傳該編碼");
+        }
+        GamePlatform gamePlatform = new GamePlatform();
+        if(OpenAPIProperties.CQ_IS_PLATFORM_LOGIN.equals("Y")){
+            gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.CQ_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
+        }else {
+            gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(cqSportsCallBackReq.getGamecode(), gameParentPlatform.getPlatformCode());
+        }
+        GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
+        BigDecimal balance = memBaseinfo.getBalance();
+        List<CqSportsInfoCallBackReq> list = cqSportsCallBackReq.getData();
+        BigDecimal betAllAmount = BigDecimal.ZERO;
+        for(CqSportsInfoCallBackReq infoCallBackReq:list) {
+            betAllAmount = betAllAmount.add(infoCallBackReq.getAmount().multiply(gameParentPlatform.getCurrencyPro()));
+        }
+        if (memBaseinfo.getBalance().compareTo(betAllAmount) == -1) {
+            return commonReturnFail("1005","餘額不足時回傳該編碼");
+        }
+        for(CqSportsInfoCallBackReq infoCallBackReq:list) {
+            BigDecimal betAmount = infoCallBackReq.getAmount().multiply(gameParentPlatform.getCurrencyPro());
+            LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+            wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Adjust Bet"));
+            wrapper.eq(Txns::getStatus, "Running");
+            wrapper.eq(Txns::getPromotionTxId, infoCallBackReq.getMtcode());
+            wrapper.eq(Txns::getPlatform, gameParentPlatform.getPlatformCode());
+            wrapper.eq(Txns::getUserId, memBaseinfo.getAccount());
+            Txns oldTxns = txnsMapper.selectOne(wrapper);
+            if (null != oldTxns) {
+                if ("Cancel Bet".equals(oldTxns.getMethod())) {
+                    return commonReturnFail("1015", "當該mtcode已經被refund時回傳該錯誤編碼");
+                } else {
+                    return commonReturnFail("2009", "MTCode重複時回傳該編碼");
+                }
+            }
+
+            balance = balance.subtract(betAmount);
+            gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
+
+            Txns txns = new Txns();
+            //混合码
+            txns.setPlatformTxId(infoCallBackReq.getMtcode());
+            //游戏商注单号
+            txns.setRoundId(infoCallBackReq.getRoundid());
+            //此交易是否是投注 true是投注 false 否
+            //玩家 ID
+            txns.setUserId(memBaseinfo.getAccount());
+            //玩家货币代码
+            txns.setCurrency(gameParentPlatform.getCurrencyType());
+            //平台代码
+            txns.setPlatform(gameParentPlatform.getPlatformCode());
+            //平台英文名称
+            txns.setPlatformEnName(gameParentPlatform.getPlatformEnName());
+            //平台中文名称
+            txns.setPlatformCnName(gameParentPlatform.getPlatformCnName());
+            //平台游戏类型
+            txns.setGameType(gameCategory.getGameType());
+            //游戏分类ID
+            txns.setCategoryId(gameCategory.getId());
+            //游戏分类名称
+            txns.setCategoryName(gameCategory.getGameName());
+            //平台游戏代码
+            txns.setGameCode(gamePlatform.getPlatformCode());
+            //游戏名称
+            txns.setGameName(gamePlatform.getPlatformEnName());
+            //下注金额
+            txns.setBetAmount(betAmount);
+            txns.setWinningAmount(betAmount.negate());
+            txns.setWinAmount(betAmount);
+            //玩家下注时间
+            txns.setBetTime(DateUtils.formatByString(infoCallBackReq.getEventtime(), DateUtils.newFormat));
+            //真实下注金额,需增加在玩家的金额
+            txns.setRealBetAmount(betAmount);
+            //返还金额 (包含下注金额)
+            //有效投注金额 或 投注面值
+            txns.setTurnover(betAmount);
+            //辨认交易时间依据
+            txns.setTxTime(null != infoCallBackReq.getEventtime() ? DateUtils.formatByString(infoCallBackReq.getEventtime(), DateUtils.newFormat) : "");
+            //操作名称
+            txns.setMethod("Place Bet");
+            txns.setStatus("Running");
+            //余额
+            txns.setBalance(balance);
+            txns.setGameMethod("bets");
+            //创建时间
+            String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
+            txns.setCreateTime(dateStr);
+            //投注 IP
+            txns.setBetIp(ip);//  string 是 投注 IP
+//        if (oldTxns != null) {
+//            txns.setStatus("Settle");
+//            txnsMapper.updateById(oldTxns);
+//        }
+            int num = txnsMapper.insert(txns);
+        }
+
+        return commonReturnSuccess(balance.divide(gameParentPlatform.getCurrencyPro()),gameParentPlatform.getCurrencyType());
+
+    }
+
+    /**
+     * 專用於體彩批次押注退還
+     * @param cqSportsRefudsCallBackReq
+     * @param ip
+     * @param wtoken
+     * @return
+     */
+    @Override
+    public Object cqRefundsCallback(CqSportsRefudsCallBackReq cqSportsRefudsCallBackReq, String ip, String wtoken) {
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.CQ_PLATFORM_CODE);
+        if (!checkIp(gameParentPlatform,ip) && !OpenAPIProperties.CQ_API_TOKEN.equals(wtoken)) {
+            return commonReturnFail("1100","伺服器錯誤時回傳該編碼");
+        }
+        String[] mtcodes = cqSportsRefudsCallBackReq.getMtcode();
+        BigDecimal balance = BigDecimal.ZERO;
+        boolean b = true;
+        for(String mtcode:mtcodes) {
+
+            LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+            wrapper.eq(Txns::getMethod, "Place Bet");
+            wrapper.eq(Txns::getStatus, "Running");
+            wrapper.eq(Txns::getPromotionTxId, mtcode);
+            Txns oldTxns = txnsMapper.selectOne(wrapper);
+            if (null == oldTxns) {
+                return commonReturnFail("1014", "當未查詢到紀錄時回傳該錯誤編碼");
+            }
+            MemTradingBO memBaseinfo = new MemTradingBO();
+            if(b){
+                memBaseinfo = gameCommonService.getMemTradingInfo(oldTxns.getUserId());
+                if (null == memBaseinfo) {
+                    return commonReturnFail("1006", "查無玩家時回傳該編碼");
+                }
+                balance = memBaseinfo.getBalance();
+            }
+            BigDecimal amount = oldTxns.getBetAmount();
+            balance = balance.add(amount);
+            gameCommonService.updateUserBalance(memBaseinfo, amount, GoldchangeEnum.CANCEL_BET, TradingEnum.INCOME);
+            String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
+            Txns txns = new Txns();
+            BeanUtils.copyProperties(oldTxns, txns);
+            //游戏商注单号
+            txns.setPlatformTxId(mtcode);
+            //混合码
+            txns.setBetAmount(amount);
+            txns.setWinningAmount(amount.negate());
+            txns.setWinAmount(amount);
+            txns.setBalance(balance);
+            txns.setMethod("Cancel Bet");
+            txns.setStatus("Running");
+            txns.setCreateTime(dateStr);
+            txns.setGameMethod("refunds");
+            int number = txnsMapper.insert(txns);
+            oldTxns.setUpdateTime(dateStr);
+            oldTxns.setStatus("Cancel");
+            txnsMapper.updateById(oldTxns);
+            if (number <= 0) {
+                return commonReturnFail("1100", "伺服器錯誤時回傳該編碼");
+            }
+        }
+        return commonReturnSuccess(balance.divide(gameParentPlatform.getCurrencyPro()), gameParentPlatform.getCurrencyType());
+    }
+
+    /**
+     * 專用於體彩取消押注退還
+     * @param cqSportsRefudsCallBackReq
+     * @param ip
+     * @param wtoken
+     * @return
+     */
+    @Override
+    public Object cqCancelCallback(CqSportsRefudsCallBackReq cqSportsRefudsCallBackReq, String ip, String wtoken) {
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.CQ_PLATFORM_CODE);
+        if (!checkIp(gameParentPlatform,ip) && !OpenAPIProperties.CQ_API_TOKEN.equals(wtoken)) {
+            return commonReturnFail("1100","伺服器錯誤時回傳該編碼");
+        }
+        String[] mtcodes = cqSportsRefudsCallBackReq.getMtcode();
+        BigDecimal balance = BigDecimal.ZERO;
+        boolean b = true;
+        List<Txns> txnsList = new ArrayList<>();
+        BigDecimal betAllAmount = BigDecimal.ZERO;
+        MemTradingBO memBaseinfo = new MemTradingBO();
+        for(String mtcode:mtcodes) {
+
+            LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+            wrapper.eq(Txns::getMethod, "Cancel Bet");
+            wrapper.eq(Txns::getStatus, "Running");
+            wrapper.eq(Txns::getPromotionTxId, mtcode);
+            Txns oldTxns = txnsMapper.selectOne(wrapper);
+            if (null == oldTxns) {
+                return commonReturnFail("1014", "當未查詢到紀錄時回傳該錯誤編碼");
+            }
+            betAllAmount = betAllAmount.add(oldTxns.getBetAmount().multiply(gameParentPlatform.getCurrencyPro()));
+            txnsList.add(oldTxns);
+            //游戏商注单号
+            oldTxns.setPlatformTxId(mtcode);
+            if(b){
+                memBaseinfo = gameCommonService.getMemTradingInfo(oldTxns.getUserId());
+                if (null == memBaseinfo) {
+                    return commonReturnFail("1006", "查無玩家時回傳該編碼");
+                }
+                balance = memBaseinfo.getBalance();
+            }
+        }
+        if (balance.compareTo(betAllAmount) == -1) {
+            return commonReturnFail("1005","餘額不足時回傳該編碼");
+        }
+        for(Txns oldTxns:txnsList) {
+
+            BigDecimal amount = oldTxns.getBetAmount();
+            balance = balance.subtract(amount);
+            gameCommonService.updateUserBalance(memBaseinfo, amount, GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
+            String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
+            Txns txns = new Txns();
+            BeanUtils.copyProperties(oldTxns, txns);
+
+            //混合码
+            txns.setBetAmount(amount);
+            txns.setWinningAmount(amount.negate());
+            txns.setWinAmount(amount);
+            txns.setBalance(balance);
+            txns.setMethod("Place Bet");
+            txns.setStatus("Running");
+            txns.setCreateTime(dateStr);
+            txns.setGameMethod("cancel");
+            int number = txnsMapper.insert(txns);
+            oldTxns.setUpdateTime(dateStr);
+            oldTxns.setStatus("Place Bet");
+            txnsMapper.updateById(oldTxns);
+            if (number <= 0) {
+                return commonReturnFail("1100", "伺服器錯誤時回傳該編碼");
+            }
+        }
+        return commonReturnSuccess(balance.divide(gameParentPlatform.getCurrencyPro()), gameParentPlatform.getCurrencyType());
+    }
+
+    /**
+     * 專用於體彩多人多派彩
+     * @param callBackReqCqSportsWinsCallBackReq
+     * @param ip
+     * @param wtoken
+     * @return
+     */
+    @Override
+    public Object cqWinsCallback(CqSportsWinsCallBackReq<CqSportsEventCallBackReq> callBackReqCqSportsWinsCallBackReq, String ip, String wtoken) {
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.CQ_PLATFORM_CODE);
+        if (!checkIp(gameParentPlatform,ip) && !OpenAPIProperties.CQ_API_TOKEN.equals(wtoken)) {
+            return commonReturnFail("1100","伺服器錯誤時回傳該編碼");
+        }
+        List<CqSportsEventCallBackReq> list = callBackReqCqSportsWinsCallBackReq.getEvent();
+        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(callBackReqCqSportsWinsCallBackReq.getAccount());
+        if (null == memBaseinfo) {
+            return commonReturnFail("1006", "查無玩家時回傳該編碼");
+        }
+        BigDecimal balance = memBaseinfo.getBalance();
+
+        for(CqSportsEventCallBackReq eventCallBackReq:list) {
+
+            LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+            wrapper.eq(Txns::getMethod, "Place Bet");
+            wrapper.eq(Txns::getStatus, "Running");
+            wrapper.eq(Txns::getPromotionTxId, eventCallBackReq.getMtcode());
+            Txns oldTxns = txnsMapper.selectOne(wrapper);
+            if (null == oldTxns) {
+                return commonReturnFail("1014", "當未查詢到紀錄時回傳該錯誤編碼");
+            }
+
+            BigDecimal amount = eventCallBackReq.getAmount().multiply(gameParentPlatform.getCurrencyPro());
+            if(amount.compareTo(BigDecimal.ZERO)==-1){
+                balance = balance.subtract(amount.abs());
+                gameCommonService.updateUserBalance(memBaseinfo, amount.abs(), GoldchangeEnum.SETTLE, TradingEnum.SPENDING);
+            }else {
+                balance = balance.add(amount);
+                gameCommonService.updateUserBalance(memBaseinfo, amount, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
+            }
+            String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
+            Txns txns = new Txns();
+            BeanUtils.copyProperties(oldTxns, txns);
+            //游戏商注单号
+            txns.setPlatformTxId(eventCallBackReq.getMtcode());
+            //混合码
+            txns.setBetAmount(amount);
+            txns.setWinningAmount(amount);
+            txns.setWinAmount(amount);
+            txns.setBalance(balance);
+            txns.setMethod("Settle");
+            txns.setStatus("Running");
+            txns.setCreateTime(dateStr);
+            txns.setGameMethod("wins");
+            int number = txnsMapper.insert(txns);
+            oldTxns.setUpdateTime(dateStr);
+            oldTxns.setStatus("Settle");
+            txnsMapper.updateById(oldTxns);
+            if (number <= 0) {
+                return commonReturnFail("1100", "伺服器錯誤時回傳該編碼");
+            }
+        }
+        return commonReturnSuccess(balance.divide(gameParentPlatform.getCurrencyPro()), gameParentPlatform.getCurrencyType());
+    }
+
+    /**
+     * 專用於體彩修改派果
+     * @param cqSportsAmendCallBackReq
+     * @param ip
+     * @param wtoken
+     * @return
+     */
+    @Override
+    public Object cqAmendCallback(CqSportsAmendCallBackReq<CqSportsAmendDataCallBackReq> cqSportsAmendCallBackReq, String ip, String wtoken) {
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.CQ_PLATFORM_CODE);
+        if (!checkIp(gameParentPlatform,ip) && !OpenAPIProperties.CQ_API_TOKEN.equals(wtoken)) {
+            return commonReturnFail("1100","伺服器錯誤時回傳該編碼");
+        }
+        List<CqSportsAmendDataCallBackReq> list = cqSportsAmendCallBackReq.getData();
+        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cqSportsAmendCallBackReq.getAccount());
+        if (null == memBaseinfo) {
+            return commonReturnFail("1006", "查無玩家時回傳該編碼");
+        }
+        BigDecimal balance = memBaseinfo.getBalance();
+
+        for(CqSportsAmendDataCallBackReq eventCallBackReq:list) {
+
+            LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+            wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Settle"));
+            wrapper.eq(Txns::getStatus, "Running");
+            wrapper.eq(Txns::getPromotionTxId, eventCallBackReq.getMtcode());
+            wrapper.eq(Txns::getRoundId, eventCallBackReq.getRoundid());
+            Txns oldTxns = txnsMapper.selectOne(wrapper);
+            if (null == oldTxns) {
+                return commonReturnFail("1014", "當未查詢到紀錄時回傳該錯誤編碼");
+            }
+
+            BigDecimal amount = eventCallBackReq.getAmount().multiply(gameParentPlatform.getCurrencyPro());
+            if(amount.compareTo(BigDecimal.ZERO)==-1){
+                return commonReturnFail("1003", "當帶入參數錯誤時或未帶入必要參數時 ，回傳該錯誤編碼。");
+            }
+            String method = "";
+            BigDecimal winningAmount = BigDecimal.ZERO;
+            if("debit".equals(eventCallBackReq.getAction())){//debit 扣款
+                method = "Place Bet";
+                winningAmount = amount.negate();
+                balance = balance.subtract(amount.abs());
+                gameCommonService.updateUserBalance(memBaseinfo, amount.abs(), GoldchangeEnum.SETTLE, TradingEnum.SPENDING);
+            }else {//credit 補款
+                balance = balance.add(amount);
+                method = "Settle";
+                winningAmount = amount.negate();
+                gameCommonService.updateUserBalance(memBaseinfo, amount, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
+            }
+            String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
+            Txns txns = new Txns();
+            BeanUtils.copyProperties(oldTxns, txns);
+            //游戏商注单号
+            txns.setPlatformTxId(eventCallBackReq.getMtcode());
+            txns.setRoundId(eventCallBackReq.getRoundid());
+            txns.setWinningAmount(winningAmount);
+            txns.setWinAmount(amount);
+            txns.setBalance(balance);
+            txns.setMethod(method);
+            txns.setStatus("Running");
+            txns.setCreateTime(dateStr);
+            txns.setGameMethod("wins");
+            int number = txnsMapper.insert(txns);
+//            oldTxns.setUpdateTime(dateStr);
+//            oldTxns.setStatus(method);
+//            txnsMapper.updateById(oldTxns);
+            if (number <= 0) {
+                return commonReturnFail("1100", "伺服器錯誤時回傳該編碼");
+            }
+        }
+        return commonReturnSuccess(balance.divide(gameParentPlatform.getCurrencyPro()), gameParentPlatform.getCurrencyType());
+    }
+
+    /**
+     * 批次修改派果
+     * @param cqSportsAmendCallBackReq
+     * @param ip
+     * @param wtoken
+     * @return
+     */
+    @Override
+    public Object cqAmendsCallback(CqSportsAmendCallBackReq<CqSportsAmendDataCallBackReq> cqSportsAmendCallBackReq, String ip, String wtoken) {
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.CQ_PLATFORM_CODE);
+        if (!checkIp(gameParentPlatform,ip) && !OpenAPIProperties.CQ_API_TOKEN.equals(wtoken)) {
+            return commonReturnFail("1100","伺服器錯誤時回傳該編碼");
+        }
+        List<CqSportsAmendDataCallBackReq> list = cqSportsAmendCallBackReq.getData();
+        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(cqSportsAmendCallBackReq.getAccount());
+        if (null == memBaseinfo) {
+            return commonReturnFail("1006", "查無玩家時回傳該編碼");
+        }
+        BigDecimal balance = memBaseinfo.getBalance();
+
+        for(CqSportsAmendDataCallBackReq eventCallBackReq:list) {
+
+            LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+            wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Settle"));
+            wrapper.eq(Txns::getStatus, "Running");
+            wrapper.eq(Txns::getPromotionTxId, eventCallBackReq.getMtcode());
+            wrapper.eq(Txns::getRoundId, eventCallBackReq.getRoundid());
+            Txns oldTxns = txnsMapper.selectOne(wrapper);
+            if (null == oldTxns) {
+                return commonReturnFail("1014", "當未查詢到紀錄時回傳該錯誤編碼");
+            }
+
+            BigDecimal amount = eventCallBackReq.getAmount().multiply(gameParentPlatform.getCurrencyPro());
+            if(amount.compareTo(BigDecimal.ZERO)==-1){
+                return commonReturnFail("1003", "當帶入參數錯誤時或未帶入必要參數時 ，回傳該錯誤編碼。");
+            }
+            String method = "";
+            BigDecimal winningAmount = BigDecimal.ZERO;
+            if("debit".equals(eventCallBackReq.getAction())){//debit 扣款
+                method = "Place Bet";
+                winningAmount = amount.negate();
+                balance = balance.subtract(amount.abs());
+                gameCommonService.updateUserBalance(memBaseinfo, amount.abs(), GoldchangeEnum.SETTLE, TradingEnum.SPENDING);
+            }else {//credit 補款
+                balance = balance.add(amount);
+                method = "Settle";
+                winningAmount = amount.negate();
+                gameCommonService.updateUserBalance(memBaseinfo, amount, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
+            }
+            String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
+            Txns txns = new Txns();
+            BeanUtils.copyProperties(oldTxns, txns);
+            //游戏商注单号
+            txns.setPlatformTxId(eventCallBackReq.getMtcode());
+            txns.setRoundId(eventCallBackReq.getRoundid());
+            txns.setWinningAmount(winningAmount);
+            txns.setWinAmount(amount);
+            txns.setBalance(balance);
+            txns.setMethod(method);
+            txns.setStatus("Running");
+            txns.setCreateTime(dateStr);
+            txns.setGameMethod("wins");
+            int number = txnsMapper.insert(txns);
+//            oldTxns.setUpdateTime(dateStr);
+//            oldTxns.setStatus(method);
+//            txnsMapper.updateById(oldTxns);
+            if (number <= 0) {
+                return commonReturnFail("1100", "伺服器錯誤時回傳該編碼");
+            }
+        }
+        return commonReturnSuccess(balance.divide(gameParentPlatform.getCurrencyPro()), gameParentPlatform.getCurrencyType());
     }
 }
 

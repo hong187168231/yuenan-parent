@@ -172,7 +172,7 @@ public class JdbCallbackServiceImpl implements JdbCallbackService {
         //游戏平台的下注项目
 //        txns.setbetType();
         //下注金额
-        txns.setBetAmount(apiRequestData.getBet());
+        txns.setBetAmount(betAmount);
         //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
         txns.setWinningAmount(betAmount);
         //玩家下注时间
@@ -184,7 +184,7 @@ public class JdbCallbackServiceImpl implements JdbCallbackService {
         //更新时间 (遵循 ISO8601 格式)
         txns.setUpdateTime(DateUtils.formatByString(apiRequestData.getLastModifyTime(), DateUtils.newFormat));
         //真实下注金额,需增加在玩家的金额
-        txns.setRealBetAmount(apiRequestData.getBet());
+        txns.setRealBetAmount(betAmount);
         //真实返还金额,游戏赢分
         txns.setRealWinAmount(apiRequestData.getWin());
         //返还金额 (包含下注金额)

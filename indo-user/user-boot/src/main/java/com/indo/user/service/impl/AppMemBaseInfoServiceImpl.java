@@ -11,6 +11,7 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.indo.admin.api.SysIpLimitClient;
 import com.indo.common.enums.AccountTypeEnum;
+import com.indo.common.enums.GiftTypeEnum;
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.common.pojo.bo.LoginInfo;
@@ -26,16 +27,14 @@ import com.indo.core.pojo.bo.MemBaseInfoBO;
 import com.indo.core.pojo.bo.MemTradingBO;
 import com.indo.core.pojo.dto.MemBaseInfoDTO;
 import com.indo.core.pojo.dto.MemGoldChangeDTO;
-import com.indo.core.pojo.entity.AgentRelation;
-import com.indo.core.pojo.entity.MemBaseinfo;
-import com.indo.core.pojo.entity.MemInviteCode;
-import com.indo.core.pojo.entity.MemLevel;
+import com.indo.core.pojo.entity.*;
 import com.indo.core.pojo.vo.LoanRecordVo;
 import com.indo.core.service.ILoanRecordService;
 import com.indo.core.service.IMemGoldChangeService;
 import com.indo.core.util.BusinessRedisUtils;
 import com.indo.user.common.util.UserBusinessRedisUtils;
 import com.indo.user.mapper.MemBaseInfoMapper;
+import com.indo.user.mapper.MemGiftReceiveMapper;
 import com.indo.user.mapper.MemInviteCodeMapper;
 import com.indo.user.pojo.req.LogOutReq;
 import com.indo.user.pojo.req.LoginReq;
@@ -66,17 +65,17 @@ import java.util.Date;
 public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, MemBaseinfo> implements AppMemBaseInfoService {
 
 
-	@Autowired
+	@Resource
 	private IMemAgentService memAgentService;
 
-	@Autowired
+	@Resource
 	private MemInviteCodeMapper memInviteCodeMapper;
 
 	@Resource
 	private MemLevelMapper memLevelMapper;
 
 	@Resource
-	private SysIpLimitClient sysIpLimitClient;
+	private MemGiftReceiveMapper memGiftReceiveMapper;
 
 	@Resource
 	private IMemGoldChangeService iMemGoldChangeService;
@@ -232,8 +231,15 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
 		MemBaseInfoBO memBaseinfoBo = DozerUtil.map(userInfo, MemBaseInfoBO.class);
 		String accToken = UserBusinessRedisUtils.createMemAccToken(memBaseinfoBo);
 		//注册送30000越南盾注册金
+		MemGiftReceive memGiftReceive = new MemGiftReceive();
+		memGiftReceive.setMemId(memBaseinfoBo.getId());
+		memGiftReceive.setGiftType(GiftTypeEnum.register.getCode());
+		memGiftReceive.setGiftCode(GiftTypeEnum.register.name());
+		memGiftReceive.setGiftName(GiftTypeEnum.register.getName());
+		memGiftReceive.setGiftAmount(new BigDecimal(30000));
+		memGiftReceiveMapper.insert(memGiftReceive);
 		MemGoldChangeDTO agentRebateChange = new MemGoldChangeDTO();
-		agentRebateChange.setChangeAmount(new BigDecimal(30000));
+		agentRebateChange.setChangeAmount(memGiftReceive.getGiftAmount());
 		agentRebateChange.setTradingEnum(TradingEnum.INCOME);
 		agentRebateChange.setGoldchangeEnum(GoldchangeEnum.register);
 		agentRebateChange.setUserId(memBaseinfoBo.getId());

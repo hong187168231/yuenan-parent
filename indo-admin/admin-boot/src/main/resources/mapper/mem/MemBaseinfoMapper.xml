@@ -148,7 +148,8 @@
         mb.account AS memAccount,
         (SELECT IFNULL(SUM(pr.real_amount),0) FROM pay_recharge pr WHERE pr.mem_id=mb.id) AS totalRechargeAmount,
         (SELECT IFNULL(SUM(abs(gt.bet_amount)),0)  FROM game_txns gt WHERE gt.user_id=mb.account) AS totalBetAmount,
-        (SELECT IFNULL(SUM(gift_amount),0)  FROM mem_gift_receive mgr WHERE mgr.mem_id=mb.id) AS totalGiftAmount
+        (SELECT IFNULL(SUM(mgr.gift_amount),0)  FROM mem_gift_receive mgr WHERE mgr.mem_id=mb.id) AS totalGiftAmount,
+        (SELECT IFNULL(SUM(mgc.amount),0) FROM mem_gold_change mgc WHERE mgc.mem_id=mb.id AND change_type>=310 AND change_type &lt;=312) AS otherAmount
         FROM mem_baseinfo mb
         WHERE 1=1
         <if test="dto.memAccount !=null and dto.memAccount !=''">
