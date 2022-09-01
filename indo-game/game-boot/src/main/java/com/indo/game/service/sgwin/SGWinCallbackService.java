@@ -1,49 +1,16 @@
 package com.indo.game.service.sgwin;
 
+import com.indo.game.pojo.vo.callback.sgwin.*;
+
 public interface SGWinCallbackService {
 
-    /**
-     * 获取余额
-     *
-     * @param params params
-     * @param ip     ip
-     * @return Object
-     */
-    Object getUserBalance(String params, String ip);
+    Object getVerifyApi(SGWinVerifyApiCallBackReq sgWinVerifyApiCallBackReq, String ip);
 
-    /**
-     * 下注
-     *
-     * @param params params
-     * @param ip     ip
-     * @return Object
-     */
-    Object placeBet(String params, String ip);
+    Object getUserBalance(SGWinGetBalanceCallBackReq sgWinGetBalanceCallBackParentReq, String ip);
 
-    /**
-     * 中奖派奖
-     *
-     * @param params params
-     * @param ip     ip
-     * @return Object
-     */
-    Object playerWin(String params, String ip);
+    Object sgwinBetCallback(SGWinBetsCallBackReq sgWinBetsCallBackParentReq, String ip);
 
-    /**
-     * 开奖更新下注结果
-     *
-     * @param params params
-     * @param ip     ip
-     * @return Object
-     */
-    Object playerLost(String params, String ip);
+    public Object notifySettle(SGWinNotifySettleCallBackReq sgWinNotifySettleCallBackReq, String ip);
 
-    /**
-     * 取消下注
-     *
-     * @param params params
-     * @param ip     ip
-     * @return Object
-     */
-    Object placeBetCancel(String params, String ip);
+    public Object refund(SGWinRefundCallBackReq<SGWinTransactionsCallBackReq> sgWinRefundCallBackReq, String ip);
 }

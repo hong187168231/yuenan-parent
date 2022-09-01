@@ -7,13 +7,12 @@ import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.common.utils.DateUtils;
 import com.indo.common.utils.StringUtils;
-import com.indo.game.common.util.XmlUtil;
 import com.indo.core.mapper.game.TxnsMapper;
-import com.indo.game.pojo.dto.sa.SaCallbackResp;
 import com.indo.core.pojo.entity.game.GameCategory;
 import com.indo.core.pojo.entity.game.GameParentPlatform;
 import com.indo.core.pojo.entity.game.GamePlatform;
 import com.indo.core.pojo.entity.game.Txns;
+import com.indo.game.pojo.vo.callback.sgwin.*;
 import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.sgwin.SGWinCallbackService;
 import com.indo.core.pojo.bo.MemTradingBO;
@@ -25,7 +24,9 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class SGWinCallbackServiceImpl implements SGWinCallbackService {
@@ -36,102 +37,113 @@ public class SGWinCallbackServiceImpl implements SGWinCallbackService {
     private TxnsMapper txnsMapper;
 
     @Override
-    public Object getUserBalance(String params, String ip) {
-        logger.info("sa_getBalance saGame paramJson:{}, ip:{}", params, ip);
+    public Object getVerifyApi(SGWinVerifyApiCallBackReq sgWinVerifyApiCallBackReq, String ip) {
+        GameParentPlatform gameParentPlatform = getGameParentPlatform();
+        SGWinVerifyApiResponseSucce sgWinVerifyApiResponseSucce = new SGWinVerifyApiResponseSucce();
+        sgWinVerifyApiResponseSucce.setSuccess(false);
+        // 校验IP
+        if (checkIp(ip, gameParentPlatform)) {
+            return sgWinVerifyApiResponseSucce;
+        }
+        sgWinVerifyApiResponseSucce.setSuccess(true);
+        return sgWinVerifyApiResponseSucce;
+    }
+
+    @Override
+    public Object getUserBalance(SGWinGetBalanceCallBackReq sgWinGetBalanceCallBackParentReq, String ip) {
+        SGWinGetBalanceResponseSucce sgWinGetBalanceResponseSucce = new SGWinGetBalanceResponseSucce();
         try {
 
             GameParentPlatform gameParentPlatform = getGameParentPlatform();
+
+            sgWinGetBalanceResponseSucce.setCode(0);
+            sgWinGetBalanceResponseSucce.setMessage("Successful.");
+            sgWinGetBalanceResponseSucce.setCurrency(sgWinGetBalanceCallBackParentReq.getCurrency());
+            sgWinGetBalanceResponseSucce.setMemberId(sgWinGetBalanceCallBackParentReq.getMemberId());
             // 校验IP
             if (checkIp(ip, gameParentPlatform)) {
-                return initFailureResponse(1005, "非信任來源IP");
+                sgWinGetBalanceResponseSucce.setCode(9999);
+                sgWinGetBalanceResponseSucce.setMessage("System Error");
+                return sgWinGetBalanceResponseSucce;
             }
 
-            JSONObject jsonObject = convertParam(params);
-            if (null == jsonObject) {
-                return initFailureResponse(1006, "解密错误");
-            }
-
-            if (!jsonObject.containsKey("username") || StringUtils.isBlank(jsonObject.getString("username"))) {
-                return initFailureResponse(1000, "帐号名不得为空");
-            }
-
-            if (!jsonObject.containsKey("currency")
-                    || StringUtils.isBlank(jsonObject.getString("currency"))
-                    || !gameParentPlatform.getCurrencyType().equals(jsonObject.getString("currency"))) {
-                return initFailureResponse(1001, "货币代码不正确");
-            }
-
-            String account = jsonObject.getString("username");
             // 查询玩家是否存在
-            MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(account);
+            MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sgWinGetBalanceCallBackParentReq.getMemberId());
             if (null == memBaseinfo) {
-                return initFailureResponse(1000, "查无此帐号,请检查");
+                sgWinGetBalanceResponseSucce.setCode(300);
+                sgWinGetBalanceResponseSucce.setMessage("Missing Member");
+                return sgWinGetBalanceResponseSucce;
             }
-
-            return initSuccessResponse(account, gameParentPlatform.getCurrencyType(), memBaseinfo.getBalance());
+            sgWinGetBalanceResponseSucce.setBalance(memBaseinfo.getBalance().divide(gameParentPlatform.getCurrencyPro()));
+            return sgWinGetBalanceResponseSucce;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            return initFailureResponse(9999, e.getMessage());
+            sgWinGetBalanceResponseSucce.setCode(9999);
+            sgWinGetBalanceResponseSucce.setMessage("System Error");
+            return sgWinGetBalanceResponseSucce;
         }
     }
 
     // 下注
     @Override
-    public Object placeBet(String params, String ip) {
-        logger.info("sa_placeBet saGame paramJson:{}, ip:{}", params, ip);
+    public Object sgwinBetCallback(SGWinBetsCallBackReq sgWinBetsCallBackReq, String ip) {
+        SGWinBetResponseError error = new SGWinBetResponseError();
         try {
 
             GameParentPlatform platformGameParent = getGameParentPlatform();
 
+            error.setCode(400);
+            error.setMessage("Insufficient fund to be deduct.");
             // 校验IP
             if (checkIp(ip, platformGameParent)) {
-                return initFailureResponse(1005, "非信任來源IP");
-            }
-
-            JSONObject jsonObject = convertParam(params);
-            if (null == jsonObject) {
-                return initFailureResponse(1006, "解密错误");
-            }
-
-            if (!jsonObject.containsKey("username") || StringUtils.isBlank(jsonObject.getString("username"))) {
-                return initFailureResponse(1000, "帐号名不得为空");
+                error.setCode(9999);
+                error.setMessage("System Error");
+                return error;
             }
 
             // 查询玩家是否存在
-            MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(jsonObject.getString("username"));
+            MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sgWinBetsCallBackReq.getMemberId());
             if (null == memBaseinfo) {
-                return initFailureResponse(1000, "查无此帐号,请检查");
+                error.setCode(300);
+                error.setMessage("Missing Member");
+                return error;
             }
 
             // 会员余额
             BigDecimal balance = memBaseinfo.getBalance();
             // 下注金额
-            BigDecimal betAmount = jsonObject.getBigDecimal("amount");
+            BigDecimal betAmount = null!=sgWinBetsCallBackReq.getAmount()?sgWinBetsCallBackReq.getAmount().multiply(platformGameParent.getCurrencyPro()):BigDecimal.ZERO;
             // 下注金额小于0
             if (betAmount.compareTo(BigDecimal.ZERO) < 0) {
-                return initFailureResponse(1005, "下注金额不能小0");
+                error.setCode(200);
+                error.setMessage("Invalid Parameter");
+                return error;
             }
 
             if (balance.compareTo(betAmount) < 0) {
-                return initFailureResponse(1004, "玩家没有足够余额以进行当前下注");
+                error.setCode(400);
+                error.setMessage("Insufficient Fund");
+                return error;
             }
             balance = balance.subtract(betAmount);
-
+            String txnid = sgWinBetsCallBackReq.getTransactionId();
+            SGWinBetResponseSucce succe = new SGWinBetResponseSucce();
+            succe.setCode(0);
+            succe.setMessage("Success");
+            succe.setTransactionId(txnid);
+            succe.setBalance(balance.divide(platformGameParent.getCurrencyPro()));
             // 更新玩家余额
             gameCommonService.updateUserBalance(memBaseinfo, betAmount.subtract(betAmount),
                     GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
 
-            String txnid = jsonObject.getString("txnid");
+
             // 查询用户请求订单
             Txns oldTxns = getTxns(platformGameParent, txnid);
-            if (null != oldTxns) {
-                return initFailureResponse(122, "交易已存在");
+            if (null != oldTxns && "Place Bet".equals(oldTxns.getMethod())) {
+                return succe;
             }
 
-            Date timestamp = jsonObject.getDate("timestamp");
-            String gametype = jsonObject.getString("gametype");
-
-            GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(gametype);
+            GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platformGameParent.getPlatformCode(),platformGameParent.getPlatformCode());
             GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
 
             Txns txns = new Txns();
@@ -139,17 +151,25 @@ public class SGWinCallbackServiceImpl implements SGWinCallbackService {
             txns.setPlatformTxId(txnid);
 
             //玩家 ID
-            txns.setUserId(memBaseinfo.getId().toString());
+            txns.setUserId(memBaseinfo.getAccount());
             //玩家货币代码
             txns.setCurrency(platformGameParent.getCurrencyType());
-//            txns.setOdds(kaCallbackPlayReq.getBetPerSelection());
-            txns.setRoundId(jsonObject.getString("gameid"));
-            txns.setGameInfo(jsonObject.getString("betdetails"));
             //平台代码
             txns.setPlatform(platformGameParent.getPlatformCode());
-            //平台名称
+            //平台英文名称
             txns.setPlatformEnName(platformGameParent.getPlatformEnName());
+            //平台中文名称
             txns.setPlatformCnName(platformGameParent.getPlatformCnName());
+            //平台游戏类型
+            txns.setGameType(gameCategory.getGameType());
+            //游戏分类ID
+            txns.setCategoryId(gameCategory.getId());
+            //游戏分类名称
+            txns.setCategoryName(gameCategory.getGameName());
+            //平台游戏代码
+            txns.setGameCode(gamePlatform.getPlatformCode());
+            //游戏名称
+            txns.setGameName(gamePlatform.getPlatformEnName());
             //平台游戏类型
             txns.setGameType(gameCategory.getGameType());
             //游戏分类ID
@@ -162,12 +182,12 @@ public class SGWinCallbackServiceImpl implements SGWinCallbackService {
             txns.setGameName(gamePlatform.getPlatformEnName());
             //下注金额
             txns.setBetAmount(betAmount);
-            //游戏平台的下注项目
-            txns.setBetType(gametype);
+            txns.setWinAmount(betAmount);
+            txns.setWinningAmount(betAmount.negate());
             //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
 //            txns.setWinningAmount(freeWinAmount);
             //玩家下注时间
-            txns.setBetTime(DateUtils.format(timestamp, DateUtils.newFormat));
+            txns.setBetTime(DateUtils.formatByString(sgWinBetsCallBackReq.getTransactionTime(), DateUtils.newFormat));
             //真实下注金额,需增加在玩家的金额
             txns.setRealBetAmount(betAmount);
             //真实返还金额,游戏赢分
@@ -176,8 +196,6 @@ public class SGWinCallbackServiceImpl implements SGWinCallbackService {
 //            txns.setWinAmount(freeWinAmount);
             //有效投注金额 或 投注面值
             txns.setTurnover(betAmount);
-            //辨认交易时间依据
-            txns.setTxTime(DateUtils.format(timestamp, DateUtils.newFormat));
             //操作名称
             txns.setMethod("Place Bet");
             txns.setStatus("Running");
@@ -189,230 +207,190 @@ public class SGWinCallbackServiceImpl implements SGWinCallbackService {
             //投注 IP
             txns.setBetIp(ip);//  string 是 投注 IP
             int num = txnsMapper.insert(txns);
-            if (num <= 0) {
-                return initFailureResponse(9999, "订单写入失败");
-            }
 
-            return initSuccessResponse(memBaseinfo.getAccount(), platformGameParent.getCurrencyType(), memBaseinfo.getBalance());
+            succe.setBalance(balance.divide(platformGameParent.getCurrencyPro()));
+            return succe;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            return initFailureResponse(9999, e.getMessage());
+            error.setCode(9999);
+            error.setMessage("System Error");
+            return error;
         }
     }
 
     // 结算注单,更新余额中奖
     @Override
-    public Object playerWin(String params, String ip) {
-        logger.info("sa_playerWin saGame paramJson:{}, ip:{}", params, ip);
+    public Object notifySettle(SGWinNotifySettleCallBackReq sgWinNotifySettleCallBackReq, String ip) {
+        SGWinNotifySettleResponseSucce succe = new SGWinNotifySettleResponseSucce();
+        succe.setCode(9999);
+        succe.setMessage("System Error");
+        succe.setTransactionId(sgWinNotifySettleCallBackReq.getTransactionId());
         try {
 
             GameParentPlatform platformGameParent = getGameParentPlatform();
 
             // 校验IP
             if (checkIp(ip, platformGameParent)) {
-                return initFailureResponse(1005, "非信任來源IP");
+                return succe;
             }
-
-            JSONObject jsonObject = convertParam(params);
-            if (null == jsonObject) {
-                return initFailureResponse(1006, "解密错误");
+            String txnid = sgWinNotifySettleCallBackReq.getTransactionId();
+            // 查询用户请求订单
+            Txns oldTxns = getTxns(platformGameParent, txnid);
+            if (null == oldTxns) {
+                return succe;
             }
-
-            if (!jsonObject.containsKey("username") || StringUtils.isBlank(jsonObject.getString("username"))) {
-                return initFailureResponse(1000, "帐号名不得为空");
-            }
-
             // 查询玩家是否存在
-            MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(jsonObject.getString("username"));
+            MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(oldTxns.getUserId());
             if (null == memBaseinfo) {
-                return initFailureResponse(1000, "查无此帐号,请检查");
+                succe.setCode(300);
+                succe.setMessage("Missing Member");
+                return succe;
             }
 
             // 会员余额
             BigDecimal balance = memBaseinfo.getBalance();
-            // 派奖金额
-            BigDecimal amount = jsonObject.getBigDecimal("amount");
-            // 派彩金额小于0
-            if (amount.compareTo(BigDecimal.ZERO) < 0) {
-                return initFailureResponse(1005, "派彩金额不能小0");
+            BigDecimal amount = null!=sgWinNotifySettleCallBackReq.getIsResettle()?sgWinNotifySettleCallBackReq.getIsResettle().multiply(platformGameParent.getCurrencyPro()):BigDecimal.ZERO;
+            if(oldTxns.getBetAmount().compareTo(amount)==0){
+                if("Settle".equals(oldTxns.getMethod())) {//取消结算
+                    if (balance.compareTo(oldTxns.getWinAmount()) < 0) {
+                        succe.setCode(400);
+                        succe.setMessage("Insufficient Fund");
+                        return succe;
+                    }
+                    balance = balance.subtract(oldTxns.getWinAmount());
+                    gameCommonService.updateUserBalance(memBaseinfo, oldTxns.getWinAmount(), GoldchangeEnum.UNSETTLE, TradingEnum.SPENDING);
+                    Txns txns = new Txns();
+                    BeanUtils.copyProperties(oldTxns, txns);
+                    txns.setRoundId(txnid);
+                    txns.setMethod("Place Bet");
+                    txns.setStatus("Running");
+                    txns.setWinningAmount(oldTxns.getBetAmount().negate());
+                    txns.setWinAmount(oldTxns.getBetAmount());
+                    txnsMapper.insert(txns);
+                    oldTxns.setStatus("Settle");
+                    String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
+                    oldTxns.setUpdateTime(dateStr);
+                    int num = txnsMapper.updateById(oldTxns);
+                }
+            }else {//结算
+                if("Settle".equals(oldTxns.getMethod())) {//重新结算
+                    if(oldTxns.getWinAmount().compareTo(amount)!=0){
+                        if(oldTxns.getWinAmount().compareTo(amount)==1) {
+                            BigDecimal diff = oldTxns.getWinAmount().subtract(amount);
+                            if (balance.compareTo(diff) < 0) {
+                                succe.setCode(400);
+                                succe.setMessage("Insufficient Fund");
+                                return succe;
+                            }
+                            balance = balance.subtract(diff);
+                            gameCommonService.updateUserBalance(memBaseinfo, diff, GoldchangeEnum.UNSETTLE, TradingEnum.SPENDING);
+                        }else {
+                            balance = balance.add(amount.subtract(oldTxns.getWinAmount()));
+                            gameCommonService.updateUserBalance(memBaseinfo, amount.subtract(oldTxns.getWinAmount()), GoldchangeEnum.SETTLE, TradingEnum.INCOME);
+                        }
+                        Txns txns = new Txns();
+                        BeanUtils.copyProperties(oldTxns, txns);
+                        txns.setRoundId(txnid);
+                        txns.setMethod("Settle");
+                        txns.setStatus("Running");
+                        txns.setWinningAmount(amount);
+                        txns.setWinAmount(amount);
+                        txnsMapper.insert(txns);
+                        oldTxns.setStatus("Settle");
+                        String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
+                        oldTxns.setUpdateTime(dateStr);
+                        int num = txnsMapper.updateById(oldTxns);
+                    }
+                }else {
+                    balance = balance.add(amount);
+                    gameCommonService.updateUserBalance(memBaseinfo, amount, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
+                    Txns txns = new Txns();
+                    BeanUtils.copyProperties(oldTxns, txns);
+                    txns.setRoundId(txnid);
+                    txns.setMethod("Settle");
+                    txns.setStatus("Running");
+                    txns.setWinningAmount(amount);
+                    txns.setWinAmount(amount);
+                    txnsMapper.insert(txns);
+                    oldTxns.setStatus("Settle");
+                    String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
+                    oldTxns.setUpdateTime(dateStr);
+                    int num = txnsMapper.updateById(oldTxns);
+                }
+
+            }
+            succe.setCode(0);
+            succe.setMessage("Success");
+            return succe;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return succe;
+        }
+    }
+
+    @Override
+    public Object refund(SGWinRefundCallBackReq<SGWinTransactionsCallBackReq> sgWinRefundCallBackReq, String ip) {
+        SGWinRefundResponse sgWinRefundResponse = new SGWinRefundResponse();
+        List list = new ArrayList<>();
+        GameParentPlatform platformGameParent = getGameParentPlatform();
+        for(SGWinTransactionsCallBackReq transactionsCallBackReq:sgWinRefundCallBackReq.getTransactions()) {
+            SGWinRefundResponseSucce succe = new SGWinRefundResponseSucce();
+            succe.setCode(0);
+            succe.setMessage("Success");
+            succe.setTransactionId(transactionsCallBackReq.getTransactionId());
+            SGWinRefundResponseError error = new SGWinRefundResponseError();
+            error.setCode(9999);
+            error.setMessage("System has failed to process your request.");
+            error.setTransactionId(transactionsCallBackReq.getTransactionId());
+            // 校验IP
+            if (checkIp(ip, platformGameParent)) {
+
+                list.add(error);
+                continue;
             }
 
-            String txnid = jsonObject.getString("txnid");
+            // 查询玩家是否存在
+            MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(transactionsCallBackReq.getMemberId());
+            if (null == memBaseinfo) {
+                error.setCode(300);
+                error.setMessage("Missing Member");
+                list.add(error);
+                continue;
+            }
+
+            // 会员余额
+            BigDecimal balance = memBaseinfo.getBalance();
+            // 退回金额
+            BigDecimal amount = null!=transactionsCallBackReq.getAmount()?transactionsCallBackReq.getAmount().multiply(platformGameParent.getCurrencyPro()):BigDecimal.ZERO;
+
+            String refTransactionId = transactionsCallBackReq.getRefTransactionId();
+            String txnid = transactionsCallBackReq.getTransactionId();
             // 查询用户请求订单
-            Txns oldTxns = getTxns(platformGameParent, txnid);
-            if (null == oldTxns) {
-                return initFailureResponse(152, "交易不存在");
+            Txns oldTxns = getTxns(platformGameParent, refTransactionId);
+            if (null == oldTxns||(null != oldTxns&&"Cancel Bet".equals(oldTxns.getMethod()))) {
+                succe.setBalance(balance.divide(platformGameParent.getCurrencyPro()));
+                list.add(succe);
+                continue;
             }
 
             balance = balance.add(amount);
-            gameCommonService.updateUserBalance(memBaseinfo, amount, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
-
-            //赌注的结果 : 赢:0,输:1,平手:2
-            int resultTyep = 0;
-            oldTxns.setResultType(resultTyep);
-            //真实返还金额,游戏赢分
-            oldTxns.setRealWinAmount(amount);
-            //返还金额 (包含下注金额)
-            oldTxns.setWinAmount(amount);
-            //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
-            oldTxns.setWinningAmount(amount);
-            oldTxns.setStatus("Settle");
-            String dateStr = DateUtils.format(jsonObject.getDate("timestamp"), DateUtils.newFormat);
-            oldTxns.setUpdateTime(dateStr);
-            int num = txnsMapper.updateById(oldTxns);
-            if (num <= 0) {
-                return initFailureResponse(1, "订单写入失败");
-            }
-            return initSuccessResponse(memBaseinfo.getAccount(), platformGameParent.getCurrencyType(), balance);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            return initFailureResponse(9999, e.getMessage());
-        }
-    }
-
-    // 结算注单,不更新余额
-    @Override
-    public Object playerLost(String params, String ip) {
-        logger.info("sa_credit saGame paramJson:{}, ip:{}", params, ip);
-        try {
-
-            GameParentPlatform platformGameParent = getGameParentPlatform();
-
-            // 校验IP
-            if (checkIp(ip, platformGameParent)) {
-                return initFailureResponse(1005, "非信任來源IP");
-            }
-
-            JSONObject jsonObject = convertParam(params);
-            if (null == jsonObject) {
-                return initFailureResponse(1006, "解密错误");
-            }
-
-            if (!jsonObject.containsKey("username") || StringUtils.isBlank(jsonObject.getString("username"))) {
-                return initFailureResponse(1000, "帐号名不得为空");
-            }
-
-            // 查询玩家是否存在
-            MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(jsonObject.getString("username"));
-            if (null == memBaseinfo) {
-                return initFailureResponse(1000, "查无此帐号,请检查");
-            }
-
-            // 会员余额
-            BigDecimal balance = memBaseinfo.getBalance();
-            String txnid = jsonObject.getString("txnid");
-            // 查询用户请求订单
-            Txns oldTxns = getTxns(platformGameParent, txnid);
-            if (null == oldTxns) {
-                return initFailureResponse(152, "交易不存在");
-            }
-
-            //赌注的结果 : 赢:0,输:1,平手:2
-            int resultTyep = 2;
-            oldTxns.setResultType(resultTyep);
-            //真实返还金额,游戏赢分
-            oldTxns.setRealWinAmount(BigDecimal.ZERO);
-            //返还金额 (包含下注金额)
-            oldTxns.setWinAmount(BigDecimal.ZERO);
-            //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
-            oldTxns.setWinningAmount(BigDecimal.ZERO);
-            oldTxns.setStatus("Settle");
-            String dateStr = DateUtils.format(jsonObject.getDate("timestamp"), DateUtils.newFormat);
-            oldTxns.setUpdateTime(dateStr);
-            int num = txnsMapper.updateById(oldTxns);
-            if (num <= 0) {
-                return initFailureResponse(1, "订单写入失败");
-            }
-            return initSuccessResponse(memBaseinfo.getAccount(), platformGameParent.getCurrencyType(), balance);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            return initFailureResponse(9999, e.getMessage());
-        }
-    }
-
-    // 取消注单
-    @Override
-    public Object placeBetCancel(String params, String ip) {
-        logger.info("sa_revoke saGame paramJson:{}, ip:{}", params, ip);
-        try {
-
-            GameParentPlatform platformGameParent = getGameParentPlatform();
-
-            // 校验IP
-            if (checkIp(ip, platformGameParent)) {
-                return initFailureResponse(1005, "非信任來源IP");
-            }
-
-            JSONObject jsonObject = convertParam(params);
-            if (null == jsonObject) {
-                return initFailureResponse(1006, "解密错误");
-            }
-
-            if (!jsonObject.containsKey("username") || StringUtils.isBlank(jsonObject.getString("username"))) {
-                return initFailureResponse(1000, "帐号名不得为空");
-            }
-
-            // 查询玩家是否存在
-            MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(jsonObject.getString("username"));
-            if (null == memBaseinfo) {
-                return initFailureResponse(1000, "查无此帐号,请检查");
-            }
-
-            String txnid = jsonObject.getString("txnid");
-            // 查询用户请求订单
-            Txns oldTxns = getTxns(platformGameParent, txnid);
-            if (null == oldTxns) {
-                return initFailureResponse(1005, "该笔交易不存在");
-            }
-
-            // 如果订单已经取消
-            if ("Cancel Bet".equals(oldTxns.getStatus())) {
-                return initFailureResponse(1005, "该笔交易不能注销");
-            }
-
-            // 会员余额
-            BigDecimal balance = memBaseinfo.getBalance().add(oldTxns.getBetAmount());
-            gameCommonService.updateUserBalance(memBaseinfo, memBaseinfo.getBalance(), GoldchangeEnum.CANCEL_BET, TradingEnum.INCOME);
-
-            String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
+            gameCommonService.updateUserBalance(memBaseinfo, amount, GoldchangeEnum.CANCEL_BET, TradingEnum.INCOME);
             Txns txns = new Txns();
             BeanUtils.copyProperties(oldTxns, txns);
-            txns.setBalance(balance);
-            txns.setId(null);
+            txns.setRoundId(txnid);
+            txns.setMethod("Cancel Bet");
             txns.setStatus("Running");
-            txns.setRealWinAmount(memBaseinfo.getBalance());//真实返还金额
-            txns.setMethod("Adjust Bet");
-            txns.setCreateTime(dateStr);
             txnsMapper.insert(txns);
-
-            oldTxns.setStatus("Cancel Bet");
+            oldTxns.setStatus("Cancel");
+            String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
             oldTxns.setUpdateTime(dateStr);
-            txnsMapper.updateById(oldTxns);
-
-            return initSuccessResponse(memBaseinfo.getAccount(), platformGameParent.getCurrencyType(), balance);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            return initFailureResponse(9999, e.getMessage());
+            int num = txnsMapper.updateById(oldTxns);
+            succe.setBalance(balance.divide(platformGameParent.getCurrencyPro()));
+            list.add(succe);
+            continue;
         }
-    }
-
-    /**
-     * 转换参数类型
-     *
-     * @param params 参数 username=satest&currency=EUR
-     * @return JSONObject
-     */
-    private JSONObject convertParam(String params) {
-        JSONObject jsonObject = null;
-        if (StringUtils.isNotEmpty(params)) {
-            jsonObject = new JSONObject();
-            String[] paramList = params.split("&");
-            for (String param : paramList) {
-                String[] paramInfos = param.split("=");
-                jsonObject.put(paramInfos[0], paramInfos[1]);
-            }
-        }
-        return jsonObject;
+        sgWinRefundResponse.setResponse(list);
+        return sgWinRefundResponse;
     }
 
     /**
@@ -426,7 +404,7 @@ public class SGWinCallbackServiceImpl implements SGWinCallbackService {
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
         wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet")
                 .or().eq(Txns::getMethod, "Cancel Bet")
-                .or().eq(Txns::getMethod, "Adjust Bet"));
+                .or().eq(Txns::getMethod, "Settle"));
         wrapper.eq(Txns::getStatus, "Running");
         wrapper.eq(Txns::getPlatformTxId, paySerialno);
         wrapper.eq(Txns::getPlatform, gameParentPlatform.getPlatformCode());
@@ -449,36 +427,7 @@ public class SGWinCallbackServiceImpl implements SGWinCallbackService {
 
     }
 
-    /**
-     * 初始化成功json返回
-     *
-     * @return JSONObject
-     */
-    private String initSuccessResponse(String username, String currency, BigDecimal amount) {
-        SaCallbackResp saLoginResp = new SaCallbackResp();
-        saLoginResp.setError(0);
-        saLoginResp.setUsername(username);
-        saLoginResp.setAmount(amount);
-        saLoginResp.setCurrency(currency);
-
-        return XmlUtil.convertToXml(saLoginResp, "UTF-8", false);
-    }
-
-    /**
-     * 初始化交互失败返回
-     *
-     * @param error       错误码
-     * @param description 错误描述
-     * @return JSONObject
-     */
-    private String initFailureResponse(Integer error, String description) {
-        SaCallbackResp saLoginResp = new SaCallbackResp();
-        saLoginResp.setError(error);
-
-        return XmlUtil.convertToXml(saLoginResp, "UTF-8", false);
-    }
-
     private GameParentPlatform getGameParentPlatform() {
-        return gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.SA_PLATFORM_CODE);
+        return gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.SGWIN_PLATFORM_CODE);
     }
 }
