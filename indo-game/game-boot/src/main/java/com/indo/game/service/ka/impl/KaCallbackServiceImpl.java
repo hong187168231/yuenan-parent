@@ -100,21 +100,17 @@ public class KaCallbackServiceImpl implements KaCallbackService {
             // 下注金额
             BigDecimal betAmount = getDivideAmount(kaCallbackPlayReq.getBetAmount()).multiply(platformGameParent.getCurrencyPro());
             BigDecimal freeWinAmount = getDivideAmount(kaCallbackPlayReq.getWinAmount()).multiply(platformGameParent.getCurrencyPro());
-//            BigDecimal betAmount = BigDecimal.valueOf(kaCallbackPlayReq.getBetAmount());
-//            BigDecimal freeWinAmount = BigDecimal.valueOf(kaCallbackPlayReq.getWinAmount());
-            BigDecimal winAmount = freeWinAmount.subtract(betAmount);
+            String method = "Place Bet";
+            BigDecimal winningAmount = BigDecimal.ZERO;
             // 免费游戏
             if (kaCallbackPlayReq.getFreeGames()) {
-//                kaCallbackPlayReq.setBetAmount(0L);
-//                betAmount = BigDecimal.ZERO;
-//                if (freeWinAmount.compareTo(betAmount) > 0) {
-//                    balance = balance.add(winAmount);
-//                    // 更新玩家余额
-//                    gameCommonService.updateUserBalance(memBaseinfo, winAmount, GoldchangeEnum.PLACE_BET, TradingEnum.INCOME);
-//                }
+                method = "Settle";
+                winningAmount = freeWinAmount;
+                balance = balance.add(freeWinAmount);
+                // 更新玩家余额
+                gameCommonService.updateUserBalance(memBaseinfo, freeWinAmount, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
             } else {
-                if (freeWinAmount.compareTo(betAmount) == 0) {//下注
-
+                if (freeWinAmount.compareTo(BigDecimal.ZERO) == 0) {//下注
                     // 下注金额小于0
                     if (betAmount.compareTo(BigDecimal.ZERO) < 0) {
                         return initFailureResponse(201, "下注金额不能小0");
@@ -123,9 +119,13 @@ public class KaCallbackServiceImpl implements KaCallbackService {
                     if (balance.compareTo(betAmount) < 0) {
                         return initFailureResponse(200, "玩家没有足够余额以进行当前下注");
                     }
+                    winningAmount = betAmount.negate();
                     balance = balance.subtract(betAmount.abs());
                     gameCommonService.updateUserBalance(memBaseinfo, betAmount.abs(), GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
                 }else {
+                    method = "Settle";
+                    BigDecimal winAmount = freeWinAmount.subtract(betAmount);
+                    winningAmount = freeWinAmount;
                     if (winAmount.compareTo(BigDecimal.ZERO) != 0) {
                         if (winAmount.compareTo(BigDecimal.ZERO) == 1) {
                             balance = balance.add(winAmount);
@@ -136,103 +136,93 @@ public class KaCallbackServiceImpl implements KaCallbackService {
                         }
                     }
                 }
-                // 查询用户请求订单
-                Txns oldTxns = getTxns(kaCallbackPlayReq.getTransactionId(), memBaseinfo.getId(), kaCallbackPlayReq.getRound());
-                if (null != oldTxns) {
-                    return initFailureResponse(201, "交易已存在");
-                }
-                GamePlatform gamePlatform;
-                if("Y".equals(OpenAPIProperties.KA_IS_PLATFORM_LOGIN)){
-                    gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platformGameParent.getPlatformCode(),platformGameParent.getPlatformCode());
-                }else {
-                    gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(kaCallbackPlayReq.getGameId(), platformGameParent.getPlatformCode());
 
-                }
-                GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
+            }
+            // 查询用户请求订单
+            Txns oldTxns = getTxns(kaCallbackPlayReq.getTransactionId(), memBaseinfo.getId(), kaCallbackPlayReq.getRound());
+            if (null != oldTxns) {
+                return initFailureResponse(201, "交易已存在");
+            }
+            GamePlatform gamePlatform;
+            if("Y".equals(OpenAPIProperties.KA_IS_PLATFORM_LOGIN)){
+                gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platformGameParent.getPlatformCode(),platformGameParent.getPlatformCode());
+            }else {
+                gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(kaCallbackPlayReq.getGameId(), platformGameParent.getPlatformCode());
 
-                Txns txns = new Txns();
-                //游戏商注单号
-                txns.setPlatformTxId(kaCallbackPlayReq.getTransactionId());
+            }
+            GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
 
-                //玩家 ID
-                txns.setUserId(memBaseinfo.getAccount());
-                //玩家货币代码
-                txns.setCurrency(platformGameParent.getCurrencyType());
+            Txns txns = new Txns();
+            //游戏商注单号
+            txns.setPlatformTxId(kaCallbackPlayReq.getTransactionId());
+
+            //玩家 ID
+            txns.setUserId(memBaseinfo.getAccount());
+            //玩家货币代码
+            txns.setCurrency(platformGameParent.getCurrencyType());
 //            txns.setOdds(kaCallbackPlayReq.getBetPerSelection());
-                txns.setRoundId(kaCallbackPlayReq.getRound().toString());
-                //平台代码
-                txns.setPlatform(platformGameParent.getPlatformCode());
-                //平台名称
-                txns.setPlatformEnName(platformGameParent.getPlatformEnName());
-                txns.setPlatformCnName(platformGameParent.getPlatformCnName());
-                //平台游戏类型
-                txns.setGameType(gameCategory.getGameType());
-                //游戏分类ID
-                txns.setCategoryId(gameCategory.getId());
-                //游戏分类名称
-                txns.setCategoryName(gameCategory.getGameName());
-                //平台游戏代码
-                txns.setGameCode(gamePlatform.getPlatformCode());
-                //游戏名称
-                txns.setGameName(gamePlatform.getPlatformEnName());
-                //下注金额
-                txns.setBetAmount(betAmount);
-                //游戏平台的下注项目
-                txns.setBetType(kaCallbackPlayReq.getGameId());
-                if (freeWinAmount.compareTo(betAmount) == 0) {//下注
-                    //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
-                    txns.setWinningAmount(betAmount.negate());
-                    //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
-                    txns.setWinningAmount(betAmount);
-                    txns.setMethod("Place Bet");
-                }else {
-                    //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
-                    txns.setWinningAmount(winAmount);
-                    //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
-                    txns.setWinningAmount(winAmount);
-                    txns.setMethod("Settle");
+            txns.setRoundId(kaCallbackPlayReq.getRound().toString());
+            //平台代码
+            txns.setPlatform(platformGameParent.getPlatformCode());
+            //平台名称
+            txns.setPlatformEnName(platformGameParent.getPlatformEnName());
+            txns.setPlatformCnName(platformGameParent.getPlatformCnName());
+            //平台游戏类型
+            txns.setGameType(gameCategory.getGameType());
+            //游戏分类ID
+            txns.setCategoryId(gameCategory.getId());
+            //游戏分类名称
+            txns.setCategoryName(gameCategory.getGameName());
+            //平台游戏代码
+            txns.setGameCode(gamePlatform.getPlatformCode());
+            //游戏名称
+            txns.setGameName(gamePlatform.getPlatformEnName());
+            //下注金额
+            txns.setBetAmount(betAmount);
+            //游戏平台的下注项目
+            txns.setBetType(kaCallbackPlayReq.getGameId());
+//中奖金额（赢为正数，亏为负数，和为0）或者总输赢
+            txns.setWinningAmount(winningAmount);
+            //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
+            txns.setWinAmount(winningAmount.abs());
+            txns.setMethod(method);
+            //玩家下注时间
+            txns.setBetTime(DateUtils.formatByLong(kaCallbackPlayReq.getTimestamp(), DateUtils.newFormat));
+            //真实下注金额,需增加在玩家的金额
+            txns.setRealBetAmount(betAmount);
+            //真实返还金额,游戏赢分
+            txns.setRealWinAmount(freeWinAmount);
+            if (!kaCallbackPlayReq.getFreeGames()) {
+                //此交易是否是投注 true是投注 false 否
+                txns.setBet(true);
+                //赌注的结果 : 赢:0,输:1,平手:2
+                int resultTyep;
+                if (freeWinAmount.compareTo(BigDecimal.ZERO) == 0) {
+                    resultTyep = 2;
+                } else if (freeWinAmount.compareTo(BigDecimal.ZERO) > 0) {
+                    resultTyep = 0;
+                } else {
+                    resultTyep = 1;
                 }
+                txns.setResultType(resultTyep);
+            }
+            //有效投注金额 或 投注面值
+            txns.setTurnover(betAmount);
+            //辨认交易时间依据
+            txns.setTxTime(DateUtils.formatByLong(kaCallbackPlayReq.getTimestamp(), DateUtils.newFormat));
+            //操作名称
 
-                //玩家下注时间
-                txns.setBetTime(DateUtils.formatByLong(kaCallbackPlayReq.getTimestamp(), DateUtils.newFormat));
-                //真实下注金额,需增加在玩家的金额
-                txns.setRealBetAmount(betAmount);
-                //真实返还金额,游戏赢分
-                txns.setRealWinAmount(freeWinAmount);
-                //返还金额 (包含下注金额)
-                txns.setWinAmount(freeWinAmount);
-                if (!kaCallbackPlayReq.getFreeGames()) {
-                    //此交易是否是投注 true是投注 false 否
-                    txns.setBet(true);
-                    //赌注的结果 : 赢:0,输:1,平手:2
-                    int resultTyep;
-                    if (freeWinAmount.compareTo(BigDecimal.ZERO) == 0) {
-                        resultTyep = 2;
-                    } else if (freeWinAmount.compareTo(BigDecimal.ZERO) > 0) {
-                        resultTyep = 0;
-                    } else {
-                        resultTyep = 1;
-                    }
-                    txns.setResultType(resultTyep);
-                }
-                //有效投注金额 或 投注面值
-                txns.setTurnover(betAmount);
-                //辨认交易时间依据
-                txns.setTxTime(DateUtils.formatByLong(kaCallbackPlayReq.getTimestamp(), DateUtils.newFormat));
-                //操作名称
-
-                txns.setStatus("Running");
-                //余额
-                txns.setBalance(balance);
-                //创建时间
-                String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
-                txns.setCreateTime(dateStr);
-                //投注 IP
-                txns.setBetIp(ip);//  string 是 投注 IP
-                int num = txnsMapper.insert(txns);
-                if (num <= 0) {
-                    return initFailureResponse(1, "订单写入失败");
-                }
+            txns.setStatus("Running");
+            //余额
+            txns.setBalance(balance);
+            //创建时间
+            String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
+            txns.setCreateTime(dateStr);
+            //投注 IP
+            txns.setBetIp(ip);//  string 是 投注 IP
+            int num = txnsMapper.insert(txns);
+            if (num <= 0) {
+                return initFailureResponse(1, "订单写入失败");
             }
 
             // 会员余额返回
