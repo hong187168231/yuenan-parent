@@ -251,7 +251,7 @@ public class CqCallBackController {
     /**
      * 專用於體彩批次押注退還
      */
-    @RequestMapping(value = "/callBack/transaction/game/refund", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/callBack/transaction/game/refunds", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object refunds(CqSportsRefudsCallBackReq cqSportsRefudsCallBackReq, HttpServletRequest request) {
