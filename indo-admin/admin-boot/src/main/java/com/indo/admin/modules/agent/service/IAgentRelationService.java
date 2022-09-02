@@ -20,7 +20,9 @@ public interface IAgentRelationService extends IService<AgentRelation> {
 
     Page<AgentVo> getPage(MemAgentReq req);
 
-    Page<AgentSubVO> subordinatePage(SubordinateReq req);
+	AgentRelation findByParentId(Long parentId);
+
+	Page<AgentSubVO> subordinatePage(SubordinateReq req);
 
     boolean upgradeAgent(String  account);
 

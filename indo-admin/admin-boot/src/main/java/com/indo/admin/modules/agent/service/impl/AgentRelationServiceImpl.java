@@ -11,12 +11,17 @@ import com.indo.admin.pojo.req.agnet.SubordinateReq;
 import com.indo.admin.pojo.vo.agent.AgentSubVO;
 import com.indo.admin.pojo.vo.agent.AgentVo;
 import com.indo.common.web.exception.BizException;
+import com.indo.core.pojo.bo.MemBaseInfoBO;
 import com.indo.core.pojo.entity.AgentRelation;
 import com.indo.core.pojo.entity.MemBaseinfo;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -33,6 +38,10 @@ public class AgentRelationServiceImpl extends ServiceImpl<AgentRelationMapper, A
     private AgentRelationMapper memAgentMapper;
     @Autowired
     private MemBaseinfoMapper memBaseinfoMapper;
+    @Autowired
+    private AgentRelationMapper agentRelationMapper;
+    @Autowired
+    private MemBaseinfoMapper memBaseInfoMapper;
 
     @Override
     public Page<AgentVo> getPage(MemAgentReq req) {
@@ -43,10 +52,37 @@ public class AgentRelationServiceImpl extends ServiceImpl<AgentRelationMapper, A
     }
 
     @Override
+    public AgentRelation findByParentId(Long parentId) {
+        LambdaQueryWrapper<AgentRelation> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(AgentRelation::getParentId, parentId);
+        return memAgentMapper.selectOne(wrapper);
+    }
+
+    @Override
     public Page<AgentSubVO> subordinatePage(SubordinateReq req) {
         Page<AgentSubVO> page = new Page<>(req.getPage(), req.getLimit());
-        List<AgentSubVO> agentList = memAgentMapper.subordinateList(page, req);
-        page.setRecords(agentList);
+        List<AgentSubVO> agentSubVOList = new ArrayList<>();
+        if (StringUtils.isNotEmpty(req.getSuperior())) {
+            MemBaseInfoBO memBaseInfoBO = memBaseInfoMapper.findMemBaseInfoByAccount(req.getSuperior());
+            if (memBaseInfoBO == null) {
+                return page;
+            }
+
+            AgentRelation agentRelation = findByParentId(memBaseInfoBO.getId());
+            if (agentRelation == null) {
+                return page;
+            }
+
+            if (StringUtils.isBlank(agentRelation.getSubUserIds())) {
+                return page;
+            }
+
+            List<Long> memIds = Arrays.asList(agentRelation.getSubUserIds().split(",")).stream().map(Long::parseLong).collect(Collectors.toList());
+            agentSubVOList = agentRelationMapper.subordinateListByMemIds(page, memIds);
+        } else {
+            agentSubVOList = agentRelationMapper.subordinateListByMemIds(page, null);
+        }
+        page.setRecords(agentSubVOList);
         return page;
     }
 
