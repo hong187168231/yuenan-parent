@@ -20,9 +20,8 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class WmServiceImpl implements WmService {
@@ -196,7 +195,7 @@ public class WmServiceImpl implements WmService {
         url.append("&lang=").append(lang);
 //        url.append("&mode=").append(cptOpenMember.getUserName());
 //        url.append("&voice=").append(cptOpenMember.getUserName());
-        url.append("&timestamp=").append(DateUtils.getGMT8TimeLength10());
+        url.append("&timestamp=").append(getGMT8TimeLength10());
         logger.info("wm 登录URL请求url:{}", url.toString());
         return commonRequest(url.toString(), null);
     }
@@ -215,7 +214,7 @@ public class WmServiceImpl implements WmService {
         url.append("&user=").append(cptOpenMember.getUserName());
         url.append("&password=").append(cptOpenMember.getPassword());
         url.append("&username=").append(cptOpenMember.getUserName());
-        url.append("&timestamp=").append(DateUtils.getGMT8TimeLength10());
+        url.append("&timestamp=").append(getGMT8TimeLength10());
 //        url.append("&syslang=").append(lang);
         logger.info("wm 創建用戶URL请求url:{}", url.toString());
         return url.toString();
@@ -234,11 +233,31 @@ public class WmServiceImpl implements WmService {
         url.append("&vendorId=").append(OpenAPIProperties.WM_VENDORID);
         url.append("&signature=").append(OpenAPIProperties.WM_SIGNATURE);
         url.append("&user=").append(userAccount);
-        url.append("&timestamp=").append(DateUtils.getGMT8TimeLength10());
+        url.append("&timestamp=").append(getGMT8TimeLength10());
 //        url.append("&syslang=").append(lang);
         return url.toString();
     }
-
+    public static long getGMT8TimeLength10(){
+        long epoch = 0;
+        try {
+            Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"), Locale.CHINESE);
+            Calendar day = Calendar.getInstance();
+            day.set(Calendar.YEAR, cal.get(Calendar.YEAR));
+            day.set(Calendar.MONTH, cal.get(Calendar.MONTH));
+            day.set(Calendar.DATE, cal.get(Calendar.DATE));
+            day.set(Calendar.HOUR_OF_DAY, cal.get(Calendar.HOUR_OF_DAY));
+            day.set(Calendar.MINUTE, cal.get(Calendar.MINUTE));
+            day.set(Calendar.SECOND, cal.get(Calendar.SECOND));
+            Date gmt8 = day.getTime();
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String t = df.format(gmt8);
+            epoch = (df.parse(t).getTime()-30000 )/ 1000;
+        } catch (Exception e) {
+            System.out.println("获取GMT8时间 getGMT8Time() error !");
+            e.printStackTrace();
+        }
+        return  epoch;
+    }
 
     public Result errorCode(String errorCode, String errorMessage) {
 //        0 成功。                                                Succeed.
