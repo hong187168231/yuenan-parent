@@ -374,9 +374,9 @@ public class KaCallbackServiceImpl implements KaCallbackService {
             if (null == memBaseinfo) {
                 return initFailureResponse(100, "玩家不存在");
             }
-
+            Long round = kaCallbackRevokeReq.getRound();
             // 查询用户请求订单
-            Txns oldTxns = getTxns(kaCallbackRevokeReq.getTransactionId(), memBaseinfo.getId(), kaCallbackRevokeReq.getRound());
+            Txns oldTxns = getTxns(kaCallbackRevokeReq.getTransactionId(), memBaseinfo.getId(), round);
             if (null == oldTxns) {
                 return initFailureResponse(400, "该笔交易不存在");
             }
@@ -387,7 +387,8 @@ public class KaCallbackServiceImpl implements KaCallbackService {
             }
             BigDecimal balance = memBaseinfo.getBalance();
             // 会员余额
-            BigDecimal cancelAmount = oldTxns.getWinningAmount();
+            BigDecimal cancelAmount = null!=kaCallbackRevokeReq.getWin()?kaCallbackRevokeReq.getWin().multiply(platformGameParent.getCurrencyPro()):BigDecimal.ZERO;
+            BigDecimal betAmount = null!=kaCallbackRevokeReq.getBet()?kaCallbackRevokeReq.getBet().multiply(platformGameParent.getCurrencyPro()):BigDecimal.ZERO;
             if (cancelAmount.compareTo(BigDecimal.ZERO) != 0) {
                 if (cancelAmount.compareTo(BigDecimal.ZERO) == 1) {
                     balance = balance.subtract(cancelAmount.abs());
@@ -397,12 +398,19 @@ public class KaCallbackServiceImpl implements KaCallbackService {
                     gameCommonService.updateUserBalance(memBaseinfo, cancelAmount, GoldchangeEnum.UNSETTLE, TradingEnum.INCOME);
                 }
             }
+            if (betAmount.compareTo(BigDecimal.ZERO) != 0&&0==round) {
+                balance = balance.add(betAmount);
+                gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.CANCEL_BET, TradingEnum.INCOME);
+            }
             String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
 
             Txns txns = new Txns();
             BeanUtils.copyProperties(oldTxns, txns);
             txns.setBalance(balance);
             txns.setId(null);
+            txns.setBetAmount(betAmount);
+            txns.setWinningAmount(cancelAmount);
+            txns.setWinAmount(cancelAmount);
             txns.setStatus("Running");
             txns.setRealWinAmount(cancelAmount);//真实返还金额
             txns.setMethod("Cancel Bet");
