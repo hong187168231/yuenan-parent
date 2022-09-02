@@ -89,6 +89,7 @@ public class WmServiceImpl implements WmService {
                 commonRequest(getLoginOutUrl(loginUser.getAccount()), null);
 
                 JSONObject jsonObject = getStartGame(cptOpenMember, gameParentPlatform.getLanguageType(), platform);
+                logger.info("wm 启动游戏返回result:{}", jsonObject);
                 if (jsonObject.getInteger("errorCode").equals(0)) {
                     // 请求URL
                     ApiResponseData responseData = new ApiResponseData();
@@ -112,7 +113,9 @@ public class WmServiceImpl implements WmService {
         logger.info("wmlogout {} wmGame account:{},wmCodeId:{}", ip, loginUser.getAccount(), platform);
         try {
             // 游戏退出
+            logger.info("wmlogout 退出请求url:{}", getLoginOutUrl(loginUser.getAccount()));
             JSONObject result = commonRequest(getLoginOutUrl(loginUser.getAccount()), null);
+            logger.info("wmlogout 退出返回result:{}", result);
             if (null == result) {
                 return Result.failed("g091087", "第三方请求异常！");
             }
@@ -138,6 +141,7 @@ public class WmServiceImpl implements WmService {
 
         // 用户注册
         JSONObject result = commonRequest(getLoginUrl(cptOpenMember, gameParentPlatform.getLanguageType()), null);
+        logger.info("wm 用户注册返回result:{}", result);
         if (null == result) {
             return Result.failed("g091087", "第三方请求异常！");
         }
@@ -146,6 +150,7 @@ public class WmServiceImpl implements WmService {
             externalService.saveCptOpenMember(cptOpenMember);
             // 启动游戏
             JSONObject jsonObject = getStartGame(cptOpenMember, gameParentPlatform.getLanguageType(), platform);
+            logger.info("wm 启动游戏返回result:{}", jsonObject);
             if (null == jsonObject) {
                 return Result.failed("g091087", "第三方请求异常！");
             }
@@ -192,7 +197,7 @@ public class WmServiceImpl implements WmService {
 //        url.append("&mode=").append(cptOpenMember.getUserName());
 //        url.append("&voice=").append(cptOpenMember.getUserName());
         url.append("&timestamp=").append(DateUtils.getGMT8TimeLength10());
-
+        logger.info("wm 登录URL请求url:{}", url.toString());
         return commonRequest(url.toString(), null);
     }
 
@@ -212,6 +217,7 @@ public class WmServiceImpl implements WmService {
         url.append("&username=").append(cptOpenMember.getUserName());
         url.append("&timestamp=").append(DateUtils.getGMT8TimeLength10());
 //        url.append("&syslang=").append(lang);
+        logger.info("wm 創建用戶URL请求url:{}", url.toString());
         return url.toString();
     }
 
