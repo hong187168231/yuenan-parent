@@ -20,10 +20,12 @@
         FROM
         mem_baseinfo mb
         left JOIN  agent_relation ma ON ma.parent_id = mb.id
-        where mb.id in
-        <foreach collection="memIds" item="id" index="index" open="(" close=")" separator=",">
-            #{id}
-        </foreach>
+        <if test="memIds != null and memIds.size > 0">
+            where mb.id in
+            <foreach collection="memIds" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>
         ORDER BY ma.create_time DESC
     </select>
 </mapper>
