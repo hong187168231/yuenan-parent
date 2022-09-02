@@ -44,7 +44,7 @@
         SELECT
         mb.id AS memId,
         mb.account AS account,
-        mb.mem_level AS memLevel,
+        ml.level AS memLevel,
         mb.real_name AS realName,
         mb.acc_type AS accType,
         mb.total_deposit AS totalDeposit,
@@ -58,6 +58,7 @@
         FROM
         mem_baseinfo mb
         left JOIN  agent_relation ma ON ma.parent_id = mb.id
+        left join mem_level ml on ml.id=mb.mem_level
         <if test="memIds != null and memIds.size > 0">
             where mb.id in
             <foreach collection="memIds" item="id" index="index" open="(" close=")" separator=",">
