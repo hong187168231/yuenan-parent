@@ -40,7 +40,7 @@
         ORDER BY ar.create_time desc
     </select>
 
-    <select id="subordinateList" resultType="com.indo.admin.pojo.vo.agent.AgentSubVO">
+    <select id="subordinateListByMemIds" resultType="com.indo.admin.pojo.vo.agent.AgentSubVO">
         SELECT
         mb.id AS memId,
         mb.account AS account,
@@ -48,21 +48,24 @@
         mb.real_name AS realName,
         mb.acc_type AS accType,
         mb.total_deposit AS totalDeposit,
-        mb.total_enchashment AS totalWithdraw,
+        mb.total_enchashment AS totalEnchashment,
         mb.total_bet AS totalBet,
         mb.create_time AS registerTime,
-        ar.agent_id AS agentId,
-        ar.superior AS superior,
-        ar.team_num AS teamNum
+        ma.agent_id AS agent_id,
+        ma.superior AS superior,
+        ma.team_num AS teamNum,
+        ma.sub_user_ids AS subUserIds
         FROM
-        agent_relation ar
-        INNER JOIN mem_baseinfo mb ON ar.mem_id = mb.id
+        mem_baseinfo mb
+        left JOIN  agent_relation ma ON ma.parent_id = mb.id
         left join mem_level ml on ml.id=mb.mem_level
-        <if test="req.superior !=null and req.superior !='' ">
-            and ar.superior = #{req.superior}
+        <if test="memIds != null and memIds.size > 0">
+            where mb.id in
+            <foreach collection="memIds" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
         </if>
-        ORDER BY
-        ar.create_time DESC
+        ORDER BY ma.create_time DESC
     </select>
     <select id="findAgentReport" resultType="com.indo.admin.pojo.vo.agent.AgentReportVo">
         SELECT

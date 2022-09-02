@@ -27,9 +27,11 @@ import java.util.List;
 @Mapper
 public interface AgentRelationMapper extends BaseMapper<AgentRelation> {
 
+    List<AgentSubVO> subordinateListByMemIds(@Param("page") Page<AgentSubVO> page, @Param("memIds") List<Long> memIds);
+
     List<AgentVo> queryList(@Param("page") Page<AgentVo> page, @Param("req") MemAgentReq req);
 
-    List<AgentSubVO> subordinateList(@Param("page")Page<AgentSubVO> page,  @Param("req") SubordinateReq req);
+    List<AgentSubVO> subordinateList(@Param("page")Page<AgentSubVO> page, @Param("req") SubordinateReq req);
 
     /**
      *  查询代理报表
