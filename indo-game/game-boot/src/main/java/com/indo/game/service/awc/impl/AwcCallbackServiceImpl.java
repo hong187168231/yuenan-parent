@@ -232,6 +232,8 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 txns.setStatus("Running");
                 String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
                 txns.setCreateTime(dateStr);
+                //玩家 ID
+                txns.setUserId(memBaseinfo.getAccount());
                 //玩家货币代码
                 txns.setCurrency(gameParentPlatform.getCurrencyType());
                 //平台代码
@@ -244,7 +246,17 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 txns.setGameType(gameCategory.getGameType());
                 //游戏分类ID
                 txns.setCategoryId(gameCategory.getId());
+                //游戏分类名称
+                txns.setCategoryName(gameCategory.getGameName());
+                //平台游戏代码
+                txns.setGameCode(gamePlatform.getPlatformCode());
+                //游戏名称
+                txns.setGameName(gamePlatform.getPlatformEnName());
+                //平台游戏类型
+                txns.setGameType(gameCategory.getGameType());
                 txns.setWinningAmount(betAmount.negate());
+                txns.setBetAmount(betAmount);
+                txns.setWinAmount(betAmount);
                 //游戏分类名称
                 txns.setCategoryName(gameCategory.getGameName());
                 //平台游戏代码
@@ -695,10 +707,11 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
 
                         Txns txns = new Txns();
                         BeanUtils.copyProperties(oldTxns, txns);
-                        BeanUtils.copyProperties(settleTxns, txns);
+//                        BeanUtils.copyProperties(settleTxns, txns);
                         txns.setId(null);
                         txns.setBalance(balance);
                         txns.setWinningAmount(winAmount);
+                        txns.setWinAmount(winAmount);
                         txns.setMethod("Settle");
                         txns.setStatus("Running");
                         txns.setCreateTime(dateStr);

@@ -177,14 +177,6 @@ public class SGWinCallbackServiceImpl implements SGWinCallbackService {
             txns.setGameName(gamePlatform.getPlatformEnName());
             //平台游戏类型
             txns.setGameType(gameCategory.getGameType());
-            //游戏分类ID
-            txns.setCategoryId(gameCategory.getId());
-            //游戏分类名称
-            txns.setCategoryName(gameCategory.getGameName());
-            //平台游戏代码
-            txns.setGameCode(gamePlatform.getPlatformCode());
-            //游戏名称
-            txns.setGameName(gamePlatform.getPlatformEnName());
             //下注金额
             txns.setBetAmount(betAmount);
             txns.setWinAmount(betAmount);
