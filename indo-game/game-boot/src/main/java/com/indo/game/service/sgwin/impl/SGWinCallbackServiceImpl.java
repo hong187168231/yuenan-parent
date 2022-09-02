@@ -100,6 +100,11 @@ public class SGWinCallbackServiceImpl implements SGWinCallbackService {
                 error.setMessage("System Error");
                 return error;
             }
+            if (null==sgWinBetsCallBackReq.getMemberId()||"".equals(sgWinBetsCallBackReq.getMemberId())){
+                error.setCode(200);
+                error.setMessage("Invalid Parameter");
+                return error;
+            }
 
             // 查询玩家是否存在
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sgWinBetsCallBackReq.getMemberId());
@@ -345,6 +350,12 @@ public class SGWinCallbackServiceImpl implements SGWinCallbackService {
             // 校验IP
             if (checkIp(ip, platformGameParent)) {
 
+                list.add(error);
+                continue;
+            }
+            if (null==transactionsCallBackReq.getMemberId()||"".equals(transactionsCallBackReq.getMemberId())){
+                error.setCode(200);
+                error.setMessage("Invalid Parameter");
                 list.add(error);
                 continue;
             }

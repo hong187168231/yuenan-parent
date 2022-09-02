@@ -26,7 +26,7 @@ public class SgwinCallBackController {
     public Object VerifyApi(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("SgwinCallBack  VerifyApi回调params:{},wtoken:{}", jsonObject);
+        logger.info("SgwinCallBack  VerifyApi回调params:{}", jsonObject);
         SGWinVerifyApiCallBackReq sgWinVerifyApiCallBackReq = JSONObject.toJavaObject(jsonObject,SGWinVerifyApiCallBackReq.class);
         Object object = sgWinCallbackService.getVerifyApi(sgWinVerifyApiCallBackReq, ip);
         logger.info("SgwinCallBack  VerifyApi回调返回数据 params:{}", object);
@@ -39,7 +39,7 @@ public class SgwinCallBackController {
     public Object getBalance(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("SgwinCallBack  获取余额getBalance回调params:{},wtoken:{}", jsonObject);
+        logger.info("SgwinCallBack  获取余额getBalance回调params:{}", jsonObject);
         SGWinGetBalanceCallBackReq sgWinGetBalanceCallBackParentReq = JSONObject.toJavaObject(jsonObject,SGWinGetBalanceCallBackReq.class);
         Object object = sgWinCallbackService.getUserBalance(sgWinGetBalanceCallBackParentReq, ip);
         logger.info("SgwinCallBack  获取余额getBalance回调返回数据 params:{}", object);
@@ -55,7 +55,7 @@ public class SgwinCallBackController {
     public Object bets(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("SgwinCallBack  下注PlaceBet回调params:{},wtoken:{}", jsonObject);
+        logger.info("SgwinCallBack  下注PlaceBet回调params:{}", jsonObject);
         SGWinBetsCallBackReq sgWinBetsCallBackParentReq = JSONObject.toJavaObject(jsonObject,SGWinBetsCallBackReq.class);
         Object object = sgWinCallbackService.sgwinBetCallback(sgWinBetsCallBackParentReq, ip);
         logger.info("SgwinCallBack  下注PlaceBet回调返回数据 params:{}", object);
@@ -68,7 +68,7 @@ public class SgwinCallBackController {
     public Object notifySettle(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("SgwinCallBack  结算notifySettle回调params:{},wtoken:{}", jsonObject);
+        logger.info("SgwinCallBack  结算notifySettle回调params:{}", jsonObject);
         SGWinNotifySettleCallBackReq sgWinNotifySettleCallBackReq = JSONObject.toJavaObject(jsonObject,SGWinNotifySettleCallBackReq.class);
         Object object = sgWinCallbackService.notifySettle(sgWinNotifySettleCallBackReq, ip);
         logger.info("SgwinCallBack  结算notifySettle回调返回数据 params:{}", object);
@@ -81,7 +81,7 @@ public class SgwinCallBackController {
     public Object refund(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
 
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("SgwinCallBack  refund回调params:{},wtoken:{}", jsonObject);
+        logger.info("SgwinCallBack  refund回调params:{}", jsonObject);
         SGWinRefundCallBackReq<SGWinTransactionsCallBackReq> sgWinRefundCallBackReq = JSONObject.toJavaObject(jsonObject,SGWinRefundCallBackReq.class);
         Object object = sgWinCallbackService.refund(sgWinRefundCallBackReq, ip);
         logger.info("SgwinCallBack  refund回调返回数据 params:{}", object);
