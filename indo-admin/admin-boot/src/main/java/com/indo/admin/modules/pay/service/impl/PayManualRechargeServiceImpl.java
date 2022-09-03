@@ -9,6 +9,7 @@ import com.indo.common.constant.GlobalConstants;
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.common.redis.utils.GeneratorIdUtil;
+import com.indo.common.result.ResultCode;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.JwtUtils;
 import com.indo.core.base.service.impl.SuperServiceImpl;
@@ -61,7 +62,7 @@ public class PayManualRechargeServiceImpl extends SuperServiceImpl<PayManualRech
     public boolean operateRecharge(Integer operateType, Long memId, Float amount,String remarks) {
         MemBaseinfo memBaseinfo = memBaseinfoMapper.selectById(memId);
         if (null == memBaseinfo) {
-            throw new BizException("该用户不存在");
+            throw new BizException(ResultCode.USERNAME_NONENTITY);
         }
         BigDecimal operateAmount = new BigDecimal(amount);
         PayRecharge rechargeOrder = new PayRecharge();
@@ -111,7 +112,7 @@ public class PayManualRechargeServiceImpl extends SuperServiceImpl<PayManualRech
                 iMemGoldChangeService.updateMemGoldChange(goldChangeDO);
                 return true;
             }
-        throw new RuntimeException("系统错误");
+        throw new BizException(ResultCode.SYSTEM_EXECUTION_ERROR);
     }
 
     @Override

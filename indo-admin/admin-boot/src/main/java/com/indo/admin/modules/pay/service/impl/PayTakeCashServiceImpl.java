@@ -12,6 +12,7 @@ import com.indo.admin.pojo.vo.pay.PayTakeCashRecordVO;
 import com.indo.common.constant.GlobalConstants;
 import com.indo.common.enums.AudiTypeEnum;
 import com.indo.common.result.Result;
+import com.indo.common.result.ResultCode;
 import com.indo.common.utils.StringUtils;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
@@ -77,18 +78,18 @@ public class PayTakeCashServiceImpl extends ServiceImpl<PayTakeCashMapper, PayTa
     public boolean takeCashOpera(AudiTypeEnum audiTypeEnum, Long takeCashId) {
         PayTakeCash payTakeCash = this.baseMapper.selectById(takeCashId);
         if (ObjectUtil.isEmpty(payTakeCash)) {
-            throw new BizException("提现订单不存在");
+            throw new BizException(ResultCode.DATA_NONENTITY);
         }
         if(StringUtils.isNotEmpty(payTakeCash.getOperatorUser())){
             if(!payTakeCash.getOperatorUser().equals(JwtUtils.getUsername())){
-                throw new BizException("该订单已有处理人,需由处理人继续完成后续操作");
+                throw new BizException(ResultCode.HANDLER_ERROR);
             }
         }
         if (payTakeCash.getCashStatus().equals(GlobalConstants.PAY_CASH_STATUS_REJECT)) {
-            throw new BizException("提现订单状态错误");
+            throw new BizException(ResultCode.DATA_STATUS_ERROR);
         }
         if (payTakeCash.getCashStatus().equals(GlobalConstants.PAY_CASH_STATUS_CANCEL)) {
-            throw new BizException("提现订单状态错误");
+            throw new BizException(ResultCode.DATA_STATUS_ERROR);
         }
         if(audiTypeEnum.getStatus().equals(GlobalConstants.PAY_CASH_STATUS_CANCEL)){
             payTakeCash.setRemitTime(new Date());

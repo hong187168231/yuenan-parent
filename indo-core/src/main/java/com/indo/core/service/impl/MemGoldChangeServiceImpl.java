@@ -7,6 +7,7 @@ import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.common.redis.utils.GeneratorIdUtil;
 import com.indo.common.redis.utils.RedisUtils;
+import com.indo.common.result.ResultCode;
 import com.indo.common.web.exception.BizException;
 import com.indo.core.base.service.impl.SuperServiceImpl;
 import com.indo.core.mapper.MemGoldChangeMapper;
@@ -105,7 +106,7 @@ public class MemGoldChangeServiceImpl extends SuperServiceImpl<MemGoldChangeMapp
                 MemGoldInfoBO memBaseinfo = memTradingMapper.findMemGoldInfo(userId);
                 if (memBaseinfo == null) {
                     log.info("{} updateUserBalance member is null,memBaseinfo: {}", change.getUserId(), memBaseinfo);
-                    throw new BizException("用户不存在");
+                    throw new BizException(ResultCode.USER_NOT_EXIST);
                 }
                 // 获取会员当前余额
                 BigDecimal currentBalance = getTradeOffAmount(memBaseinfo.getBalance());
@@ -166,7 +167,7 @@ public class MemGoldChangeServiceImpl extends SuperServiceImpl<MemGoldChangeMapp
                     int changeRow = baseMapper.insert(memGoldChange);
                     if (changeRow != 1) {
                         log.error("{} updateUserBalance insertSelective 插入账变信息余额失败. return:{}", userId, changeRow);
-                        throw new BizException("操作失败");
+                        throw new BizException(ResultCode.SYSTEM_EXECUTION_ERROR);
                     }
                 }
                 int row = updateMemberAmount(changeAmount,
@@ -189,7 +190,7 @@ public class MemGoldChangeServiceImpl extends SuperServiceImpl<MemGoldChangeMapp
             }
         } catch (Exception e) {
             log.error("{} updateUserBalance occur error. change info:{}", userId, change, e);
-            throw new RuntimeException("用户修改余额出错", e.getCause());
+            throw new RuntimeException(ResultCode.UPDATE_BALANCE_ERROR.getMsg(), e.getCause());
         } finally {
             // 释放锁
             lock.writeLock().unlock();

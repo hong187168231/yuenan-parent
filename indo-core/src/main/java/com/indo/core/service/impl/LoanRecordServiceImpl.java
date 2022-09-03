@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.common.pojo.bo.LoginInfo;
+import com.indo.common.result.ResultCode;
 import com.indo.common.web.exception.BizException;
 import com.indo.core.mapper.ActivityConfigMapper;
 import com.indo.core.mapper.LoanRecordMapper;
@@ -65,12 +66,12 @@ public class LoanRecordServiceImpl extends ServiceImpl<LoanRecordMapper, LoanRec
         wrapper.eq(ActivityConfig::getTypes,2);
         ActivityConfig activityConfig = activityConfigMapper.selectOne(wrapper);
         if(activityConfig==null){
-            throw new BizException("无相关活动配置，无法参加活动");
+            throw new BizException(ResultCode.ACTIVITY_NOT_CONFIGURATION);
         }
         JSONObject json = JSONObject.parseObject(activityConfig.getConfigInfo());
         BigDecimal money = json.getBigDecimal("vip"+memLevel.getLevel());
         if(money==null||money.compareTo(BigDecimal.ZERO)==0){
-            throw new BizException("无借呗配置，请与管理员联系");
+            throw new BizException(ResultCode.LOANRECORD_NOT_CONFIGURATION);
         }
         LambdaQueryWrapper<LoanRecord> loanWrapper = new LambdaQueryWrapper<>();
         loanWrapper.eq(LoanRecord::getMemId,loginInfo.getId());
@@ -87,7 +88,7 @@ public class LoanRecordServiceImpl extends ServiceImpl<LoanRecordMapper, LoanRec
             }
         });
         if((money.subtract((loanAmount.get().subtract(backMoney.get())))).compareTo(amount)==-1){
-            throw new BizException("额度不足，拒绝提供服务");
+            throw new BizException(ResultCode.BALANCE_BU);
         }
         LoanRecord lr = new LoanRecord();
         lr.setLoanAmount(amount);
@@ -131,10 +132,10 @@ public class LoanRecordServiceImpl extends ServiceImpl<LoanRecordMapper, LoanRec
     @Override
     public void activeBackMoney(BigDecimal amount,LoginInfo loginInfo) {
         if(amount.compareTo(BigDecimal.ZERO)<=0){
-            throw new BizException("还款金额错误");
+            throw new BizException(ResultCode.REPAYMENT_AMOUNT_ERROR);
         }
         if(loginInfo.getBalance().compareTo(amount)==-1){
-            throw new BizException("余额不足");
+            throw new BizException(ResultCode.BALANCE_BU);
         }
         LambdaQueryWrapper<LoanRecord> loanWrapper = new LambdaQueryWrapper<>();
         loanWrapper.eq(LoanRecord::getStates,1);
@@ -145,7 +146,7 @@ public class LoanRecordServiceImpl extends ServiceImpl<LoanRecordMapper, LoanRec
         loanWrappers.eq(LoanRecord::getMemId,loginInfo.getId());
         List<LoanRecord> loanRecordLists = baseMapper.selectList(loanWrappers);
         if(loanRecordList==null&&loanRecordLists==null){
-            throw new BizException("无欠款");
+            throw new BizException(ResultCode.NO_ARREARS);
         }
         BigDecimal repayment = new BigDecimal(0).add(amount);
         //还部分优先清账
@@ -205,12 +206,12 @@ public class LoanRecordServiceImpl extends ServiceImpl<LoanRecordMapper, LoanRec
         wrapper.eq(ActivityConfig::getTypes,2);
         ActivityConfig activityConfig = activityConfigMapper.selectOne(wrapper);
         if(activityConfig==null){
-            throw new BizException("无相关活动配置，无法参加活动");
+            throw new BizException(ResultCode.ACTIVITY_NOT_CONFIGURATION);
         }
         JSONObject json = JSONObject.parseObject(activityConfig.getConfigInfo());
         BigDecimal money = json.getBigDecimal("vip"+memLevel.getLevel());
         if(money==null||money.compareTo(BigDecimal.ZERO)==0){
-            throw new BizException("无借呗配置，请与管理员联系");
+            throw new BizException(ResultCode.LOANRECORD_NOT_CONFIGURATION);
         }
         LambdaQueryWrapper<LoanRecord> loanWrapper = new LambdaQueryWrapper<>();
         loanWrapper.eq(LoanRecord::getMemId,loginInfo.getId());

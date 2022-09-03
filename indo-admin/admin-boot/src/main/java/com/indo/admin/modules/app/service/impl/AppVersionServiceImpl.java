@@ -14,6 +14,7 @@ import com.indo.admin.pojo.dto.ActivityQueryDTO;
 import com.indo.admin.pojo.req.app.AppVersionReq;
 import com.indo.common.constant.RedisConstants;
 import com.indo.common.result.Result;
+import com.indo.common.result.ResultCode;
 import com.indo.common.utils.StringUtils;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
@@ -67,7 +68,7 @@ public class AppVersionServiceImpl extends ServiceImpl<AppVersionMapper, AppVers
     public boolean edit(AppVersionReq req) {
         AppVersion appVersion = findAppVersionById(req.getVersionId());
         if (null == appVersion) {
-            throw new BizException("活动不存在");
+            throw new BizException(ResultCode.DATA_NONENTITY);
         }
         DozerUtil.map(req, appVersion);
         if (baseMapper.updateById(appVersion) > 0) {

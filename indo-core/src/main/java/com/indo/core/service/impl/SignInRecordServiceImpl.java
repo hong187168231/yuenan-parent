@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.common.pojo.bo.LoginInfo;
+import com.indo.common.result.ResultCode;
 import com.indo.common.web.exception.BizException;
 import com.indo.core.mapper.ActivityConfigMapper;
 import com.indo.core.mapper.SignInRecordMapper;
@@ -62,7 +63,7 @@ public class SignInRecordServiceImpl extends ServiceImpl<SignInRecordMapper, Sig
         wrapper.eq(ActivityConfig::getTypes,1);
         ActivityConfig activityConfig = activityConfigMapper.selectOne(wrapper);
         if(activityConfig==null){
-            throw new BizException("无相关活动配置，无法参加活动");
+            throw new BizException(ResultCode.ACTIVITY_NOT_CONFIGURATION);
         }
         JSONObject json = JSONObject.parseObject(activityConfig.getConfigInfo());
         LambdaQueryWrapper<SignInRecord> srWrapper = new LambdaQueryWrapper<>();
@@ -70,7 +71,7 @@ public class SignInRecordServiceImpl extends ServiceImpl<SignInRecordMapper, Sig
         List<SignInRecord> srList=  baseMapper.selectList(srWrapper);
         srList.forEach(l->{
             if(DateUtils.isSameDay(l.getCreateTime(),new Date())){
-                throw new BizException("今天已签到");
+                throw new BizException(ResultCode.SIGNED_IN_TODAY);
             }
         });
         Integer num = baseMapper.selectCount(srWrapper);

@@ -9,6 +9,7 @@ import com.indo.admin.modules.agent.service.IAgentSpreadService;
 import com.indo.admin.pojo.vo.act.AdvertiseVO;
 import com.indo.admin.pojo.vo.agent.AgentSpreadVO;
 import com.indo.common.result.Result;
+import com.indo.common.result.ResultCode;
 import com.indo.common.utils.StringUtils;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
@@ -43,29 +44,29 @@ public class AgentSpreadServiceImpl extends ServiceImpl<AgentSpreadMapper, Agent
     @Override
     public void insertAgentSpread(AgentSpreadReq req) {
         if(StringUtils.isEmpty(req.getImageUrl()) ||StringUtils.isEmpty(req.getSkipUrl())||StringUtils.isEmpty(req.getContent())){
-            throw new BizException("主要参数不可为空");
+            throw new BizException(ResultCode.PARAM_ERROR);
         }
         AgentSpread agentSpread = new AgentSpread();
         BeanUtils.copyProperties(req, agentSpread);
         //agentSpread.setCreateUser(JwtUtils.getUsername());
         if(baseMapper.insert(agentSpread)<=0){
-            throw new BizException("代理推广信息插入失败，请与管理员联系");
+            throw new BizException(ResultCode.AGENT_PROMOTION_INSERTION_ERROR);
         }
     }
 
     @Override
     public void updateAgentSpread(AgentSpreadReq req) {
         if(req.getId()==null){
-            throw new BizException("主要参数不可为空");
+            throw new BizException(ResultCode.PARAM_ERROR);
         }
         AgentSpread agentSpread = baseMapper.selectById(req.getId());
         if(agentSpread==null){
-            throw new BizException("数据不正确");
+            throw new BizException(ResultCode.DATA_NONENTITY);
         }
         BeanUtils.copyProperties(req, agentSpread);
         //agentSpread.setUpdateUser(JwtUtils.getUsername());
         if(baseMapper.updateById(agentSpread)<=0){
-            throw new BizException("代理推广信息更新失败，请与管理员联系");
+            throw new BizException(ResultCode.AGENT_PROMOTION_UPDATE_ERROR);
         }
     }
 }

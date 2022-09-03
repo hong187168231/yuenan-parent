@@ -15,6 +15,7 @@ import com.indo.admin.pojo.dto.MemBetInfoDTO;
 import com.indo.admin.pojo.vo.mem.MemBetInfoVo;
 import com.indo.common.enums.AccountTypeEnum;
 import com.indo.common.pojo.bo.LoginInfo;
+import com.indo.common.result.ResultCode;
 import com.indo.common.utils.ShareCodeUtil;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
@@ -107,13 +108,13 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
     public void addMemBaseInfo(MemAddReq req) {
         MemBaseInfoBO curentMem = this.memBaseInfoMapper.findMemBaseInfoByAccount(req.getAccount());
         if (curentMem != null) {
-            throw new BizException("该账号已存在!");
+            throw new BizException(ResultCode.DATA_DUPLICATION);
         }
         MemBaseInfoBO supperMem = null;
         if (StringUtils.isNotBlank(req.getSuperAccno())) {
             supperMem = this.memBaseInfoMapper.findMemBaseInfoByAccount(req.getSuperAccno());
             if (supperMem == null || !supperMem.getAccType().equals(2)) {
-                throw new BizException("请填入正确的代理账号");
+                throw new BizException(ResultCode.ACCOUNT_ERROR);
             }
         }
         MemBaseinfo memBaseinfo = new MemBaseinfo();
@@ -159,7 +160,7 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
         memInviteCode.setStatus(1);
         boolean inviteFlag = memInviteCodeMapper.insert(memInviteCode) > 0;
         if (!inviteFlag) {
-            throw new BizException("邀请码生成错误!");
+            throw new BizException(ResultCode.INVITATION_CODE_ERROR);
         }
     }
 
@@ -184,7 +185,7 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
                 .eq(AgentRelation::getStatus, 1);
         AgentRelation parentAgent = agentRelationMapper.selectOne(wrapper);
         if (ObjectUtil.isNull(wrapper)) {
-            throw new BizException("该邀请人未成为代理");
+            throw new BizException(ResultCode.INVITEE_NO_AGENT_ERROR);
         }
         String subUserIds = StringUtils.isBlank(parentAgent.getSubUserIds()) ?
                 memBaseinfo.getId() + "" : parentAgent.getSubUserIds() + "," + memBaseinfo.getId();
@@ -225,7 +226,7 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
     public MemBaseDetailVO getMemBaseInfoByAccount(String account) {
         MemBaseinfo memBaseinfo = baseMapper.selectOne(new QueryWrapper<MemBaseinfo>().lambda().eq(MemBaseinfo::getAccount, account));
         if(memBaseinfo==null){
-            throw new BizException("无此人信息");
+            throw new BizException(ResultCode.DATA_NONENTITY);
         }
         MemBaseDetailVO memBaseDetailVO = new MemBaseDetailVO();
         BeanUtils.copyProperties(memBaseinfo, memBaseDetailVO);
@@ -287,7 +288,7 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
     public MemBaseinfo checkMemIsExist(Long id) {
         MemBaseinfo memBaseinfo = this.baseMapper.selectById(id);
         if (memBaseinfo == null) {
-            throw new BizException("用户不存在");
+            throw new BizException(ResultCode.DATA_NONENTITY);
         }
         return memBaseinfo;
     }

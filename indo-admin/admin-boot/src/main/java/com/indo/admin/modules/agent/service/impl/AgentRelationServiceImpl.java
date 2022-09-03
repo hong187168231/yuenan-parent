@@ -10,6 +10,7 @@ import com.indo.admin.pojo.req.agnet.MemAgentReq;
 import com.indo.admin.pojo.req.agnet.SubordinateReq;
 import com.indo.admin.pojo.vo.agent.AgentSubVO;
 import com.indo.admin.pojo.vo.agent.AgentVo;
+import com.indo.common.result.ResultCode;
 import com.indo.common.web.exception.BizException;
 import com.indo.core.pojo.bo.MemBaseInfoBO;
 import com.indo.core.pojo.entity.AgentRelation;
@@ -92,7 +93,7 @@ public class AgentRelationServiceImpl extends ServiceImpl<AgentRelationMapper, A
         wrapper.eq(MemBaseinfo::getAccount, account);
         MemBaseinfo memBaseinfo = memBaseinfoMapper.selectOne(wrapper);
         if (null == memBaseinfo) {
-            throw new BizException("该账号用户不存在");
+            throw new BizException(ResultCode.USERNAME_NONENTITY);
         }
         memBaseinfo.setAccType(2);
         return memBaseinfoMapper.updateById(memBaseinfo) > 0;

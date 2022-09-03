@@ -11,6 +11,7 @@ import com.indo.admin.pojo.entity.SysUserRole;
 import com.indo.admin.modules.sys.service.ISysUserRoleService;
 import com.indo.admin.modules.sys.service.ISysUserService;
 import com.indo.common.constant.GlobalConstants;
+import com.indo.common.result.ResultCode;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.JwtUtils;
 import lombok.AllArgsConstructor;
@@ -97,7 +98,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         Boolean isEqual = passwordEncoder.matches(changePasswordDto.getUsedPassword(),sysUser.getPassword());
 
         if(!isEqual){
-            throw new BizException("旧密码错误");
+            throw new BizException(ResultCode.USERNAME_OR_PASSWORD_ERROR);
         }
         
         String encodeNew = passwordEncoder.encode(changePasswordDto.getNewPassword());

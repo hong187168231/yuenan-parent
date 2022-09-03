@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.indo.admin.modules.sys.mapper.SysIpLimitMapper;
 import com.indo.admin.modules.sys.service.ISysIpLimitService;
 import com.indo.admin.pojo.dto.SysIpLimitDTO;
+import com.indo.common.result.ResultCode;
 import com.indo.core.pojo.entity.SysIpLimit;
 import com.indo.common.utils.StringUtils;
 import com.indo.common.web.exception.BizException;
@@ -33,7 +34,7 @@ public class SysIpLimitServiceImpl extends ServiceImpl<SysIpLimitMapper, SysIpLi
     @Override
     public List<SysIpLimit> findSysIpLimitByType(Integer types) {
         if(types==null||types<=0){
-            throw new BizException("不正确的类型");
+            throw new BizException(ResultCode.PARAM_ERROR);
         }
         LambdaQueryWrapper<SysIpLimit> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(SysIpLimit::getTypes,types);
@@ -48,7 +49,7 @@ public class SysIpLimitServiceImpl extends ServiceImpl<SysIpLimitMapper, SysIpLi
     @Override
     public Page<SysIpLimit> findSysIpLimitPage(SysIpLimitDTO sysIpLimit) {
         if(sysIpLimit==null||sysIpLimit.getTypes()==null||sysIpLimit.getTypes()<=0){
-            throw new BizException("主要参数不可为空");
+            throw new BizException(ResultCode.PARAM_ERROR);
         }
         Page<SysIpLimit> page = new Page<>(sysIpLimit.getPage(), sysIpLimit.getLimit());
         LambdaQueryWrapper<SysIpLimit> wrapper = new LambdaQueryWrapper<>();
@@ -67,10 +68,10 @@ public class SysIpLimitServiceImpl extends ServiceImpl<SysIpLimitMapper, SysIpLi
     @Override
     public void insertSysIpLimit(SysIpLimit sysIpLimit) {
         if (sysIpLimit == null || StringUtils.isEmpty(sysIpLimit.getIp())) {
-            throw new BizException("主要参数不可为空");
+            throw new BizException(ResultCode.PARAM_ERROR);
         }
         if(sysIpLimit.getTypes()==null||sysIpLimit.getTypes()<=0){
-            throw new BizException("不正确的类型");
+            throw new BizException(ResultCode.PARAM_ERROR);
         }
         //sysIpLimit.setCreateUser(JwtUtils.getUsername());
         baseMapper.insert(sysIpLimit);
@@ -84,7 +85,7 @@ public class SysIpLimitServiceImpl extends ServiceImpl<SysIpLimitMapper, SysIpLi
     @Override
     public void deleteSysIpLimitByIdList(List<Integer> list) {
         if(list==null||list.size()<=0){
-            throw new BizException("无效的参数");
+            throw new BizException(ResultCode.PARAM_ERROR);
         }
         list.forEach(l->{
             if(l!=null&&l>0){

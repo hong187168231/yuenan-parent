@@ -12,6 +12,7 @@ import com.indo.admin.modules.sys.service.ISysRoleMenuService;
 import com.indo.admin.modules.sys.service.ISysRolePermissionService;
 import com.indo.admin.modules.sys.service.ISysRoleService;
 import com.indo.admin.modules.sys.service.ISysUserRoleService;
+import com.indo.common.result.ResultCode;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +33,7 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
     public boolean delete(List<Long> ids) {
         Optional.ofNullable(ids).orElse(new ArrayList<>()).forEach(id -> {
             int count = iSysUserRoleService.count(new LambdaQueryWrapper<SysUserRole>().eq(SysUserRole::getRoleId, id));
-            Assert.isTrue(count <= 0, "该角色已分配用户，无法删除");
+            Assert.isTrue(count <= 0, ResultCode.CANNOT_DELETE.getMsg());
             iSysRoleMenuService.remove(new LambdaQueryWrapper<SysRoleMenu>().eq(SysRoleMenu::getRoleId, id));
             iSysRolePermissionService.remove(new LambdaQueryWrapper<SysRolePermission>().eq(SysRolePermission::getRoleId, id));
         });

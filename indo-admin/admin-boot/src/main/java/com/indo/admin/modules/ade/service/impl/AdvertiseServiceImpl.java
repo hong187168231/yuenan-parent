@@ -10,6 +10,7 @@ import com.indo.admin.modules.ade.service.IAdvertiseService;
 import com.indo.admin.pojo.vo.act.AdvertiseVO;
 import com.indo.common.constant.RedisConstants;
 import com.indo.common.result.Result;
+import com.indo.common.result.ResultCode;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
 import com.indo.common.web.util.JwtUtils;
@@ -69,7 +70,7 @@ public class AdvertiseServiceImpl extends ServiceImpl<AdvertiseRecordMapper, Adv
         checkAdeOpera(advertiseDTO.getAdeId());
         Advertise advertise = findAdvertiseById(advertiseDTO.getAdeId());
         if (null == advertise) {
-            throw new BizException("广告不存在");
+            throw new BizException(ResultCode.DATA_NONENTITY);
         }
         BeanUtils.copyProperties(advertiseDTO, advertise);
         advertise.setUpdateUser(JwtUtils.getUsername());
@@ -96,7 +97,7 @@ public class AdvertiseServiceImpl extends ServiceImpl<AdvertiseRecordMapper, Adv
     public boolean operateStatus(Long adeId, Integer status) {
         Advertise advertise = findAdvertiseById(adeId);
         if (null == advertise) {
-            throw new BizException("广告不存在");
+            throw new BizException(ResultCode.DATA_NONENTITY);
         }
         advertise.setStatus(status);
         advertise.setAdeId(adeId);
@@ -120,7 +121,7 @@ public class AdvertiseServiceImpl extends ServiceImpl<AdvertiseRecordMapper, Adv
      */
     private void checkAdeOpera(Long adeId) {
         if (selectAdeShelveFlag(adeId)) {
-            throw new BizException("广告状态为已上架，暂不能进行编辑修改操作!");
+            throw new BizException(ResultCode.DATA_PUT);
         }
     }
 

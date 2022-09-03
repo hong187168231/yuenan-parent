@@ -83,10 +83,33 @@ public enum ResultCode implements IResultCode, Serializable {
     DATABASE_DEADLOCK("C0331", "数据库死锁"),
     DATA_DUPLICATION("C0332", "数据重复"),
     DATA_NONENTITY("C0333", "数据不存在"),
+    DATA_PUT("C0334", "数据状态为已上架，暂不能进行编辑修改操作!"),
+    DATA_STATUS_ERROR("C0335", "数据状态错误"),
     SYSTEM_MAINTENANCE_CODE("S9999", "系统维护状态"),
     DATABASE_PRIMARY_KEY_CONFLICT("C0341", "主键冲突"),
     SYSPARAMETER_NOT_EXIST("P00001", "系统参数不存在"),
-    SYSPARAMETER_EMPTY("P00002", "系统参数为空");
+    SYSPARAMETER_EMPTY("P00002", "系统参数为空"),
+
+    USER_PERMISSION_PROHIBITION("D0001", "该邀请人已被禁止发展下级"),
+    AGENT_AUDIT_ERROR("D0002", "代理审核出错!"),
+    AGENT_PROMOTION_INSERTION_ERROR("D0003", "代理推广信息插入失败，请与管理员联系"),
+    AGENT_PROMOTION_UPDATE_ERROR("D0004", "代理推广信息更新失败，请与管理员联系"),
+    MISSING_SUFFIX("D0005", "缺少后缀名"),
+    ACCOUNT_ERROR("D0006", "账号不存在"),
+    INVITATION_CODE_ERROR("D0007", "邀请码生成错误!"),
+    INVITEE_NO_AGENT_ERROR("D0008", "该邀请人未成为代理!"),
+    NOT_UPDATE_LEVEL("D0009", "不可修改等级!"),
+    HANDLER_ERROR("D0010", "该订单已有处理人,需由处理人继续完成后续操作"),
+    CANNOT_DELETE("D0011", "该角色已分配用户，无法删除"),
+    ACTIVITY_NOT_CONFIGURATION("D0012", "无相关活动配置，无法参加活动"),
+    LOANRECORD_NOT_CONFIGURATION("D0013", "无借呗配置，请与管理员联系"),
+    BALANCE_BU("D0014", "额度不足，拒绝提供服务"),
+    REPAYMENT_AMOUNT_ERROR("D0015", "还款金额错误"),
+    NO_ARREARS("D0016", "无欠款"),
+    UPDATE_BALANCE_ERROR("D0017", "用户修改余额出错"),
+    SIGNED_IN_TODAY("D0018", "今天已签到"),
+    TASK_REWARD_ERROR("D0019", "错误的领取，无可领取任务奖励"),
+    ;
 
 
     @Override

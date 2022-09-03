@@ -12,6 +12,7 @@ import com.indo.admin.pojo.dto.ActivityTypeDTO;
 import com.indo.admin.pojo.vo.act.ActivityTypeVO;
 import com.indo.common.constant.RedisConstants;
 import com.indo.common.result.Result;
+import com.indo.common.result.ResultCode;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
 import com.indo.common.web.util.JwtUtils;
@@ -72,7 +73,7 @@ public class ActivityTypeServiceImpl extends ServiceImpl<ActivityTypeMapper, Act
     public boolean edit(ActivityTypeDTO activityTypeDTO) {
         ActivityType activityType = this.baseMapper.selectById(activityTypeDTO.getActTypeId());
         if (null == activityType) {
-            throw new BizException("活动类型不存在");
+            throw new BizException(ResultCode.DATA_NONENTITY);
         }
         BeanUtils.copyProperties(activityTypeDTO, activityType);
         if (baseMapper.updateById(activityType) > 0) {

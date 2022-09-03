@@ -8,6 +8,7 @@ import com.indo.admin.modules.msg.mapper.MsgStationLetterMapper;
 import com.indo.admin.modules.msg.service.IMsgStationLetterService;
 import com.indo.admin.pojo.dto.MsgDTO;
 import com.indo.admin.pojo.vo.msg.MsgStationLetterVO;
+import com.indo.common.result.ResultCode;
 import com.indo.common.utils.StringUtils;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
@@ -92,11 +93,11 @@ public class MsgStationLetterServiceImpl extends ServiceImpl<MsgStationLetterMap
     @Override
     public void deleteMsg(MsgDTO msgDTO) {
         if(msgDTO.getMsgId()==null){
-            throw new BizException("主要参数不可为空");
+            throw new BizException(ResultCode.SYSPARAMETER_EMPTY);
         }
         MsgStationLetter msgStationLetter = baseMapper.selectById(msgDTO.getMsgId());
         if(msgStationLetter==null){
-            throw new BizException("数据不存在");
+            throw new BizException(ResultCode.DATA_NONENTITY);
         }
         msgStationLetter.setIsDel(true);
         baseMapper.updateById(msgStationLetter);

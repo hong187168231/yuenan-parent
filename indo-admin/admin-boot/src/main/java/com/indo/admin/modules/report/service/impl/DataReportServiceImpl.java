@@ -12,6 +12,7 @@ import com.indo.admin.pojo.vo.agent.AgentReportVo;
 import com.indo.admin.pojo.vo.game.PlatformReportVo;
 import com.indo.admin.pojo.vo.mem.MemReportVo;
 import com.indo.admin.pojo.vo.pay.PayRechargeReportVo;
+import com.indo.common.result.ResultCode;
 import com.indo.common.utils.StringUtils;
 import com.indo.common.web.exception.BizException;
 import org.springframework.stereotype.Service;
@@ -31,7 +32,7 @@ public class DataReportServiceImpl implements DataReportService {
     @Override
     public Page<AgentReportVo> findAgentReportPage(AgentReportDTO agentReportDTO) {
         if(StringUtils.isEmpty(agentReportDTO.getBeginTime())||StringUtils.isEmpty(agentReportDTO.getEndTime())){
-            throw new BizException("查询时间不可为空");
+            throw new BizException(ResultCode.SYSPARAMETER_EMPTY);
         }
         Page<AgentReportVo> page = new Page<>(agentReportDTO.getPage(), agentReportDTO.getLimit());
         return agentRelationMapper.findAgentReport(page,agentReportDTO);
@@ -40,7 +41,7 @@ public class DataReportServiceImpl implements DataReportService {
     @Override
     public Page<MemReportVo> findMemberReportPage(MemReportDTO memReportDTO) {
         if(StringUtils.isEmpty(memReportDTO.getBeginTime())||StringUtils.isEmpty(memReportDTO.getEndTime())){
-            throw new BizException("查询时间不可为空");
+            throw new BizException(ResultCode.SYSPARAMETER_EMPTY);
         }
         Page<MemReportVo> page = new Page<>(memReportDTO.getPage(), memReportDTO.getLimit());
         return memBankMapper.findMemberReport(page,memReportDTO);
@@ -49,7 +50,7 @@ public class DataReportServiceImpl implements DataReportService {
     @Override
     public Page<PayRechargeReportVo> findPayRechargeReportPage(PayRechargeReportDTO payRechargeReportDTO) {
         if(StringUtils.isEmpty(payRechargeReportDTO.getBeginTime())||StringUtils.isEmpty(payRechargeReportDTO.getEndTime())){
-            throw new BizException("查询时间不可为空");
+            throw new BizException(ResultCode.SYSPARAMETER_EMPTY);
         }
         Page<PayRechargeReportVo> page = new Page<>(payRechargeReportDTO.getPage(), payRechargeReportDTO.getLimit());
         return payRechargeMapper.findPayRechargeReport(page,payRechargeReportDTO);
@@ -58,7 +59,7 @@ public class DataReportServiceImpl implements DataReportService {
     @Override
     public Page<PlatformReportVo> findPlatformReportPage(PlatformReportDTO platformReportDTO) {
         if(StringUtils.isEmpty(platformReportDTO.getBeginTime())||StringUtils.isEmpty(platformReportDTO.getEndTime())){
-            throw new BizException("查询时间不可为空");
+            throw new BizException(ResultCode.SYSPARAMETER_EMPTY);
         }
         Page<PlatformReportVo> page = new Page<>(platformReportDTO.getPage(), platformReportDTO.getLimit());
         return adminGameParentPlatformMapper.findPlatformReport(page,platformReportDTO);
@@ -67,7 +68,7 @@ public class DataReportServiceImpl implements DataReportService {
     @Override
     public TotalReportVo findTotalReport(TotalReportDTO totalReportDTO) {
         if(StringUtils.isEmpty(totalReportDTO.getBeginTime())||StringUtils.isEmpty(totalReportDTO.getEndTime())){
-            throw new BizException("查询时间不可为空");
+            throw new BizException(ResultCode.SYSPARAMETER_EMPTY);
         }
         return payRechargeMapper.findTotalReport(totalReportDTO);
     }

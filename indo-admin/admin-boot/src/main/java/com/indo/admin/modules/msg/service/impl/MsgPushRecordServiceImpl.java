@@ -7,6 +7,7 @@ import com.indo.admin.modules.msg.mapper.MsgPushRecordMapper;
 import com.indo.admin.modules.msg.service.IMsgPushRecordService;
 import com.indo.admin.pojo.dto.MsgDTO;
 import com.indo.admin.pojo.vo.msg.MsgPushRecordVO;
+import com.indo.common.result.ResultCode;
 import com.indo.common.utils.StringUtils;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
@@ -84,11 +85,11 @@ public class MsgPushRecordServiceImpl extends ServiceImpl<MsgPushRecordMapper, M
     @Override
     public void deleteMsg(MsgDTO msgDTO) {
        if(msgDTO.getMsgId()==null){
-           throw new BizException("主要参数不可为空");
+           throw new BizException(ResultCode.SYSPARAMETER_EMPTY);
        }
         MsgPushRecord msgPushRecord = baseMapper.selectById(msgDTO.getMsgId());
        if(msgPushRecord==null){
-           throw new BizException("数据不存在");
+           throw new BizException(ResultCode.DATA_NONENTITY);
        }
         msgPushRecord.setIsDel(true);
         baseMapper.updateById(msgPushRecord);

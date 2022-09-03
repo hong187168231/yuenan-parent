@@ -43,11 +43,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (oauthUserDetails == null || oauthUserDetails.getId() == null) {
             throw new UsernameNotFoundException(ResultCode.USER_NOT_EXIST.getMsg());
         } else if (!oauthUserDetails.isEnabled()) {
-            throw new DisabledException("该账户已被禁用!");
+            throw new DisabledException(ResultCode.USER_ACCOUNT_LOCKED.getMsg());
         } else if (!oauthUserDetails.isAccountNonLocked()) {
-            throw new LockedException("该账号已被锁定!");
+            throw new LockedException(ResultCode.USER_ACCOUNT_LOCKED.getMsg());
         } else if (!oauthUserDetails.isAccountNonExpired()) {
-            throw new AccountExpiredException("该账号已过期!");
+            throw new AccountExpiredException(ResultCode.USER_ACCOUNT_LOCKED.getMsg());
         }
         return oauthUserDetails;
     }

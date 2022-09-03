@@ -12,6 +12,7 @@ import com.indo.admin.pojo.dto.ActivityDTO;
 import com.indo.admin.pojo.dto.ActivityQueryDTO;
 import com.indo.common.constant.RedisConstants;
 import com.indo.common.result.Result;
+import com.indo.common.result.ResultCode;
 import com.indo.common.utils.StringUtils;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
@@ -81,7 +82,7 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> i
         checkAdeOpera(activityDTO.getActId());
         Activity activity = findActivityById(activityDTO.getActId());
         if (null == activity) {
-            throw new BizException("活动不存在");
+            throw new BizException(ResultCode.DATA_NONENTITY);
         }
         BeanUtils.copyProperties(activityDTO, activity);
         if (baseMapper.updateById(activity) > 0) {
@@ -110,7 +111,7 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> i
     public boolean operateStatus(Long actId, Integer status) {
         Activity activity = findActivityById(actId);
         if (null == activity) {
-            throw new BizException("活动不存在");
+            throw new BizException(ResultCode.DATA_NONENTITY);
         }
         activity.setStatus(status);
         activity.setActId(actId);
@@ -133,7 +134,7 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> i
      */
     private void checkAdeOpera(Long adeId) {
         if (selectActShelveFlag(adeId)) {
-            throw new BizException("活动状态为已上架，暂不能进行编辑修改操作!");
+            throw new BizException(ResultCode.DATA_PUT);
         }
     }
 

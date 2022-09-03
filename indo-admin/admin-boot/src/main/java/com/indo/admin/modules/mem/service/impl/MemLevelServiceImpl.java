@@ -3,6 +3,7 @@ package com.indo.admin.modules.mem.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.common.util.AdminBusinessRedisUtils;
+import com.indo.common.result.ResultCode;
 import com.indo.core.mapper.MemLevelMapper;
 import com.indo.admin.pojo.req.mem.MemLevelAddReq;
 import com.indo.admin.pojo.req.mem.MemLevelPageReq;
@@ -59,10 +60,10 @@ public class MemLevelServiceImpl extends SuperServiceImpl<MemLevelMapper, MemLev
     public boolean updateOne(MemLevelUpdateReq req) {
         MemLevel memLevel = baseMapper.selectById(req.getId());
         if (memLevel == null) {
-            throw new BizException("会员不存在");
+            throw new BizException(ResultCode.DATA_NONENTITY);
         }
         if(!memLevel.getLevel().equals(req.getLevel())){
-            throw new BizException("不可修改等级");
+            throw new BizException(ResultCode.NOT_UPDATE_LEVEL);
         }
         MemLevel tempMemLevel = new MemLevel();
         BeanUtils.copyProperties(req, tempMemLevel);

@@ -8,6 +8,7 @@ import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TaskEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.common.pojo.bo.LoginInfo;
+import com.indo.common.result.ResultCode;
 import com.indo.common.web.exception.BizException;
 import com.indo.core.mapper.MemTaskRecordMapper;
 import com.indo.core.mapper.SysTaskMapper;
@@ -229,7 +230,7 @@ public class SysTaskServiceImpl extends ServiceImpl<SysTaskMapper, SysTask> impl
         taskwrapper.eq(MemTaskRecord::getStates,0);
         List<MemTaskRecord> memTaskRecordList = memTaskRecordMapper.selectList(taskwrapper);
         if(memTaskRecordList.isEmpty()){
-            throw new BizException("错误的领取，无可领取任务奖励");
+            throw new BizException(ResultCode.TASK_REWARD_ERROR);
         }
         memTaskRecordList.forEach(l->{
             MemGoldChangeDTO agentRebateChange = new MemGoldChangeDTO();

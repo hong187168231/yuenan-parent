@@ -15,6 +15,7 @@ import com.indo.admin.pojo.vo.agent.AgentApplyVO;
 import com.indo.common.constant.GlobalConstants;
 import com.indo.common.enums.AudiTypeEnum;
 import com.indo.common.enums.ProhibitStatusEnum;
+import com.indo.common.result.ResultCode;
 import com.indo.common.utils.ShareCodeUtil;
 import com.indo.common.utils.StringUtils;
 import com.indo.common.web.exception.BizException;
@@ -63,17 +64,17 @@ public class AgentApplyServiceImpl extends ServiceImpl<AgentApplyMapper, AgentAp
     public synchronized boolean applyAudit(MemApplyAuditReq req) {
         AgentApply memAgentApply = baseMapper.selectById(req.getAgentApplyId());
         if (ObjectUtil.isEmpty(memAgentApply)) {
-            throw new BizException("代理审核申请不存在");
+            throw new BizException(ResultCode.DATA_NONENTITY);
         }
         if (memAgentApply.getStatus().equals(GlobalConstants.PAY_CASH_STATUS_REJECT)) {
-            throw new BizException("提现订单状态错误");
+            throw new BizException(ResultCode.DATA_STATUS_ERROR);
         }
         if (memAgentApply.getStatus().equals(GlobalConstants.PAY_CASH_STATUS_CANCEL)) {
-            throw new BizException("提现订单状态错误");
+            throw new BizException(ResultCode.DATA_STATUS_ERROR);
         }
         MemBaseinfo memBaseinfo = iMemBaseinfoService.getMemBaseInfo(memAgentApply.getMemId());
         if (ProhibitStatusEnum.invite.getStatus().equals(memBaseinfo.getProhibitInvite())) {
-            throw new BizException("该邀请人已被禁止发展下级");
+            throw new BizException(ResultCode.USER_PERMISSION_PROHIBITION);
         }
         if (req.getAudiType().name().equals(AudiTypeEnum.reject.name())) {
             //更新代理关系
@@ -102,7 +103,7 @@ public class AgentApplyServiceImpl extends ServiceImpl<AgentApplyMapper, AgentAp
         memBaseinfo.setAccType(GlobalConstants.ACC_TYPE_AGENT);
         boolean memFlag = iMemBaseinfoService.updateById(memBaseinfo);
         if (!memFlag) {
-            throw new BizException("代理审核出错!");
+            throw new BizException(ResultCode.AGENT_AUDIT_ERROR);
         }
         // 刷新用户缓存
         MemBaseInfoDTO memBaseInfoDTO = new MemBaseInfoDTO();

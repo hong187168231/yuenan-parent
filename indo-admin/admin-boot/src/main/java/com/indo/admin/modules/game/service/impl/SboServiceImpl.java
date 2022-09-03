@@ -8,6 +8,7 @@ import com.indo.admin.modules.game.service.SboService;
 import com.indo.admin.pojo.dto.game.sbo.*;
 import com.indo.admin.pojo.vo.game.sbo.SboApiResponseData;
 import com.indo.common.result.Result;
+import com.indo.common.result.ResultCode;
 import com.indo.common.utils.GameUtil;
 import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.common.web.util.JwtUtils;
@@ -44,7 +45,7 @@ public class SboServiceImpl implements SboService {
             wrapper.eq(GameAgent::getParentName, OpenAPIProperties.SBO_PLATFORM_CODE);
             GameAgent gameAgent = gameAgentMapper.selectOne(wrapper);
             if (null != gameAgent) {
-                return Result.failed("代理已经存在");
+                return Result.failed(ResultCode.DATA_DUPLICATION);
             }
 
 //            Map<String, String> trr = new HashMap<>();
@@ -63,7 +64,7 @@ public class SboServiceImpl implements SboService {
             SboApiResponseData sboApiResponse = commonRequest(sboAgentJsonDTO, OpenAPIProperties.SBO_API_URL + "/web-root/restricted/agent/register-agent.aspx", JwtUtils.getUserId().intValue(), ip, "registerAgent");
 
             if (null == sboApiResponse) {
-                return Result.failed("g100104", "网络繁忙，请稍后重试！");
+                return Result.failed(ResultCode.SYSTEM_EXECUTION_TIMEOUT);
             }
             if ("0".equals(sboApiResponse.getError().getId())) {
                 gameAgent = new GameAgent();
@@ -77,7 +78,7 @@ public class SboServiceImpl implements SboService {
             }
         } catch (Exception e) {
             logger.error("sbolog game error {} ", e);
-            return Result.failed("g100104", e.getMessage());
+            return Result.failed(ResultCode.SYSTEM_EXECUTION_TIMEOUT);
         }
     }
 
@@ -93,7 +94,7 @@ public class SboServiceImpl implements SboService {
             wrapper.eq(GameAgent::getParentName, OpenAPIProperties.SBO_PLATFORM_CODE);
             GameAgent gameAgent = gameAgentMapper.selectOne(wrapper);
             if (null == gameAgent) {
-                return Result.failed("代理不存在");
+                return Result.failed(ResultCode.DATA_DUPLICATION);
             }
 //            更新代理状态至 CLOSED / SUSPEND / ACTIVE.
 //            若更新状态为 CLOSED, 该代理底下的玩家将无法登入。 若更新状态为 SUSPEND, 该代理底下的玩家可以登入，但无法下注。 代理状态更新的影响会马上生效。
@@ -108,7 +109,7 @@ public class SboServiceImpl implements SboService {
             SboApiResponseData sboApiResponse = commonRequest(sboUpdateAgentStatusJsonDTO, OpenAPIProperties.SBO_API_URL + "/web-root/restricted/agent/update-agent-status.aspx", JwtUtils.getUserId().intValue(), ip, "updateAgentStatus");
 
             if (null == sboApiResponse) {
-                return Result.failed("g100104", "网络繁忙，请稍后重试！");
+                return Result.failed(ResultCode.SYSTEM_EXECUTION_TIMEOUT);
             }
             if ("0".equals(sboApiResponse.getError().getId())) {
                 gameAgent.setStatus(sboUpdateAgentStatusDTO.getStatus());
@@ -148,7 +149,7 @@ public class SboServiceImpl implements SboService {
             SboApiResponseData sboApiResponse = commonRequest(sboUpdateAgentPresetBetDTO, OpenAPIProperties.SBO_API_URL + "/web-root/restricted/agent/update-agent-preset-bet-settings.aspx", JwtUtils.getUserId().intValue(), ip, "updateAgentPresetBet");
 
             if (null == sboApiResponse) {
-                return Result.failed("g100104", "网络繁忙，请稍后重试！");
+                return Result.failed(ResultCode.SYSTEM_EXECUTION_TIMEOUT);
             }
             if ("0".equals(sboApiResponse.getError().getId())) {
                 BeanUtils.copyProperties(sboUpdateAgentPresetBetDTO, gameAgent);

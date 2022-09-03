@@ -7,6 +7,8 @@ import com.indo.admin.modules.file.mapper.FileMapper;
 import com.indo.admin.modules.file.service.IFileService;
 import com.indo.common.pojo.bo.ObjectInfo;
 import com.indo.common.result.PageResult;
+import com.indo.common.result.ResultCode;
+import com.indo.common.web.exception.BizException;
 import com.indo.core.pojo.entity.FileInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.MapUtils;
@@ -27,7 +29,7 @@ public abstract class AbstractIFileService extends ServiceImpl<FileMapper, FileI
     public FileInfo upload(MultipartFile file, String folder) {
         FileInfo fileInfo = FileUtil.getFileInfo(file);
         if (!fileInfo.getName().contains(FILE_SPLIT)) {
-            throw new IllegalArgumentException("缺少后缀名");
+            throw new BizException(ResultCode.MISSING_SUFFIX);
         }
         ObjectInfo objectInfo = uploadFile(file, folder);
         fileInfo.setPath(objectInfo.getObjectPath());
