@@ -25,7 +25,7 @@
         (SELECT level FROM mem_level ml WHERE ml.id=m.mem_level) as level
         FROM agent_rebate_record m
         <where>
-            <if test="req.account !=null">
+            <if test="req.account !=null and req.account != ''">
                 and m.account = #{req.account}
             </if>
             <if test="req.startTime != null and req.startTime != ''">
