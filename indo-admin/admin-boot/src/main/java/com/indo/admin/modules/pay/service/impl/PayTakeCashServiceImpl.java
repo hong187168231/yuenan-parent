@@ -71,6 +71,7 @@ public class PayTakeCashServiceImpl extends ServiceImpl<PayTakeCashMapper, PayTa
         if (cashOrderDTO.getEndTime() != null) {
             wrapper.le(PayTakeCash::getCreateTime, cashOrderDTO.getEndTime());
         }
+        wrapper.orderByDesc(PayTakeCash::getCreateTime);
         return baseMapper.selectPage(page, wrapper);
     }
 
