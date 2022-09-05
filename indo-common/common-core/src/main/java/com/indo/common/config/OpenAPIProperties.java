@@ -674,6 +674,27 @@ public class OpenAPIProperties implements InitializingBean {
     @Value("${ag.isPlatformLogin}")
     private String agIsPlatformLogin;
 
+    //TCGWin
+    public static String TCGWIN_API_URL;
+    public static String TCGWIN_DES_KEY;
+    public static String TCGWIN_SHA256_KEY;
+    public static String TCGWIN_MERCHANT_CODE;
+    public static String TCGWIN_PLATFORM_CODE;
+    public static String TCGWIN_IS_PLATFORM_LOGIN;
+
+    @Value("${tcgwin.apiUrl}")
+    private String tcgwinApiurl;
+    @Value("${tcgwin.tcgwinDesKey}")
+    private String tcgwinDesKey;
+    @Value("${tcgwin.tcgwinSha256Key}")
+    private String tcgwinSha256Key;
+    @Value("${tcgwin.tcgwinMerchantCode}")
+    private String tcgwinMerchantCode;
+    @Value("${tcgwin.platformCode}")
+    private String tcgwinPlatformCode;
+    @Value("${tcgwin.isPlatformLogin}")
+    private String tcgwinIsPlatformLogin;
+
     @Override
     public void afterPropertiesSet() {
 
@@ -915,5 +936,12 @@ public class OpenAPIProperties implements InitializingBean {
         AG_API_KEY = agApiKey;
         AG_SID_KEY = agSidKey;
         AG_CAGENT = agCagent;
+
+        TCGWIN_MERCHANT_CODE = tcgwinMerchantCode;
+        TCGWIN_API_URL = tcgwinApiurl;
+        TCGWIN_DES_KEY =  tcgwinDesKey;
+        TCGWIN_SHA256_KEY = tcgwinSha256Key;
+        TCGWIN_PLATFORM_CODE = tcgwinPlatformCode;
+        TCGWIN_IS_PLATFORM_LOGIN = tcgwinIsPlatformLogin;
     }
 }
