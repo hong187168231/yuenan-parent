@@ -6,7 +6,7 @@ spring:
       # 注册中心
       discovery:
         server-addr: http://172.31.38.39:8848
-        namespace: yuenan-prod
+        namespace: 368a1e2d-5359-405c-9834-a39a44e1d522
       # 配置中心
       config:
         server-addr: ${spring.cloud.nacos.discovery.server-addr}
