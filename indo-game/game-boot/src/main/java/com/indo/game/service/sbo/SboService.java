@@ -9,7 +9,7 @@ public interface SboService {
     /**
      * SBO Sports
      */
-    public Result sboGame(LoginInfo loginUser, String ip,String platform,String parentName,String loginType) ;
+    public Result sboGame(LoginInfo loginUser, String ip,String platform,String parentName,String loginType,String countryCode) ;
 
     /**
      * SBO Sports登出玩家

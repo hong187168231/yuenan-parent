@@ -12,7 +12,7 @@ public interface SabaService {
     /**
      * saba Sports
      */
-    Result sabaGame(LoginInfo loginUser, String ip, String platform,String parentName,String isMobileLogin);
+    Result sabaGame(LoginInfo loginUser, String ip, String platform,String parentName,String isMobileLogin,String countryCode);
 
     /**
      * saba Sports登出玩家

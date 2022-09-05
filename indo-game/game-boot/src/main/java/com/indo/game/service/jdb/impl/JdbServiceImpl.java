@@ -54,7 +54,7 @@ public class JdbServiceImpl implements JdbService {
      * @return loginUser 用户信息
      */
     @Override
-    public Result jdbGame(LoginInfo loginUser, String isMobileLogin,String ip,String platform,String parentName) {
+    public Result jdbGame(LoginInfo loginUser, String isMobileLogin,String ip,String platform,String parentName,String countryCode) {
         logger.info("jdblog {} aeGame account:{}, aeCodeId:{}", loginUser.getId(), loginUser.getNickName(), platform);
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
@@ -122,7 +122,7 @@ public class JdbServiceImpl implements JdbService {
                     }
                 }
             }
-            return getToken(gameParentPlatform,gamePlatform,loginUser, ip,isMobileLogin);
+            return getToken(gameParentPlatform,gamePlatform,loginUser, ip,isMobileLogin, countryCode);
         } catch (Exception e) {
             e.printStackTrace();
             return Result.failed("g100104","网络繁忙，请稍后重试！");
@@ -163,7 +163,7 @@ public class JdbServiceImpl implements JdbService {
     /**
      *  取得 Token
      */
-    public Result getToken(GameParentPlatform gameParentPlatform,GamePlatform gamePlatform,LoginInfo loginUser,String ip,String isMobileLogin){
+    public Result getToken(GameParentPlatform gameParentPlatform,GamePlatform gamePlatform,LoginInfo loginUser,String ip,String isMobileLogin,String countryCode){
         JdbApiRequestGetTokenDto jdbApiRequestParentDto = new JdbApiRequestGetTokenDto();
         jdbApiRequestParentDto.setParent(OpenAPIProperties.JDB_AGENT);//代理账号
         jdbApiRequestParentDto.setTs(new Date().getTime());//当前系统时间
@@ -171,7 +171,25 @@ public class JdbServiceImpl implements JdbService {
         jdbApiRequestParentDto.setUid(loginUser.getAccount());//玩家账号
 
         jdbApiRequestParentDto.setBalance(loginUser.getBalance());// Double Y 余额
-        jdbApiRequestParentDto.setLang(gameParentPlatform.getLanguageType());// String(2) N 语系
+        if(null!=countryCode&&!"".equals(countryCode)){
+            switch (countryCode) {
+                case "IN":
+                    countryCode = "en";
+                case "EN":
+                    countryCode = "en";
+                case "CN":
+                    countryCode = "cn";
+                case "VN":
+                    countryCode = "vn";
+                case "TH":
+                    countryCode = "th";
+                default:
+                    countryCode = gameParentPlatform.getLanguageType();
+            }
+        }else{
+            countryCode = gameParentPlatform.getLanguageType();
+        }
+        jdbApiRequestParentDto.setLang(countryCode);// String(2) N 语系
 //        en：英文（默认值）
 //        cn：简体中文
 //        th：泰文

@@ -8,7 +8,7 @@ public interface PsService {
     /**
      * 登录游戏JK电子
      */
-    public Result psGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName);
+    public Result psGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode);
 
     /**
      * JK电子游戏 强迫登出玩家

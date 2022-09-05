@@ -121,7 +121,7 @@ g091084 用户名无效。                                          Invalid user
 g091085 提取负数                                              Withdraw negative amount
 g091086 用户余额为零                                          User balance is zero
 
-   2022/3/5新增
+## 2022/3/5新增
 g091087 第三方请求异常                                          third request error
 
 g091088 转帐识别码已存在
@@ -159,29 +159,6 @@ g091119  merchantTransId	参数不得为空
 g091120  amount	格式错误
 g091121  amount	参数不得为空
 g091122  转帐金额不得为	0
-      
-091123  success
-g091124  Player	not	found.
-g091125  Authorization	invalid.
-g091126  MTCode	duplicate.
-g091127  Time	zone	must	be	UTC-4.
-g091128  Account or password must use the following characters:a-z A-Z 0-9 -
-g091129  check	account	api	error.
-g091130  Account	too	long.
-g091131  No	default	pool	type
-g091132  Transaction	in	progress,	please	check
-g091133  StartTime	and	EndTime	are	future
-g091134  Something	wrong.
-g091135  User	service	error.
-g091136  Transaction	service	error
-g091137  Game	Manager	service	error
-g091138  Wallet	service	error.
-g091139  Tviewer	service	error.
-g091140  Orderview	service	error.
-g091141  Report	service	error.
-g091142  This	owner	has	been	frozen.
-g091143  This	owner	has	been	disable.
-g091144  This	player	has	been    disable.
 
 
 g091145  内部服务器错误

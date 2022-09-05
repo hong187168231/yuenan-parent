@@ -60,7 +60,7 @@ public class SboServiceImpl implements SboService {
      * @return loginUser 用户信息
      */
     @Override
-    public Result sboGame(LoginInfo loginUser, String ip, String platform,String parentName,String loginType) {
+    public Result sboGame(LoginInfo loginUser, String ip, String platform,String parentName,String loginType,String countryCode) {
         logger.info("sbolog  sboGame loginUser:{}, ip:{}, platform:{}, parentName:{}, loginType:{}", loginUser,ip,platform,parentName,loginType);
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
@@ -107,7 +107,7 @@ public class SboServiceImpl implements SboService {
                 cptOpenMember.setLoginTime(new Date());
                 cptOpenMember.setType(parentName);
                 //创建玩家
-                return restrictedPlayer(gameParentPlatform,loginUser, gamePlatform, ip, cptOpenMember,loginType);
+                return restrictedPlayer(gameParentPlatform,loginUser, gamePlatform, ip, cptOpenMember,loginType,countryCode);
             } else {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
@@ -116,7 +116,7 @@ public class SboServiceImpl implements SboService {
                 this.logout(loginUser,ip);
 
                     //登录
-                return initGame(gameParentPlatform,loginUser, gamePlatform, ip,loginType);
+                return initGame(gameParentPlatform,loginUser, gamePlatform, ip,loginType,countryCode);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -129,7 +129,7 @@ public class SboServiceImpl implements SboService {
      *
      * @return loginUser 用户信息
      */
-    public Result restrictedPlayer(GameParentPlatform gameParentPlatform,LoginInfo loginUser, GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember,String loginType) {
+    public Result restrictedPlayer(GameParentPlatform gameParentPlatform,LoginInfo loginUser, GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember,String loginType,String countryCode) {
 
         try {
             LambdaQueryWrapper<GameAgent> wrapper = new LambdaQueryWrapper<>();
@@ -152,7 +152,7 @@ public class SboServiceImpl implements SboService {
             }
             if ("0".equals(sboApiResponse.getError().getId()) || "4103".equals(sboApiResponse.getError().getId())) {
                 externalService.saveCptOpenMember(cptOpenMember);
-                return initGame(gameParentPlatform,loginUser, gamePlatform, ip,loginType);
+                return initGame(gameParentPlatform,loginUser, gamePlatform, ip,loginType,countryCode);
             } else {
                 return errorCode(sboApiResponse.getError().getId(), sboApiResponse.getError().getMsg());
             }
@@ -165,7 +165,7 @@ public class SboServiceImpl implements SboService {
     /**
      * 登录
      */
-    private Result initGame(GameParentPlatform gameParentPlatform,LoginInfo loginUser, GamePlatform gamePlatform, String ip,String loginType) throws Exception {
+    private Result initGame(GameParentPlatform gameParentPlatform,LoginInfo loginUser, GamePlatform gamePlatform, String ip,String loginType,String countryCode) throws Exception {
         try {
             SboPlayerLoginJsonDTO sboPlayerLoginJsonDTO = new SboPlayerLoginJsonDTO();
             sboPlayerLoginJsonDTO.setUsername(loginUser.getAccount());
@@ -180,12 +180,40 @@ public class SboServiceImpl implements SboService {
             if (null == sboApiResponse) {
                 return Result.failed("g100104","网络繁忙，请稍后重试！");
             }
+            if(null!=countryCode&&!"".equals(countryCode)){
+                switch (countryCode) {
+                    case "IN":
+                        countryCode = "en";
+                    case "EN":
+                        countryCode = "en";
+                    case "CN":
+                        countryCode = "zh-cn";
+                    case "VN":
+                        countryCode = "vi-vn";
+                    case "TW":
+                        countryCode = "zh-tw";
+                    case "TH":
+                        countryCode = "th-th";
+                    case "ID":
+                        countryCode = "id-id";
+                    case "MY":
+                        countryCode = "my-mm";
+                    case "KR":
+                        countryCode = "ko-kr";
+                    case "JP":
+                        countryCode = "ja-jp";
+                    default:
+                        countryCode = gameParentPlatform.getLanguageType();
+                }
+            }else{
+                countryCode = gameParentPlatform.getLanguageType();
+            }
             if ("0".equals(sboApiResponse.getError().getId())) {
                 ApiResponseData responseData = new ApiResponseData();
                 StringBuilder urlStr = new StringBuilder();
                 https://{response-url}&lang=en&oddstyle=MY&theme=sbo&oddsmode=double&device=d
                 urlStr.append("https://").append(sboApiResponse.getUrl());
-                urlStr.append("&lang=").append(gameParentPlatform.getLanguageType());
+                urlStr.append("&lang=").append(countryCode);
                 urlStr.append("&oddstyle=EU");
                 urlStr.append("&theme=sbo&oddsmode=double&device=").append(loginType);
                 responseData.setPathUrl((String) urlStr.toString());

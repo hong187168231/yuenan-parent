@@ -8,7 +8,7 @@ public interface PgService {
     /**
      * 登录游戏AE电子
      */
-    public Result pgGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName);
+    public Result pgGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode);
 
     /**
      * AE电子游戏 强迫登出玩家

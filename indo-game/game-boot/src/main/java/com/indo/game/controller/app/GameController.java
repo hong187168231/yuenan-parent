@@ -147,12 +147,13 @@ public class GameController {
     public Result initGame(@LoginUser LoginInfo loginUser, @RequestParam("isMobileLogin") String isMobileLogin, @RequestParam("platform") String platform,
                            @RequestParam("parentName") String parentName,
                            HttpServletRequest request) throws InterruptedException {
-
+//        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+        String countryCode = request.getHeader("countryCode");
         String params = "";
         if (loginUser == null || StringUtils.isBlank(loginUser.getAccount())) {
             return Result.failed("g100103", "会员登录失效，请重新登录！");
         }
-        log.info("登录平台或单一游戏登录 进入游戏。。。 platform:{},loginUser:{},parentName:{},isMobileLogin:{}", platform, loginUser, parentName,isMobileLogin);
+        log.info("登录平台或单一游戏登录 进入游戏。。。 platform:{},loginUser:{},parentName:{},isMobileLogin:{},countryCode:{}", platform, loginUser, parentName,isMobileLogin,countryCode);
         //黑名单校验
         List<SysIpLimit> list =sysIpLimitClient.findSysIpLimitByType(1).getData();
         if(list!=null&&list.size()>0){
@@ -175,41 +176,41 @@ public class GameController {
                 String ip = IPAddressUtil.getIpAddress(request);
                 Result resultInfo = null;
                 if (OpenAPIProperties.AWC_PLATFORM_CODE.equals(parentName)) {//AE真人视讯
-                    resultInfo = awcService.awcGame(loginUser, isMobileLogin, ip, platform, parentName);
+                    resultInfo = awcService.awcGame(loginUser, isMobileLogin, ip, platform, parentName,countryCode);
                 }
                 if (OpenAPIProperties.UG_PLATFORM_CODE.equals(parentName)) {
                     String loginType = "mobile";
                     if (!"1".equals(isMobileLogin))
                         loginType = "pc";
 
-                    resultInfo = ugService.ugGame(loginUser, ip, platform, loginType, parentName);
+                    resultInfo = ugService.ugGame(loginUser, ip, platform, loginType, parentName,countryCode);
                 }
                 if (OpenAPIProperties.SBO_PLATFORM_CODE.equals(parentName)) {
                     String loginType = "m";//mobile
                     if (!"1".equals(isMobileLogin))
                         loginType = "d";//desktop
-                    resultInfo = sboSportsService.sboGame(loginUser, ip, platform, parentName,loginType);
+                    resultInfo = sboSportsService.sboGame(loginUser, ip, platform, parentName,loginType,countryCode);
                 }
                 if (OpenAPIProperties.SABA_PLATFORM_CODE.equals(parentName)) {
                     String loginType = "2";//mobile
                     if (!"1".equals(isMobileLogin))
                         loginType = "1";//desktop
-                    resultInfo = sabaService.sabaGame(loginUser, ip, platform, parentName,loginType);
+                    resultInfo = sabaService.sabaGame(loginUser, ip, platform, parentName,loginType,countryCode);
                 }
                 if (OpenAPIProperties.JDB_PLATFORM_CODE.equals(parentName)) {
-                    resultInfo = jdbService.jdbGame(loginUser, isMobileLogin, ip, platform, parentName);
+                    resultInfo = jdbService.jdbGame(loginUser, isMobileLogin, ip, platform, parentName, countryCode);
                 }
                 if (OpenAPIProperties.AE_PLATFORM_CODE.equals(parentName)) {//AE电子
-                    resultInfo = aeService.aeGame(loginUser, isMobileLogin, ip, platform, parentName);
+                    resultInfo = aeService.aeGame(loginUser, isMobileLogin, ip, platform, parentName, countryCode);
                 }
                 if (OpenAPIProperties.CQ_PLATFORM_CODE.equals(parentName)) {
-                    resultInfo = cqService.cqGame(loginUser, isMobileLogin, ip, platform, parentName);
+                    resultInfo = cqService.cqGame(loginUser, isMobileLogin, ip, platform, parentName, countryCode);
                 }
                 if (OpenAPIProperties.PG_PLATFORM_CODE.equals(parentName)) {
-                    resultInfo = pgService.pgGame(loginUser, isMobileLogin, ip, platform, parentName);
+                    resultInfo = pgService.pgGame(loginUser, isMobileLogin, ip, platform, parentName, countryCode);
                 }
                 if (OpenAPIProperties.PS_PLATFORM_CODE.equals(parentName)) {
-                    resultInfo = psService.psGame(loginUser, isMobileLogin, ip, platform, parentName);
+                    resultInfo = psService.psGame(loginUser, isMobileLogin, ip, platform, parentName, countryCode);
                 }
                 if (OpenAPIProperties.T9_PLATFORM_CODE.equals(parentName)) {
                     resultInfo = t9Service.t9Game(loginUser, isMobileLogin, ip, platform, parentName);

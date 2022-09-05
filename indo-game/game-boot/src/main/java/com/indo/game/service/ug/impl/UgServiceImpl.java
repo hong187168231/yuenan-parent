@@ -58,7 +58,7 @@ public class UgServiceImpl implements UgService {
      * @return loginUser 用户信息
      */
     @Override
-    public Result ugGame(LoginInfo loginUser, String ip,String platform,String WebType,String parentName) {
+    public Result ugGame(LoginInfo loginUser, String ip,String platform,String WebType,String parentName,String countryCode) {
         logger.info("uglog ugGame loginUser:{}, ip:{}, platform:{}, WebType:{}, parentName:{}", loginUser, platform, WebType, parentName);
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
@@ -105,13 +105,13 @@ public class UgServiceImpl implements UgService {
                 cptOpenMember.setLoginTime(new Date());
                 cptOpenMember.setType(parentName);
                 //创建玩家
-                return restrictedPlayer(gameParentPlatform,loginUser,gamePlatform, ip, cptOpenMember,WebType);
+                return restrictedPlayer(gameParentPlatform,loginUser,gamePlatform, ip, cptOpenMember,WebType,countryCode);
             } else {
                 this.logout(loginUser,ip);
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
                 //登录
-                return initGame(gameParentPlatform,loginUser, gamePlatform, ip, WebType);
+                return initGame(gameParentPlatform,loginUser, gamePlatform, ip, WebType,countryCode);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -123,7 +123,7 @@ public class UgServiceImpl implements UgService {
      * 注册会员
      * @return loginUser 用户信息
      */
-    public Result restrictedPlayer(GameParentPlatform gameParentPlatform,LoginInfo loginUser,GamePlatform gamePlatform, String ip,CptOpenMember cptOpenMember,String WebType) {
+    public Result restrictedPlayer(GameParentPlatform gameParentPlatform,LoginInfo loginUser,GamePlatform gamePlatform, String ip,CptOpenMember cptOpenMember,String WebType,String countryCode) {
         logger.info("uglog restrictedPlayer {} ugGame account:{}, ugCodeId:{}", loginUser.getId(), loginUser.getNickName());
         try {
             UgRegisterPlayerJsonDTO ugRegisterPlayerJsonDTO = new UgRegisterPlayerJsonDTO();
@@ -140,7 +140,7 @@ public class UgServiceImpl implements UgService {
             logger.info("UG体育注册会员返回参数: ugApiResponse:{}"+ugApiResponse);
             if(null!=ugApiResponse&&"000000".equals(ugApiResponse.getCode())){
                 externalService.saveCptOpenMember(cptOpenMember);
-                return initGame(gameParentPlatform,loginUser,gamePlatform, ip,WebType);
+                return initGame(gameParentPlatform,loginUser,gamePlatform, ip,WebType,countryCode);
             }else if(null==ugApiResponse){
                 return Result.failed();
             }else {
@@ -157,8 +157,37 @@ public class UgServiceImpl implements UgService {
     /**
      * 登录
      */
-    private Result initGame(GameParentPlatform gameParentPlatform,LoginInfo loginUser,GamePlatform gamePlatform, String ip,String WebType) throws Exception {
+    private Result initGame(GameParentPlatform gameParentPlatform,LoginInfo loginUser,GamePlatform gamePlatform, String ip,String WebType,String countryCode) throws Exception {
         logger.info("uglog initGame Login {} initGame ugGame account:{}, ugCodeId:{},ip:{}", loginUser.getId(), loginUser.getNickName(),ip);
+        //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+        if(null!=countryCode&&!"".equals(countryCode)){
+            switch (countryCode) {
+                case "IN":
+                    countryCode = "en";
+                case "EN":
+                    countryCode = "en";
+                case "CN":
+                    countryCode = "zh_cn";
+                case "VN":
+                    countryCode = "vi";
+                case "TW":
+                    countryCode = "zh_TW";
+                case "TH":
+                    countryCode = "th";
+                case "ID":
+                    countryCode = "id";
+                case "MY":
+                    countryCode = "ms_MY";
+                case "KR":
+                    countryCode = "ko_KR";
+                case "JP":
+                    countryCode = "ja_JP";
+                default:
+                    countryCode = gameParentPlatform.getLanguageType();
+            }
+        }else{
+            countryCode = gameParentPlatform.getLanguageType();
+        }
 //        try {
 //            operatorId	string	16	Y	商户代码
 //            userId	string	50	Y	玩家帐号
@@ -171,7 +200,7 @@ public class UgServiceImpl implements UgService {
 //            sportId	number		N	偏好运动类型，预设值：1 (足球)，支援设定的运动有：1 (足球), 2 (篮球), 7 (网球), 11 (板球)
             String urlLogin = OpenAPIProperties.UG_LOGIN_URL+"/auth/single?operatorId="+OpenAPIProperties.UG_COMPANY_KEY+"&userId="+loginUser.getAccount()
                     +"&returnUrl="+OpenAPIProperties.UG_RETURN_URL+"&oddsExpression=decimal"
-                    +"&language="+gameParentPlatform.getLanguageType()
+                    +"&language="+countryCode
                     +"&webType="+WebType+"&theme=style&sportId=1";
             logger.info("UG体育登录initGame输入 urlLogin:{},  loginUser:{}, ip:{}", urlLogin, loginUser, ip);
 

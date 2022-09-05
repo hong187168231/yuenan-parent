@@ -50,7 +50,7 @@ public class PgServiceImpl implements PgService {
      * @return loginUser 用户信息
      */
     @Override
-    public Result pgGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName) {
+    public Result pgGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode) {
         logger.info("pglog  {} pgGame account:{}, pgCodeId:{}", loginUser.getId(), loginUser.getNickName(), platform);
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
@@ -100,19 +100,43 @@ public class PgServiceImpl implements PgService {
                 externalService.updateCptOpenMember(cptOpenMember);
                 logout(loginUser, platform, ip);
             }
-
+//        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+            if(null!=countryCode&&!"".equals(countryCode)){
+                switch (countryCode) {
+                    case "IN":
+                        countryCode = "en";
+                    case "EN":
+                        countryCode = "en";
+                    case "CN":
+                        countryCode = "zh";
+                    case "VN":
+                        countryCode = "vi";
+                    case "TH":
+                        countryCode = "th";
+                    case "ID":
+                        countryCode = "id";
+                    case "KR":
+                        countryCode = "ko";
+                    case "JP":
+                        countryCode = "ja";
+                    default:
+                        countryCode = gameParentPlatform.getLanguageType();
+                }
+            }else{
+                countryCode = gameParentPlatform.getLanguageType();
+            }
             StringBuilder builder = new StringBuilder();
             if("Y".equals(OpenAPIProperties.PG_IS_PLATFORM_LOGIN)) {
                 builder.append(OpenAPIProperties.PG_LOGIN_URL).append("/web-lobby/games/?");
                 builder.append("operator_token=").append(OpenAPIProperties.PG_API_TOKEN);
                 builder.append("&operator_player_session=").append(cptOpenMember.getPassword());
-                builder.append("&language=").append(gameParentPlatform.getLanguageType());
+                builder.append("&language=").append(countryCode);
             }else {
                 builder.append(OpenAPIProperties.PG_LOGIN_URL).append("/"+gamePlatform.getPlatformCode()+"/index.html?");
                 builder.append("btt=1");//游戏启动模式3
                 builder.append("&ot=").append(OpenAPIProperties.PG_API_TOKEN);//运营商独有的身份识别
                 builder.append("&ops=").append(cptOpenMember.getPassword());//运营商系统生成的令牌
-                builder.append("&language=").append(gameParentPlatform.getLanguageType());//游戏显示语言
+                builder.append("&language=").append(countryCode);//游戏显示语言
             }
             logger.info("pglog  pgGame登录玩家 urlapi:{}", builder.toString(),cptOpenMember);
             //登录

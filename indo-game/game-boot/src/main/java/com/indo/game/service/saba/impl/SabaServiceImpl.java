@@ -55,7 +55,7 @@ public class SabaServiceImpl implements SabaService {
      * @return loginUser 用户信息
      */
     @Override
-    public Result sabaGame(LoginInfo loginUser, String ip, String platform, String parentName,String isMobileLogin) {
+    public Result sabaGame(LoginInfo loginUser, String ip, String platform, String parentName,String isMobileLogin,String countryCode) {
         logger.info("saba体育log  sabaGame loginUser:{}, ip:{}, platform:{}, parentName:{}", loginUser,ip,platform,parentName);
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
@@ -102,14 +102,14 @@ public class SabaServiceImpl implements SabaService {
                 cptOpenMember.setLoginTime(new Date());
                 cptOpenMember.setType(parentName);
                 //创建玩家
-                return restrictedPlayer(gameParentPlatform, loginUser, gamePlatform, ip, cptOpenMember, isMobileLogin);
+                return restrictedPlayer(gameParentPlatform, loginUser, gamePlatform, ip, cptOpenMember, isMobileLogin, countryCode);
             } else {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
                 //登出
                 this.logout(loginUser,ip);
                 //登录
-                return initGame(gameParentPlatform, loginUser, gamePlatform, ip, isMobileLogin);
+                return initGame(gameParentPlatform, loginUser, gamePlatform, ip, isMobileLogin, countryCode);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -122,7 +122,7 @@ public class SabaServiceImpl implements SabaService {
      *
      * @return loginUser 用户信息
      */
-    public Result restrictedPlayer(GameParentPlatform gameParentPlatform, LoginInfo loginUser, GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember,String isMobileLogin) {
+    public Result restrictedPlayer(GameParentPlatform gameParentPlatform, LoginInfo loginUser, GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember,String isMobileLogin,String countryCode) {
         logger.info("sabalog {} sabaGame account:{}, sabaCodeId:{}", loginUser.getId(), loginUser.getNickName());
         try {
             Map<String, String> trr = new HashMap<>();
@@ -140,7 +140,7 @@ public class SabaServiceImpl implements SabaService {
             }
             if ("0".equals(sabaApiResponse.getError_code()) || "6".equals(sabaApiResponse.getError_code())) {
                 externalService.saveCptOpenMember(cptOpenMember);
-                return initGame(gameParentPlatform, loginUser, gamePlatform, ip,isMobileLogin);
+                return initGame(gameParentPlatform, loginUser, gamePlatform, ip,isMobileLogin, countryCode);
             } else {
                 return errorCode(sabaApiResponse.getError_code(), sabaApiResponse.getMessage());
             }
@@ -153,10 +153,33 @@ public class SabaServiceImpl implements SabaService {
     /**
      * 登录
      */
-    private Result initGame(GameParentPlatform gameParentPlatform, LoginInfo loginUser, GamePlatform gamePlatform, String ip,String isMobileLogin) throws Exception {
+    private Result initGame(GameParentPlatform gameParentPlatform, LoginInfo loginUser, GamePlatform gamePlatform, String ip,String isMobileLogin,String countryCode) throws Exception {
         logger.info("sabalog {} sabaGame account:{}, sabaCodeId:{}", loginUser.getId(), loginUser.getNickName());
         try {
+            if(null!=countryCode&&!"".equals(countryCode)){
+                switch (countryCode) {
+                    case "IN":
+                        countryCode = "en";
+                    case "EN":
+                        countryCode = "en";
+                    case "CN":
+                        countryCode = "cs";
+                    case "VN":
+                        countryCode = "vn";
+                    case "TW":
+                        countryCode = "ch";
+                    case "TH":
+                        countryCode = "th";
+                    case "ID":
+                        countryCode = "id";
+                    default:
+                        countryCode = gameParentPlatform.getLanguageType();
+                }
+            }else{
+                countryCode = gameParentPlatform.getLanguageType();
+            }
             Map<String, String> trr = new HashMap<>();
+            trr.put("lang", countryCode);
             trr.put("vendor_member_id", loginUser.getAccount());
             trr.put("platform", isMobileLogin);  //投注平台. 输入要登录的平台码。 1:桌机, 2:手机 h5, 3:手机纯文字.
             logger.info("saba体育log  登录initGame输入 loginUser:{}, ip:{}, params:{}, urlapi:{}", loginUser,ip,trr,OpenAPIProperties.SABA_API_URL + "/GetSabaUrl");
@@ -165,6 +188,7 @@ public class SabaServiceImpl implements SabaService {
             if (null == sabaApiResponse) {
                 return Result.failed("g100104", "网络繁忙，请稍后重试！");
             }
+//
             if ("0".equals(sabaApiResponse.getError_code())) {
                 ApiResponseData responseData = new ApiResponseData();
                 responseData.setPathUrl(sabaApiResponse.getData());

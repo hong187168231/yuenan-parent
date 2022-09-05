@@ -49,7 +49,7 @@ public class CqServiceImpl implements CqService {
      * @return loginUser 用户信息
      */
     @Override
-    public Result cqGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName) {
+    public Result cqGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode) {
         logger.info("cqlog {} cqGame account:{}, cqCodeId:{}", loginUser.getId(), loginUser.getNickName(), platform);
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
@@ -106,7 +106,7 @@ public class CqServiceImpl implements CqService {
                 this.logout(loginUser,parentName,ip);
             }
             //登录
-            return initGame(gameParentPlatform, gamePlatform, cptOpenMember, isMobileLogin);
+            return initGame(gameParentPlatform, gamePlatform, cptOpenMember, isMobileLogin, countryCode);
         } catch (Exception e) {
             e.printStackTrace();
             return Result.failed("g100104", "网络繁忙，请稍后重试！");
@@ -117,8 +117,8 @@ public class CqServiceImpl implements CqService {
      * 登录逻辑
      */
     private Result initGame(GameParentPlatform platformGameParent, GamePlatform gamePlatform,
-                            CptOpenMember cptOpenMember, String isMobileLogin) {
-        CqApiResponseData cqApiResponseData = gameLogin(platformGameParent, gamePlatform, cptOpenMember, isMobileLogin);
+                            CptOpenMember cptOpenMember, String isMobileLogin,String countryCode) {
+        CqApiResponseData cqApiResponseData = gameLogin(platformGameParent, gamePlatform, cptOpenMember, isMobileLogin, countryCode);
         if (null == cqApiResponseData) {
             return Result.failed("g091087", "第三方请求异常！");
         }
@@ -139,7 +139,7 @@ public class CqServiceImpl implements CqService {
     /**
      * 调用API登录
      */
-    private CqApiResponseData gameLogin(GameParentPlatform platformGameParent, GamePlatform gamePlatform, CptOpenMember cptOpenMemberm, String isMobileLogin) {
+    private CqApiResponseData gameLogin(GameParentPlatform platformGameParent, GamePlatform gamePlatform, CptOpenMember cptOpenMemberm, String isMobileLogin,String countryCode) {
         Map<String, String> params = new HashMap<String, String>();
 //        params.put("account", cptOpenMemberm.getUserName());
 //        params.put("lang", platformGameParent.getLanguageType());
@@ -153,7 +153,25 @@ public class CqServiceImpl implements CqService {
         }else {
             params.put("gameplat", "mobile");
         }
-        params.put("lang", platformGameParent.getLanguageType());//lang	string	必填	語言代碼，全數支援 zh-cn ,en ，部份遊戲支援 th, zh-tw，確切支援程度請調用遊戲列表 API 回傳資訊
+        if(null!=countryCode&&!"".equals(countryCode)){
+            switch (countryCode) {
+                case "IN":
+                    countryCode = "en";
+                case "EN":
+                    countryCode = "en";
+                case "CN":
+                    countryCode = "zh-cn";
+                case "VN":
+                    countryCode = "vn";
+                case "TH":
+                    countryCode = "th";
+                default:
+                    countryCode = platformGameParent.getLanguageType();
+            }
+        }else{
+            countryCode = platformGameParent.getLanguageType();
+        }
+        params.put("lang", countryCode);//lang	string	必填	語言代碼，全數支援 zh-cn ,en ，部份遊戲支援 th, zh-tw，確切支援程度請調用遊戲列表 API 回傳資訊
         params.put("session", "");//session	string	選填	SessionID，貴司提供後，我司會帶入此參數去呼叫貴司錢包 Bet, Rollout 或 TakeAll API
         params.put("app", "Y");//app	string	選填	是否是透過app 執行遊戲，Y=是，N=否，預設為N
         params.put("detect", "");//detect	string	選填	是否開啟阻擋不合遊戲規格瀏覽器提示， Y=是，N=否，預設為N

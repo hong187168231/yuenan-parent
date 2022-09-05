@@ -52,7 +52,7 @@ public class AeServiceImpl implements AeService {
      * @return loginUser 用户信息
      */
     @Override
-    public Result aeGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName) {
+    public Result aeGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode) {
         logger.info("aelog {} aeGame account:{}, aeCodeId:{}", loginUser.getId(), loginUser.getNickName(), platform);
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
@@ -101,7 +101,7 @@ public class AeServiceImpl implements AeService {
                 cptOpenMember.setLoginTime(new Date());
                 cptOpenMember.setType(parentName);
                 //创建玩家
-                return createMemberGame(gameParentPlatform, gamePlatform, ip, cptOpenMember, isMobileLogin);
+                return createMemberGame(gameParentPlatform, gamePlatform, ip, cptOpenMember, isMobileLogin, countryCode);
             } else {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
@@ -109,7 +109,7 @@ public class AeServiceImpl implements AeService {
                 logout(loginUser, platform, ip);
             }
             //登录
-            return initGame(gameParentPlatform, gamePlatform, cptOpenMember, isMobileLogin);
+            return initGame(gameParentPlatform, gamePlatform, cptOpenMember, isMobileLogin, countryCode);
         } catch (Exception e) {
             e.printStackTrace();
             return Result.failed("g100104", "网络繁忙，请稍后重试！");
@@ -120,8 +120,8 @@ public class AeServiceImpl implements AeService {
      * 登录逻辑
      */
     private Result initGame(GameParentPlatform platformGameParent, GamePlatform gamePlatform,
-                            CptOpenMember cptOpenMember, String isMobileLogin) {
-        AeApiResponseData aeApiResponseData = gameLogin(platformGameParent, gamePlatform, cptOpenMember, isMobileLogin);
+                            CptOpenMember cptOpenMember, String isMobileLogin,String countryCode) {
+        AeApiResponseData aeApiResponseData = gameLogin(platformGameParent, gamePlatform, cptOpenMember, isMobileLogin, countryCode);
         if (null == aeApiResponseData) {
             return Result.failed("g091087", "第三方请求异常！");
         }
@@ -138,7 +138,7 @@ public class AeServiceImpl implements AeService {
     /**
      * 调用API登录
      */
-    private AeApiResponseData gameLogin(GameParentPlatform platformGameParent, GamePlatform gamePlatform, CptOpenMember cptOpenMemberm, String isMobileLogin) {
+    private AeApiResponseData gameLogin(GameParentPlatform platformGameParent, GamePlatform gamePlatform, CptOpenMember cptOpenMemberm, String isMobileLogin,String countryCode) {
         long currentTime = System.currentTimeMillis();
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("merchantId", OpenAPIProperties.AE_MERCHANT_ID);
@@ -162,7 +162,35 @@ public class AeServiceImpl implements AeService {
         String sign = MD5.md5(builder.toString());
         params.put("gameId", gamePlatform.getPlatformCode());
         params.put("sign", sign);
-        params.put("language", platformGameParent.getLanguageType());
+        if(null!=countryCode&&!"".equals(countryCode)){
+            switch (countryCode) {
+                case "IN":
+                    countryCode = "en_US";
+                case "EN":
+                    countryCode = "en_US";
+                case "CN":
+                    countryCode = "zh_CN";
+                case "VN":
+                    countryCode = "vi_VN";
+                case "TW":
+                    countryCode = "zh_TW";
+                case "TH":
+                    countryCode = "th_TH";
+                case "ID":
+                    countryCode = "in_ID";
+                case "MY":
+                    countryCode = "ms_MY";
+                case "KR":
+                    countryCode = "ko_KR";
+                case "JP":
+                    countryCode = "ja_JP";
+                default:
+                    countryCode = platformGameParent.getLanguageType();
+            }
+        }else{
+            countryCode = platformGameParent.getLanguageType();
+        }
+        params.put("language", countryCode);
         String jsonStr = JSON.toJSONString(params);
         AeApiResponseData aeApiResponseData = null;
         try {
@@ -181,14 +209,14 @@ public class AeServiceImpl implements AeService {
     /**
      * 创建账户并登录逻辑
      */
-    private Result createMemberGame(GameParentPlatform platformGameParent, GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember, String isMobileLogin) {
+    private Result createMemberGame(GameParentPlatform platformGameParent, GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember, String isMobileLogin,String countryCode) {
         AeApiResponseData aeApiResponseData = createMember(platformGameParent, gamePlatform, ip, cptOpenMember, isMobileLogin);
         if (null == aeApiResponseData) {
             return Result.failed("g091087", "第三方请求异常！");
         }
         if (("0").equals(aeApiResponseData.getCode())) {
             externalService.saveCptOpenMember(cptOpenMember);
-            return initGame(platformGameParent, gamePlatform, cptOpenMember, isMobileLogin);
+            return initGame(platformGameParent, gamePlatform, cptOpenMember, isMobileLogin, countryCode);
         } else {
             return errorCode(aeApiResponseData.getCode(), aeApiResponseData.getMsg());
         }

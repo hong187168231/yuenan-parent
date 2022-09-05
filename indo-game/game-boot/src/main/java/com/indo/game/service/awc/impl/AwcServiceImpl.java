@@ -50,7 +50,7 @@ public class AwcServiceImpl implements AwcService {
      * @return loginUser 用户信息
      */
     @Override
-    public Result awcGame(LoginInfo loginUser, String isMobileLogin,String ip,String platform,String parentName) {
+    public Result awcGame(LoginInfo loginUser, String isMobileLogin,String ip,String platform,String parentName,String countryCode) {
         logger.info("awclog {} aeGame account:{}, aeCodeId:{}", loginUser.getId(), loginUser.getNickName(), platform);
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
@@ -100,13 +100,13 @@ public class AwcServiceImpl implements AwcService {
                 cptOpenMember.setLoginTime(new Date());
                 cptOpenMember.setType(parentName);
                 //创建玩家
-                return createMemberGame(gameParentPlatform,gamePlatform, ip, cptOpenMember,isMobileLogin);
+                return createMemberGame(gameParentPlatform,gamePlatform, ip, cptOpenMember,isMobileLogin,countryCode);
             } else {
                 this.logout(loginUser,ip);
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
                 //登录
-                return initGame(gameParentPlatform,gamePlatform, ip, cptOpenMember, isMobileLogin);
+                return initGame(gameParentPlatform,gamePlatform, ip, cptOpenMember, isMobileLogin,countryCode);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -142,8 +142,8 @@ public class AwcServiceImpl implements AwcService {
     /**
      * 登录
      */
-    private Result initGame(GameParentPlatform gameParentPlatform,GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember,String isMobileLogin) throws Exception {
-        AwcApiResponseData awcApiResponseData = game(gameParentPlatform,gamePlatform, ip, cptOpenMember,isMobileLogin);
+    private Result initGame(GameParentPlatform gameParentPlatform,GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember,String isMobileLogin,String countryCode) throws Exception {
+        AwcApiResponseData awcApiResponseData = game(gameParentPlatform,gamePlatform, ip, cptOpenMember,isMobileLogin,countryCode);
         if (null == awcApiResponseData ) {
             return Result.failed("g100104","网络繁忙，请稍后重试！");
         }
@@ -158,7 +158,7 @@ public class AwcServiceImpl implements AwcService {
     /**
      * 创建玩家
      */
-    private Result createMemberGame(GameParentPlatform gameParentPlatform,GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember,String isMobileLogin) throws Exception {
+    private Result createMemberGame(GameParentPlatform gameParentPlatform,GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember,String isMobileLogin,String countryCode) throws Exception {
         AwcApiResponseData awcApiResponseData = createMember(gameParentPlatform,gamePlatform, ip, cptOpenMember);
 //        AwcApiResponseData awcApiResponseData = new AwcApiResponseData();
 //        awcApiResponseData.setStatus("0000");
@@ -167,7 +167,7 @@ public class AwcServiceImpl implements AwcService {
         }
         if("0000".equals(awcApiResponseData.getStatus())||"1001".equals(awcApiResponseData.getStatus())){
             externalService.saveCptOpenMember(cptOpenMember);
-            return initGame(gameParentPlatform,gamePlatform, ip, cptOpenMember,isMobileLogin);
+            return initGame(gameParentPlatform,gamePlatform, ip, cptOpenMember,isMobileLogin,countryCode);
         }else {
             return errorCode(awcApiResponseData.getStatus(),awcApiResponseData.getDesc());
         }
@@ -229,7 +229,7 @@ public class AwcServiceImpl implements AwcService {
      * @param cptOpenMember
      * @return
      */
-    public AwcApiResponseData game(GameParentPlatform gameParentPlatform,GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember,String isMobileLogin) {
+    public AwcApiResponseData game(GameParentPlatform gameParentPlatform,GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember,String isMobileLogin,String countryCode) {
         try {
             Map<String, String> trr = new HashMap<>();
             trr.put("userId", cptOpenMember.getUserName());
@@ -243,8 +243,45 @@ public class AwcServiceImpl implements AwcService {
 //            用于导回您指定的网站，需要设置 http:// 或 https://
 //            Example 范例：http://www.google.com
             trr.put("externalURL", "");
-
-            trr.put("language", gameParentPlatform.getLanguageType());
+            //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+            if(null!=countryCode&&!"".equals(countryCode)){
+                switch (countryCode) {
+                    case "IN":
+                        countryCode = "en_US";
+                    case "EN":
+                        countryCode = "en_US";
+                    case "CN":
+                        countryCode = "zh_CN";
+                    case "VN":
+                        countryCode = "vi_VN";
+                    case "TW":
+                        countryCode = "zh_TW";
+                    case "TH":
+                        countryCode = "th_TH";
+                    case "ID":
+                        countryCode = "in_ID";
+                    case "MY":
+                        countryCode = "ms_MY";
+                    case "KR":
+                        countryCode = "ko_KR";
+                    case "JP":
+                        countryCode = "ja_JP";
+                    default:
+                        countryCode = gameParentPlatform.getLanguageType();
+                }
+            }else{
+                countryCode = gameParentPlatform.getLanguageType();
+            }
+//            en_US	英文
+//            zh_CN	简体中文
+//            zh_TW	繁体中文
+//            th_TH	泰语
+//            in_ID	印度尼西亚语
+//            ms_MY	马来语
+//            ko_KR	韩语
+//            ja_JP	日文
+//            vi_VN	越南文
+            trr.put("language", countryCode);
             String url = "/wallet/login";
             if(!gameParentPlatform.getPlatformCode().equals(gamePlatform.getParentName())) {
                 url = "/wallet/doLoginAndLaunchGame";
