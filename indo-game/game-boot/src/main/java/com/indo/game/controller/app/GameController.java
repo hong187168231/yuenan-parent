@@ -38,6 +38,7 @@ import com.indo.game.service.saba.SabaService;
 import com.indo.game.service.sbo.SboService;
 import com.indo.game.service.sgwin.SGWinService;
 import com.indo.game.service.t9.T9Service;
+import com.indo.game.service.tcg.TCGWinService;
 import com.indo.game.service.tp.TpService;
 import com.indo.game.service.ug.UgService;
 import com.indo.game.service.v8.V8Service;
@@ -128,6 +129,8 @@ public class GameController {
     private AgService agService;
     @Autowired
     private SGWinService sgWinService;
+    @Autowired
+    private TCGWinService tcgWinService;
     @Autowired
     private RedissonClient redissonClient;
     @Resource
@@ -281,7 +284,9 @@ public class GameController {
                 if (OpenAPIProperties.SGWIN_PLATFORM_CODE.equals(parentName)) {
                     resultInfo = sgWinService.sgwinGame(loginUser, isMobileLogin, ip, platform, parentName);
                 }
-
+                if (OpenAPIProperties.TCGWIN_PLATFORM_CODE.equals(platform)) {
+                    resultInfo = tcgWinService.tcgwinGame(loginUser, isMobileLogin, ip, platform, parentName);
+                }
 
                 if (resultInfo == null) {
                     log.info("登录平台或单一游戏登录log {} loginPlatform result is null. params:{},ip:{},parentName:{}", loginUser.getId(), params, ip, parentName);
@@ -415,6 +420,9 @@ public class GameController {
             }
             if (OpenAPIProperties.SGWIN_PLATFORM_CODE.equals(platform)) {
                 resultInfo = sgWinService.logout(loginUser, platform, ip);
+            }
+            if (OpenAPIProperties.TCGWIN_PLATFORM_CODE.equals(platform)) {
+                resultInfo = tcgWinService.logout(loginUser, platform, ip);
             }
             if (resultInfo == null) {
                 log.info("退出平台log {} loginPlatform result is null. params:{},ip:{}", loginUser.getId(), params, ip);
