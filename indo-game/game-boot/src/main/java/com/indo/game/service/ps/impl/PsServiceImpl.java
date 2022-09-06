@@ -96,11 +96,39 @@ public class PsServiceImpl implements PsService {
                 externalService.updateCptOpenMember(cptOpenMember);
                 this.logout(loginUser, platform, ip);
             }
+            if(null!=countryCode&&!"".equals(countryCode)){
+                switch (countryCode) {
+                    case "IN":
+                        countryCode = "en_US";
+                    case "EN":
+                        countryCode = "en_US";
+                    case "CN":
+                        countryCode = "zh_CN";
+                    case "VN":
+                        countryCode = "vi_VN";
+                    case "TW":
+                        countryCode = "zh_TW";
+                    case "TH":
+                        countryCode = "th_TH";
+                    case "ID":
+                        countryCode = "in_ID";
+                    case "MY":
+                        countryCode = "ms_MY";
+                    case "KR":
+                        countryCode = "ko_KR";
+                    case "JP":
+                        countryCode = "ja_JP";
+                    default:
+                        countryCode = gameParentPlatform.getLanguageType();
+                }
+            }else{
+                countryCode = gameParentPlatform.getLanguageType();
+            }
             StringBuilder builder = new StringBuilder();
             builder.append(OpenAPIProperties.PS_API_URL).append("/launch/?host_id=");
             builder.append(OpenAPIProperties.PS_HOST_ID);
             builder.append("&game_id=").append(platform);
-            builder.append("&lang=").append(gameParentPlatform.getLanguageType());
+            builder.append("&lang=").append(countryCode);
             builder.append("&access_token=").append(cptOpenMember.getPassword());
 
             //登录
