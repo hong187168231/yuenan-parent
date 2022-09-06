@@ -35,7 +35,7 @@ public class JiliServiceImpl implements JiliService {
     private GameCommonService gameCommonService;
 
     @Override
-    public Result jiliGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName) {
+    public Result jiliGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode) {
         logger.info("jililog {} jiliGame account:{},jiliCodeId:{}", parentName, loginUser.getAccount(), platform);
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
@@ -91,9 +91,38 @@ public class JiliServiceImpl implements JiliService {
                 Map<String, Object> params = new HashMap<>();
                 params.put("Account", loginUser.getAccount());
                 GameUtil.postForm4PP(getLoginOutUrl(loginUser.getAccount()), params, null);
+                //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+                if(null!=countryCode&&!"".equals(countryCode)){
+                    switch (countryCode) {
+                        case "IN":
+                            countryCode = "hi-IN";
+                        case "EN":
+                            countryCode = "en_US";
+                        case "CN":
+                            countryCode = "zh_CN";
+                        case "VN":
+                            countryCode = "vi_VN";
+                        case "TW":
+                            countryCode = "zh_TW";
+                        case "TH":
+                            countryCode = "th_TH";
+                        case "ID":
+                            countryCode = "in_ID";
+                        case "MY":
+                            countryCode = "ms_MY";
+                        case "KR":
+                            countryCode = "ko_KR";
+                        case "JP":
+                            countryCode = "ja_JP";
+                        default:
+                            countryCode = gameParentPlatform.getLanguageType();
+                    }
+                }else{
+                    countryCode = gameParentPlatform.getLanguageType();
+                }
                 // 请求URL
                 ApiResponseData responseData = new ApiResponseData();
-                responseData.setPathUrl(getStartGame(cptOpenMember, platform, gameParentPlatform.getLanguageType()));
+                responseData.setPathUrl(getStartGame(cptOpenMember, platform,countryCode));
                 return Result.success(responseData);
             }
 

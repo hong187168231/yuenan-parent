@@ -48,7 +48,7 @@ public class DgServiceImpl implements DgService {
      * @return loginUser 用户信息
      */
     @Override
-    public Result dgGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName) {
+    public Result dgGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode) {
         logger.info("Dglog  {} dgGame account:{}, pgCodeId:{}", loginUser.getId(), loginUser.getNickName(), platform);
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
@@ -93,12 +93,12 @@ public class DgServiceImpl implements DgService {
                 cptOpenMember.setLoginTime(new Date());
                 cptOpenMember.setType(parentName);
                 //创建玩家
-                return createMemberGame(gameParentPlatform, cptOpenMember);
+                return createMemberGame(gameParentPlatform, cptOpenMember, countryCode);
             } else {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
                 logout(loginUser, platform, ip);
-                return gameLogin(gameParentPlatform, cptOpenMember);
+                return gameLogin(gameParentPlatform, cptOpenMember, countryCode);
             }
 
         } catch (Exception e) {
@@ -107,15 +107,38 @@ public class DgServiceImpl implements DgService {
         }
     }
 
-    private Result gameLogin(GameParentPlatform platformGameParent, CptOpenMember cptOpenMember) {
+    private Result gameLogin(GameParentPlatform platformGameParent, CptOpenMember cptOpenMember,String countryCode) {
         JSONObject map = new JSONObject();
         Integer random = RandomUtil.getRandomOne(6);
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(OpenAPIProperties.DG_AGENT_NAME).append(OpenAPIProperties.DG_API_KEY).append(random);
         String sign = DigestUtils.md5Hex(stringBuilder.toString());
+        //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+        if(null!=countryCode&&!"".equals(countryCode)){
+            switch (countryCode) {
+                case "IN":
+                    countryCode = "0";
+                case "EN":
+                    countryCode = "0";
+                case "CN":
+                    countryCode = "1";
+                case "VN":
+                    countryCode = "5";
+                case "TW":
+                    countryCode = "2";
+                case "TH":
+                    countryCode = "4";
+                case "KR":
+                    countryCode = "3";
+                default:
+                    countryCode = platformGameParent.getLanguageType();
+            }
+        }else{
+            countryCode = platformGameParent.getLanguageType();
+        }
         map.put("random", random);
         map.put("token", sign);
-        map.put("lang", platformGameParent.getLanguageType());
+        map.put("lang", countryCode);
         map.put("domains", "1");
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("username", cptOpenMember.getUserName());
@@ -178,11 +201,11 @@ public class DgServiceImpl implements DgService {
     /**
      * 创建账户并登录逻辑
      */
-    private Result createMemberGame(GameParentPlatform platformGameParent, CptOpenMember cptOpenMember) {
+    private Result createMemberGame(GameParentPlatform platformGameParent, CptOpenMember cptOpenMember,String countryCode) {
         JSONObject apiResponseData = createDgMemberGame(cptOpenMember, platformGameParent);
         if (null != apiResponseData && "0".equals(apiResponseData.getString("codeId"))) {
             externalService.saveCptOpenMember(cptOpenMember);
-            return gameLogin(platformGameParent,cptOpenMember);
+            return gameLogin(platformGameParent,cptOpenMember, countryCode);
         }else if(null == apiResponseData){
             return Result.failed();
         }else {

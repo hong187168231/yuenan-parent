@@ -10,7 +10,7 @@ public interface V8Service {
     /**
      * 登录游戏V8
      */
-    Result v8Game(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName);
+    Result v8Game(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode);
 
     /**
      * V8电子游戏 强迫登出玩家

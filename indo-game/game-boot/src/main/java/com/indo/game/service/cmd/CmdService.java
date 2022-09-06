@@ -7,7 +7,7 @@ public interface CmdService {
     /**
      * 登录游戏cmd
      */
-    Result cmdGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName);
+    Result cmdGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode);
 
     /**
      * cmd游戏 强迫登出玩家

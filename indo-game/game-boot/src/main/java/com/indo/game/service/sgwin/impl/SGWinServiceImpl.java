@@ -37,7 +37,7 @@ public class SGWinServiceImpl implements SGWinService {
 
 
     @Override
-    public Result sgwinGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName) {
+    public Result sgwinGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode) {
         logger.info("SGWinlog  {} SGWinGame account:{}, pgCodeId:{}", loginUser.getId(), loginUser.getNickName(), platform);
         // 是否开售校验
         GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(parentName);

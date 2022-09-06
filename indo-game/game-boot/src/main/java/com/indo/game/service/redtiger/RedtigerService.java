@@ -7,7 +7,7 @@ public interface RedtigerService {
     /**
      * 登录游戏redtiger
      */
-    Result redtigerGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName);
+    Result redtigerGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode);
 
     /**
      * redtiger 强迫登出玩家

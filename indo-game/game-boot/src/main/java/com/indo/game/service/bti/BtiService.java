@@ -8,7 +8,7 @@ public interface BtiService {
     /**
      * 登录游戏bti
      */
-    Result btiGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName);
+    Result btiGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode);
 
     /**
      * wm游戏 强迫登出玩家

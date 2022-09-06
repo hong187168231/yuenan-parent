@@ -8,7 +8,7 @@ public interface Rich88Service {
     /**
      * 登录游戏rich88
      */
-    Result rich88Game(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName);
+    Result rich88Game(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode);
 
     /**
      * rich88游戏 强迫登出玩家

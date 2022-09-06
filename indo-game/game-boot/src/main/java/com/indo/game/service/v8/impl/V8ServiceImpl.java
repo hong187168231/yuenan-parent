@@ -41,7 +41,7 @@ public class V8ServiceImpl implements V8Service {
 
 
     @Override
-    public Result v8Game(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName) {
+    public Result v8Game(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode) {
         logger.info("v8_log {} v8Game account:{},v8CodeId:{}", parentName, loginUser.getAccount(), platform);
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);

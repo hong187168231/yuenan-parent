@@ -47,7 +47,7 @@ public class KmServerImpl implements KmService {
      * @return loginUser 用户信息
      */
     @Override
-    public Result kmGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName) {
+    public Result kmGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode) {
         logger.info("kmLog  {} kmGame account:{}, pgCodeId:{}", loginUser.getId(), loginUser.getNickName(), platform);
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
@@ -116,7 +116,36 @@ public class KmServerImpl implements KmService {
                 builder.append("gpcode=").append("KMQM");
                 builder.append("&gcode=").append(gamePlatform.getPlatformCode());
                 builder.append("&token=").append(tokenJson.getString("authtoken"));
-                builder.append("&lang=").append(gameParentPlatform.getLanguageType());
+                //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+                if(null!=countryCode&&!"".equals(countryCode)){
+                    switch (countryCode) {
+                        case "IN":
+                            countryCode = "en-US";
+                        case "EN":
+                            countryCode = "en_US";
+                        case "CN":
+                            countryCode = "zh-CN";
+                        case "VN":
+                            countryCode = "vi-VN";
+                        case "TW":
+                            countryCode = "zh-TW";
+                        case "TH":
+                            countryCode = "th-TH";
+                        case "ID":
+                            countryCode = "in-ID";
+                        case "MY":
+                            countryCode = "ms-MY";
+                        case "KR":
+                            countryCode = "ko-KR";
+                        case "JP":
+                            countryCode = "ja-JP";
+                        default:
+                            countryCode = gameParentPlatform.getLanguageType();
+                    }
+                }else{
+                    countryCode = gameParentPlatform.getLanguageType();
+                }
+                builder.append("&lang=").append(countryCode);
             }
 
             //登录

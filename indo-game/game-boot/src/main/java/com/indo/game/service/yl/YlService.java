@@ -8,7 +8,7 @@ public interface YlService {
     /**
      * 登录游戏JYL 捕鱼
      */
-    public Result ylGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName);
+    public Result ylGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode);
 
     /**
      * YL 捕鱼游戏 强迫登出玩家

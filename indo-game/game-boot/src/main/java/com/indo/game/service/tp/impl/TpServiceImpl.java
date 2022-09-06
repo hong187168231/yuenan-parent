@@ -53,7 +53,7 @@ public class TpServiceImpl implements TpService {
      * @return loginUser 用户信息
      */
     @Override
-    public Result tpGame(LoginInfo loginUser, String isMobileLogin,String ip,String platform,String parentName) {
+    public Result tpGame(LoginInfo loginUser, String isMobileLogin,String ip,String platform,String parentName,String countryCode) {
         logger.info("awclog {} aeGame account:{}, aeCodeId:{}", loginUser.getId(), loginUser.getNickName(), platform);
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
@@ -103,14 +103,14 @@ public class TpServiceImpl implements TpService {
                 cptOpenMember.setLoginTime(new Date());
                 cptOpenMember.setType(parentName);
                 //创建玩家
-                return createMemberGame(gameParentPlatform,gamePlatform, ip, cptOpenMember,isMobileLogin,gamehall,balance);
+                return createMemberGame(gameParentPlatform,gamePlatform, ip, cptOpenMember,isMobileLogin,gamehall,balance, countryCode);
             } else {
                 Result result = this.logout(loginUser,ip);
                 if(null!=result&& ResultCode.SUCCESS.getCode().equals(result.getCode())) {
                     cptOpenMember.setLoginTime(new Date());
                     externalService.updateCptOpenMember(cptOpenMember);
                     //登录
-                    return initGame(gameParentPlatform, gamePlatform, ip, cptOpenMember, isMobileLogin,gamehall,balance);
+                    return initGame(gameParentPlatform, gamePlatform, ip, cptOpenMember, isMobileLogin,gamehall,balance, countryCode);
                 }else {
                     return result;
                 }
@@ -176,8 +176,8 @@ public class TpServiceImpl implements TpService {
     /**
      * 登录
      */
-    private Result initGame(GameParentPlatform gameParentPlatform,GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember,String isMobileLogin,String gamehall,BigDecimal balance) throws Exception {
-        String callBackStr = game(gameParentPlatform,gamePlatform, ip, cptOpenMember,isMobileLogin,gamehall,balance);
+    private Result initGame(GameParentPlatform gameParentPlatform,GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember,String isMobileLogin,String gamehall,BigDecimal balance,String countryCode) throws Exception {
+        String callBackStr = game(gameParentPlatform,gamePlatform, ip, cptOpenMember,isMobileLogin,gamehall,balance, countryCode);
         logger.info("TP电子 initGame登录 返回,params:{}",callBackStr);
         if (null == callBackStr || "".equals(callBackStr)) {
             return Result.failed("g100104","网络繁忙，请稍后重试！");
@@ -196,7 +196,7 @@ public class TpServiceImpl implements TpService {
     /**
      * 创建玩家
      */
-    private Result createMemberGame(GameParentPlatform gameParentPlatform,GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember,String isMobileLogin,String gamehall,BigDecimal balance) throws Exception {
+    private Result createMemberGame(GameParentPlatform gameParentPlatform,GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember,String isMobileLogin,String gamehall,BigDecimal balance,String countryCode) throws Exception {
         String callBackStr = createMember(ip, cptOpenMember);
         logger.info("TP电子 createMemberGame创建玩家 返回,params:{}",callBackStr);
         if (null == callBackStr || "".equals(callBackStr)) {
@@ -206,7 +206,7 @@ public class TpServiceImpl implements TpService {
         JSONObject statusJsonObject = jsonObject.getJSONObject("status");
         if("0".equals(statusJsonObject.getString("code"))){
             externalService.saveCptOpenMember(cptOpenMember);
-            return initGame(gameParentPlatform,gamePlatform, ip, cptOpenMember,isMobileLogin,gamehall,balance);
+            return initGame(gameParentPlatform,gamePlatform, ip, cptOpenMember,isMobileLogin,gamehall,balance, countryCode);
         }else {
             return errorCode(statusJsonObject.getString("code"),statusJsonObject.getString("message"));
         }
@@ -241,7 +241,7 @@ public class TpServiceImpl implements TpService {
      * @param cptOpenMember
      * @return
      */
-    public String game(GameParentPlatform gameParentPlatform,GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember,String isMobileLogin,String gamehall,BigDecimal balance) {
+    public String game(GameParentPlatform gameParentPlatform,GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember,String isMobileLogin,String gamehall,BigDecimal balance,String countryCode) {
         try {
             if (deposit(gameParentPlatform,gamePlatform, balance, balance.subtract(balance), ip, cptOpenMember, "",gamehall)) {
 //            Map<String, String> trr = new HashMap<>();
@@ -258,8 +258,33 @@ public class TpServiceImpl implements TpService {
 //            trr.put("agent_id","");//	string (query string)	Optional	代理id
 //            trr.put("bounsmode","");//	string (query string)	Optional	獎金組
 //            trr.put("sign","");//	string (query string)	Required	簽章
-                String signStr = "gamehall=" + gamehall + "&gamecode=" + gamePlatform.getPlatformCode() + "&account=" + cptOpenMember.getUserName() + "&lang=" + gameParentPlatform.getLanguageType() + "&platform=" + isMobileLogin + "&sub_gamehall=" + "&return_url=" + "&is_free_trial=" + "&register_url=" + "&room_id=" + "&agent_id=" + "&bounsmode=" + OpenAPIProperties.TP_API_KEY;
-                String params = "gamehall=" + gamehall + "&gamecode=" + gamePlatform.getPlatformCode() + "&account=" + cptOpenMember.getUserName() + "&lang=" + gameParentPlatform.getLanguageType() + "&platform=" + isMobileLogin + "&sub_gamehall=" + "&return_url=" + "&is_free_trial=" + "&register_url=" + "&room_id=" + "&agent_id=" + "&bounsmode=" + "&sign=" + MD5.md5(signStr);
+                //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+                if(null!=countryCode&&!"".equals(countryCode)){
+                    switch (countryCode) {
+                        case "IN":
+                            countryCode = "en";
+                        case "EN":
+                            countryCode = "en";
+                        case "CN":
+                            countryCode = "zh-CN";
+                        case "VN":
+                            countryCode = "vi";
+                        case "TW":
+                            countryCode = "zh-TW";
+                        case "TH":
+                            countryCode = "th";
+                        case "ID":
+                            countryCode = "id";
+                        case "JP":
+                            countryCode = "ja";
+                        default:
+                            countryCode = gameParentPlatform.getLanguageType();
+                    }
+                }else{
+                    countryCode = gameParentPlatform.getLanguageType();
+                }
+                String signStr = "gamehall=" + gamehall + "&gamecode=" + gamePlatform.getPlatformCode() + "&account=" + cptOpenMember.getUserName() + "&lang=" + countryCode + "&platform=" + isMobileLogin + "&sub_gamehall=" + "&return_url=" + "&is_free_trial=" + "&register_url=" + "&room_id=" + "&agent_id=" + "&bounsmode=" + OpenAPIProperties.TP_API_KEY;
+                String params = "gamehall=" + gamehall + "&gamecode=" + gamePlatform.getPlatformCode() + "&account=" + cptOpenMember.getUserName() + "&lang=" + countryCode + "&platform=" + isMobileLogin + "&sub_gamehall=" + "&return_url=" + "&is_free_trial=" + "&register_url=" + "&room_id=" + "&agent_id=" + "&bounsmode=" + "&sign=" + MD5.md5(signStr);
                 logger.info("TP电子 createMember创建玩家 请求,params:{},url:{},signStr:{}", params, "/api/game/game-link", signStr);
                 return commonRequestGet(params, "/api/game/game-link");
             }

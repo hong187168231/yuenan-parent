@@ -47,7 +47,7 @@ public class YlServiceImpl implements YlService {
      * @return loginUser 用户信息
      */
     @Override
-    public Result ylGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName) {
+    public Result ylGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode) {
         logger.info("yllog  {} YLGame account:{}, ylCodeId:{}", loginUser.getId(), loginUser.getNickName(), platform);
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
@@ -98,14 +98,14 @@ public class YlServiceImpl implements YlService {
                 externalService.updateCptOpenMember(cptOpenMember);
                 logout(loginUser, platform, ip);
             }
-            return initGame(gamePlatform,gameParentPlatform, cptOpenMember);
+            return initGame(gamePlatform,gameParentPlatform, cptOpenMember, countryCode);
         } catch (Exception e) {
             e.printStackTrace();
             return Result.failed("g100104", "网络繁忙，请稍后重试！");
         }
     }
 
-    private Result gameLogin(String apiKey, String platform, GameParentPlatform platformGameParent, CptOpenMember cptOpenMember) {
+    private Result gameLogin(String apiKey, String platform, GameParentPlatform platformGameParent, CptOpenMember cptOpenMember,String countryCode) {
         String pathUrl = "";
         try {
             Map<String, String> map = new HashMap<>();
@@ -113,7 +113,38 @@ public class YlServiceImpl implements YlService {
             map.put("key", apiKey);
             map.put("extension1", OpenAPIProperties.YL_EXTENSION);
             map.put("userName", cptOpenMember.getUserName());
-            map.put("language", platformGameParent.getLanguageType());
+            //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+            if(null!=countryCode&&!"".equals(countryCode)){
+                switch (countryCode) {
+                    case "IN":
+                        countryCode = "EN";
+                    case "EN":
+                        countryCode = "EN";
+                    case "CN":
+                        countryCode = "CN";
+                    case "VN":
+                        countryCode = "VN";
+                    case "TW":
+                        countryCode = "HK";
+                    case "TH":
+                        countryCode = "TH";
+                    case "ID":
+                        countryCode = "ID";
+                    case "SP":
+                        countryCode = "SP";
+                    case "KR":
+                        countryCode = "KO";
+                    case "JP":
+                        countryCode = "JP";
+                    case "MM":
+                        countryCode = "MM";
+                    default:
+                        countryCode = platformGameParent.getLanguageType();
+                }
+            }else{
+                countryCode = platformGameParent.getLanguageType();
+            }
+            map.put("language", countryCode);
             if (!OpenAPIProperties.YL_IS_PLATFORM_LOGIN.equals("Y")) {
                 map.put("gameId", platform);
             }
@@ -140,7 +171,7 @@ public class YlServiceImpl implements YlService {
         }
     }
 
-    private Result initGame(GamePlatform gamePlatform,GameParentPlatform platformGameParent, CptOpenMember cptOpenMember) {
+    private Result initGame(GamePlatform gamePlatform,GameParentPlatform platformGameParent, CptOpenMember cptOpenMember,String countryCode) {
         String apiKey = "";
         try {
             Map<String, String> map = new HashMap<>();
@@ -156,7 +187,7 @@ public class YlServiceImpl implements YlService {
             logger.info("YL捕鱼获取KEY请求返回：", jsonObject);
             if (null != jsonObject && "1".equals(jsonObject.getString("status"))) {
                 apiKey = jsonObject.getString("key");
-                return gameLogin(apiKey, gamePlatform.getPlatformCode(), platformGameParent, cptOpenMember);
+                return gameLogin(apiKey, gamePlatform.getPlatformCode(), platformGameParent, cptOpenMember, countryCode);
             }else if(null == jsonObject){
                 return Result.failed();
             }else {

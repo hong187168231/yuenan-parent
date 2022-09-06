@@ -7,7 +7,7 @@ public interface KaService {
     /**
      * 登录游戏KA
      */
-    Result kaGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName);
+    Result kaGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode);
 
     /**
      * KA游戏 强迫登出玩家 (第三方不提供此服务)

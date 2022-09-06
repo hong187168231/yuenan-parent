@@ -54,7 +54,7 @@ public class DjServiceImpl implements DjService {
      * @return loginUser 用户信息
      */
     @Override
-    public Result djGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName) {
+    public Result djGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode) {
         logger.info("djlog  {} jkGame account:{}, pgCodeId:{}", loginUser.getId(), loginUser.getNickName(), platform);
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
@@ -112,7 +112,7 @@ public class DjServiceImpl implements DjService {
             if (null == aeApiResponseData || "".equals(aeApiResponseData)) {
                 return Result.failed("g091087", "第三方请求异常！");
             }
-            String pathUrl = gameLogin(aeApiResponseData, gameParentPlatform, cptOpenMember, isMobileLogin);
+            String pathUrl = gameLogin(aeApiResponseData, gameParentPlatform, cptOpenMember, isMobileLogin, countryCode);
 
             String apiUrl = replaceAllBlank(pathUrl);
             //登录
@@ -125,14 +125,42 @@ public class DjServiceImpl implements DjService {
         }
     }
 
-    private String gameLogin(String aeApiResponseData, GameParentPlatform platformGameParent, CptOpenMember cptOpenMember, String isMobileLogin) {
+    private String gameLogin(String aeApiResponseData, GameParentPlatform gameParentPlatform, CptOpenMember cptOpenMember, String isMobileLogin,String countryCode) {
 
-        Map<String, String> params = new HashMap<String, String>();
-        params.put("session_id", aeApiResponseData);
-        params.put("lang", platformGameParent.getLanguageType());
-        params.put("login_id", cptOpenMember.getUserId() + "");
+//        Map<String, String> params = new HashMap<String, String>();
+//        params.put("session_id", aeApiResponseData);
+//        params.put("lang", platformGameParent.getLanguageType());
+//        params.put("login_id", cptOpenMember.getUserId() + "");
         try {
-
+//        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+            if(null!=countryCode&&!"".equals(countryCode)){
+                switch (countryCode) {
+                    case "IN":
+                        countryCode = "en_US";
+                    case "EN":
+                        countryCode = "en_US";
+                    case "CN":
+                        countryCode = "zh_CN";
+                    case "VN":
+                        countryCode = "vi_VN";
+                    case "TW":
+                        countryCode = "zh_TW";
+                    case "TH":
+                        countryCode = "th_TH";
+                    case "ID":
+                        countryCode = "in_ID";
+                    case "MY":
+                        countryCode = "ms_MY";
+                    case "KR":
+                        countryCode = "ko_KR";
+                    case "JP":
+                        countryCode = "ja_JP";
+                    default:
+                        countryCode = gameParentPlatform.getLanguageType();
+                }
+            }else{
+                countryCode = gameParentPlatform.getLanguageType();
+            }
             StringBuilder apiUrl = new StringBuilder();
             apiUrl.append(OpenAPIProperties.DJ_MOBILE_URL).append("/api/cash/auth");
 
@@ -140,7 +168,7 @@ public class DjServiceImpl implements DjService {
             html.append("<html><head></head><body>");
             html.append("<form name=\"myform\" action=\"").append(apiUrl.toString()).append("\" method=\"post\" /> ");
             html.append("<input type=\"hidden\" name=\"session_id\" value=\"").append(aeApiResponseData).append("\" /> ");
-            html.append("<input type=\"hidden\" name=\"lang\" value=\"").append(platformGameParent.getLanguageType()).append("\" /> ");
+            html.append("<input type=\"hidden\" name=\"lang\" value=\"").append(countryCode).append("\" /> ");
             html.append("<input type=\"hidden\" name=\"login_id\" value=\"").append(cptOpenMember.getUserId()).append("\" /> ");
             html.append("<input id=\"fingerprint\" name=\"fingerprint\" value=\"\" type=\"hidden\" />");
             html.append("</form><script type=\"text/javascript\"> document.myform.submit(); </script> </body></html>");

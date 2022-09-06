@@ -30,7 +30,7 @@ public class KaServiceImpl implements KaService {
     private GameCommonService gameCommonService;
 
     @Override
-    public Result kaGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName) {
+    public Result kaGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode) {
         logger.info("kalog {} kaGame account:{},kaCodeId:{}", loginUser.getId(), loginUser.getAccount(), platform);
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
@@ -79,9 +79,37 @@ public class KaServiceImpl implements KaService {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
             }
-
+//        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+            if(null!=countryCode&&!"".equals(countryCode)){
+                switch (countryCode) {
+                    case "IN":
+                        countryCode = "en_US";
+                    case "EN":
+                        countryCode = "en_US";
+                    case "CN":
+                        countryCode = "zh_CN";
+                    case "VN":
+                        countryCode = "vi_VN";
+                    case "TW":
+                        countryCode = "zh_TW";
+                    case "TH":
+                        countryCode = "th_TH";
+                    case "ID":
+                        countryCode = "in_ID";
+                    case "MY":
+                        countryCode = "ms_MY";
+                    case "KR":
+                        countryCode = "ko_KR";
+                    case "JP":
+                        countryCode = "ja_JP";
+                    default:
+                        countryCode = gameParentPlatform.getLanguageType();
+                }
+            }else{
+                countryCode = gameParentPlatform.getLanguageType();
+            }
             ApiResponseData responseData = new ApiResponseData();
-            responseData.setPathUrl(getStartGameUrl(cptOpenMember, platform, gameParentPlatform.getCurrencyType(), gameParentPlatform.getLanguageType()));
+            responseData.setPathUrl(getStartGameUrl(cptOpenMember, platform, gameParentPlatform.getCurrencyType(), countryCode));
             return Result.success(responseData);
         } catch (Exception e) {
             e.printStackTrace();

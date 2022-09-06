@@ -8,7 +8,7 @@ public interface DgService {
     /**
      * 登录游戏DG
      */
-    public Result dgGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName);
+    public Result dgGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode);
 
     /**
      * DG 强迫登出玩家

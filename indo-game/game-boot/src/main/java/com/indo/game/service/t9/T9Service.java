@@ -8,7 +8,7 @@ public interface T9Service {
     /**
      * 登录游戏T9电子
      */
-    Result t9Game(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName);
+    Result t9Game(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode);
 
     /**
      * T9电子游戏 强迫登出玩家

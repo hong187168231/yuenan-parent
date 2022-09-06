@@ -8,7 +8,7 @@ public interface AgService {
     /**
      * 登录游戏AG
      */
-    public Result agGame(LoginInfo loginUser, String isMobileLogin,String ip,String platform,String parentName) ;
+    public Result agGame(LoginInfo loginUser, String isMobileLogin,String ip,String platform,String parentName,String countryCode) ;
 
     /**
      * AG

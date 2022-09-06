@@ -13,7 +13,7 @@ public interface PpService {
     /**
      * 登录游戏PP电子
      */
-    Result ppGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName);
+    Result ppGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode);
 
     /**
      * PP电子游戏 强迫登出玩家

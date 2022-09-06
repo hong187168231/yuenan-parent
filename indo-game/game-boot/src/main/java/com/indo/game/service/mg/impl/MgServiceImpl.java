@@ -47,7 +47,7 @@ public class MgServiceImpl implements MgService {
      * @return loginUser 用户信息
      */
     @Override
-    public Result mgGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName) {
+    public Result mgGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode) {
         logger.info("mgLog登录游戏Mg游戏 mgGame userId:{}, account:{}, platform:{}, parentName:{}", loginUser.getId(), loginUser.getAccount(), platform, parentName);
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
@@ -95,7 +95,7 @@ public class MgServiceImpl implements MgService {
                 cptOpenMember.setLoginTime(new Date());
                 cptOpenMember.setType(parentName);
                 //创建玩家
-                return createMemberGame(gameParentPlatform , gamePlatform,cptOpenMember, isMobileLogin, "Bearer "+tokenJson.getString("access_token"));
+                return createMemberGame(gameParentPlatform , gamePlatform,cptOpenMember, isMobileLogin, "Bearer "+tokenJson.getString("access_token"), countryCode);
             } else {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
@@ -106,7 +106,7 @@ public class MgServiceImpl implements MgService {
                 }
             }
 
-            return gameLogin(gameParentPlatform, gamePlatform, cptOpenMember, isMobileLogin, "Bearer "+tokenJson.getString("access_token"));
+            return gameLogin(gameParentPlatform, gamePlatform, cptOpenMember, isMobileLogin, "Bearer "+tokenJson.getString("access_token"), countryCode);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -138,14 +138,14 @@ public class MgServiceImpl implements MgService {
     /**
      * 创建账户并登录逻辑
      */
-    private Result createMemberGame(GameParentPlatform platformGameParent, GamePlatform gamePlatform,CptOpenMember cptOpenMember, String isMobileLogin, String token) {
+    private Result createMemberGame(GameParentPlatform platformGameParent, GamePlatform gamePlatform,CptOpenMember cptOpenMember, String isMobileLogin, String token,String countryCode) {
         JSONObject pgApiResponseData = createMember(cptOpenMember, token);
         if (null == pgApiResponseData) {
             return Result.failed("g091087", "第三方请求异常！");
         }
         if (!StringUtils.isEmpty(pgApiResponseData.getString("uri"))) {
             externalService.saveCptOpenMember(cptOpenMember);
-            return gameLogin(platformGameParent, gamePlatform, cptOpenMember, isMobileLogin, "Bearer "+token);
+            return gameLogin(platformGameParent, gamePlatform, cptOpenMember, isMobileLogin, "Bearer "+token, countryCode);
         } else {
             if (!StringUtils.isEmpty(pgApiResponseData.getString("error"))) {
                 JSONObject errorJ = (JSONObject)pgApiResponseData.get("error");
@@ -180,7 +180,7 @@ public class MgServiceImpl implements MgService {
      * 调用API登录
      */
     private Result gameLogin(GameParentPlatform platformGameParent, GamePlatform gamePlatform,
-                                 CptOpenMember cptOpenMemberm, String isMobileLogin, String token) {
+                                 CptOpenMember cptOpenMemberm, String isMobileLogin, String token,String countryCode) {
         JSONObject apiResponseData = null;
         try {
             Map<String, String> params = new HashMap<String, String>();
@@ -218,7 +218,36 @@ public class MgServiceImpl implements MgService {
             } else {
                 params.put("platform", "Unknown");
             }
-            params.put("langCode", platformGameParent.getLanguageType());
+            //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+            if(null!=countryCode&&!"".equals(countryCode)){
+                switch (countryCode) {
+                    case "IN":
+                        countryCode = "en-US";
+                    case "EN":
+                        countryCode = "en-US";
+                    case "CN":
+                        countryCode = "zh-CN";
+                    case "VN":
+                        countryCode = "vi-VN";
+                    case "TW":
+                        countryCode = "zh-TW";
+                    case "TH":
+                        countryCode = "th-TH";
+                    case "ID":
+                        countryCode = "in-ID";
+                    case "MY":
+                        countryCode = "ms-MY";
+                    case "KR":
+                        countryCode = "ko-KR";
+                    case "JP":
+                        countryCode = "ja-JP";
+                    default:
+                        countryCode = platformGameParent.getLanguageType();
+                }
+            }else{
+                countryCode = platformGameParent.getLanguageType();
+            }
+            params.put("langCode", countryCode);
             StringBuilder apiUrl = new StringBuilder();
             apiUrl.append(OpenAPIProperties.MG_API_URL).append("/api/v1/agents/").append(OpenAPIProperties.MG_AGENT_CODE);
             apiUrl.append("/players/").append(cptOpenMemberm.getUserName()).append("/sessions");

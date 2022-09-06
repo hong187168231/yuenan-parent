@@ -8,7 +8,7 @@ public interface TCGWinService {
     /**
      * 登录游戏sa
      */
-    Result tcgwinGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName);
+    Result tcgwinGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode);
 
     /**
      * sa游戏 强迫登出玩家

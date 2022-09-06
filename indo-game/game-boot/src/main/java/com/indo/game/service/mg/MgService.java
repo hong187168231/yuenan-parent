@@ -8,7 +8,7 @@ public interface MgService {
     /**
      * 登录游戏Mg电子
      */
-    public Result mgGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName);
+    public Result mgGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode);
 
     /**
      * mg电子游戏 强迫登出玩家

@@ -50,7 +50,7 @@ public class BlServiceImpl implements BlService {
      * @return loginUser 用户信息
      */
     @Override
-    public Result blGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName) {
+    public Result blGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode) {
         logger.info("BLlog  {} dgGame account:{}, pgCodeId:{}", loginUser.getId(), loginUser.getNickName(), platform);
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
@@ -100,7 +100,7 @@ public class BlServiceImpl implements BlService {
                 externalService.updateCptOpenMember(cptOpenMember);
                 Result result = logout(loginUser, platform, ip);
             }
-            BlResponseParentData apiResponseData = gameLogin(gameParentPlatform, gamePlatform,cptOpenMember,ip);
+            BlResponseParentData apiResponseData = gameLogin(gameParentPlatform, gamePlatform,cptOpenMember,ip, countryCode);
             if (null != apiResponseData && "200".equals(apiResponseData.getResp_msg().getCode())) {
                 //登录
                 ApiResponseData responseData = new ApiResponseData();
@@ -115,7 +115,7 @@ public class BlServiceImpl implements BlService {
         }
     }
 
-    private BlResponseParentData gameLogin(GameParentPlatform platformGameParent,GamePlatform gamePlatform, CptOpenMember cptOpenMember,String ip) {
+    private BlResponseParentData gameLogin(GameParentPlatform platformGameParent,GamePlatform gamePlatform, CptOpenMember cptOpenMember,String ip,String countryCode) {
         Map<String, String> map = new HashMap<String, String>();
         Integer random = RandomUtil.getRandomOne(7);
         Long dataTime = System.currentTimeMillis() / 1000;
@@ -128,9 +128,29 @@ public class BlServiceImpl implements BlService {
             map.put("game_code", gamePlatform.getPlatformCode());
         }
         map.put("player_account", cptOpenMember.getUserName());
-        map.put("lang", platformGameParent.getLanguageType());
+        //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+        if(null!=countryCode&&!"".equals(countryCode)){
+            switch (countryCode) {
+                case "IN":
+                    countryCode = "en_US";
+                case "EN":
+                    countryCode = "en_US";
+                case "CN":
+                    countryCode = "zh_CN";
+                case "VN":
+                    countryCode = "vi_VN";
+                case "KR":
+                    countryCode = "ko_KR";
+                default:
+                    countryCode = platformGameParent.getLanguageType();
+            }
+        }else{
+            countryCode = platformGameParent.getLanguageType();
+        }
+        map.put("lang", countryCode);
         map.put("ip", ip);
-        map.put("country", platformGameParent.getLanguageType());
+
+        map.put("country", platformGameParent.getCurrencyType());
         map.put("AccessKeyId", OpenAPIProperties.BL_KEY_ID);
         map.put("Timestamp", dataTime + "");
         map.put("Nonce", random + "");

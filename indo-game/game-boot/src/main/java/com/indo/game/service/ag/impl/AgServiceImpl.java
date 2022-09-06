@@ -56,7 +56,7 @@ public class AgServiceImpl implements AgService {
      * @return loginUser 用户信息
      */
     @Override
-    public Result agGame(LoginInfo loginUser, String isMobileLogin,String ip,String platform,String parentName) {
+    public Result agGame(LoginInfo loginUser, String isMobileLogin,String ip,String platform,String parentName,String countryCode) {
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
         if (null == gameParentPlatform) {
@@ -105,13 +105,13 @@ public class AgServiceImpl implements AgService {
                 cptOpenMember.setLoginTime(new Date());
                 cptOpenMember.setType(parentName);
                 //创建玩家
-                return createMemberGame(gameParentPlatform,gamePlatform, ip, cptOpenMember,isMobileLogin);
+                return createMemberGame(gameParentPlatform,gamePlatform, ip, cptOpenMember,isMobileLogin, countryCode);
             } else {
                 this.logout(loginUser,ip);
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
                 //登录
-                return initGame(gameParentPlatform,gamePlatform, ip, cptOpenMember, isMobileLogin);
+                return initGame(gameParentPlatform,gamePlatform, ip, cptOpenMember, isMobileLogin, countryCode);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -157,8 +157,8 @@ public class AgServiceImpl implements AgService {
     /**
      * 登录
      */
-    private Result initGame(GameParentPlatform gameParentPlatform,GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember,String isMobileLogin) throws Exception {
-        String resultString = game(gameParentPlatform,gamePlatform, ip, cptOpenMember,isMobileLogin);
+    private Result initGame(GameParentPlatform gameParentPlatform,GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember,String isMobileLogin,String countryCode) throws Exception {
+        String resultString = game(gameParentPlatform,gamePlatform, ip, cptOpenMember,isMobileLogin, countryCode);
         if (null == resultString || "".equals(resultString) ) {
             return Result.failed("g100104","网络繁忙，请稍后重试！");
         }
@@ -174,7 +174,7 @@ public class AgServiceImpl implements AgService {
     /**
      * 创建玩家
      */
-    private Result createMemberGame(GameParentPlatform gameParentPlatform,GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember,String isMobileLogin) throws Exception {
+    private Result createMemberGame(GameParentPlatform gameParentPlatform,GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember,String isMobileLogin, String countryCode) throws Exception {
         String resultString = createMember(gameParentPlatform,gamePlatform, ip, cptOpenMember);
         if (null == resultString || "".equals(resultString) ) {
             return Result.failed("g100104","网络繁忙，请稍后重试！");
@@ -231,12 +231,31 @@ public String createSession(BigDecimal balance, CptOpenMember cptOpenMember) {
      * @param cptOpenMember
      * @return
      */
-    public String game(GameParentPlatform gameParentPlatform,GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember,String isMobileLogin) {
+    public String game(GameParentPlatform gameParentPlatform,GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember,String isMobileLogin,String countryCode) {
         try {
+            //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+            if(null!=countryCode&&!"".equals(countryCode)){
+                switch (countryCode) {
+                    case "IN":
+                        countryCode = "3";
+                    case "EN":
+                        countryCode = "3";
+                    case "CN":
+                        countryCode = "1";
+                    case "VN":
+                        countryCode = "4";
+                    case "TW":
+                        countryCode = "2";
+                    default:
+                        countryCode = gameParentPlatform.getLanguageType();
+                }
+            }else{
+                countryCode = gameParentPlatform.getLanguageType();
+            }
             String paramStr = "cagent="+OpenAPIProperties.AG_CAGENT+"/\\\\\\\\/loginname="+cptOpenMember.getUserName()+
                     "/\\\\\\\\/method=lg/\\\\\\\\/actype=0/\\\\\\\\/" +
                     "password="+cptOpenMember.getUserName()+"/\\\\\\\\/dm=" +
-                    "/\\\\\\\\/sid="+OpenAPIProperties.AG_SID_KEY+"/\\\\\\\\/lang="+gameParentPlatform.getLanguageType()+
+                    "/\\\\\\\\/sid="+OpenAPIProperties.AG_SID_KEY+"/\\\\\\\\/lang="+countryCode+
                     "/\\\\\\\\/gameType=0/\\\\\\\\/oddtype="+gamePlatform.getBetLimit()+"/\\\\\\\\/cur="+gameParentPlatform.getCurrencyType();
             logger.info("aglog  createMember创建玩家加密前 paramStr:{}", paramStr);
             String param = AGEncrypt.encryptDes(paramStr,OpenAPIProperties.AG_API_KEY);

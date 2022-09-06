@@ -34,7 +34,7 @@ public class FCServiceImpl implements FCService {
     private GameCommonService gameCommonService;
 
     @Override
-    public Result fcGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName) {
+    public Result fcGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode) {
         logger.info("fclog {} fcGame account:{},kaCodeId:{}", loginUser.getId(), loginUser.getAccount(), platform);
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
@@ -97,8 +97,26 @@ public class FCServiceImpl implements FCService {
                 JSONObject.parseObject(GameUtil.postForm4PP(url, param, null), FCApiCommonResp.class);
 
             }
-
-            return getPlayerGameUrl(cptOpenMember.getUserName(), platform, gameParentPlatform.getCurrencyType(), gameParentPlatform.getLanguageType());
+//        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+            if(null!=countryCode&&!"".equals(countryCode)){
+                switch (countryCode) {
+                    case "IN":
+                        countryCode = "1";
+                    case "EN":
+                        countryCode = "1";
+                    case "CN":
+                        countryCode = "2";
+                    case "VN":
+                        countryCode = "3";
+                    case "TH":
+                        countryCode = "4";
+                    default:
+                        countryCode = gameParentPlatform.getLanguageType();
+                }
+            }else{
+                countryCode = gameParentPlatform.getLanguageType();
+            }
+            return getPlayerGameUrl(cptOpenMember.getUserName(), platform, gameParentPlatform.getCurrencyType(), countryCode);
         } catch (Exception e) {
             e.printStackTrace();
             return Result.failed("g100104", "网络繁忙，请稍后重试！");

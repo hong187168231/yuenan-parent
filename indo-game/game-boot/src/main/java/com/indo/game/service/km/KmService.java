@@ -8,7 +8,7 @@ public interface KmService {
     /**
      * 登录游戏KingMaker
      */
-    public Result kmGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName);
+    public Result kmGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode);
 
     /**
      * KingMaker 强迫登出玩家

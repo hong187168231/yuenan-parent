@@ -29,7 +29,7 @@ public class BtiServiceImpl implements BtiService {
     private GameCommonService gameCommonService;
 
     @Override
-    public Result btiGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName) {
+    public Result btiGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode) {
         logger.info("bti体育log  btiGame loginUser:{}, ip:{}, platform:{}, parentName:{}, isMobileLogin:{}", loginUser,ip,platform,parentName,isMobileLogin);
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
@@ -63,7 +63,25 @@ public class BtiServiceImpl implements BtiService {
         }
 
         try {
-
+//        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+            if(null!=countryCode&&!"".equals(countryCode)){
+                switch (countryCode) {
+                    case "IN":
+                        countryCode = "en";
+                    case "EN":
+                        countryCode = "en";
+                    case "CN":
+                        countryCode = "zh";
+                    case "VN":
+                        countryCode = "vi";
+                    case "TH":
+                        countryCode = "th";
+                    default:
+                        countryCode = gameParentPlatform.getLanguageType();
+                }
+            }else{
+                countryCode = gameParentPlatform.getLanguageType();
+            }
             // 验证且绑定（KY-CPT第三方会员关系）
             CptOpenMember cptOpenMember = externalService.getCptOpenMember(loginUser.getId().intValue(), parentName);
             if (cptOpenMember == null) {
@@ -78,14 +96,14 @@ public class BtiServiceImpl implements BtiService {
                 externalService.saveCptOpenMember(cptOpenMember);
                 // 请求URL
                 ApiResponseData responseData = new ApiResponseData();
-                responseData.setPathUrl(OpenAPIProperties.BTI_API_URL + "/en/sports/?operatorToken=" + cptOpenMember.getPassword());
+                responseData.setPathUrl(OpenAPIProperties.BTI_API_URL + "/"+countryCode+"/sports/?operatorToken=" + cptOpenMember.getPassword());
                 return Result.success(responseData);
             } else {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
                 // 请求URL
                 ApiResponseData responseData = new ApiResponseData();
-                responseData.setPathUrl(OpenAPIProperties.BTI_API_URL + "/en/sports/?operatorToken=" + cptOpenMember.getPassword());
+                responseData.setPathUrl(OpenAPIProperties.BTI_API_URL + "/"+countryCode+"/sports/?operatorToken=" + cptOpenMember.getPassword());
                 return Result.success(responseData);
 
             }

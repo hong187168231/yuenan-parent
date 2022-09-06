@@ -8,7 +8,7 @@ public interface BlService {
     /**
      * 登录游戏BOLE
      */
-    public Result blGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName);
+    public Result blGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode);
 
     /**
      * BOLE 强迫登出玩家

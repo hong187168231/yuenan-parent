@@ -47,7 +47,7 @@ public class MtServiceImpl implements MtService {
     private TxnsMapper txnsMapper;
 
     @Override
-    public Result mtGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName) {
+    public Result mtGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode) {
         logger.info("mtlog mtGame account:{},mtCodeId:{}", loginUser.getAccount(), platform);
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
@@ -93,7 +93,7 @@ public class MtServiceImpl implements MtService {
                 cptOpenMember.setLoginTime(new Date());
                 cptOpenMember.setType(parentName);
                 //创建玩家
-                return createMemberGame(cptOpenMember, gameParentPlatform, gamePlatform, loginUser);
+                return createMemberGame(cptOpenMember, gameParentPlatform, gamePlatform, loginUser, countryCode);
             } else {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
@@ -101,7 +101,7 @@ public class MtServiceImpl implements MtService {
                 // 退出游戏
                 commonRequest(getLoginOutUrl(loginUser.getAccount()));
                 // 启动游戏
-                String startUrl = getStartGame(cptOpenMember, gameParentPlatform,gamePlatform);
+                String startUrl = getStartGame(cptOpenMember, gameParentPlatform,gamePlatform, countryCode);
                 logger.info("天美log启动游戏 startUrl:{}", startUrl);
                 JSONObject jsonObject = commonRequest(startUrl);
                 if (null == jsonObject) {
@@ -484,7 +484,7 @@ public class MtServiceImpl implements MtService {
      * @return Result
      */
     private Result createMemberGame(CptOpenMember cptOpenMember, GameParentPlatform gameParentPlatform,
-                                    GamePlatform gamePlatform, LoginInfo loginUser) {
+                                    GamePlatform gamePlatform, LoginInfo loginUser,String countryCode) {
 
         // 用户注册
         JSONObject result = commonRequest(getCreateUrl(cptOpenMember, loginUser));
@@ -495,7 +495,7 @@ public class MtServiceImpl implements MtService {
         if (1 == result.getInteger("resultCode")||5==result.getInteger("resultCode")) {
             externalService.saveCptOpenMember(cptOpenMember);
             // 启动游戏
-            String startUrl = getStartGame(cptOpenMember, gameParentPlatform,gamePlatform);
+            String startUrl = getStartGame(cptOpenMember, gameParentPlatform,gamePlatform, countryCode);
             logger.info("createMemberGame 启动游戏startUrl:{}", startUrl);
             JSONObject jsonObject = commonRequest(startUrl);
             if (null == jsonObject) {
@@ -536,14 +536,42 @@ public class MtServiceImpl implements MtService {
      * @param cptOpenMember、 cptOpenMember
      * @return url
      */
-    private String getStartGame(CptOpenMember cptOpenMember, GameParentPlatform gameParentPlatform, GamePlatform gamePlatform) {
+    private String getStartGame(CptOpenMember cptOpenMember, GameParentPlatform gameParentPlatform, GamePlatform gamePlatform,String countryCode) {
 
         JSONObject jsonObject = new JSONObject(new LinkedHashMap<>());
         if(!gamePlatform.getPlatformCode().equals(gameParentPlatform.getPlatformCode())){
             jsonObject.put("gameCode", gamePlatform.getPlatformCode());
         }
-
-        jsonObject.put("lang", gameParentPlatform.getLanguageType());
+//        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+        if(null!=countryCode&&!"".equals(countryCode)){
+            switch (countryCode) {
+                case "IN":
+                    countryCode = "EN-US";
+                case "EN":
+                    countryCode = "EN-US";
+                case "CN":
+                    countryCode = "ZH-CN";
+                case "VN":
+                    countryCode = "VI-VN";
+                case "TW":
+                    countryCode = "ZH-TW";
+                case "TH":
+                    countryCode = "TH-TH";
+                case "ID":
+                    countryCode = "IN-ID";
+                case "MY":
+                    countryCode = "MS-MY";
+                case "KR":
+                    countryCode = "KO-KR";
+                case "JP":
+                    countryCode = "JA-JP";
+                default:
+                    countryCode = gameParentPlatform.getLanguageType();
+            }
+        }else{
+            countryCode = gameParentPlatform.getLanguageType();
+        }
+        jsonObject.put("lang", countryCode);
         String data = jsonObject.toJSONString();
         StringBuilder url = new StringBuilder();
         url.append(OpenAPIProperties.MT_API_URL);

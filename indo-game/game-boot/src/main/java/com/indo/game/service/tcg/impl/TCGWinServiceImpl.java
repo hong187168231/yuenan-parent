@@ -46,7 +46,7 @@ public class TCGWinServiceImpl implements TCGWinService {
 
 
     @Override
-    public Result tcgwinGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName) {
+    public Result tcgwinGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode) {
         logger.info("tcgwinlog  {} tcgwinGame account:{}, pgCodeId:{}", loginUser.getId(), loginUser.getNickName(), platform);
         // 是否开售校验
         GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(parentName);
@@ -92,12 +92,12 @@ public class TCGWinServiceImpl implements TCGWinService {
                 cptOpenMember.setLoginTime(new Date());
                 cptOpenMember.setType(parentName);
                 //创建玩家
-                return createMemberGame(platformGameParent, gamePlatform, ip, cptOpenMember, isMobileLogin);
+                return createMemberGame(platformGameParent, gamePlatform, ip, cptOpenMember, isMobileLogin, countryCode);
             } else {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
                 logout(loginUser, platform, ip);
-                return  initGame(platformGameParent, gamePlatform,  cptOpenMember, isMobileLogin);
+                return  initGame(platformGameParent, gamePlatform,  cptOpenMember, isMobileLogin, countryCode);
             }
 
         } catch (Exception e) {
@@ -108,14 +108,14 @@ public class TCGWinServiceImpl implements TCGWinService {
     /**
      * 创建账户并登录逻辑
      */
-    private Result createMemberGame(GameParentPlatform platformGameParent, GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember, String isMobileLogin) {
+    private Result createMemberGame(GameParentPlatform platformGameParent, GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember, String isMobileLogin,String countryCode) {
         TcgwinApiResp tcgwinApiResp = createMember(platformGameParent, gamePlatform, ip, cptOpenMember, isMobileLogin);
         if (null == tcgwinApiResp) {
             return Result.failed("g091087", "第三方请求异常！");
         }
         if (tcgwinApiResp.getStatus()==0) {
             externalService.saveCptOpenMember(cptOpenMember);
-            return initGame(platformGameParent, gamePlatform, cptOpenMember, isMobileLogin);
+            return initGame(platformGameParent, gamePlatform, cptOpenMember, isMobileLogin, countryCode);
         } else {
             return errorCode(tcgwinApiResp.getStatus(), tcgwinApiResp.getError_desc());
         }
@@ -150,8 +150,8 @@ public class TCGWinServiceImpl implements TCGWinService {
      * 登录逻辑
      */
     private Result initGame(GameParentPlatform platformGameParent, GamePlatform gamePlatform,
-                            CptOpenMember cptOpenMember, String isMobileLogin) {
-        TcgwinApiResp tcgwinApiResp = gameLogin(platformGameParent, gamePlatform, cptOpenMember, isMobileLogin);
+                            CptOpenMember cptOpenMember, String isMobileLogin,String countryCode) {
+        TcgwinApiResp tcgwinApiResp = gameLogin(platformGameParent, gamePlatform, cptOpenMember, isMobileLogin, countryCode);
         if (null == tcgwinApiResp) {
             return Result.failed("g091087", "第三方请求异常！");
         }
@@ -172,7 +172,7 @@ public class TCGWinServiceImpl implements TCGWinService {
      * 调用API登录
      */
     private TcgwinApiResp gameLogin(GameParentPlatform platformGameParent, GamePlatform gamePlatform,
-                                    CptOpenMember cptOpenMember, String isMobileLogin) {
+                                    CptOpenMember cptOpenMember, String isMobileLogin,String countryCode) {
         TcgwinApiLoginReq tcgwinApiLoginReq = new TcgwinApiLoginReq();
         tcgwinApiLoginReq.setMethod("lg");
         tcgwinApiLoginReq.setUsername(cptOpenMember.getUserName());
@@ -201,7 +201,36 @@ public class TCGWinServiceImpl implements TCGWinService {
         }else {
             tcgwinApiLoginReq.setView("Lobby Page");
         }
-        tcgwinApiLoginReq.setLanguage(platformGameParent.getLanguageType());
+        //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+        if(null!=countryCode&&!"".equals(countryCode)){
+            switch (countryCode) {
+                case "IN":
+                    countryCode = "EN";
+                case "EN":
+                    countryCode = "EN";
+                case "CN":
+                    countryCode = "CN";
+                case "VN":
+                    countryCode = "VI";
+                case "TW":
+                    countryCode = "TW";
+                case "TH":
+                    countryCode = "TH";
+                case "ID":
+                    countryCode = "ID";
+                case "KM":
+                    countryCode = "KM";
+                case "KR":
+                    countryCode = "KO";
+                case "JP":
+                    countryCode = "JA";
+                default:
+                    countryCode = platformGameParent.getLanguageType();
+            }
+        }else{
+            countryCode = platformGameParent.getLanguageType();
+        }
+        tcgwinApiLoginReq.setLanguage(countryCode);
         if(2==proType||384==proType||420==proType){
             List list = new ArrayList();
             LambdaQueryWrapper<TcgLottery> wrapper = new LambdaQueryWrapper<>();

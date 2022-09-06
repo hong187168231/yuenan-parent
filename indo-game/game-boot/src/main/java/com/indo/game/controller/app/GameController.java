@@ -213,80 +213,80 @@ public class GameController {
                     resultInfo = psService.psGame(loginUser, isMobileLogin, ip, platform, parentName, countryCode);
                 }
                 if (OpenAPIProperties.T9_PLATFORM_CODE.equals(parentName)) {
-                    resultInfo = t9Service.t9Game(loginUser, isMobileLogin, ip, platform, parentName);
+                    resultInfo = t9Service.t9Game(loginUser, isMobileLogin, ip, platform, parentName, countryCode);
                 }
                 if (OpenAPIProperties.PP_PLATFORM_CODE.equals(parentName)) {
-                    resultInfo = ppService.ppGame(loginUser, isMobileLogin, ip, platform, parentName);
+                    resultInfo = ppService.ppGame(loginUser, isMobileLogin, ip, platform, parentName, countryCode);
                 }
                 if (OpenAPIProperties.RICH_PLATFORM_CODE.equals(parentName)) {
-                    resultInfo = rich88Service.rich88Game(loginUser, isMobileLogin, ip, platform, parentName);
+                    resultInfo = rich88Service.rich88Game(loginUser, isMobileLogin, ip, platform, parentName, countryCode);
                 }
                 if (OpenAPIProperties.KA_PLATFORM_CODE.equals(parentName)) {
-                    resultInfo = kaService.kaGame(loginUser, isMobileLogin, ip, platform, parentName);
+                    resultInfo = kaService.kaGame(loginUser, isMobileLogin, ip, platform, parentName, countryCode);
                 }
                 if (OpenAPIProperties.DJ_PLATFORM_CODE.equals(parentName)) {
-                    resultInfo = djService.djGame(loginUser, isMobileLogin, ip, platform, parentName);
+                    resultInfo = djService.djGame(loginUser, isMobileLogin, ip, platform, parentName, countryCode);
                 }
                 if (OpenAPIProperties.JILI_PLATFORM_CODE.equals(parentName)) {
-                    resultInfo = jiliService.jiliGame(loginUser, isMobileLogin, ip, platform, parentName);
+                    resultInfo = jiliService.jiliGame(loginUser, isMobileLogin, ip, platform, parentName, countryCode);
                 }
                 if (OpenAPIProperties.FC_PLATFORM_CODE.equals(parentName)) {
-                    resultInfo = fcService.fcGame(loginUser, isMobileLogin, ip, platform, parentName);
+                    resultInfo = fcService.fcGame(loginUser, isMobileLogin, ip, platform, parentName, countryCode);
                 }
                 if (OpenAPIProperties.YL_PLATFORM_CODE.equals(parentName)) {
-                    resultInfo = ylService.ylGame(loginUser, isMobileLogin, ip, platform, parentName);
+                    resultInfo = ylService.ylGame(loginUser, isMobileLogin, ip, platform, parentName, countryCode);
                 }
                 if (OpenAPIProperties.REDTIGER_PLATFORM_CODE.equals(parentName)) {
-                    resultInfo = redtigerService.redtigerGame(loginUser, isMobileLogin, ip, platform, parentName);
+                    resultInfo = redtigerService.redtigerGame(loginUser, isMobileLogin, ip, platform, parentName, countryCode);
                 }
                 if (OpenAPIProperties.MG_PLATFORM_CODE.equals(parentName)) {
-                    resultInfo = mgService.mgGame(loginUser, isMobileLogin, ip, platform, parentName);
+                    resultInfo = mgService.mgGame(loginUser, isMobileLogin, ip, platform, parentName, countryCode);
                 }
                 if (OpenAPIProperties.CMD_PLATFORM_CODE.equals(parentName)) {
-                    resultInfo = cmdService.cmdGame(loginUser, isMobileLogin, ip, platform, parentName);
+                    resultInfo = cmdService.cmdGame(loginUser, isMobileLogin, ip, platform, parentName, countryCode);
                 }
                 if (OpenAPIProperties.WM_PLATFORM_CODE.equals(parentName)) {
-                    resultInfo = wmService.wmGame(loginUser, isMobileLogin, ip, platform, parentName);
+                    resultInfo = wmService.wmGame(loginUser, isMobileLogin, ip, platform, parentName, countryCode);
                 }
                 if (OpenAPIProperties.DG_PLATFORM_CODE.equals(parentName)) {
-                    resultInfo = dgService.dgGame(loginUser, isMobileLogin, ip, platform, parentName);
+                    resultInfo = dgService.dgGame(loginUser, isMobileLogin, ip, platform, parentName, countryCode);
                 }
                 if (OpenAPIProperties.BTI_PLATFORM_CODE.equals(parentName)) {
-                    resultInfo = btiService.btiGame(loginUser, isMobileLogin, ip, platform, parentName);
+                    resultInfo = btiService.btiGame(loginUser, isMobileLogin, ip, platform, parentName, countryCode);
                 }
                 if (OpenAPIProperties.MT_PLATFORM_CODE.equals(parentName)) {
-                    resultInfo = mtService.mtGame(loginUser, isMobileLogin, ip, platform, parentName);
+                    resultInfo = mtService.mtGame(loginUser, isMobileLogin, ip, platform, parentName, countryCode);
                 }
                 if (OpenAPIProperties.KM_PLATFORM_CODE.equals(parentName)) {
-                    resultInfo = kmService.kmGame(loginUser, isMobileLogin, ip, platform, parentName);
+                    resultInfo = kmService.kmGame(loginUser, isMobileLogin, ip, platform, parentName, countryCode);
                 }
                 if (OpenAPIProperties.V8_PLATFORM_CODE.equals(parentName)) {
-                    resultInfo = v8Service.v8Game(loginUser, isMobileLogin, ip, platform, parentName);
+                    resultInfo = v8Service.v8Game(loginUser, isMobileLogin, ip, platform, parentName, countryCode);
                 }
                 if (OpenAPIProperties.BL_PLATFORM_CODE.equals(parentName)) {
-                    resultInfo = blService.blGame(loginUser, isMobileLogin, ip, platform, parentName);
+                    resultInfo = blService.blGame(loginUser, isMobileLogin, ip, platform, parentName, countryCode);
                 }
                 if (OpenAPIProperties.OB_PLATFORM_CODE.equals(parentName)) {
-                    resultInfo = obService.obGame(loginUser, isMobileLogin, ip, platform, parentName);
+                    resultInfo = obService.obGame(loginUser, isMobileLogin, ip, platform, parentName, countryCode);
                 }
                 if (OpenAPIProperties.SA_PLATFORM_CODE.equals(parentName)) {
-                    resultInfo = saService.saGame(loginUser, isMobileLogin, ip, platform, parentName);
+                    resultInfo = saService.saGame(loginUser, isMobileLogin, ip, platform, parentName, countryCode);
                 }
 
                 if (OpenAPIProperties.TP_PLATFORM_CODE.equals(parentName)) {
                     String loginType = "mobile";
                     if (!"1".equals(isMobileLogin))
                         loginType = "web";
-                    resultInfo = tpService.tpGame(loginUser, loginType, ip, platform, parentName);
+                    resultInfo = tpService.tpGame(loginUser, loginType, ip, platform, parentName, countryCode);
                 }
                 if (OpenAPIProperties.AG_PLATFORM_CODE.equals(parentName)) {
-                    resultInfo = agService.agGame(loginUser, isMobileLogin, ip, platform, parentName);
+                    resultInfo = agService.agGame(loginUser, isMobileLogin, ip, platform, parentName, countryCode);
                 }
                 if (OpenAPIProperties.SGWIN_PLATFORM_CODE.equals(parentName)) {
-                    resultInfo = sgWinService.sgwinGame(loginUser, isMobileLogin, ip, platform, parentName);
+                    resultInfo = sgWinService.sgwinGame(loginUser, isMobileLogin, ip, platform, parentName, countryCode);
                 }
                 if (OpenAPIProperties.TCGWIN_PLATFORM_CODE.equals(platform)) {
-                    resultInfo = tcgWinService.tcgwinGame(loginUser, isMobileLogin, ip, platform, parentName);
+                    resultInfo = tcgWinService.tcgwinGame(loginUser, isMobileLogin, ip, platform, parentName, countryCode);
                 }
 
                 if (resultInfo == null) {

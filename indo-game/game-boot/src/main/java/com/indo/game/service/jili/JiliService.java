@@ -7,7 +7,7 @@ public interface JiliService {
     /**
      * 登录游戏jili
      */
-    Result jiliGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName);
+    Result jiliGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode);
 
     /**
      * jili游戏 强迫登出玩家

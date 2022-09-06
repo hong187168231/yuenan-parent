@@ -33,7 +33,7 @@ public class WmServiceImpl implements WmService {
 
 
     @Override
-    public Result wmGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName) {
+    public Result wmGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode) {
         logger.info("wmlog {} wmGame account:{},wmCodeId:{}", parentName, loginUser.getAccount(), platform);
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
@@ -80,14 +80,42 @@ public class WmServiceImpl implements WmService {
                 cptOpenMember.setType(parentName);
 
                 // 第一次登录自动创建玩家, 后续登录返回登录游戏URL
-                return createMemberGame(cptOpenMember, gameParentPlatform, platform);
+                return createMemberGame(cptOpenMember, gameParentPlatform, platform, countryCode);
             } else {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
                 // 先退出
                 commonRequest(getLoginOutUrl(loginUser.getAccount()), null);
-
-                JSONObject jsonObject = getStartGame(cptOpenMember, gameParentPlatform.getLanguageType(), platform);
+//        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+                if(null!=countryCode&&!"".equals(countryCode)){
+                    switch (countryCode) {
+                        case "IN":
+                            countryCode = "6";
+                        case "EN":
+                            countryCode = "1";
+                        case "CN":
+                            countryCode = "0";
+                        case "VN":
+                            countryCode = "3";
+                        case "TW":
+                            countryCode = "9";
+                        case "TH":
+                            countryCode = "3";
+                        case "ID":
+                            countryCode = "8";
+                        case "MY":
+                            countryCode = "7";
+                        case "KR":
+                            countryCode = "5";
+                        case "JP":
+                            countryCode = "4";
+                        default:
+                            countryCode = gameParentPlatform.getLanguageType();
+                    }
+                }else{
+                    countryCode = gameParentPlatform.getLanguageType();
+                }
+                JSONObject jsonObject = getStartGame(cptOpenMember, countryCode, platform);
                 logger.info("wm 启动游戏返回result:{}", jsonObject);
                 if (jsonObject.getInteger("errorCode").equals(0)) {
                     // 请求URL
@@ -136,10 +164,38 @@ public class WmServiceImpl implements WmService {
      * @param cptOpenMember cptOpenMember
      * @return Result
      */
-    private Result createMemberGame(CptOpenMember cptOpenMember, GameParentPlatform gameParentPlatform, String platform) {
-
+    private Result createMemberGame(CptOpenMember cptOpenMember, GameParentPlatform gameParentPlatform, String platform,String countryCode) {
+//        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+        if(null!=countryCode&&!"".equals(countryCode)){
+            switch (countryCode) {
+                case "IN":
+                    countryCode = "6";
+                case "EN":
+                    countryCode = "1";
+                case "CN":
+                    countryCode = "0";
+                case "VN":
+                    countryCode = "3";
+                case "TW":
+                    countryCode = "9";
+                case "TH":
+                    countryCode = "3";
+                case "ID":
+                    countryCode = "8";
+                case "MY":
+                    countryCode = "7";
+                case "KR":
+                    countryCode = "5";
+                case "JP":
+                    countryCode = "4";
+                default:
+                    countryCode = gameParentPlatform.getLanguageType();
+            }
+        }else{
+            countryCode = gameParentPlatform.getLanguageType();
+        }
         // 用户注册
-        JSONObject result = commonRequest(getLoginUrl(cptOpenMember, gameParentPlatform.getLanguageType()), null);
+        JSONObject result = commonRequest(getLoginUrl(cptOpenMember, countryCode), null);
         logger.info("wm 用户注册返回result:{}", result);
         if (null == result) {
             return Result.failed("g091087", "第三方请求异常！");

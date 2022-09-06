@@ -36,7 +36,7 @@ public class RedtigerServiceImpl implements RedtigerService {
 
 
     @Override
-    public Result redtigerGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName) {
+    public Result redtigerGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode) {
         logger.info("RTlog RTGame   userId:{},account:{},platform:{},parentName:{}", loginUser.getId(), loginUser.getAccount(), platform,parentName);
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
@@ -90,7 +90,7 @@ public class RedtigerServiceImpl implements RedtigerService {
             }
 
             // 启动游戏
-            return getInitUserJson(gameParentPlatform, ip, loginUser, cptOpenMember, platform, "1".equals(isMobileLogin));
+            return getInitUserJson(gameParentPlatform, ip, loginUser, cptOpenMember, platform, "1".equals(isMobileLogin), countryCode);
         } catch (Exception e) {
             e.printStackTrace();
             return Result.failed("g100104", "网络繁忙，请稍后重试！");
@@ -115,7 +115,7 @@ public class RedtigerServiceImpl implements RedtigerService {
      * @return
      */
     private Result getInitUserJson(GameParentPlatform gameParentPlatform, String ip,
-                                       LoginInfo loginUser, CptOpenMember cptOpenMember, String platform, boolean isApp) {
+                                       LoginInfo loginUser, CptOpenMember cptOpenMember, String platform, boolean isApp,String countryCode) {
         JSONObject json = new JSONObject();
         JSONObject config = new JSONObject();
         JSONObject player = new JSONObject();
@@ -130,7 +130,28 @@ public class RedtigerServiceImpl implements RedtigerService {
         player.put("update", true);
         player.put("nickname", StringUtils.isEmpty(loginUser.getNickName()) ? loginUser.getAccount() : loginUser.getNickName());
         player.put("country", "CN");
-        player.put("language", gameParentPlatform.getLanguageType());
+        //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+        if(null!=countryCode&&!"".equals(countryCode)){
+            switch (countryCode) {
+                case "IN":
+                    countryCode = "en_US";
+                case "EN":
+                    countryCode = "en_US";
+                case "CN":
+                    countryCode = "zh_CN";
+                case "VN":
+                    countryCode = "vi";
+                case "TW":
+                    countryCode = "zh_TW";
+                case "TH":
+                    countryCode = "th";
+                default:
+                    countryCode = gameParentPlatform.getLanguageType();
+            }
+        }else{
+            countryCode = gameParentPlatform.getLanguageType();
+        }
+        player.put("language", countryCode);
         player.put("currency", gameParentPlatform.getCurrencyType());
         player.put("session", session);
         player.put("group", group);

@@ -37,7 +37,7 @@ public class Rich88ServiceImpl implements Rich88Service {
     private GameCommonService gameCommonService;
 
     @Override
-    public Result rich88Game(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName) {
+    public Result rich88Game(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode) {
         logger.info("rich88log {} rich88Game account:{},Rich88CodeId:{}", loginUser.getId(), loginUser.getAccount(), platform);
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
@@ -89,9 +89,27 @@ public class Rich88ServiceImpl implements Rich88Service {
                 // 先退出
                 commonRequest(getLoginOutUrl(loginUser.getAccount()), null, loginUser.getId());
             }
-
+//        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+            if(null!=countryCode&&!"".equals(countryCode)){
+                switch (countryCode) {
+                    case "IN":
+                        countryCode = "en_US";
+                    case "EN":
+                        countryCode = "en_US";
+                    case "CN":
+                        countryCode = "zh_CN";
+                    case "VN":
+                        countryCode = "vi_VN";
+                    case "TH":
+                        countryCode = "th_TH";
+                    default:
+                        countryCode = gameParentPlatform.getLanguageType();
+                }
+            }else{
+                countryCode = gameParentPlatform.getLanguageType();
+            }
             // 第一次登录自动创建玩家, 后续登录返回登录游戏URL
-            return createMemberGame(cptOpenMember, platform, gameParentPlatform.getLanguageType());
+            return createMemberGame(cptOpenMember, platform, countryCode);
 
         } catch (Exception e) {
             e.printStackTrace();

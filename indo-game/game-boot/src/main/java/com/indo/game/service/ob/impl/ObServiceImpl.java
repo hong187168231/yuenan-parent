@@ -48,7 +48,7 @@ public class ObServiceImpl implements ObService {
      * @return loginUser 用户信息
      */
     @Override
-    public Result obGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName) {
+    public Result obGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode) {
         logger.info("OB体育log  obGame loginUser:{}, ip:{}, platform:{}, parentName:{}, isMobileLogin:{}", loginUser,ip,platform,parentName,isMobileLogin);
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);

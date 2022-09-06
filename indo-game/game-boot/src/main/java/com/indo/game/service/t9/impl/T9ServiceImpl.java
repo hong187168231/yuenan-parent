@@ -50,7 +50,7 @@ public class T9ServiceImpl implements T9Service {
     }
 
     @Override
-    public Result t9Game(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName) {
+    public Result t9Game(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode) {
         logger.info("t9log {} t9Game account:{},t9CodeId:{}", loginUser.getId(), loginUser.getAccount(), platform);
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
@@ -96,7 +96,7 @@ public class T9ServiceImpl implements T9Service {
                 cptOpenMember.setLoginTime(new Date());
                 cptOpenMember.setType(parentName);
                 //创建玩家
-                return createMemberGame(cptOpenMember, platform, "1".equals(isMobileLogin));
+                return createMemberGame(cptOpenMember, platform, "1".equals(isMobileLogin), countryCode, gameParentPlatform);
             } else {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
@@ -111,7 +111,7 @@ public class T9ServiceImpl implements T9Service {
             }
 
             // 启动游戏
-            return getPlayerGameUrl(loginUser.getAccount(), platform, "1".equals(isMobileLogin));
+            return getPlayerGameUrl(loginUser.getAccount(), platform, "1".equals(isMobileLogin), countryCode, gameParentPlatform);
         } catch (Exception e) {
             e.printStackTrace();
             return Result.failed("g100104", "网络繁忙，请稍后重试！");
@@ -149,12 +149,41 @@ public class T9ServiceImpl implements T9Service {
      *
      * @return
      */
-    private Result getPlayerGameUrl(String playerID, String gameCode, boolean isAPP) {
+    private Result getPlayerGameUrl(String playerID, String gameCode, boolean isAPP,String countryCode,GameParentPlatform gameParentPlatform) {
         T9ApiResponseData t9ApiResponseData = null;
         try {
             Map<String, Object> params = new HashMap<>();
             params.put("playerID", playerID);
             params.put("gameCode", gameCode);
+            if(null!=countryCode&&!"".equals(countryCode)){
+                switch (countryCode) {
+                    case "IN":
+                        countryCode = "en_US";
+                    case "EN":
+                        countryCode = "en_US";
+                    case "CN":
+                        countryCode = "zh_CN";
+                    case "VN":
+                        countryCode = "vi_VN";
+                    case "TW":
+                        countryCode = "zh_TW";
+                    case "TH":
+                        countryCode = "th_TH";
+                    case "ID":
+                        countryCode = "in_ID";
+                    case "MY":
+                        countryCode = "ms_MY";
+                    case "KR":
+                        countryCode = "ko_KR";
+                    case "JP":
+                        countryCode = "ja_JP";
+                    default:
+                        countryCode = gameParentPlatform.getLanguageType();
+                }
+            }else{
+                countryCode = gameParentPlatform.getLanguageType();
+            }
+            params.put("lang", countryCode);
             params.put("isAPP", isAPP);
             params.put("hasLogo", true);
             params.put("walletType", 2);
@@ -185,7 +214,7 @@ public class T9ServiceImpl implements T9Service {
      * @param cptOpenMember
      * @return
      */
-    private Result createMemberGame(CptOpenMember cptOpenMember, String platform, boolean isAPP) {
+    private Result createMemberGame(CptOpenMember cptOpenMember, String platform, boolean isAPP,String countryCode,GameParentPlatform gameParentPlatform) {
         // 创建T9账号
         T9ApiResponseData t9ApiResponseData = createT9Member(cptOpenMember);
         if (null == t9ApiResponseData) {
@@ -194,7 +223,7 @@ public class T9ServiceImpl implements T9Service {
 
         if ("200".equals(t9ApiResponseData.getStatusCode())) {
             externalService.saveCptOpenMember(cptOpenMember);
-            return getPlayerGameUrl(cptOpenMember.getUserName(), platform, isAPP);
+            return getPlayerGameUrl(cptOpenMember.getUserName(), platform, isAPP, countryCode, gameParentPlatform);
         } else {
             return errorCode(t9ApiResponseData.getStatusCode(), t9ApiResponseData.getErrorMessage());
         }

@@ -39,7 +39,7 @@ public class SaServiceImpl implements SaService {
 
 
     @Override
-    public Result saGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName) {
+    public Result saGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode) {
         logger.info("salog {} saGame account:{},saCodeId:{}", parentName, loginUser.getAccount(), platform);
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
@@ -86,7 +86,7 @@ public class SaServiceImpl implements SaService {
                 cptOpenMember.setType(parentName);
 
                 // 第一次登录自动创建玩家, 后续登录返回登录游戏URL
-                return createMemberGame(cptOpenMember, gameParentPlatform, isMobileLogin);
+                return createMemberGame(cptOpenMember, gameParentPlatform, isMobileLogin, countryCode);
             } else {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
@@ -128,16 +128,42 @@ public class SaServiceImpl implements SaService {
                     if (null == result1) {
                         return Result.failed("g091087", "第三方请求异常！");
                     }
-
+//        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+                    if(null!=countryCode&&!"".equals(countryCode)){
+                        switch (countryCode) {
+                            case "IN":
+                                countryCode = "hi*";
+                            case "EN":
+                                countryCode = "en_US";
+                            case "CN":
+                                countryCode = "zh_CN";
+                            case "VN":
+                                countryCode = "vn";
+                            case "TW":
+                                countryCode = "zh_TW";
+                            case "TH":
+                                countryCode = "th";
+                            case "ID":
+                                countryCode = "id";
+                            case "MY":
+                                countryCode = "ms";
+                            case "JP":
+                                countryCode = "jp";
+                            default:
+                                countryCode = gameParentPlatform.getLanguageType();
+                        }
+                    }else{
+                        countryCode = gameParentPlatform.getLanguageType();
+                    }
                     SaLoginResp saLoginResp1 = (SaLoginResp) result1;
                     if (0 == saLoginResp1.getErrorMsgId()) {
                         // 请求URL
                         ApiResponseData responseData = new ApiResponseData();
                         // PC
                         if (isMobileLogin.equals("1")) {
-                            responseData.setPathUrl(initLoginUrl(cptOpenMember.getUserName(), saLoginResp1.getToken(),gameParentPlatform.getLanguageType(), false));
+                            responseData.setPathUrl(initLoginUrl(cptOpenMember.getUserName(), saLoginResp1.getToken(),countryCode, false));
                         } else {
-                            responseData.setPathUrl(initLoginUrl(cptOpenMember.getUserName(), saLoginResp1.getToken(),gameParentPlatform.getLanguageType(), true));
+                            responseData.setPathUrl(initLoginUrl(cptOpenMember.getUserName(), saLoginResp1.getToken(),countryCode, true));
                         }
                         return Result.success(responseData);
                     } else {
@@ -191,7 +217,7 @@ public class SaServiceImpl implements SaService {
      * @param isMobileLogin 1-pc 其他-web
      * @return Result
      */
-    private Result createMemberGame(CptOpenMember cptOpenMember, GameParentPlatform gameParentPlatform, String isMobileLogin) {
+    private Result createMemberGame(CptOpenMember cptOpenMember, GameParentPlatform gameParentPlatform, String isMobileLogin,String countryCode) {
 
         String time = DateUtils.getLongDateString(new Date());
         String qs = "method=LoginRequest&Key=" + OpenAPIProperties.SA_SECRET_KEY + "&Time=" + time +
@@ -209,7 +235,33 @@ public class SaServiceImpl implements SaService {
         if (null == result) {
             return Result.failed("g091087", "第三方请求异常！");
         }
-
+//        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+        if(null!=countryCode&&!"".equals(countryCode)){
+            switch (countryCode) {
+                case "IN":
+                    countryCode = "hi*";
+                case "EN":
+                    countryCode = "en_US";
+                case "CN":
+                    countryCode = "zh_CN";
+                case "VN":
+                    countryCode = "vn";
+                case "TW":
+                    countryCode = "zh_TW";
+                case "TH":
+                    countryCode = "th";
+                case "ID":
+                    countryCode = "id";
+                case "MY":
+                    countryCode = "ms";
+                case "JP":
+                    countryCode = "jp";
+                default:
+                    countryCode = gameParentPlatform.getLanguageType();
+            }
+        }else{
+            countryCode = gameParentPlatform.getLanguageType();
+        }
         SaLoginResp saLoginResp = (SaLoginResp) result;
         if (0 == saLoginResp.getErrorMsgId()) {
             externalService.saveCptOpenMember(cptOpenMember);
@@ -217,9 +269,9 @@ public class SaServiceImpl implements SaService {
             ApiResponseData responseData = new ApiResponseData();
             // PC
             if (isMobileLogin.equals("1")) {
-                responseData.setPathUrl(initLoginUrl(cptOpenMember.getUserName(), saLoginResp.getToken(),gameParentPlatform.getLanguageType(), false));
+                responseData.setPathUrl(initLoginUrl(cptOpenMember.getUserName(), saLoginResp.getToken(),countryCode, false));
             } else {
-                responseData.setPathUrl(initLoginUrl(cptOpenMember.getUserName(), saLoginResp.getToken(),gameParentPlatform.getLanguageType(), true));
+                responseData.setPathUrl(initLoginUrl(cptOpenMember.getUserName(), saLoginResp.getToken(),countryCode, true));
             }
             return Result.success(responseData);
         } else {

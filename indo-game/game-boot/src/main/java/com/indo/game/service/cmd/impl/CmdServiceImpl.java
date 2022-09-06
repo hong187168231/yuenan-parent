@@ -31,7 +31,7 @@ public class CmdServiceImpl implements CmdService {
     private GameCommonService gameCommonService;
 
     @Override
-    public Result cmdGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName) {
+    public Result cmdGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode) {
         logger.info("cmd体育log  cmdGame loginUser:{}, ip:{}, platform:{}, parentName:{}, isMobileLogin:{}", loginUser,ip,platform,parentName,isMobileLogin);
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
@@ -79,7 +79,7 @@ public class CmdServiceImpl implements CmdService {
                 externalService.saveCptOpenMember(cptOpenMember);
 
                 // 第一次登录自动创建玩家, 后续登录返回登录游戏URL
-                return createMemberGame(cptOpenMember, gameParentPlatform, isMobileLogin);
+                return createMemberGame(cptOpenMember, gameParentPlatform, isMobileLogin, countryCode);
             } else {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
@@ -88,10 +88,39 @@ public class CmdServiceImpl implements CmdService {
                 JSONObject result = JSONObject.parseObject(returnResult);
 
                 logger.info("cmd体育log  登录cmdGame输入 urlapi:{}",getStartGame(cptOpenMember, gameParentPlatform.getCurrencyType(), gameParentPlatform.getLanguageType(), isMobileLogin));
+                //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+                if(null!=countryCode&&!"".equals(countryCode)){
+                    switch (countryCode) {
+                        case "IN":
+                            countryCode = "en-US";
+                        case "EN":
+                            countryCode = "en-US";
+                        case "CN":
+                            countryCode = "zh-CN";
+                        case "VN":
+                            countryCode = "vi-VN";
+                        case "TW":
+                            countryCode = "zh-TW";
+                        case "TH":
+                            countryCode = "th-TH";
+                        case "ID":
+                            countryCode = "in-ID";
+                        case "MY":
+                            countryCode = "ms-MY";
+                        case "KR":
+                            countryCode = "ko-KR";
+                        case "JP":
+                            countryCode = "ja-JP";
+                        default:
+                            countryCode = gameParentPlatform.getLanguageType();
+                    }
+                }else{
+                    countryCode = gameParentPlatform.getLanguageType();
+                }
                 // 请求URL
                 ApiResponseData responseData = new ApiResponseData();
                 responseData.setPathUrl(getStartGame(cptOpenMember, gameParentPlatform.getCurrencyType(),
-                        gameParentPlatform.getLanguageType(), isMobileLogin));
+                        countryCode, isMobileLogin));
                 logger.info("cmd体育log  登录cmdGame返回 responseData:{}",responseData);
                 return Result.success(responseData);
 
@@ -132,7 +161,7 @@ public class CmdServiceImpl implements CmdService {
      * @param cptOpenMember cptOpenMember
      * @return Result
      */
-    private Result createMemberGame(CptOpenMember cptOpenMember, GameParentPlatform gameParentPlatform, String isMobileLogin) {
+    private Result createMemberGame(CptOpenMember cptOpenMember, GameParentPlatform gameParentPlatform, String isMobileLogin,String countryCode) {
         logger.info("cmd体育log  创建账号createMemberGame输入 urlapi:{}",getLoginUrl(cptOpenMember.getPassword(), gameParentPlatform.getCurrencyType()));
         String returnResult
                 = GameUtil.httpGetWithCookies(
@@ -145,10 +174,39 @@ public class CmdServiceImpl implements CmdService {
 
         if (0 == result.getInteger("Code")) {
             logger.info("cmd体育log  登录createMemberGame输入 urlapi:{}",getStartGame(cptOpenMember, gameParentPlatform.getCurrencyType(), gameParentPlatform.getLanguageType(), isMobileLogin));
+            //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+            if(null!=countryCode&&!"".equals(countryCode)){
+                switch (countryCode) {
+                    case "IN":
+                        countryCode = "en-US";
+                    case "EN":
+                        countryCode = "en-US";
+                    case "CN":
+                        countryCode = "zh-CN";
+                    case "VN":
+                        countryCode = "vi-VN";
+                    case "TW":
+                        countryCode = "zh-TW";
+                    case "TH":
+                        countryCode = "th-TH";
+                    case "ID":
+                        countryCode = "in-ID";
+                    case "MY":
+                        countryCode = "ms-MY";
+                    case "KR":
+                        countryCode = "ko-KR";
+                    case "JP":
+                        countryCode = "ja-JP";
+                    default:
+                        countryCode = gameParentPlatform.getLanguageType();
+                }
+            }else{
+                countryCode = gameParentPlatform.getLanguageType();
+            }
             // 请求URL
             ApiResponseData responseData = new ApiResponseData();
             responseData.setPathUrl(
-                    getStartGame(cptOpenMember, gameParentPlatform.getCurrencyType(), gameParentPlatform.getLanguageType(), isMobileLogin));
+                    getStartGame(cptOpenMember, gameParentPlatform.getCurrencyType(), countryCode, isMobileLogin));
             logger.info("cmd体育log  登录createMemberGame返回 responseData:{}",responseData);
             return Result.success(responseData);
         } else {

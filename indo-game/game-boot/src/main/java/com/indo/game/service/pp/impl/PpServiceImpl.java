@@ -47,7 +47,7 @@ public class PpServiceImpl implements PpService {
     private TxnsMapper txnsMapper;
 
     @Override
-    public Result ppGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName) {
+    public Result ppGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode) {
         logger.info("pplog ppGame account:{},ppCodeId:{}", loginUser.getId(), loginUser.getAccount(), platform);
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
@@ -101,12 +101,40 @@ public class PpServiceImpl implements PpService {
                 // 退出游戏
                 loginOutPP(loginUser);
             }
-
+//        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+            if(null!=countryCode&&!"".equals(countryCode)){
+                switch (countryCode) {
+                    case "IN":
+                        countryCode = "en";
+                    case "EN":
+                        countryCode = "en";
+                    case "CN":
+                        countryCode = "zh";
+                    case "VN":
+                        countryCode = "vi";
+                    case "TW":
+                        countryCode = "zh";
+                    case "TH":
+                        countryCode = "th";
+                    case "ID":
+                        countryCode = "in";
+                    case "MY":
+                        countryCode = "ms";
+                    case "KR":
+                        countryCode = "ko";
+                    case "JP":
+                        countryCode = "ja";
+                    default:
+                        countryCode = gameParentPlatform.getLanguageType();
+                }
+            }else{
+                countryCode = gameParentPlatform.getLanguageType();
+            }
             PpApiStartGameReq ppApiRequestData = new PpApiStartGameReq();
             ppApiRequestData.setSecureLogin(OpenAPIProperties.PP_SECURE_LOGIN);
             ppApiRequestData.setExternalPlayerId(loginUser.getAccount());
             ppApiRequestData.setGameId(platform);
-            ppApiRequestData.setLanguage(gameParentPlatform.getLanguageType());
+            ppApiRequestData.setLanguage(countryCode);
             return startGame(ppApiRequestData, ip);
         } catch (Exception e) {
             e.printStackTrace();

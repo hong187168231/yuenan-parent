@@ -7,7 +7,7 @@ public interface WmService {
     /**
      * 登录游戏wm
      */
-    Result wmGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName);
+    Result wmGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode);
 
     /**
      * wm游戏 强迫登出玩家

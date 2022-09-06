@@ -10,7 +10,7 @@ public interface MtService {
     /**
      * 登录游戏MT
      */
-    Result mtGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName);
+    Result mtGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode);
 
     /**
      * MT电子游戏 强迫登出玩家

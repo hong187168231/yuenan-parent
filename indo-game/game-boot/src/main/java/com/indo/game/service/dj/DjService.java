@@ -8,7 +8,7 @@ public interface DjService {
     /**
      * 登录游戏DJ
      */
-    public Result djGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName);
+    public Result djGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode);
 
     /**
      * DJ 强迫登出玩家

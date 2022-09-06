@@ -8,7 +8,7 @@ public interface ObService {
     /**
      * 登录游戏OB
      */
-    public Result obGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName);
+    public Result obGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode);
 
     /**
      * OB游戏 强迫登出玩家
