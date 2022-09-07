@@ -5,6 +5,7 @@ import com.indo.common.config.OpenAPIProperties;
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.common.result.Result;
+import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.service.common.GameCommonService;
 import com.indo.core.pojo.bo.MemTradingBO;
 import io.swagger.annotations.Api;
@@ -27,18 +28,14 @@ public class TestController {
 //    @Autowired
 //    private GameCommonService iGameManageService;
 //
-//    @ApiOperation(value = "游戏记录", httpMethod = "GET")
-//    @GetMapping(value = "/hello")
-//    @AllowAccess
-//    public Result<?> queryGameRecord() {
-//        System.out.println(OpenAPIProperties.PROXY_HOST_NAME);
-//        MemTradingBO memBaseinfo = new MemTradingBO();
-//        memBaseinfo.setId(42L);
-//        memBaseinfo.setAccount("swuserid");
-//        MemTradingBO memTradingBO = iGameManageService.getMemTradingInfo("puff");
-//        iGameManageService.updateUserBalance(memBaseinfo, new BigDecimal("20.0"), GoldchangeEnum.REFUND, TradingEnum.INCOME);
-//        return Result.success(memBaseinfo);
-//    }
+    @ApiOperation(value = "游戏记录", httpMethod = "GET")
+    @GetMapping(value = "/hello")
+    @AllowAccess
+    public Result<?> queryGameRecord() {
+
+        System.out.println("test1:"+MessageUtils.get("networktimeout"));
+        return null;
+    }
 
 
 }

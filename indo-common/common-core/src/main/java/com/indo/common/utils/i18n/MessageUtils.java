@@ -1,8 +1,10 @@
 package com.indo.common.utils.i18n;
 
 import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
+
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 /**
  * 国际化工具类
@@ -19,10 +21,51 @@ public class MessageUtils {
     /**
      * 获取单个国际化翻译值
      */
-    public static String get(String msgKey) {
+    public static String get(String msgKey,String countryCode) {
         try {
-            return messageSource.getMessage(msgKey, null, LocaleContextHolder.getLocale());
+            String lang = "";
+            String country = "";
+            switch (countryCode) {
+                case "IN":
+                    lang = "en";
+                    country = "IN";
+                case "EN":
+                    lang = "en";
+                    country = "US";
+                case "CN":
+                    lang = "zh";
+                    country = "CN";
+                case "VN":
+                    lang = "vi";
+                    country = "VN";
+                case "TW":
+                    lang = "zh";
+                    country = "TW";
+                case "TH":
+                    lang = "th";
+                    country = "TH";
+                case "ID":
+                    lang = "in";
+                    country = "ID";
+                case "MY":
+                    lang = "ms";
+                    country = "MY";
+                    countryCode = "ms_MY";
+                case "KR":
+                    lang = "ko";
+                    country = "KR";
+                case "JP":
+                    lang = "ja";
+                    country = "JP";
+                default:
+                    lang = "en";
+                    country = "US";
+            }
+            Locale locale = new Locale(lang,country);
+            ResourceBundle bundle = ResourceBundle.getBundle("messages", locale);
+            return bundle.getString(msgKey);
         } catch (Exception e) {
+            e.printStackTrace();
             return msgKey;
         }
     }
