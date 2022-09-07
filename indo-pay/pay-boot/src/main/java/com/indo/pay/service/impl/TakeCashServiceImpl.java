@@ -24,6 +24,7 @@ import com.indo.core.pojo.entity.MemBaseinfo;
 import com.indo.core.pojo.entity.PayTakeCash;
 import com.indo.core.service.IMemGoldChangeService;
 import com.indo.pay.mapper.MemBankRelationMapper;
+import com.indo.pay.mapper.MemBaseInfoMapper;
 import com.indo.pay.mapper.TakeCashMapper;
 import com.indo.pay.pojo.dto.PayCallBackDTO;
 import com.indo.pay.pojo.req.TakeCashApplyReq;
@@ -61,6 +62,8 @@ public class TakeCashServiceImpl extends SuperServiceImpl<TakeCashMapper, PayTak
     private MemBaseInfoFeignClient memBaseInfoFeignClient;
     @Autowired
     private MemBankRelationMapper memBankRelationMapper;
+    @Autowired
+    private MemBaseInfoMapper memBaseInfoMapper;
 
     @Override
     public boolean takeCashApply(TakeCashApplyReq cashApplyReq, LoginInfo loginUser) {
@@ -140,8 +143,11 @@ public class TakeCashServiceImpl extends SuperServiceImpl<TakeCashMapper, PayTak
             throw new BizException("银行卡无效");
         }
         MemBaseInfoBO currentMem = getMemCacheBaseInfo(loginUser.getAccount());
-        if (currentMem.getProhibitDisbursement().equals(1)) {
-            throw new BizException("你暂时提现,请联系管理员");
+        if (currentMem == null) {
+            currentMem = memBaseInfoMapper.findMemBaseInfoByAccount(loginUser.getAccount());
+        }
+        if (currentMem == null || currentMem.getProhibitDisbursement().equals(1)) {
+            throw new BizException("你暂时无法提现,请联系管理员");
         }
         BeanUtils.copyProperties(memBank, bridgeMemBank);
     }
