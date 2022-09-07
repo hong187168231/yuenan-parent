@@ -419,4 +419,5 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
 		updateWrapper.set(memBaseInfoBO.getCanAmount().longValue() > 0, MemBaseinfo::getCanAmount, memBaseInfoBO.getCanAmount().subtract(amount));
 	  return this.update(updateWrapper);
 	}
+
 }
