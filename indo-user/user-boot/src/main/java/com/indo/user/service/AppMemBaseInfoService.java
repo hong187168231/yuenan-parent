@@ -15,6 +15,8 @@ import com.indo.user.pojo.req.mem.UpdatePasswordReq;
 import com.indo.user.pojo.vo.AppLoginVo;
 import com.indo.user.pojo.vo.mem.MemBaseInfoVo;
 
+import java.math.BigDecimal;
+
 public interface AppMemBaseInfoService extends SuperService<MemBaseinfo> {
 
     /**
@@ -103,4 +105,5 @@ public interface AppMemBaseInfoService extends SuperService<MemBaseinfo> {
     MemTradingBO tradingInfo(String account);
 
 
+	  boolean updateBanlaceAndCanAmount(String account, BigDecimal amount);
 }

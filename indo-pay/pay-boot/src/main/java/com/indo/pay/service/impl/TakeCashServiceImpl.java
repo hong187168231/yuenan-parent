@@ -73,6 +73,8 @@ public class TakeCashServiceImpl extends SuperServiceImpl<TakeCashMapper, PayTak
         saveCashOrder(loginUser, cashApplyReq, bridgeMemBank);
         // 更新账变信息
         updateCashGoldChange(loginUser, cashApplyReq);
+        // 扣减用户余额和可提现金额
+        updateBanlaceAndCanAmount(loginUser.getAccount(), cashApplyReq.getTakeCashAmount());
         return true;
     }
 
@@ -223,6 +225,7 @@ public class TakeCashServiceImpl extends SuperServiceImpl<TakeCashMapper, PayTak
         orderCash.setCashStatus(0);
         boolean cashFlag = this.baseMapper.insert(orderCash) > 0;
         if (cashFlag) {
+
             return orderCash.getTakeCashId();
         } else {
             throw new BizException("提现异常");
@@ -310,5 +313,8 @@ public class TakeCashServiceImpl extends SuperServiceImpl<TakeCashMapper, PayTak
         }
     }
 
-
+    private boolean updateBanlaceAndCanAmount(String account, BigDecimal amount) {
+        Result<Boolean>  result = memBaseInfoFeignClient.takeCashApply(account, amount);
+        return result.getData();
+    }
 }

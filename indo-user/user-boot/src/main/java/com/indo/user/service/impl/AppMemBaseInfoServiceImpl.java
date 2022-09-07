@@ -4,12 +4,12 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
-import com.indo.admin.api.SysIpLimitClient;
 import com.indo.common.enums.AccountTypeEnum;
 import com.indo.common.enums.GiftTypeEnum;
 import com.indo.common.enums.GoldchangeEnum;
@@ -47,7 +47,6 @@ import com.indo.user.service.AppMemBaseInfoService;
 import com.indo.user.service.IMemAgentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -407,4 +406,17 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
 		return this.baseMapper.tradingInfo(account);
 	}
 
+	@Override
+	public boolean updateBanlaceAndCanAmount(String account, BigDecimal amount) {
+		MemBaseInfoBO memBaseInfoBO = this.baseMapper.findMemBaseInfoByAccount(account);
+		if (memBaseInfoBO == null  || memBaseInfoBO.getBalance().compareTo(amount) == -1 ||
+				 memBaseInfoBO.getCanAmount().compareTo(amount) == -1) {
+       return false;
+		}
+		LambdaUpdateWrapper<MemBaseinfo> updateWrapper = new LambdaUpdateWrapper<MemBaseinfo>()
+				.eq(MemBaseinfo::getAccount, account);
+		updateWrapper.set(memBaseInfoBO.getBalance().longValue() > 0, MemBaseinfo::getBalance, memBaseInfoBO.getBalance());
+		updateWrapper.set(memBaseInfoBO.getCanAmount().longValue() > 0, MemBaseinfo::getCanAmount, memBaseInfoBO.getCanAmount());
+	  return this.update(updateWrapper);
+	}
 }
