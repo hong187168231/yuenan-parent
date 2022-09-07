@@ -11,17 +11,22 @@ import com.indo.admin.pojo.vo.pay.PayTakeCashApplyVO;
 import com.indo.admin.pojo.vo.pay.PayTakeCashRecordVO;
 import com.indo.common.constant.GlobalConstants;
 import com.indo.common.enums.AudiTypeEnum;
+import com.indo.common.enums.GoldchangeEnum;
+import com.indo.common.enums.TradingEnum;
 import com.indo.common.result.Result;
 import com.indo.common.result.ResultCode;
 import com.indo.common.utils.StringUtils;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
 import com.indo.common.web.util.JwtUtils;
+import com.indo.core.pojo.dto.MemGoldChangeDTO;
 import com.indo.core.pojo.entity.MemBaseinfo;
 import com.indo.core.pojo.entity.PayTakeCash;
+import com.indo.core.service.IMemGoldChangeService;
 import com.indo.pay.api.WithdrawFeignClient;
 import com.indo.pay.pojo.bo.PayTakeCashBO;
 import com.indo.pay.pojo.req.PayTakeCashReq;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -38,6 +43,8 @@ import java.util.List;
  */
 @Service
 public class PayTakeCashServiceImpl extends ServiceImpl<PayTakeCashMapper, PayTakeCash> implements IPayTakeCashService {
+    @Autowired
+    private IMemGoldChangeService iMemGoldChangeService;
     @Override
     public Page<PayTakeCash> cashApplyList(PayTakeCashReq req) {
         Page<PayTakeCash> applyPage = new Page<>(req.getPage(), req.getLimit());
@@ -94,6 +101,15 @@ public class PayTakeCashServiceImpl extends ServiceImpl<PayTakeCashMapper, PayTa
         }
         if(audiTypeEnum.getStatus().equals(GlobalConstants.PAY_CASH_STATUS_CANCEL)){
             payTakeCash.setRemitTime(new Date());
+        }
+        if(audiTypeEnum.getStatus().equals(GlobalConstants.PAY_CASH_STATUS_REJECT)){
+            MemGoldChangeDTO goldChangeDO = new MemGoldChangeDTO();
+            goldChangeDO.setChangeAmount(payTakeCash.getActualAmount());
+            goldChangeDO.setTradingEnum(TradingEnum.INCOME);
+            goldChangeDO.setGoldchangeEnum(GoldchangeEnum.TXKK_REFUSE);
+            goldChangeDO.setUserId(payTakeCash.getMemId());
+            goldChangeDO.setUpdateUser(JwtUtils.getUsername());
+            iMemGoldChangeService.updateMemGoldChange(goldChangeDO);
         }
         payTakeCash.setCashStatus(audiTypeEnum.getStatus());
         payTakeCash.setOperatorUser(JwtUtils.getUsername());

@@ -72,7 +72,7 @@ public class TakeCashServiceImpl extends SuperServiceImpl<TakeCashMapper, PayTak
         // 保存提现申请
         saveCashOrder(loginUser, cashApplyReq, bridgeMemBank);
         // 更新账变信息
-        //updateCashGoldChange(loginUser, cashApplyReq, applyId);
+        updateCashGoldChange(loginUser, cashApplyReq);
         return true;
     }
 
@@ -235,16 +235,14 @@ public class TakeCashServiceImpl extends SuperServiceImpl<TakeCashMapper, PayTak
      *
      * @param loginUser
      * @param cashApplyReq
-     * @param applyId
      */
-    public void updateCashGoldChange(LoginInfo loginUser, TakeCashApplyReq cashApplyReq, Long applyId) {
+    public void updateCashGoldChange(LoginInfo loginUser, TakeCashApplyReq cashApplyReq) {
         MemGoldChangeDTO goldChangeDO = new MemGoldChangeDTO();
         goldChangeDO.setChangeAmount(cashApplyReq.getTakeCashAmount());
         goldChangeDO.setTradingEnum(TradingEnum.SPENDING);
         goldChangeDO.setGoldchangeEnum(GoldchangeEnum.TXKK);
         goldChangeDO.setUserId(loginUser.getId());
         goldChangeDO.setUpdateUser(loginUser.getAccount());
-        goldChangeDO.setRefId(applyId);
         iMemGoldChangeService.updateMemGoldChange(goldChangeDO);
     }
 

@@ -45,6 +45,7 @@ public enum GoldchangeEnum {
     TASK(312, "任务"),
 
     TXKK(401, "提现扣款"),
+    TXKK_REFUSE(402, "提现扣款取消"),
     JJTC(407, "奖金提出"),
 
 
