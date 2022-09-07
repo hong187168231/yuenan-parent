@@ -415,8 +415,8 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
 		}
 		LambdaUpdateWrapper<MemBaseinfo> updateWrapper = new LambdaUpdateWrapper<MemBaseinfo>()
 				.eq(MemBaseinfo::getAccount, account);
-		updateWrapper.set(memBaseInfoBO.getBalance().longValue() > 0, MemBaseinfo::getBalance, memBaseInfoBO.getBalance());
-		updateWrapper.set(memBaseInfoBO.getCanAmount().longValue() > 0, MemBaseinfo::getCanAmount, memBaseInfoBO.getCanAmount());
+		updateWrapper.set(memBaseInfoBO.getBalance().longValue() > 0, MemBaseinfo::getBalance, memBaseInfoBO.getBalance().subtract(amount));
+		updateWrapper.set(memBaseInfoBO.getCanAmount().longValue() > 0, MemBaseinfo::getCanAmount, memBaseInfoBO.getCanAmount().subtract(amount));
 	  return this.update(updateWrapper);
 	}
 }
