@@ -18,20 +18,20 @@ public interface PpService {
     /**
      * PP电子游戏 强迫登出玩家
      */
-    Result logout(LoginInfo loginUser, String platform, String ip);
+    Result logout(LoginInfo loginUser, String platform, String ip,String countryCode);
 
     /**
      * PP电子充值提款
      */
-    Result transfer(PpApiTransferReq ppApiTransferReq, String ip);
+    Result transfer(PpApiTransferReq ppApiTransferReq, String ip,String countryCode);
 
     /**
      * 查询PP电子余额
      */
-    Result getBalance(PpApiGetBalanceReq ppApiGetBalanceReq, String ip);
+    Result getBalance(PpApiGetBalanceReq ppApiGetBalanceReq, String ip,String countryCode);
 
     /**
      * 启动PP游戏
      */
-    Result startGame(PpApiStartGameReq ppApiStartGameReq, String ip);
+    Result startGame(PpApiStartGameReq ppApiStartGameReq, String ip,String countryCode);
 }

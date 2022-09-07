@@ -6,6 +6,7 @@ import com.indo.common.config.OpenAPIProperties;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
 import com.indo.common.utils.GameUtil;
+import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.common.util.SnowflakeId;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
 import com.indo.game.pojo.dto.cq.CqApiResponseData;
@@ -54,33 +55,33 @@ public class CqServiceImpl implements CqService {
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
         if (null == gameParentPlatform) {
-            return Result.failed("(" + parentName + ")平台不存在");
+            return Result.failed("g100101", MessageUtils.get("g100101",countryCode));
         }
         if (0==gameParentPlatform.getIsStart()) {
-            return Result.failed("g100101", "平台未启用");
+            return Result.failed("g100101", MessageUtils.get("g100101",countryCode));
         }
         if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
-            return Result.failed("g000001", gameParentPlatform.getMaintenanceContent());
+            return Result.failed("g000001", MessageUtils.get("g000001",countryCode));
         }
 
         // 是否开售校验
         GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
         if (null == gamePlatform) {
-            return Result.failed("(" + platform + ")游戏不存在");
+            return Result.failed("g100102", MessageUtils.get("g100102",countryCode));
         }
         if (0==gamePlatform.getIsStart()) {
-            return Result.failed("g100102", "游戏未启用");
+            return Result.failed("g100102", MessageUtils.get("g100102",countryCode));
         }
         if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
-            return Result.failed("g091047", gamePlatform.getMaintenanceContent());
+            return Result.failed("g091047", MessageUtils.get("g091047",countryCode));
         }
-        BigDecimal balance = loginUser.getBalance();
-        //验证站点棋牌余额
-        if (null == balance || BigDecimal.ZERO == balance) {
-            logger.info("站点CQ9游戏余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
-            //站点棋牌余额不足
-            return Result.failed("g300004", "会员余额不足");
-        }
+//        BigDecimal balance = loginUser.getBalance();
+//        //验证站点棋牌余额
+//        if (null == balance || BigDecimal.ZERO == balance) {
+//            logger.info("站点CQ9游戏余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
+//            //站点棋牌余额不足
+//            return Result.failed("g300004", MessageUtils.get("g300004",countryCode));
+//        }
         try {
 
             // 验证且绑定（AE-CPT第三方会员关系）
@@ -103,13 +104,13 @@ public class CqServiceImpl implements CqService {
                 externalService.updateCptOpenMember(cptOpenMember);
             }
             if(b){
-                this.logout(loginUser,parentName,ip);
+                this.logout(loginUser,parentName,ip,countryCode);
             }
             //登录
             return initGame(gameParentPlatform, gamePlatform, cptOpenMember, isMobileLogin, countryCode);
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.failed("g100104", "网络繁忙，请稍后重试！");
+            return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
         }
     }
 
@@ -120,11 +121,11 @@ public class CqServiceImpl implements CqService {
                             CptOpenMember cptOpenMember, String isMobileLogin,String countryCode) {
         CqApiResponseData cqApiResponseData = gameLogin(platformGameParent, gamePlatform, cptOpenMember, isMobileLogin, countryCode);
         if (null == cqApiResponseData) {
-            return Result.failed("g091087", "第三方请求异常！");
+            return Result.failed("g091087", MessageUtils.get("g091087",countryCode));
         }
         JSONObject jsonStatusObject = JSON.parseObject(cqApiResponseData.getStatus());
         if (null == jsonStatusObject) {
-            return Result.failed("g091087", "第三方请求异常！");
+            return Result.failed("g091087", MessageUtils.get("g091087",countryCode));
         }
         if (("0").equals(jsonStatusObject.getString("code"))) {
             ApiResponseData responseData = new ApiResponseData();
@@ -132,7 +133,7 @@ public class CqServiceImpl implements CqService {
             responseData.setPathUrl(jsonDataObject.getString("url"));
             return Result.success(responseData);
         } else {
-            return errorCode(jsonStatusObject.getString("code"), jsonStatusObject.getString("message"));
+            return errorCode(jsonStatusObject.getString("code"), jsonStatusObject.getString("message"),countryCode);
         }
     }
 
@@ -153,25 +154,26 @@ public class CqServiceImpl implements CqService {
         }else {
             params.put("gameplat", "mobile");
         }
+        String lang = "";
         if(null!=countryCode&&!"".equals(countryCode)){
             switch (countryCode) {
                 case "IN":
-                    countryCode = "en";
+                    lang = "en";
                 case "EN":
-                    countryCode = "en";
+                    lang = "en";
                 case "CN":
-                    countryCode = "zh-cn";
+                    lang = "zh-cn";
                 case "VN":
-                    countryCode = "vn";
+                    lang = "vn";
                 case "TH":
-                    countryCode = "th";
+                    lang = "th";
                 default:
-                    countryCode = platformGameParent.getLanguageType();
+                    lang = platformGameParent.getLanguageType();
             }
         }else{
-            countryCode = platformGameParent.getLanguageType();
+            lang = platformGameParent.getLanguageType();
         }
-        params.put("lang", countryCode);//lang	string	必填	語言代碼，全數支援 zh-cn ,en ，部份遊戲支援 th, zh-tw，確切支援程度請調用遊戲列表 API 回傳資訊
+        params.put("lang", lang);//lang	string	必填	語言代碼，全數支援 zh-cn ,en ，部份遊戲支援 th, zh-tw，確切支援程度請調用遊戲列表 API 回傳資訊
         params.put("session", "");//session	string	選填	SessionID，貴司提供後，我司會帶入此參數去呼叫貴司錢包 Bet, Rollout 或 TakeAll API
         params.put("app", "Y");//app	string	選填	是否是透過app 執行遊戲，Y=是，N=否，預設為N
         params.put("detect", "");//detect	string	選填	是否開啟阻擋不合遊戲規格瀏覽器提示， Y=是，N=否，預設為N
@@ -191,7 +193,7 @@ public class CqServiceImpl implements CqService {
     /**
      * 强迫登出玩家
      */
-    public Result logout(LoginInfo loginUser, String platform, String ip) {
+    public Result logout(LoginInfo loginUser, String platform, String ip,String  countryCode) {
         try {
             GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(platform);
             if (null == platformGameParent) {
@@ -203,16 +205,16 @@ public class CqServiceImpl implements CqService {
             apiUrl.append(OpenAPIProperties.CQ_API_URL).append("/gameboy/player/logout");
             CqApiResponseData cqApiResponseData = commonRequest(apiUrl.toString(), params, loginUser.getId().intValue(), "cqGameLogin");
             if (null == cqApiResponseData) {
-                return Result.failed("g091087", "第三方请求异常！");
+                return Result.failed("g091087", MessageUtils.get("g091087",countryCode));
             }
             JSONObject jsonObject = JSON.parseObject(cqApiResponseData.getStatus());
             if (null == jsonObject) {
-                return Result.failed("g091087", "第三方请求异常！");
+                return Result.failed("g091087", MessageUtils.get("g091087",countryCode));
             }
             if ("0".equals(jsonObject.getString("code"))) {
                 return Result.success(cqApiResponseData);
             } else {
-                return errorCode(jsonObject.getString("code"), jsonObject.getString("message"));
+                return errorCode(jsonObject.getString("code"), jsonObject.getString("message"),countryCode);
             }
         } catch (Exception e) {
             logger.error("cqlog cqlogout:{}", e);
@@ -241,79 +243,79 @@ public class CqServiceImpl implements CqService {
     }
 
 
-    public Result errorCode(String errorCode, String errorMessage) {
+    public Result errorCode(String errorCode, String errorMessage,String  countryCode) {
         if ("0".equals(errorCode)) {
-            return Result.failed("g091123", errorMessage);
+            return Result.failed("g091123", MessageUtils.get("g091123",countryCode));
         } else if ("1".equals(errorCode)) {
-            return Result.failed("g300004", errorMessage);
+            return Result.failed("g300004", MessageUtils.get("g300004",countryCode));
         } else if ("2".equals(errorCode)) {
-            return Result.failed("g091124", errorMessage);
+            return Result.failed("g091124", MessageUtils.get("g091124",countryCode));
         } else if ("3".equals(errorCode)) {
-            return Result.failed("g091008", errorMessage);
+            return Result.failed("g091008", MessageUtils.get("g091008",countryCode));
         } else if ("4".equals(errorCode)) {
-            return Result.failed("g091125", errorMessage);
+            return Result.failed("g091125", MessageUtils.get("g091125",countryCode));
         } else if ("5".equals(errorCode)) {
-            return Result.failed("g000007", errorMessage);
+            return Result.failed("g000007", MessageUtils.get("g000007",countryCode));
         } else if ("6".equals(errorCode)) {
-            return Result.failed("g100003", errorMessage);
+            return Result.failed("g100003", MessageUtils.get("g100003",countryCode));
         } else if ("8".equals(errorCode)) {
-            return Result.failed("g091068", errorMessage);
+            return Result.failed("g091068", MessageUtils.get("g091068",countryCode));
         } else if ("9".equals(errorCode)) {
-            return Result.failed("g091126", errorMessage);
+            return Result.failed("g091126", MessageUtils.get("g091126",countryCode));
         } else if ("10".equals(errorCode)) {
-            return Result.failed("g091024", errorMessage);
+            return Result.failed("g091024", MessageUtils.get("g091024",countryCode));
         } else if ("11".equals(errorCode)) {
-            return Result.failed("g091034", errorMessage);
+            return Result.failed("g091034", MessageUtils.get("g091034",countryCode));
         } else if ("12".equals(errorCode)) {
-            return Result.failed("g091127", errorMessage);
+            return Result.failed("g091127", MessageUtils.get("g091127",countryCode));
         } else if ("13".equals(errorCode)) {
-            return Result.failed("g091033", errorMessage);
+            return Result.failed("g091033", MessageUtils.get("g091033",countryCode));
         } else if ("14".equals(errorCode)) {
-            return Result.failed("g091097", errorMessage);
+            return Result.failed("g091097", MessageUtils.get("g091097",countryCode));
         } else if ("15".equals(errorCode)) {
-            return Result.failed("g091128", errorMessage);
+            return Result.failed("g091128", MessageUtils.get("g091128",countryCode));
         } else if ("16".equals(errorCode)) {
-            return Result.failed("g091129", errorMessage);
+            return Result.failed("g091129", MessageUtils.get("g091129",countryCode));
         } else if ("23".equals(errorCode)) {
-            return Result.failed("g000001", errorMessage);
+            return Result.failed("g000001", MessageUtils.get("g000001",countryCode));
         } else if ("24".equals(errorCode)) {
-            return Result.failed("g091130", errorMessage);
+            return Result.failed("g091130", MessageUtils.get("g091130",countryCode));
         } else if ("28".equals(errorCode)) {
-            return Result.failed("g100005", errorMessage);
+            return Result.failed("g100005", MessageUtils.get("g100005",countryCode));
         } else if ("29".equals(errorCode)) {
-            return Result.failed("g091131", errorMessage);
+            return Result.failed("g091131", MessageUtils.get("g091131",countryCode));
         } else if ("31".equals(errorCode)) {
-            return Result.failed("g100005", errorMessage);
+            return Result.failed("g100005", MessageUtils.get("g100005",countryCode));
         } else if ("33".equals(errorCode)) {
-            return Result.failed("g091132", errorMessage);
+            return Result.failed("g091132", MessageUtils.get("g091132",countryCode));
         } else if ("35".equals(errorCode)) {
-            return Result.failed("g091133", errorMessage);
+            return Result.failed("g091133", MessageUtils.get("g091133",countryCode));
         } else if ("100".equals(errorCode)) {
-            return Result.failed("g091134", errorMessage);
+            return Result.failed("g091134", MessageUtils.get("g091134",countryCode));
         } else if ("101".equals(errorCode)) {
-            return Result.failed("g091090", errorMessage);
+            return Result.failed("g091090", MessageUtils.get("g091090",countryCode));
         } else if ("102".equals(errorCode)) {
-            return Result.failed("g091135", errorMessage);
+            return Result.failed("g091135", MessageUtils.get("g091135",countryCode));
         } else if ("103".equals(errorCode)) {
-            return Result.failed("g091136", errorMessage);
+            return Result.failed("g091136", MessageUtils.get("g091136",countryCode));
         } else if ("104".equals(errorCode)) {
-            return Result.failed("g091137", errorMessage);
+            return Result.failed("g091137", MessageUtils.get("g091137",countryCode));
         } else if ("105".equals(errorCode)) {
-            return Result.failed("g091138", errorMessage);
+            return Result.failed("g091138", MessageUtils.get("g091138",countryCode));
         } else if ("106".equals(errorCode)) {
-            return Result.failed("g091139", errorMessage);
+            return Result.failed("g091139", MessageUtils.get("g091139",countryCode));
         } else if ("107".equals(errorCode)) {
-            return Result.failed("g091140", errorMessage);
+            return Result.failed("g091140", MessageUtils.get("g091140",countryCode));
         } else if ("108".equals(errorCode)) {
-            return Result.failed("g091141", errorMessage);
+            return Result.failed("g091141", MessageUtils.get("g091141",countryCode));
         } else if ("200".equals(errorCode)) {
-            return Result.failed("g091142", errorMessage);
+            return Result.failed("g091142", MessageUtils.get("g091142",countryCode));
         } else if ("201".equals(errorCode)) {
-            return Result.failed("g091143", errorMessage);
+            return Result.failed("g091143", MessageUtils.get("g091143",countryCode));
         } else if ("202".equals(errorCode)) {
-            return Result.failed("g091144", errorMessage);
+            return Result.failed("g091144", MessageUtils.get("g091144",countryCode));
         } else {
-            return Result.failed("g009999", errorMessage);
+            return Result.failed("g009999", MessageUtils.get("g009999",countryCode));
         }
     }
 }

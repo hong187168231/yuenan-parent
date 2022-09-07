@@ -15,6 +15,6 @@ public interface JdbService {
     /**
      * AE真人、SV388斗鸡游戏 强迫登出玩家
      */
-    public Result logout(LoginInfo loginUser,String ip);
+    public Result logout(LoginInfo loginUser,String ip,String countryCode);
 
 }

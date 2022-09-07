@@ -7,6 +7,7 @@ import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
 import com.indo.common.utils.GameUtil;
 import com.indo.common.utils.encrypt.MD5;
+import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.core.pojo.entity.game.GameParentPlatform;
 import com.indo.core.pojo.entity.game.GamePlatform;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
@@ -42,35 +43,35 @@ public class SGWinServiceImpl implements SGWinService {
         // 是否开售校验
         GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(parentName);
         if (null == platformGameParent) {
-            return Result.failed("(" + parentName + ")游戏平台不存在");
+            return Result.failed("g100101", MessageUtils.get("g100101",countryCode));
         }
         if ("0".equals(platformGameParent.getIsStart())) {
-            return Result.failed("g" + "100101", "游戏平台未启用");
+            return Result.failed("g100101", MessageUtils.get("g100101",countryCode));
         }
         if ("1".equals(platformGameParent.getIsOpenMaintenance())) {
-            return Result.failed("g000001", platformGameParent.getMaintenanceContent());
+            return Result.failed("g000001", MessageUtils.get("g000001",countryCode));
         }
         GamePlatform gamePlatform = new GamePlatform();
         if (!platform.equals(parentName)) {
             // 是否开售校验
             gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
             if (null == gamePlatform) {
-                return Result.failed("(" + platform + ")平台游戏不存在");
+                return Result.failed("g100102", MessageUtils.get("g100102",countryCode));
             }
             if ("0".equals(gamePlatform.getIsStart())) {
-                return Result.failed("g" + "100102", "游戏未启用");
+                return Result.failed("g100102", MessageUtils.get("g100102",countryCode));
             }
             if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
-                return Result.failed("g091047", gamePlatform.getMaintenanceContent());
+                return Result.failed("g091047", MessageUtils.get("g091047",countryCode));
             }
         }
-        BigDecimal balance = loginUser.getBalance();
-        //验证站点棋牌余额
-        if (null == balance || BigDecimal.ZERO.equals(balance)) {
-            logger.info("站点SGWin余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
-            //站点棋牌余额不足
-            return Result.failed("g300004", "会员余额不足");
-        }
+//        BigDecimal balance = loginUser.getBalance();
+//        //验证站点棋牌余额
+//        if (null == balance || BigDecimal.ZERO.equals(balance)) {
+//            logger.info("站点SGWin余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
+//            //站点棋牌余额不足
+//            return Result.failed("g300004", MessageUtils.get("g300004",countryCode));
+//        }
         try {
 
             // 验证且绑定（AE-CPT第三方会员关系）
@@ -87,7 +88,7 @@ public class SGWinServiceImpl implements SGWinService {
             } else {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
-                logout(loginUser, platform, ip);
+                logout(loginUser, platform, ip, countryCode);
             }
 
             SgwinApiResp sgwinApiResp = gameLogin( cptOpenMember);
@@ -106,12 +107,12 @@ public class SGWinServiceImpl implements SGWinService {
                 responseData.setPathUrl(url);
                 return Result.success(responseData);
             }else {
-                return this.errorCode(sgwinApiResp.getError(),sgwinApiResp.getMessage());
+                return this.errorCode(sgwinApiResp.getError(),sgwinApiResp.getMessage(), countryCode);
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.failed("g100104", "网络繁忙，请稍后重试！");
+            return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
         }
     }
 
@@ -157,7 +158,7 @@ public class SGWinServiceImpl implements SGWinService {
      * 强迫登出玩家
      */
     @Override
-    public Result logout(LoginInfo loginUser, String platform, String ip) {
+    public Result logout(LoginInfo loginUser, String platform, String ip,String countryCode) {
         try {
             StringBuilder params = new StringBuilder();
             params.append("agentID").append("=").append(OpenAPIProperties.SGWIN_AGENT_ID);
@@ -176,7 +177,7 @@ public class SGWinServiceImpl implements SGWinService {
             if(sgwinApiResp.getSuccess()){
                 return Result.success();
             }else {
-                return this.errorCode(sgwinApiResp.getError(),sgwinApiResp.getMessage());
+                return this.errorCode(sgwinApiResp.getError(),sgwinApiResp.getMessage(), countryCode);
             }
         } catch (Exception e) {
             logger.error("BLlog  BLlogout:{}", e);
@@ -197,29 +198,29 @@ public class SGWinServiceImpl implements SGWinService {
         }
         return sgwinApiResp;
     }
-    public Result errorCode(String errorCode, String errorMessage) {
+    public Result errorCode(String errorCode, String errorMessage,String countryCode) {
         if ("E0016.member.offline".equals(errorCode)) {//会员不在线
-            return Result.failed("g091088", errorMessage);
+            return Result.failed("g091088", MessageUtils.get("\"g091088\"",countryCode));
         }else if ("E0003.user.not.found".equals(errorCode)) {//用户不存在
-            return Result.failed("g010001", errorMessage);
+            return Result.failed("g010001", MessageUtils.get("g010001",countryCode));
         }else  if ("E0015.validate.username".equals(errorCode)) {//请输入帐号
-            return Result.failed("g000007", errorMessage);
+            return Result.failed("g000007", MessageUtils.get("g000007",countryCode));
         }else  if ("E0003.user.not.found".equals(errorCode)) {//只输入英文字母和数字
-            return Result.failed("g100002", errorMessage);
+            return Result.failed("g100002", MessageUtils.get("g100002",countryCode));
         }else  if ("E0018.validate.username.length".equals(errorCode)) {//用户名要最少2个字位
-            return Result.failed("g100002", errorMessage);
+            return Result.failed("g100002", MessageUtils.get("g100002",countryCode));
         }else  if ("E0019.validate.username.length.max.32".equals(errorCode)) {//帐号最多32位
-            return Result.failed("g100002", errorMessage);
+            return Result.failed("g100002", MessageUtils.get("g100002",countryCode));
         }else  if ("E0020.validate.account.exist".equals(errorCode)) {//帐号已存在
-            return Result.failed("g100003", errorMessage);
+            return Result.failed("g100003", MessageUtils.get("g100003",countryCode));
         }else  if ("E0025.validate.users.range".equals(errorCode)) {//盘口不能为空
-            return Result.failed("g000007", errorMessage);
+            return Result.failed("g000007", MessageUtils.get("g000007",countryCode));
         }else  if ("E0015.login.error.status.5".equals(errorCode)) {//抱歉!你的帐号被停用了。
-            return Result.failed("g200002", errorMessage);
+            return Result.failed("g200002", MessageUtils.get("g200002",countryCode));
         }else  if ("E0022.validate.users.range".equals(errorCode)) {//盘口{X}不可使用。{X}为 A, B, C, D
-            return Result.failed("g100110", errorMessage);
+            return Result.failed("g100110", MessageUtils.get("g100110",countryCode));
         }else{
-            return Result.failed("g009999", errorMessage);
+            return Result.failed("g009999", MessageUtils.get("g009999",countryCode));
         }
     }
 }

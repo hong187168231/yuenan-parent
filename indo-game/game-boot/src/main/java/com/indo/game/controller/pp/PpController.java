@@ -37,10 +37,11 @@ public class PpController {
     @ResponseBody
     @AllowAccess
     public Object transfer(PpApiTransferReq ppApiTransferReq, HttpServletRequest request) {
-
+//        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+        String countryCode = request.getHeader("countryCode");
         String ip = IPAddressUtil.getIpAddress(request);
         logger.info("ppController  transfer ,params:{}", JSONObject.toJSONString(ppApiTransferReq));
-        Object object = ppService.transfer(ppApiTransferReq, ip);
+        Object object = ppService.transfer(ppApiTransferReq, ip,countryCode);
         logger.info("ppController  transfer 余额存取返回数据 params:{}", JSONObject.toJSONString(object));
         return object;
     }
@@ -52,10 +53,11 @@ public class PpController {
     @ResponseBody
     @AllowAccess
     public Object getBalance(PpApiGetBalanceReq ppApiGetBalanceReq, HttpServletRequest request) {
-
+//        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+        String countryCode = request.getHeader("countryCode");
         String ip = IPAddressUtil.getIpAddress(request);
         logger.info("ppController  getBalance ,params:{}", JSONObject.toJSONString(ppApiGetBalanceReq));
-        Object object = ppService.getBalance(ppApiGetBalanceReq, ip);
+        Object object = ppService.getBalance(ppApiGetBalanceReq, ip,countryCode);
         logger.info("ppController  getBalance 获取余额返回数据 params:{}", JSONObject.toJSONString(object));
         return object;
     }
@@ -67,10 +69,11 @@ public class PpController {
     @ResponseBody
     @AllowAccess
     public Object startGame(PpApiStartGameReq ppApiStartGameReq, HttpServletRequest request) {
-
+//        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+        String countryCode = request.getHeader("countryCode");
         String ip = IPAddressUtil.getIpAddress(request);
         logger.info("ppController  startGame ,params:{}", JSONObject.toJSONString(ppApiStartGameReq));
-        Object object = ppService.startGame(ppApiStartGameReq, ip);
+        Object object = ppService.startGame(ppApiStartGameReq, ip,countryCode);
         logger.info("ppController  startGame 启动游戏返回数据 params:{}", JSONObject.toJSONString(object));
         return object;
     }

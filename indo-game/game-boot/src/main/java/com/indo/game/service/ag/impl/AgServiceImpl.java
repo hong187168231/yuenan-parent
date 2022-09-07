@@ -4,6 +4,7 @@ import com.indo.common.config.OpenAPIProperties;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
 import com.indo.common.utils.GameUtil;
+import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.core.mapper.game.GameCategoryMapper;
 import com.indo.core.mapper.game.GamePlatformMapper;
 import com.indo.core.pojo.bo.MemTradingBO;
@@ -60,37 +61,37 @@ public class AgServiceImpl implements AgService {
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
         if (null == gameParentPlatform) {
-            return Result.failed("(" + parentName + ")平台不存在");
+            return Result.failed("g100101", MessageUtils.get("g100101",countryCode));
         }
         if (0==gameParentPlatform.getIsStart()) {
-            return Result.failed("g100101", "平台未启用");
+            return Result.failed("g100101", MessageUtils.get("g100101",countryCode));
         }
         if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
-            return Result.failed("g000001", gameParentPlatform.getMaintenanceContent());
+            return Result.failed("g000001", MessageUtils.get("g000001",countryCode));
         }
         // 是否开售校验
         GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
         if (null == gamePlatform) {
-            return Result.failed("(" + platform + ")游戏不存在");
+            return Result.failed("g100102", MessageUtils.get("g100102",countryCode));
         }
         if (0==gamePlatform.getIsStart()) {
-            return Result.failed("g100102", "游戏未启用");
+            return Result.failed("g100102", MessageUtils.get("g100102",countryCode));
         }
         if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
-            return Result.failed("g091047", gamePlatform.getMaintenanceContent());
+            return Result.failed("g091047", MessageUtils.get("g091047",countryCode));
         }
         //初次判断站点棋牌余额是否够该用户
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(loginUser.getAccount());
         if (null==memBaseinfo){
-            return Result.failed("g010001",loginUser.getAccount()+"用户不存在");
+            return Result.failed("g010001",MessageUtils.get("g010001",countryCode));
         }
-        BigDecimal balance = memBaseinfo.getBalance();
-        //验证站点棋牌余额
-        if (null==balance || BigDecimal.ZERO==balance) {
-            logger.info("站点ag余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
-            //站点棋牌余额不足
-            return Result.failed("g300004","会员余额不足");
-        }
+//        BigDecimal balance = memBaseinfo.getBalance();
+//        //验证站点棋牌余额
+//        if (null==balance || BigDecimal.ZERO==balance) {
+//            logger.info("站点ag余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
+//            //站点棋牌余额不足
+//            return Result.failed("g300004",MessageUtils.get("g300004",countryCode));
+//        }
 
         try {
 
@@ -107,7 +108,7 @@ public class AgServiceImpl implements AgService {
                 //创建玩家
                 return createMemberGame(gameParentPlatform,gamePlatform, ip, cptOpenMember,isMobileLogin, countryCode);
             } else {
-                this.logout(loginUser,ip);
+                this.logout(loginUser,ip, countryCode);
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
                 //登录
@@ -115,14 +116,14 @@ public class AgServiceImpl implements AgService {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.failed("g100104","网络繁忙，请稍后重试！");
+            return Result.failed("g100104",MessageUtils.get("g100104",countryCode));
         }
     }
 
     /**
      * AE真人、SV388斗鸡游戏 强迫登出玩家
      */
-    public Result logout(LoginInfo loginUser,String ip){
+    public Result logout(LoginInfo loginUser,String ip,String countryCode){
         Map<String, String> trr = new HashMap<>();
         trr.put("userIds", loginUser.getAccount());
 
@@ -136,7 +137,7 @@ public class AgServiceImpl implements AgService {
 //            logger.info("aglog  createMember创建玩家加密后 param:{},url:{} ", paramStr,OpenAPIProperties.AG_API_URL+"/doBusiness.do");
 //            String resultString = commonRequest(trr, OpenAPIProperties.AG_API_URL+"/wallet/logout",);
 //            if (null == resultString || "".equals(resultString) ) {
-//                return Result.failed("g100104","网络繁忙，请稍后重试！");
+//                return Result.failed("g100104",MessageUtils.get("g100104",countryCode));
 //            }
 //            Document doc = commonXml(resultString);
 //            String errorCode = doc.getElementsByTagName("info").item(0).getTextContent();
@@ -149,7 +150,7 @@ public class AgServiceImpl implements AgService {
             return null;
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.failed("g100104","网络繁忙，请稍后重试！");
+            return Result.failed("g100104",MessageUtils.get("g100104",countryCode));
         }
 
     }
@@ -160,7 +161,7 @@ public class AgServiceImpl implements AgService {
     private Result initGame(GameParentPlatform gameParentPlatform,GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember,String isMobileLogin,String countryCode) throws Exception {
         String resultString = game(gameParentPlatform,gamePlatform, ip, cptOpenMember,isMobileLogin, countryCode);
         if (null == resultString || "".equals(resultString) ) {
-            return Result.failed("g100104","网络繁忙，请稍后重试！");
+            return Result.failed("g100104",MessageUtils.get("g100104",countryCode));
         }
         Document doc = commonXml(resultString);
         String errorCode = doc.getElementsByTagName("info").item(0).getTextContent();
@@ -168,7 +169,7 @@ public class AgServiceImpl implements AgService {
         if (StringUtils.isNotEmpty(errorCode) && errorCode.equals("0")) {
             return Result.success();
         }else {
-            return errorCode(errorCode,msg);
+            return errorCode(errorCode,msg, countryCode);
         }
     }
     /**
@@ -177,7 +178,7 @@ public class AgServiceImpl implements AgService {
     private Result createMemberGame(GameParentPlatform gameParentPlatform,GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember,String isMobileLogin, String countryCode) throws Exception {
         String resultString = createMember(gameParentPlatform,gamePlatform, ip, cptOpenMember);
         if (null == resultString || "".equals(resultString) ) {
-            return Result.failed("g100104","网络繁忙，请稍后重试！");
+            return Result.failed("g100104",MessageUtils.get("g100104",countryCode));
         }
         Document doc = commonXml(resultString);
         String errorCode = doc.getElementsByTagName("info").item(0).getTextContent();
@@ -185,7 +186,7 @@ public class AgServiceImpl implements AgService {
         if (StringUtils.isNotEmpty(errorCode) && errorCode.equals("0")) {
             return Result.success();
         }else {
-            return errorCode(errorCode,msg);
+            return errorCode(errorCode,msg, countryCode);
         }
     }
 
@@ -234,28 +235,29 @@ public String createSession(BigDecimal balance, CptOpenMember cptOpenMember) {
     public String game(GameParentPlatform gameParentPlatform,GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember,String isMobileLogin,String countryCode) {
         try {
             //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+            String lang = "";
             if(null!=countryCode&&!"".equals(countryCode)){
                 switch (countryCode) {
                     case "IN":
-                        countryCode = "3";
+                        lang = "3";
                     case "EN":
-                        countryCode = "3";
+                        lang = "3";
                     case "CN":
-                        countryCode = "1";
+                        lang = "1";
                     case "VN":
-                        countryCode = "4";
+                        lang = "4";
                     case "TW":
-                        countryCode = "2";
+                        lang = "2";
                     default:
-                        countryCode = gameParentPlatform.getLanguageType();
+                        lang = gameParentPlatform.getLanguageType();
                 }
             }else{
-                countryCode = gameParentPlatform.getLanguageType();
+                lang = gameParentPlatform.getLanguageType();
             }
             String paramStr = "cagent="+OpenAPIProperties.AG_CAGENT+"/\\\\\\\\/loginname="+cptOpenMember.getUserName()+
                     "/\\\\\\\\/method=lg/\\\\\\\\/actype=0/\\\\\\\\/" +
                     "password="+cptOpenMember.getUserName()+"/\\\\\\\\/dm=" +
-                    "/\\\\\\\\/sid="+OpenAPIProperties.AG_SID_KEY+"/\\\\\\\\/lang="+countryCode+
+                    "/\\\\\\\\/sid="+OpenAPIProperties.AG_SID_KEY+"/\\\\\\\\/lang="+lang+
                     "/\\\\\\\\/gameType=0/\\\\\\\\/oddtype="+gamePlatform.getBetLimit()+"/\\\\\\\\/cur="+gameParentPlatform.getCurrencyType();
             logger.info("aglog  createMember创建玩家加密前 paramStr:{}", paramStr);
             String param = AGEncrypt.encryptDes(paramStr,OpenAPIProperties.AG_API_KEY);
@@ -293,27 +295,27 @@ public String createSession(BigDecimal balance, CptOpenMember cptOpenMember) {
         }
     }
 
-    public Result  errorCode(String errorCode,String errorMessage){
+    public Result  errorCode(String errorCode,String errorMessage,String countryCode){
         if ("key_error".equals(errorCode)){//Key值(参考3.1.1)为错误
-            return Result.failed("g000005",errorMessage);
+            return Result.failed("g091061",MessageUtils.get("g091061",countryCode));
         }else if ("network_error ".equals(errorCode)){//网络问题导致资料遗失
-            return Result.failed("0000",errorMessage);
+            return Result.failed("g100104",MessageUtils.get("g100104",countryCode));
         }else if ("account_add_fail".equals(errorCode)){//创建新账号失败, 可能是密码不正确或账号已存在
-            return Result.failed("g090010",errorMessage);
+            return Result.failed("g100003", MessageUtils.get("g100003",countryCode));
         }if ("key_error".equals(errorCode)){//Key值(参考3.1.1)为错误
-            return Result.failed("g000005",errorMessage);
+            return Result.failed("g091061",MessageUtils.get("g091061",countryCode));
         }if ("1000".equals(errorCode)){//缺少必要的参数.
-            return Result.failed("g000005",errorMessage);
+            return Result.failed("g000007",MessageUtils.get("g000007",countryCode));
         }if ("1016".equals(errorCode)){//玩家账户是禁用状态的
-            return Result.failed("g000005",errorMessage);
+            return Result.failed("g200003",MessageUtils.get("g200003",countryCode));
         }if ("2002".equals(errorCode)){//该玩家账户是不存在的
-            return Result.failed("g000005",errorMessage);
+            return Result.failed("g010001",MessageUtils.get("g010001",countryCode));
         }if ("2003".equals(errorCode)){//该产品编码不支持单一钱包功能
-            return Result.failed("g000005",errorMessage);
+            return Result.failed("g000002",MessageUtils.get("g000002",countryCode));
         }if ("9999".equals(errorCode)){//发送请求后, 服务器出现错误.
-            return Result.failed("g000005",errorMessage);
+            return Result.failed("g009999",MessageUtils.get("g009999",countryCode));
         }else {//其他错误, 请联络我们，参看msg错误描述信息
-            return Result.failed("g090011",errorMessage);
+            return Result.failed("g009999",MessageUtils.get("g009999",countryCode));
         }
 
     }

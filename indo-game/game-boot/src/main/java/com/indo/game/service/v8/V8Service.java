@@ -15,7 +15,7 @@ public interface V8Service {
     /**
      * V8电子游戏 强迫登出玩家
      */
-    Result logout(LoginInfo loginUser,String platform, String ip);
+    Result logout(LoginInfo loginUser,String platform, String ip,String countryCode);
 
     /**
      * V8游戏下分
@@ -25,7 +25,7 @@ public interface V8Service {
      * @param ip ip
      * @return Result
      */
-    Result crebit(LoginInfo loginUser, String platform, BigDecimal money, String ip);
+    Result crebit(LoginInfo loginUser, String platform, BigDecimal money, String ip,String countryCode);
 
     /**
      * V8游戏玩家总分
@@ -34,5 +34,5 @@ public interface V8Service {
      * @param ip ip
      * @return Result
      */
-    Result balance(LoginInfo loginUser, String platform, String ip);
+    Result balance(LoginInfo loginUser, String platform, String ip,String countryCode);
 }

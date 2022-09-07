@@ -13,5 +13,5 @@ public interface TCGWinService {
     /**
      * sa游戏 强迫登出玩家
      */
-    Result logout(LoginInfo loginUser, String platform, String ip);
+    Result logout(LoginInfo loginUser, String platform, String ip,String countryCode);
 }
