@@ -315,6 +315,10 @@ public class TakeCashServiceImpl extends SuperServiceImpl<TakeCashMapper, PayTak
 
     private boolean updateBanlaceAndCanAmount(String account, BigDecimal amount) {
         Result<Boolean>  result = memBaseInfoFeignClient.takeCashApply(account, amount);
-        return result.getData();
+        if (Result.success().getCode().equals(result.getCode())) {
+            return true;
+        } else {
+            throw new BizException("update member banlace and CanAmount error: " + account);
+        }
     }
 }

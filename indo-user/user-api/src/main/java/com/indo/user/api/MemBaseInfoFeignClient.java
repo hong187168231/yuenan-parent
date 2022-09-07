@@ -21,6 +21,6 @@ public interface MemBaseInfoFeignClient {
 
 
     @PostMapping("/rpc/memBaseInfo/takeCash/apply")
-    Result<Boolean> takeCashApply(String account, BigDecimal amount);
+    Result<Boolean> takeCashApply(@RequestParam("account")String account, @RequestParam("amount")BigDecimal amount);
 
 }
