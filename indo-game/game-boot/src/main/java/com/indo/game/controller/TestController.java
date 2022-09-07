@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 
 @RestController
@@ -31,9 +32,10 @@ public class TestController {
     @ApiOperation(value = "游戏记录", httpMethod = "GET")
     @GetMapping(value = "/hello")
     @AllowAccess
-    public Result<?> queryGameRecord() {
-
-        System.out.println("test1:"+MessageUtils.get("networktimeout"));
+    public Result<?> queryGameRecord(HttpServletRequest request) {
+        String countryCode = request.getHeader("countryCode");
+        System.out.println("test1:"+countryCode);
+        System.out.println("test2:"+MessageUtils.get("networktimeout",countryCode));
         return null;
     }
 

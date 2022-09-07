@@ -24,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -83,9 +84,11 @@ public class GameManageController {
     @ApiOperation(value = "查询所有平台记录", httpMethod = "POST")
     @PostMapping(value = "/allGameInfoCount",produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public Result<List<GameStatiRecord>> queryAllGameInfoCount(@LoginUser LoginInfo loginUser, GameInfoPageReq req) {
+    public Result<List<GameStatiRecord>> queryAllGameInfoCount(@LoginUser LoginInfo loginUser, GameInfoPageReq req,HttpServletRequest request) {
+        //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+        String countryCode = request.getHeader("countryCode");
         if (loginUser == null || StringUtils.isBlank(loginUser.getAccount())) {
-            return Result.failed(MessageUtils.get("youarenotloggedin"));
+            return Result.failed("g091111",MessageUtils.get("g091111",countryCode));
         }
         req.setUserAcct(loginUser.getAccount());
         log.info("查询所有平台记录allGameInfoCount 请求 req:{}", JSONObject.toJSONString(req));
@@ -97,9 +100,11 @@ public class GameManageController {
     @ApiOperation(value = "查询所有游戏记录", httpMethod = "POST")
     @PostMapping(value = "/allGameInfo",produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public Result<List<GameInfoRecord>> queryAllGameInfo(@LoginUser LoginInfo loginUser, GameInfoPageReq req) {
+    public Result<List<GameInfoRecord>> queryAllGameInfo(@LoginUser LoginInfo loginUser, GameInfoPageReq req,HttpServletRequest request) {
+        //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+        String countryCode = request.getHeader("countryCode");
         if (loginUser == null || StringUtils.isBlank(loginUser.getAccount())) {
-            return Result.failed(MessageUtils.get("youarenotloggedin"));
+            return Result.failed("g091111",MessageUtils.get("g091111",countryCode));
         }
         req.setUserAcct(loginUser.getAccount());
         log.info("查询所有游戏记录queryAllGameInfo请求 req:{}", JSONObject.toJSONString(req));
@@ -111,9 +116,11 @@ public class GameManageController {
     @ApiOperation(value = "查询代理游戏记录", httpMethod = "POST")
     @PostMapping(value = "/allAgentGameInfo",produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public Result<List<GameInfoAgentRecord>> queryAllAgentGameInfo(@LoginUser LoginInfo loginUser, GameInfoPageReq req) {
+    public Result<List<GameInfoAgentRecord>> queryAllAgentGameInfo(@LoginUser LoginInfo loginUser, GameInfoPageReq req, HttpServletRequest request) {
+        //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+        String countryCode = request.getHeader("countryCode");
         if (loginUser == null || StringUtils.isBlank(loginUser.getAccount())) {
-            return Result.failed(MessageUtils.get("youarenotloggedin"));
+            return Result.failed("g091111",MessageUtils.get("g091111",countryCode));
         }
         req.setUserAcct(loginUser.getAccount());
         log.info("查询代理游戏记录queryAllAgentGameInfo请求 req:{}", JSONObject.toJSONString(req));
