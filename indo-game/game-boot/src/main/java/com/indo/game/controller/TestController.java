@@ -34,6 +34,7 @@ public class TestController {
     @AllowAccess
     public Result<?> queryGameRecord(HttpServletRequest request) {
         String countryCode = request.getHeader("countryCode");
+        System.out.println("test18:");
         System.out.println("test1:"+countryCode);
         System.out.println("test2:"+MessageUtils.get("networktimeout",countryCode));
         return null;

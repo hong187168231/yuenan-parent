@@ -94,7 +94,7 @@ public class PayManualRechargeServiceImpl extends SuperServiceImpl<PayManualRech
             if(operateType.equals(2)){
                 payManualRecharge.setAfterAmount(memBaseinfo.getBalance().subtract(operateAmount));
             }
-            payManualRecharge.setCreateUser("JwtUtils.getUsername()");
+            payManualRecharge.setCreateUser(JwtUtils.getUsername());
             payManualRecharge.setCreateTime(new Date());
             payManualRecharge.setRemarks(remarks);
             if (baseMapper.insert(payManualRecharge) > 0) {
