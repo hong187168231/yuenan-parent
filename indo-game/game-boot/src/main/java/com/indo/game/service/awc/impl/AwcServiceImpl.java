@@ -282,13 +282,15 @@ public class AwcServiceImpl implements AwcService {
 //            ja_JP	日文
 //            vi_VN	越南文
             trr.put("language", countryCode);
-            String url = "/wallet/login";
-            if(!gameParentPlatform.getPlatformCode().equals(gamePlatform.getParentName())) {
-                url = "/wallet/doLoginAndLaunchGame";
-                trr.put("gameCode", gamePlatform.getPlatformCode());//平台游戏代码
-            }else {
-                trr.put("gameForbidden", "");//指定对玩家隐藏游戏平台，您仅能透过 API 执行这个动作
-            }
+//            String url = "/wallet/login";
+//            if(!gameParentPlatform.getPlatformCode().equals(gamePlatform.getParentName())) {
+//                url = "/wallet/doLoginAndLaunchGame";
+//                trr.put("gameCode", gamePlatform.getPlatformCode());//平台游戏代码
+//            }else {
+//                trr.put("gameForbidden", "");//指定对玩家隐藏游戏平台，您仅能透过 API 执行这个动作
+//            }
+            String url = "/wallet/doLoginAndLaunchGame";
+            trr.put("gameCode", "MX-LIVE-001");//平台游戏代码
 //                String str[] = gamePlatform.getPlatformCode().split("_");
 //                trr.put("platform", str[0]);//游戏平台名称
                 trr.put("platform", "SEXYBCRT");//游戏平台名称
