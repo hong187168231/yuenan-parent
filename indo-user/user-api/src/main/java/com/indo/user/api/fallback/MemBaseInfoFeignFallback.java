@@ -8,6 +8,8 @@ import com.indo.core.pojo.bo.MemTradingBO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.openfeign.FallbackFactory;
 
+import java.math.BigDecimal;
+
 @Slf4j
 public class MemBaseInfoFeignFallback implements FallbackFactory<MemBaseInfoFeignClient> {
 
@@ -26,6 +28,12 @@ public class MemBaseInfoFeignFallback implements FallbackFactory<MemBaseInfoFeig
             public Result<MemTradingBO> getMemTradingInfo(String account) {
                 return Result.failed(ResultCode.DEGRADATION);
             }
+
+            @Override
+            public Result<Boolean> takeCashApply(String account, BigDecimal amount) {
+                return Result.failed(ResultCode.DEGRADATION);
+            }
+
         };
     }
 }

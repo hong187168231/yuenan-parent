@@ -6,6 +6,7 @@ import com.indo.user.service.AppMemBaseInfoService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 
 
 /**
@@ -28,6 +29,10 @@ public class MemBaseInfoRpc {
         return Result.success(memBaseInfoService.tradingInfo(account));
     }
 
+    @PostMapping("/takeCash/apply")
+    public Result<Boolean> takeCashApply(String account, BigDecimal amount) {
+        return Result.success(memBaseInfoService.updateBanlaceAndCanAmount(account, amount));
+    }
 
 }
     

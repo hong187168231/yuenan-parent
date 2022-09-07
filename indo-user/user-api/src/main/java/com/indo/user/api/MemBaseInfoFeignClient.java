@@ -9,6 +9,8 @@ import com.indo.user.api.fallback.MemBaseInfoFeignFallback;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+
 @FeignClient(value = ServiceIdConstant.USER_SERVICE_ID, contextId = "oauth-client",
         fallbackFactory = MemBaseInfoFeignFallback.class, configuration = {KeepErrMsgConfiguration.class})
 public interface MemBaseInfoFeignClient {
@@ -18,6 +20,7 @@ public interface MemBaseInfoFeignClient {
     Result<MemTradingBO> getMemTradingInfo(@PathVariable String account);
 
 
-
+    @PostMapping("/rpc/memBaseInfo/takeCash/apply")
+    Result<Boolean> takeCashApply(String account, BigDecimal amount);
 
 }
