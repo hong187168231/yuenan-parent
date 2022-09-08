@@ -114,6 +114,7 @@ public class V8ServiceImpl implements V8Service {
         try {
 
             String result = GameUtil.httpGetWithCookies(getLoginOutUrl(loginUser.getAccount()), null, null);
+            logger.info("v8Game logout登出返回:result:{}", result);
             JSONObject jsonObject = JSONObject.parseObject(result);
 
             if (null == jsonObject || null == jsonObject.getJSONObject("d")) {
@@ -223,6 +224,7 @@ public class V8ServiceImpl implements V8Service {
         try {
             //
             String result = GameUtil.httpGetWithCookies(getLoginUrl(cptOpenMember.getUserName(), platform, ip,balance), null, null);
+            logger.info("v8Game getLoginUrl登录返回:result:{}", result);
             JSONObject jsonObject = JSONObject.parseObject(result);
 
             if (null == jsonObject || null == jsonObject.getJSONObject("d")) {
