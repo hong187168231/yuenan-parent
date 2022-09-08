@@ -29,10 +29,5 @@ public class MemBaseInfoRpc {
         return Result.success(memBaseInfoService.tradingInfo(account));
     }
 
-    @PostMapping("/takeCash/apply")
-    public Result<Boolean> takeCashApply(String account, BigDecimal amount) {
-        return Result.success(memBaseInfoService.updateBanlaceAndCanAmount(account, amount));
-    }
-
 }
     

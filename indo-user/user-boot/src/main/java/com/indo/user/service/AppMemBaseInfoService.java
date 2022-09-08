@@ -104,6 +104,4 @@ public interface AppMemBaseInfoService extends SuperService<MemBaseinfo> {
      */
     MemTradingBO tradingInfo(String account);
 
-
-	  boolean updateBanlaceAndCanAmount(String account, BigDecimal amount);
 }

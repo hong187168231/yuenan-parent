@@ -406,18 +406,4 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
 		return this.baseMapper.tradingInfo(account);
 	}
 
-	@Override
-	public boolean updateBanlaceAndCanAmount(String account, BigDecimal amount) {
-		MemBaseInfoBO memBaseInfoBO = this.baseMapper.findMemBaseInfoByAccount(account);
-		if (memBaseInfoBO == null  || memBaseInfoBO.getBalance().compareTo(amount) == -1 ||
-				 memBaseInfoBO.getCanAmount().compareTo(amount) == -1) {
-       return false;
-		}
-		LambdaUpdateWrapper<MemBaseinfo> updateWrapper = new LambdaUpdateWrapper<MemBaseinfo>()
-				.eq(MemBaseinfo::getAccount, account);
-		updateWrapper.set(memBaseInfoBO.getBalance().longValue() > 0, MemBaseinfo::getBalance, memBaseInfoBO.getBalance().subtract(amount));
-		updateWrapper.set(memBaseInfoBO.getCanAmount().longValue() > 0, MemBaseinfo::getCanAmount, memBaseInfoBO.getCanAmount().subtract(amount));
-	  return this.update(updateWrapper);
-	}
-
 }

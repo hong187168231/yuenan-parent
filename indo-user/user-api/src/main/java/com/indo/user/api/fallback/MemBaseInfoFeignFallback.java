@@ -28,12 +28,6 @@ public class MemBaseInfoFeignFallback implements FallbackFactory<MemBaseInfoFeig
             public Result<MemTradingBO> getMemTradingInfo(String account) {
                 return Result.failed(ResultCode.DEGRADATION);
             }
-
-            @Override
-            public Result<Boolean> takeCashApply(String account, BigDecimal amount) {
-                return Result.failed(ResultCode.DEGRADATION);
-            }
-
         };
     }
 }
