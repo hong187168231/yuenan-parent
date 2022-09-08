@@ -32,7 +32,9 @@ public class MtController {
         String ip = IPAddressUtil.getIpAddress(request);
         logger.info("MtController allWithdraw, params:{}", params);
         String platform = params.getString("platform");
-        Object object = mtService.allWithdraw(loginUser, platform, ip);
+        //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+        String countryCode = request.getHeader("countryCode");
+        Object object = mtService.allWithdraw(loginUser, platform, ip,countryCode);
         logger.info("MtController allWithdraw 返回数据 params:{}", object);
         return object;
     }
@@ -45,7 +47,9 @@ public class MtController {
         String ip = IPAddressUtil.getIpAddress(request);
         logger.info("MtController getPlayerBalance , params:{}", params);
         String platform = params.getString("platform");
-        Object object = mtService.getPlayerBalance(loginUser, platform, ip);
+        //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+        String countryCode = request.getHeader("countryCode");
+        Object object = mtService.getPlayerBalance(loginUser, platform, ip,countryCode);
         logger.info("MtController getPlayerBalance 返回数据 params:{}", object);
         return object;
     }
@@ -59,7 +63,9 @@ public class MtController {
         logger.info("MtController deposit params:{}", params);
         String platform = params.getString("platform");
         BigDecimal coins = params.getBigDecimal("coins");
-        Object object = mtService.deposit(loginUser, platform, ip, coins);
+        //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+        String countryCode = request.getHeader("countryCode");
+        Object object = mtService.deposit(loginUser, platform, ip, coins,countryCode);
         logger.info("MtController deposit 返回数据 params:{}", object);
         return object;
     }
@@ -73,7 +79,10 @@ public class MtController {
         logger.info("MtController withdraw params:{}", params);
         String platform = params.getString("platform");
         BigDecimal coins = params.getBigDecimal("coins");
-        Object object = mtService.withdraw(loginUser, platform, ip, coins);
+        //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+        String countryCode = request.getHeader("countryCode");
+
+        Object object = mtService.withdraw(loginUser, platform, ip, coins,countryCode);
         logger.info("MtController withdraw 返回数据 params:{}", object);
         return object;
     }

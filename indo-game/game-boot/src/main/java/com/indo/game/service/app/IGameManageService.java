@@ -28,7 +28,7 @@ public interface IGameManageService {
 
     IPage<GameInfoRecord> queryAllGameInfo(GameInfoPageReq req);
 
-    Result<List<GameInfoAgentRecord>> queryAllAgentGameInfo(LoginInfo loginUser,GameInfoPageReq req);
+    Result<List<GameInfoAgentRecord>> queryAllAgentGameInfo(LoginInfo loginUser,GameInfoPageReq req,String countryCode);
 
     public List<GameParentPlatform> queryAllGameParentPlatform();
 

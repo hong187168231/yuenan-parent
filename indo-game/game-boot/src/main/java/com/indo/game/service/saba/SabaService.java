@@ -17,7 +17,7 @@ public interface SabaService {
     /**
      * saba Sports登出玩家
      */
-    Result logout(LoginInfo loginUser, String ip);
+    Result logout(LoginInfo loginUser, String ip,String countryCode);
 
 
 }

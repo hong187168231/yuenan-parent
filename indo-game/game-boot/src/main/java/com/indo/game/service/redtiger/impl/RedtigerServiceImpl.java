@@ -7,6 +7,7 @@ import com.indo.common.redis.utils.GeneratorIdUtil;
 import com.indo.common.result.Result;
 import com.indo.common.utils.GameUtil;
 import com.indo.common.utils.StringUtils;
+import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.core.pojo.entity.game.GameParentPlatform;
@@ -41,33 +42,33 @@ public class RedtigerServiceImpl implements RedtigerService {
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
         if (null == gameParentPlatform) {
-            return Result.failed("(" + parentName + ")平台不存在");
+            return Result.failed("g100101", MessageUtils.get("g100101",countryCode));
         }
         if (0==gameParentPlatform.getIsStart()) {
-            return Result.failed("g100101", "平台未启用");
+            return Result.failed("g100101", MessageUtils.get("g100101",countryCode));
         }
         if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
-            return Result.failed("g000001", gameParentPlatform.getMaintenanceContent());
+            return Result.failed("g000001", MessageUtils.get("g000001",countryCode));
         }
         // 是否开售校验
         GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
         if (null == gamePlatform) {
-            return Result.failed("(" + platform + ")游戏不存在");
+            return Result.failed("g100102", MessageUtils.get("g100102",countryCode));
         }
         if (0==gamePlatform.getIsStart()) {
-            return Result.failed("g100102", "游戏未启用");
+            return Result.failed("g100102", MessageUtils.get("g100102",countryCode));
         }
         if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
-            return Result.failed("g091047", gamePlatform.getMaintenanceContent());
+            return Result.failed("g091047", MessageUtils.get("g091047",countryCode));
         }
 
-        BigDecimal balance = loginUser.getBalance();
-        //验证站点余额
-        if (null == balance || balance.compareTo(BigDecimal.ZERO) == 0) {
-            logger.info("站点RT余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
-            //站点棋牌余额不足
-            return Result.failed("g300004", "会员余额不足");
-        }
+//        BigDecimal balance = loginUser.getBalance();
+//        //验证站点余额
+//        if (null == balance || balance.compareTo(BigDecimal.ZERO) == 0) {
+//            logger.info("站点RT余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
+//            //站点棋牌余额不足
+//            return Result.failed("g300004", MessageUtils.get("g300004",countryCode));
+//        }
 
         try {
 
@@ -93,12 +94,12 @@ public class RedtigerServiceImpl implements RedtigerService {
             return getInitUserJson(gameParentPlatform, ip, loginUser, cptOpenMember, platform, "1".equals(isMobileLogin), countryCode);
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.failed("g100104", "网络繁忙，请稍后重试！");
+            return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
         }
     }
 
     @Override
-    public Result logout(LoginInfo loginUser, String platform, String ip) {
+    public Result logout(LoginInfo loginUser, String platform, String ip,String countryCode) {
         return Result.success();
     }
 
@@ -131,27 +132,28 @@ public class RedtigerServiceImpl implements RedtigerService {
         player.put("nickname", StringUtils.isEmpty(loginUser.getNickName()) ? loginUser.getAccount() : loginUser.getNickName());
         player.put("country", "CN");
         //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+        String lang = "";
         if(null!=countryCode&&!"".equals(countryCode)){
             switch (countryCode) {
                 case "IN":
-                    countryCode = "en_US";
+                    lang = "en_US";
                 case "EN":
-                    countryCode = "en_US";
+                    lang = "en_US";
                 case "CN":
-                    countryCode = "zh_CN";
+                    lang = "zh_CN";
                 case "VN":
-                    countryCode = "vi";
+                    lang = "vi";
                 case "TW":
-                    countryCode = "zh_TW";
+                    lang = "zh_TW";
                 case "TH":
-                    countryCode = "th";
+                    lang = "th";
                 default:
-                    countryCode = gameParentPlatform.getLanguageType();
+                    lang = gameParentPlatform.getLanguageType();
             }
         }else{
-            countryCode = gameParentPlatform.getLanguageType();
+            lang = gameParentPlatform.getLanguageType();
         }
-        player.put("language", countryCode);
+        player.put("language", lang);
         player.put("currency", gameParentPlatform.getCurrencyType());
         player.put("session", session);
         player.put("group", group);
@@ -189,7 +191,7 @@ public class RedtigerServiceImpl implements RedtigerService {
             return Result.success(responseData);
         } else {
             JSONObject errors = returnJson.getJSONArray("errors").getJSONObject(0);
-            return errorCode(errors.getString("code"), errors.getString("message"));
+            return errorCode(errors.getString("code"), errors.getString("message"), countryCode);
         }
     }
 
@@ -214,59 +216,59 @@ public class RedtigerServiceImpl implements RedtigerService {
         return url.toString();
     }
 
-    public Result errorCode(String errorCode, String errorMessage) {
+    public Result errorCode(String errorCode, String errorMessage,String countryCode) {
 //        200 成功。                                                Succeed.
         switch (errorCode) {
 //         系统错误，应重试，如不断发生应向 Evolution 报告
             case "G.0":
-                return Result.failed("g000007", errorMessage);
+                return Result.failed("g000007", MessageUtils.get("g000007",countryCode));
 //        G.1 未知赌场 $casinoKey                                              No authorized to access
             case "G.1":
-                return Result.failed("g100107", errorMessage);
+                return Result.failed("g100107", MessageUtils.get("g100107",countryCode));
 
 //        600 提供赌场 $casinoKey 的 $apiToken 不正确	                            Domain is null or the length of domain less than 2.
             case "G.2":
-                return Result.failed("g100107", errorMessage);
+                return Result.failed("g100107", MessageUtils.get("g100107",countryCode));
 
 //        700 json 没有为赌场 $casinoKey 配置玩家会话创建	。                                          Failed to pass the domain validation.
             case "G.3":
-                return Result.failed("g100107", errorMessage);
+                return Result.failed("g100107", MessageUtils.get("g100107",countryCode));
 
 //        800 无法发行令牌	。                     The encrypted data is null or the length of the encrypted data is equal to 0.
             case "G.4":
-                return Result.failed("g009999", errorMessage);
+                return Result.failed("g009999", MessageUtils.get("g009999",countryCode));
 
 //        111050 无法验证用户            Assertion(SAML) didn't pass the timestamp validation.
             case "G.5":
-                return Result.failed("g100002", errorMessage);
+                return Result.failed("g100002", MessageUtils.get("g100002",countryCode));
 
 //        111090 玩家已被锁定。                      Failed to extract the SAML parameters from the encrypted data.
             case "G.6":
-                return Result.failed("g100004", errorMessage);
+                return Result.failed("g100004", MessageUtils.get("g100004",countryCode));
 
 //        111120 无法保存玩家数据。                                            Unknow action.
             case "G.7":
-                return Result.failed("g100103", errorMessage);
+                return Result.failed("g100103", MessageUtils.get("g100103",countryCode));
 
 //        111160 由于以下原因无法验证用户身份：$status                             The same value as before.
             case "G.8":
-                return Result.failed("g100103", errorMessage);
+                return Result.failed("g100103", MessageUtils.get("g100103",countryCode));
 
 //        111170 游戏不存在。                                                Time out.
             case "G.9":
-                return Result.failed("g000003", errorMessage);
+                return Result.failed("g000003", MessageUtils.get("g000003",countryCode));
 
 //        111180 游戏无法开启。                                            Read time out.
             case "G.10":
-                return Result.failed("g100104", errorMessage);
+                return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
 
 //        111040 商户被冻结。                                            Duplicate transactions.
             case "G.11":
-                return Result.failed("g100102", errorMessage);
+                return Result.failed("g100102", MessageUtils.get("g100102",countryCode));
 
 //        9999 失败。                                                Failed.
             default:
-                return Result.failed("g009999", errorMessage);
+                return Result.failed("g009999", MessageUtils.get("g009999",countryCode));
         }
     }
 }

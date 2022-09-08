@@ -13,7 +13,7 @@ public interface AgService {
     /**
      * AG
      */
-    public Result logout(LoginInfo loginUser,String ip);
+    public Result logout(LoginInfo loginUser,String ip,String countryCode);
 
 
 }

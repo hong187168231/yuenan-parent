@@ -5,6 +5,7 @@ import com.indo.common.config.OpenAPIProperties;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
 import com.indo.common.utils.GameUtil;
+import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.common.util.SnowflakeId;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
 import com.indo.game.pojo.entity.CptOpenMember;
@@ -52,32 +53,32 @@ public class MgServiceImpl implements MgService {
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
         if (null == gameParentPlatform) {
-            return Result.failed("(" + parentName + ")平台不存在");
+            return Result.failed("g100101", MessageUtils.get("g100101",countryCode));
         }
         if (0==gameParentPlatform.getIsStart()) {
-            return Result.failed("g100101", "平台未启用");
+            return Result.failed("g100101", MessageUtils.get("g100101",countryCode));
         }
         if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
-            return Result.failed("g000001", gameParentPlatform.getMaintenanceContent());
+            return Result.failed("g000001", MessageUtils.get("g000001",countryCode));
         }
         // 是否开售校验
         GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
         if (null == gamePlatform) {
-            return Result.failed("(" + platform + ")游戏不存在");
+            return Result.failed("g100102", MessageUtils.get("g100102",countryCode));
         }
         if (0==gamePlatform.getIsStart()) {
-            return Result.failed("g100102", "游戏未启用");
+            return Result.failed("g100102", MessageUtils.get("g100102",countryCode));
         }
         if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
-            return Result.failed("g091047", gamePlatform.getMaintenanceContent());
+            return Result.failed("g091047", MessageUtils.get("g091047",countryCode));
         }
-        BigDecimal balance = loginUser.getBalance();
-        //验证站点棋牌余额
-        if (null == balance || BigDecimal.ZERO == balance) {
-            logger.info("站点PG余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
-            //站点棋牌余额不足
-            return Result.failed("g300004", "会员余额不足");
-        }
+//        BigDecimal balance = loginUser.getBalance();
+//        //验证站点棋牌余额
+//        if (null == balance || BigDecimal.ZERO == balance) {
+//            logger.info("站点PG余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
+//            //站点棋牌余额不足
+//            return Result.failed("g300004", MessageUtils.get("g300004",countryCode));
+//        }
         try {
             JSONObject tokenJson;
             // 验证且绑定（AE-CPT第三方会员关系）
@@ -85,7 +86,7 @@ public class MgServiceImpl implements MgService {
             if (cptOpenMember == null) {
                 tokenJson = gameToken(loginUser.getId().intValue());
                 if (StringUtils.isEmpty(tokenJson.getString("access_token"))) {
-                    return errorCode(tokenJson.getString("code"), tokenJson.getString("message"));
+                    return errorCode(tokenJson.getString("code"), tokenJson.getString("message"),countryCode);
                 }
                 cptOpenMember = new CptOpenMember();
                 cptOpenMember.setUserName(loginUser.getAccount());
@@ -99,10 +100,10 @@ public class MgServiceImpl implements MgService {
             } else {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
-                logout(loginUser, platform, ip);
+                logout(loginUser, platform, ip,countryCode);
                 tokenJson = gameToken(loginUser.getId().intValue());
                 if (StringUtils.isEmpty(tokenJson.getString("access_token"))) {
-                    return errorCode(tokenJson.getString("code"), tokenJson.getString("message"));
+                    return errorCode(tokenJson.getString("code"), tokenJson.getString("message"),countryCode);
                 }
             }
 
@@ -110,7 +111,7 @@ public class MgServiceImpl implements MgService {
 
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.failed("g100104", "网络繁忙，请稍后重试！");
+            return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
         }
     }
 
@@ -141,7 +142,7 @@ public class MgServiceImpl implements MgService {
     private Result createMemberGame(GameParentPlatform platformGameParent, GamePlatform gamePlatform,CptOpenMember cptOpenMember, String isMobileLogin, String token,String countryCode) {
         JSONObject pgApiResponseData = createMember(cptOpenMember, token);
         if (null == pgApiResponseData) {
-            return Result.failed("g091087", "第三方请求异常！");
+            return Result.failed("g091087", MessageUtils.get("g091087",countryCode));
         }
         if (!StringUtils.isEmpty(pgApiResponseData.getString("uri"))) {
             externalService.saveCptOpenMember(cptOpenMember);
@@ -149,9 +150,9 @@ public class MgServiceImpl implements MgService {
         } else {
             if (!StringUtils.isEmpty(pgApiResponseData.getString("error"))) {
                 JSONObject errorJ = (JSONObject)pgApiResponseData.get("error");
-                return errorCode(errorJ.getString("code"), errorJ.getString("message"));
+                return errorCode(errorJ.getString("code"), errorJ.getString("message"),countryCode);
             }else {
-                return errorCode(pgApiResponseData.getString("code"), pgApiResponseData.getString("message"));
+                return errorCode(pgApiResponseData.getString("code"), pgApiResponseData.getString("message"),countryCode);
             }
         }
     }
@@ -219,35 +220,36 @@ public class MgServiceImpl implements MgService {
                 params.put("platform", "Unknown");
             }
             //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+            String lang = "";
             if(null!=countryCode&&!"".equals(countryCode)){
                 switch (countryCode) {
                     case "IN":
-                        countryCode = "en-US";
+                        lang = "en-US";
                     case "EN":
-                        countryCode = "en-US";
+                        lang = "en-US";
                     case "CN":
-                        countryCode = "zh-CN";
+                        lang = "zh-CN";
                     case "VN":
-                        countryCode = "vi-VN";
+                        lang = "vi-VN";
                     case "TW":
-                        countryCode = "zh-TW";
+                        lang = "zh-TW";
                     case "TH":
-                        countryCode = "th-TH";
+                        lang = "th-TH";
                     case "ID":
-                        countryCode = "in-ID";
+                        lang = "in-ID";
                     case "MY":
-                        countryCode = "ms-MY";
+                        lang = "ms-MY";
                     case "KR":
-                        countryCode = "ko-KR";
+                        lang = "ko-KR";
                     case "JP":
-                        countryCode = "ja-JP";
+                        lang = "ja-JP";
                     default:
-                        countryCode = platformGameParent.getLanguageType();
+                        lang = platformGameParent.getLanguageType();
                 }
             }else{
-                countryCode = platformGameParent.getLanguageType();
+                lang = platformGameParent.getLanguageType();
             }
-            params.put("langCode", countryCode);
+            params.put("langCode", lang);
             StringBuilder apiUrl = new StringBuilder();
             apiUrl.append(OpenAPIProperties.MG_API_URL).append("/api/v1/agents/").append(OpenAPIProperties.MG_AGENT_CODE);
             apiUrl.append("/players/").append(cptOpenMemberm.getUserName()).append("/sessions");
@@ -264,9 +266,9 @@ public class MgServiceImpl implements MgService {
             }else {
                 if (!StringUtils.isEmpty(apiResponseData.getString("error"))) {
                     JSONObject errorJ = (JSONObject)apiResponseData.get("error");
-                    return errorCode(errorJ.getString("code"), errorJ.getString("message"));
+                    return errorCode(errorJ.getString("code"), errorJ.getString("message"),countryCode);
                 }else {
-                    return errorCode(apiResponseData.getString("code"), apiResponseData.getString("message"));
+                    return errorCode(apiResponseData.getString("code"), apiResponseData.getString("message"),countryCode);
                 }
             }
 
@@ -280,7 +282,7 @@ public class MgServiceImpl implements MgService {
     /**
      * 强迫登出玩家
      */
-    public Result logout(LoginInfo loginUser, String platform, String ip) {
+    public Result logout(LoginInfo loginUser, String platform, String ip,String  countryCode) {
         try {
             return Result.success();
         } catch (Exception e) {
@@ -306,23 +308,23 @@ public class MgServiceImpl implements MgService {
     }
 
 
-    public Result errorCode(String errorCode, String errorMessage) {
+    public Result errorCode(String errorCode, String errorMessage,String countryCode) {
         switch (errorCode) {
             case "InputValidationError":
-                return Result.failed("g091118", errorMessage);
+                return Result.failed("g091118", MessageUtils.get("g091118",countryCode));
             case "GeneralError":
-                return Result.failed("g091145", errorMessage);
+                return Result.failed("g091145", MessageUtils.get("g091145",countryCode));
             case "PlayerDoesNotExist":
-                return Result.failed("g010001", errorMessage);
+                return Result.failed("g010001", MessageUtils.get("g010001",countryCode));
             case "ContentNotFoundForPlayer":
-                return Result.failed("g091068", errorMessage);
+                return Result.failed("g091068", MessageUtils.get("g091068",countryCode));
             case "PlayerIsLocked":
-                return Result.failed("g200003", errorMessage);
+                return Result.failed("g200003", MessageUtils.get("g200003",countryCode));
             case "GameDoesNotExist":
-                return Result.failed("g091158", errorMessage);
+                return Result.failed("g091158", MessageUtils.get("g091158",countryCode));
             //        9999 失败。                                                Failed.
             default:
-                return Result.failed("g009999", errorMessage);
+                return Result.failed("g009999", MessageUtils.get("g009999",countryCode));
         }
     }
 }

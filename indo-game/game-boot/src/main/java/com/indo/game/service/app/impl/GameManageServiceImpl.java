@@ -8,6 +8,7 @@ import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.redis.utils.RedisUtils;
 import com.indo.common.result.Result;
 import com.indo.common.utils.CollectionUtil;
+import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.core.pojo.entity.AgentRelation;
 import com.indo.core.mapper.game.TxnsMapper;
 import com.indo.core.pojo.entity.game.GameCategory;
@@ -100,7 +101,7 @@ public class GameManageServiceImpl implements IGameManageService {
     }
 
     @Override
-    public Result<List<GameInfoAgentRecord>> queryAllAgentGameInfo(LoginInfo loginUser,GameInfoPageReq req) {
+    public Result<List<GameInfoAgentRecord>> queryAllAgentGameInfo(LoginInfo loginUser,GameInfoPageReq req,String countryCode) {
         boolean b = false;
         //验证是否是当前用户下代理
         GameInfoPageImpReq gameInfoPageImpReq = new GameInfoPageImpReq();
@@ -119,7 +120,7 @@ public class GameManageServiceImpl implements IGameManageService {
                         return Result.success();
                     }
            }else {
-                return Result.failed("g091035", "无效代理ID" );
+                return Result.failed("g091035", MessageUtils.get("g091035",countryCode));
            }
         }else {
             agentAcctList.add(loginUser.getAccount());

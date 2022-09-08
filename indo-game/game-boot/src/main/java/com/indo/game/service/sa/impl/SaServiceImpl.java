@@ -6,6 +6,7 @@ import com.indo.common.redis.utils.GeneratorIdUtil;
 import com.indo.common.result.Result;
 import com.indo.common.utils.DateUtils;
 import com.indo.common.utils.GameUtil;
+import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.common.util.FCHashAESEncrypt;
 import com.indo.game.common.util.SAJEncryption;
 import com.indo.game.common.util.XmlUtil;
@@ -44,33 +45,33 @@ public class SaServiceImpl implements SaService {
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
         if (null == gameParentPlatform) {
-            return Result.failed("(" + parentName + ")平台不存在");
+            return Result.failed("g100101", MessageUtils.get("g100101",countryCode));
         }
         if (0==gameParentPlatform.getIsStart()) {
-            return Result.failed("g100101", "平台未启用");
+            return Result.failed("g100101", MessageUtils.get("g100101",countryCode));
         }
         if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
-            return Result.failed("g000001", gameParentPlatform.getMaintenanceContent());
+            return Result.failed("g000001", MessageUtils.get("g000001",countryCode));
         }
         // 是否开售校验
         GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
         if (null == gamePlatform) {
-            return Result.failed("(" + platform + ")游戏不存在");
+            return Result.failed("g100102", MessageUtils.get("g100102",countryCode));
         }
         if (0==gamePlatform.getIsStart()) {
-            return Result.failed("g100102", "游戏未启用");
+            return Result.failed("g100102", MessageUtils.get("g100102",countryCode));
         }
         if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
-            return Result.failed("g091047", gamePlatform.getMaintenanceContent());
+            return Result.failed("g091047", MessageUtils.get("g091047",countryCode));
         }
 
-        BigDecimal balance = loginUser.getBalance();
-        //验证站点余额
-        if (null == balance || balance.compareTo(BigDecimal.ZERO) == 0) {
-            logger.info("站点sa余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
-            //站点棋牌余额不足
-            return Result.failed("g300004", "会员余额不足");
-        }
+//        BigDecimal balance = loginUser.getBalance();
+//        //验证站点余额
+//        if (null == balance || balance.compareTo(BigDecimal.ZERO) == 0) {
+//            logger.info("站点sa余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
+//            //站点棋牌余额不足
+//            return Result.failed("g300004", MessageUtils.get("g300004",countryCode));
+//        }
 
         try {
 
@@ -92,7 +93,7 @@ public class SaServiceImpl implements SaService {
                 externalService.updateCptOpenMember(cptOpenMember);
 
                 //先退出
-                this.logout(loginUser,platform,ip);
+                this.logout(loginUser,platform,ip,countryCode);
 
                 logger.info("salogin ip{} saGame account:{},platform:{},parentName:{}", ip, loginUser.getAccount(), platform,parentName);
                 String time = DateUtils.getLongDateString(new Date());
@@ -107,7 +108,7 @@ public class SaServiceImpl implements SaService {
                 // 用户离线
                 Object result = loginOutRequst(OpenAPIProperties.SA_API_URL, param);
                 if (null == result) {
-                    return Result.failed("g091087", "第三方请求异常！");
+                    return Result.failed("g091087", MessageUtils.get("g091087",countryCode));
                 }
 
                 SaKickUserResp saLoginResp = (SaKickUserResp) result;
@@ -126,34 +127,35 @@ public class SaServiceImpl implements SaService {
                     // 用户注册
                     Object result1 = commonRequest(OpenAPIProperties.SA_API_URL, param1);
                     if (null == result1) {
-                        return Result.failed("g091087", "第三方请求异常！");
+                        return Result.failed("g091087", MessageUtils.get("g091087",countryCode));
                     }
 //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+                    String lang = "";
                     if(null!=countryCode&&!"".equals(countryCode)){
                         switch (countryCode) {
                             case "IN":
-                                countryCode = "hi*";
+                                lang = "hi*";
                             case "EN":
-                                countryCode = "en_US";
+                                lang = "en_US";
                             case "CN":
-                                countryCode = "zh_CN";
+                                lang = "zh_CN";
                             case "VN":
-                                countryCode = "vn";
+                                lang = "vn";
                             case "TW":
-                                countryCode = "zh_TW";
+                                lang = "zh_TW";
                             case "TH":
-                                countryCode = "th";
+                                lang = "th";
                             case "ID":
-                                countryCode = "id";
+                                lang = "id";
                             case "MY":
-                                countryCode = "ms";
+                                lang = "ms";
                             case "JP":
-                                countryCode = "jp";
+                                lang = "jp";
                             default:
-                                countryCode = gameParentPlatform.getLanguageType();
+                                lang = gameParentPlatform.getLanguageType();
                         }
                     }else{
-                        countryCode = gameParentPlatform.getLanguageType();
+                        lang = gameParentPlatform.getLanguageType();
                     }
                     SaLoginResp saLoginResp1 = (SaLoginResp) result1;
                     if (0 == saLoginResp1.getErrorMsgId()) {
@@ -161,27 +163,27 @@ public class SaServiceImpl implements SaService {
                         ApiResponseData responseData = new ApiResponseData();
                         // PC
                         if (isMobileLogin.equals("1")) {
-                            responseData.setPathUrl(initLoginUrl(cptOpenMember.getUserName(), saLoginResp1.getToken(),countryCode, false));
+                            responseData.setPathUrl(initLoginUrl(cptOpenMember.getUserName(), saLoginResp1.getToken(),lang, false));
                         } else {
-                            responseData.setPathUrl(initLoginUrl(cptOpenMember.getUserName(), saLoginResp1.getToken(),countryCode, true));
+                            responseData.setPathUrl(initLoginUrl(cptOpenMember.getUserName(), saLoginResp1.getToken(),lang, true));
                         }
                         return Result.success(responseData);
                     } else {
-                        return errorCode(saLoginResp1.getErrorMsgId().toString(), saLoginResp1.getErrorMsg());
+                        return errorCode(saLoginResp1.getErrorMsgId().toString(), saLoginResp1.getErrorMsg(),countryCode);
                     }
                 }
-                return errorCode(saLoginResp.getErrorMsgId().toString(), saLoginResp.getErrorMsg());
+                return errorCode(saLoginResp.getErrorMsgId().toString(), saLoginResp.getErrorMsg(),countryCode);
             }
 
 
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.failed("g100104", "网络繁忙，请稍后重试！");
+            return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
         }
     }
 
     @Override
-    public Result logout(LoginInfo loginUser, String platform, String ip) {
+    public Result logout(LoginInfo loginUser, String platform, String ip,String countryCode) {
         logger.info("salogout ip{} saGame account:{},platform:{},parentName:{}", ip, loginUser.getAccount(), platform);
         try {
             String time = DateUtils.getLongDateString(new Date());
@@ -196,17 +198,17 @@ public class SaServiceImpl implements SaService {
             // 用户离线
             Object result = loginOutRequst(OpenAPIProperties.SA_API_URL, param);
             if (null == result) {
-                return Result.failed("g091087", "第三方请求异常！");
+                return Result.failed("g091087", MessageUtils.get("g091087",countryCode));
             }
 
             SaLoginResp saLoginResp = (SaLoginResp) result;
             if (saLoginResp.getErrorMsgId() == 0) {
                 return Result.success();
             }
-            return errorCode(saLoginResp.getErrorMsgId().toString(), saLoginResp.getErrorMsg());
+            return errorCode(saLoginResp.getErrorMsgId().toString(), saLoginResp.getErrorMsg(),countryCode);
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.failed("g100104", "网络繁忙，请稍后重试！");
+            return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
         }
     }
 
@@ -233,34 +235,35 @@ public class SaServiceImpl implements SaService {
         // 用户注册
         Object result = commonRequest(OpenAPIProperties.SA_API_URL, param);
         if (null == result) {
-            return Result.failed("g091087", "第三方请求异常！");
+            return Result.failed("g091087", MessageUtils.get("g091087",countryCode));
         }
 //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+        String lang = "";
         if(null!=countryCode&&!"".equals(countryCode)){
             switch (countryCode) {
                 case "IN":
-                    countryCode = "hi*";
+                    lang = "hi*";
                 case "EN":
-                    countryCode = "en_US";
+                    lang = "en_US";
                 case "CN":
-                    countryCode = "zh_CN";
+                    lang = "zh_CN";
                 case "VN":
-                    countryCode = "vn";
+                    lang = "vn";
                 case "TW":
-                    countryCode = "zh_TW";
+                    lang = "zh_TW";
                 case "TH":
-                    countryCode = "th";
+                    lang = "th";
                 case "ID":
-                    countryCode = "id";
+                    lang = "id";
                 case "MY":
-                    countryCode = "ms";
+                    lang = "ms";
                 case "JP":
-                    countryCode = "jp";
+                    lang = "jp";
                 default:
-                    countryCode = gameParentPlatform.getLanguageType();
+                    lang = gameParentPlatform.getLanguageType();
             }
         }else{
-            countryCode = gameParentPlatform.getLanguageType();
+            lang = gameParentPlatform.getLanguageType();
         }
         SaLoginResp saLoginResp = (SaLoginResp) result;
         if (0 == saLoginResp.getErrorMsgId()) {
@@ -269,13 +272,13 @@ public class SaServiceImpl implements SaService {
             ApiResponseData responseData = new ApiResponseData();
             // PC
             if (isMobileLogin.equals("1")) {
-                responseData.setPathUrl(initLoginUrl(cptOpenMember.getUserName(), saLoginResp.getToken(),countryCode, false));
+                responseData.setPathUrl(initLoginUrl(cptOpenMember.getUserName(), saLoginResp.getToken(),lang, false));
             } else {
-                responseData.setPathUrl(initLoginUrl(cptOpenMember.getUserName(), saLoginResp.getToken(),countryCode, true));
+                responseData.setPathUrl(initLoginUrl(cptOpenMember.getUserName(), saLoginResp.getToken(),lang, true));
             }
             return Result.success(responseData);
         } else {
-            return errorCode(saLoginResp.getErrorMsgId().toString(), saLoginResp.getErrorMsg());
+            return errorCode(saLoginResp.getErrorMsgId().toString(), saLoginResp.getErrorMsg(), countryCode);
         }
     }
 
@@ -316,44 +319,44 @@ public class SaServiceImpl implements SaService {
     }
 
 
-    public Result errorCode(String errorCode, String errorMessage) {
+    public Result errorCode(String errorCode, String errorMessage,String countryCode) {
 //        0 成功。                                                Succeed.
         switch (errorCode) {
 //        108 用户名长度或者格式错误
             case "108":
-                return Result.failed("g100002", errorMessage);
+                return Result.failed("g100002", MessageUtils.get("g100002",countryCode));
 //        113 用户名已存在
             case "113":
-                return Result.failed("g100003", errorMessage);
+                return Result.failed("g100003", MessageUtils.get("g100003",countryCode));
 
 //        114  币种不存在
             case "114":
-                return Result.failed("g100001", errorMessage);
+                return Result.failed("g100001", MessageUtils.get("g100001",countryCode));
 
 //        133  建立帐户失败
             case "133":
-                return Result.failed("g100004", errorMessage);
+                return Result.failed("g100004", MessageUtils.get("g100004",countryCode));
 // 100  用户名错误
             case "100":
-                return Result.failed("g010001", errorMessage);
+                return Result.failed("g010001", MessageUtils.get("g010001",countryCode));
 // 102: 密钥错误
             case "102":
-                return Result.failed("g100104", errorMessage);
+                return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
 //104: 服务器不可用
             case "104":
-                return Result.failed("g100104", errorMessage);
+                return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
 //116: 用户名不存在
             case "116":
-                return Result.failed("g010001", errorMessage);
+                return Result.failed("g010001", MessageUtils.get("g010001",countryCode));
 //125: 强制用户离线失败
             case "125":
-                return Result.failed("g100104", errorMessage);
+                return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
 //128: 解密错误
             case "128":
-                return Result.failed("g100104", errorMessage);
+                return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
 //        9999 失败。                                                Failed.
             default:
-                return Result.failed("g009999", errorMessage);
+                return Result.failed("g009999", MessageUtils.get("g100104",countryCode));
         }
     }
 }

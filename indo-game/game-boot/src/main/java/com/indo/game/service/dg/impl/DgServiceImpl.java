@@ -6,6 +6,7 @@ import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
 import com.indo.common.utils.GameUtil;
 import com.indo.common.utils.RandomUtil;
+import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.core.pojo.entity.game.GameParentPlatform;
@@ -53,32 +54,32 @@ public class DgServiceImpl implements DgService {
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
         if (null == gameParentPlatform) {
-            return Result.failed("(" + parentName + ")平台不存在");
+            return Result.failed("g100101", MessageUtils.get("g100101",countryCode));
         }
         if (0==gameParentPlatform.getIsStart()) {
-            return Result.failed("g100101", "平台未启用");
+            return Result.failed("g100101", MessageUtils.get("g100101",countryCode));
         }
         if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
-            return Result.failed("g000001", gameParentPlatform.getMaintenanceContent());
+            return Result.failed("g000001", MessageUtils.get("g000001",countryCode));
         }
         // 是否开售校验
         GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
         if (null == gamePlatform) {
-            return Result.failed("(" + platform + ")游戏不存在");
+            return Result.failed("g100102", MessageUtils.get("g100102",countryCode));
         }
         if (0==gamePlatform.getIsStart()) {
-            return Result.failed("g100102", "游戏未启用");
+            return Result.failed("g100102", MessageUtils.get("g100102",countryCode));
         }
         if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
-            return Result.failed("g091047", gamePlatform.getMaintenanceContent());
+            return Result.failed("g091047", MessageUtils.get("g091047",countryCode));
         }
-        BigDecimal balance = loginUser.getBalance();
-        //验证站点棋牌余额
-        if (null == balance || BigDecimal.ZERO == balance) {
-            logger.info("站点PG余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
-            //站点棋牌余额不足
-            return Result.failed("g300004", "会员余额不足");
-        }
+//        BigDecimal balance = loginUser.getBalance();
+//        //验证站点棋牌余额
+//        if (null == balance || BigDecimal.ZERO == balance) {
+//            logger.info("站点PG余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
+//            //站点棋牌余额不足
+//            return Result.failed("g300004", MessageUtils.get("g300004",countryCode));
+//        }
         try {
 
             // 验证且绑定（AE-CPT第三方会员关系）
@@ -97,13 +98,13 @@ public class DgServiceImpl implements DgService {
             } else {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
-                logout(loginUser, platform, ip);
+                logout(loginUser, platform, ip, countryCode);
                 return gameLogin(gameParentPlatform, cptOpenMember, countryCode);
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.failed("g100104", "网络繁忙，请稍后重试！");
+            return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
         }
     }
 
@@ -114,31 +115,32 @@ public class DgServiceImpl implements DgService {
         stringBuilder.append(OpenAPIProperties.DG_AGENT_NAME).append(OpenAPIProperties.DG_API_KEY).append(random);
         String sign = DigestUtils.md5Hex(stringBuilder.toString());
         //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+        String lang = "";
         if(null!=countryCode&&!"".equals(countryCode)){
             switch (countryCode) {
                 case "IN":
-                    countryCode = "0";
+                    lang = "0";
                 case "EN":
-                    countryCode = "0";
+                    lang = "0";
                 case "CN":
-                    countryCode = "1";
+                    lang = "1";
                 case "VN":
-                    countryCode = "5";
+                    lang = "5";
                 case "TW":
-                    countryCode = "2";
+                    lang = "2";
                 case "TH":
-                    countryCode = "4";
+                    lang = "4";
                 case "KR":
-                    countryCode = "3";
+                    lang = "3";
                 default:
-                    countryCode = platformGameParent.getLanguageType();
+                    lang = platformGameParent.getLanguageType();
             }
         }else{
-            countryCode = platformGameParent.getLanguageType();
+            lang = platformGameParent.getLanguageType();
         }
         map.put("random", random);
         map.put("token", sign);
-        map.put("lang", countryCode);
+        map.put("lang", lang);
         map.put("domains", "1");
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("username", cptOpenMember.getUserName());
@@ -160,7 +162,7 @@ public class DgServiceImpl implements DgService {
             }else if(null == dgApiResponseData){
                 return Result.failed();
             }else {
-                return errorCode(dgApiResponseData.getString("codeId"), dgApiResponseData.getString("random"));
+                return errorCode(dgApiResponseData.getString("codeId"), dgApiResponseData.getString("random"), countryCode);
             }
         } catch (Exception e) {
             logger.error("Dglog dgGameLoginr:{}", e);
@@ -209,7 +211,7 @@ public class DgServiceImpl implements DgService {
         }else if(null == apiResponseData){
             return Result.failed();
         }else {
-            return errorCode(apiResponseData.getString("codeId"), apiResponseData.getString("random"));
+            return errorCode(apiResponseData.getString("codeId"), apiResponseData.getString("random"), countryCode);
         }
     }
 
@@ -217,7 +219,7 @@ public class DgServiceImpl implements DgService {
     /**
      * 强迫登出玩家
      */
-    public Result logout(LoginInfo loginUser, String platform, String ip) {
+    public Result logout(LoginInfo loginUser, String platform, String ip,String countryCode) {
         try {
             JSONObject map = new JSONObject();
             Integer random = RandomUtil.getRandomOne(6);
@@ -236,7 +238,7 @@ public class DgServiceImpl implements DgService {
             }else if(null == apiResponseData){
                 return Result.failed();
             }else {
-                return errorCode(apiResponseData.getString("codeId"), apiResponseData.getString("random"));
+                return errorCode(apiResponseData.getString("codeId"), apiResponseData.getString("random"), countryCode);
             }
         } catch (Exception e) {
             logger.error("Dglog  DgLogout:{}", e);
@@ -264,19 +266,19 @@ public class DgServiceImpl implements DgService {
     }
 
 
-    public Result errorCode(String errorCode, String errorMessage) {
+    public Result errorCode(String errorCode, String errorMessage,String countryCode) {
         if ("1034".equals(errorCode)) {
-            return Result.failed("g091087", errorMessage);
+            return Result.failed("g091087", MessageUtils.get("g091087",countryCode));
         } else if ("1035".equals(errorCode)) {
-            return Result.failed("g009999", errorMessage);
+            return Result.failed("g009999", MessageUtils.get("g009999",countryCode));
         } else if ("1200".equals(errorCode)) {
-            return Result.failed("g091124", errorMessage);
+            return Result.failed("g091124", MessageUtils.get("g091124",countryCode));
         } else if ("1204".equals(errorCode)) {
-            return Result.failed("g091008", errorMessage);
+            return Result.failed("g091008", MessageUtils.get("g091008",countryCode));
         } else if ("1305".equals(errorCode)) {
-            return Result.failed("g100003", errorMessage);
+            return Result.failed("g100003", MessageUtils.get("g100003",countryCode));
         } else {
-            return Result.failed("g009999", errorMessage);
+            return Result.failed("g009999", MessageUtils.get("g009999",countryCode));
         }
     }
 }

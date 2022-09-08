@@ -6,6 +6,7 @@ import com.indo.common.config.OpenAPIProperties;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
 import com.indo.common.utils.GameUtil;
+import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.common.util.RandomGUID;
 import com.indo.game.common.util.SnowflakeId;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
@@ -55,32 +56,32 @@ public class PgServiceImpl implements PgService {
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
         if (null == gameParentPlatform) {
-            return Result.failed("(" + parentName + ")平台不存在");
+            return Result.failed("g100101", MessageUtils.get("g100101",countryCode));
         }
         if (0==gameParentPlatform.getIsStart()) {
-            return Result.failed("g100101", "平台未启用");
+            return Result.failed("g100101", MessageUtils.get("g100101",countryCode));
         }
         if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
-            return Result.failed("g000001", gameParentPlatform.getMaintenanceContent());
+            return Result.failed("g000001", MessageUtils.get("g000001",countryCode));
         }
         // 是否开售校验
         GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
         if (null == gamePlatform) {
-            return Result.failed("(" + platform + ")游戏不存在");
+            return Result.failed("g100102", MessageUtils.get("g100102",countryCode));
         }
         if (0==gamePlatform.getIsStart()) {
-            return Result.failed("g100102", "游戏未启用");
+            return Result.failed("g100102", MessageUtils.get("g100102",countryCode));
         }
         if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
-            return Result.failed("g091047", gamePlatform.getMaintenanceContent());
+            return Result.failed("g091047", MessageUtils.get("g091047",countryCode));
         }
-        BigDecimal balance = loginUser.getBalance();
-        //验证站点棋牌余额
-        if (null == balance || BigDecimal.ZERO == balance) {
-            logger.info("站点PG余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
-            //站点棋牌余额不足
-            return Result.failed("g300004", "会员余额不足");
-        }
+//        BigDecimal balance = loginUser.getBalance();
+//        //验证站点棋牌余额
+//        if (null == balance || BigDecimal.ZERO == balance) {
+//            logger.info("站点PG余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
+//            //站点棋牌余额不足
+//            return Result.failed("g300004", MessageUtils.get("g300004",countryCode));
+//        }
         try {
 
             // 验证且绑定（AE-CPT第三方会员关系）
@@ -98,45 +99,46 @@ public class PgServiceImpl implements PgService {
             } else {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
-                logout(loginUser, platform, ip);
+                logout(loginUser, platform, ip, countryCode);
             }
 //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+            String lang = "";
             if(null!=countryCode&&!"".equals(countryCode)){
                 switch (countryCode) {
                     case "IN":
-                        countryCode = "en";
+                        lang = "en";
                     case "EN":
-                        countryCode = "en";
+                        lang = "en";
                     case "CN":
-                        countryCode = "zh";
+                        lang = "zh";
                     case "VN":
-                        countryCode = "vi";
+                        lang = "vi";
                     case "TH":
-                        countryCode = "th";
+                        lang = "th";
                     case "ID":
-                        countryCode = "id";
+                        lang = "id";
                     case "KR":
-                        countryCode = "ko";
+                        lang = "ko";
                     case "JP":
-                        countryCode = "ja";
+                        lang = "ja";
                     default:
-                        countryCode = gameParentPlatform.getLanguageType();
+                        lang = gameParentPlatform.getLanguageType();
                 }
             }else{
-                countryCode = gameParentPlatform.getLanguageType();
+                lang = gameParentPlatform.getLanguageType();
             }
             StringBuilder builder = new StringBuilder();
             if("Y".equals(OpenAPIProperties.PG_IS_PLATFORM_LOGIN)) {
                 builder.append(OpenAPIProperties.PG_LOGIN_URL).append("/web-lobby/games/?");
                 builder.append("operator_token=").append(OpenAPIProperties.PG_API_TOKEN);
                 builder.append("&operator_player_session=").append(cptOpenMember.getPassword());
-                builder.append("&language=").append(countryCode);
+                builder.append("&language=").append(lang);
             }else {
                 builder.append(OpenAPIProperties.PG_LOGIN_URL).append("/"+gamePlatform.getPlatformCode()+"/index.html?");
                 builder.append("btt=1");//游戏启动模式3
                 builder.append("&ot=").append(OpenAPIProperties.PG_API_TOKEN);//运营商独有的身份识别
                 builder.append("&ops=").append(cptOpenMember.getPassword());//运营商系统生成的令牌
-                builder.append("&language=").append(countryCode);//游戏显示语言
+                builder.append("&language=").append(lang);//游戏显示语言
             }
             logger.info("pglog  pgGame登录玩家 urlapi:{}", builder.toString(),cptOpenMember);
             //登录
@@ -145,7 +147,7 @@ public class PgServiceImpl implements PgService {
             return Result.success(responseData);
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.failed("g100104", "网络繁忙，请稍后重试！");
+            return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
         }
     }
 
@@ -153,10 +155,10 @@ public class PgServiceImpl implements PgService {
     /**
      * 创建账户并登录逻辑
      */
-    private Result createMemberGame(GameParentPlatform platformGameParent, GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember, String isMobileLogin) {
+    private Result createMemberGame(GameParentPlatform platformGameParent, GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember, String isMobileLogin,String countryCode) {
         PgApiResponseData pgApiResponseData = createMember(platformGameParent, gamePlatform, ip, cptOpenMember, isMobileLogin);
         if (null == pgApiResponseData ) {
-            return Result.failed("g091087", "第三方请求异常！");
+            return Result.failed("g091087", MessageUtils.get("g091087",countryCode));
         }
         JSONObject jsonDataObject = null;
         JSONObject jsonStatusObject = null;
@@ -171,9 +173,9 @@ public class PgServiceImpl implements PgService {
             return Result.success();
         } else {
             if(null!=jsonStatusObject){
-                return errorCode(jsonStatusObject.getString("code"), jsonStatusObject.getString("message"));
+                return errorCode(jsonStatusObject.getString("code"), jsonStatusObject.getString("message"), countryCode);
             }else {
-                return Result.failed("g091087", "第三方请求异常！");
+                return Result.failed("g091087", MessageUtils.get("g091087",countryCode));
             }
         }
     }
@@ -206,7 +208,7 @@ public class PgServiceImpl implements PgService {
     /**
      * 强迫登出玩家
      */
-    public Result logout(LoginInfo loginUser, String platform, String ip) {
+    public Result logout(LoginInfo loginUser, String platform, String ip,String countryCode) {
         try {
             GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(platform);
             if (null == platformGameParent) {
@@ -239,9 +241,9 @@ public class PgServiceImpl implements PgService {
                 return Result.success();
             } else {
                 if(null!=jsonStatusObject){
-                    return errorCode(jsonStatusObject.getString("code"), jsonStatusObject.getString("message"));
+                    return errorCode(jsonStatusObject.getString("code"), jsonStatusObject.getString("message"), countryCode);
                 }else {
-                    return Result.failed("g091087", "第三方请求异常！");
+                    return Result.failed("g091087", MessageUtils.get("g091087",countryCode));
                 }
             }
         } catch (Exception e) {
@@ -271,19 +273,19 @@ public class PgServiceImpl implements PgService {
     }
 
 
-    public Result errorCode(String errorCode, String errorMessage) {
+    public Result errorCode(String errorCode, String errorMessage,String countryCode) {
         if ("1034".equals(errorCode)) {
-            return Result.failed("g091087", errorMessage);
+            return Result.failed("g091087", MessageUtils.get("g091087",countryCode));
         } else if ("1035".equals(errorCode)) {
-            return Result.failed("g009999", errorMessage);
+            return Result.failed("g009999", MessageUtils.get("g009999",countryCode));
         } else if ("1200".equals(errorCode)) {
-            return Result.failed("g091124", errorMessage);
+            return Result.failed("g091124", MessageUtils.get("g091124",countryCode));
         } else if ("1204".equals(errorCode)) {
-            return Result.failed("g091008", errorMessage);
+            return Result.failed("g091008", MessageUtils.get("g091008",countryCode));
         } else if ("1305".equals(errorCode)) {
-            return Result.failed("g100003", errorMessage);
+            return Result.failed("g100003", MessageUtils.get("g100003",countryCode));
         } else {
-            return Result.failed("g009999", errorMessage);
+            return Result.failed("g009999", MessageUtils.get("g009999",countryCode));
         }
     }
 }

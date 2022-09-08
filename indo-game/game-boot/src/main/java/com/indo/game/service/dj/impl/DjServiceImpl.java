@@ -4,6 +4,7 @@ import com.indo.common.config.OpenAPIProperties;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
 import com.indo.common.utils.GameUtil;
+import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.core.pojo.entity.game.GameParentPlatform;
 import com.indo.core.pojo.entity.game.GamePlatform;
 import com.indo.game.common.util.SnowflakeId;
@@ -59,32 +60,32 @@ public class DjServiceImpl implements DjService {
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
         if (null == gameParentPlatform) {
-            return Result.failed("(" + parentName + ")平台不存在");
+            return Result.failed("g100101", MessageUtils.get("g100101",countryCode));
         }
         if (0==gameParentPlatform.getIsStart()) {
-            return Result.failed("g100101", "平台未启用");
+            return Result.failed("g100101", MessageUtils.get("g100101",countryCode));
         }
         if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
-            return Result.failed("g000001", gameParentPlatform.getMaintenanceContent());
+            return Result.failed("g000001", MessageUtils.get("g000001",countryCode));
         }
         // 是否开售校验
         GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
         if (null == gamePlatform) {
-            return Result.failed("(" + platform + ")游戏不存在");
+            return Result.failed("g100102", MessageUtils.get("g100102",countryCode));
         }
         if (0==gamePlatform.getIsStart()) {
-            return Result.failed("g100102", "游戏未启用");
+            return Result.failed("g100102", MessageUtils.get("g100102",countryCode));
         }
         if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
-            return Result.failed("g091047", gamePlatform.getMaintenanceContent());
+            return Result.failed("g091047", MessageUtils.get("g091047",countryCode));
         }
-        BigDecimal balance = loginUser.getBalance();
-        //验证站点棋牌余额
-        if (null == balance || BigDecimal.ZERO == balance) {
-            logger.info("站点PG余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
-            //站点棋牌余额不足
-            return Result.failed("g300004", "会员余额不足");
-        }
+//        BigDecimal balance = loginUser.getBalance();
+//        //验证站点棋牌余额
+//        if (null == balance || BigDecimal.ZERO == balance) {
+//            logger.info("站点PG余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
+//            //站点棋牌余额不足
+//            return Result.failed("g300004", MessageUtils.get("g300004",countryCode));
+//        }
         try {
 
             // 验证且绑定（AE-CPT第三方会员关系）
@@ -100,17 +101,17 @@ public class DjServiceImpl implements DjService {
                 //创建玩家
                 String name = createGameUser(cptOpenMember);
                 if (StringUtils.isEmpty(name)) {
-                    return Result.failed("g091087", "第三方请求异常！");
+                    return Result.failed("g091087", MessageUtils.get("g091087",countryCode));
                 }
             } else {
 //                cptOpenMember.setPassword(SnowflakeId.generateId().toString());
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
-                logout(loginUser, platform, ip);
+                logout(loginUser, platform, ip,countryCode);
             }
             String aeApiResponseData = gameInit(cptOpenMember, isMobileLogin);
             if (null == aeApiResponseData || "".equals(aeApiResponseData)) {
-                return Result.failed("g091087", "第三方请求异常！");
+                return Result.failed("g091087", MessageUtils.get("g091087",countryCode));
             }
             String pathUrl = gameLogin(aeApiResponseData, gameParentPlatform, cptOpenMember, isMobileLogin, countryCode);
 
@@ -121,7 +122,7 @@ public class DjServiceImpl implements DjService {
             return Result.success(responseData);
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.failed("g100104", "网络繁忙，请稍后重试！");
+            return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
         }
     }
 
@@ -133,33 +134,34 @@ public class DjServiceImpl implements DjService {
 //        params.put("login_id", cptOpenMember.getUserId() + "");
         try {
 //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+            String lang = "";
             if(null!=countryCode&&!"".equals(countryCode)){
                 switch (countryCode) {
                     case "IN":
-                        countryCode = "en_US";
+                        lang = "en_US";
                     case "EN":
-                        countryCode = "en_US";
+                        lang = "en_US";
                     case "CN":
-                        countryCode = "zh_CN";
+                        lang = "zh_CN";
                     case "VN":
-                        countryCode = "vi_VN";
+                        lang = "vi_VN";
                     case "TW":
-                        countryCode = "zh_TW";
+                        lang = "zh_TW";
                     case "TH":
-                        countryCode = "th_TH";
+                        lang = "th_TH";
                     case "ID":
-                        countryCode = "in_ID";
+                        lang = "in_ID";
                     case "MY":
-                        countryCode = "ms_MY";
+                        lang = "ms_MY";
                     case "KR":
-                        countryCode = "ko_KR";
+                        lang = "ko_KR";
                     case "JP":
-                        countryCode = "ja_JP";
+                        lang = "ja_JP";
                     default:
-                        countryCode = gameParentPlatform.getLanguageType();
+                        lang = gameParentPlatform.getLanguageType();
                 }
             }else{
-                countryCode = gameParentPlatform.getLanguageType();
+                lang = gameParentPlatform.getLanguageType();
             }
             StringBuilder apiUrl = new StringBuilder();
             apiUrl.append(OpenAPIProperties.DJ_MOBILE_URL).append("/api/cash/auth");
@@ -168,7 +170,7 @@ public class DjServiceImpl implements DjService {
             html.append("<html><head></head><body>");
             html.append("<form name=\"myform\" action=\"").append(apiUrl.toString()).append("\" method=\"post\" /> ");
             html.append("<input type=\"hidden\" name=\"session_id\" value=\"").append(aeApiResponseData).append("\" /> ");
-            html.append("<input type=\"hidden\" name=\"lang\" value=\"").append(countryCode).append("\" /> ");
+            html.append("<input type=\"hidden\" name=\"lang\" value=\"").append(lang).append("\" /> ");
             html.append("<input type=\"hidden\" name=\"login_id\" value=\"").append(cptOpenMember.getUserId()).append("\" /> ");
             html.append("<input id=\"fingerprint\" name=\"fingerprint\" value=\"\" type=\"hidden\" />");
             html.append("</form><script type=\"text/javascript\"> document.myform.submit(); </script> </body></html>");
@@ -234,7 +236,7 @@ public class DjServiceImpl implements DjService {
     /**
      * 强迫登出玩家
      */
-    public Result logout(LoginInfo loginUser, String platform, String ip) {
+    public Result logout(LoginInfo loginUser, String platform, String ip,String countryCode) {
         try {
             GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(platform);
             if (null == platformGameParent) {

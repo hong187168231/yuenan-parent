@@ -40,7 +40,9 @@ public class V8CallbackController {
         String ip = IPAddressUtil.getIpAddress(request);
         String platform = params.getString("platform");
         BigDecimal money = params.getBigDecimal("money");
-        return v8Service.crebit(loginUser, platform, money, ip);
+        //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+        String countryCode = request.getHeader("countryCode");
+        return v8Service.crebit(loginUser, platform, money, ip,countryCode);
     }
 
     @RequestMapping(value = "/balance", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
@@ -50,7 +52,9 @@ public class V8CallbackController {
                          @RequestBody JSONObject params, HttpServletRequest request){
         String ip = IPAddressUtil.getIpAddress(request);
         String platform = params.getString("platform");
-        return v8Service.balance(loginUser, platform, ip);
+        //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+        String countryCode = request.getHeader("countryCode");
+        return v8Service.balance(loginUser, platform, ip,countryCode);
     }
 
     @RequestMapping(value = "/callBack", method = RequestMethod.GET,produces = "application/json;charset=UTF-8")

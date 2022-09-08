@@ -124,7 +124,7 @@ public class GameManageController {
         }
         req.setUserAcct(loginUser.getAccount());
         log.info("查询代理游戏记录queryAllAgentGameInfo请求 req:{}", JSONObject.toJSONString(req));
-        Result<List<GameInfoAgentRecord>> result = iGameManageService.queryAllAgentGameInfo(loginUser,req);
+        Result<List<GameInfoAgentRecord>> result = iGameManageService.queryAllAgentGameInfo(loginUser,req,countryCode);
         log.info("查询代理游戏记录queryAllAgentGameInfo返回 result:{}", result);
         return result;
     }
