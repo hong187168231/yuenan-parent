@@ -18,6 +18,6 @@ public interface MemBaseInfoMapper extends SuperMapper<MemBaseinfo> {
 
     MemBaseInfoBO findMemBaseInfoByAccount(@Param("account") String account);
 
-    @Update("UPDATE mem_baseinfo SET balance=balance - #{amount}, can_amount=can_amount - #{amount} WHERE user_id=#{userId}")
+    @Update("UPDATE mem_baseinfo SET balance=balance - #{amount}, can_amount=can_amount - #{amount} WHERE account=#{account}")
     int updateBanlaceAndCanAmount(@Param("account") String account, @Param("amount") BigDecimal amount);
 }
