@@ -35,6 +35,7 @@ import com.indo.pay.service.ITakeCashService;
 import com.indo.core.pojo.bo.MemTradingBO;
 import com.indo.user.api.MemBaseInfoFeignClient;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -133,7 +134,7 @@ public class TakeCashServiceImpl extends SuperServiceImpl<TakeCashMapper, PayTak
             throw new BizException("提前金额大于可提现金额");
         }
         // 存在处理中的提现订单
-        boolean processCashFlag = this.selectProcessCashOrder(loginUser.getId());
+        boolean processCashFlag = this.selectProcessCashOrder(loginUser.getId(), GlobalConstants.PAY_CASH_STATUS_PENDING);
         if (processCashFlag) {
            throw new BizException("已存在提现中的订单");
         }
@@ -193,16 +194,15 @@ public class TakeCashServiceImpl extends SuperServiceImpl<TakeCashMapper, PayTak
     }
 
 
-    public boolean selectProcessCashOrder(Long memId) {
+    public boolean selectProcessCashOrder(Long memId, Integer status) {
         List<Integer> statusList = new LinkedList<>();
-        statusList.add(1);
-        statusList.add(2);
+        statusList.add(status);
         LambdaQueryWrapper<PayTakeCash> wrapper = new LambdaQueryWrapper<>();
         wrapper.
                 eq(PayTakeCash::getMemId, memId)
                 .in(PayTakeCash::getCashStatus, statusList);
         List list = this.baseMapper.selectList(wrapper);
-        return list.size() > 0;
+        return CollectionUtils.isNotEmpty(list);
     }
 
     /**
