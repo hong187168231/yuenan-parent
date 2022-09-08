@@ -108,26 +108,37 @@ public class PpServiceImpl implements PpService {
                 switch (countryCode) {
                     case "IN":
                         lang = "en";
+                        break;
                     case "EN":
                         lang = "en";
+                        break;
                     case "CN":
                         lang = "zh";
+                        break;
                     case "VN":
                         lang = "vi";
+                        break;
                     case "TW":
                         lang = "zh";
+                        break;
                     case "TH":
                         lang = "th";
+                        break;
                     case "ID":
                         lang = "in";
+                        break;
                     case "MY":
                         lang = "ms";
+                        break;
                     case "KR":
                         lang = "ko";
+                        break;
                     case "JP":
                         lang = "ja";
+                        break;
                     default:
                         lang = gameParentPlatform.getLanguageType();
+                        break;
                 }
             }else{
                 lang = gameParentPlatform.getLanguageType();

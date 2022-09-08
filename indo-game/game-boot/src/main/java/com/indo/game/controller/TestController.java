@@ -36,7 +36,7 @@ public class TestController {
         String countryCode = request.getHeader("countryCode");
         System.out.println("test18:");
         System.out.println("test1:"+countryCode);
-        System.out.println("test2:"+MessageUtils.get("networktimeout",countryCode));
+        System.out.println("test2:"+MessageUtils.get("g000007",countryCode));
         return null;
     }
 

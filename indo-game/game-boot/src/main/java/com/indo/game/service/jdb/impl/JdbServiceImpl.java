@@ -177,16 +177,22 @@ public class JdbServiceImpl implements JdbService {
             switch (countryCode) {
                 case "IN":
                     lang = "en";
+                    break;
                 case "EN":
                     lang = "en";
+                    break;
                 case "CN":
                     lang = "cn";
+                    break;
                 case "VN":
                     lang = "vn";
+                    break;
                 case "TH":
                     lang = "th";
+                    break;
                 default:
                     lang = gameParentPlatform.getLanguageType();
+                    break;
             }
         }else{
             lang = gameParentPlatform.getLanguageType();

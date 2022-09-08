@@ -549,26 +549,37 @@ public class MtServiceImpl implements MtService {
             switch (countryCode) {
                 case "IN":
                     lang = "EN-US";
+                    break;
                 case "EN":
                     lang = "EN-US";
+                    break;
                 case "CN":
                     lang = "ZH-CN";
+                    break;
                 case "VN":
                     lang = "VI-VN";
+                    break;
                 case "TW":
                     lang = "ZH-TW";
+                    break;
                 case "TH":
                     lang = "TH-TH";
+                    break;
                 case "ID":
                     lang = "IN-ID";
+                    break;
                 case "MY":
                     lang = "MS-MY";
+                    break;
                 case "KR":
                     lang = "KO-KR";
+                    break;
                 case "JP":
                     lang = "JA-JP";
+                    break;
                 default:
                     lang = gameParentPlatform.getLanguageType();
+                    break;
             }
         }else{
             lang = gameParentPlatform.getLanguageType();

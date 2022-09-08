@@ -137,18 +137,25 @@ public class RedtigerServiceImpl implements RedtigerService {
             switch (countryCode) {
                 case "IN":
                     lang = "en_US";
+                    break;
                 case "EN":
                     lang = "en_US";
+                    break;
                 case "CN":
                     lang = "zh_CN";
+                    break;
                 case "VN":
                     lang = "vi";
+                    break;
                 case "TW":
                     lang = "zh_TW";
+                    break;
                 case "TH":
                     lang = "th";
+                    break;
                 default:
                     lang = gameParentPlatform.getLanguageType();
+                    break;
             }
         }else{
             lang = gameParentPlatform.getLanguageType();

@@ -120,20 +120,28 @@ public class DgServiceImpl implements DgService {
             switch (countryCode) {
                 case "IN":
                     lang = "0";
+                    break;
                 case "EN":
                     lang = "0";
+                    break;
                 case "CN":
                     lang = "1";
+                    break;
                 case "VN":
                     lang = "5";
+                    break;
                 case "TW":
                     lang = "2";
+                    break;
                 case "TH":
                     lang = "4";
+                    break;
                 case "KR":
                     lang = "3";
+                    break;
                 default:
                     lang = platformGameParent.getLanguageType();
+                    break;
             }
         }else{
             lang = platformGameParent.getLanguageType();

@@ -70,16 +70,22 @@ public class BtiServiceImpl implements BtiService {
                 switch (countryCode) {
                     case "IN":
                         lang = "en";
+                        break;
                     case "EN":
                         lang = "en";
+                        break;
                     case "CN":
                         lang = "zh";
+                        break;
                     case "VN":
                         lang = "vi";
+                        break;
                     case "TH":
                         lang = "th";
+                        break;
                     default:
                         lang = gameParentPlatform.getLanguageType();
+                        break;
                 }
             }else{
                 lang = gameParentPlatform.getLanguageType();

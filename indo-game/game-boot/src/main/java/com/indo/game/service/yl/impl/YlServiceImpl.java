@@ -120,28 +120,40 @@ public class YlServiceImpl implements YlService {
                 switch (countryCode) {
                     case "IN":
                         lang = "EN";
+                        break;
                     case "EN":
                         lang = "EN";
+                        break;
                     case "CN":
                         lang = "CN";
+                        break;
                     case "VN":
                         lang = "VN";
+                        break;
                     case "TW":
                         lang = "HK";
+                        break;
                     case "TH":
                         lang = "TH";
+                        break;
                     case "ID":
                         lang = "ID";
+                        break;
                     case "SP":
                         lang = "SP";
+                        break;
                     case "KR":
                         lang = "KO";
+                        break;
                     case "JP":
                         lang = "JP";
+                        break;
                     case "MM":
                         lang = "MM";
+                        break;
                     default:
                         lang = platformGameParent.getLanguageType();
+                        break;
                 }
             }else{
                 lang = platformGameParent.getLanguageType();

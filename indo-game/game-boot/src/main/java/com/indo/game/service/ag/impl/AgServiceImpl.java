@@ -240,16 +240,22 @@ public String createSession(BigDecimal balance, CptOpenMember cptOpenMember) {
                 switch (countryCode) {
                     case "IN":
                         lang = "3";
+                        break;
                     case "EN":
                         lang = "3";
+                        break;
                     case "CN":
                         lang = "1";
+                        break;
                     case "VN":
                         lang = "4";
+                        break;
                     case "TW":
                         lang = "2";
+                        break;
                     default:
                         lang = gameParentPlatform.getLanguageType();
+                        break;
                 }
             }else{
                 lang = gameParentPlatform.getLanguageType();

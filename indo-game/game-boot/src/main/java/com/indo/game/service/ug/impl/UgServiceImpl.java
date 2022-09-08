@@ -166,26 +166,37 @@ public class UgServiceImpl implements UgService {
             switch (countryCode) {
                 case "IN":
                     lang = "en";
+                    break;
                 case "EN":
                     lang = "en";
+                    break;
                 case "CN":
                     lang = "zh_cn";
+                    break;
                 case "VN":
                     lang = "vi";
+                    break;
                 case "TW":
                     lang = "zh_TW";
+                    break;
                 case "TH":
                     lang = "th";
+                    break;
                 case "ID":
                     lang = "id";
+                    break;
                 case "MY":
                     lang = "ms_MY";
+                    break;
                 case "KR":
                     lang = "ko_KR";
+                    break;
                 case "JP":
                     lang = "ja_JP";
+                    break;
                 default:
                     lang = gameParentPlatform.getLanguageType();
+                    break;
             }
         }else{
             lang = gameParentPlatform.getLanguageType();

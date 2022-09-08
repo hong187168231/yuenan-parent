@@ -1,5 +1,7 @@
 package com.indo.common.utils.i18n;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +19,7 @@ public class MessageUtils {
     public MessageUtils(MessageSource messageSource) {
         this.messageSource = messageSource;
     }
-
+    private static final Logger logger = LoggerFactory.getLogger(MessageUtils.class);
     /**
      * 获取单个国际化翻译值
      */
@@ -29,39 +31,50 @@ public class MessageUtils {
                 case "IN":
                     lang = "en";
                     country = "IN";
+                    break;
                 case "EN":
                     lang = "en";
                     country = "US";
+                    break;
                 case "CN":
                     lang = "zh";
                     country = "CN";
+                    break;
                 case "VN":
                     lang = "vi";
                     country = "VN";
+                    break;
                 case "TW":
                     lang = "zh";
                     country = "TW";
+                    break;
                 case "TH":
                     lang = "th";
                     country = "TH";
+                    break;
                 case "ID":
                     lang = "in";
                     country = "ID";
+                    break;
                 case "MY":
                     lang = "ms";
                     country = "MY";
-                    countryCode = "ms_MY";
+                    break;
                 case "KR":
                     lang = "ko";
                     country = "KR";
+                    break;
                 case "JP":
                     lang = "ja";
                     country = "JP";
+                    break;
                 default:
                     lang = "en";
                     country = "US";
+                    break;
             }
             Locale locale = new Locale(lang,country);
+            logger.info("获取单个国际化翻译值msgKey:{},countryCode：{},lang：{},country：{},locale：{}", msgKey, countryCode,lang,country,locale);
             ResourceBundle bundle = ResourceBundle.getBundle("messages", locale);
             return bundle.getString(msgKey);
         } catch (Exception e) {

@@ -93,26 +93,37 @@ public class WmServiceImpl implements WmService {
                     switch (countryCode) {
                         case "IN":
                             lang = "6";
+                            break;
                         case "EN":
                             lang = "1";
+                            break;
                         case "CN":
                             lang = "0";
+                            break;
                         case "VN":
                             lang = "3";
+                            break;
                         case "TW":
                             lang = "9";
+                            break;
                         case "TH":
                             lang = "3";
+                            break;
                         case "ID":
                             lang = "8";
+                            break;
                         case "MY":
                             lang = "7";
+                            break;
                         case "KR":
                             lang = "5";
+                            break;
                         case "JP":
                             lang = "4";
+                            break;
                         default:
                             lang = gameParentPlatform.getLanguageType();
+                            break;
                     }
                 }else{
                     lang = gameParentPlatform.getLanguageType();
@@ -173,26 +184,37 @@ public class WmServiceImpl implements WmService {
             switch (countryCode) {
                 case "IN":
                     lang = "6";
+                    break;
                 case "EN":
                     lang = "1";
+                    break;
                 case "CN":
                     lang = "0";
+                    break;
                 case "VN":
                     lang = "3";
+                    break;
                 case "TW":
                     lang = "9";
+                    break;
                 case "TH":
                     lang = "3";
+                    break;
                 case "ID":
                     lang = "8";
+                    break;
                 case "MY":
                     lang = "7";
+                    break;
                 case "KR":
                     lang = "5";
+                    break;
                 case "JP":
                     lang = "4";
+                    break;
                 default:
                     lang = gameParentPlatform.getLanguageType();
+                    break;
             }
         }else{
             lang = gameParentPlatform.getLanguageType();
