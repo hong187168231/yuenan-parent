@@ -328,11 +328,15 @@ public class TakeCashServiceImpl extends SuperServiceImpl<TakeCashMapper, PayTak
             throw new BizException("提现异常");
         }
         if (memBaseInfoBO.getBalance().compareTo(amount) == -1) {
-            throw new BizException("余额小于提现金额，提现异常");
+            throw new BizException("余额小于提现金额，不可提现");
         }
         if (memBaseInfoBO.getCanAmount().compareTo(amount) == -1) {
-            throw new BizException("可提现金额小于提现金额，提现异常");
+            throw new BizException("可提现金额小于提现金额，不可提现");
         }
+        if(amount.compareTo(memBaseInfoBO.getCanAmount()) == 1){
+            throw new BizException("可提现金额大于提现金额，不可提现");
+        }
+
         return SqlHelper.retBool(this.memBaseInfoMapper.updateBanlaceAndCanAmount(account, amount));
     }
 }
