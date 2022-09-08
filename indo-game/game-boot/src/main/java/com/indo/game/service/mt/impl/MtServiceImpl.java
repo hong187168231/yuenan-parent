@@ -612,8 +612,8 @@ public class MtServiceImpl implements MtService {
         url.append(MD5.md5(cptOpenMember.getPassword())).append("/");
 
         JSONObject jsonObject = new JSONObject(new LinkedHashMap<>());
-        jsonObject.put("nickname", loginUser.getNickName());
-        jsonObject.put("playerLevel", loginUser.getMemLevel());
+        jsonObject.put("nickname", "");
+        jsonObject.put("playerLevel", "");
         url.append(MD5.md5(OpenAPIProperties.MT_KEY + jsonObject.toJSONString())).append("/");
         url.append(getEncode(jsonObject.toJSONString()));
         return url.toString();
