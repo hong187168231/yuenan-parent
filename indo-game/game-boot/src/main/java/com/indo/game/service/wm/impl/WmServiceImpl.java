@@ -7,6 +7,7 @@ import com.indo.common.redis.utils.GeneratorIdUtil;
 import com.indo.common.result.Result;
 import com.indo.common.utils.DateUtils;
 import com.indo.common.utils.GameUtil;
+import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.core.pojo.entity.game.GameParentPlatform;
@@ -38,33 +39,33 @@ public class WmServiceImpl implements WmService {
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
         if (null == gameParentPlatform) {
-            return Result.failed("(" + parentName + ")平台不存在");
+            return Result.failed("g100101", MessageUtils.get("g100101",countryCode));
         }
         if (0==gameParentPlatform.getIsStart()) {
-            return Result.failed("g100101", "平台未启用");
+            return Result.failed("g100101", MessageUtils.get("g100101",countryCode));
         }
         if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
-            return Result.failed("g000001", gameParentPlatform.getMaintenanceContent());
+            return Result.failed("g000001", MessageUtils.get("g000001",countryCode));
         }
         // 是否开售校验
         GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
         if (null == gamePlatform) {
-            return Result.failed("(" + platform + ")游戏不存在");
+            return Result.failed("g100102", MessageUtils.get("g100102",countryCode));
         }
         if (0==gamePlatform.getIsStart()) {
-            return Result.failed("g100102", "游戏未启用");
+            return Result.failed("g100102", MessageUtils.get("g100102",countryCode));
         }
         if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
-            return Result.failed("g091047", gamePlatform.getMaintenanceContent());
+            return Result.failed("g091047", MessageUtils.get("g091047",countryCode));
         }
 
-        BigDecimal balance = loginUser.getBalance();
-        //验证站点余额
-        if (null == balance || balance.compareTo(BigDecimal.ZERO) == 0) {
-            logger.info("站点wm余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
-            //站点棋牌余额不足
-            return Result.failed("g300004", "会员余额不足");
-        }
+//        BigDecimal balance = loginUser.getBalance();
+//        //验证站点余额
+//        if (null == balance || balance.compareTo(BigDecimal.ZERO) == 0) {
+//            logger.info("站点wm余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
+//            //站点棋牌余额不足
+//            return Result.failed("g300004", MessageUtils.get("g300004",countryCode));
+//        }
 
         try {
 
@@ -87,35 +88,47 @@ public class WmServiceImpl implements WmService {
                 // 先退出
                 commonRequest(getLoginOutUrl(loginUser.getAccount()), null);
 //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+                String lang = "";
                 if(null!=countryCode&&!"".equals(countryCode)){
                     switch (countryCode) {
                         case "IN":
-                            countryCode = "6";
+                            lang = "6";
+                            break;
                         case "EN":
-                            countryCode = "1";
+                            lang = "1";
+                            break;
                         case "CN":
-                            countryCode = "0";
+                            lang = "0";
+                            break;
                         case "VN":
-                            countryCode = "3";
+                            lang = "3";
+                            break;
                         case "TW":
-                            countryCode = "9";
+                            lang = "9";
+                            break;
                         case "TH":
-                            countryCode = "3";
+                            lang = "3";
+                            break;
                         case "ID":
-                            countryCode = "8";
+                            lang = "8";
+                            break;
                         case "MY":
-                            countryCode = "7";
+                            lang = "7";
+                            break;
                         case "KR":
-                            countryCode = "5";
+                            lang = "5";
+                            break;
                         case "JP":
-                            countryCode = "4";
+                            lang = "4";
+                            break;
                         default:
-                            countryCode = gameParentPlatform.getLanguageType();
+                            lang = gameParentPlatform.getLanguageType();
+                            break;
                     }
                 }else{
-                    countryCode = gameParentPlatform.getLanguageType();
+                    lang = gameParentPlatform.getLanguageType();
                 }
-                JSONObject jsonObject = getStartGame(cptOpenMember, countryCode, platform);
+                JSONObject jsonObject = getStartGame(cptOpenMember, lang, platform);
                 logger.info("wm 启动游戏返回result:{}", jsonObject);
                 if (jsonObject.getInteger("errorCode").equals(0)) {
                     // 请求URL
@@ -123,7 +136,7 @@ public class WmServiceImpl implements WmService {
                     responseData.setPathUrl(jsonObject.getString("result"));
                     return Result.success(responseData);
                 } else {
-                    return errorCode(jsonObject.getString("errorCode"), jsonObject.getString("errorMessage"));
+                    return errorCode(jsonObject.getString("errorCode"), jsonObject.getString("errorMessage"), countryCode);
                 }
 
             }
@@ -131,12 +144,12 @@ public class WmServiceImpl implements WmService {
 
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.failed("g100104", "网络繁忙，请稍后重试！");
+            return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
         }
     }
 
     @Override
-    public Result logout(LoginInfo loginUser, String platform, String ip) {
+    public Result logout(LoginInfo loginUser, String platform, String ip,String countryCode) {
         logger.info("wmlogout {} wmGame account:{},wmCodeId:{}", ip, loginUser.getAccount(), platform);
         try {
             // 游戏退出
@@ -144,17 +157,17 @@ public class WmServiceImpl implements WmService {
             JSONObject result = commonRequest(getLoginOutUrl(loginUser.getAccount()), null);
             logger.info("wmlogout 退出返回result:{}", result);
             if (null == result) {
-                return Result.failed("g091087", "第三方请求异常！");
+                return Result.failed("g091087", MessageUtils.get("g091087",countryCode));
             }
 
             if (0 == result.getInteger("errorCode")) {
                 return Result.success();
             } else {
-                return errorCode(result.getString("errorCode"), result.getString("errorMessage"));
+                return errorCode(result.getString("errorCode"), result.getString("errorMessage"), countryCode);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.failed("g100104", "网络繁忙，请稍后重试！");
+            return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
         }
     }
 
@@ -166,39 +179,51 @@ public class WmServiceImpl implements WmService {
      */
     private Result createMemberGame(CptOpenMember cptOpenMember, GameParentPlatform gameParentPlatform, String platform,String countryCode) {
 //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+        String lang = "";
         if(null!=countryCode&&!"".equals(countryCode)){
             switch (countryCode) {
                 case "IN":
-                    countryCode = "6";
+                    lang = "6";
+                    break;
                 case "EN":
-                    countryCode = "1";
+                    lang = "1";
+                    break;
                 case "CN":
-                    countryCode = "0";
+                    lang = "0";
+                    break;
                 case "VN":
-                    countryCode = "3";
+                    lang = "3";
+                    break;
                 case "TW":
-                    countryCode = "9";
+                    lang = "9";
+                    break;
                 case "TH":
-                    countryCode = "3";
+                    lang = "3";
+                    break;
                 case "ID":
-                    countryCode = "8";
+                    lang = "8";
+                    break;
                 case "MY":
-                    countryCode = "7";
+                    lang = "7";
+                    break;
                 case "KR":
-                    countryCode = "5";
+                    lang = "5";
+                    break;
                 case "JP":
-                    countryCode = "4";
+                    lang = "4";
+                    break;
                 default:
-                    countryCode = gameParentPlatform.getLanguageType();
+                    lang = gameParentPlatform.getLanguageType();
+                    break;
             }
         }else{
-            countryCode = gameParentPlatform.getLanguageType();
+            lang = gameParentPlatform.getLanguageType();
         }
         // 用户注册
-        JSONObject result = commonRequest(getLoginUrl(cptOpenMember, countryCode), null);
+        JSONObject result = commonRequest(getLoginUrl(cptOpenMember, lang), null);
         logger.info("wm 用户注册返回result:{}", result);
         if (null == result) {
-            return Result.failed("g091087", "第三方请求异常！");
+            return Result.failed("g091087", MessageUtils.get("g091087",countryCode));
         }
 
         if (0 == result.getInteger("errorCode")) {
@@ -207,7 +232,7 @@ public class WmServiceImpl implements WmService {
             JSONObject jsonObject = getStartGame(cptOpenMember, gameParentPlatform.getLanguageType(), platform);
             logger.info("wm 启动游戏返回result:{}", jsonObject);
             if (null == jsonObject) {
-                return Result.failed("g091087", "第三方请求异常！");
+                return Result.failed("g091087", MessageUtils.get("g091087",countryCode));
             }
             if (jsonObject.getInteger("errorCode").equals(0)) {
                 // 请求URL
@@ -215,10 +240,10 @@ public class WmServiceImpl implements WmService {
                 responseData.setPathUrl(jsonObject.getString("result"));
                 return Result.success(responseData);
             } else {
-                return errorCode(jsonObject.getString("errorCode"), jsonObject.getString("errorMessage"));
+                return errorCode(jsonObject.getString("errorCode"), jsonObject.getString("errorMessage"), countryCode);
             }
         } else {
-            return errorCode(result.getString("errorCode"), result.getString("errorMessage"));
+            return errorCode(result.getString("errorCode"), result.getString("errorMessage"), countryCode);
         }
     }
 
@@ -315,56 +340,56 @@ public class WmServiceImpl implements WmService {
         return  epoch;
     }
 
-    public Result errorCode(String errorCode, String errorMessage) {
+    public Result errorCode(String errorCode, String errorMessage,String countryCode) {
 //        0 成功。                                                Succeed.
         switch (errorCode) {
 //        104 新增会员资料错误,此帐号已被使用!!
             case "104":
-                return Result.failed("g100003", errorMessage);
+                return Result.failed("g100003", MessageUtils.get("g100003",countryCode));
 //        10404 帐号长度过长
             case "10404":
-                return Result.failed("g100002", errorMessage);
+                return Result.failed("g100002", MessageUtils.get("g100002",countryCode));
 
 //        10405 帐号长度过短
             case "10405":
-                return Result.failed("g100002", errorMessage);
+                return Result.failed("g100002", MessageUtils.get("g100002",countryCode));
 
 //        10406 密码长度过短
             case "10406":
-                return Result.failed("g100108", errorMessage);
+                return Result.failed("g100108", MessageUtils.get("g100108",countryCode));
 // 10407  密码长度过长
             case "10407":
-                return Result.failed("g100108", errorMessage);
+                return Result.failed("g100108", MessageUtils.get("g100108",countryCode));
 // 10409 姓名长度过长
             case "10409":
-                return Result.failed("g000007", errorMessage);
+                return Result.failed("g000007", MessageUtils.get("g000007",countryCode));
 // 10502  帐号名不得为空
             case "10502":
-                return Result.failed("g100003", errorMessage);
+                return Result.failed("g100003", MessageUtils.get("g100003",countryCode));
 // 10508  密码不得为空
             case "10508":
-                return Result.failed("g100108", errorMessage);
+                return Result.failed("g100108", MessageUtils.get("g100108",countryCode));
 // 10509  姓名不得为空
             case "10509":
-                return Result.failed("g000007", errorMessage);
+                return Result.failed("g000007", MessageUtils.get("g000007",countryCode));
 // 10419  筹码格式错误(请用逗号隔开)
             case "10419":
-                return Result.failed("g000007", errorMessage);
+                return Result.failed("g000007", MessageUtils.get("g000007",countryCode));
             // 10420  筹码个数错误(介于5-10个)
             case "10420":
-                return Result.failed("g000007", errorMessage);
+                return Result.failed("g000007", MessageUtils.get("g000007",countryCode));
             // 10421  筹码种类错误
             case "10421":
-                return Result.failed("g000007", errorMessage);
+                return Result.failed("g000007", MessageUtils.get("g000007",countryCode));
             // 10422  帐号只接受英文、数字、下划线与@
             case "10422":
-                return Result.failed("g100106", errorMessage);
+                return Result.failed("g100106", MessageUtils.get("g100106",countryCode));
             // 10520  上层代理停用或停押
             case "10520":
-                return Result.failed("g091035", errorMessage);
+                return Result.failed("g091035", MessageUtils.get("g091035",countryCode));
 //        9999 失败。                                                Failed.
             default:
-                return Result.failed("g009999", errorMessage);
+                return Result.failed("g009999", MessageUtils.get("g009999",countryCode));
         }
     }
 }

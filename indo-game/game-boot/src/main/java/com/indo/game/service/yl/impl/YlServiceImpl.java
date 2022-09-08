@@ -5,6 +5,7 @@ import com.indo.common.config.OpenAPIProperties;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
 import com.indo.common.utils.GameUtil;
+import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.common.util.SnowflakeId;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
 import com.indo.game.pojo.entity.CptOpenMember;
@@ -52,32 +53,32 @@ public class YlServiceImpl implements YlService {
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
         if (null == gameParentPlatform) {
-            return Result.failed("(" + parentName + ")平台不存在");
+            return Result.failed("g100101", MessageUtils.get("g100101",countryCode));
         }
         if (0==gameParentPlatform.getIsStart()) {
-            return Result.failed("g100101", "平台未启用");
+            return Result.failed("g100101", MessageUtils.get("g100101",countryCode));
         }
         if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
-            return Result.failed("g000001", gameParentPlatform.getMaintenanceContent());
+            return Result.failed("g000001", MessageUtils.get("g000001",countryCode));
         }
         // 是否开售校验
         GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
         if (null == gamePlatform) {
-            return Result.failed("(" + platform + ")游戏不存在");
+            return Result.failed("g100102", MessageUtils.get("g100102",countryCode));
         }
         if (0==gamePlatform.getIsStart()) {
-            return Result.failed("g100102", "游戏未启用");
+            return Result.failed("g100102", MessageUtils.get("g100102",countryCode));
         }
         if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
-            return Result.failed("g091047", gamePlatform.getMaintenanceContent());
+            return Result.failed("g091047", MessageUtils.get("g091047",countryCode));
         }
-        BigDecimal balance = loginUser.getBalance();
-        //验证站点棋牌余额
-        if (null == balance || BigDecimal.ZERO == balance) {
-            logger.info("站点YL余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
-            //站点棋牌余额不足
-            return Result.failed("g300004", "会员余额不足");
-        }
+//        BigDecimal balance = loginUser.getBalance();
+//        //验证站点棋牌余额
+//        if (null == balance || BigDecimal.ZERO == balance) {
+//            logger.info("站点YL余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
+//            //站点棋牌余额不足
+//            return Result.failed("g300004", MessageUtils.get("g300004",countryCode));
+//        }
         try {
 
             // 验证且绑定（YL-CPT第三方会员关系）
@@ -96,12 +97,12 @@ public class YlServiceImpl implements YlService {
                 cptOpenMember.setPassword(SnowflakeId.generateId().toString());
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
-                logout(loginUser, platform, ip);
+                logout(loginUser, platform, ip, countryCode);
             }
             return initGame(gamePlatform,gameParentPlatform, cptOpenMember, countryCode);
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.failed("g100104", "网络繁忙，请稍后重试！");
+            return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
         }
     }
 
@@ -114,37 +115,50 @@ public class YlServiceImpl implements YlService {
             map.put("extension1", OpenAPIProperties.YL_EXTENSION);
             map.put("userName", cptOpenMember.getUserName());
             //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+            String lang = "";
             if(null!=countryCode&&!"".equals(countryCode)){
                 switch (countryCode) {
                     case "IN":
-                        countryCode = "EN";
+                        lang = "EN";
+                        break;
                     case "EN":
-                        countryCode = "EN";
+                        lang = "EN";
+                        break;
                     case "CN":
-                        countryCode = "CN";
+                        lang = "CN";
+                        break;
                     case "VN":
-                        countryCode = "VN";
+                        lang = "VN";
+                        break;
                     case "TW":
-                        countryCode = "HK";
+                        lang = "HK";
+                        break;
                     case "TH":
-                        countryCode = "TH";
+                        lang = "TH";
+                        break;
                     case "ID":
-                        countryCode = "ID";
+                        lang = "ID";
+                        break;
                     case "SP":
-                        countryCode = "SP";
+                        lang = "SP";
+                        break;
                     case "KR":
-                        countryCode = "KO";
+                        lang = "KO";
+                        break;
                     case "JP":
-                        countryCode = "JP";
+                        lang = "JP";
+                        break;
                     case "MM":
-                        countryCode = "MM";
+                        lang = "MM";
+                        break;
                     default:
-                        countryCode = platformGameParent.getLanguageType();
+                        lang = platformGameParent.getLanguageType();
+                        break;
                 }
             }else{
-                countryCode = platformGameParent.getLanguageType();
+                lang = platformGameParent.getLanguageType();
             }
-            map.put("language", countryCode);
+            map.put("language", lang);
             if (!OpenAPIProperties.YL_IS_PLATFORM_LOGIN.equals("Y")) {
                 map.put("gameId", platform);
             }
@@ -162,7 +176,7 @@ public class YlServiceImpl implements YlService {
             }else if(null == jsonObject){
                 return Result.failed();
             }else {
-                return errorCode(jsonObject.getString("status"),jsonObject.getString("desc"));
+                return errorCode(jsonObject.getString("status"),jsonObject.getString("desc"), countryCode);
             }
         } catch (Exception e) {
             logger.error("YL捕鱼登录获取异常：", e);
@@ -191,7 +205,7 @@ public class YlServiceImpl implements YlService {
             }else if(null == jsonObject){
                 return Result.failed();
             }else {
-                return errorCode(jsonObject.getString("status"),jsonObject.getString("desc"));
+                return errorCode(jsonObject.getString("status"),jsonObject.getString("desc"), countryCode);
             }
         } catch (Exception e) {
             logger.error("YL捕鱼获取KEY异常：", e);
@@ -204,7 +218,7 @@ public class YlServiceImpl implements YlService {
     /**
      * 强迫登出玩家
      */
-    public Result logout(LoginInfo loginUser, String platform, String ip) {
+    public Result logout(LoginInfo loginUser, String platform, String ip,String countryCode) {
         try {
             Map<String, String> map = new HashMap<>();
             map.put("cert", OpenAPIProperties.YL_CERT);
@@ -219,7 +233,7 @@ public class YlServiceImpl implements YlService {
             }else if(null == jsonObject){
                 return Result.failed();
             }else {
-                return errorCode(jsonObject.getString("status"),jsonObject.getString("desc"));
+                return errorCode(jsonObject.getString("status"),jsonObject.getString("desc"), countryCode);
             }
 
         } catch (Exception e) {
@@ -244,50 +258,50 @@ public class YlServiceImpl implements YlService {
         return psApiResponseData;
     }
 
-    public Result  errorCode(String errorCode,String errorMessage){
+    public Result  errorCode(String errorCode,String errorMessage,String countryCode){
 //        0000 成功。                                                Succeed.
         switch (errorCode){
             case "0":
-                return Result.failed("g009999",errorMessage);
+                return Result.failed("g009999",MessageUtils.get("g009999",countryCode));
             case "500":
-                return Result.failed("g009999",errorMessage);
+                return Result.failed("g009999",MessageUtils.get("g009999",countryCode));
             case "1001":
-                return Result.failed("g000002",errorMessage);
+                return Result.failed("g000002",MessageUtils.get("g000002",countryCode));
             case "1002":
-                return Result.failed("g300007",errorMessage);
+                return Result.failed("g300007",MessageUtils.get("g300007",countryCode));
             case "1003":
-                return Result.failed("g091068",errorMessage);
+                return Result.failed("g091068",MessageUtils.get("g091068",countryCode));
             case "1004":
-                return Result.failed("g091084",errorMessage);
+                return Result.failed("g091084",MessageUtils.get("g091084",countryCode));
             case "1006":
-                return Result.failed("g091075",errorMessage);
+                return Result.failed("g091075",MessageUtils.get("g091075",countryCode));
             case "1007":
-                return Result.failed("g091155",errorMessage);
+                return Result.failed("g091155",MessageUtils.get("g091155",countryCode));
             case "1008":
-                return Result.failed("g091156",errorMessage);
+                return Result.failed("g091156",MessageUtils.get("g091156",countryCode));
             case "1009":
-                return Result.failed("g300004",errorMessage);
+                return Result.failed("g300004",MessageUtils.get("g300004",countryCode));
             case "1011":
-                return Result.failed("g091033",errorMessage);
+                return Result.failed("g091033",MessageUtils.get("g091033",countryCode));
             case "1012":
-                return Result.failed("g091158",errorMessage);
+                return Result.failed("g091158",MessageUtils.get("g091158",countryCode));
             case "1014":
-                return Result.failed("g091157",errorMessage);
+                return Result.failed("g091157",MessageUtils.get("g091157",countryCode));
             case "1015":
-                return Result.failed("g091159",errorMessage);
+                return Result.failed("g091159",MessageUtils.get("g091159",countryCode));
             case "1016":
-                return Result.failed("g091035",errorMessage);
+                return Result.failed("g091035",MessageUtils.get("g091035",countryCode));
             case "1018":
-                return Result.failed("g200003",errorMessage);
+                return Result.failed("g200003",MessageUtils.get("g200003",countryCode));
             case "1023":
-                return Result.failed("g091159",errorMessage);
+                return Result.failed("g091159",MessageUtils.get("g091159",countryCode));
             case "1024":
-                return Result.failed("g100001",errorMessage);
+                return Result.failed("g100001",MessageUtils.get("g100001",countryCode));
             case "1030":
-                return Result.failed("g091035",errorMessage);
+                return Result.failed("g091035", MessageUtils.get("g091035",countryCode));
             //        9999 失败。                                                Failed.
             default:
-                return Result.failed("g009999",errorMessage);
+                return Result.failed("g009999",MessageUtils.get("g009999",countryCode));
         }
     }
 }

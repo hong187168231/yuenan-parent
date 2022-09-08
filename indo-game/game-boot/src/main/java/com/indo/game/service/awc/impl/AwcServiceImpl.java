@@ -5,6 +5,7 @@ import com.indo.common.config.OpenAPIProperties;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
 import com.indo.common.utils.DateUtils;
+import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.core.mapper.game.GameCategoryMapper;
 import com.indo.core.mapper.game.GamePlatformMapper;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
@@ -55,37 +56,37 @@ public class AwcServiceImpl implements AwcService {
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
         if (null == gameParentPlatform) {
-            return Result.failed("(" + parentName + ")平台不存在");
+            return Result.failed("g100101", MessageUtils.get("g100101",countryCode));
         }
         if (0==gameParentPlatform.getIsStart()) {
-            return Result.failed("g100101", "平台未启用");
+            return Result.failed("g100101", MessageUtils.get("g100101",countryCode));
         }
         if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
-            return Result.failed("g000001", gameParentPlatform.getMaintenanceContent());
+            return Result.failed("g000001", MessageUtils.get("g000001",countryCode));
         }
         // 是否开售校验
         GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
         if (null == gamePlatform) {
-            return Result.failed("(" + platform + ")游戏不存在");
+            return Result.failed("g100102", MessageUtils.get("g100102",countryCode));
         }
         if (0==gamePlatform.getIsStart()) {
-            return Result.failed("g100102", "游戏未启用");
+            return Result.failed("g100102", MessageUtils.get("g100102",countryCode));
         }
         if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
-            return Result.failed("g091047", gamePlatform.getMaintenanceContent());
+            return Result.failed("g091047", MessageUtils.get("g091047",countryCode));
         }
 //        //初次判断站点棋牌余额是否够该用户
 //        MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(loginUser.getAccount());
 //        if (null==memBaseinfo){
 //            return Result.failed(loginUser.getAccount()+"用户不存在");
 //        }
-        BigDecimal balance = loginUser.getBalance();
-        //验证站点棋牌余额
-        if (null==balance || BigDecimal.ZERO==balance) {
-            logger.info("站点awc余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
-            //站点棋牌余额不足
-            return Result.failed("g300004","会员余额不足");
-        }
+//        BigDecimal balance = loginUser.getBalance();
+//        //验证站点棋牌余额
+//        if (null==balance || BigDecimal.ZERO==balance) {
+//            logger.info("站点awc余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
+//            //站点棋牌余额不足
+//            return Result.failed("g300004",MessageUtils.get("g300004",countryCode));
+//        }
 
         try {
 
@@ -102,7 +103,7 @@ public class AwcServiceImpl implements AwcService {
                 //创建玩家
                 return createMemberGame(gameParentPlatform,gamePlatform, ip, cptOpenMember,isMobileLogin,countryCode);
             } else {
-                this.logout(loginUser,ip);
+                this.logout(loginUser,ip, countryCode);
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
                 //登录
@@ -110,14 +111,14 @@ public class AwcServiceImpl implements AwcService {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.failed("g100104","网络繁忙，请稍后重试！");
+            return Result.failed("g100104",MessageUtils.get("g100104",countryCode));
         }
     }
 
     /**
      * AE真人、SV388斗鸡游戏 强迫登出玩家
      */
-    public Result logout(LoginInfo loginUser,String ip){
+    public Result logout(LoginInfo loginUser,String ip,String countryCode){
         Map<String, String> trr = new HashMap<>();
         trr.put("userIds", loginUser.getAccount());
 
@@ -125,16 +126,16 @@ public class AwcServiceImpl implements AwcService {
         try {
             awcApiResponseData = commonRequest(trr, OpenAPIProperties.AWC_API_URL_LOGIN+"/wallet/logout", Integer.valueOf(loginUser.getId().intValue()), ip, "logout");
             if (null == awcApiResponseData ) {
-                return Result.failed("g100104","网络繁忙，请稍后重试！");
+                return Result.failed("g100104",MessageUtils.get("g100104",countryCode));
             }
             if("0000".equals(awcApiResponseData.getStatus())){
                 return Result.success(awcApiResponseData);
             }else {
-                return errorCode(awcApiResponseData.getStatus(),awcApiResponseData.getDesc());
+                return errorCode(awcApiResponseData.getStatus(),awcApiResponseData.getDesc(), countryCode);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.failed("g100104","网络繁忙，请稍后重试！");
+            return Result.failed("g100104",MessageUtils.get("g100104",countryCode));
         }
 
     }
@@ -145,14 +146,14 @@ public class AwcServiceImpl implements AwcService {
     private Result initGame(GameParentPlatform gameParentPlatform,GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember,String isMobileLogin,String countryCode) throws Exception {
         AwcApiResponseData awcApiResponseData = game(gameParentPlatform,gamePlatform, ip, cptOpenMember,isMobileLogin,countryCode);
         if (null == awcApiResponseData ) {
-            return Result.failed("g100104","网络繁忙，请稍后重试！");
+            return Result.failed("g100104",MessageUtils.get("g100104",countryCode));
         }
         if("0000".equals(awcApiResponseData.getStatus())){
             ApiResponseData responseData = new ApiResponseData();
             responseData.setPathUrl(awcApiResponseData.getUrl());
             return Result.success(responseData);
         }else {
-            return errorCode(awcApiResponseData.getStatus(),awcApiResponseData.getDesc());
+            return errorCode(awcApiResponseData.getStatus(),awcApiResponseData.getDesc(), countryCode);
         }
     }
     /**
@@ -163,13 +164,13 @@ public class AwcServiceImpl implements AwcService {
 //        AwcApiResponseData awcApiResponseData = new AwcApiResponseData();
 //        awcApiResponseData.setStatus("0000");
         if (null == awcApiResponseData ) {
-            return Result.failed("g100104","网络繁忙，请稍后重试！");
+            return Result.failed("g100104",MessageUtils.get("g100104",countryCode));
         }
         if("0000".equals(awcApiResponseData.getStatus())||"1001".equals(awcApiResponseData.getStatus())){
             externalService.saveCptOpenMember(cptOpenMember);
             return initGame(gameParentPlatform,gamePlatform, ip, cptOpenMember,isMobileLogin,countryCode);
         }else {
-            return errorCode(awcApiResponseData.getStatus(),awcApiResponseData.getDesc());
+            return errorCode(awcApiResponseData.getStatus(),awcApiResponseData.getDesc(), countryCode);
         }
     }
 
@@ -244,33 +245,45 @@ public class AwcServiceImpl implements AwcService {
 //            Example 范例：http://www.google.com
             trr.put("externalURL", "");
             //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+            String lang = "";
             if(null!=countryCode&&!"".equals(countryCode)){
                 switch (countryCode) {
                     case "IN":
-                        countryCode = "en_US";
+                        lang = "en_US";
+                        break;
                     case "EN":
-                        countryCode = "en_US";
+                        lang = "en_US";
+                        break;
                     case "CN":
-                        countryCode = "zh_CN";
+                        lang = "zh_CN";
+                        break;
                     case "VN":
-                        countryCode = "vi_VN";
+                        lang = "vi_VN";
+                        break;
                     case "TW":
-                        countryCode = "zh_TW";
+                        lang = "zh_TW";
+                        break;
                     case "TH":
-                        countryCode = "th_TH";
+                        lang = "th_TH";
+                        break;
                     case "ID":
-                        countryCode = "in_ID";
+                        lang = "in_ID";
+                        break;
                     case "MY":
-                        countryCode = "ms_MY";
+                        lang = "ms_MY";
+                        break;
                     case "KR":
-                        countryCode = "ko_KR";
+                        lang = "ko_KR";
+                        break;
                     case "JP":
-                        countryCode = "ja_JP";
+                        lang = "ja_JP";
+                        break;
                     default:
-                        countryCode = gameParentPlatform.getLanguageType();
+                        lang = gameParentPlatform.getLanguageType();
+                        break;
                 }
             }else{
-                countryCode = gameParentPlatform.getLanguageType();
+                lang = gameParentPlatform.getLanguageType();
             }
 //            en_US	英文
 //            zh_CN	简体中文
@@ -281,14 +294,16 @@ public class AwcServiceImpl implements AwcService {
 //            ko_KR	韩语
 //            ja_JP	日文
 //            vi_VN	越南文
-            trr.put("language", countryCode);
-            String url = "/wallet/login";
-            if(!gameParentPlatform.getPlatformCode().equals(gamePlatform.getParentName())) {
-                url = "/wallet/doLoginAndLaunchGame";
-                trr.put("gameCode", gamePlatform.getPlatformCode());//平台游戏代码
-            }else {
-                trr.put("gameForbidden", "");//指定对玩家隐藏游戏平台，您仅能透过 API 执行这个动作
-            }
+            trr.put("language", lang);
+//            String url = "/wallet/login";
+//            if(!gameParentPlatform.getPlatformCode().equals(gamePlatform.getParentName())) {
+//                url = "/wallet/doLoginAndLaunchGame";
+//                trr.put("gameCode", gamePlatform.getPlatformCode());//平台游戏代码
+//            }else {
+//                trr.put("gameForbidden", "");//指定对玩家隐藏游戏平台，您仅能透过 API 执行这个动作
+//            }
+            String url = "/wallet/doLoginAndLaunchGame";
+            trr.put("gameCode", "MX-LIVE-001");//平台游戏代码
 //                String str[] = gamePlatform.getPlatformCode().split("_");
 //                trr.put("platform", str[0]);//游戏平台名称
                 trr.put("platform", "SEXYBCRT");//游戏平台名称
@@ -439,200 +454,196 @@ public class AwcServiceImpl implements AwcService {
         }
         return awcApiResponse;
     }
-    public Result  errorCode(String errorCode,String errorMessage){
+    public Result  errorCode(String errorCode,String errorMessage,String countryCode){
 //        9998	系统繁忙
         if ("9998".equals(errorCode)){
-            return Result.failed("g000005",errorMessage);
-        }else
-//        0000	成功
-        if ("0000".equals(errorCode)){
-            return Result.failed("0000",errorMessage);
+            return Result.failed("g000005", MessageUtils.get("g000005",countryCode));
         }else
 //        10	请输入所有数据
         if ("10".equals(errorCode)){
-            return Result.failed("g090010",errorMessage);
+            return Result.failed("g090010",MessageUtils.get("g090010",countryCode));
         }else
 //        11	您的代理底下没有此游戏
         if ("11".equals(errorCode)){
-            return Result.failed("g090011",errorMessage);
+            return Result.failed("g090011",MessageUtils.get("g090011",countryCode));
         }else
 //        1000  无效的使用者账号
         if ("1000".equals(errorCode)){
-            return Result.failed("g100002",errorMessage);
+            return Result.failed("g100002",MessageUtils.get("g100002",countryCode));
         }else
 //        1001	帐号已存在
         if ("1001".equals(errorCode)){
-            return Result.failed("g100003",errorMessage);
+            return Result.failed("g100003",MessageUtils.get("g100003",countryCode));
         }else
 //        1002	帐号不存在
         if ("1002".equals(errorCode)){
-            return Result.failed("g010001",errorMessage);
+            return Result.failed("g010001",MessageUtils.get("g010001",countryCode));
         }else
 //        1004	无效的货币
         if ("1004".equals(errorCode)){
-            return Result.failed("g100001",errorMessage);
+            return Result.failed("g100001",MessageUtils.get("g100001",countryCode));
         }else
 //        1005	语言不存在
         if ("1005".equals(errorCode)){
-            return Result.failed("g091005",errorMessage);
+            return Result.failed("g091005",MessageUtils.get("g091005",countryCode));
         }else
 //        1006	PT 设定为空
         if ("1006".equals(errorCode)){
-            return Result.failed("g091006",errorMessage);
+            return Result.failed("g091006",MessageUtils.get("g091006",countryCode));
         }else
 //        1007	PT 设定与上线冲突
         if ("1007".equals(errorCode)){
-            return Result.failed("g091007",errorMessage);
+            return Result.failed("g091007",MessageUtils.get("g091007",countryCode));
         }else
 //        1008	无效的 token
         if ("1008".equals(errorCode)){
-            return Result.failed("g091008",errorMessage);
+            return Result.failed("g091008",MessageUtils.get("g091008",countryCode));
         }else
 //        1009	无效时区
         if ("1009".equals(errorCode)){
-            return Result.failed("g091009",errorMessage);
+            return Result.failed("g091009",MessageUtils.get("g091009",countryCode));
         }else
 //        1010	无效的数量
         if ("1010".equals(errorCode)){
-            return Result.failed("g091010",errorMessage);
+            return Result.failed("g091010",MessageUtils.get("g091010",countryCode));
         }else
 //        1011	无效的交易代码
         if ("1011".equals(errorCode)){
-            return Result.failed("g091011",errorMessage);
+            return Result.failed("g091011",MessageUtils.get("g091011",countryCode));
         }else
 //        1012	有待处理的转帐
         if ("1012".equals(errorCode)){
-            return Result.failed("g091012",errorMessage);
+            return Result.failed("g091012",MessageUtils.get("g091012",countryCode));
         }else
 //        1013	帐号已锁
         if ("1013".equals(errorCode)){
-            return Result.failed("g200003",errorMessage);
+            return Result.failed("g200003",MessageUtils.get("g200003",countryCode));
         }else
 //        1014	帐号暂停
         if ("1014".equals(errorCode)){
-            return Result.failed("g200002",errorMessage);
+            return Result.failed("g200002",MessageUtils.get("g200002",countryCode));
         }else
 //        1016	交易代码已被执行过
         if ("1016".equals(errorCode)){
-            return Result.failed("g091016",errorMessage);
+            return Result.failed("g091016",MessageUtils.get("g091016",countryCode));
         }else
 //        1017	交易代码不存在
         if ("1017".equals(errorCode)){
-            return Result.failed("g091017",errorMessage);
+            return Result.failed("g091017",MessageUtils.get("g091017",countryCode));
         }else
 //        1018	余额不足
         if ("1018".equals(errorCode)){
-            return Result.failed("g300004",errorMessage);
+            return Result.failed("g300004",MessageUtils.get("g300004",countryCode));
         }else
 //        1019	没有资料
         if ("1019".equals(errorCode)){
-            return Result.failed("g091019",errorMessage);
+            return Result.failed("g091019",MessageUtils.get("g091019",countryCode));
         }else
 //        1024	无效的日期 (时间) 格式
         if ("1024".equals(errorCode)){
-            return Result.failed("g091024",errorMessage);
+            return Result.failed("g091024",MessageUtils.get("g091024",countryCode));
         }else
 //        1025	无效的交易状态
         if ("1025".equals(errorCode)){
-            return Result.failed("g091025",errorMessage);
+            return Result.failed("g091025",MessageUtils.get("g091025",countryCode));
         }else
 //        1026	无效的投注限制设定
         if ("1026".equals(errorCode)){
-            return Result.failed("g091026",errorMessage);
+            return Result.failed("g091026",MessageUtils.get("g091026",countryCode));
         }else
 //        1027	无效的认证码
         if ("1027".equals(errorCode)){
-            return Result.failed("g091027",errorMessage);
+            return Result.failed("g091027",MessageUtils.get("g091027",countryCode));
         }else
 //        1028	无法执行指定的行为，
         if ("1028".equals(errorCode)){
-            return Result.failed("g091028",errorMessage);
+            return Result.failed("g091028",MessageUtils.get("g091028",countryCode));
         }else
 //        1029	无效的 IP
 //        通常发生于您的 IP 尚未加白
         if ("1029".equals(errorCode)){
-            return Result.failed("g000003",errorMessage);
+            return Result.failed("g000003",MessageUtils.get("g000003",countryCode));
         }else
 //        1030	使用无效的装置呼叫 (
         if ("1030".equals(errorCode)){
-            return Result.failed("g091030",errorMessage);
+            return Result.failed("g091030",MessageUtils.get("g091030",countryCode));
         }else
 //                1031	系统维护中
         if ("1031".equals(errorCode)){
-            return Result.failed("g000001",errorMessage);
+            return Result.failed("g000001",MessageUtils.get("g000001",countryCode));
         }else
 //                1032	重复登入
         if ("1032".equals(errorCode)){
-            return Result.failed("g091032",errorMessage);
+            return Result.failed("g091032",MessageUtils.get("g091032",countryCode));
         }else
 //                1033	无效的游戏代码
         if ("1033".equals(errorCode)){
-            return Result.failed("g091033",errorMessage);
+            return Result.failed("g091033",MessageUtils.get("g091033",countryCode));
         }else
 //                1034	您使用的时间参数不符
         if ("1034".equals(errorCode)){
-            return Result.failed("g091034",errorMessage);
+            return Result.failed("g091034",MessageUtils.get("g091034",countryCode));
         }else
 //                1035	无效的 Agent Id
         if ("1035".equals(errorCode)){
-            return Result.failed("g091035",errorMessage);
+            return Result.failed("g091035",MessageUtils.get("g091035",countryCode));
         }else
 //                1036	无效的参数
         if ("1036".equals(errorCode)){
-            return Result.failed("g000007",errorMessage);
+            return Result.failed("g000007",MessageUtils.get("g000007",countryCode));
         }else
 //                1037	错误的客户设定
 //                通常可能发生于您的目标回调
         if ("1037".equals(errorCode)){
-            return Result.failed("g091037",errorMessage);
+            return Result.failed("g091037",MessageUtils.get("g091037",countryCode));
         }else
 //                1038	重复的交易
         if ("1038".equals(errorCode)){
-            return Result.failed("g091038",errorMessage);
+            return Result.failed("g091038",MessageUtils.get("g091038",countryCode));
         }else
 //                1039	无此交易
         if ("1039".equals(errorCode)){
-            return Result.failed("g091039",errorMessage);
+            return Result.failed("g091039",MessageUtils.get("g091039",countryCode));
         }else
 //                1040	请求逾时
         if ("1040".equals(errorCode)){
-            return Result.failed("g091040",errorMessage);
+            return Result.failed("g091040",MessageUtils.get("g091040",countryCode));
         }else
 //                1041	HTTP 状态错误
         if ("1041".equals(errorCode)){
-            return Result.failed("g091041",errorMessage);
+            return Result.failed("g091041",MessageUtils.get("g091041",countryCode));
         }else
 //                1042	HTTP 请求空白
         if ("1042".equals(errorCode)){
-            return Result.failed("g091042",errorMessage);
+            return Result.failed("g091042",MessageUtils.get("g091042",countryCode));
         }else
 //                1043	下注已被取消
         if ("1043".equals(errorCode)){
-            return Result.failed("g091043",errorMessage);
+            return Result.failed("g091043",MessageUtils.get("g091043",countryCode));
         }else
 //                1044	无效的下注
         if ("1044".equals(errorCode)){
-            return Result.failed("g091044",errorMessage);
+            return Result.failed("g091044",MessageUtils.get("g091044",countryCode));
         }else
 //                1045	帐便记录新增失败
         if ("1045".equals(errorCode)){
-            return Result.failed("g091045",errorMessage);
+            return Result.failed("g091045",MessageUtils.get("g091045",countryCode));
         }else
 //                1046	转帐失败！请立即联系
         if ("1046".equals(errorCode)){
-            return Result.failed("g091046",errorMessage);
+            return Result.failed("g091046",MessageUtils.get("g091046",countryCode));
         }else
 //                1047	游戏维护中
         if ("1047".equals(errorCode)){
-            return Result.failed("g091047",errorMessage);
+            return Result.failed("g091047",MessageUtils.get("g091047",countryCode));
         }else
 //                1056	[任一参数]为空值
         if ("1056".equals(errorCode)){
-            return Result.failed("g091056",errorMessage);
+            return Result.failed("g091056",MessageUtils.get("g091056",countryCode));
         }else
 //        9999	失败
             {
-                return Result.failed("g009999",errorMessage);
+                return Result.failed("g009999",MessageUtils.get("g009999",countryCode));
             }
 
 

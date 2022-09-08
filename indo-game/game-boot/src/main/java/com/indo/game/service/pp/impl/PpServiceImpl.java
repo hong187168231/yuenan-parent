@@ -10,6 +10,7 @@ import com.indo.common.redis.utils.GeneratorIdUtil;
 import com.indo.common.result.Result;
 import com.indo.common.utils.DateUtils;
 import com.indo.common.utils.GameUtil;
+import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.common.util.PPHashAESEncrypt;
 import com.indo.core.mapper.game.TxnsMapper;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
@@ -52,33 +53,33 @@ public class PpServiceImpl implements PpService {
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
         if (null == gameParentPlatform) {
-            return Result.failed("(" + parentName + ")平台不存在");
+            return Result.failed("g100101", MessageUtils.get("g100101",countryCode));
         }
         if (0==gameParentPlatform.getIsStart()) {
-            return Result.failed("g100101", "平台未启用");
+            return Result.failed("g100101", MessageUtils.get("g100101",countryCode));
         }
         if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
-            return Result.failed("g000001", gameParentPlatform.getMaintenanceContent());
+            return Result.failed("g000001", MessageUtils.get("g000001",countryCode));
         }
         // 是否开售校验
         GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
         if (null == gamePlatform) {
-            return Result.failed("(" + platform + ")游戏不存在");
+            return Result.failed("g100102", MessageUtils.get("g100102",countryCode));
         }
         if (0==gamePlatform.getIsStart()) {
-            return Result.failed("g100102", "游戏未启用");
+            return Result.failed("g100102", MessageUtils.get("g100102",countryCode));
         }
         if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
-            return Result.failed("g091047", gamePlatform.getMaintenanceContent());
+            return Result.failed("g091047", MessageUtils.get("g091047",countryCode));
         }
 
-        BigDecimal balance = loginUser.getBalance();
-        //验证站点余额
-        if (null == balance || balance.compareTo(BigDecimal.ZERO) == 0) {
-            logger.info("站点pp余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
-            //站点棋牌余额不足
-            return Result.failed("g300004", "会员余额不足");
-        }
+//        BigDecimal balance = loginUser.getBalance();
+//        //验证站点余额
+//        if (null == balance || balance.compareTo(BigDecimal.ZERO) == 0) {
+//            logger.info("站点pp余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
+//            //站点棋牌余额不足
+//            return Result.failed("g300004", MessageUtils.get("g300004",countryCode));
+//        }
 
         try {
 
@@ -93,7 +94,7 @@ public class PpServiceImpl implements PpService {
                 cptOpenMember.setLoginTime(new Date());
                 cptOpenMember.setType(parentName);
                 //创建玩家
-                createMemberGame(cptOpenMember);
+                createMemberGame(cptOpenMember, countryCode);
             } else {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
@@ -102,48 +103,60 @@ public class PpServiceImpl implements PpService {
                 loginOutPP(loginUser);
             }
 //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+            String lang = "";
             if(null!=countryCode&&!"".equals(countryCode)){
                 switch (countryCode) {
                     case "IN":
-                        countryCode = "en";
+                        lang = "en";
+                        break;
                     case "EN":
-                        countryCode = "en";
+                        lang = "en";
+                        break;
                     case "CN":
-                        countryCode = "zh";
+                        lang = "zh";
+                        break;
                     case "VN":
-                        countryCode = "vi";
+                        lang = "vi";
+                        break;
                     case "TW":
-                        countryCode = "zh";
+                        lang = "zh";
+                        break;
                     case "TH":
-                        countryCode = "th";
+                        lang = "th";
+                        break;
                     case "ID":
-                        countryCode = "in";
+                        lang = "in";
+                        break;
                     case "MY":
-                        countryCode = "ms";
+                        lang = "ms";
+                        break;
                     case "KR":
-                        countryCode = "ko";
+                        lang = "ko";
+                        break;
                     case "JP":
-                        countryCode = "ja";
+                        lang = "ja";
+                        break;
                     default:
-                        countryCode = gameParentPlatform.getLanguageType();
+                        lang = gameParentPlatform.getLanguageType();
+                        break;
                 }
             }else{
-                countryCode = gameParentPlatform.getLanguageType();
+                lang = gameParentPlatform.getLanguageType();
             }
             PpApiStartGameReq ppApiRequestData = new PpApiStartGameReq();
             ppApiRequestData.setSecureLogin(OpenAPIProperties.PP_SECURE_LOGIN);
             ppApiRequestData.setExternalPlayerId(loginUser.getAccount());
             ppApiRequestData.setGameId(platform);
-            ppApiRequestData.setLanguage(countryCode);
-            return startGame(ppApiRequestData, ip);
+            ppApiRequestData.setLanguage(lang);
+            return startGame(ppApiRequestData, ip, countryCode);
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.failed("g100104", "网络繁忙，请稍后重试！");
+            return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
         }
     }
 
     @Override
-    public Result logout(LoginInfo loginUser, String platform, String ip) {
+    public Result logout(LoginInfo loginUser, String platform, String ip,String countryCode) {
         logger.info("pplogout ppGame account:{},t9CodeId:{}", loginUser.getId(), loginUser.getAccount(), platform);
         try {
             // 退出游戏
@@ -152,11 +165,11 @@ public class PpServiceImpl implements PpService {
             if (0 == ppCommonResp.getError()) {
                 return Result.success(ppCommonResp);
             } else {
-                return errorCode(ppCommonResp.getError().toString(), ppCommonResp.getDescription());
+                return errorCode(ppCommonResp.getError().toString(), ppCommonResp.getDescription(),countryCode);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.failed("g100104", "网络繁忙，请稍后重试！");
+            return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
         }
     }
 
@@ -173,7 +186,7 @@ public class PpServiceImpl implements PpService {
     }
 
     @Override
-    public Result transfer(PpApiTransferReq ppApiTransferReq, String ip) {
+    public Result transfer(PpApiTransferReq ppApiTransferReq, String ip,String countryCode) {
         logger.info("pp_transfer ppGame paramJson:{}, ip:{}", JSONObject.toJSONString(ppApiTransferReq), ip);
         try {
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(ppApiTransferReq.getExternalPlayerId());
@@ -186,7 +199,7 @@ public class PpServiceImpl implements PpService {
             // 存提金额
             BigDecimal betAmount = ppApiTransferReq.getAmount();
             if (memBaseinfo.getBalance().compareTo(betAmount) < 0) {
-                return Result.failed("g300004", "会员余额不足");
+                return Result.failed("g300004", MessageUtils.get("g300004",countryCode));
             }
             // 存提转账交易ID
             String transactionId = GoldchangeEnum.DSFYXZZ.name() + GeneratorIdUtil.generateId();
@@ -208,7 +221,7 @@ public class PpServiceImpl implements PpService {
                     memBaseinfo.getId(), "transferPP");
 
             if (0 != ppApiResponseData.getError()) {
-                return errorCode(ppApiResponseData.getError().toString(), ppApiResponseData.getDescription());
+                return errorCode(ppApiResponseData.getError().toString(), ppApiResponseData.getDescription(),countryCode);
             }
             // 大于0， 从平台转出， 转入PP电子
             if (betAmount.compareTo(BigDecimal.ZERO) > 0) {
@@ -288,21 +301,21 @@ public class PpServiceImpl implements PpService {
 
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            return Result.failed("g100104", "网络繁忙，请稍后重试！");
+            return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
         }
 
         return Result.success();
     }
 
     @Override
-    public Result getBalance(PpApiGetBalanceReq ppApiGetBalanceReq, String ip) {
+    public Result getBalance(PpApiGetBalanceReq ppApiGetBalanceReq, String ip,String countryCode) {
         logger.info("pp_getBalance ppGame paramJson:{}, ip:{}", JSONObject.toJSONString(ppApiGetBalanceReq), ip);
         PpApiResponseData ppApiResponseData;
         try {
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(ppApiGetBalanceReq.getExternalPlayerId());
 
             if (null == memBaseinfo) {
-                return Result.failed("g010001", "会员帐号不存在");
+                return Result.failed("g010001", MessageUtils.get("g010001",countryCode));
             }
 
             // 交互第三方
@@ -318,25 +331,25 @@ public class PpServiceImpl implements PpService {
                     memBaseinfo.getId(), "getBalancePP");
 
             if (0 != ppApiResponseData.getError()) {
-                return errorCode(ppApiResponseData.getError().toString(), ppApiResponseData.getDescription());
+                return errorCode(ppApiResponseData.getError().toString(), ppApiResponseData.getDescription(),countryCode);
             }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            return Result.failed("g100104", "网络繁忙，请稍后重试！");
+            return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
         }
 
         return Result.success(JSONObject.toJSONString(ppApiResponseData));
     }
 
     @Override
-    public Result startGame(PpApiStartGameReq ppApiStartGameReq, String ip) {
+    public Result startGame(PpApiStartGameReq ppApiStartGameReq, String ip,String countryCode) {
         logger.info("pp_startGame ppGame paramJson:{}, ip:{}", JSONObject.toJSONString(ppApiStartGameReq), ip);
         PpApiResponseData ppApiResponseData;
         try {
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(ppApiStartGameReq.getExternalPlayerId());
 
             if (null == memBaseinfo) {
-                return Result.failed("g010001", "会员帐号不存在");
+                return Result.failed("g010001", MessageUtils.get("g010001",countryCode));
             }
 
             // 交互第三方
@@ -349,11 +362,11 @@ public class PpServiceImpl implements PpService {
                     memBaseinfo.getId(), "startGamePP");
 
             if (0 != ppApiResponseData.getError()) {
-                return errorCode(ppApiResponseData.getError().toString(), ppApiResponseData.getDescription());
+                return errorCode(ppApiResponseData.getError().toString(), ppApiResponseData.getDescription(),countryCode);
             }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            return Result.failed("g100104", "网络繁忙，请稍后重试！");
+            return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
         }
 
         ApiResponseData responseData = new ApiResponseData();
@@ -390,7 +403,7 @@ public class PpServiceImpl implements PpService {
      * @param cptOpenMember
      * @return
      */
-    private Result createMemberGame(CptOpenMember cptOpenMember) {
+    private Result createMemberGame(CptOpenMember cptOpenMember,String countryCode) {
         // 创建PP账号
         PpApiResponseData ppApiResponseData = createPpMember(cptOpenMember);
         if (null == ppApiResponseData) {
@@ -402,7 +415,7 @@ public class PpServiceImpl implements PpService {
             externalService.saveCptOpenMember(cptOpenMember);
             return Result.success();
         } else {
-            return errorCode(ppApiResponseData.getError().toString(), ppApiResponseData.getDescription());
+            return errorCode(ppApiResponseData.getError().toString(), ppApiResponseData.getDescription(), countryCode);
         }
     }
 
@@ -500,42 +513,42 @@ public class PpServiceImpl implements PpService {
     }
 
 
-    public Result errorCode(String errorCode, String errorMessage) {
+    public Result errorCode(String errorCode, String errorMessage,String countryCode) {
 //        200 成功。                                                Succeed.
         switch (errorCode) {
 //        1 内部错误。请重试
             case "1":
-                return Result.failed("g100104", errorMessage);
+                return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
 //        100 {错误描述}。请稍后重试。” （GetTransferStatus 方法）           No authorized to access
             case "100":
-                return Result.failed("g100104", errorMessage);
+                return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
 
 //        2 安全登录名和安全密码组合错误                            Domain is null or the length of domain less than 2.
             case "2":
-                return Result.failed("g100107", errorMessage);
+                return Result.failed("g100107", MessageUtils.get("g100107",countryCode));
 
 //        6 未找到游戏或系统不允许游戏                                        Failed to pass the domain validation.
             case "6":
-                return Result.failed("g100102", errorMessage);
+                return Result.failed("g100102", MessageUtils.get("g100102",countryCode));
 
 //        7一个或多个输入参数未设置或设置错误。   The encrypted data is null or the length of the encrypted data is equal to 0.
             case "7":
-                return Result.failed("g000007", errorMessage);
+                return Result.failed("g000007", MessageUtils.get("g000007",countryCode));
 
 //        8 交易已存在            Assertion(SAML) didn't pass the timestamp validation.
             case "8":
-                return Result.failed("g091016", errorMessage);
+                return Result.failed("g091016", MessageUtils.get("g091016",countryCode));
 
 //        17 未找到玩家。                      Failed to extract the SAML parameters from the encrypted data.
             case "17":
-                return Result.failed("g010001", errorMessage);
+                return Result.failed("g010001", MessageUtils.get("g010001",countryCode));
 
 //        21 货币代码错误或不受支持。                                            Unknow action.
             case "21":
-                return Result.failed("g100001", errorMessage);
+                return Result.failed("g100001", MessageUtils.get("g100001",countryCode));
 //        9999 失败。                                                Failed.
             default:
-                return Result.failed("g009999", errorMessage);
+                return Result.failed("g009999", MessageUtils.get("g009999",countryCode));
         }
     }
 }

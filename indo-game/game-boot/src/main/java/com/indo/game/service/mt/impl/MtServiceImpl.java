@@ -10,6 +10,7 @@ import com.indo.common.result.Result;
 import com.indo.common.utils.DateUtils;
 import com.indo.common.utils.GameUtil;
 import com.indo.common.utils.encrypt.MD5;
+import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.core.mapper.game.TxnsMapper;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
 import com.indo.game.pojo.entity.CptOpenMember;
@@ -52,33 +53,33 @@ public class MtServiceImpl implements MtService {
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
         if (null == gameParentPlatform) {
-            return Result.failed("(" + parentName + ")平台不存在");
+            return Result.failed("g100101", MessageUtils.get("g100101",countryCode));
         }
         if (0==gameParentPlatform.getIsStart()) {
-            return Result.failed("g100101", "平台未启用");
+            return Result.failed("g100101", MessageUtils.get("g100101",countryCode));
         }
         if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
-            return Result.failed("g000001", gameParentPlatform.getMaintenanceContent());
+            return Result.failed("g000001", MessageUtils.get("g100101",countryCode));
         }
             // 是否开售校验
         GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
         if (null == gamePlatform) {
-            return Result.failed("(" + platform + ")游戏不存在");
+            return Result.failed("g100102", MessageUtils.get("g100102",countryCode));
         }
         if (0==gamePlatform.getIsStart()) {
-            return Result.failed("g100102", "游戏未启用");
+            return Result.failed("g100102", MessageUtils.get("g100102",countryCode));
         }
         if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
-            return Result.failed("g091047", gamePlatform.getMaintenanceContent());
+            return Result.failed("g091047", MessageUtils.get("g091047",countryCode));
         }
 
-        BigDecimal balance = loginUser.getBalance();
-        //验证站点余额
-        if (null == balance || balance.compareTo(BigDecimal.ZERO) == 0) {
-            logger.info("站点mt余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
-            //站点棋牌余额不足
-            return Result.failed("g300004", "会员余额不足");
-        }
+//        BigDecimal balance = loginUser.getBalance();
+//        //验证站点余额
+//        if (null == balance || balance.compareTo(BigDecimal.ZERO) == 0) {
+//            logger.info("站点mt余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
+//            //站点棋牌余额不足
+//            return Result.failed("g300004", MessageUtils.get("g300004",countryCode));
+//        }
 
         try {
 
@@ -105,7 +106,7 @@ public class MtServiceImpl implements MtService {
                 logger.info("天美log启动游戏 startUrl:{}", startUrl);
                 JSONObject jsonObject = commonRequest(startUrl);
                 if (null == jsonObject) {
-                    return Result.failed("g091087", "第三方请求异常！");
+                    return Result.failed("g091087", MessageUtils.get("g091087",countryCode));
                 }
                 logger.info("天美log getStartGame启动游戏返回paramsMap:{}", jsonObject.toJSONString());
                 if (jsonObject.getInteger("resultCode")==1) {
@@ -116,7 +117,7 @@ public class MtServiceImpl implements MtService {
                     return Result.success(responseData);
                 } else {
                     logger.info("天美log getStartGame启动游戏返回失败:resultCode:{}}",jsonObject.getInteger("resultCode"));
-                    return errorCode(jsonObject.getString("resultCode"));
+                    return errorCode(jsonObject.getString("resultCode"),countryCode);
                 }
             }
 
@@ -124,42 +125,42 @@ public class MtServiceImpl implements MtService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return Result.failed("g100104", "网络繁忙，请稍后重试！");
+        return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
 
     }
 
     @Override
-    public Result logout(LoginInfo loginUser, String platform, String ip) {
+    public Result logout(LoginInfo loginUser, String platform, String ip,String countryCode) {
         logger.info("mtlogout mtGame account:{},code:{}", loginUser.getAccount(), platform);
         try {
             // 退出
             JSONObject jsonObject = commonRequest(getLoginOutUrl(loginUser.getAccount()));
             logger.info("天美log logout退出游戏返回:JSONObject:{}}",jsonObject.toJSONString());
             if (null == jsonObject) {
-                return Result.failed("g091087", "第三方请求异常！");
+                return Result.failed("g091087", MessageUtils.get("g091087",countryCode));
             }
             if (jsonObject.getInteger("resultCode")==1) {
                 logger.info("天美log logout退出游戏返回成功:resultCode:{}}",jsonObject.getInteger("resultCode"));
                 return Result.success();
             } else {
                 logger.info("天美log logout退出游戏返回失败:resultCode:{}}",jsonObject.getInteger("resultCode"));
-                return errorCode(jsonObject.getString("resultCode"));
+                return errorCode(jsonObject.getString("resultCode"),countryCode);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.failed("g100104", "网络繁忙，请稍后重试！");
+            return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
         }
     }
 
     @Override
-    public Result allWithdraw(LoginInfo loginUser, String platform, String ip) {
+    public Result allWithdraw(LoginInfo loginUser, String platform, String ip,String countryCode) {
         logger.info("mt_allWithdraw mtGame account:{},code:{}", loginUser.getAccount(), platform);
         try {
             String transactionId = GoldchangeEnum.DSFYXZZ.name() + GeneratorIdUtil.generateId();
             // 全部提取
             JSONObject jsonObject = commonRequest(getAllWithdrawUrl(loginUser.getAccount(), transactionId));
             if (null == jsonObject) {
-                return Result.failed("g091087", "第三方请求异常！");
+                return Result.failed("g091087", MessageUtils.get("g091087",countryCode));
             }
             GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.MT_PLATFORM_CODE);
             if (jsonObject.getInteger("resultCode").equals(1)) {
@@ -243,23 +244,23 @@ public class MtServiceImpl implements MtService {
                 gameCommonService.updateUserBalance(memBaseinfo, transCoins, GoldchangeEnum.DSFYXZZ, TradingEnum.INCOME);
                 return Result.success();
             } else {
-                return errorCode(jsonObject.getString("resultCode"));
+                return errorCode(jsonObject.getString("resultCode"),countryCode);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.failed("g100104", "网络繁忙，请稍后重试！");
+            return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
         }
 
     }
 
     @Override
-    public Result getPlayerBalance(LoginInfo loginUser, String platform, String ip) {
+    public Result getPlayerBalance(LoginInfo loginUser, String platform, String ip,String countryCode) {
         logger.info("mt_getPlayerBalance mtGame account:{},code:{}", loginUser.getAccount(), platform);
         try {
             // 余额查询
             JSONObject jsonObject = commonRequest(getBalanceUrl(loginUser.getAccount()));
             if (null == jsonObject) {
-                return Result.failed("g091087", "第三方请求异常！");
+                return Result.failed("g091087", MessageUtils.get("g091087",countryCode));
             }
 
             if (jsonObject.getInteger("resultCode").equals(1)) {
@@ -267,16 +268,16 @@ public class MtServiceImpl implements MtService {
                 jsonObject1.put("balance", jsonObject.getBigDecimal("coinBalance"));
                 return Result.success(jsonObject1);
             } else {
-                return errorCode(jsonObject.getString("resultCode"));
+                return errorCode(jsonObject.getString("resultCode"),countryCode);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.failed("g100104", "网络繁忙，请稍后重试！");
+            return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
         }
     }
 
     @Override
-    public Result deposit(LoginInfo loginUser, String platform, String ip, BigDecimal coins) {
+    public Result deposit(LoginInfo loginUser, String platform, String ip, BigDecimal coins,String countryCode) {
         logger.info("mt_deposit mtGame account:{},code:{}", loginUser.getAccount(), platform);
         try {
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(loginUser.getAccount());
@@ -289,7 +290,7 @@ public class MtServiceImpl implements MtService {
             // 充值
             JSONObject jsonObject = commonRequest(getDepositUrl(loginUser.getAccount(), transactionId, coins.divide(platformGameParent.getCurrencyPro())));
             if (null == jsonObject) {
-                return Result.failed("g091087", "第三方请求异常！");
+                return Result.failed("g091087", MessageUtils.get("g091087",countryCode));
             }
             if (jsonObject.getInteger("resultCode").equals(1)) {
                 // 返回交易编码
@@ -370,16 +371,16 @@ public class MtServiceImpl implements MtService {
                 }
                 return Result.success();
             } else {
-                return errorCode(jsonObject.getString("resultCode"));
+                return errorCode(jsonObject.getString("resultCode"),countryCode);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.failed("g100104", "网络繁忙，请稍后重试！");
+            return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
         }
     }
 
     @Override
-    public Result withdraw(LoginInfo loginUser, String platform, String ip, BigDecimal coins) {
+    public Result withdraw(LoginInfo loginUser, String platform, String ip, BigDecimal coins,String countryCode) {
         logger.info("mt_withdraw mtGame account:{},code:{}", loginUser.getAccount(), platform);
         try {
             GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.MT_PLATFORM_CODE);
@@ -387,7 +388,7 @@ public class MtServiceImpl implements MtService {
             // 提取
             JSONObject jsonObject = commonRequest(getWithdrawUrl(loginUser.getAccount(), transactionId, coins.divide(platformGameParent.getCurrencyPro())));
             if (null == jsonObject) {
-                return Result.failed("g091087", "第三方请求异常！");
+                return Result.failed("g091087", MessageUtils.get("g091087",countryCode));
             }
             if (jsonObject.getInteger("resultCode").equals(1)) {
                 // 返回交易编码
@@ -469,11 +470,11 @@ public class MtServiceImpl implements MtService {
                 }
                 return Result.success();
             } else {
-                return errorCode(jsonObject.getString("resultCode"));
+                return errorCode(jsonObject.getString("resultCode"),countryCode);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.failed("g100104", "网络繁忙，请稍后重试！");
+            return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
         }
     }
 
@@ -489,7 +490,7 @@ public class MtServiceImpl implements MtService {
         // 用户注册
         JSONObject result = commonRequest(getCreateUrl(cptOpenMember, loginUser));
         if (null == result) {
-            return Result.failed("g091087", "第三方请求异常！");
+            return Result.failed("g091087", MessageUtils.get("g091087",countryCode));
         }
         logger.info("createMemberGame 用户注册返回JSONObject:{}", result.toJSONString());
         if (1 == result.getInteger("resultCode")||5==result.getInteger("resultCode")) {
@@ -499,7 +500,7 @@ public class MtServiceImpl implements MtService {
             logger.info("createMemberGame 启动游戏startUrl:{}", startUrl);
             JSONObject jsonObject = commonRequest(startUrl);
             if (null == jsonObject) {
-                return Result.failed("g091087", "第三方请求异常！");
+                return Result.failed("g091087", MessageUtils.get("g091087",countryCode));
             }
             logger.info("createMemberGame 启动游戏返回JSONObject:{}", jsonObject.toJSONString());
             if (jsonObject.getInteger("resultCode")==1) {
@@ -510,10 +511,10 @@ public class MtServiceImpl implements MtService {
                 return Result.success(responseData);
             } else {
                 logger.info("天美log createMemberGame启动游戏返回失败:resultCode:{}",jsonObject.getInteger("resultCode"));
-                return errorCode(jsonObject.getString("resultCode"));
+                return errorCode(jsonObject.getString("resultCode"),countryCode);
             }
         } else {
-            return errorCode(result.getString("resultCode"));
+            return errorCode(result.getString("resultCode"),countryCode);
         }
     }
 
@@ -543,35 +544,47 @@ public class MtServiceImpl implements MtService {
             jsonObject.put("gameCode", gamePlatform.getPlatformCode());
         }
 //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+        String lang = "";
         if(null!=countryCode&&!"".equals(countryCode)){
             switch (countryCode) {
                 case "IN":
-                    countryCode = "EN-US";
+                    lang = "EN-US";
+                    break;
                 case "EN":
-                    countryCode = "EN-US";
+                    lang = "EN-US";
+                    break;
                 case "CN":
-                    countryCode = "ZH-CN";
+                    lang = "ZH-CN";
+                    break;
                 case "VN":
-                    countryCode = "VI-VN";
+                    lang = "VI-VN";
+                    break;
                 case "TW":
-                    countryCode = "ZH-TW";
+                    lang = "ZH-TW";
+                    break;
                 case "TH":
-                    countryCode = "TH-TH";
+                    lang = "TH-TH";
+                    break;
                 case "ID":
-                    countryCode = "IN-ID";
+                    lang = "IN-ID";
+                    break;
                 case "MY":
-                    countryCode = "MS-MY";
+                    lang = "MS-MY";
+                    break;
                 case "KR":
-                    countryCode = "KO-KR";
+                    lang = "KO-KR";
+                    break;
                 case "JP":
-                    countryCode = "JA-JP";
+                    lang = "JA-JP";
+                    break;
                 default:
-                    countryCode = gameParentPlatform.getLanguageType();
+                    lang = gameParentPlatform.getLanguageType();
+                    break;
             }
         }else{
-            countryCode = gameParentPlatform.getLanguageType();
+            lang = gameParentPlatform.getLanguageType();
         }
-        jsonObject.put("lang", countryCode);
+        jsonObject.put("lang", lang);
         String data = jsonObject.toJSONString();
         StringBuilder url = new StringBuilder();
         url.append(OpenAPIProperties.MT_API_URL);
@@ -599,8 +612,8 @@ public class MtServiceImpl implements MtService {
         url.append(MD5.md5(cptOpenMember.getPassword())).append("/");
 
         JSONObject jsonObject = new JSONObject(new LinkedHashMap<>());
-        jsonObject.put("nickname", loginUser.getNickName());
-        jsonObject.put("playerLevel", loginUser.getMemLevel());
+        jsonObject.put("nickname", "");
+        jsonObject.put("playerLevel", "");
         url.append(MD5.md5(OpenAPIProperties.MT_KEY + jsonObject.toJSONString())).append("/");
         url.append(getEncode(jsonObject.toJSONString()));
         return url.toString();
@@ -718,53 +731,53 @@ public class MtServiceImpl implements MtService {
     }
 
 
-    public Result errorCode(String errorCode) {
+    public Result errorCode(String errorCode,String countryCode) {
 //        0 成功。                                                Succeed.
         switch (errorCode) {
 //        0 创建异常
             case "0":
-                return Result.failed("g009999", "创建异常");
+                return Result.failed("g009999", MessageUtils.get("g009999",countryCode));
 //        2 商户不存在
             case "2":
-                return Result.failed("g091116", "商户不存在");
+                return Result.failed("g091116", MessageUtils.get("g091116",countryCode));
 
 //        3 商户无效
             case "3":
-                return Result.failed("g091104", "商户无效");
+                return Result.failed("g091104", MessageUtils.get("g091104",countryCode));
 
 //        5 商户用户已注册
             case "5":
-                return Result.failed("g100003", "商户用户已注册");
+                return Result.failed("g100003", MessageUtils.get("g100003",countryCode));
             //        6 商户用户系统禁用
             case "6":
-                return Result.failed("g200003", "商户用户系统禁用");
+                return Result.failed("g200003", MessageUtils.get("g200003",countryCode));
             //        7 商户用户系统禁用
             case "7":
-                return Result.failed("g000004", "密码错误");
+                return Result.failed("g000004", MessageUtils.get("g000004",countryCode));
 // 12  商户用户游戏在线
             case "12":
-                return Result.failed("g100104", "商户用户游戏在线");
+                return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
 // 15  IP被限制
             case "15":
-                return Result.failed("g000003", "IP被限制");
+                return Result.failed("g000003", MessageUtils.get("g000003",countryCode));
 // 21 解密错误
             case "21":
-                return Result.failed("g000007", "解密错误");
+                return Result.failed("g000007", MessageUtils.get("g000007",countryCode));
             // 22 商户用户登录禁用
             case "22":
-                return Result.failed("g200003", "商户用户登录禁用");
+                return Result.failed("g200003", MessageUtils.get("g200003",countryCode));
 // 32  可选参数错误
             case "32":
-                return Result.failed("g000007", "可选参数错误");
+                return Result.failed("g000007", MessageUtils.get("g000007",countryCode));
             // 33  交易编码已存在
             case "33":
-                return Result.failed("g091016", "交易编码已存在");
+                return Result.failed("g091016", MessageUtils.get("g091016",countryCode));
 // 40  维护模式
             case "40":
-                return Result.failed("g000001", "维护模式");
+                return Result.failed("g000001", MessageUtils.get("g000001",countryCode));
 //        9999 失败。                                                Failed.
             default:
-                return Result.failed("g009999", "系统繁忙");
+                return Result.failed("g009999", MessageUtils.get("g009999",countryCode));
         }
     }
 }

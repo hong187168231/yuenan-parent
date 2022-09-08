@@ -15,7 +15,7 @@ public interface UgService {
     /**
      * UG Sports登出玩家
      */
-    public Result logout(LoginInfo loginUser,String ip);
+    public Result logout(LoginInfo loginUser,String ip,String countryCode);
 
 
     /**

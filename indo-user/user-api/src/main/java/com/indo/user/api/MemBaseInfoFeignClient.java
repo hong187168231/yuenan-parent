@@ -19,8 +19,4 @@ public interface MemBaseInfoFeignClient {
     @GetMapping("/rpc/memBaseInfo/getMemTradingInfo/{account}")
     Result<MemTradingBO> getMemTradingInfo(@PathVariable String account);
 
-
-    @PostMapping("/rpc/memBaseInfo/takeCash/apply")
-    Result<Boolean> takeCashApply(@RequestParam("account")String account, @RequestParam("amount")BigDecimal amount);
-
 }

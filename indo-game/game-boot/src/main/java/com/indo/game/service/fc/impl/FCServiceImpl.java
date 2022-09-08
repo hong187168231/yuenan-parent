@@ -6,6 +6,7 @@ import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.redis.utils.GeneratorIdUtil;
 import com.indo.common.result.Result;
 import com.indo.common.utils.GameUtil;
+import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.common.util.FCHashAESEncrypt;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
 import com.indo.game.pojo.dto.fc.FCApiCommonResp;
@@ -39,33 +40,33 @@ public class FCServiceImpl implements FCService {
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
         if (null == gameParentPlatform) {
-            return Result.failed("(" + parentName + ")平台不存在");
+            return Result.failed("g100101", MessageUtils.get("g100101",countryCode));
         }
         if (0==gameParentPlatform.getIsStart()) {
-            return Result.failed("g100101", "平台未启用");
+            return Result.failed("g100101", MessageUtils.get("g100101",countryCode));
         }
         if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
-            return Result.failed("g000001", gameParentPlatform.getMaintenanceContent());
+            return Result.failed("g000001", MessageUtils.get("g000001",countryCode));
         }
         // 是否开售校验
         GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
         if (null == gamePlatform) {
-            return Result.failed("(" + platform + ")游戏不存在");
+            return Result.failed("g100102", MessageUtils.get("g100102",countryCode));
         }
         if (0==gamePlatform.getIsStart()) {
-            return Result.failed("g100102", "游戏未启用");
+            return Result.failed("g100102", MessageUtils.get("g100102",countryCode));
         }
         if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
-            return Result.failed("g091047", gamePlatform.getMaintenanceContent());
+            return Result.failed("g091047", MessageUtils.get("g091047",countryCode));
         }
 
-        BigDecimal balance = loginUser.getBalance();
-        //验证站点余额
-        if (null == balance || balance.compareTo(BigDecimal.ZERO) == 0) {
-            logger.info("站点fc余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
-            //站点棋牌余额不足
-            return Result.failed("g300004", "会员余额不足");
-        }
+//        BigDecimal balance = loginUser.getBalance();
+//        //验证站点余额
+//        if (null == balance || balance.compareTo(BigDecimal.ZERO) == 0) {
+//            logger.info("站点fc余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
+//            //站点棋牌余额不足
+//            return Result.failed("g300004", MessageUtils.get("g300004",countryCode));
+//        }
 
         try {
 
@@ -98,33 +99,40 @@ public class FCServiceImpl implements FCService {
 
             }
 //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+            String lang = "";
             if(null!=countryCode&&!"".equals(countryCode)){
                 switch (countryCode) {
                     case "IN":
-                        countryCode = "1";
+                        lang = "1";
+                        break;
                     case "EN":
-                        countryCode = "1";
+                        lang = "1";
+                        break;
                     case "CN":
-                        countryCode = "2";
+                        lang = "2";
+                        break;
                     case "VN":
-                        countryCode = "3";
+                        lang = "3";
+                        break;
                     case "TH":
-                        countryCode = "4";
+                        lang = "4";
+                        break;
                     default:
-                        countryCode = gameParentPlatform.getLanguageType();
+                        lang = gameParentPlatform.getLanguageType();
+                        break;
                 }
             }else{
-                countryCode = gameParentPlatform.getLanguageType();
+                lang = gameParentPlatform.getLanguageType();
             }
-            return getPlayerGameUrl(cptOpenMember.getUserName(), platform, gameParentPlatform.getCurrencyType(), countryCode);
+            return getPlayerGameUrl(cptOpenMember.getUserName(), platform, gameParentPlatform.getCurrencyType(), lang, countryCode);
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.failed("g100104", "网络繁忙，请稍后重试！");
+            return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
         }
     }
 
     @Override
-    public Result logout(LoginInfo loginUser, String platform, String ip) {
+    public Result logout(LoginInfo loginUser, String platform, String ip,String countryCode) {
         logger.info("fclogout {} fcGame account:{},t9CodeId:{}", ip, loginUser.getAccount(), platform);
         try {
             GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.FC_PLATFORM_CODE);
@@ -142,11 +150,11 @@ public class FCServiceImpl implements FCService {
             if (null != fcApiCommonResp && fcApiCommonResp.getResult() == 0) {
                 return Result.success();
             } else {
-                return errorCode(fcApiCommonResp.getResult().toString());
+                return errorCode(fcApiCommonResp.getResult().toString(), countryCode);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.failed("g100104", "网络繁忙，请稍后重试！");
+            return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
         }
     }
 
@@ -155,7 +163,7 @@ public class FCServiceImpl implements FCService {
      *
      * @return Result
      */
-    private Result getPlayerGameUrl(String playerID, String gameCode, String currency, String lang) {
+    private Result getPlayerGameUrl(String playerID, String gameCode, String currency, String lang,String countryCode) {
         try {
             Map<String, Object> loginParam = new HashMap<>();
             loginParam.put("MemberAccount", playerID);
@@ -175,7 +183,7 @@ public class FCServiceImpl implements FCService {
                 responseData.setPathUrl(fcApiCommonResp.getUrl());
                 return Result.success(responseData);
             } else {
-                return errorCode(fcApiCommonResp.getResult().toString());
+                return errorCode(fcApiCommonResp.getResult().toString(), countryCode);
             }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -185,87 +193,87 @@ public class FCServiceImpl implements FCService {
     }
 
 
-    private Result errorCode(String errorCode) {
+    private Result errorCode(String errorCode,String countryCode) {
 //        0 成功。                                                Succeed.
         switch (errorCode) {
 //        200 会员账号不合法
             case "200":
-                return Result.failed("g300002", "充提点数为0");
+                return Result.failed("g300002", MessageUtils.get("g300002",countryCode));
 //        201 系统错误                                              No authorized to access
             case "201":
-                return Result.failed("g300001", "充提点数异常");
+                return Result.failed("g300001", MessageUtils.get("g300001",countryCode));
 
 //        202 API参数错误                            Domain is null or the length of domain less than 2.
             case "202":
-                return Result.failed("g300002", "充提方式代码错误");
+                return Result.failed("g300002", MessageUtils.get("g300002",countryCode));
 
 //        203 json 格式错误。                                          Failed to pass the domain validation.
             case "203":
-                return Result.failed("g300004", "玩家余额不足");
+                return Result.failed("g300004", MessageUtils.get("g300004",countryCode));
 
 //        215 系统维护中。                     The encrypted data is null or the length of the encrypted data is equal to 0.
             case "215":
-                return Result.failed("g091005", "未开放此语系");
+                return Result.failed("g091005", MessageUtils.get("g091005",countryCode));
 
 //        217 不允许IP            Assertion(SAML) didn't pass the timestamp validation.
             case "217":
-                return Result.failed("g000007", "输入参数不是JSON格式");
+                return Result.failed("g000007", MessageUtils.get("g000007",countryCode));
 
 //        301 玩家已被锁定。                      Failed to extract the SAML parameters from the encrypted data.
             case "301":
-                return Result.failed("g091116", "无法取到商户秘钥");
+                return Result.failed("g091116", MessageUtils.get("g091116",countryCode));
 
 //        303 未知动作。                                            Unknow action.
             case "303":
-                return Result.failed("g000007", "参数解密失败");
+                return Result.failed("g000007", MessageUtils.get("g000007",countryCode));
 
 //        304 Game On Maintenance。                                      The same value as before.
             case "304":
-                return Result.failed("g091116", "商户签章对比失败");
+                return Result.failed("g091116", MessageUtils.get("g091116",countryCode));
 
 //        401 游戏不存在。                                                Time out.
             case "401":
-                return Result.failed("g000003", "此商户代码禁用");
+                return Result.failed("g000003", MessageUtils.get("g000003",countryCode));
 
 //        405 游戏无法开启。                                            Read time out.
             case "405":
-                return Result.failed("g100101", "游戏不存在");
+                return Result.failed("g100101", MessageUtils.get("g100101",countryCode));
 
 //        406 商户被冻结。                                            Duplicate transactions.
             case "406":
-                return Result.failed("g100102", "游戏关闭");
+                return Result.failed("g100102", MessageUtils.get("g100102",countryCode));
 
 //        407 玩家已存在。                                          Please try again later.
             case "407":
-                return Result.failed("g200003", "会员账号锁定");
+                return Result.failed("g200003", MessageUtils.get("g200003",countryCode));
 
 //        408 玩家不存在。                                            System is maintained.
             case "408":
-                return Result.failed("g000001", "系统维护中");
+                return Result.failed("g000001", MessageUtils.get("g000001",countryCode));
 //        410 玩家不存在。                                            System is maintained.
             case "410":
-                return Result.failed("g000003", "IP不可用");
+                return Result.failed("g000003", MessageUtils.get("g000003",countryCode));
             //        500 玩家不存在。                                            System is maintained.
             case "500":
-                return Result.failed("g010001", "账号不存在");
+                return Result.failed("g010001", MessageUtils.get("g010001",countryCode));
             //        501 玩家不存在。                                            System is maintained.
             case "501":
-                return Result.failed("g100002", "账号过长");
+                return Result.failed("g100002", MessageUtils.get("g100002",countryCode));
             //        502 玩家不存在。                                            System is maintained.
             case "502":
-                return Result.failed("g100003", "账号重复");
+                return Result.failed("g100003", MessageUtils.get("g100003",countryCode));
             case "504":
-                return Result.failed("g100103", "账号不在线");
+                return Result.failed("g100103", MessageUtils.get("g100103",countryCode));
             //        410 玩家不存在。                                            System is maintained.
             case "505":
-                return Result.failed("g100002", "账号过短");
+                return Result.failed("g100002", MessageUtils.get("g100002",countryCode));
             case "604":
-                return Result.failed("g100107", "验证失败");
+                return Result.failed("g100107", MessageUtils.get("g100107",countryCode));
             case "1012":
-                return Result.failed("g100005", "没有带入币别");
+                return Result.failed("g100005", MessageUtils.get("g100005",countryCode));
 //        9999 失败。                                                Failed.
             default:
-                return Result.failed("g009999", "参数错误");
+                return Result.failed("g009999", MessageUtils.get("g009999",countryCode));
         }
     }
 }

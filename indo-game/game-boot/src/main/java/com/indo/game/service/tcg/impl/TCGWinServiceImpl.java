@@ -8,6 +8,7 @@ import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
 import com.indo.common.utils.GameUtil;
 import com.indo.common.utils.encrypt.MD5;
+import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.core.pojo.entity.game.GameParentPlatform;
 import com.indo.core.pojo.entity.game.GamePlatform;
 import com.indo.core.pojo.entity.game.Txns;
@@ -51,35 +52,35 @@ public class TCGWinServiceImpl implements TCGWinService {
         // 是否开售校验
         GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(parentName);
         if (null == platformGameParent) {
-            return Result.failed("(" + parentName + ")游戏平台不存在");
+            return Result.failed("g100101", MessageUtils.get("g100101",countryCode));
         }
         if ("0".equals(platformGameParent.getIsStart())) {
-            return Result.failed("g" + "100101", "游戏平台未启用");
+            return Result.failed("g100101", MessageUtils.get("g100101",countryCode));
         }
         if ("1".equals(platformGameParent.getIsOpenMaintenance())) {
-            return Result.failed("g000001", platformGameParent.getMaintenanceContent());
+            return Result.failed("g000001", MessageUtils.get("g000001",countryCode));
         }
         GamePlatform gamePlatform = new GamePlatform();
         if (!platform.equals(parentName)) {
             // 是否开售校验
             gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
             if (null == gamePlatform) {
-                return Result.failed("(" + platform + ")平台游戏不存在");
+                return Result.failed("g100102", MessageUtils.get("g100102",countryCode));
             }
             if ("0".equals(gamePlatform.getIsStart())) {
-                return Result.failed("g" + "100102", "游戏未启用");
+                return Result.failed("g100102", MessageUtils.get("g100102",countryCode));
             }
             if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
-                return Result.failed("g091047", gamePlatform.getMaintenanceContent());
+                return Result.failed("g091047", MessageUtils.get("g091047",countryCode));
             }
         }
-        BigDecimal balance = loginUser.getBalance();
-        //验证站点棋牌余额
-        if (null == balance || BigDecimal.ZERO.equals(balance)) {
-            logger.info("站点tcgwin余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
-            //站点棋牌余额不足
-            return Result.failed("g300004", "会员余额不足");
-        }
+//        BigDecimal balance = loginUser.getBalance();
+//        //验证站点棋牌余额
+//        if (null == balance || BigDecimal.ZERO.equals(balance)) {
+//            logger.info("站点tcgwin余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
+//            //站点棋牌余额不足
+//            return Result.failed("g300004", MessageUtils.get("g300004",countryCode));
+//        }
         try {
 
             // 验证且绑定（AE-CPT第三方会员关系）
@@ -96,13 +97,13 @@ public class TCGWinServiceImpl implements TCGWinService {
             } else {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
-                logout(loginUser, platform, ip);
+                logout(loginUser, platform, ip,countryCode);
                 return  initGame(platformGameParent, gamePlatform,  cptOpenMember, isMobileLogin, countryCode);
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.failed("g100104", "网络繁忙，请稍后重试！");
+            return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
         }
     }
     /**
@@ -111,13 +112,13 @@ public class TCGWinServiceImpl implements TCGWinService {
     private Result createMemberGame(GameParentPlatform platformGameParent, GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember, String isMobileLogin,String countryCode) {
         TcgwinApiResp tcgwinApiResp = createMember(platformGameParent, gamePlatform, ip, cptOpenMember, isMobileLogin);
         if (null == tcgwinApiResp) {
-            return Result.failed("g091087", "第三方请求异常！");
+            return Result.failed("g091087", MessageUtils.get("g091087",countryCode));
         }
         if (tcgwinApiResp.getStatus()==0) {
             externalService.saveCptOpenMember(cptOpenMember);
             return initGame(platformGameParent, gamePlatform, cptOpenMember, isMobileLogin, countryCode);
         } else {
-            return errorCode(tcgwinApiResp.getStatus(), tcgwinApiResp.getError_desc());
+            return errorCode(tcgwinApiResp.getStatus(), tcgwinApiResp.getError_desc(),countryCode);
         }
     }
 
@@ -153,7 +154,7 @@ public class TCGWinServiceImpl implements TCGWinService {
                             CptOpenMember cptOpenMember, String isMobileLogin,String countryCode) {
         TcgwinApiResp tcgwinApiResp = gameLogin(platformGameParent, gamePlatform, cptOpenMember, isMobileLogin, countryCode);
         if (null == tcgwinApiResp) {
-            return Result.failed("g091087", "第三方请求异常！");
+            return Result.failed("g091087", MessageUtils.get("g091087",countryCode));
         }
         if (tcgwinApiResp.getStatus()==0) {
             ApiResponseData responseData = new ApiResponseData();
@@ -161,7 +162,7 @@ public class TCGWinServiceImpl implements TCGWinService {
             responseData.setPathUrl(jsonObject.getString("gameUrl"));
             return Result.success(responseData);
         } else {
-            return errorCode(tcgwinApiResp.getStatus(), tcgwinApiResp.getError_desc());
+            return errorCode(tcgwinApiResp.getStatus(), tcgwinApiResp.getError_desc(),countryCode);
         }
     }
 
@@ -202,35 +203,47 @@ public class TCGWinServiceImpl implements TCGWinService {
             tcgwinApiLoginReq.setView("Lobby Page");
         }
         //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+        String lang = "";
         if(null!=countryCode&&!"".equals(countryCode)){
             switch (countryCode) {
                 case "IN":
-                    countryCode = "EN";
+                    lang = "EN";
+                    break;
                 case "EN":
-                    countryCode = "EN";
+                    lang = "EN";
+                    break;
                 case "CN":
-                    countryCode = "CN";
+                    lang = "CN";
+                    break;
                 case "VN":
-                    countryCode = "VI";
+                    lang = "VI";
+                    break;
                 case "TW":
-                    countryCode = "TW";
+                    lang = "TW";
+                    break;
                 case "TH":
-                    countryCode = "TH";
+                    lang = "TH";
+                    break;
                 case "ID":
-                    countryCode = "ID";
+                    lang = "ID";
+                    break;
                 case "KM":
-                    countryCode = "KM";
+                    lang = "KM";
+                    break;
                 case "KR":
-                    countryCode = "KO";
+                    lang = "KO";
+                    break;
                 case "JP":
-                    countryCode = "JA";
+                    lang = "JA";
+                    break;
                 default:
-                    countryCode = platformGameParent.getLanguageType();
+                    lang = platformGameParent.getLanguageType();
+                    break;
             }
         }else{
-            countryCode = platformGameParent.getLanguageType();
+            lang = platformGameParent.getLanguageType();
         }
-        tcgwinApiLoginReq.setLanguage(countryCode);
+        tcgwinApiLoginReq.setLanguage(lang);
         if(2==proType||384==proType||420==proType){
             List list = new ArrayList();
             LambdaQueryWrapper<TcgLottery> wrapper = new LambdaQueryWrapper<>();
@@ -275,7 +288,7 @@ public class TCGWinServiceImpl implements TCGWinService {
      * 强迫登出玩家
      */
     @Override
-    public Result logout(LoginInfo loginUser, String platform, String ip) {
+    public Result logout(LoginInfo loginUser, String platform, String ip,String countryCode) {
         try {
             TcgwinApiOutLottoMemberReq tcgwinApiOutLottoMemberReq = new TcgwinApiOutLottoMemberReq();
             tcgwinApiOutLottoMemberReq.setMethod("kom");
@@ -289,12 +302,12 @@ public class TCGWinServiceImpl implements TCGWinService {
             tcgwinApiResp = commonRequest(apiUrl.toString(), jsonStr, loginUser.getId().intValue(), "logout");
             logger.info("tcgwin  logout注销返回resultString:{}", JSON.toJSONString(tcgwinApiResp));
             if (null == tcgwinApiResp) {
-                return Result.failed("g091087", "第三方请求异常！");
+                return Result.failed("g091087", MessageUtils.get("g091087",countryCode));
             }
             if(tcgwinApiResp.getStatus()==0){
                 return Result.success();
             }else {
-                return this.errorCode(tcgwinApiResp.getStatus(),tcgwinApiResp.getError_desc());
+                return this.errorCode(tcgwinApiResp.getStatus(),tcgwinApiResp.getError_desc(),countryCode);
             }
         } catch (Exception e) {
             logger.error("BLlog  BLlogout:{}", e);
@@ -333,63 +346,63 @@ public class TCGWinServiceImpl implements TCGWinService {
         }
         return tcgwinApiResp;
     }
-    public Result errorCode(int errorCode, String errorMessage) {
+    public Result errorCode(int errorCode, String errorMessage,String countryCode) {
         switch (errorCode) {
             case 1://	Unknown system error, please contact TCG customer support	未知的系统错误，请联系TCG客服
-                return Result.failed("g000001", errorMessage);
+                return Result.failed("g000001", MessageUtils.get("g000001",countryCode));
             case 2://	Missing required parameter	缺少必需的参数
-                return Result.failed("g000007", errorMessage);
+                return Result.failed("g000007", MessageUtils.get("g000007",countryCode));
             case 3://	Method not supported for the this product type	此产品类型不支持此方法
-                return Result.failed("g000002", errorMessage);
+                return Result.failed("g000002", MessageUtils.get("g000002",countryCode));
             case 4://	Merchant is not allowed for this product type	商家不允许使用此产品类型
-                return Result.failed("g000002", errorMessage);
+                return Result.failed("g000002", MessageUtils.get("g000002",countryCode));
             case 5://	Merchant not found	找不到商家
-                return Result.failed("g000002", errorMessage);
+                return Result.failed("g000002", MessageUtils.get("g000002",countryCode));
             case 6://	Invalid parameters, Failed to decrypt the parameters	参数无效，无法解密参数。
-                return Result.failed("g000007", errorMessage);
+                return Result.failed("g000007", MessageUtils.get("g000007",countryCode));
             case 7://	Invalid signature	签名无效
-                return Result.failed("g091161", errorMessage);
+                return Result.failed("g091161", MessageUtils.get("g091161",countryCode));
             case 8://	Unsupported currency	不支持的货币
-                return Result.failed("g100001", errorMessage);
+                return Result.failed("g100001", MessageUtils.get("g100001",countryCode));
             case 9://	Invalid Account type	帐户类型无效
-                return Result.failed("g100002", errorMessage);
+                return Result.failed("g100002", MessageUtils.get("g100002",countryCode));
             case 10://	Invalid product type	产品类型无效
-                return Result.failed("g091162", errorMessage);
+                return Result.failed("g091162", MessageUtils.get("g091162",countryCode));
             case 11://	Insufficient balance to fund out / withdraw	提现余额不足
-                return Result.failed("g300004", errorMessage);
+                return Result.failed("g300004", MessageUtils.get("g300004",countryCode));
             case 12://	Transaction already exists.	交易序号已經存在
-                return Result.failed("g091038", errorMessage);
+                return Result.failed("g091038", MessageUtils.get("g091038",countryCode));
             case 13://	Invalid game code	游戏代码无效
-                return Result.failed("g091033", errorMessage);
+                return Result.failed("g091033", MessageUtils.get("g091033",countryCode));
             case 15://	User Does Not Exists	用户不存在
-                return Result.failed("g010001", errorMessage);
+                return Result.failed("g010001", MessageUtils.get("g010001",countryCode));
             case 16://	Insufficient merchant credit to fund in	信用额度不足
-                return Result.failed("g091163", errorMessage);
+                return Result.failed("g091163", MessageUtils.get("g091163",countryCode));
             case 18://	Trial mode is not supported for this game code	此游戏代码不支持试用模式
-                return Result.failed("g091164", errorMessage);
+                return Result.failed("g091164", MessageUtils.get("g091164",countryCode));
             case 19://	Batch not ready	批次理未准备好
-                return Result.failed("g091165", errorMessage);
+                return Result.failed("g091165", MessageUtils.get("g091165",countryCode));
             case 21://	Method not found	找不到方法
-                return Result.failed("g091166", errorMessage);
+                return Result.failed("g091166", MessageUtils.get("g091166",countryCode));
             case 22://	Parameter Validation Failed	参数验证失败
-                return Result.failed("g091167", errorMessage);
+                return Result.failed("g091167", MessageUtils.get("g091167",countryCode));
             case 23://	API is busy	API 繁忙
-                return Result.failed("g000005", errorMessage);
+                return Result.failed("g000005", MessageUtils.get("g000005",countryCode));
             case 24://	Transaction not found	未找到此交易
-                return Result.failed("g091017", errorMessage);
+                return Result.failed("g091017", MessageUtils.get("g091017",countryCode));
             case 25://	Reservation already process	预约已经完成
-                return Result.failed("g091168", errorMessage);
+                return Result.failed("g091168", MessageUtils.get("g091168",countryCode));
             case 26://	Decimal not supported	Decimal 格式未支持
-                return Result.failed("g091118", errorMessage);
+                return Result.failed("g091118", MessageUtils.get("g091118",countryCode));
             case 27://	API is under maintenance	接口正在维护中
-                return Result.failed("g000001", errorMessage);
+                return Result.failed("g000001", MessageUtils.get("g000001",countryCode));
             case 28://	API is prohibited for this merchant	此商户禁止使用此接口
-                return Result.failed("g000002", errorMessage);
+                return Result.failed("g000002", MessageUtils.get("g000002",countryCode));
             case 30://	Product is under maintenance	产品正在维护中
-                return Result.failed("g000001", errorMessage);
+                return Result.failed("g000001", MessageUtils.get("g000001",countryCode));
             //        9999 失败。                                                Failed.
             default:
-                return Result.failed("g009999", errorMessage);
+                return Result.failed("g009999", MessageUtils.get("g009999",countryCode));
         }
     }
     public static void main(String[] args) throws Exception {

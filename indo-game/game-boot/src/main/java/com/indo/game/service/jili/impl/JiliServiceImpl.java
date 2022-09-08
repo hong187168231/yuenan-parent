@@ -7,6 +7,7 @@ import com.indo.common.redis.utils.GeneratorIdUtil;
 import com.indo.common.result.Result;
 import com.indo.common.utils.GameUtil;
 import com.indo.common.utils.StringUtils;
+import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.common.util.JiliAESEncrypt;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
 import com.indo.game.pojo.dto.jili.JiliApiResponse;
@@ -40,13 +41,13 @@ public class JiliServiceImpl implements JiliService {
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
         if (null == gameParentPlatform) {
-            return Result.failed("(" + parentName + ")平台不存在");
+            return Result.failed("g100101", MessageUtils.get("g100101",countryCode));
         }
         if (0==gameParentPlatform.getIsStart()) {
-            return Result.failed("g100101", "平台未启用");
+            return Result.failed("g100101", MessageUtils.get("g100101",countryCode));
         }
         if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
-            return Result.failed("g000001", gameParentPlatform.getMaintenanceContent());
+            return Result.failed("g000001", MessageUtils.get("g000001",countryCode));
         }
         // 是否开售校验
         GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
@@ -54,19 +55,19 @@ public class JiliServiceImpl implements JiliService {
             return Result.failed("(" + platform + ")游戏不存在");
         }
         if (0==gamePlatform.getIsStart()) {
-            return Result.failed("g100102", "游戏未启用");
+            return Result.failed("g100102", MessageUtils.get("g100102",countryCode));
         }
         if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
-            return Result.failed("g091047", gamePlatform.getMaintenanceContent());
+            return Result.failed("g091047", MessageUtils.get("g091047",countryCode));
         }
 
-        BigDecimal balance = loginUser.getBalance();
-        //验证站点余额
-        if (null == balance || balance.compareTo(BigDecimal.ZERO) == 0) {
-            logger.info("站点jili余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
-            //站点棋牌余额不足
-            return Result.failed("g300004", "会员余额不足");
-        }
+//        BigDecimal balance = loginUser.getBalance();
+//        //验证站点余额
+//        if (null == balance || balance.compareTo(BigDecimal.ZERO) == 0) {
+//            logger.info("站点jili余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
+//            //站点棋牌余额不足
+//            return Result.failed("g300004", MessageUtils.get("g300004",countryCode));
+//        }
 
         try {
 
@@ -83,7 +84,7 @@ public class JiliServiceImpl implements JiliService {
                 externalService.saveCptOpenMember(cptOpenMember);
 
                 // 第一次登录自动创建玩家, 后续登录返回登录游戏URL
-                return createMemberGame(cptOpenMember, platform, gameParentPlatform.getLanguageType());
+                return createMemberGame(cptOpenMember, platform, gameParentPlatform.getLanguageType(),countryCode);
             } else {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
@@ -92,49 +93,61 @@ public class JiliServiceImpl implements JiliService {
                 params.put("Account", loginUser.getAccount());
                 GameUtil.postForm4PP(getLoginOutUrl(loginUser.getAccount()), params, null);
                 //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+                String lang = "";
                 if(null!=countryCode&&!"".equals(countryCode)){
                     switch (countryCode) {
                         case "IN":
-                            countryCode = "hi-IN";
+                            lang = "hi-IN";
+                            break;
                         case "EN":
-                            countryCode = "en_US";
+                            lang = "en_US";
+                            break;
                         case "CN":
-                            countryCode = "zh_CN";
+                            lang = "zh_CN";
+                            break;
                         case "VN":
-                            countryCode = "vi_VN";
+                            lang = "vi_VN";
+                            break;
                         case "TW":
-                            countryCode = "zh_TW";
+                            lang = "zh_TW";
+                            break;
                         case "TH":
-                            countryCode = "th_TH";
+                            lang = "th_TH";
+                            break;
                         case "ID":
-                            countryCode = "in_ID";
+                            lang = "in_ID";
+                            break;
                         case "MY":
-                            countryCode = "ms_MY";
+                            lang = "ms_MY";
+                            break;
                         case "KR":
-                            countryCode = "ko_KR";
+                            lang = "ko_KR";
+                            break;
                         case "JP":
-                            countryCode = "ja_JP";
+                            lang = "ja_JP";
+                            break;
                         default:
-                            countryCode = gameParentPlatform.getLanguageType();
+                            lang = gameParentPlatform.getLanguageType();
+                            break;
                     }
                 }else{
-                    countryCode = gameParentPlatform.getLanguageType();
+                    lang = gameParentPlatform.getLanguageType();
                 }
                 // 请求URL
                 ApiResponseData responseData = new ApiResponseData();
-                responseData.setPathUrl(getStartGame(cptOpenMember, platform,countryCode));
+                responseData.setPathUrl(getStartGame(cptOpenMember, platform,lang));
                 return Result.success(responseData);
             }
 
 
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.failed("g100104", "网络繁忙，请稍后重试！");
+            return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
         }
     }
 
     @Override
-    public Result logout(LoginInfo loginUser, String platform, String ip) {
+    public Result logout(LoginInfo loginUser, String platform, String ip,String countryCode) {
         logger.info("jililogout {} jiliGame account:{},jiliCodeId:{}", loginUser.getId(), loginUser.getAccount(), platform);
         try {
             Map<String, Object> params = new HashMap<>();
@@ -144,11 +157,11 @@ public class JiliServiceImpl implements JiliService {
             if (0 == jiliApiResponse.getErrorCode()) {
                 return Result.success();
             } else {
-                return errorCode(jiliApiResponse.getErrorCode().toString(), jiliApiResponse.getMessage());
+                return errorCode(jiliApiResponse.getErrorCode().toString(), jiliApiResponse.getMessage(),countryCode);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.failed("g100104", "网络繁忙，请稍后重试！");
+            return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
         }
     }
 
@@ -158,11 +171,11 @@ public class JiliServiceImpl implements JiliService {
      * @param cptOpenMember cptOpenMember
      * @return Result
      */
-    private Result createMemberGame(CptOpenMember cptOpenMember, String platform, String lang) {
+    private Result createMemberGame(CptOpenMember cptOpenMember, String platform, String lang,String countryCode) {
         //
         JiliApiResponse jiliApiResponse = createJiliMember(cptOpenMember, platform, lang);
         if (null == jiliApiResponse) {
-            return Result.failed("g091087", "第三方请求异常！");
+            return Result.failed("g091087", MessageUtils.get("g091087",countryCode));
         }
 
         if (0 == jiliApiResponse.getErrorCode()) {
@@ -171,7 +184,7 @@ public class JiliServiceImpl implements JiliService {
             responseData.setPathUrl(getStartGame(cptOpenMember, platform, lang));
             return Result.success(responseData);
         } else {
-            return errorCode(jiliApiResponse.getErrorCode().toString(), jiliApiResponse.getMessage());
+            return errorCode(jiliApiResponse.getErrorCode().toString(), jiliApiResponse.getMessage(),countryCode);
         }
     }
 
@@ -278,27 +291,27 @@ public class JiliServiceImpl implements JiliService {
         return url.toString();
     }
 
-    public Result errorCode(String errorCode, String errorMessage) {
+    public Result errorCode(String errorCode, String errorMessage,String countryCode) {
 //        0 成功。                                                Succeed.
         switch (errorCode) {
 //        2 Key 验证失败
             case "2":
-                return Result.failed("g100107", errorMessage);
+                return Result.failed("g100107", MessageUtils.get("g100107",countryCode));
 //        9 AgentId 不存在 玩家账号与 AgentId 不匹配 (详见 Chapter             No authorized to access
             case "9":
-                return Result.failed("g000007", errorMessage);
+                return Result.failed("g000007", MessageUtils.get("g000007",countryCode));
 
 //        104 執⾏营运商于 auth 回传错误或禁用的货币                            Domain is null or the length of domain less than 2.
             case "104":
-                return Result.failed("g100001", errorMessage);
+                return Result.failed("g100001", MessageUtils.get("g100001",countryCode));
 
 //        101 会员账号不存在/不在在线                                   Failed to pass the domain validation.
             case "101":
-                return Result.failed("g010001", errorMessage);
+                return Result.failed("g010001", MessageUtils.get("g010001",countryCode));
 
 //        9999 失败。                                                Failed.
             default:
-                return Result.failed("g009999", errorMessage);
+                return Result.failed("g009999", MessageUtils.get("g009999",countryCode));
         }
     }
 }

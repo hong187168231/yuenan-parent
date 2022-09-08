@@ -6,6 +6,7 @@ import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.redis.utils.GeneratorIdUtil;
 import com.indo.common.result.Result;
 import com.indo.common.utils.GameUtil;
+import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
 import com.indo.game.pojo.dto.t9.T9ApiResponseData;
 import com.indo.game.pojo.entity.CptOpenMember;
@@ -55,33 +56,33 @@ public class T9ServiceImpl implements T9Service {
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
         if (null == gameParentPlatform) {
-            return Result.failed("(" + parentName + ")平台不存在");
+            return Result.failed("g100101", MessageUtils.get("g100101",countryCode));
         }
         if (0==gameParentPlatform.getIsStart()) {
-            return Result.failed("g100101", "平台未启用");
+            return Result.failed("g100101", MessageUtils.get("g100101",countryCode));
         }
         if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
-            return Result.failed("g000001", gameParentPlatform.getMaintenanceContent());
+            return Result.failed("g000001", MessageUtils.get("g000001",countryCode));
         }
         // 是否开售校验
         GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
         if (null == gamePlatform) {
-            return Result.failed("(" + platform + ")游戏不存在");
+            return Result.failed("g100102", MessageUtils.get("g100102",countryCode));
         }
         if (0==gamePlatform.getIsStart()) {
-            return Result.failed("g100102", "游戏未启用");
+            return Result.failed("g100102", MessageUtils.get("g100102",countryCode));
         }
         if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
-            return Result.failed("g091047", gamePlatform.getMaintenanceContent());
+            return Result.failed("g091047", MessageUtils.get("g091047",countryCode));
         }
 
-        BigDecimal balance = loginUser.getBalance();
-        //验证站点余额
-        if (null == balance || balance.compareTo(BigDecimal.ZERO) == 0) {
-            logger.info("站点t9余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
-            //站点棋牌余额不足
-            return Result.failed("g300004", "会员余额不足");
-        }
+//        BigDecimal balance = loginUser.getBalance();
+//        //验证站点余额
+//        if (null == balance || balance.compareTo(BigDecimal.ZERO) == 0) {
+//            logger.info("站点t9余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
+//            //站点棋牌余额不足
+//            return Result.failed("g300004", MessageUtils.get("g300004",countryCode));
+//        }
 
         try {
 
@@ -114,12 +115,12 @@ public class T9ServiceImpl implements T9Service {
             return getPlayerGameUrl(loginUser.getAccount(), platform, "1".equals(isMobileLogin), countryCode, gameParentPlatform);
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.failed("g100104", "网络繁忙，请稍后重试！");
+            return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
         }
     }
 
     @Override
-    public Result logout(LoginInfo loginUser, String platform, String ip) {
+    public Result logout(LoginInfo loginUser, String platform, String ip,String countryCode) {
         logger.info("t9logout {} t9Game account:{},t9CodeId:{}", loginUser.getId(), loginUser.getAccount(), platform);
         try {
             Map<String, Object> params = new HashMap<>();
@@ -131,16 +132,16 @@ public class T9ServiceImpl implements T9Service {
             T9ApiResponseData t9ApiResponseData = commonRequest(getLogOutT9PlayerUrl(), params, loginUser.getId());
             logger.info("T9log  logout退出登录返回 t9ApiResponseData:{}", JSONObject.toJSONString(t9ApiResponseData));
             if (null == t9ApiResponseData) {
-                return Result.failed("g091087", "第三方请求异常！");
+                return Result.failed("g091087", MessageUtils.get("g091087",countryCode));
             }
             if ("200".equals(t9ApiResponseData.getStatusCode())) {
                 return Result.success(t9ApiResponseData);
             } else {
-                return errorCode(t9ApiResponseData.getStatusCode(), t9ApiResponseData.getErrorMessage());
+                return errorCode(t9ApiResponseData.getStatusCode(), t9ApiResponseData.getErrorMessage(),countryCode);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.failed("g100104", "网络繁忙，请稍后重试！");
+            return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
         }
     }
 
@@ -155,35 +156,47 @@ public class T9ServiceImpl implements T9Service {
             Map<String, Object> params = new HashMap<>();
             params.put("playerID", playerID);
             params.put("gameCode", gameCode);
+            String lang = "";
             if(null!=countryCode&&!"".equals(countryCode)){
                 switch (countryCode) {
                     case "IN":
-                        countryCode = "en_US";
+                        lang = "en_US";
+                        break;
                     case "EN":
-                        countryCode = "en_US";
+                        lang = "en_US";
+                        break;
                     case "CN":
-                        countryCode = "zh_CN";
+                        lang = "zh_CN";
+                        break;
                     case "VN":
-                        countryCode = "vi_VN";
+                        lang = "vi_VN";
+                        break;
                     case "TW":
-                        countryCode = "zh_TW";
+                        lang = "zh_TW";
+                        break;
                     case "TH":
-                        countryCode = "th_TH";
+                        lang = "th_TH";
+                        break;
                     case "ID":
-                        countryCode = "in_ID";
+                        lang = "in_ID";
+                        break;
                     case "MY":
-                        countryCode = "ms_MY";
+                        lang = "ms_MY";
+                        break;
                     case "KR":
-                        countryCode = "ko_KR";
+                        lang = "ko_KR";
+                        break;
                     case "JP":
-                        countryCode = "ja_JP";
+                        lang = "ja_JP";
+                        break;
                     default:
-                        countryCode = gameParentPlatform.getLanguageType();
+                        lang = gameParentPlatform.getLanguageType();
+                        break;
                 }
             }else{
-                countryCode = gameParentPlatform.getLanguageType();
+                lang = gameParentPlatform.getLanguageType();
             }
-            params.put("lang", countryCode);
+            params.put("lang", lang);
             params.put("isAPP", isAPP);
             params.put("hasLogo", true);
             params.put("walletType", 2);
@@ -204,7 +217,7 @@ public class T9ServiceImpl implements T9Service {
             responseData.setPathUrl(t9ApiResponseData.getData().toString());
             return Result.success(responseData);
         } else {
-            return errorCode(t9ApiResponseData.getStatusCode(), t9ApiResponseData.getErrorMessage());
+            return errorCode(t9ApiResponseData.getStatusCode(), t9ApiResponseData.getErrorMessage(),countryCode);
         }
     }
 
@@ -218,14 +231,14 @@ public class T9ServiceImpl implements T9Service {
         // 创建T9账号
         T9ApiResponseData t9ApiResponseData = createT9Member(cptOpenMember);
         if (null == t9ApiResponseData) {
-            return Result.failed("g091087", "第三方请求异常！");
+            return Result.failed("g091087", MessageUtils.get("g091087",countryCode));
         }
 
         if ("200".equals(t9ApiResponseData.getStatusCode())) {
             externalService.saveCptOpenMember(cptOpenMember);
             return getPlayerGameUrl(cptOpenMember.getUserName(), platform, isAPP, countryCode, gameParentPlatform);
         } else {
-            return errorCode(t9ApiResponseData.getStatusCode(), t9ApiResponseData.getErrorMessage());
+            return errorCode(t9ApiResponseData.getStatusCode(), t9ApiResponseData.getErrorMessage(),countryCode);
         }
     }
 
@@ -319,67 +332,67 @@ public class T9ServiceImpl implements T9Service {
         return builder.toString();
     }
 
-    public Result errorCode(String errorCode, String errorMessage) {
+    public Result errorCode(String errorCode, String errorMessage,String countryCode) {
 //        200 成功。                                                Succeed.
         switch (errorCode) {
 //        300 会员账号不合法
             case "300":
-                return Result.failed("g100002", errorMessage);
+                return Result.failed("g100002", MessageUtils.get("g100002",countryCode));
 //        500 系统错误                                              No authorized to access
             case "500":
-                return Result.failed("g100104", errorMessage);
+                return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
 
 //        600 API参数错误                            Domain is null or the length of domain less than 2.
             case "600":
-                return Result.failed("g000007", errorMessage);
+                return Result.failed("g000007", MessageUtils.get("g000007",countryCode));
 
 //        700 json 格式错误。                                          Failed to pass the domain validation.
             case "700":
-                return Result.failed("g009999", errorMessage);
+                return Result.failed("g009999", MessageUtils.get("g009999",countryCode));
 
 //        800 系统维护中。                     The encrypted data is null or the length of the encrypted data is equal to 0.
             case "800":
-                return Result.failed("g000001", errorMessage);
+                return Result.failed("g000001", MessageUtils.get("g000001",countryCode));
 
 //        111050 不允许IP            Assertion(SAML) didn't pass the timestamp validation.
             case "111050":
-                return Result.failed("g100105", errorMessage);
+                return Result.failed("g100105", MessageUtils.get("g100105",countryCode));
 
 //        111090 玩家已被锁定。                      Failed to extract the SAML parameters from the encrypted data.
             case "111090":
-                return Result.failed("g200003", errorMessage);
+                return Result.failed("g200003", MessageUtils.get("g200003",countryCode));
 
 //        111120 未知动作。                                            Unknow action.
             case "111120":
-                return Result.failed("g300004", errorMessage);
+                return Result.failed("g300004", MessageUtils.get("g300004",countryCode));
 
 //        111160 Game On Maintenance。                                      The same value as before.
             case "111160":
-                return Result.failed("g000001", errorMessage);
+                return Result.failed("g000001", MessageUtils.get("g000001",countryCode));
 
 //        111170 游戏不存在。                                                Time out.
             case "111170":
-                return Result.failed("g100101", errorMessage);
+                return Result.failed("g100101", MessageUtils.get("g100101",countryCode));
 
 //        111180 游戏无法开启。                                            Read time out.
             case "111180":
-                return Result.failed("g100102", errorMessage);
+                return Result.failed("g100102", MessageUtils.get("g100102",countryCode));
 
 //        111040 商户被冻结。                                            Duplicate transactions.
             case "111040":
-                return Result.failed("g200003", errorMessage);
+                return Result.failed("g200003", MessageUtils.get("g200003",countryCode));
 
 //        191080 玩家已存在。                                          Please try again later.
             case "191080":
-                return Result.failed("g100003", errorMessage);
+                return Result.failed("g100003", MessageUtils.get("g100003",countryCode));
 
 //        191030 玩家不存在。                                            System is maintained.
             case "191030":
-                return Result.failed("g010001", errorMessage);
+                return Result.failed("g010001", MessageUtils.get("g010001",countryCode));
 
 //        9999 失败。                                                Failed.
             default:
-                return Result.failed("g009999", errorMessage);
+                return Result.failed("g009999", MessageUtils.get("g009999",countryCode));
         }
     }
 }

@@ -5,6 +5,7 @@ import com.indo.common.config.OpenAPIProperties;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
 import com.indo.common.utils.GameUtil;
+import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.common.util.SnowflakeId;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
 import com.indo.game.pojo.entity.CptOpenMember;
@@ -52,32 +53,32 @@ public class PsServiceImpl implements PsService {
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
         if (null == gameParentPlatform) {
-            return Result.failed("(" + parentName + ")平台不存在");
+            return Result.failed("g100101", MessageUtils.get("g100101",countryCode));
         }
         if (0==gameParentPlatform.getIsStart()) {
-            return Result.failed("g100101", "平台未启用");
+            return Result.failed("g100101", MessageUtils.get("g100101",countryCode));
         }
         if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
-            return Result.failed("g000001", gameParentPlatform.getMaintenanceContent());
+            return Result.failed("g000001", MessageUtils.get("g000001",countryCode));
         }
         // 是否开售校验
         GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
         if (null == gamePlatform) {
-            return Result.failed("(" + platform + ")游戏不存在");
+            return Result.failed("g100102", MessageUtils.get("g100102",countryCode));
         }
         if (0==gamePlatform.getIsStart()) {
-            return Result.failed("g100102", "游戏未启用");
+            return Result.failed("g100102", MessageUtils.get("g100102",countryCode));
         }
         if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
-            return Result.failed("g091047", gamePlatform.getMaintenanceContent());
+            return Result.failed("g091047", MessageUtils.get("g091047",countryCode));
         }
-        BigDecimal balance = loginUser.getBalance();
-        //验证站点棋牌余额
-        if (null == balance || BigDecimal.ZERO == balance) {
-            logger.info("站点PG余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
-            //站点棋牌余额不足
-            return Result.failed("g300004", "会员余额不足");
-        }
+//        BigDecimal balance = loginUser.getBalance();
+//        //验证站点棋牌余额
+//        if (null == balance || BigDecimal.ZERO == balance) {
+//            logger.info("站点PG余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
+//            //站点棋牌余额不足
+//            return Result.failed("g300004", MessageUtils.get("g300004",countryCode));
+//        }
         try {
             // 验证且绑定（AE-CPT第三方会员关系）
             CptOpenMember cptOpenMember = externalService.getCptOpenMember(loginUser.getId().intValue(), parentName);
@@ -94,41 +95,53 @@ public class PsServiceImpl implements PsService {
             } else {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
-                this.logout(loginUser, platform, ip);
+                this.logout(loginUser, platform, ip,countryCode);
             }
+            String lang = "";
             if(null!=countryCode&&!"".equals(countryCode)){
                 switch (countryCode) {
                     case "IN":
-                        countryCode = "en_US";
+                        lang = "en_US";
+                        break;
                     case "EN":
-                        countryCode = "en_US";
+                        lang = "en_US";
+                        break;
                     case "CN":
-                        countryCode = "zh_CN";
+                        lang = "zh_CN";
+                        break;
                     case "VN":
-                        countryCode = "vi_VN";
+                        lang = "vi_VN";
+                        break;
                     case "TW":
-                        countryCode = "zh_TW";
+                        lang = "zh_TW";
+                        break;
                     case "TH":
-                        countryCode = "th_TH";
+                        lang = "th_TH";
+                        break;
                     case "ID":
-                        countryCode = "in_ID";
+                        lang = "in_ID";
+                        break;
                     case "MY":
-                        countryCode = "ms_MY";
+                        lang = "ms_MY";
+                        break;
                     case "KR":
-                        countryCode = "ko_KR";
+                        lang = "ko_KR";
+                        break;
                     case "JP":
-                        countryCode = "ja_JP";
+                        lang = "ja_JP";
+                        break;
                     default:
-                        countryCode = gameParentPlatform.getLanguageType();
+                        lang = gameParentPlatform.getLanguageType();
+                        break;
                 }
             }else{
-                countryCode = gameParentPlatform.getLanguageType();
+                lang = gameParentPlatform.getLanguageType();
             }
             StringBuilder builder = new StringBuilder();
             builder.append(OpenAPIProperties.PS_API_URL).append("/launch/?host_id=");
             builder.append(OpenAPIProperties.PS_HOST_ID);
             builder.append("&game_id=").append(platform);
-            builder.append("&lang=").append(countryCode);
+            builder.append("&lang=").append(lang);
             builder.append("&access_token=").append(cptOpenMember.getPassword());
 
             //登录
@@ -137,7 +150,7 @@ public class PsServiceImpl implements PsService {
             return Result.success(responseData);
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.failed("g100104", "网络繁忙，请稍后重试！");
+            return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
         }
     }
 
@@ -145,7 +158,7 @@ public class PsServiceImpl implements PsService {
     /**
      * 强迫登出玩家
      */
-    public Result logout(LoginInfo loginUser, String platform, String ip) {
+    public Result logout(LoginInfo loginUser, String platform, String ip,String countryCode) {
         try {
             GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(platform);
             if (null == platformGameParent) {

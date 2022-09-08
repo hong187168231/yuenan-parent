@@ -8,6 +8,7 @@ import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
 import com.indo.common.result.ResultCode;
 import com.indo.common.utils.IPAddressUtil;
+import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.IPUtils;
 import com.indo.core.pojo.entity.SysIpLimit;
@@ -151,7 +152,7 @@ public class GameController {
         String countryCode = request.getHeader("countryCode");
         String params = "";
         if (loginUser == null || StringUtils.isBlank(loginUser.getAccount())) {
-            return Result.failed("g100103", "会员登录失效，请重新登录！");
+            return Result.failed("g100103", MessageUtils.get("g100103",countryCode));
         }
         log.info("登录平台或单一游戏登录 进入游戏。。。 platform:{},loginUser:{},parentName:{},isMobileLogin:{},countryCode:{}", platform, loginUser, parentName,isMobileLogin,countryCode);
         //黑名单校验
@@ -166,7 +167,7 @@ public class GameController {
                 }
             }
             if(status){
-                throw new BizException("非法的IP登录");
+                return Result.failed("g000003", MessageUtils.get("g000003",countryCode));
             }
         }
         RLock lock = redissonClient.getLock("INITGAME_" + loginUser.getId());
@@ -291,18 +292,18 @@ public class GameController {
 
                 if (resultInfo == null) {
                     log.info("登录平台或单一游戏登录log {} loginPlatform result is null. params:{},ip:{},parentName:{}", loginUser.getId(), params, ip, parentName);
-                    return Result.failed("g100104", "网络繁忙，请稍后重试！");
+                    return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
                 }
                 log.info("登录平台或单一游戏登录log {} loginPlatform resultInfo:{}, params:{},parentName:{}", loginUser.getId(), JSONObject.toJSONString(resultInfo), params, parentName);
                 return resultInfo;
             } else {
                 log.info("登录平台或单一游戏登录log {} loginPlatform lock  repeat request. error");
-                return Result.failed("g100104", "网络繁忙，请稍后重试！");
+                return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
             }
         } catch (Exception e) {
             e.printStackTrace();
             log.error("登录平台或单一游戏登录log {} loginPlatform occur error:{}. params:{},parentName:{}", loginUser.getId(), e.getMessage(), params, parentName);
-            return Result.failed("g100104", "网络繁忙，请稍后重试！");
+            return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
         } finally {
             try {
                 lock.unlock();
@@ -319,10 +320,11 @@ public class GameController {
     @PostMapping(value ="/logoutPlatform",produces = "application/json;charset=UTF-8")
     @ResponseBody
     public Result logout(@LoginUser LoginInfo loginUser, @RequestParam("platform") String platform, HttpServletRequest request) throws InterruptedException {
-
+//        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+        String countryCode = request.getHeader("countryCode");
         String params = "";
         if (loginUser == null) {
-            return Result.failed("g100103", "会员登录失效，请重新登录！");
+            return Result.failed("g100103", MessageUtils.get("g100103",countryCode));
         }
         log.info("退出平台logout loginUser:{}, params:{}", loginUser, platform);
 
@@ -330,104 +332,104 @@ public class GameController {
             Result resultInfo = new Result();
             String ip = IPAddressUtil.getIpAddress(request);
             if (OpenAPIProperties.AWC_PLATFORM_CODE.equals(platform)) {
-                resultInfo = awcService.logout(loginUser, ip);
+                resultInfo = awcService.logout(loginUser, ip,countryCode);
             }
             if (OpenAPIProperties.UG_PLATFORM_CODE.equals(platform)) {
-                resultInfo = ugService.logout(loginUser, ip);
+                resultInfo = ugService.logout(loginUser, ip,countryCode);
             }
             if (OpenAPIProperties.SBO_PLATFORM_CODE.equals(platform)) {
-                resultInfo = sboSportsService.logout(loginUser, ip);
+                resultInfo = sboSportsService.logout(loginUser, ip,countryCode);
             }
             if (OpenAPIProperties.SABA_PLATFORM_CODE.equals(platform)) {
-                resultInfo = sabaService.logout(loginUser, ip);
+                resultInfo = sabaService.logout(loginUser, ip,countryCode);
             }
             if (OpenAPIProperties.JDB_PLATFORM_CODE.equals(platform)) {
-                resultInfo = jdbService.logout(loginUser, ip);
+                resultInfo = jdbService.logout(loginUser, ip,countryCode);
             }
             if (OpenAPIProperties.AE_PLATFORM_CODE.equals(platform)) {
-                resultInfo = aeService.logout(loginUser, platform, ip);
+                resultInfo = aeService.logout(loginUser, platform, ip,countryCode);
             }
             if (OpenAPIProperties.CQ_PLATFORM_CODE.equals(platform)) {
-                resultInfo = cqService.logout(loginUser, platform, ip);
+                resultInfo = cqService.logout(loginUser, platform, ip,countryCode);
             }
             if (OpenAPIProperties.PG_PLATFORM_CODE.equals(platform)) {
-                resultInfo = pgService.logout(loginUser, platform, ip);
+                resultInfo = pgService.logout(loginUser, platform, ip,countryCode);
             }
             if (OpenAPIProperties.PS_PLATFORM_CODE.equals(platform)) {
-                resultInfo = psService.logout(loginUser, platform, ip);
+                resultInfo = psService.logout(loginUser, platform, ip,countryCode);
             }
             if (OpenAPIProperties.T9_PLATFORM_CODE.equals(platform)) {
-                resultInfo = t9Service.logout(loginUser, platform, ip);
+                resultInfo = t9Service.logout(loginUser, platform, ip,countryCode);
             }
             if (OpenAPIProperties.PP_PLATFORM_CODE.equals(platform)) {
-                resultInfo = ppService.logout(loginUser, platform, ip);
+                resultInfo = ppService.logout(loginUser, platform, ip,countryCode);
             }
             if (OpenAPIProperties.RICH_PLATFORM_CODE.equals(platform)) {
-                resultInfo = rich88Service.logout(loginUser, platform, ip);
+                resultInfo = rich88Service.logout(loginUser, platform, ip,countryCode);
             }
             if (OpenAPIProperties.KA_PLATFORM_CODE.equals(platform)) {
-                resultInfo = kaService.logout(loginUser, platform, ip);
+                resultInfo = kaService.logout(loginUser, platform, ip,countryCode);
             }
             if (OpenAPIProperties.DJ_PLATFORM_CODE.equals(platform)) {
-                resultInfo = djService.logout(loginUser, platform, ip);
+                resultInfo = djService.logout(loginUser, platform, ip,countryCode);
             }
             if (OpenAPIProperties.JILI_PLATFORM_CODE.equals(platform)) {
-                resultInfo = jiliService.logout(loginUser, platform, ip);
+                resultInfo = jiliService.logout(loginUser, platform, ip,countryCode);
             }
             if (OpenAPIProperties.FC_PLATFORM_CODE.equals(platform)) {
-                resultInfo = fcService.logout(loginUser, platform, ip);
+                resultInfo = fcService.logout(loginUser, platform, ip,countryCode);
             }
             if (OpenAPIProperties.YL_PLATFORM_CODE.equals(platform)) {
-                resultInfo = ylService.logout(loginUser, platform, ip);
+                resultInfo = ylService.logout(loginUser, platform, ip,countryCode);
             }
             if (OpenAPIProperties.REDTIGER_PLATFORM_CODE.equals(platform)) {
-                resultInfo = redtigerService.logout(loginUser, platform, ip);
+                resultInfo = redtigerService.logout(loginUser, platform, ip,countryCode);
             }
             if (OpenAPIProperties.CMD_PLATFORM_CODE.equals(platform)) {
-                resultInfo = cmdService.logout(loginUser, platform, ip);
+                resultInfo = cmdService.logout(loginUser, platform, ip,countryCode);
             }
             if (OpenAPIProperties.WM_PLATFORM_CODE.equals(platform)) {
-                resultInfo = wmService.logout(loginUser, platform, ip);
+                resultInfo = wmService.logout(loginUser, platform, ip,countryCode);
             }
             if (OpenAPIProperties.MG_PLATFORM_CODE.equals(platform)) {
-                resultInfo = mgService.logout(loginUser, platform, ip);
+                resultInfo = mgService.logout(loginUser, platform, ip,countryCode);
             }
             if (OpenAPIProperties.DG_PLATFORM_CODE.equals(platform)) {
-                resultInfo = dgService.logout(loginUser, platform, ip);
+                resultInfo = dgService.logout(loginUser, platform, ip,countryCode);
             }
             if (OpenAPIProperties.BTI_PLATFORM_CODE.equals(platform)) {
-                resultInfo = btiService.logout(loginUser, platform, ip);
+                resultInfo = btiService.logout(loginUser, platform, ip,countryCode);
             }
             if (OpenAPIProperties.MT_PLATFORM_CODE.equals(platform)) {
-                resultInfo = mtService.logout(loginUser, platform, ip);
+                resultInfo = mtService.logout(loginUser, platform, ip,countryCode);
             }
             if (OpenAPIProperties.KM_PLATFORM_CODE.equals(platform)) {
-                resultInfo = kmService.logout(loginUser, platform, ip);
+                resultInfo = kmService.logout(loginUser, platform, ip,countryCode);
             }
             if (OpenAPIProperties.V8_PLATFORM_CODE.equals(platform)) {
-                resultInfo = v8Service.logout(loginUser, platform, ip);
+                resultInfo = v8Service.logout(loginUser, platform, ip,countryCode);
             }
             if (OpenAPIProperties.BL_PLATFORM_CODE.equals(platform)) {
-                resultInfo = blService.logout(loginUser, platform, ip);
+                resultInfo = blService.logout(loginUser, platform, ip,countryCode);
             }
             if (OpenAPIProperties.OB_PLATFORM_CODE.equals(platform)) {
-                resultInfo = obService.logout(loginUser, platform, ip);
+                resultInfo = obService.logout(loginUser, platform, ip,countryCode);
             }
             if (OpenAPIProperties.SA_PLATFORM_CODE.equals(platform)) {
-                resultInfo = saService.logout(loginUser, platform, ip);
+                resultInfo = saService.logout(loginUser, platform, ip,countryCode);
             }
             if (OpenAPIProperties.TP_PLATFORM_CODE.equals(platform)) {
-                resultInfo = tpService.logout(loginUser, ip);
+                resultInfo = tpService.logout(loginUser, ip,countryCode);
             }
             if (OpenAPIProperties.SGWIN_PLATFORM_CODE.equals(platform)) {
-                resultInfo = sgWinService.logout(loginUser, platform, ip);
+                resultInfo = sgWinService.logout(loginUser, platform, ip,countryCode);
             }
             if (OpenAPIProperties.TCGWIN_PLATFORM_CODE.equals(platform)) {
-                resultInfo = tcgWinService.logout(loginUser, platform, ip);
+                resultInfo = tcgWinService.logout(loginUser, platform, ip,countryCode);
             }
             if (resultInfo == null) {
                 log.info("退出平台log {} loginPlatform result is null. params:{},ip:{}", loginUser.getId(), params, ip);
-                return Result.failed("g100104", "网络繁忙，请稍后重试！");
+                return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
             } else {
                 if (!resultInfo.getCode().equals(ResultCode.SUCCESS)) {
                     return resultInfo;
@@ -438,7 +440,7 @@ public class GameController {
         } catch (Exception e) {
             e.printStackTrace();
             log.error("退出平台log {} logout occur error:{}. params:{}", loginUser.getId(), e.getMessage(), params);
-            return Result.failed("g100104", "网络繁忙，请稍后重试！");
+            return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
         }
     }
 }

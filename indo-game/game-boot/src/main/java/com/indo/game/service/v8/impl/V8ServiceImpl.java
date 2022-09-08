@@ -8,6 +8,7 @@ import com.indo.common.result.Result;
 import com.indo.common.utils.DateUtils;
 import com.indo.common.utils.GameUtil;
 import com.indo.common.utils.encrypt.MD5Encoder;
+import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.common.util.V8Encrypt;
 import com.indo.core.mapper.game.TxnsMapper;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
@@ -46,33 +47,33 @@ public class V8ServiceImpl implements V8Service {
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
         if (null == gameParentPlatform) {
-            return Result.failed("(" + parentName + ")平台不存在");
+            return Result.failed("g100101", MessageUtils.get("g100101",countryCode));
         }
         if (0==gameParentPlatform.getIsStart()) {
-            return Result.failed("g100101", "平台未启用");
+            return Result.failed("g100101", MessageUtils.get("g100101",countryCode));
         }
         if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
-            return Result.failed("g000001", gameParentPlatform.getMaintenanceContent());
+            return Result.failed("g000001", MessageUtils.get("g000001",countryCode));
         }
         // 是否开售校验
         GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
         if (null == gamePlatform) {
-            return Result.failed("(" + platform + ")游戏不存在");
+            return Result.failed("g100102", MessageUtils.get("g100102",countryCode));
         }
         if (0==gamePlatform.getIsStart()) {
-            return Result.failed("g100102", "游戏未启用");
+            return Result.failed("g100102", MessageUtils.get("g100102",countryCode));
         }
         if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
-            return Result.failed("g091047", gamePlatform.getMaintenanceContent());
+            return Result.failed("g091047", MessageUtils.get("g091047",countryCode));
         }
 
         BigDecimal balance = loginUser.getBalance();
-        //验证站点余额
-        if (null == balance || balance.compareTo(BigDecimal.ZERO) == 0) {
-            logger.info("站点v8余额不足，当前用户memid: {},nickName: {},balance: {}", loginUser.getId(), loginUser.getNickName(), balance);
-            //站点棋牌余额不足
-            return Result.failed("g300004", "会员余额不足");
-        }
+//        //验证站点余额
+//        if (null == balance || balance.compareTo(BigDecimal.ZERO) == 0) {
+//            logger.info("站点v8余额不足，当前用户memid: {},nickName: {},balance: {}", loginUser.getId(), loginUser.getNickName(), balance);
+//            //站点棋牌余额不足
+//            return Result.failed("g300004", MessageUtils.get("g300004",countryCode));
+//        }
 
         try {
 
@@ -89,7 +90,7 @@ public class V8ServiceImpl implements V8Service {
                 externalService.saveCptOpenMember(cptOpenMember);
 
                 // 第一次登录自动创建玩家, 后续登录返回登录游戏URL
-                return createMemberGame(cptOpenMember, platform, ip, true,balance);
+                return createMemberGame(cptOpenMember, platform, ip, true,balance, countryCode);
             } else {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
@@ -97,18 +98,18 @@ public class V8ServiceImpl implements V8Service {
                 GameUtil.httpGetWithCookies(getLoginOutUrl(loginUser.getAccount()), null, null);
 
                 // 请求地址
-                return createMemberGame(cptOpenMember, platform, ip, false,balance);
+                return createMemberGame(cptOpenMember, platform, ip, false,balance, countryCode);
             }
 
 
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.failed("g100104", "网络繁忙，请稍后重试！");
+            return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
         }
     }
 
     @Override
-    public Result logout(LoginInfo loginUser, String platform, String ip) {
+    public Result logout(LoginInfo loginUser, String platform, String ip,String countryCode) {
         logger.info("v8_logout {} v8Game account:{},v8CodeId:{}", loginUser.getId(), loginUser.getAccount(), platform);
         try {
 
@@ -116,24 +117,24 @@ public class V8ServiceImpl implements V8Service {
             JSONObject jsonObject = JSONObject.parseObject(result);
 
             if (null == jsonObject || null == jsonObject.getJSONObject("d")) {
-                return Result.failed("g091087", "第三方请求异常！");
+                return Result.failed("g091087", MessageUtils.get("g091087",countryCode));
             }
 
             JSONObject jsonData = jsonObject.getJSONObject("d");
             if (0 == jsonData.getInteger("code")) {
                 return Result.success();
             } else {
-                return errorCode(jsonData.getInteger("code").toString(), null);
+                return errorCode(jsonData.getInteger("code").toString(), null, countryCode);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.failed("g100104", "网络繁忙，请稍后重试！");
+            return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
         }
     }
 
 
     @Override
-    public Result crebit(LoginInfo loginUser, String platform, BigDecimal money, String ip) {
+    public Result crebit(LoginInfo loginUser, String platform, BigDecimal money, String ip,String countryCode) {
         logger.info("v8_crebit {} v8Game account:{},v8CodeId:{}", money, loginUser.getAccount(), platform);
         try {
             GameParentPlatform platformGameParent = getGameParentPlatform();
@@ -145,7 +146,7 @@ public class V8ServiceImpl implements V8Service {
             JSONObject jsonObject = JSONObject.parseObject(result);
 
             if (null == jsonObject || null == jsonObject.getJSONObject("d")) {
-                return Result.failed("g091087", "第三方请求异常！");
+                return Result.failed("g091087", MessageUtils.get("g091087",countryCode));
             }
 
             // 查询下分订单是否成功
@@ -168,11 +169,11 @@ public class V8ServiceImpl implements V8Service {
             e.printStackTrace();
             logger.error(e.getMessage(), e);
         }
-        return Result.failed("g100104", "网络繁忙，请稍后重试！");
+        return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
     }
 
     @Override
-    public Result balance(LoginInfo loginUser, String platform, String ip) {
+    public Result balance(LoginInfo loginUser, String platform, String ip, String countryCode) {
         logger.info("v8_balance {} v8Game account:{},v8CodeId:{}", ip, loginUser.getAccount(), platform);
         try {
             // V8 游戏玩家情况
@@ -180,20 +181,20 @@ public class V8ServiceImpl implements V8Service {
             JSONObject jsonObject = JSONObject.parseObject(result);
 
             if (null == jsonObject || null == jsonObject.getJSONObject("d")) {
-                return Result.failed("g091087", "第三方请求异常！");
+                return Result.failed("g091087", MessageUtils.get("g091087",countryCode));
             }
 
             JSONObject jsonData = jsonObject.getJSONObject("d");
             if (0 == jsonData.getInteger("code")) {
                 return Result.success(jsonData);
             } else {
-                return errorCode(jsonData.getInteger("code").toString(), null);
+                return errorCode(jsonData.getInteger("code").toString(), null, countryCode);
             }
         } catch (Exception e) {
             e.printStackTrace();
             logger.error(e.getMessage(), e);
         }
-        return Result.failed("g100104", "网络繁忙，请稍后重试！");
+        return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
     }
 
     /**
@@ -218,14 +219,14 @@ public class V8ServiceImpl implements V8Service {
      * @param cptOpenMember cptOpenMember
      * @return Result
      */
-    private Result createMemberGame(CptOpenMember cptOpenMember, String platform, String ip, boolean isCreateUser,BigDecimal balance) {
+    private Result createMemberGame(CptOpenMember cptOpenMember, String platform, String ip, boolean isCreateUser,BigDecimal balance,String countryCode) {
         try {
             //
             String result = GameUtil.httpGetWithCookies(getLoginUrl(cptOpenMember.getUserName(), platform, ip,balance), null, null);
             JSONObject jsonObject = JSONObject.parseObject(result);
 
             if (null == jsonObject || null == jsonObject.getJSONObject("d")) {
-                return Result.failed("g091087", "第三方请求异常！");
+                return Result.failed("g091087", MessageUtils.get("g091087",countryCode));
             }
 
             JSONObject jsonData = jsonObject.getJSONObject("d");
@@ -238,11 +239,11 @@ public class V8ServiceImpl implements V8Service {
                 responseData.setPathUrl(jsonData.getString("url"));
                 return Result.success(responseData);
             } else {
-                return errorCode(jsonData.getInteger("code").toString(), null);
+                return errorCode(jsonData.getInteger("code").toString(), null, countryCode);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.failed("g100104", "网络繁忙，请稍后重试！");
+            return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
         }
 
     }
@@ -461,27 +462,27 @@ public class V8ServiceImpl implements V8Service {
         return gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.V8_PLATFORM_CODE);
     }
 
-    public Result errorCode(String errorCode, String errorMessage) {
+    public Result errorCode(String errorCode, String errorMessage,String countryCode) {
 //        0 成功。                                                Succeed.
         switch (errorCode) {
 //        2 Key 验证失败
             case "2":
-                return Result.failed("g100107", errorMessage);
+                return Result.failed("g100107", MessageUtils.get("g100107",countryCode));
 //        9 AgentId 不存在 玩家账号与 AgentId 不匹配 (详见 Chapter             No authorized to access
             case "9":
-                return Result.failed("g000007", errorMessage);
+                return Result.failed("g000007", MessageUtils.get("g000007",countryCode));
 
 //        104 執⾏营运商于 auth 回传错误或禁用的货币                            Domain is null or the length of domain less than 2.
             case "104":
-                return Result.failed("g100001", errorMessage);
+                return Result.failed("g100001", MessageUtils.get("g100001",countryCode));
 
 //        101 会员账号不存在/不在在线                                   Failed to pass the domain validation.
             case "101":
-                return Result.failed("g010001", errorMessage);
+                return Result.failed("g010001", MessageUtils.get("g010001",countryCode));
 
 //        9999 失败。                                                Failed.
             default:
-                return Result.failed("g009999", errorMessage);
+                return Result.failed("g009999", MessageUtils.get("g009999",countryCode));
         }
     }
 }

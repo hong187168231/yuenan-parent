@@ -3,7 +3,9 @@ package com.indo.pay.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.indo.common.constant.GlobalConstants;
 import com.indo.common.constant.RedisKeys;
 import com.indo.common.enums.GoldchangeEnum;
@@ -319,12 +321,22 @@ public class TakeCashServiceImpl extends SuperServiceImpl<TakeCashMapper, PayTak
         }
     }
 
-    private boolean updateBanlaceAndCanAmount(String account, BigDecimal amount) {
-        Result<Boolean>  result = memBaseInfoFeignClient.takeCashApply(account, amount);
-        if (Result.success().getCode().equals(result.getCode())) {
-            return true;
-        } else {
-            throw new BizException("update member banlace and CanAmount error: " + account);
+
+    public boolean updateBanlaceAndCanAmount(String account, BigDecimal amount) {
+        MemBaseInfoBO memBaseInfoBO = memBaseInfoMapper.findMemBaseInfoByAccount(account);
+        if (memBaseInfoBO == null) {
+            throw new BizException("提现异常");
         }
+        if (memBaseInfoBO.getBalance().compareTo(amount) == -1) {
+            throw new BizException("余额小于提现金额，不可提现");
+        }
+        if (memBaseInfoBO.getCanAmount().compareTo(amount) == -1) {
+            throw new BizException("可提现金额小于提现金额，不可提现");
+        }
+        if(amount.compareTo(memBaseInfoBO.getCanAmount()) == 1){
+            throw new BizException("可提现金额大于提现金额，不可提现");
+        }
+
+        return SqlHelper.retBool(this.memBaseInfoMapper.updateBanlaceAndCanAmount(account, amount));
     }
 }

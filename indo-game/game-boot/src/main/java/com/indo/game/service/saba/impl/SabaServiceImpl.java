@@ -5,6 +5,7 @@ import com.indo.common.config.OpenAPIProperties;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
 import com.indo.common.utils.GameUtil;
+import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.core.mapper.game.GameCategoryMapper;
 import com.indo.core.mapper.game.GamePlatformMapper;
 import com.indo.game.mapper.frontend.GameTypeMapper;
@@ -60,34 +61,34 @@ public class SabaServiceImpl implements SabaService {
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
         if (null == gameParentPlatform) {
-            return Result.failed("(" + parentName + ")平台不存在");
+            return Result.failed("g100101", MessageUtils.get("g100101",countryCode));
         }
         if (0==gameParentPlatform.getIsStart()) {
-            return Result.failed("g100101", "平台未启用");
+            return Result.failed("g100101", MessageUtils.get("g100101",countryCode));
         }
         if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
-            return Result.failed("g000001", gameParentPlatform.getMaintenanceContent());
+            return Result.failed("g000001", MessageUtils.get("g000001",countryCode));
         }
         // 是否开售校验
         GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
         if (null == gamePlatform) {
-            return Result.failed("(" + platform + ")游戏不存在");
+            return Result.failed("g100102", MessageUtils.get("g100102",countryCode));
         }
         if (0==gamePlatform.getIsStart()) {
-            return Result.failed("g100102", "游戏未启用");
+            return Result.failed("g100102", MessageUtils.get("g100102",countryCode));
         }
         if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
-            return Result.failed("g091047", gamePlatform.getMaintenanceContent());
+            return Result.failed("g091047", MessageUtils.get("g091047",countryCode));
         }
         //初次判断站点棋牌余额是否够该用户
 //        MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(loginUser.getAccount());
-        BigDecimal balance = loginUser.getBalance();
-        //验证站点棋牌余额
-        if (null == balance || BigDecimal.ZERO == balance) {
-            logger.info("站点saba余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
-            //站点棋牌余额不足
-            return Result.failed("g300004", "会员余额不足");
-        }
+//        BigDecimal balance = loginUser.getBalance();
+//        //验证站点棋牌余额
+//        if (null == balance || BigDecimal.ZERO == balance) {
+//            logger.info("站点saba余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
+//            //站点棋牌余额不足
+//            return Result.failed("g300004", MessageUtils.get("g300004",countryCode));
+//        }
 
         try {
 
@@ -107,13 +108,13 @@ public class SabaServiceImpl implements SabaService {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
                 //登出
-                this.logout(loginUser,ip);
+                this.logout(loginUser,ip, countryCode);
                 //登录
                 return initGame(gameParentPlatform, loginUser, gamePlatform, ip, isMobileLogin, countryCode);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.failed("g100104", "网络繁忙，请稍后重试！");
+            return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
         }
     }
 
@@ -136,13 +137,13 @@ public class SabaServiceImpl implements SabaService {
             SabaApiResponseData sabaApiResponse = commonRequest(trr, OpenAPIProperties.SABA_API_URL + "/CreateMember", loginUser.getId().intValue(), ip, "restrictedPlayer");
             logger.info("saba体育log  注册会员restrictedPlayer返回 sabaApiResponse:{}", JSONObject.toJSONString(sabaApiResponse));
             if (null == sabaApiResponse) {
-                return Result.failed("g100104", "网络繁忙，请稍后重试！");
+                return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
             }
             if ("0".equals(sabaApiResponse.getError_code()) || "6".equals(sabaApiResponse.getError_code())) {
                 externalService.saveCptOpenMember(cptOpenMember);
                 return initGame(gameParentPlatform, loginUser, gamePlatform, ip,isMobileLogin, countryCode);
             } else {
-                return errorCode(sabaApiResponse.getError_code(), sabaApiResponse.getMessage());
+                return errorCode(sabaApiResponse.getError_code(), sabaApiResponse.getMessage(), countryCode);
             }
         } catch (Exception e) {
             logger.error("sabalog game error {} ", e);
@@ -156,37 +157,38 @@ public class SabaServiceImpl implements SabaService {
     private Result initGame(GameParentPlatform gameParentPlatform, LoginInfo loginUser, GamePlatform gamePlatform, String ip,String isMobileLogin,String countryCode) throws Exception {
         logger.info("sabalog {} sabaGame account:{}, sabaCodeId:{}", loginUser.getId(), loginUser.getNickName());
         try {
+            String lang = "";
             if(null!=countryCode&&!"".equals(countryCode)){
                 switch (countryCode) {
                     case "IN":
-                        countryCode = "en";
+                        lang = "en";
                     case "EN":
-                        countryCode = "en";
+                        lang = "en";
                     case "CN":
-                        countryCode = "cs";
+                        lang = "cs";
                     case "VN":
-                        countryCode = "vn";
+                        lang = "vn";
                     case "TW":
-                        countryCode = "ch";
+                        lang = "ch";
                     case "TH":
-                        countryCode = "th";
+                        lang = "th";
                     case "ID":
-                        countryCode = "id";
+                        lang = "id";
                     default:
-                        countryCode = gameParentPlatform.getLanguageType();
+                        lang = gameParentPlatform.getLanguageType();
                 }
             }else{
-                countryCode = gameParentPlatform.getLanguageType();
+                lang = gameParentPlatform.getLanguageType();
             }
             Map<String, String> trr = new HashMap<>();
-            trr.put("lang", countryCode);
+            trr.put("lang", lang);
             trr.put("vendor_member_id", loginUser.getAccount());
             trr.put("platform", isMobileLogin);  //投注平台. 输入要登录的平台码。 1:桌机, 2:手机 h5, 3:手机纯文字.
             logger.info("saba体育log  登录initGame输入 loginUser:{}, ip:{}, params:{}, urlapi:{}", loginUser,ip,trr,OpenAPIProperties.SABA_API_URL + "/GetSabaUrl");
             SabaApiResponseData sabaApiResponse = commonRequest(trr, OpenAPIProperties.SABA_API_URL + "/GetSabaUrl", loginUser.getId().intValue(), ip, "restrictedPlayer");
             logger.info("saba体育log  登录initGame返回 sabaApiResponse:{}", JSONObject.toJSONString(sabaApiResponse));
             if (null == sabaApiResponse) {
-                return Result.failed("g100104", "网络繁忙，请稍后重试！");
+                return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
             }
 //
             if ("0".equals(sabaApiResponse.getError_code())) {
@@ -194,7 +196,7 @@ public class SabaServiceImpl implements SabaService {
                 responseData.setPathUrl(sabaApiResponse.getData());
                 return Result.success(responseData);
             } else {
-                return errorCode(sabaApiResponse.getError_code(), sabaApiResponse.getMessage());
+                return errorCode(sabaApiResponse.getError_code(), sabaApiResponse.getMessage(), countryCode);
             }
         } catch (Exception e) {
             logger.error("sabalog game error {} ", e);
@@ -205,7 +207,7 @@ public class SabaServiceImpl implements SabaService {
     /**
      * 强迫登出玩家
      */
-    public Result logout(LoginInfo loginUser, String ip) {
+    public Result logout(LoginInfo loginUser, String ip,String countryCode) {
         Map<String, String> trr = new HashMap<>();
         trr.put("vendor_member_id ", loginUser.getAccount());
 
@@ -215,7 +217,7 @@ public class SabaServiceImpl implements SabaService {
             sabaApiResponse = commonRequest(trr, OpenAPIProperties.SABA_API_URL + "/KickUser", Integer.valueOf(loginUser.getId().intValue()), ip, "logout");
             logger.info("saba体育log  登出玩家logout返回 sabaApiResponse:{}", JSONObject.toJSONString(sabaApiResponse));
             if (null == sabaApiResponse) {
-                return Result.failed("g100104", "网络繁忙，请稍后重试！");
+                return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
             }
             if ("0".equals(sabaApiResponse.getError_code())) {
                 return Result.success(sabaApiResponse);
@@ -224,7 +226,7 @@ public class SabaServiceImpl implements SabaService {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.failed("g100104", "网络繁忙，请稍后重试！");
+            return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
         }
 
     }
@@ -249,33 +251,33 @@ public class SabaServiceImpl implements SabaService {
     }
 
 
-    public Result errorCode(String errorCode, String errorMessage) {
+    public Result errorCode(String errorCode, String errorMessage,String countryCode) {
         if ("1".equals(errorCode)) {
-            return Result.failed("g009999", errorMessage);
+            return Result.failed("g009999", MessageUtils.get("g009999",countryCode));
         } else if ("2".equals(errorCode)) {
-            return Result.failed("g100003", errorMessage);
+            return Result.failed("g100003", MessageUtils.get("g100003",countryCode));
         } else if ("3".equals(errorCode)) {
-            return Result.failed("g091147", errorMessage);
+            return Result.failed("g091147", MessageUtils.get("g091147",countryCode));
         } else if ("4".equals(errorCode)) {
-            return Result.failed("g091148", errorMessage);
+            return Result.failed("g091148", MessageUtils.get("g091148",countryCode));
         } else if ("5".equals(errorCode)) {
-            return Result.failed("g100005", errorMessage);
+            return Result.failed("g100005", MessageUtils.get("g100005",countryCode));
         } else if ("6".equals(errorCode)) {
-            return Result.failed("g091149", errorMessage);
+            return Result.failed("g091149", MessageUtils.get("g091149",countryCode));
         } else if ("7".equals(errorCode)) {
-            return Result.failed("g091150", errorMessage);
+            return Result.failed("g091150", MessageUtils.get("g091150",countryCode));
         } else if ("8".equals(errorCode)) {
-            return Result.failed("g091151", errorMessage);
+            return Result.failed("g091151", MessageUtils.get("g091151",countryCode));
         } else if ("9".equals(errorCode)) {
-            return Result.failed("g091152", errorMessage);
+            return Result.failed("g091152", MessageUtils.get("g091152",countryCode));
         } else if ("10".equals(errorCode)) {
-            return Result.failed("g000001", errorMessage);
+            return Result.failed("g000001", MessageUtils.get("g000001",countryCode));
         } else if ("12".equals(errorCode)) {
-            return Result.failed("g091153", errorMessage);
+            return Result.failed("g091153", MessageUtils.get("g091153",countryCode));
         } else if ("13".equals(errorCode)) {
-            return Result.failed("g091154", errorMessage);
+            return Result.failed("g091154", MessageUtils.get("g091154",countryCode));
         } else {
-            return Result.failed("g009999", errorMessage);
+            return Result.failed("g009999", MessageUtils.get("g009999",countryCode));
         }
     }
 

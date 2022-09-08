@@ -7,6 +7,7 @@ import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
 import com.indo.common.utils.DateUtils;
 import com.indo.common.utils.GameUtil;
+import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.core.mapper.game.TxnsMapper;
 import com.indo.core.mapper.game.GameCategoryMapper;
 import com.indo.game.mapper.frontend.GameTypeMapper;
@@ -63,34 +64,34 @@ public class UgServiceImpl implements UgService {
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
         if (null == gameParentPlatform) {
-            return Result.failed("(" + parentName + ")平台不存在");
+            return Result.failed("g100101", MessageUtils.get("g100101",countryCode));
         }
         if (0==gameParentPlatform.getIsStart()) {
-            return Result.failed("g100101", "平台未启用");
+            return Result.failed("g100101", MessageUtils.get("g100101",countryCode));
         }
         if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
-            return Result.failed("g000001", gameParentPlatform.getMaintenanceContent());
+            return Result.failed("g000001", MessageUtils.get("g000001",countryCode));
         }
         // 是否开售校验
         GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
         if (null == gamePlatform) {
-            return Result.failed("(" + platform + ")游戏不存在");
+            return Result.failed("g100102", MessageUtils.get("g100102",countryCode));
         }
         if (0==gamePlatform.getIsStart()) {
-            return Result.failed("g100102", "游戏未启用");
+            return Result.failed("g100102", MessageUtils.get("g100102",countryCode));
         }
         if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
-            return Result.failed("g091047", gamePlatform.getMaintenanceContent());
+            return Result.failed("g091047", MessageUtils.get("g091047",countryCode));
         }
         //初次判断站点棋牌余额是否够该用户
 //        MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(loginUser.getAccount());
-        BigDecimal balance = loginUser.getBalance();
-        //验证站点棋牌余额
-        if (null==balance || BigDecimal.ZERO==balance) {
-            logger.info("站点ug余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
-            //站点棋牌余额不足
-            return Result.failed("g300004","会员余额不足");
-        }
+//        BigDecimal balance = loginUser.getBalance();
+//        //验证站点棋牌余额
+//        if (null==balance || BigDecimal.ZERO==balance) {
+//            logger.info("站点ug余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
+//            //站点棋牌余额不足
+//            return Result.failed("g300004",MessageUtils.get("g300004",countryCode));
+//        }
 
         try {
 
@@ -107,7 +108,7 @@ public class UgServiceImpl implements UgService {
                 //创建玩家
                 return restrictedPlayer(gameParentPlatform,loginUser,gamePlatform, ip, cptOpenMember,WebType,countryCode);
             } else {
-                this.logout(loginUser,ip);
+                this.logout(loginUser,ip,countryCode);
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
                 //登录
@@ -115,7 +116,7 @@ public class UgServiceImpl implements UgService {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.failed("g100104","网络繁忙，请稍后重试！");
+            return Result.failed("g100104",MessageUtils.get("g100104",countryCode));
         }
     }
 
@@ -145,7 +146,7 @@ public class UgServiceImpl implements UgService {
                 return Result.failed();
             }else {
                 {
-                    return this.errorCode(ugApiResponse.getCode(),ugApiResponse.getMsg());
+                    return this.errorCode(ugApiResponse.getCode(),ugApiResponse.getMsg(),countryCode);
                 }
             }
         } catch (Exception e) {
@@ -160,33 +161,45 @@ public class UgServiceImpl implements UgService {
     private Result initGame(GameParentPlatform gameParentPlatform,LoginInfo loginUser,GamePlatform gamePlatform, String ip,String WebType,String countryCode) throws Exception {
         logger.info("uglog initGame Login {} initGame ugGame account:{}, ugCodeId:{},ip:{}", loginUser.getId(), loginUser.getNickName(),ip);
         //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+        String lang = "";
         if(null!=countryCode&&!"".equals(countryCode)){
             switch (countryCode) {
                 case "IN":
-                    countryCode = "en";
+                    lang = "en";
+                    break;
                 case "EN":
-                    countryCode = "en";
+                    lang = "en";
+                    break;
                 case "CN":
-                    countryCode = "zh_cn";
+                    lang = "zh_cn";
+                    break;
                 case "VN":
-                    countryCode = "vi";
+                    lang = "vi";
+                    break;
                 case "TW":
-                    countryCode = "zh_TW";
+                    lang = "zh_TW";
+                    break;
                 case "TH":
-                    countryCode = "th";
+                    lang = "th";
+                    break;
                 case "ID":
-                    countryCode = "id";
+                    lang = "id";
+                    break;
                 case "MY":
-                    countryCode = "ms_MY";
+                    lang = "ms_MY";
+                    break;
                 case "KR":
-                    countryCode = "ko_KR";
+                    lang = "ko_KR";
+                    break;
                 case "JP":
-                    countryCode = "ja_JP";
+                    lang = "ja_JP";
+                    break;
                 default:
-                    countryCode = gameParentPlatform.getLanguageType();
+                    lang = gameParentPlatform.getLanguageType();
+                    break;
             }
         }else{
-            countryCode = gameParentPlatform.getLanguageType();
+            lang = gameParentPlatform.getLanguageType();
         }
 //        try {
 //            operatorId	string	16	Y	商户代码
@@ -200,7 +213,7 @@ public class UgServiceImpl implements UgService {
 //            sportId	number		N	偏好运动类型，预设值：1 (足球)，支援设定的运动有：1 (足球), 2 (篮球), 7 (网球), 11 (板球)
             String urlLogin = OpenAPIProperties.UG_LOGIN_URL+"/auth/single?operatorId="+OpenAPIProperties.UG_COMPANY_KEY+"&userId="+loginUser.getAccount()
                     +"&returnUrl="+OpenAPIProperties.UG_RETURN_URL+"&oddsExpression=decimal"
-                    +"&language="+countryCode
+                    +"&language="+lang
                     +"&webType="+WebType+"&theme=style&sportId=1";
             logger.info("UG体育登录initGame输入 urlLogin:{},  loginUser:{}, ip:{}", urlLogin, loginUser, ip);
 
@@ -219,14 +232,14 @@ public class UgServiceImpl implements UgService {
 //            }
 //        } catch (Exception e) {
 //            logger.error("uglog initGame Login game error {} ", e);
-//            return Result.failed("g100104","网络繁忙，请稍后重试！");
+//            return Result.failed("g100104",MessageUtils.get("g100104",countryCode));
 //        }
     }
 
     /**
      * 强迫登出玩家
      */
-    public Result logout(LoginInfo loginUser,String ip){
+    public Result logout(LoginInfo loginUser,String ip,String countryCode){
         UgLogoutJsonDTO ugLogoutJsonDTO = new UgLogoutJsonDTO();
         ugLogoutJsonDTO.setUserId(loginUser.getAccount());
         ugLogoutJsonDTO.setApiKey(OpenAPIProperties.UG_API_KEY);
@@ -242,13 +255,13 @@ public class UgServiceImpl implements UgService {
                 return Result.failed();
             }else {
                 {
-                    return this.errorCode(ugApiResponse.getCode(),ugApiResponse.getMsg());
+                    return this.errorCode(ugApiResponse.getCode(),ugApiResponse.getMsg(),countryCode);
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
             logger.info("uglog logout {} ", e);
-            return Result.failed("g100104","网络繁忙，请稍后重试！");
+            return Result.failed("g100104",MessageUtils.get("g100104",countryCode));
         }
 
     }
@@ -497,28 +510,28 @@ public class UgServiceImpl implements UgService {
         }
         return ugApiResponse;
     }
-        public Result errorCode(String errorCode, String errorMessage) {
+        public Result errorCode(String errorCode, String errorMessage,String countryCode) {
             switch (errorCode) {
                 case "000001"://	系统维护	SYSTEM MAINTENANCE
-                    return Result.failed("g000001", errorMessage);
+                    return Result.failed("g000001", MessageUtils.get("g000001",countryCode));
                 case "000002"://	授权已取消	AUTHORIZATION HAS BEEN CANCELED
-                    return Result.failed("g000002", errorMessage);
+                    return Result.failed("g000002", MessageUtils.get("g000002",countryCode));
                 case "000003"://	IP 不在白名单中	IP NOT IN THE WHITELIST
-                    return Result.failed("g000003", errorMessage);
+                    return Result.failed("g000003", MessageUtils.get("g000003",countryCode));
                 case "000004"://	API 密钥错误	API KEY ERROR
-                    return Result.failed("g091160", errorMessage);
+                    return Result.failed("g091160", MessageUtils.get("g091160",countryCode));
                 case "000005"://	系统忙碌	SYSTEM BUSY
-                    return Result.failed("g000005", errorMessage);
+                    return Result.failed("g000005", MessageUtils.get("g000005",countryCode));
                 case "000006"://	超出查询时间范围	OVER INQUIRY TIME RANGE
-                    return Result.failed("g000006", errorMessage);
+                    return Result.failed("g000006", MessageUtils.get("g000006",countryCode));
                 case "000007"://	参数错误	ENTER PARAMETER ERROR
-                    return Result.failed("g000007", errorMessage);
+                    return Result.failed("g000007", MessageUtils.get("g000007",countryCode));
                 case "000008"://	频繁请求	REQUEST TOO MUCH FREQUENTLY
-                    return Result.failed("g000008", errorMessage);
+                    return Result.failed("g000008", MessageUtils.get("g000008",countryCode));
                 case "000009"://	无效的网址	INVALID URL
-                    return Result.failed("g091159", errorMessage);
+                    return Result.failed("g091159", MessageUtils.get("g091159",countryCode));
                 case "000010"://	API password 错误	API PASSWORD ERROR
-                    return Result.failed("g000004", errorMessage);
+                    return Result.failed("g000004", MessageUtils.get("g000004",countryCode));
 //                case "000011"://	不允许的请求方法	METHOD NOT ALLOWED
 //                    return Result.failed("g009999", errorMessage);
 //                case "000012"://	operatorId 错误	OPERATOR ID ERROR
@@ -593,7 +606,7 @@ public class UgServiceImpl implements UgService {
 //                    return Result.failed("g091145", errorMessage);
                 //        9999 失败。                                                Failed.
                 default:
-                    return Result.failed("g009999", errorMessage);
+                    return Result.failed("g009999", MessageUtils.get("g009999",countryCode));
             }
         }
 }

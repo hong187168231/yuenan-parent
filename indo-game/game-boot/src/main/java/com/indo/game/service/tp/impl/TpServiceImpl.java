@@ -9,6 +9,7 @@ import com.indo.common.result.ResultCode;
 import com.indo.common.utils.DateUtils;
 import com.indo.common.utils.GameUtil;
 import com.indo.common.utils.encrypt.MD5;
+import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.core.mapper.game.TxnsMapper;
 import com.indo.core.mapper.game.GameCategoryMapper;
 import com.indo.core.mapper.game.GamePlatformMapper;
@@ -58,24 +59,24 @@ public class TpServiceImpl implements TpService {
         // 是否开售校验
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(parentName);
         if (null == gameParentPlatform) {
-            return Result.failed("(" + parentName + ")平台不存在");
+            return Result.failed("g100101", MessageUtils.get("g100101",countryCode));
         }
         if (0==gameParentPlatform.getIsStart()) {
-            return Result.failed("g100101", "平台未启用");
+            return Result.failed("g100101", MessageUtils.get("g100101",countryCode));
         }
         if ("1".equals(gameParentPlatform.getIsOpenMaintenance())) {
-            return Result.failed("g000001", gameParentPlatform.getMaintenanceContent());
+            return Result.failed("g000001", MessageUtils.get("g000001",countryCode));
         }
         // 是否开售校验
         GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platform,parentName);
         if (null == gamePlatform) {
-            return Result.failed("(" + platform + ")游戏不存在");
+            return Result.failed("g100102", MessageUtils.get("g100102",countryCode));
         }
         if (0==gamePlatform.getIsStart()) {
-            return Result.failed("g100102", "游戏未启用");
+            return Result.failed("g100102", MessageUtils.get("g100102",countryCode));
         }
         if ("1".equals(gamePlatform.getIsOpenMaintenance())) {
-            return Result.failed("g091047", gamePlatform.getMaintenanceContent());
+            return Result.failed("g091047", MessageUtils.get("g091047",countryCode));
         }
 //        //初次判断站点棋牌余额是否够该用户
 //        MemBaseinfo memBaseinfo = gameCommonService.getByAccountNo(loginUser.getAccount());
@@ -87,7 +88,7 @@ public class TpServiceImpl implements TpService {
         if (null==balance || BigDecimal.ZERO==balance) {
             logger.info("站点awc余额不足，当前用户memid {},nickName {},balance {}", loginUser.getId(), loginUser.getNickName(), balance);
             //站点棋牌余额不足
-            return Result.failed("g300004","会员余额不足");
+            return Result.failed("g300004",MessageUtils.get("g300004",countryCode));
         }
 
         try {
@@ -105,7 +106,7 @@ public class TpServiceImpl implements TpService {
                 //创建玩家
                 return createMemberGame(gameParentPlatform,gamePlatform, ip, cptOpenMember,isMobileLogin,gamehall,balance, countryCode);
             } else {
-                Result result = this.logout(loginUser,ip);
+                Result result = this.logout(loginUser,ip, countryCode);
                 if(null!=result&& ResultCode.SUCCESS.getCode().equals(result.getCode())) {
                     cptOpenMember.setLoginTime(new Date());
                     externalService.updateCptOpenMember(cptOpenMember);
@@ -117,25 +118,25 @@ public class TpServiceImpl implements TpService {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.failed("g100104","网络繁忙，请稍后重试！");
+            return Result.failed("g100104",MessageUtils.get("g100104",countryCode));
         }
     }
 
     /**
      * 强迫登出玩家
      */
-    public Result logout(LoginInfo loginUser,String ip){
+    public Result logout(LoginInfo loginUser,String ip,String countryCode){
         // 验证且绑定（KY-CPT第三方会员关系）
         CptOpenMember cptOpenMember = externalService.getCptOpenMember(loginUser.getId().intValue(), OpenAPIProperties.T9_PLATFORM_CODE);
         String gamehall = "gpk2";
         String callBackBalanceStr = getBalance(cptOpenMember,gamehall);
         if (null == callBackBalanceStr || "".equals(callBackBalanceStr) ) {
-            return Result.failed("g100104","网络繁忙，请稍后重试！");
+            return Result.failed("g100104",MessageUtils.get("g100104",countryCode));
         }else {
             JSONObject jsonObjectBalance = JSONObject.parseObject(callBackBalanceStr);
             JSONObject statusJsonObjectBalance = jsonObjectBalance.getJSONObject("status");
             if (!"0".equals(statusJsonObjectBalance.getString("code"))) {
-                return errorCode(statusJsonObjectBalance.getString("code"), statusJsonObjectBalance.getString("message"));
+                return errorCode(statusJsonObjectBalance.getString("code"), statusJsonObjectBalance.getString("message"),countryCode);
             } else {
                 JSONObject dataJsonObjectBalance = jsonObjectBalance.getJSONObject("data");
                 BigDecimal amount = dataJsonObjectBalance.getBigDecimal("balance");
@@ -156,18 +157,18 @@ public class TpServiceImpl implements TpService {
                     callBackStr = commonRequest(trr, "/api/player/logout", Integer.valueOf(loginUser.getId().intValue()), ip, "logout");
                     logger.info("TP电子 logout强迫登出玩家 返回,params:{}", callBackStr);
                     if (null == callBackStr || "".equals(callBackStr)) {
-                        return Result.failed("g100104", "网络繁忙，请稍后重试！");
+                        return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
                     }
                     JSONObject jsonObject = JSONObject.parseObject(callBackStr);
                     JSONObject statusJsonObject = jsonObject.getJSONObject("status");
                     if ("0".equals(statusJsonObject.getString("code"))) {
                         return Result.success(statusJsonObject);
                     } else {
-                        return errorCode(statusJsonObject.getString("code"), statusJsonObject.getString("message"));
+                        return errorCode(statusJsonObject.getString("code"), statusJsonObject.getString("message"),countryCode);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    return Result.failed("g100104", "网络繁忙，请稍后重试！");
+                    return Result.failed("g100104", MessageUtils.get("g100104",countryCode));
                 }
             }
         }
@@ -180,7 +181,7 @@ public class TpServiceImpl implements TpService {
         String callBackStr = game(gameParentPlatform,gamePlatform, ip, cptOpenMember,isMobileLogin,gamehall,balance, countryCode);
         logger.info("TP电子 initGame登录 返回,params:{}",callBackStr);
         if (null == callBackStr || "".equals(callBackStr)) {
-            return Result.failed("g100104","网络繁忙，请稍后重试！");
+            return Result.failed("g100104",MessageUtils.get("g100104",countryCode));
         }
         JSONObject jsonObject = JSONObject.parseObject(callBackStr);
         JSONObject statusJsonObject = jsonObject.getJSONObject("status");
@@ -190,7 +191,7 @@ public class TpServiceImpl implements TpService {
             responseData.setPathUrl(dataJsonObject.getString("url"));
             return Result.success(responseData);
         }else {
-            return errorCode(statusJsonObject.getString("code"),statusJsonObject.getString("message"));
+            return errorCode(statusJsonObject.getString("code"),statusJsonObject.getString("message"),countryCode);
         }
     }
     /**
@@ -200,7 +201,7 @@ public class TpServiceImpl implements TpService {
         String callBackStr = createMember(ip, cptOpenMember);
         logger.info("TP电子 createMemberGame创建玩家 返回,params:{}",callBackStr);
         if (null == callBackStr || "".equals(callBackStr)) {
-            return Result.failed("g100104","网络繁忙，请稍后重试！");
+            return Result.failed("g100104",MessageUtils.get("g100104",countryCode));
         }
         JSONObject jsonObject = JSONObject.parseObject(callBackStr);
         JSONObject statusJsonObject = jsonObject.getJSONObject("status");
@@ -208,7 +209,7 @@ public class TpServiceImpl implements TpService {
             externalService.saveCptOpenMember(cptOpenMember);
             return initGame(gameParentPlatform,gamePlatform, ip, cptOpenMember,isMobileLogin,gamehall,balance, countryCode);
         }else {
-            return errorCode(statusJsonObject.getString("code"),statusJsonObject.getString("message"));
+            return errorCode(statusJsonObject.getString("code"),statusJsonObject.getString("message"),countryCode);
         }
     }
 
@@ -259,32 +260,42 @@ public class TpServiceImpl implements TpService {
 //            trr.put("bounsmode","");//	string (query string)	Optional	獎金組
 //            trr.put("sign","");//	string (query string)	Required	簽章
                 //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+                String lang = "";
                 if(null!=countryCode&&!"".equals(countryCode)){
                     switch (countryCode) {
                         case "IN":
-                            countryCode = "en";
+                            lang = "en";
+                            break;
                         case "EN":
-                            countryCode = "en";
+                            lang = "en";
+                            break;
                         case "CN":
-                            countryCode = "zh-CN";
+                            lang = "zh-CN";
+                            break;
                         case "VN":
-                            countryCode = "vi";
+                            lang = "vi";
+                            break;
                         case "TW":
-                            countryCode = "zh-TW";
+                            lang = "zh-TW";
+                            break;
                         case "TH":
-                            countryCode = "th";
+                            lang = "th";
+                            break;
                         case "ID":
-                            countryCode = "id";
+                            lang = "id";
+                            break;
                         case "JP":
-                            countryCode = "ja";
+                            lang = "ja";
+                            break;
                         default:
-                            countryCode = gameParentPlatform.getLanguageType();
+                            lang = gameParentPlatform.getLanguageType();
+                            break;
                     }
                 }else{
-                    countryCode = gameParentPlatform.getLanguageType();
+                    lang = gameParentPlatform.getLanguageType();
                 }
-                String signStr = "gamehall=" + gamehall + "&gamecode=" + gamePlatform.getPlatformCode() + "&account=" + cptOpenMember.getUserName() + "&lang=" + countryCode + "&platform=" + isMobileLogin + "&sub_gamehall=" + "&return_url=" + "&is_free_trial=" + "&register_url=" + "&room_id=" + "&agent_id=" + "&bounsmode=" + OpenAPIProperties.TP_API_KEY;
-                String params = "gamehall=" + gamehall + "&gamecode=" + gamePlatform.getPlatformCode() + "&account=" + cptOpenMember.getUserName() + "&lang=" + countryCode + "&platform=" + isMobileLogin + "&sub_gamehall=" + "&return_url=" + "&is_free_trial=" + "&register_url=" + "&room_id=" + "&agent_id=" + "&bounsmode=" + "&sign=" + MD5.md5(signStr);
+                String signStr = "gamehall=" + gamehall + "&gamecode=" + gamePlatform.getPlatformCode() + "&account=" + cptOpenMember.getUserName() + "&lang=" + lang + "&platform=" + isMobileLogin + "&sub_gamehall=" + "&return_url=" + "&is_free_trial=" + "&register_url=" + "&room_id=" + "&agent_id=" + "&bounsmode=" + OpenAPIProperties.TP_API_KEY;
+                String params = "gamehall=" + gamehall + "&gamecode=" + gamePlatform.getPlatformCode() + "&account=" + cptOpenMember.getUserName() + "&lang=" + lang + "&platform=" + isMobileLogin + "&sub_gamehall=" + "&return_url=" + "&is_free_trial=" + "&register_url=" + "&room_id=" + "&agent_id=" + "&bounsmode=" + "&sign=" + MD5.md5(signStr);
                 logger.info("TP电子 createMember创建玩家 请求,params:{},url:{},signStr:{}", params, "/api/game/game-link", signStr);
                 return commonRequestGet(params, "/api/game/game-link");
             }
@@ -546,7 +557,7 @@ public class TpServiceImpl implements TpService {
         return GameUtil.sendGet(OpenAPIProperties.TP_API_URL+url, params);
     }
 
-    public Result  errorCode(String errorCode,String errorMessage) {
-        return Result.failed("g009999","code:"+errorCode+" message:"+errorMessage);
+    public Result  errorCode(String errorCode,String errorMessage,String countryCode) {
+        return Result.failed("g009999",MessageUtils.get("g009999",countryCode));
     }
 }

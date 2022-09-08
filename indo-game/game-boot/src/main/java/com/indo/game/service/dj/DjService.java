@@ -13,6 +13,6 @@ public interface DjService {
     /**
      * DJ 强迫登出玩家
      */
-    public Result logout(LoginInfo loginUser, String platform, String ip);
+    public Result logout(LoginInfo loginUser, String platform, String ip,String countryCode);
 
 }
