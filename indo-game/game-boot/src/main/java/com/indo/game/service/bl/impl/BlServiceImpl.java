@@ -135,16 +135,22 @@ public class BlServiceImpl implements BlService {
             switch (countryCode) {
                 case "IN":
                     lang = "en_US";
+                    break;
                 case "EN":
                     lang = "en_US";
+                    break;
                 case "CN":
                     lang = "zh_CN";
+                    break;
                 case "VN":
                     lang = "vi_VN";
+                    break;
                 case "KR":
                     lang = "ko_KR";
+                    break;
                 default:
                     lang = platformGameParent.getLanguageType();
+                    break;
             }
         }else{
             lang = platformGameParent.getLanguageType();

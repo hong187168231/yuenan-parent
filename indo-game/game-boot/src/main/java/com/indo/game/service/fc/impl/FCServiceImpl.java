@@ -104,16 +104,22 @@ public class FCServiceImpl implements FCService {
                 switch (countryCode) {
                     case "IN":
                         lang = "1";
+                        break;
                     case "EN":
                         lang = "1";
+                        break;
                     case "CN":
                         lang = "2";
+                        break;
                     case "VN":
                         lang = "3";
+                        break;
                     case "TH":
                         lang = "4";
+                        break;
                     default:
                         lang = gameParentPlatform.getLanguageType();
+                        break;
                 }
             }else{
                 lang = gameParentPlatform.getLanguageType();

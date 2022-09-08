@@ -123,26 +123,37 @@ public class KmServerImpl implements KmService {
                     switch (countryCode) {
                         case "IN":
                             lang = "en-US";
+                            break;
                         case "EN":
                             lang = "en_US";
+                            break;
                         case "CN":
                             lang = "zh-CN";
+                            break;
                         case "VN":
                             lang = "vi-VN";
+                            break;
                         case "TW":
                             lang = "zh-TW";
+                            break;
                         case "TH":
                             lang = "th-TH";
+                            break;
                         case "ID":
                             lang = "in-ID";
+                            break;
                         case "MY":
                             lang = "ms-MY";
+                            break;
                         case "KR":
                             lang = "ko-KR";
+                            break;
                         case "JP":
                             lang = "ja-JP";
+                            break;
                         default:
                             lang = gameParentPlatform.getLanguageType();
+                            break;
                     }
                 }else{
                     lang = gameParentPlatform.getLanguageType();

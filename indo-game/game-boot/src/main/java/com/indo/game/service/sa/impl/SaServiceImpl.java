@@ -134,25 +134,35 @@ public class SaServiceImpl implements SaService {
                     if(null!=countryCode&&!"".equals(countryCode)){
                         switch (countryCode) {
                             case "IN":
-                                lang = "hi*";
+                                lang = "hi";
+                                break;
                             case "EN":
                                 lang = "en_US";
+                                break;
                             case "CN":
                                 lang = "zh_CN";
+                                break;
                             case "VN":
                                 lang = "vn";
+                                break;
                             case "TW":
                                 lang = "zh_TW";
+                                break;
                             case "TH":
                                 lang = "th";
+                                break;
                             case "ID":
                                 lang = "id";
+                                break;
                             case "MY":
                                 lang = "ms";
+                                break;
                             case "JP":
                                 lang = "jp";
+                                break;
                             default:
                                 lang = gameParentPlatform.getLanguageType();
+                                break;
                         }
                     }else{
                         lang = gameParentPlatform.getLanguageType();
@@ -242,25 +252,35 @@ public class SaServiceImpl implements SaService {
         if(null!=countryCode&&!"".equals(countryCode)){
             switch (countryCode) {
                 case "IN":
-                    lang = "hi*";
+                    lang = "hi";
+                    break;
                 case "EN":
                     lang = "en_US";
+                    break;
                 case "CN":
                     lang = "zh_CN";
+                    break;
                 case "VN":
                     lang = "vn";
+                    break;
                 case "TW":
                     lang = "zh_TW";
+                    break;
                 case "TH":
                     lang = "th";
+                    break;
                 case "ID":
                     lang = "id";
+                    break;
                 case "MY":
                     lang = "ms";
+                    break;
                 case "JP":
                     lang = "jp";
+                    break;
                 default:
                     lang = gameParentPlatform.getLanguageType();
+                    break;
             }
         }else{
             lang = gameParentPlatform.getLanguageType();

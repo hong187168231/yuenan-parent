@@ -159,16 +159,22 @@ public class CqServiceImpl implements CqService {
             switch (countryCode) {
                 case "IN":
                     lang = "en";
+                    break;
                 case "EN":
                     lang = "en";
+                    break;
                 case "CN":
                     lang = "zh-cn";
+                    break;
                 case "VN":
                     lang = "vn";
+                    break;
                 case "TH":
                     lang = "th";
+                    break;
                 default:
                     lang = platformGameParent.getLanguageType();
+                    break;
             }
         }else{
             lang = platformGameParent.getLanguageType();

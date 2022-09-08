@@ -96,16 +96,22 @@ public class Rich88ServiceImpl implements Rich88Service {
                 switch (countryCode) {
                     case "IN":
                         lang = "en_US";
+                        break;
                     case "EN":
                         lang = "en_US";
+                        break;
                     case "CN":
                         lang = "zh_CN";
+                        break;
                     case "VN":
                         lang = "vi_VN";
+                        break;
                     case "TH":
                         lang = "th_TH";
+                        break;
                     default:
                         lang = gameParentPlatform.getLanguageType();
+                        break;
                 }
             }else{
                 lang = gameParentPlatform.getLanguageType();

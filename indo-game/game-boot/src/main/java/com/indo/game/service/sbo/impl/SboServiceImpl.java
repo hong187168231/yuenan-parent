@@ -186,26 +186,37 @@ public class SboServiceImpl implements SboService {
                 switch (countryCode) {
                     case "IN":
                         lang = "en";
+                        break;
                     case "EN":
                         lang = "en";
+                        break;
                     case "CN":
                         lang = "zh-cn";
+                        break;
                     case "VN":
                         lang = "vi-vn";
+                        break;
                     case "TW":
                         lang = "zh-tw";
+                        break;
                     case "TH":
                         lang = "th-th";
+                        break;
                     case "ID":
                         lang = "id-id";
+                        break;
                     case "MY":
                         lang = "my-mm";
+                        break;
                     case "KR":
                         lang = "ko-kr";
+                        break;
                     case "JP":
                         lang = "ja-jp";
+                        break;
                     default:
                         lang = gameParentPlatform.getLanguageType();
+                        break;
                 }
             }else{
                 lang = gameParentPlatform.getLanguageType();

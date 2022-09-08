@@ -208,26 +208,37 @@ public class TCGWinServiceImpl implements TCGWinService {
             switch (countryCode) {
                 case "IN":
                     lang = "EN";
+                    break;
                 case "EN":
                     lang = "EN";
+                    break;
                 case "CN":
                     lang = "CN";
+                    break;
                 case "VN":
                     lang = "VI";
+                    break;
                 case "TW":
                     lang = "TW";
+                    break;
                 case "TH":
                     lang = "TH";
+                    break;
                 case "ID":
                     lang = "ID";
+                    break;
                 case "KM":
                     lang = "KM";
+                    break;
                 case "KR":
                     lang = "KO";
+                    break;
                 case "JP":
                     lang = "JA";
+                    break;
                 default:
                     lang = platformGameParent.getLanguageType();
+                    break;
             }
         }else{
             lang = platformGameParent.getLanguageType();

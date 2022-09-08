@@ -549,26 +549,37 @@ public class MtServiceImpl implements MtService {
             switch (countryCode) {
                 case "IN":
                     lang = "EN-US";
+                    break;
                 case "EN":
                     lang = "EN-US";
+                    break;
                 case "CN":
                     lang = "ZH-CN";
+                    break;
                 case "VN":
                     lang = "VI-VN";
+                    break;
                 case "TW":
                     lang = "ZH-TW";
+                    break;
                 case "TH":
                     lang = "TH-TH";
+                    break;
                 case "ID":
                     lang = "IN-ID";
+                    break;
                 case "MY":
                     lang = "MS-MY";
+                    break;
                 case "KR":
                     lang = "KO-KR";
+                    break;
                 case "JP":
                     lang = "JA-JP";
+                    break;
                 default:
                     lang = gameParentPlatform.getLanguageType();
+                    break;
             }
         }else{
             lang = gameParentPlatform.getLanguageType();
@@ -601,8 +612,8 @@ public class MtServiceImpl implements MtService {
         url.append(MD5.md5(cptOpenMember.getPassword())).append("/");
 
         JSONObject jsonObject = new JSONObject(new LinkedHashMap<>());
-        jsonObject.put("nickname", loginUser.getNickName());
-        jsonObject.put("playerLevel", loginUser.getMemLevel());
+        jsonObject.put("nickname", "");
+        jsonObject.put("playerLevel", "");
         url.append(MD5.md5(OpenAPIProperties.MT_KEY + jsonObject.toJSONString())).append("/");
         url.append(getEncode(jsonObject.toJSONString()));
         return url.toString();

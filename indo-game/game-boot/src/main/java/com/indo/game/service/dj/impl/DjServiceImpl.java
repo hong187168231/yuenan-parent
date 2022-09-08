@@ -139,26 +139,37 @@ public class DjServiceImpl implements DjService {
                 switch (countryCode) {
                     case "IN":
                         lang = "en_US";
+                        break;
                     case "EN":
                         lang = "en_US";
+                        break;
                     case "CN":
                         lang = "zh_CN";
+                        break;
                     case "VN":
                         lang = "vi_VN";
+                        break;
                     case "TW":
                         lang = "zh_TW";
+                        break;
                     case "TH":
                         lang = "th_TH";
+                        break;
                     case "ID":
                         lang = "in_ID";
+                        break;
                     case "MY":
                         lang = "ms_MY";
+                        break;
                     case "KR":
                         lang = "ko_KR";
+                        break;
                     case "JP":
                         lang = "ja_JP";
+                        break;
                     default:
                         lang = gameParentPlatform.getLanguageType();
+                        break;
                 }
             }else{
                 lang = gameParentPlatform.getLanguageType();
