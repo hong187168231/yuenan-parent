@@ -7,6 +7,7 @@ import com.indo.common.enums.TradingEnum;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.redis.utils.GeneratorIdUtil;
 import com.indo.common.result.Result;
+import com.indo.common.result.ResultCode;
 import com.indo.common.utils.DateUtils;
 import com.indo.common.utils.GameUtil;
 import com.indo.common.utils.encrypt.MD5;
@@ -88,7 +89,7 @@ public class MtServiceImpl implements MtService {
             if (cptOpenMember == null) {
                 cptOpenMember = new CptOpenMember();
                 cptOpenMember.setUserId(loginUser.getId().intValue());
-                cptOpenMember.setUserName(loginUser.getAccount());
+                cptOpenMember.setUserName(OpenAPIProperties.USER_PREFIX+loginUser.getAccount());
                 cptOpenMember.setPassword(GeneratorIdUtil.generateId());
                 cptOpenMember.setCreateTime(new Date());
                 cptOpenMember.setLoginTime(new Date());
@@ -100,7 +101,7 @@ public class MtServiceImpl implements MtService {
                 externalService.updateCptOpenMember(cptOpenMember);
 
                 // 退出游戏
-                commonRequest(getLoginOutUrl(loginUser.getAccount()));
+                commonRequest(getLoginOutUrl(OpenAPIProperties.USER_PREFIX+loginUser.getAccount()));
                 // 启动游戏
                 String startUrl = getStartGame(cptOpenMember, gameParentPlatform,gamePlatform, countryCode);
                 logger.info("天美log启动游戏 startUrl:{}", startUrl);
@@ -110,6 +111,7 @@ public class MtServiceImpl implements MtService {
                 }
                 logger.info("天美log getStartGame启动游戏返回paramsMap:{}", jsonObject.toJSONString());
                 if (jsonObject.getInteger("resultCode")==1) {
+                    this.deposit(loginUser, countryCode);
                     // 请求URL
                     ApiResponseData responseData = new ApiResponseData();
                     responseData.setPathUrl(jsonObject.getString("url"));
@@ -133,18 +135,23 @@ public class MtServiceImpl implements MtService {
     public Result logout(LoginInfo loginUser, String platform, String ip,String countryCode) {
         logger.info("mtlogout mtGame account:{},code:{}", loginUser.getAccount(), platform);
         try {
-            // 退出
-            JSONObject jsonObject = commonRequest(getLoginOutUrl(loginUser.getAccount()));
-            logger.info("天美log logout退出游戏返回:JSONObject:{}}",jsonObject.toJSONString());
-            if (null == jsonObject) {
-                return Result.failed("g091087", MessageUtils.get("g091087",countryCode));
-            }
-            if (jsonObject.getInteger("resultCode")==1) {
-                logger.info("天美log logout退出游戏返回成功:resultCode:{}}",jsonObject.getInteger("resultCode"));
-                return Result.success();
-            } else {
-                logger.info("天美log logout退出游戏返回失败:resultCode:{}}",jsonObject.getInteger("resultCode"));
-                return errorCode(jsonObject.getString("resultCode"),countryCode);
+            Result result = allWithdraw( loginUser,  countryCode);
+            if (ResultCode.SUCCESS.getCode().equals(result.getCode())){
+                // 退出
+                JSONObject jsonObject = commonRequest(getLoginOutUrl(OpenAPIProperties.USER_PREFIX + loginUser.getAccount()));
+                logger.info("天美log logout退出游戏返回:JSONObject:{}}", jsonObject.toJSONString());
+                if (null == jsonObject) {
+                    return Result.failed("g091087", MessageUtils.get("g091087", countryCode));
+                }
+                if (jsonObject.getInteger("resultCode") == 1) {
+                    logger.info("天美log logout退出游戏返回成功:resultCode:{}}", jsonObject.getInteger("resultCode"));
+                    return Result.success();
+                } else {
+                    logger.info("天美log logout退出游戏返回失败:resultCode:{}}", jsonObject.getInteger("resultCode"));
+                    return errorCode(jsonObject.getString("resultCode"), countryCode);
+                }
+            }else {
+                return result;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -152,15 +159,17 @@ public class MtServiceImpl implements MtService {
         }
     }
 
-    @Override
-    public Result allWithdraw(LoginInfo loginUser, String platform, String ip,String countryCode) {
-        logger.info("mt_allWithdraw mtGame account:{},code:{}", loginUser.getAccount(), platform);
+    public Result allWithdraw(LoginInfo loginUser, String countryCode) {
+        logger.info("mt_allWithdraw mtGame account:{},countryCode:{}", loginUser.getAccount(), countryCode);
         try {
             String transactionId = GoldchangeEnum.DSFYXZZ.name() + GeneratorIdUtil.generateId();
+            logger.info("天美log allWithdraw取出所以余额请求:apiurl:{}}", getAllWithdrawUrl(OpenAPIProperties.USER_PREFIX+loginUser.getAccount(), transactionId));
             // 全部提取
-            JSONObject jsonObject = commonRequest(getAllWithdrawUrl(loginUser.getAccount(), transactionId));
+            JSONObject jsonObject = commonRequest(getAllWithdrawUrl(OpenAPIProperties.USER_PREFIX+loginUser.getAccount(), transactionId));
+            logger.info("天美log allWithdraw取出所以余额返回:resultCode:{}}", jsonObject);
             if (null == jsonObject) {
-                return Result.failed("g091087", MessageUtils.get("g091087",countryCode));
+//                return Result.failed("g091087", MessageUtils.get("g091087",countryCode));
+                this.allWithdraw(loginUser,  countryCode);
             }
             GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.MT_PLATFORM_CODE);
             if (jsonObject.getInteger("resultCode").equals(1)) {
@@ -172,75 +181,8 @@ public class MtServiceImpl implements MtService {
                 Date date = jsonObject.getDate("date");
 
                 MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(loginUser.getAccount());
-                GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(platform);
-                GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
-
 
                 BigDecimal balance = memBaseinfo.getBalance().add(transCoins);
-                Txns txns = new Txns();
-                //游戏商注单号
-                txns.setPlatformTxId(transactionId);
-                //此交易是否是投注 true是投注 false 否
-                txns.setBet(false);
-                //玩家 ID
-                txns.setUserId(memBaseinfo.getAccount());
-                //玩家货币代码
-                txns.setCurrency(platformGameParent.getCurrencyType());
-                //平台代码
-                txns.setPlatform(platformGameParent.getPlatformCode());
-                //平台名称
-                txns.setPlatformEnName(platformGameParent.getPlatformEnName());
-                txns.setPlatformCnName(platformGameParent.getPlatformCnName());
-                //平台游戏类型
-                txns.setGameType(gameCategory.getGameType());
-                //游戏分类ID
-                txns.setCategoryId(gameCategory.getId());
-                //游戏分类名称
-                txns.setCategoryName(gameCategory.getGameName());
-                //平台游戏代码
-                txns.setGameCode(gamePlatform.getPlatformCode());
-                //游戏名称
-                txns.setGameName(gamePlatform.getPlatformEnName());
-                //下注金额
-                txns.setBetAmount(BigDecimal.ZERO);
-                // PP交易ID
-                txns.setRePlatformTxId(transId);
-                //游戏平台的下注项目
-//            txns.setBetType(ppApiTransferReq.getGameId());
-                //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
-                txns.setWinningAmount(transCoins);
-                //玩家下注时间
-                txns.setBetTime(DateUtils.format(new Date(), DateUtils.newFormat));
-                //真实下注金额,需增加在玩家的金额
-                txns.setRealBetAmount(BigDecimal.ZERO);
-                //真实返还金额,游戏赢分
-                txns.setRealWinAmount(transCoins);
-                // 返还金额 (包含下注金额)
-                txns.setWinAmount(transCoins);
-                //有效投注金额 或 投注面值
-                txns.setTurnover(BigDecimal.ZERO);
-                //辨认交易时间依据
-                txns.setTxTime(DateUtils.format(date, DateUtils.newFormat));
-                //操作名称
-                txns.setMethod("Settle");
-                txns.setStatus("Running");
-                //余额
-                txns.setBalance(balance);
-                //创建时间
-                String dateStr = DateUtils.format(date, DateUtils.newFormat);
-                txns.setCreateTime(dateStr);
-                //投注 IP
-                txns.setBetIp(ip);//  string 是 投注 IP
-                int num = txnsMapper.insert(txns);
-                if (num <= 0) {
-                    int count = 0;
-                    // 失败重试
-                    while (count < 5) {
-                        num = txnsMapper.insert(txns);
-                        if (num > 0) break;
-                        count++;
-                    }
-                }
                 gameCommonService.updateUserBalance(memBaseinfo, transCoins, GoldchangeEnum.DSFYXZZ, TradingEnum.INCOME);
                 return Result.success();
             } else {
@@ -253,12 +195,11 @@ public class MtServiceImpl implements MtService {
 
     }
 
-    @Override
     public Result getPlayerBalance(LoginInfo loginUser, String platform, String ip,String countryCode) {
         logger.info("mt_getPlayerBalance mtGame account:{},code:{}", loginUser.getAccount(), platform);
         try {
             // 余额查询
-            JSONObject jsonObject = commonRequest(getBalanceUrl(loginUser.getAccount()));
+            JSONObject jsonObject = commonRequest(getBalanceUrl(OpenAPIProperties.USER_PREFIX+loginUser.getAccount()));
             if (null == jsonObject) {
                 return Result.failed("g091087", MessageUtils.get("g091087",countryCode));
             }
@@ -276,99 +217,35 @@ public class MtServiceImpl implements MtService {
         }
     }
 
-    @Override
-    public Result deposit(LoginInfo loginUser, String platform, String ip, BigDecimal coins,String countryCode) {
-        logger.info("mt_deposit mtGame account:{},code:{}", loginUser.getAccount(), platform);
+    /**
+     * 充值到美天棋牌
+     * @param loginUser
+     * @param countryCode
+     * @return
+     */
+    public Result deposit(LoginInfo loginUser, String countryCode) {
+        logger.info("mt_deposit mtGame account:{},countryCode:{}", loginUser.getAccount(), countryCode);
         try {
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(loginUser.getAccount());
-            if (memBaseinfo.getBalance().compareTo(coins) < 0) {
-                return Result.failed("g300004", "会员余额不足！");
-            }
+            BigDecimal balance = memBaseinfo.getBalance();
             GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.MT_PLATFORM_CODE);
             String transactionId = GoldchangeEnum.DSFYXZZ.name() + GeneratorIdUtil.generateId();
-
+            logger.info("天美log deposit存入所有余额请求:resultCode:{}}", getDepositUrl(OpenAPIProperties.USER_PREFIX+loginUser.getAccount(), transactionId, balance.divide(platformGameParent.getCurrencyPro())));
             // 充值
-            JSONObject jsonObject = commonRequest(getDepositUrl(loginUser.getAccount(), transactionId, coins.divide(platformGameParent.getCurrencyPro())));
+            JSONObject jsonObject = commonRequest(getDepositUrl(OpenAPIProperties.USER_PREFIX+loginUser.getAccount(), transactionId, balance.divide(platformGameParent.getCurrencyPro())));
+            logger.info("天美log deposit存入所有余额请求返回:resultCode:{}}", jsonObject);
             if (null == jsonObject) {
-                return Result.failed("g091087", MessageUtils.get("g091087",countryCode));
+                this.deposit( loginUser, countryCode);
+//                return Result.failed("g091087", MessageUtils.get("g091087",countryCode));
             }
             if (jsonObject.getInteger("resultCode").equals(1)) {
                 // 返回交易编码
                 String transId = jsonObject.getString("transId");
                 // 提出时间
                 Date date = jsonObject.getDate("date");
-
-                GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCode(platform);
-                GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
-
-
                 // 会员平台扣款
-                gameCommonService.updateUserBalance(memBaseinfo, coins, GoldchangeEnum.DSFYXZZ, TradingEnum.SPENDING);
-                BigDecimal balance = memBaseinfo.getBalance().subtract(coins);
-                Txns txns = new Txns();
-                //游戏商注单号
-                txns.setPlatformTxId(transactionId);
-                //此交易是否是投注 true是投注 false 否
-                txns.setBet(false);
-                //玩家 ID
-                txns.setUserId(memBaseinfo.getId().toString());
-                //玩家货币代码
-                txns.setCurrency(platformGameParent.getCurrencyType());
-                //平台代码
-                txns.setPlatform(platformGameParent.getPlatformCode());
-                //平台名称
-                txns.setPlatformEnName(platformGameParent.getPlatformEnName());
-                txns.setPlatformCnName(platformGameParent.getPlatformCnName());
-                //平台游戏类型
-                txns.setGameType(gameCategory.getGameType());
-                //游戏分类ID
-                txns.setCategoryId(gameCategory.getId());
-                //游戏分类名称
-                txns.setCategoryName(gameCategory.getGameName());
-                //平台游戏代码
-                txns.setGameCode(gamePlatform.getPlatformCode());
-                //游戏名称
-                txns.setGameName(gamePlatform.getPlatformEnName());
-                //下注金额
-                txns.setBetAmount(coins);
-                // PP交易ID
-                txns.setRePlatformTxId(transId);
-                //游戏平台的下注项目
-//            txns.setBetType(ppApiTransferReq.getGameId());
-                //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
-                txns.setWinningAmount(BigDecimal.ZERO);
-                //玩家下注时间
-                txns.setBetTime(DateUtils.format(new Date(), DateUtils.newFormat));
-                //真实下注金额,需增加在玩家的金额
-                txns.setRealBetAmount(coins);
-                //真实返还金额,游戏赢分
-                txns.setRealWinAmount(BigDecimal.ZERO);
-                // 返还金额 (包含下注金额)
-                txns.setWinAmount(BigDecimal.ZERO);
-                //有效投注金额 或 投注面值
-                txns.setTurnover(coins);
-                //辨认交易时间依据
-                txns.setTxTime(DateUtils.format(date, DateUtils.newFormat));
-                //操作名称
-                txns.setMethod("Settle");
-                txns.setStatus("Running");
-                //余额
-                txns.setBalance(balance);
-                //创建时间
-                String dateStr = DateUtils.format(date, DateUtils.newFormat);
-                txns.setCreateTime(dateStr);
-                //投注 IP
-                txns.setBetIp(ip);//  string 是 投注 IP
-                int num = txnsMapper.insert(txns);
-                if (num <= 0) {
-                    int count = 0;
-                    // 失败重试
-                    while (count < 5) {
-                        num = txnsMapper.insert(txns);
-                        if (num > 0) break;
-                        count++;
-                    }
-                }
+                gameCommonService.updateUserBalance(memBaseinfo, balance, GoldchangeEnum.DSFYXZZ, TradingEnum.SPENDING);
+                balance = balance.subtract(balance);
                 return Result.success();
             } else {
                 return errorCode(jsonObject.getString("resultCode"),countryCode);
@@ -379,14 +256,13 @@ public class MtServiceImpl implements MtService {
         }
     }
 
-    @Override
     public Result withdraw(LoginInfo loginUser, String platform, String ip, BigDecimal coins,String countryCode) {
         logger.info("mt_withdraw mtGame account:{},code:{}", loginUser.getAccount(), platform);
         try {
             GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.MT_PLATFORM_CODE);
             String transactionId = GoldchangeEnum.DSFYXZZ.name() + GeneratorIdUtil.generateId();
             // 提取
-            JSONObject jsonObject = commonRequest(getWithdrawUrl(loginUser.getAccount(), transactionId, coins.divide(platformGameParent.getCurrencyPro())));
+            JSONObject jsonObject = commonRequest(getWithdrawUrl(OpenAPIProperties.USER_PREFIX+loginUser.getAccount(), transactionId, coins.divide(platformGameParent.getCurrencyPro())));
             if (null == jsonObject) {
                 return Result.failed("g091087", MessageUtils.get("g091087",countryCode));
             }
@@ -404,70 +280,6 @@ public class MtServiceImpl implements MtService {
                 // 会员平台加款
                 gameCommonService.updateUserBalance(memBaseinfo, coins, GoldchangeEnum.DSFYXZZ, TradingEnum.SPENDING);
                 BigDecimal balance = memBaseinfo.getBalance().add(coins);
-                Txns txns = new Txns();
-                //游戏商注单号
-                txns.setPlatformTxId(transactionId);
-                //此交易是否是投注 true是投注 false 否
-                txns.setBet(false);
-                //玩家 ID
-                txns.setUserId(memBaseinfo.getId().toString());
-                //玩家货币代码
-                txns.setCurrency(platformGameParent.getCurrencyType());
-                //平台代码
-                txns.setPlatform(platformGameParent.getPlatformCode());
-                //平台名称
-                txns.setPlatformEnName(platformGameParent.getPlatformEnName());
-                txns.setPlatformCnName(platformGameParent.getPlatformCnName());
-                //平台游戏类型
-                txns.setGameType(gameCategory.getGameType());
-                //游戏分类ID
-                txns.setCategoryId(gameCategory.getId());
-                //游戏分类名称
-                txns.setCategoryName(gameCategory.getGameName());
-                //平台游戏代码
-                txns.setGameCode(gamePlatform.getPlatformCode());
-                //游戏名称
-                txns.setGameName(gamePlatform.getPlatformEnName());
-                //下注金额
-                txns.setBetAmount(BigDecimal.ZERO);
-                // PP交易ID
-                txns.setRePlatformTxId(transId);
-                //游戏平台的下注项目
-//            txns.setBetType(ppApiTransferReq.getGameId());
-                //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
-                txns.setWinningAmount(coins);
-                //玩家下注时间
-                txns.setBetTime(DateUtils.format(new Date(), DateUtils.newFormat));
-                //真实下注金额,需增加在玩家的金额
-                txns.setRealBetAmount(BigDecimal.ZERO);
-                //真实返还金额,游戏赢分
-                txns.setRealWinAmount(coins);
-                // 返还金额 (包含下注金额)
-                txns.setWinAmount(coins);
-                //有效投注金额 或 投注面值
-                txns.setTurnover(BigDecimal.ZERO);
-                //辨认交易时间依据
-                txns.setTxTime(DateUtils.format(date, DateUtils.newFormat));
-                //操作名称
-                txns.setMethod("Settle");
-                txns.setStatus("Running");
-                //余额
-                txns.setBalance(balance);
-                //创建时间
-                String dateStr = DateUtils.format(date, DateUtils.newFormat);
-                txns.setCreateTime(dateStr);
-                //投注 IP
-                txns.setBetIp(ip);//  string 是 投注 IP
-                int num = txnsMapper.insert(txns);
-                if (num <= 0) {
-                    int count = 0;
-                    // 失败重试
-                    while (count < 5) {
-                        num = txnsMapper.insert(txns);
-                        if (num > 0) break;
-                        count++;
-                    }
-                }
                 return Result.success();
             } else {
                 return errorCode(jsonObject.getString("resultCode"),countryCode);
@@ -504,6 +316,7 @@ public class MtServiceImpl implements MtService {
             }
             logger.info("createMemberGame 启动游戏返回JSONObject:{}", jsonObject.toJSONString());
             if (jsonObject.getInteger("resultCode")==1) {
+                this.deposit(loginUser, countryCode);
                 // 请求URL
                 ApiResponseData responseData = new ApiResponseData();
                 responseData.setPathUrl(jsonObject.getString("url"));

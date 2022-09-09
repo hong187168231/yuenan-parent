@@ -17,40 +17,40 @@ public interface MtService {
      */
     Result logout(LoginInfo loginUser,String platform, String ip,String countryCode);
 
-    /**
-     * 从MT中全部提出游戏币
-     * @param loginUser
-     * @param platform
-     * @param ip
-     * @return
-     */
-    Result allWithdraw(LoginInfo loginUser,String platform, String ip,String countryCode);
-
-    /**
-     * 查询玩家MT游戏中账户余额
-     * @param loginUser
-     * @param platform
-     * @param ip
-     * @return
-     */
-    Result getPlayerBalance(LoginInfo loginUser,String platform, String ip,String countryCode);
-
-    /**
-     * 充值到MT游戏
-     * @param loginUser
-     * @param platform
-     * @param ip
-     * @return
-     */
-    Result deposit(LoginInfo loginUser, String platform, String ip, BigDecimal coins,String countryCode);
-
-    /**
-     * 从MT游戏提取
-     * @param loginUser
-     * @param platform
-     * @param ip
-     * @return
-     */
-    Result withdraw(LoginInfo loginUser,String platform, String ip, BigDecimal coins,String countryCode);
+//    /**
+//     * 从MT中全部提出游戏币
+//     * @param loginUser
+//     * @param platform
+//     * @param ip
+//     * @return
+//     */
+//    Result allWithdraw(LoginInfo loginUser,String platform, String ip,String countryCode);
+//
+//    /**
+//     * 查询玩家MT游戏中账户余额
+//     * @param loginUser
+//     * @param platform
+//     * @param ip
+//     * @return
+//     */
+//    Result getPlayerBalance(LoginInfo loginUser,String platform, String ip,String countryCode);
+//
+//    /**
+//     * 充值到MT游戏
+//     * @param loginUser
+//     * @param platform
+//     * @param ip
+//     * @return
+//     */
+//    Result deposit(LoginInfo loginUser, String platform, String ip, BigDecimal coins,String countryCode);
+//
+//    /**
+//     * 从MT游戏提取
+//     * @param loginUser
+//     * @param platform
+//     * @param ip
+//     * @return
+//     */
+//    Result withdraw(LoginInfo loginUser,String platform, String ip, BigDecimal coins,String countryCode);
 
 }
