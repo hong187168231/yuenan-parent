@@ -10,11 +10,13 @@ import com.indo.core.mapper.game.GameCategoryMapper;
 import com.indo.core.mapper.game.GamePlatformMapper;
 import com.indo.game.mapper.frontend.GameTypeMapper;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
+import com.indo.game.pojo.dto.comm.LoginGame;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.core.pojo.entity.game.GameParentPlatform;
 import com.indo.core.pojo.entity.game.GamePlatform;
 import com.indo.game.pojo.vo.callback.saba.SabaApiResponseData;
 import com.indo.game.service.common.GameCommonService;
+import com.indo.game.service.common.GameLogoutService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
 import com.indo.game.service.saba.SabaService;
 
@@ -27,6 +29,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -49,7 +52,8 @@ public class SabaServiceImpl implements SabaService {
     GameCategoryMapper gameCategoryMapper;
     @Autowired
     private GamePlatformMapper gamePlatformMapper;
-
+    @Autowired
+    private GameLogoutService gameLogoutService;
     /**
      * 登录游戏
      *
@@ -89,7 +93,7 @@ public class SabaServiceImpl implements SabaService {
 //            //站点棋牌余额不足
 //            return Result.failed("g300004", MessageUtils.get("g300004",countryCode));
 //        }
-
+        gameLogoutService.gamelogout(loginUser.getAccount(),  ip,  countryCode);
         try {
 
             // 验证且绑定（KY-CPT第三方会员关系）
@@ -108,7 +112,7 @@ public class SabaServiceImpl implements SabaService {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
                 //登出
-                this.logout(loginUser,ip, countryCode);
+//                this.logout(loginUser,ip, countryCode);
                 //登录
                 return initGame(gameParentPlatform, loginUser, gamePlatform, ip, isMobileLogin, countryCode);
             }
@@ -207,14 +211,14 @@ public class SabaServiceImpl implements SabaService {
     /**
      * 强迫登出玩家
      */
-    public Result logout(LoginInfo loginUser, String ip,String countryCode) {
+    public Result logout(String account,String platform, String ip,String countryCode) {
         Map<String, String> trr = new HashMap<>();
-        trr.put("vendor_member_id ", loginUser.getAccount());
+        trr.put("vendor_member_id ", account);
 
         SabaApiResponseData sabaApiResponse = null;
         try {
-            logger.info("saba体育log  登出玩家logout输入 loginUser:{}, ip:{}, params:{}, urlapi:{}", loginUser,ip,trr,OpenAPIProperties.SABA_API_URL + "/KickUser");
-            sabaApiResponse = commonRequest(trr, OpenAPIProperties.SABA_API_URL + "/KickUser", Integer.valueOf(loginUser.getId().intValue()), ip, "logout");
+            logger.info("saba体育log  登出玩家logout输入 loginUser:{}, ip:{}, params:{}, urlapi:{}", account,ip,trr,OpenAPIProperties.SABA_API_URL + "/KickUser");
+            sabaApiResponse = commonRequest(trr, OpenAPIProperties.SABA_API_URL + "/KickUser", 0, ip, "logout");
             logger.info("saba体育log  登出玩家logout返回 sabaApiResponse:{}", JSONObject.toJSONString(sabaApiResponse));
             if (null == sabaApiResponse) {
                 return Result.failed("g100104", MessageUtils.get("g100104",countryCode));

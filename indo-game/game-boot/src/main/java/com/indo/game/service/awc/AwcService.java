@@ -16,7 +16,7 @@ public interface AwcService {
     /**
      * AE真人、SV388斗鸡游戏 强迫登出玩家
      */
-    public Result logout(LoginInfo loginUser,String ip,String countryCode);
+    public Result logout(String account,String platform, String ip,String countryCode);
 
     /**
      * 同步注单

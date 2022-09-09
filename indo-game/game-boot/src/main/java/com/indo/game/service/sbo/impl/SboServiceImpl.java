@@ -12,6 +12,7 @@ import com.indo.core.mapper.game.GamePlatformMapper;
 import com.indo.game.mapper.frontend.GameTypeMapper;
 import com.indo.game.mapper.sbo.GameAgentMapper;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
+import com.indo.game.pojo.dto.comm.LoginGame;
 import com.indo.game.pojo.dto.sbo.SboPlayerLoginJsonDTO;
 import com.indo.game.pojo.dto.sbo.SboPlayerLogoutJsonDTO;
 import com.indo.game.pojo.dto.sbo.SboRegisterPlayerJsonDTO;
@@ -21,6 +22,7 @@ import com.indo.core.pojo.entity.game.GamePlatform;
 import com.indo.game.pojo.entity.sbo.GameAgent;
 import com.indo.game.pojo.vo.callback.sbo.SboApiResponseData;
 import com.indo.game.service.common.GameCommonService;
+import com.indo.game.service.common.GameLogoutService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
 import com.indo.game.service.sbo.SboService;
 import org.apache.commons.lang3.StringUtils;
@@ -54,7 +56,8 @@ public class SboServiceImpl implements SboService {
     private GamePlatformMapper gamePlatformMapper;
     @Autowired
     private GameAgentMapper gameAgentMapper;
-
+    @Autowired
+    private GameLogoutService gameLogoutService;
     /**
      * 登录游戏
      *
@@ -94,7 +97,7 @@ public class SboServiceImpl implements SboService {
 //            //站点棋牌余额不足
 //            return Result.failed("g300004",MessageUtils.get("g300004",countryCode));
 //        }
-
+        gameLogoutService.gamelogout(loginUser.getAccount(),  ip,  countryCode);
         try {
 
             // 验证且绑定（KY-CPT第三方会员关系）
@@ -114,7 +117,7 @@ public class SboServiceImpl implements SboService {
                 externalService.updateCptOpenMember(cptOpenMember);
 
                 // 先退出
-                this.logout(loginUser,ip,countryCode);
+//                this.logout(loginUser,ip,countryCode);
 
                     //登录
                 return initGame(gameParentPlatform,loginUser, gamePlatform, ip,loginType,countryCode);
@@ -243,14 +246,14 @@ public class SboServiceImpl implements SboService {
     /**
      * 强迫登出玩家
      */
-    public Result logout(LoginInfo loginUser, String ip,String countryCode) {
+    public Result logout(String account,String platform, String ip,String countryCode) {
         SboPlayerLogoutJsonDTO sboPlayerLogoutJsonDTO = new SboPlayerLogoutJsonDTO();
-        sboPlayerLogoutJsonDTO.setUsername(loginUser.getAccount());
+        sboPlayerLogoutJsonDTO.setUsername(account);
 
         SboApiResponseData sboApiResponse = null;
         try {
-            logger.info("SBO登出玩家输入 apiUrl:{}, params:{}, loginUser:{}, ip:{}", OpenAPIProperties.SBO_API_URL + "/web-root/restricted/player/logout.aspx", JSONObject.toJSONString(sboPlayerLogoutJsonDTO),loginUser,ip);
-            sboApiResponse = commonRequest(sboPlayerLogoutJsonDTO, OpenAPIProperties.SBO_API_URL + "/web-root/restricted/player/logout.aspx", Integer.valueOf(loginUser.getId().intValue()), ip, "logout");
+            logger.info("SBO登出玩家输入 apiUrl:{}, params:{}, loginUser:{}, ip:{}", OpenAPIProperties.SBO_API_URL + "/web-root/restricted/player/logout.aspx", JSONObject.toJSONString(sboPlayerLogoutJsonDTO),account,ip);
+            sboApiResponse = commonRequest(sboPlayerLogoutJsonDTO, OpenAPIProperties.SBO_API_URL + "/web-root/restricted/player/logout.aspx", 0, ip, "logout");
             logger.info("SBO登出玩家返回 sboApiResponse:{}", sboApiResponse);
             if (null == sboApiResponse) {
                 return Result.failed("g100104",MessageUtils.get("g100104",countryCode));

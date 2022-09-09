@@ -13,6 +13,6 @@ public interface BlService {
     /**
      * BOLE 强迫登出玩家
      */
-    public Result logout(LoginInfo loginUser, String platform, String ip,String countryCode);
+    public Result logout(String account,String platform, String ip,String countryCode);
 
 }

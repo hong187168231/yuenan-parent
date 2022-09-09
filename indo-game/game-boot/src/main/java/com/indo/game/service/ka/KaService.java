@@ -12,5 +12,5 @@ public interface KaService {
     /**
      * KA游戏 强迫登出玩家 (第三方不提供此服务)
      */
-    Result logout(LoginInfo loginUser, String platform, String ip,String countryCode);
+    Result logout(String account,String platform, String ip,String countryCode);
 }

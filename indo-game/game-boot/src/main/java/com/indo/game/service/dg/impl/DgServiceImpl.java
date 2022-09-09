@@ -8,10 +8,12 @@ import com.indo.common.utils.GameUtil;
 import com.indo.common.utils.RandomUtil;
 import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
+import com.indo.game.pojo.dto.comm.LoginGame;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.core.pojo.entity.game.GameParentPlatform;
 import com.indo.core.pojo.entity.game.GamePlatform;
 import com.indo.game.service.common.GameCommonService;
+import com.indo.game.service.common.GameLogoutService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
 import com.indo.game.service.dg.DgService;
 
@@ -24,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import cn.hutool.json.JSONArray;
 
@@ -41,7 +44,8 @@ public class DgServiceImpl implements DgService {
     private CptOpenMemberService externalService;
     @Autowired
     private GameCommonService gameCommonService;
-
+    @Autowired
+    private GameLogoutService gameLogoutService;
 
     /**
      * 登录游戏CQ9游戏
@@ -80,6 +84,7 @@ public class DgServiceImpl implements DgService {
 //            //站点棋牌余额不足
 //            return Result.failed("g300004", MessageUtils.get("g300004",countryCode));
 //        }
+        gameLogoutService.gamelogout(loginUser.getAccount(),  ip,  countryCode);
         try {
 
             // 验证且绑定（AE-CPT第三方会员关系）
@@ -98,7 +103,7 @@ public class DgServiceImpl implements DgService {
             } else {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
-                logout(loginUser, platform, ip, countryCode);
+//                logout(loginUser, platform, ip, countryCode);
                 return gameLogin(gameParentPlatform, cptOpenMember, countryCode);
             }
 
@@ -227,7 +232,7 @@ public class DgServiceImpl implements DgService {
     /**
      * 强迫登出玩家
      */
-    public Result logout(LoginInfo loginUser, String platform, String ip,String countryCode) {
+    public Result logout(String account,String platform, String ip,String countryCode) {
         try {
             JSONObject map = new JSONObject();
             Integer random = RandomUtil.getRandomOne(6);
@@ -237,10 +242,10 @@ public class DgServiceImpl implements DgService {
             map.put("token", sign);
             map.put("random", random);
             JSONArray jsonArray = new JSONArray();
-            jsonArray.put(loginUser.getAccount());
+            jsonArray.put(account);
             StringBuilder apiUrl = new StringBuilder();
             apiUrl.append(OpenAPIProperties.DG_API_URL).append("/user/offline/").append(OpenAPIProperties.DG_AGENT_NAME);
-            JSONObject apiResponseData = commonRequest(apiUrl.toString(), map, loginUser.getId().intValue(), "dgLogout");
+            JSONObject apiResponseData = commonRequest(apiUrl.toString(), map, 0, "dgLogout");
             if (null != apiResponseData && "0".equals(apiResponseData.getString("codeId"))) {
                 return Result.success();
             }else if(null == apiResponseData){

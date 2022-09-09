@@ -6,6 +6,7 @@ import com.indo.core.pojo.bo.MemTradingBO;
 import com.indo.core.pojo.entity.game.GameCategory;
 import com.indo.core.pojo.entity.game.GameParentPlatform;
 import com.indo.core.pojo.entity.game.GamePlatform;
+import com.indo.game.pojo.dto.comm.LoginGame;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -84,4 +85,9 @@ public interface GameCommonService {
     GameCategory getGameCategoryById(Long id);
 
 
+    public List<LoginGame> queryAllLoginGame(String account);
+
+    public void addLoginGamed(LoginGame loginGame);
+
+    public boolean deleteBatchLoginGame(List<LoginGame> list);
 }

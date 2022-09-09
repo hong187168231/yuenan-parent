@@ -13,13 +13,16 @@ import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.core.mapper.game.TxnsMapper;
 import com.indo.core.mapper.game.GameCategoryMapper;
 import com.indo.core.mapper.game.GamePlatformMapper;
+import com.indo.core.pojo.bo.MemTradingBO;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
+import com.indo.game.pojo.dto.comm.LoginGame;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.core.pojo.entity.game.GameCategory;
 import com.indo.core.pojo.entity.game.GameParentPlatform;
 import com.indo.core.pojo.entity.game.GamePlatform;
 import com.indo.core.pojo.entity.game.Txns;
 import com.indo.game.service.common.GameCommonService;
+import com.indo.game.service.common.GameLogoutService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
 import com.indo.game.service.tp.TpService;
 import org.slf4j.Logger;
@@ -49,6 +52,8 @@ public class TpServiceImpl implements TpService {
     GameCategoryMapper gameCategoryMapper;
     @Autowired
     private GamePlatformMapper gamePlatformMapper;
+    @Autowired
+    private GameLogoutService gameLogoutService;
     /**
      * 登录游戏AWC-AE真人
      * @return loginUser 用户信息
@@ -90,7 +95,7 @@ public class TpServiceImpl implements TpService {
             //站点棋牌余额不足
             return Result.failed("g300004",MessageUtils.get("g300004",countryCode));
         }
-
+        gameLogoutService.gamelogout(loginUser.getAccount(),  ip,  countryCode);
         try {
             String gamehall = "gpk2";
             // 验证且绑定（KY-CPT第三方会员关系）
@@ -106,15 +111,15 @@ public class TpServiceImpl implements TpService {
                 //创建玩家
                 return createMemberGame(gameParentPlatform,gamePlatform, ip, cptOpenMember,isMobileLogin,gamehall,balance, countryCode);
             } else {
-                Result result = this.logout(loginUser,ip, countryCode);
-                if(null!=result&& ResultCode.SUCCESS.getCode().equals(result.getCode())) {
+//                Result result = this.logout(loginUser,ip, countryCode);
+//                if(null!=result&& ResultCode.SUCCESS.getCode().equals(result.getCode())) {
                     cptOpenMember.setLoginTime(new Date());
                     externalService.updateCptOpenMember(cptOpenMember);
                     //登录
                     return initGame(gameParentPlatform, gamePlatform, ip, cptOpenMember, isMobileLogin,gamehall,balance, countryCode);
-                }else {
-                    return result;
-                }
+//                }else {
+//                    return result;
+//                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -125,9 +130,9 @@ public class TpServiceImpl implements TpService {
     /**
      * 强迫登出玩家
      */
-    public Result logout(LoginInfo loginUser,String ip,String countryCode){
+    public Result logout(String account,String platform, String ip,String countryCode){
         // 验证且绑定（KY-CPT第三方会员关系）
-        CptOpenMember cptOpenMember = externalService.getCptOpenMember(loginUser.getId().intValue(), OpenAPIProperties.T9_PLATFORM_CODE);
+        CptOpenMember cptOpenMember = externalService.getCptOpenMember(account, OpenAPIProperties.T9_PLATFORM_CODE);
         String gamehall = "gpk2";
         String callBackBalanceStr = getBalance(cptOpenMember,gamehall);
         if (null == callBackBalanceStr || "".equals(callBackBalanceStr) ) {
@@ -141,20 +146,21 @@ public class TpServiceImpl implements TpService {
                 JSONObject dataJsonObjectBalance = jsonObjectBalance.getJSONObject("data");
                 BigDecimal amount = dataJsonObjectBalance.getBigDecimal("balance");
                 if(BigDecimal.ZERO.compareTo(amount) == -1){
+//                    MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(account);
                     GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.T9_PLATFORM_CODE);
                     GamePlatform gamePlatform = new GamePlatform();
-                    withdrawMoney(gameParentPlatform,gamePlatform,amount, loginUser.getBalance().add(amount), ip, cptOpenMember,"",gamehall);
+                    withdrawMoney(gameParentPlatform,gamePlatform,amount, amount, ip, cptOpenMember,"",gamehall);
                 }
                 Map<String, String> trr = new HashMap<>();
-                trr.put("account", loginUser.getAccount());//player帳號
+                trr.put("account", account);//player帳號
                 trr.put("gamehall", gamehall);//遊戲廠商
                 trr.put("agent_id", "");//代理id
-                String signStr = "account=" + loginUser.getAccount() + "&gamehall=" + "" + "&agent_id=" + OpenAPIProperties.TP_API_KEY;
+                String signStr = "account=" + account + "&gamehall=" + "" + "&agent_id=" + OpenAPIProperties.TP_API_KEY;
                 trr.put("sign", MD5.md5(signStr));//簽章
                 logger.info("TP电子 logout强迫登出玩家 请求,params:{},url:{},signStr:{}", JSONObject.toJSONString(trr), "/api/player/logout", signStr);
                 String callBackStr = null;
                 try {
-                    callBackStr = commonRequest(trr, "/api/player/logout", Integer.valueOf(loginUser.getId().intValue()), ip, "logout");
+                    callBackStr = commonRequest(trr, "/api/player/logout", 0, ip, "logout");
                     logger.info("TP电子 logout强迫登出玩家 返回,params:{}", callBackStr);
                     if (null == callBackStr || "".equals(callBackStr)) {
                         return Result.failed("g100104", MessageUtils.get("g100104",countryCode));

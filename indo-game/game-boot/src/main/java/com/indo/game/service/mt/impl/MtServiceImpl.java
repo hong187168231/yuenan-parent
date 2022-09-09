@@ -14,12 +14,14 @@ import com.indo.common.utils.encrypt.MD5;
 import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.core.mapper.game.TxnsMapper;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
+import com.indo.game.pojo.dto.comm.LoginGame;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.core.pojo.entity.game.GameCategory;
 import com.indo.core.pojo.entity.game.GameParentPlatform;
 import com.indo.core.pojo.entity.game.GamePlatform;
 import com.indo.core.pojo.entity.game.Txns;
 import com.indo.game.service.common.GameCommonService;
+import com.indo.game.service.common.GameLogoutService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
 import com.indo.game.service.mt.MtService;
 import com.indo.core.pojo.bo.MemTradingBO;
@@ -31,10 +33,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 
 @Service
@@ -47,6 +46,8 @@ public class MtServiceImpl implements MtService {
     private GameCommonService gameCommonService;
     @Autowired
     private TxnsMapper txnsMapper;
+    @Autowired
+    private GameLogoutService gameLogoutService;
 
     @Override
     public Result mtGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode) {
@@ -81,6 +82,7 @@ public class MtServiceImpl implements MtService {
 //            //站点棋牌余额不足
 //            return Result.failed("g300004", MessageUtils.get("g300004",countryCode));
 //        }
+        gameLogoutService.gamelogout(loginUser.getAccount(),  ip,  countryCode);
 
         try {
 
@@ -101,7 +103,7 @@ public class MtServiceImpl implements MtService {
                 externalService.updateCptOpenMember(cptOpenMember);
 
                 // 退出游戏
-                commonRequest(getLoginOutUrl(OpenAPIProperties.USER_PREFIX+loginUser.getAccount()));
+//                commonRequest(getLoginOutUrl(OpenAPIProperties.USER_PREFIX+loginUser.getAccount()));
                 // 启动游戏
                 String startUrl = getStartGame(cptOpenMember, gameParentPlatform,gamePlatform, countryCode);
                 logger.info("天美log启动游戏 startUrl:{}", startUrl);
@@ -132,13 +134,13 @@ public class MtServiceImpl implements MtService {
     }
 
     @Override
-    public Result logout(LoginInfo loginUser, String platform, String ip,String countryCode) {
-        logger.info("mtlogout mtGame account:{},code:{}", loginUser.getAccount(), platform);
+    public Result logout(String account,String platform, String ip,String countryCode) {
+        logger.info("mtlogout mtGame account:{},code:{}", account, platform);
         try {
-            Result result = allWithdraw( loginUser,  countryCode);
+            Result result = allWithdraw( account,  countryCode);
             if (ResultCode.SUCCESS.getCode().equals(result.getCode())){
                 // 退出
-                JSONObject jsonObject = commonRequest(getLoginOutUrl(OpenAPIProperties.USER_PREFIX + loginUser.getAccount()));
+                JSONObject jsonObject = commonRequest(getLoginOutUrl(OpenAPIProperties.USER_PREFIX + account));
                 logger.info("天美log logout退出游戏返回:JSONObject:{}}", jsonObject.toJSONString());
                 if (null == jsonObject) {
                     return Result.failed("g091087", MessageUtils.get("g091087", countryCode));
@@ -159,17 +161,17 @@ public class MtServiceImpl implements MtService {
         }
     }
 
-    public Result allWithdraw(LoginInfo loginUser, String countryCode) {
-        logger.info("mt_allWithdraw mtGame account:{},countryCode:{}", loginUser.getAccount(), countryCode);
+    public Result allWithdraw(String account, String countryCode) {
+        logger.info("mt_allWithdraw mtGame account:{},countryCode:{}", account, countryCode);
         try {
             String transactionId = GoldchangeEnum.DSFYXZZ.name() + GeneratorIdUtil.generateId();
-            logger.info("天美log allWithdraw取出所以余额请求:apiurl:{}}", getAllWithdrawUrl(OpenAPIProperties.USER_PREFIX+loginUser.getAccount(), transactionId));
+            logger.info("天美log allWithdraw取出所以余额请求:apiurl:{}}", getAllWithdrawUrl(OpenAPIProperties.USER_PREFIX+account, transactionId));
             // 全部提取
-            JSONObject jsonObject = commonRequest(getAllWithdrawUrl(OpenAPIProperties.USER_PREFIX+loginUser.getAccount(), transactionId));
+            JSONObject jsonObject = commonRequest(getAllWithdrawUrl(OpenAPIProperties.USER_PREFIX+account, transactionId));
             logger.info("天美log allWithdraw取出所以余额返回:resultCode:{}}", jsonObject);
             if (null == jsonObject) {
 //                return Result.failed("g091087", MessageUtils.get("g091087",countryCode));
-                this.allWithdraw(loginUser,  countryCode);
+                this.allWithdraw(account,  countryCode);
             }
             GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.MT_PLATFORM_CODE);
             if (jsonObject.getInteger("resultCode").equals(1)) {
@@ -180,7 +182,7 @@ public class MtServiceImpl implements MtService {
                 // 提出时间
                 Date date = jsonObject.getDate("date");
 
-                MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(loginUser.getAccount());
+                MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(account);
 
                 BigDecimal balance = memBaseinfo.getBalance().add(transCoins);
                 gameCommonService.updateUserBalance(memBaseinfo, transCoins, GoldchangeEnum.DSFYXZZ, TradingEnum.INCOME);
@@ -227,6 +229,9 @@ public class MtServiceImpl implements MtService {
         logger.info("mt_deposit mtGame account:{},countryCode:{}", loginUser.getAccount(), countryCode);
         try {
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(loginUser.getAccount());
+            if(BigDecimal.ZERO.compareTo(memBaseinfo.getBalance())==0){
+                return Result.success();
+            }
             BigDecimal balance = memBaseinfo.getBalance();
             GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.MT_PLATFORM_CODE);
             String transactionId = GoldchangeEnum.DSFYXZZ.name() + GeneratorIdUtil.generateId();

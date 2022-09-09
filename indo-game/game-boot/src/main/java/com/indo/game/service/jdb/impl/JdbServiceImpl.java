@@ -10,6 +10,7 @@ import com.indo.game.common.util.JDBAESEncrypt;
 import com.indo.core.mapper.game.GameCategoryMapper;
 import com.indo.core.mapper.game.GamePlatformMapper;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
+import com.indo.game.pojo.dto.comm.LoginGame;
 import com.indo.game.pojo.dto.jdb.JdbApiRequestGetTokenDto;
 import com.indo.game.pojo.dto.jdb.JdbApiRequestGetTryTokenDto;
 import com.indo.game.pojo.dto.jdb.JdbApiRequestParentDto;
@@ -21,6 +22,7 @@ import com.indo.game.pojo.vo.callback.jdb.JdbApiIsGameingInfoRequestBack;
 import com.indo.game.pojo.vo.callback.jdb.JdbApiIsGameingRequestBack;
 import com.indo.game.pojo.vo.callback.jdb.JdbApiRequestBack;
 import com.indo.game.service.common.GameCommonService;
+import com.indo.game.service.common.GameLogoutService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
 import com.indo.game.service.jdb.JdbService;
 import org.apache.commons.lang3.StringUtils;
@@ -50,6 +52,8 @@ public class JdbServiceImpl implements JdbService {
     GameCategoryMapper gameCategoryMapper;
     @Autowired
     private GamePlatformMapper gamePlatformMapper;
+    @Autowired
+    private GameLogoutService gameLogoutService;
     /**
      * 登录游戏jdb电子
      * @return loginUser 用户信息
@@ -91,7 +95,7 @@ public class JdbServiceImpl implements JdbService {
 //            //站点棋牌余额不足
 //            return Result.failed("g300004",MessageUtils.get("g300004",countryCode));
 //        }
-
+        gameLogoutService.gamelogout(loginUser.getAccount(),  ip,  countryCode);
         try {
 
             // 验证且绑定（KY-CPT第三方会员关系）
@@ -112,17 +116,17 @@ public class JdbServiceImpl implements JdbService {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
             }
-            if(b) {
-                JdbApiIsGameingRequestBack<JdbApiIsGameingInfoRequestBack> jdbApiIsGameingRequestBack = getIsGameing(loginUser, ip);
-                if (null != jdbApiIsGameingRequestBack) {
-                    if ("0000".equals(jdbApiIsGameingRequestBack.getErr_text())) {
-                        List<JdbApiIsGameingInfoRequestBack> list = jdbApiIsGameingRequestBack.getData();
-                        if (null != list && list.size() > 0) {
-                            this.logout(loginUser, ip,countryCode);
-                        }
-                    }
-                }
-            }
+//            if(b) {
+//                JdbApiIsGameingRequestBack<JdbApiIsGameingInfoRequestBack> jdbApiIsGameingRequestBack = getIsGameing(loginUser, ip);
+//                if (null != jdbApiIsGameingRequestBack) {
+//                    if ("0000".equals(jdbApiIsGameingRequestBack.getErr_text())) {
+//                        List<JdbApiIsGameingInfoRequestBack> list = jdbApiIsGameingRequestBack.getData();
+//                        if (null != list && list.size() > 0) {
+//                            this.logout(loginUser, ip,countryCode);
+//                        }
+//                    }
+//                }
+//            }
             return getToken(gameParentPlatform,gamePlatform,loginUser, ip,isMobileLogin, countryCode);
         } catch (Exception e) {
             e.printStackTrace();
@@ -133,15 +137,15 @@ public class JdbServiceImpl implements JdbService {
     /**
      *  强迫登出玩家
      */
-    public Result logout(LoginInfo loginUser,String ip,String countryCode){
+    public Result logout(String account,String platform, String ip,String countryCode){
         JdbApiRequestParentDto jdbApiRequestParentDto = new JdbApiRequestParentDto();
         jdbApiRequestParentDto.setParent(OpenAPIProperties.JDB_AGENT);//代理账号
         jdbApiRequestParentDto.setTs(new Date().getTime());//当前系统时间
         jdbApiRequestParentDto.setAction(17);//交易号
-        jdbApiRequestParentDto.setUid(loginUser.getAccount());//玩家账号
+        jdbApiRequestParentDto.setUid(account);//玩家账号
 
         try {
-            String resultString = commonRequest(JSONObject.toJSONString(jdbApiRequestParentDto), Integer.valueOf(loginUser.getId().intValue()), ip, "logout");
+            String resultString = commonRequest(JSONObject.toJSONString(jdbApiRequestParentDto), 0, ip, "logout");
             JdbApiRequestBack jdbApiRequestBack = null;
             if (StringUtils.isNotEmpty(resultString)) {
                 jdbApiRequestBack = JSONObject.parseObject(resultString, JdbApiRequestBack.class);

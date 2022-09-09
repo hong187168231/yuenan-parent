@@ -1,22 +1,27 @@
 package com.indo.game.service.common.impl;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.indo.admin.pojo.criteria.GameDownloadQueryCriteria;
 import com.indo.common.constant.RedisConstants;
 import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.common.redis.utils.RedisUtils;
 import com.indo.common.result.Result;
 import com.indo.common.utils.CollectionUtil;
+import com.indo.common.utils.QueryHelpPlus;
 import com.indo.common.web.exception.BizException;
 import com.indo.core.mapper.game.GameCategoryMapper;
 import com.indo.core.mapper.game.GameParentPlatformMapper;
 import com.indo.core.mapper.game.GamePlatformMapper;
 import com.indo.core.pojo.dto.MemGoldChangeDTO;
+import com.indo.core.pojo.entity.game.GameDownload;
 import com.indo.core.service.IMemGoldChangeService;
 import com.indo.game.common.util.GameBusinessRedisUtils;
 import com.indo.core.pojo.entity.game.GameCategory;
 import com.indo.core.pojo.entity.game.GameParentPlatform;
 import com.indo.core.pojo.entity.game.GamePlatform;
+import com.indo.game.pojo.dto.comm.LoginGame;
 import com.indo.game.service.common.GameCommonService;
 import com.indo.user.api.MemBaseInfoFeignClient;
 import com.indo.core.pojo.bo.MemTradingBO;
@@ -28,10 +33,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -170,5 +172,22 @@ public class GameCommonServiceImpl implements GameCommonService {
         }
     }
 
+
+    public List<LoginGame> queryAllLoginGame(String account) {
+        Map<Object, Object> map = RedisUtils.hmget(RedisConstants.GAME_LOGINGAME_KEY+account);
+        List<LoginGame> loginGames = new ArrayList(map.values());
+        return loginGames;
+    }
+
+    public void addLoginGamed(LoginGame loginGame) {
+        RedisUtils.hset(RedisConstants.GAME_LOGINGAME_KEY+loginGame.getAccount(), loginGame.getParentName() + "", loginGame);
+    }
+
+    public boolean deleteBatchLoginGame(List<LoginGame> list) {
+        for(LoginGame loginGame:list){
+            RedisUtils.hdel(RedisConstants.GAME_LOGINGAME_KEY+loginGame.getAccount(), loginGame.getParentName() + "");
+        }
+        return true;
+    }
 
 }

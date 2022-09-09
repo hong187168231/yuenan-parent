@@ -12,6 +12,7 @@ import com.indo.core.mapper.game.TxnsMapper;
 import com.indo.core.mapper.game.GameCategoryMapper;
 import com.indo.game.mapper.frontend.GameTypeMapper;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
+import com.indo.game.pojo.dto.comm.LoginGame;
 import com.indo.game.pojo.dto.ug.*;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.core.pojo.entity.game.GameCategory;
@@ -20,6 +21,7 @@ import com.indo.core.pojo.entity.game.GamePlatform;
 import com.indo.core.pojo.entity.game.Txns;
 import com.indo.game.pojo.vo.callback.ug.*;
 import com.indo.game.service.common.GameCommonService;
+import com.indo.game.service.common.GameLogoutService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
 import com.indo.game.service.ug.UgService;
 import org.apache.commons.lang3.StringUtils;
@@ -53,7 +55,8 @@ public class UgServiceImpl implements UgService {
 
     @Autowired
     private TxnsMapper txnsMapper;
-
+    @Autowired
+    private GameLogoutService gameLogoutService;
     /**
      * 登录游戏
      * @return loginUser 用户信息
@@ -92,7 +95,7 @@ public class UgServiceImpl implements UgService {
 //            //站点棋牌余额不足
 //            return Result.failed("g300004",MessageUtils.get("g300004",countryCode));
 //        }
-
+        gameLogoutService.gamelogout(loginUser.getAccount(),  ip,  countryCode);
         try {
 
             // 验证且绑定（KY-CPT第三方会员关系）
@@ -108,7 +111,7 @@ public class UgServiceImpl implements UgService {
                 //创建玩家
                 return restrictedPlayer(gameParentPlatform,loginUser,gamePlatform, ip, cptOpenMember,WebType,countryCode);
             } else {
-                this.logout(loginUser,ip,countryCode);
+//                this.logout(loginUser,ip,countryCode);
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
                 //登录
@@ -239,15 +242,15 @@ public class UgServiceImpl implements UgService {
     /**
      * 强迫登出玩家
      */
-    public Result logout(LoginInfo loginUser,String ip,String countryCode){
+    public Result logout(String account,String platform, String ip,String countryCode){
         UgLogoutJsonDTO ugLogoutJsonDTO = new UgLogoutJsonDTO();
-        ugLogoutJsonDTO.setUserId(loginUser.getAccount());
+        ugLogoutJsonDTO.setUserId(account);
         ugLogoutJsonDTO.setApiKey(OpenAPIProperties.UG_API_KEY);
         ugLogoutJsonDTO.setOperatorId(OpenAPIProperties.UG_COMPANY_KEY);
-        logger.info("UG体育登出玩家输入 apiUrl:{}, params:{}, userId:{}, ip:{}", OpenAPIProperties.UG_API_URL+"/api/single/logout", JSONObject.toJSONString(ugLogoutJsonDTO), loginUser.getId(), ip);
+        logger.info("UG体育登出玩家输入 apiUrl:{}, params:{}, userId:{}, ip:{}", OpenAPIProperties.UG_API_URL+"/api/single/logout", JSONObject.toJSONString(ugLogoutJsonDTO), 0, ip);
         UgApiResponseData ugApiResponse = null;
         try {
-            ugApiResponse = commonRequestPost(ugLogoutJsonDTO, OpenAPIProperties.UG_API_URL+"/api/single/logout", Integer.valueOf(loginUser.getId().intValue()), ip, "logout");
+            ugApiResponse = commonRequestPost(ugLogoutJsonDTO, OpenAPIProperties.UG_API_URL+"/api/single/logout", 0, ip, "logout");
             logger.info("UG体育登出玩家返回参数: ugApiResponse:{}"+ugApiResponse);
             if(null!=ugApiResponse&&"000000".equals(ugApiResponse.getCode())){
                 return Result.success(ugApiResponse);

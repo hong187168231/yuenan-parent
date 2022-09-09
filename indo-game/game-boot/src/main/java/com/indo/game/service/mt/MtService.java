@@ -15,7 +15,7 @@ public interface MtService {
     /**
      * MT电子游戏 强迫登出玩家
      */
-    Result logout(LoginInfo loginUser,String platform, String ip,String countryCode);
+    Result logout(String account,String platform, String ip,String countryCode);
 
 //    /**
 //     * 从MT中全部提出游戏币

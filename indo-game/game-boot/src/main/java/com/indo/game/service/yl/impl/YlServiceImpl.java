@@ -8,10 +8,12 @@ import com.indo.common.utils.GameUtil;
 import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.common.util.SnowflakeId;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
+import com.indo.game.pojo.dto.comm.LoginGame;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.core.pojo.entity.game.GameParentPlatform;
 import com.indo.core.pojo.entity.game.GamePlatform;
 import com.indo.game.service.common.GameCommonService;
+import com.indo.game.service.common.GameLogoutService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
 import com.indo.game.service.yl.YlService;
 
@@ -24,6 +26,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -40,7 +43,8 @@ public class YlServiceImpl implements YlService {
     private CptOpenMemberService externalService;
     @Autowired
     private GameCommonService gameCommonService;
-
+    @Autowired
+    private GameLogoutService gameLogoutService;
 
     /**
      * 登录游戏CQ9游戏
@@ -79,6 +83,7 @@ public class YlServiceImpl implements YlService {
 //            //站点棋牌余额不足
 //            return Result.failed("g300004", MessageUtils.get("g300004",countryCode));
 //        }
+        gameLogoutService.gamelogout(loginUser.getAccount(),  ip,  countryCode);
         try {
 
             // 验证且绑定（YL-CPT第三方会员关系）
@@ -97,7 +102,7 @@ public class YlServiceImpl implements YlService {
                 cptOpenMember.setPassword(SnowflakeId.generateId().toString());
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
-                logout(loginUser, platform, ip, countryCode);
+//                logout(loginUser, platform, ip, countryCode);
             }
             return initGame(gamePlatform,gameParentPlatform, cptOpenMember, countryCode);
         } catch (Exception e) {
@@ -218,15 +223,15 @@ public class YlServiceImpl implements YlService {
     /**
      * 强迫登出玩家
      */
-    public Result logout(LoginInfo loginUser, String platform, String ip,String countryCode) {
+    public Result logout(String account,String platform, String ip,String countryCode) {
         try {
             Map<String, String> map = new HashMap<>();
             map.put("cert", OpenAPIProperties.YL_CERT);
-            map.put("user", loginUser.getAccount());
+            map.put("user", account);
             StringBuilder builder = new StringBuilder();
             builder.append(OpenAPIProperties.YL_API_URL).append("/api/").append(OpenAPIProperties.YL_WEB_SITE).append("/logout");
-            logger.error("YL捕鱼强迫登出玩家请求：url{},params{},userAcct{}", builder,map,loginUser.getAccount());
-            JSONObject jsonObject = commonRequest(builder.toString(), map, loginUser.getId().intValue(), "yLLogOut");
+            logger.error("YL捕鱼强迫登出玩家请求：url{},params{},userAcct{}", builder,map,account);
+            JSONObject jsonObject = commonRequest(builder.toString(), map, 0, "yLLogOut");
             logger.info("YL捕鱼强迫登出玩家请求返回：", jsonObject);
             if (null != jsonObject && "1".equals(jsonObject.getString("desc"))) {
                 return Result.success();

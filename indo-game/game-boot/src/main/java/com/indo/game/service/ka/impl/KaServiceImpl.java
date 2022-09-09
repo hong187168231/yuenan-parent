@@ -7,10 +7,12 @@ import com.indo.common.result.Result;
 import com.indo.common.utils.StringUtils;
 import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
+import com.indo.game.pojo.dto.comm.LoginGame;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.core.pojo.entity.game.GameParentPlatform;
 import com.indo.core.pojo.entity.game.GamePlatform;
 import com.indo.game.service.common.GameCommonService;
+import com.indo.game.service.common.GameLogoutService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
 import com.indo.game.service.ka.KaService;
 import org.slf4j.Logger;
@@ -20,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 
 @Service
@@ -29,7 +32,8 @@ public class KaServiceImpl implements KaService {
     private CptOpenMemberService externalService;
     @Autowired
     private GameCommonService gameCommonService;
-
+    @Autowired
+    private GameLogoutService gameLogoutService;
     @Override
     public Result kaGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode) {
         logger.info("kalog {} kaGame account:{},kaCodeId:{}", loginUser.getId(), loginUser.getAccount(), platform);
@@ -63,7 +67,7 @@ public class KaServiceImpl implements KaService {
 //            //站点棋牌余额不足
 //            return Result.failed("g300004", MessageUtils.get("g300004",countryCode));
 //        }
-
+        gameLogoutService.gamelogout(loginUser.getAccount(),  ip,  countryCode);
         try {
 
             // 验证且绑定（KY-CPT第三方会员关系）
@@ -131,8 +135,8 @@ public class KaServiceImpl implements KaService {
     }
 
     @Override
-    public Result logout(LoginInfo loginUser, String platform, String ip,String countryCode) {
-        logger.info("kalogout {} kaGame account:{},t9CodeId:{}", loginUser.getId(), loginUser.getAccount(), platform);
+    public Result logout(String account,String platform, String ip,String countryCode) {
+        logger.info("kalogout   kaGame account:{},platform:{}", account, platform);
 //        try {
 //            PpApiRequestData ppApiRequestData = new PpApiRequestData();
 //            ppApiRequestData.setSecureLogin(OpenAPIProperties.PP_SECURE_LOGIN);

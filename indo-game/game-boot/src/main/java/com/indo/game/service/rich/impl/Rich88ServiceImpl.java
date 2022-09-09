@@ -10,21 +10,25 @@ import com.indo.common.utils.StringUtils;
 import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.common.util.RichSHAEncrypt;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
+import com.indo.game.pojo.dto.comm.LoginGame;
 import com.indo.game.pojo.dto.rich.Rich88ApiResponseData;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.core.pojo.entity.game.GameParentPlatform;
 import com.indo.core.pojo.entity.game.GamePlatform;
 import com.indo.game.service.common.GameCommonService;
+import com.indo.game.service.common.GameLogoutService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
 import com.indo.game.service.rich.Rich88Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -36,7 +40,8 @@ public class Rich88ServiceImpl implements Rich88Service {
     private CptOpenMemberService externalService;
     @Resource
     private GameCommonService gameCommonService;
-
+    @Autowired
+    private GameLogoutService gameLogoutService;
     @Override
     public Result rich88Game(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode) {
         logger.info("rich88log {} rich88Game account:{},Rich88CodeId:{}", loginUser.getId(), loginUser.getAccount(), platform);
@@ -70,7 +75,7 @@ public class Rich88ServiceImpl implements Rich88Service {
 //            //站点棋牌余额不足
 //            return Result.failed("g300004", MessageUtils.get("g300004",countryCode));
 //        }
-
+        gameLogoutService.gamelogout(loginUser.getAccount(),  ip,  countryCode);
         try {
 
             // 验证且绑定（KY-CPT第三方会员关系）
@@ -88,7 +93,7 @@ public class Rich88ServiceImpl implements Rich88Service {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
                 // 先退出
-                commonRequest(getLoginOutUrl(loginUser.getAccount()), null, loginUser.getId());
+//                commonRequest(getLoginOutUrl(loginUser.getAccount()), null, loginUser.getId());
             }
 //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
             String lang = "";
@@ -126,12 +131,12 @@ public class Rich88ServiceImpl implements Rich88Service {
     }
 
     @Override
-    public Result logout(LoginInfo loginUser, String platform, String ip,String countryCode) {
-        logger.info("rich88logout {} rich88Game account:{},rich88CodeId:{}", loginUser.getId(), loginUser.getAccount(), platform);
+    public Result logout(String account,String platform, String ip,String countryCode) {
+        logger.info("rich88logout rich88Game account:{},rich88CodeId:{}", account, platform);
         try {
             // 退出游戏
             Rich88ApiResponseData rich88ApiResponseData =
-                    commonRequest(getLoginOutUrl(loginUser.getAccount()), null, loginUser.getId());
+                    commonRequest(getLoginOutUrl(account), null, 0);
             if (null == rich88ApiResponseData) {
                 return Result.failed("g091087", MessageUtils.get("g091087",countryCode));
             }

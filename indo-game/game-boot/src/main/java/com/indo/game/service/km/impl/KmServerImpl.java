@@ -8,10 +8,12 @@ import com.indo.common.utils.GameUtil;
 import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.common.util.SnowflakeId;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
+import com.indo.game.pojo.dto.comm.LoginGame;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.core.pojo.entity.game.GameParentPlatform;
 import com.indo.core.pojo.entity.game.GamePlatform;
 import com.indo.game.service.common.GameCommonService;
+import com.indo.game.service.common.GameLogoutService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
 import com.indo.game.service.km.KmService;
 
@@ -24,6 +26,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -40,7 +43,8 @@ public class KmServerImpl implements KmService {
     private CptOpenMemberService externalService;
     @Autowired
     private GameCommonService gameCommonService;
-
+    @Autowired
+    private GameLogoutService gameLogoutService;
 
     /**
      * 登录游戏Mg游戏
@@ -79,6 +83,7 @@ public class KmServerImpl implements KmService {
 //            //站点棋牌余额不足
 //            return Result.failed("g300004", MessageUtils.get("g300004",countryCode));
 //        }
+        gameLogoutService.gamelogout(loginUser.getAccount(),  ip,  countryCode);
         try {
 
             // 验证且绑定（AE-CPT第三方会员关系）
@@ -96,7 +101,7 @@ public class KmServerImpl implements KmService {
             } else {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
-                logout(loginUser, platform, ip, countryCode);
+//                logout(loginUser, platform, ip, countryCode);
             }
             JSONObject tokenJson = gameToken(loginUser, gameParentPlatform, ip,countryCode,isMobileLogin);
             if (StringUtils.isEmpty(tokenJson.getString("authtoken"))) {
@@ -208,15 +213,15 @@ public class KmServerImpl implements KmService {
     /**
      * 强迫登出玩家
      */
-    public Result logout(LoginInfo loginUser, String platform, String ip,String countryCode) {
+    public Result logout(String account,String platform, String ip,String countryCode) {
         try {
             Map<String, String> map = new HashMap<>();
-            map.put("userid", loginUser.getAccount());
+            map.put("userid", account);
             StringBuilder builder = new StringBuilder();
             builder.append(OpenAPIProperties.KM_API_URL).append("/api/player/deauthorize");
             JSONObject apiResponseData = null;
             logger.error("kmLog  logout请求 url:{},params:{},", builder.toString(),map);
-            apiResponseData = commonRequest(builder.toString(), map, loginUser.getId().intValue(), "logout");
+            apiResponseData = commonRequest(builder.toString(), map, 0, "logout");
             logger.error("kmLog  logout返回 apiResponseData:{},", JSONObject.toJSONString(apiResponseData));
             if(null==apiResponseData){
                 return Result.failed("g100104", MessageUtils.get("g100104",countryCode));

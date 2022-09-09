@@ -8,15 +8,18 @@ import com.indo.common.result.Result;
 import com.indo.common.utils.GameUtil;
 import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
+import com.indo.game.pojo.dto.comm.LoginGame;
 import com.indo.game.pojo.dto.t9.T9ApiResponseData;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.core.pojo.entity.game.GameParentPlatform;
 import com.indo.core.pojo.entity.game.GamePlatform;
 import com.indo.game.service.common.GameCommonService;
+import com.indo.game.service.common.GameLogoutService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
 import com.indo.game.service.t9.T9Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
@@ -29,6 +32,7 @@ import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -43,7 +47,8 @@ public class T9ServiceImpl implements T9Service {
     private CptOpenMemberService externalService;
     @Resource
     private GameCommonService gameCommonService;
-
+    @Autowired
+    private GameLogoutService gameLogoutService;
     @Bean
     @LoadBalanced
     public RestTemplate restTemplate() {
@@ -83,7 +88,7 @@ public class T9ServiceImpl implements T9Service {
 //            //站点棋牌余额不足
 //            return Result.failed("g300004", MessageUtils.get("g300004",countryCode));
 //        }
-
+        gameLogoutService.gamelogout(loginUser.getAccount(),  ip,  countryCode);
         try {
 
             // 验证且绑定（KY-CPT第三方会员关系）
@@ -102,13 +107,13 @@ public class T9ServiceImpl implements T9Service {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
 
-                Map<String, Object> params = new HashMap<>();
-                params.put("playerID", loginUser.getAccount());
-                params.put("actionType", "0");
-                params.put("checkValue", getCheckValue("0"));
-
-                // 退出游戏
-                commonRequest(getLogOutT9PlayerUrl(), params, loginUser.getId());
+//                Map<String, Object> params = new HashMap<>();
+//                params.put("playerID", loginUser.getAccount());
+//                params.put("actionType", "0");
+//                params.put("checkValue", getCheckValue("0"));
+//
+//                // 退出游戏
+//                commonRequest(getLogOutT9PlayerUrl(), params, loginUser.getId());
             }
 
             // 启动游戏
@@ -120,16 +125,16 @@ public class T9ServiceImpl implements T9Service {
     }
 
     @Override
-    public Result logout(LoginInfo loginUser, String platform, String ip,String countryCode) {
-        logger.info("t9logout {} t9Game account:{},t9CodeId:{}", loginUser.getId(), loginUser.getAccount(), platform);
+    public Result logout(String account,String platform, String ip,String countryCode) {
+        logger.info("t9logout  t9Game account:{},platform:{}",  account, platform);
         try {
             Map<String, Object> params = new HashMap<>();
-            params.put("playerID", loginUser.getAccount());
+            params.put("playerID", account);
             params.put("actionType", "0");
             params.put("checkValue", getCheckValue("0"));
-            logger.info("T9log  logout退出登录 urlapi:{},paramsMap:{},loginUser:{}", getLogOutT9PlayerUrl(), params,loginUser);
+            logger.info("T9log  logout退出登录 urlapi:{},paramsMap:{},loginUser:{}", getLogOutT9PlayerUrl(), params,account);
             // 退出游戏
-            T9ApiResponseData t9ApiResponseData = commonRequest(getLogOutT9PlayerUrl(), params, loginUser.getId());
+            T9ApiResponseData t9ApiResponseData = commonRequest(getLogOutT9PlayerUrl(), params, 0);
             logger.info("T9log  logout退出登录返回 t9ApiResponseData:{}", JSONObject.toJSONString(t9ApiResponseData));
             if (null == t9ApiResponseData) {
                 return Result.failed("g091087", MessageUtils.get("g091087",countryCode));
