@@ -98,7 +98,7 @@ public class KmServerImpl implements KmService {
                 externalService.updateCptOpenMember(cptOpenMember);
                 logout(loginUser, platform, ip, countryCode);
             }
-            JSONObject tokenJson = gameToken(loginUser, gameParentPlatform, ip);
+            JSONObject tokenJson = gameToken(loginUser, gameParentPlatform, ip,countryCode,isMobileLogin);
             if (StringUtils.isEmpty(tokenJson.getString("authtoken"))) {
                 return errorCode(tokenJson.getString("code"), tokenJson.getString("message"), countryCode);
             }
@@ -117,48 +117,6 @@ public class KmServerImpl implements KmService {
                 builder.append("gpcode=").append("KMQM");
                 builder.append("&gcode=").append(gamePlatform.getPlatformCode());
                 builder.append("&token=").append(tokenJson.getString("authtoken"));
-                //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
-                String lang = "";
-                if(null!=countryCode&&!"".equals(countryCode)){
-                    switch (countryCode) {
-                        case "IN":
-                            lang = "en-US";
-                            break;
-                        case "EN":
-                            lang = "en_US";
-                            break;
-                        case "CN":
-                            lang = "zh-CN";
-                            break;
-                        case "VN":
-                            lang = "vi-VN";
-                            break;
-                        case "TW":
-                            lang = "zh-TW";
-                            break;
-                        case "TH":
-                            lang = "th-TH";
-                            break;
-                        case "ID":
-                            lang = "in-ID";
-                            break;
-                        case "MY":
-                            lang = "ms-MY";
-                            break;
-                        case "KR":
-                            lang = "ko-KR";
-                            break;
-                        case "JP":
-                            lang = "ja-JP";
-                            break;
-                        default:
-                            lang = gameParentPlatform.getLanguageType();
-                            break;
-                    }
-                }else{
-                    lang = gameParentPlatform.getLanguageType();
-                }
-                builder.append("&lang=").append(lang);
             }
 
             //登录
@@ -172,15 +130,62 @@ public class KmServerImpl implements KmService {
         }
     }
 
-    private JSONObject gameToken(LoginInfo loginUser, GameParentPlatform platformGameParent, String ip) {
+    private JSONObject gameToken(LoginInfo loginUser, GameParentPlatform platformGameParent, String ip,String countryCode,String isMobileLogin) {
         Map<String, String> map = new HashMap<>();
         map.put("ipaddress", OpenAPIProperties.PROXY_HOST_NAME);
         map.put("username", loginUser.getAccount());
         map.put("userid", loginUser.getAccount());
-        map.put("lang", platformGameParent.getLanguageType());
+        //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+        String lang = "";
+        if(null!=countryCode&&!"".equals(countryCode)){
+            switch (countryCode) {
+                case "IN":
+                    lang = "en-US";
+                    break;
+                case "EN":
+                    lang = "en_US";
+                    break;
+                case "CN":
+                    lang = "zh-CN";
+                    break;
+                case "VN":
+                    lang = "vi-VN";
+                    break;
+                case "TW":
+                    lang = "zh-TW";
+                    break;
+                case "TH":
+                    lang = "th-TH";
+                    break;
+                case "ID":
+                    lang = "in-ID";
+                    break;
+                case "MY":
+                    lang = "ms-MY";
+                    break;
+                case "KR":
+                    lang = "ko-KR";
+                    break;
+                case "JP":
+                    lang = "ja-JP";
+                    break;
+                default:
+                    lang = platformGameParent.getLanguageType();
+                    break;
+            }
+        }else{
+            lang = platformGameParent.getLanguageType();
+        }
+        map.put("lang", lang);
         map.put("cur", platformGameParent.getCurrencyType());
+
         map.put("betlimitid", "1");
-        map.put("platformtype", "1");
+        //                1：手机 0:PC
+        if("0".equals(isMobileLogin)) {
+            map.put("platformtype", "0");
+        }else {
+            map.put("platformtype", "1");
+        }
         //调用此API时，请务必传递正确的'istestplayer'参数值。若针对玩家传递'istestplayer=false'，那么玩家就会
 //        在QM中以真实玩家身份被创建，且无法经由API将此身份变更为测试玩家。
         map.put("istestplayer", "false");
