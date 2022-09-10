@@ -3,6 +3,7 @@ package com.indo.admin.modules.game.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.indo.admin.modules.game.service.IGameManageService;
+import com.indo.admin.api.GameFeignClient;
 import com.indo.admin.pojo.dto.game.manage.GameInfoPageReq;
 import com.indo.admin.pojo.dto.game.manage.GameParentPlatformPageReq;
 import com.indo.admin.pojo.dto.game.manage.GamePlatformPageReq;
@@ -10,14 +11,19 @@ import com.indo.admin.pojo.vo.game.manage.GameInfoRecord;
 import com.indo.admin.pojo.vo.game.manage.GameStatiRecord;
 import com.indo.common.result.Result;
 import com.indo.common.utils.DateUtils;
+import com.indo.common.utils.IPAddressUtil;
 import com.indo.core.pojo.entity.game.*;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -32,6 +38,8 @@ public class GameManageController {
 
     @Autowired
     private IGameManageService iGameManageService;
+    @Resource
+    private GameFeignClient gameFeignClient;
 
     @ApiOperation(value = "查询所有平台记录", httpMethod = "POST")
     @PostMapping(value = "/allGameInfoCount")
@@ -163,5 +171,19 @@ public class GameManageController {
         String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
         gameParentPlatform.setUpdateTime(dateStr);
         return Result.judge(iGameManageService.modifiyGameParentPlatform(gameParentPlatform));
+    }
+
+    @ApiOperation(value = "强迫登出游戏", httpMethod = "POST")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "account", value = "用户账号 ", paramType = "query", dataType = "string", required = true)
+    })
+    @PostMapping(value ="/gameLogout",produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public Result gameLogout(String account, HttpServletRequest request){
+        //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+        String countryCode = request.getHeader("countryCode");
+        String ip = IPAddressUtil.getIpAddress(request);
+        log.info("强迫登出游戏gameLogout loginUser:{}, ip:{}", account,ip);
+        return gameFeignClient.gamelogout( account);
     }
 }
