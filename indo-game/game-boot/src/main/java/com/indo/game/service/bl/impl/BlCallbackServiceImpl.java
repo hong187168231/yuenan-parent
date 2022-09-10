@@ -99,9 +99,9 @@ public class BlCallbackServiceImpl implements BlCallbackService {
                 return dataJson;
             }
         }
-        JSONObject jsonObject = JSONObject.parseObject(blCallBackReq.getCost_info());
+        BigDecimal amount = null!=blCallBackReq.getAmount()?blCallBackReq.getAmount().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
         if (blCallBackReq.getType() == 10) {
-            if (memBaseinfo.getBalance().compareTo(jsonObject.getBigDecimal("bet_num")) == -1) {
+            if (memBaseinfo.getBalance().compareTo(amount) == -1) {
                 dataJson.put("resp_msg", statusJson);
                 JSONArray array = new JSONArray();
                 statusJson.put("code", "1");
@@ -109,16 +109,16 @@ public class BlCallbackServiceImpl implements BlCallbackService {
                 statusJson.put("errors", array);
                 return dataJson;
             }
-            balance = balance.subtract(jsonObject.getBigDecimal("bet_num"));
-            gameCommonService.updateUserBalance(memBaseinfo, jsonObject.getBigDecimal("bet_num"), GoldchangeEnum.DSFYXZZ, TradingEnum.SPENDING);
+            balance = balance.subtract(amount);
+            gameCommonService.updateUserBalance(memBaseinfo, amount, GoldchangeEnum.DSFYXZZ, TradingEnum.SPENDING);
 
         } else if (blCallBackReq.getType() == 11) {
-            balance = balance.add(jsonObject.getBigDecimal("bet_num"));
-            gameCommonService.updateUserBalance(memBaseinfo, jsonObject.getBigDecimal("bet_num"), GoldchangeEnum.DSFYXZZ, TradingEnum.INCOME);
+            balance = balance.add(amount);
+            gameCommonService.updateUserBalance(memBaseinfo, amount, GoldchangeEnum.DSFYXZZ, TradingEnum.INCOME);
 
         } else if (blCallBackReq.getType() == 12) {
-            balance = balance.add(jsonObject.getBigDecimal("bet_num"));
-            gameCommonService.updateUserBalance(memBaseinfo, jsonObject.getBigDecimal("bet_num"), GoldchangeEnum.DSFYXZZ, TradingEnum.INCOME);
+            balance = balance.add(amount);
+            gameCommonService.updateUserBalance(memBaseinfo, amount, GoldchangeEnum.DSFYXZZ, TradingEnum.INCOME);
         }
 
         Txns txns = new Txns();
@@ -145,20 +145,20 @@ public class BlCallbackServiceImpl implements BlCallbackService {
         //游戏名称
         txns.setGameName(gamePlatform.getPlatformEnName());
         //下注金额
-        txns.setBetAmount(jsonObject.getBigDecimal("bet_num"));
+        txns.setBetAmount(amount);
         //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
-        txns.setWinningAmount(jsonObject.getBigDecimal("bet_num"));
+        txns.setWinningAmount(amount);
         //真实下注金额,需增加在玩家的金额
-        txns.setRealBetAmount(jsonObject.getBigDecimal("bet_num"));
+        txns.setRealBetAmount(amount);
         //真实返还金额,游戏赢分
-        txns.setRealWinAmount(jsonObject.getBigDecimal("bet_num"));
+        txns.setRealWinAmount(amount);
         //返还金额 (包含下注金额)
         //赌注的结果 : 赢:0,输:1,平手:2
         int resultTyep;
         //玩家下注时间
         txns.setBetTime(DateUtils.formatByString(blCallBackReq.getTime(), DateUtils.newFormat));
         //有效投注金额 或 投注面值
-        txns.setTurnover(jsonObject.getBigDecimal("bet_num"));
+        txns.setTurnover(amount);
         //操作名称
         txns.setMethod("Place Bet");
         txns.setStatus("Running");
