@@ -37,7 +37,7 @@ public class TestController {
         System.out.println("test18:");
         System.out.println("test1:"+countryCode);
         System.out.println("test2:"+MessageUtils.get("g000007",countryCode));
-        return null;
+        return Result.failed(MessageUtils.get("g000007",countryCode));
     }
 
 
