@@ -55,9 +55,9 @@ public class Rich88CallbackServiceImpl implements Rich88CallbackService {
         }
 
         // 校验API key
-        if (StringUtils.isBlank(apiKey) || !apiKey.equals(getApiKey(pfId, timestamp))) {
-            return initFailureResponse(16007, "API key 驗證錯誤");
-        }
+//        if (StringUtils.isBlank(apiKey) || !apiKey.equals(getApiKey(pfId, timestamp))) {
+//            return initFailureResponse(16007, "API key 驗證錯誤");
+//        }
 
         JSONObject jsonObject = initSuccessResponse();
         JSONObject data = new JSONObject();
@@ -77,9 +77,9 @@ public class Rich88CallbackServiceImpl implements Rich88CallbackService {
         }
 
         // 验证sessionid
-        if (!authorization.equals(OpenAPIProperties.RICH_SESSION_ID)) {
-            return initFailureResponse(22003, "Token 驗證錯誤");
-        }
+//        if (!authorization.equals(OpenAPIProperties.RICH_SESSION_ID)) {
+//            return initFailureResponse(22003, "Token 驗證錯誤");
+//        }
 
         // 查询玩家是否存在
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(account);
@@ -105,9 +105,9 @@ public class Rich88CallbackServiceImpl implements Rich88CallbackService {
         }
 
         // 验证sessionid
-        if (!authorization.equals(OpenAPIProperties.RICH_SESSION_ID)) {
-            return initFailureResponse(22003, "Token 驗證錯誤");
-        }
+//        if (!authorization.equals(OpenAPIProperties.RICH_SESSION_ID)) {
+//            return initFailureResponse(22003, "Token 驗證錯誤");
+//        }
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(rich88TransferReq.getAccount());
         if (null == memBaseinfo) {
             return initFailureResponse(13002, "帳號不存在");
@@ -239,9 +239,9 @@ public class Rich88CallbackServiceImpl implements Rich88CallbackService {
         }
 
         // 验证sessionid
-        if (!authorization.equals(OpenAPIProperties.RICH_SESSION_ID)) {
-            return initFailureResponse(22003, "Token 驗證錯誤");
-        }
+//        if (!authorization.equals(OpenAPIProperties.RICH_SESSION_ID)) {
+//            return initFailureResponse(22003, "Token 驗證錯誤");
+//        }
 
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(rich88ActivityReq.getAccount());
         if (null == memBaseinfo) {
