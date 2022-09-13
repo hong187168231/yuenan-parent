@@ -98,8 +98,8 @@ public class KaCallbackServiceImpl implements KaCallbackService {
             // 会员余额
             BigDecimal balance = memBaseinfo.getBalance();
             // 下注金额
-            BigDecimal betAmount = getDivideAmount(kaCallbackPlayReq.getBetAmount()).multiply(platformGameParent.getCurrencyPro());
-            BigDecimal freeWinAmount = getDivideAmount(kaCallbackPlayReq.getWinAmount()).multiply(platformGameParent.getCurrencyPro());
+            BigDecimal betAmount = getDivideAmount(kaCallbackPlayReq.getBetAmount().multiply(platformGameParent.getCurrencyPro()));
+            BigDecimal freeWinAmount = getDivideAmount(kaCallbackPlayReq.getWinAmount().multiply(platformGameParent.getCurrencyPro()));
             String method = "Place Bet";
             BigDecimal winningAmount = BigDecimal.ZERO;
             // 免费游戏
@@ -261,7 +261,7 @@ public class KaCallbackServiceImpl implements KaCallbackService {
             // 会员余额
             BigDecimal balance = memBaseinfo.getBalance();
             // 派奖金额
-            BigDecimal amount = getDivideAmount(kaCallbackCreditReq.getAmount()).multiply(platformGameParent.getCurrencyPro());
+            BigDecimal amount = getDivideAmount(kaCallbackCreditReq.getAmount().multiply(platformGameParent.getCurrencyPro()));
 //            BigDecimal amount = kaCallbackCreditReq.getAmount();
             // 派彩金额小于0
             if (amount.compareTo(BigDecimal.ZERO) < 0) {
@@ -387,8 +387,8 @@ public class KaCallbackServiceImpl implements KaCallbackService {
             }
             BigDecimal balance = memBaseinfo.getBalance();
             // 会员余额
-            BigDecimal cancelAmount = null!=kaCallbackRevokeReq.getWin()?kaCallbackRevokeReq.getWin().multiply(platformGameParent.getCurrencyPro()):BigDecimal.ZERO;
-            BigDecimal betAmount = null!=kaCallbackRevokeReq.getBet()?kaCallbackRevokeReq.getBet().multiply(platformGameParent.getCurrencyPro()):BigDecimal.ZERO;
+            BigDecimal cancelAmount = getDivideAmount(null!=kaCallbackRevokeReq.getWin()?kaCallbackRevokeReq.getWin().multiply(platformGameParent.getCurrencyPro()):BigDecimal.ZERO);
+            BigDecimal betAmount = getDivideAmount(null!=kaCallbackRevokeReq.getBet()?kaCallbackRevokeReq.getBet().multiply(platformGameParent.getCurrencyPro()):BigDecimal.ZERO);
             if (cancelAmount.compareTo(BigDecimal.ZERO) != 0) {
                 if (cancelAmount.compareTo(BigDecimal.ZERO) == 1) {
                     balance = balance.subtract(cancelAmount.abs());
@@ -482,7 +482,6 @@ public class KaCallbackServiceImpl implements KaCallbackService {
      * 获取历史订单
      *
      * @param reference 订单编号
-     * @param userId    会员ID
      * @param round     回合(一般游戏为0,免费游戏有具体1.2.3...)
      * @return 订单
      */
@@ -517,11 +516,8 @@ public class KaCallbackServiceImpl implements KaCallbackService {
      * @param amount 下注或者奖金
      * @return 除以100 转换货币
      */
-    private BigDecimal getDivideAmount(Long amount) {
-        if (0 == amount) {
-            return BigDecimal.ZERO;
-        }
-        return BigDecimal.valueOf(amount).divide(BigDecimal.valueOf(100L), 2, RoundingMode.HALF_UP);
+    private BigDecimal getDivideAmount(BigDecimal amount) {
+        return amount.divide(BigDecimal.valueOf(100L), 2, RoundingMode.HALF_UP);
     }
 
     /**

@@ -4,6 +4,8 @@ package com.indo.game.pojo.dto.ka;
 import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @Data
 public class KACallbackPlayReq extends KACallbackCommonReq {
     // 交易序号
@@ -12,11 +14,11 @@ public class KACallbackPlayReq extends KACallbackCommonReq {
 
     // 下注金额 已经乘以100
     @JSONField(name = "betAmount")
-    private Long betAmount;
+    private BigDecimal betAmount;
 
     // 派彩金额 已经乘以100
     @JSONField(name = "winAmount")
-    private Long winAmount;
+    private BigDecimal winAmount;
 
     // 赔付线游戏的下注线数或方式游戏的转轮数
     @JSONField(name = "selections")
