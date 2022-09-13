@@ -12,12 +12,14 @@ import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.common.util.V8Encrypt;
 import com.indo.core.mapper.game.TxnsMapper;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
+import com.indo.game.pojo.dto.comm.LoginGame;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.core.pojo.entity.game.GameCategory;
 import com.indo.core.pojo.entity.game.GameParentPlatform;
 import com.indo.core.pojo.entity.game.GamePlatform;
 import com.indo.core.pojo.entity.game.Txns;
 import com.indo.game.service.common.GameCommonService;
+import com.indo.game.service.common.GameLogoutService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
 import com.indo.game.service.v8.V8Service;
 import com.indo.core.pojo.bo.MemTradingBO;
@@ -28,6 +30,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class V8ServiceImpl implements V8Service {
@@ -39,7 +42,8 @@ public class V8ServiceImpl implements V8Service {
     private GameCommonService gameCommonService;
     @Autowired
     private TxnsMapper txnsMapper;
-
+    @Autowired
+    private GameLogoutService gameLogoutService;
 
     @Override
     public Result v8Game(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode) {
@@ -74,7 +78,7 @@ public class V8ServiceImpl implements V8Service {
 //            //站点棋牌余额不足
 //            return Result.failed("g300004", MessageUtils.get("g300004",countryCode));
 //        }
-
+        gameLogoutService.gamelogout(loginUser.getAccount(),  ip,  countryCode);
         try {
 
             // 验证且绑定（KY-CPT第三方会员关系）
@@ -95,7 +99,7 @@ public class V8ServiceImpl implements V8Service {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
                 // 先退出游戏
-                GameUtil.httpGetWithCookies(getLoginOutUrl(loginUser.getAccount()), null, null);
+//                GameUtil.httpGetWithCookies(getLoginOutUrl(loginUser.getAccount()), null, null);
 
                 // 请求地址
                 return createMemberGame(cptOpenMember, platform, ip, false,balance, countryCode);
@@ -109,11 +113,12 @@ public class V8ServiceImpl implements V8Service {
     }
 
     @Override
-    public Result logout(LoginInfo loginUser, String platform, String ip,String countryCode) {
-        logger.info("v8_logout {} v8Game account:{},v8CodeId:{}", loginUser.getId(), loginUser.getAccount(), platform);
+    public Result logout(String account,String platform, String ip,String countryCode) {
+        logger.info("v8_logout v8Game account:{},v8CodeId:{}", account, platform);
         try {
 
-            String result = GameUtil.httpGetWithCookies(getLoginOutUrl(loginUser.getAccount()), null, null);
+            String result = GameUtil.httpGetWithCookies(getLoginOutUrl(account), null, null);
+            logger.info("v8Game logout登出返回:result:{}", result);
             JSONObject jsonObject = JSONObject.parseObject(result);
 
             if (null == jsonObject || null == jsonObject.getJSONObject("d")) {
@@ -223,6 +228,7 @@ public class V8ServiceImpl implements V8Service {
         try {
             //
             String result = GameUtil.httpGetWithCookies(getLoginUrl(cptOpenMember.getUserName(), platform, ip,balance), null, null);
+            logger.info("v8Game getLoginUrl登录返回:result:{}", result);
             JSONObject jsonObject = JSONObject.parseObject(result);
 
             if (null == jsonObject || null == jsonObject.getJSONObject("d")) {

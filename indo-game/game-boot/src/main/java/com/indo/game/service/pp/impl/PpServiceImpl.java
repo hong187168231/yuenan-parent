@@ -14,6 +14,7 @@ import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.common.util.PPHashAESEncrypt;
 import com.indo.core.mapper.game.TxnsMapper;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
+import com.indo.game.pojo.dto.comm.LoginGame;
 import com.indo.game.pojo.dto.pp.PpApiGetBalanceReq;
 import com.indo.game.pojo.dto.pp.PpApiRequestData;
 import com.indo.game.pojo.dto.pp.PpApiResponseData;
@@ -25,6 +26,7 @@ import com.indo.core.pojo.entity.game.GameParentPlatform;
 import com.indo.core.pojo.entity.game.GamePlatform;
 import com.indo.core.pojo.entity.game.Txns;
 import com.indo.game.service.common.GameCommonService;
+import com.indo.game.service.common.GameLogoutService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
 import com.indo.game.service.pp.PpService;
 import com.indo.core.pojo.bo.MemTradingBO;
@@ -35,6 +37,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -46,7 +49,8 @@ public class PpServiceImpl implements PpService {
     private GameCommonService gameCommonService;
     @Autowired
     private TxnsMapper txnsMapper;
-
+    @Autowired
+    private GameLogoutService gameLogoutService;
     @Override
     public Result ppGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode) {
         logger.info("pplog ppGame account:{},ppCodeId:{}", loginUser.getId(), loginUser.getAccount(), platform);
@@ -80,7 +84,7 @@ public class PpServiceImpl implements PpService {
 //            //站点棋牌余额不足
 //            return Result.failed("g300004", MessageUtils.get("g300004",countryCode));
 //        }
-
+        gameLogoutService.gamelogout(loginUser.getAccount(),  ip,  countryCode);
         try {
 
             // 验证且绑定（KY-CPT第三方会员关系）
@@ -100,7 +104,7 @@ public class PpServiceImpl implements PpService {
                 externalService.updateCptOpenMember(cptOpenMember);
 
                 // 退出游戏
-                loginOutPP(loginUser);
+//                loginOutPP(loginUser);
             }
 //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
             String lang = "";
@@ -156,11 +160,11 @@ public class PpServiceImpl implements PpService {
     }
 
     @Override
-    public Result logout(LoginInfo loginUser, String platform, String ip,String countryCode) {
-        logger.info("pplogout ppGame account:{},t9CodeId:{}", loginUser.getId(), loginUser.getAccount(), platform);
+    public Result logout(String account,String platform, String ip,String countryCode) {
+        logger.info("pplogout ppGame account:{},platform:{}", account, platform);
         try {
             // 退出游戏
-            PpApiResponseData ppCommonResp = loginOutPP(loginUser);
+            PpApiResponseData ppCommonResp = loginOutPP(account);
 
             if (0 == ppCommonResp.getError()) {
                 return Result.success(ppCommonResp);
@@ -173,16 +177,16 @@ public class PpServiceImpl implements PpService {
         }
     }
 
-    private PpApiResponseData loginOutPP(LoginInfo loginUser) throws Exception {
+    private PpApiResponseData loginOutPP(String account) throws Exception {
         PpApiRequestData ppApiRequestData = new PpApiRequestData();
         ppApiRequestData.setSecureLogin(OpenAPIProperties.PP_SECURE_LOGIN);
-        ppApiRequestData.setExternalPlayerId(loginUser.getAccount());
+        ppApiRequestData.setExternalPlayerId(account);
 
         // 获取请求参数
         Map<String, Object> params = getPostParams(ppApiRequestData);
 
         // 退出游戏
-        return commonRequest(getLogOutPpPlayerUrl(), params, loginUser.getId(), "loginoutPP");
+        return commonRequest(getLogOutPpPlayerUrl(), params, 0, "loginoutPP");
     }
 
     @Override

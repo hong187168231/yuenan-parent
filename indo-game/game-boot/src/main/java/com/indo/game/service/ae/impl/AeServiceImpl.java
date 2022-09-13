@@ -10,11 +10,13 @@ import com.indo.common.utils.encrypt.MD5;
 import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.pojo.dto.ae.AeApiResponseData;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
+import com.indo.game.pojo.dto.comm.LoginGame;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.core.pojo.entity.game.GameParentPlatform;
 import com.indo.core.pojo.entity.game.GamePlatform;
 import com.indo.game.service.ae.AeService;
 import com.indo.game.service.common.GameCommonService;
+import com.indo.game.service.common.GameLogoutService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
 
 import org.apache.commons.lang3.StringUtils;
@@ -25,11 +27,7 @@ import org.springframework.stereotype.Service;
 
 
 import java.math.BigDecimal;
-import java.util.Base64;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -45,7 +43,8 @@ public class AeServiceImpl implements AeService {
     private CptOpenMemberService externalService;
     @Autowired
     private GameCommonService gameCommonService;
-
+    @Autowired
+    private GameLogoutService gameLogoutService;
 
     /**
      * 登录游戏AE电子
@@ -86,7 +85,7 @@ public class AeServiceImpl implements AeService {
 //            //站点棋牌余额不足
 //            return Result.failed("g300004", MessageUtils.get("g300004",countryCode));
 //        }
-
+        gameLogoutService.gamelogout(loginUser.getAccount(),  ip,  countryCode);
         try {
 
             // 验证且绑定（AE-CPT第三方会员关系）
@@ -107,7 +106,7 @@ public class AeServiceImpl implements AeService {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
                 //先登出
-                logout(loginUser, platform, ip, countryCode);
+//                logout(loginUser, platform, ip, countryCode);
             }
             //登录
             return initGame(gameParentPlatform, gamePlatform, cptOpenMember, isMobileLogin, countryCode);
@@ -271,7 +270,7 @@ public class AeServiceImpl implements AeService {
     /**
      * 强迫登出玩家
      */
-    public Result logout(LoginInfo loginUser, String platform, String ip,String countryCode) {
+    public Result logout(String account,String platform, String ip,String countryCode) {
         try {
             GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(platform);
             if (null == platformGameParent) {
@@ -279,7 +278,7 @@ public class AeServiceImpl implements AeService {
             }
             long currentTime = System.currentTimeMillis();
             StringBuilder builder = new StringBuilder();
-            String name = OpenAPIProperties.AE_MERCHANT_ID + "_" + loginUser.getAccount();
+            String name = OpenAPIProperties.AE_MERCHANT_ID + "_" + account;
             builder.append(OpenAPIProperties.AE_MERCHANT_ID).append(platformGameParent.getCurrencyType()).append(currentTime);
             builder.append(name).append(Base64.getEncoder().encodeToString(OpenAPIProperties.AE_MERCHANT_KEY.getBytes()));
             logger.info("aelog logout登出玩家加密前。 builder:{}", builder.toString());
@@ -293,8 +292,8 @@ public class AeServiceImpl implements AeService {
             String jsonStr = JSON.toJSONString(params);
             StringBuilder apiUrl = new StringBuilder();
             apiUrl.append(OpenAPIProperties.AE_API_URL).append("/api/logout");
-            logger.info("aelog logout登出玩家请求。 apiUrl:{},params:{},user:{}", apiUrl.toString(),jsonStr,loginUser);
-            AeApiResponseData aeApiResponseData = commonRequest(apiUrl.toString(), jsonStr, loginUser.getId().intValue(), "gameLogout");
+            logger.info("aelog logout登出玩家请求。 apiUrl:{},params:{},user:{}", apiUrl.toString(),jsonStr,account);
+            AeApiResponseData aeApiResponseData = commonRequest(apiUrl.toString(), jsonStr, 0, "gameLogout");
             logger.info("aelog logout登出玩家返回。 aeApiResponseData:{}", JSONObject.toJSONString(aeApiResponseData));
             if (null == aeApiResponseData) {
                 return Result.failed();

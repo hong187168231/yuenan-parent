@@ -9,6 +9,7 @@ import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.core.mapper.game.GameCategoryMapper;
 import com.indo.core.mapper.game.GamePlatformMapper;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
+import com.indo.game.pojo.dto.comm.LoginGame;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.game.pojo.dto.awc.AwcTransaction;
 import com.indo.game.pojo.dto.awc.AwcApiResponseData;
@@ -17,6 +18,7 @@ import com.indo.core.pojo.entity.game.GamePlatform;
 import com.indo.game.service.awc.AwcService;
 import com.indo.common.utils.GameUtil;
 import com.indo.game.service.common.GameCommonService;
+import com.indo.game.service.common.GameLogoutService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -46,6 +48,8 @@ public class AwcServiceImpl implements AwcService {
     GameCategoryMapper gameCategoryMapper;
     @Autowired
     private GamePlatformMapper gamePlatformMapper;
+    @Autowired
+    private GameLogoutService gameLogoutService;
     /**
      * 登录游戏AWC-AE真人
      * @return loginUser 用户信息
@@ -87,7 +91,7 @@ public class AwcServiceImpl implements AwcService {
 //            //站点棋牌余额不足
 //            return Result.failed("g300004",MessageUtils.get("g300004",countryCode));
 //        }
-
+        gameLogoutService.gamelogout(loginUser.getAccount(),  ip,  countryCode);
         try {
 
             // 验证且绑定（KY-CPT第三方会员关系）
@@ -103,7 +107,7 @@ public class AwcServiceImpl implements AwcService {
                 //创建玩家
                 return createMemberGame(gameParentPlatform,gamePlatform, ip, cptOpenMember,isMobileLogin,countryCode);
             } else {
-                this.logout(loginUser,ip, countryCode);
+//                this.logout(loginUser,ip, countryCode);
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
                 //登录
@@ -118,13 +122,13 @@ public class AwcServiceImpl implements AwcService {
     /**
      * AE真人、SV388斗鸡游戏 强迫登出玩家
      */
-    public Result logout(LoginInfo loginUser,String ip,String countryCode){
+    public Result logout(String account,String platform, String ip,String countryCode){
         Map<String, String> trr = new HashMap<>();
-        trr.put("userIds", loginUser.getAccount());
+        trr.put("userIds", account);
 
         AwcApiResponseData awcApiResponseData = null;
         try {
-            awcApiResponseData = commonRequest(trr, OpenAPIProperties.AWC_API_URL_LOGIN+"/wallet/logout", Integer.valueOf(loginUser.getId().intValue()), ip, "logout");
+            awcApiResponseData = commonRequest(trr, OpenAPIProperties.AWC_API_URL_LOGIN+"/wallet/logout", 0, ip, "logout");
             if (null == awcApiResponseData ) {
                 return Result.failed("g100104",MessageUtils.get("g100104",countryCode));
             }

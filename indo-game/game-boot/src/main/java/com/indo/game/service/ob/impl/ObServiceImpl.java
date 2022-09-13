@@ -8,11 +8,13 @@ import com.indo.common.utils.GameUtil;
 import com.indo.common.utils.encrypt.MD5;
 import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
+import com.indo.game.pojo.dto.comm.LoginGame;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.core.pojo.entity.game.GameParentPlatform;
 import com.indo.core.pojo.entity.game.GamePlatform;
 import com.indo.game.pojo.vo.callback.ob.ObApiResponseData;
 import com.indo.game.service.common.GameCommonService;
+import com.indo.game.service.common.GameLogoutService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
 import com.indo.game.service.ob.ObService;
 
@@ -25,6 +27,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -41,7 +44,8 @@ public class ObServiceImpl implements ObService {
     private CptOpenMemberService externalService;
     @Autowired
     private GameCommonService gameCommonService;
-
+    @Autowired
+    private GameLogoutService gameLogoutService;
 
     /**
      * 登录游戏AE电子
@@ -80,7 +84,7 @@ public class ObServiceImpl implements ObService {
 //            //站点棋牌余额不足
 //            return Result.failed("g300004", MessageUtils.get("g300004",countryCode));
 //        }
-
+        gameLogoutService.gamelogout(loginUser.getAccount(),  ip,  countryCode);
         try {
 
             // 验证且绑定（AE-CPT第三方会员关系）
@@ -99,7 +103,7 @@ public class ObServiceImpl implements ObService {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
                 //先登出
-                logout(loginUser, platform, ip, countryCode);
+//                logout(loginUser, platform, ip, countryCode);
             }
             //登录
             return initGame(gameParentPlatform, gamePlatform, cptOpenMember, isMobileLogin, countryCode);
@@ -219,7 +223,7 @@ public class ObServiceImpl implements ObService {
     /**
      * 强迫登出玩家
      */
-    public Result logout(LoginInfo loginUser, String platform, String ip,String countryCode) {
+    public Result logout(String account,String platform, String ip,String countryCode) {
         try {
             GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(platform);
             if (null == platformGameParent) {
@@ -228,10 +232,10 @@ public class ObServiceImpl implements ObService {
             long currentTime = System.currentTimeMillis();
             StringBuilder builder = new StringBuilder();
             Map<String, String> params = new HashMap<String, String>();
-            params.put("userName", loginUser.getAccount());
+            params.put("userName", account);
             params.put("merchantCode", OpenAPIProperties.OB_MERCHANT_CODE);
             params.put("timestamp", currentTime + "");
-            builder.append(OpenAPIProperties.OB_MERCHANT_CODE).append("&").append(loginUser.getAccount()).append("&").append(currentTime);
+            builder.append(OpenAPIProperties.OB_MERCHANT_CODE).append("&").append(account).append("&").append(currentTime);
             String signKey = MD5.md5(builder.toString());
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append(signKey).append("&").append(OpenAPIProperties.OB_MERCHANT_KEY);
@@ -240,7 +244,7 @@ public class ObServiceImpl implements ObService {
             StringBuilder apiUrl = new StringBuilder();
             apiUrl.append(OpenAPIProperties.OB_API_URL).append("/api/user/kickOutUser");
             logger.info("OB体育log  登出玩家logout输入 apiUrl:{}, platform:{}", apiUrl.toString(), params);
-            ObApiResponseData obApiResponseData = commonRequest(apiUrl.toString(), params, loginUser.getId().intValue(), "gameLogout");
+            ObApiResponseData obApiResponseData = commonRequest(apiUrl.toString(), params, 0, "gameLogout");
             logger.info("OB体育log  登出玩家logout返回 obApiResponseData:{}", obApiResponseData);
             if (null == obApiResponseData) {
                 return Result.failed();

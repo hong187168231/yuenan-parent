@@ -11,20 +11,24 @@ import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.core.pojo.entity.game.GameParentPlatform;
 import com.indo.core.pojo.entity.game.GamePlatform;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
+import com.indo.game.pojo.dto.comm.LoginGame;
 import com.indo.game.pojo.dto.sgwin.SgwinApiResp;
 import com.indo.game.pojo.dto.sgwin.SgwinLoginRequest;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.game.service.common.GameCommonService;
+import com.indo.game.service.common.GameLogoutService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
 import com.indo.game.service.sgwin.SGWinService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 @Service
@@ -35,7 +39,8 @@ public class SGWinServiceImpl implements SGWinService {
     private CptOpenMemberService externalService;
     @Resource
     private GameCommonService gameCommonService;
-
+    @Autowired
+    private GameLogoutService gameLogoutService;
 
     @Override
     public Result sgwinGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode) {
@@ -72,6 +77,7 @@ public class SGWinServiceImpl implements SGWinService {
 //            //站点棋牌余额不足
 //            return Result.failed("g300004", MessageUtils.get("g300004",countryCode));
 //        }
+        gameLogoutService.gamelogout(loginUser.getAccount(),  ip,  countryCode);
         try {
 
             // 验证且绑定（AE-CPT第三方会员关系）
@@ -88,7 +94,7 @@ public class SGWinServiceImpl implements SGWinService {
             } else {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
-                logout(loginUser, platform, ip, countryCode);
+//                logout(loginUser, platform, ip, countryCode);
             }
 
             SgwinApiResp sgwinApiResp = gameLogin( cptOpenMember);
@@ -158,12 +164,12 @@ public class SGWinServiceImpl implements SGWinService {
      * 强迫登出玩家
      */
     @Override
-    public Result logout(LoginInfo loginUser, String platform, String ip,String countryCode) {
+    public Result logout(String account,String platform, String ip,String countryCode) {
         try {
             StringBuilder params = new StringBuilder();
             params.append("agentID").append("=").append(OpenAPIProperties.SGWIN_AGENT_ID);
             params.append("&root").append("=").append(OpenAPIProperties.SGWIN_AGENT);
-            params.append("&username").append("=").append(loginUser.getAccount().toUpperCase(Locale.ROOT));
+            params.append("&username").append("=").append(account.toUpperCase(Locale.ROOT));
             String sign = MD5.md5(params.toString()+"&"+OpenAPIProperties.SGWIN_API_TOKEN);
             StringBuilder urlParams = new StringBuilder();
             urlParams.append(params+"&hash").append(sign);
@@ -171,8 +177,8 @@ public class SGWinServiceImpl implements SGWinService {
             StringBuilder apiUrl = new StringBuilder();
             apiUrl.append(OpenAPIProperties.SGWIN_API_URL).append("/api/logout").append("?");
             apiUrl.append(urlParams);
-            logger.info("SGWin  logout注销请求apiUrl:{}, params:{}, user:{}", apiUrl, null, loginUser);
-            sgwinApiResp = commonRequest(apiUrl.toString(), "", loginUser.getId().intValue(), "logout");
+            logger.info("SGWin  logout注销请求apiUrl:{}, params:{}, user:{}", apiUrl, null, account);
+            sgwinApiResp = commonRequest(apiUrl.toString(), "", 0, "logout");
             logger.info("SGWin  logout注销返回resultString:{}", JSON.toJSONString(sgwinApiResp));
             if(sgwinApiResp.getSuccess()){
                 return Result.success();

@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -76,7 +77,7 @@ public class MessageUtils {
             Locale locale = new Locale(lang,country);
             logger.info("获取单个国际化翻译值msgKey:{},countryCode：{},lang：{},country：{},locale：{}", msgKey, countryCode,lang,country,locale);
             ResourceBundle bundle = ResourceBundle.getBundle("messages", locale);
-            return bundle.getString(msgKey);
+            return new String(bundle.getString(msgKey).getBytes(StandardCharsets.ISO_8859_1),StandardCharsets.UTF_8);
         } catch (Exception e) {
             e.printStackTrace();
             return msgKey;

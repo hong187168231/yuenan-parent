@@ -706,8 +706,6 @@ public class GameUtil extends HttpCommonUtils {
     }
 
     public static String httpGetWithCookies(String url, Header[] headers, HttpHost proxy) {
-        logger.info("GET请求 httpGetWithCookies headers:{}, proxy: {}", headers, proxy);
-        logger.info("GET请求 httpGetWithCookies url:{}", url);
         PoolingHttpClientConnectionManager connManager = new PoolingHttpClientConnectionManager();
         connManager.setMaxTotal(1000);
         connManager.setDefaultConnectionConfig(ConnectionConfig.custom().setCharset(Charset.forName("utf-8")).build());

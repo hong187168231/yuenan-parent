@@ -9,11 +9,13 @@ import com.indo.common.utils.GameUtil;
 import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.common.util.SnowflakeId;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
+import com.indo.game.pojo.dto.comm.LoginGame;
 import com.indo.game.pojo.dto.cq.CqApiResponseData;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.core.pojo.entity.game.GameParentPlatform;
 import com.indo.core.pojo.entity.game.GamePlatform;
 import com.indo.game.service.common.GameCommonService;
+import com.indo.game.service.common.GameLogoutService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
 import com.indo.game.service.cq.CqService;
 
@@ -26,6 +28,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -42,7 +45,8 @@ public class CqServiceImpl implements CqService {
     private CptOpenMemberService externalService;
     @Autowired
     private GameCommonService gameCommonService;
-
+    @Autowired
+    private GameLogoutService gameLogoutService;
 
     /**
      * 登录游戏CQ9游戏
@@ -82,6 +86,7 @@ public class CqServiceImpl implements CqService {
 //            //站点棋牌余额不足
 //            return Result.failed("g300004", MessageUtils.get("g300004",countryCode));
 //        }
+        gameLogoutService.gamelogout(loginUser.getAccount(),  ip,  countryCode);
         try {
 
             // 验证且绑定（AE-CPT第三方会员关系）
@@ -103,9 +108,9 @@ public class CqServiceImpl implements CqService {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
             }
-            if(b){
-                this.logout(loginUser,parentName,ip,countryCode);
-            }
+//            if(b){
+//                this.logout(loginUser,parentName,ip,countryCode);
+//            }
             //登录
             return initGame(gameParentPlatform, gamePlatform, cptOpenMember, isMobileLogin, countryCode);
         } catch (Exception e) {
@@ -199,17 +204,17 @@ public class CqServiceImpl implements CqService {
     /**
      * 强迫登出玩家
      */
-    public Result logout(LoginInfo loginUser, String platform, String ip,String  countryCode) {
+    public Result logout(String account,String platform, String ip,String countryCode) {
         try {
             GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(platform);
             if (null == platformGameParent) {
                 return Result.failed();
             }
             Map<String, String> params = new HashMap<String, String>();
-            params.put("account", loginUser.getAccount());
+            params.put("account", account);
             StringBuilder apiUrl = new StringBuilder();
             apiUrl.append(OpenAPIProperties.CQ_API_URL).append("/gameboy/player/logout");
-            CqApiResponseData cqApiResponseData = commonRequest(apiUrl.toString(), params, loginUser.getId().intValue(), "cqGameLogin");
+            CqApiResponseData cqApiResponseData = commonRequest(apiUrl.toString(), params, 0, "cqGameLogin");
             if (null == cqApiResponseData) {
                 return Result.failed("g091087", MessageUtils.get("g091087",countryCode));
             }

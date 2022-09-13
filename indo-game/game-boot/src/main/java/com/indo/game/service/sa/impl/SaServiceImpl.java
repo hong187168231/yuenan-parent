@@ -11,22 +11,26 @@ import com.indo.game.common.util.FCHashAESEncrypt;
 import com.indo.game.common.util.SAJEncryption;
 import com.indo.game.common.util.XmlUtil;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
+import com.indo.game.pojo.dto.comm.LoginGame;
 import com.indo.game.pojo.dto.sa.SaKickUserResp;
 import com.indo.game.pojo.dto.sa.SaLoginResp;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.core.pojo.entity.game.GameParentPlatform;
 import com.indo.core.pojo.entity.game.GamePlatform;
 import com.indo.game.service.common.GameCommonService;
+import com.indo.game.service.common.GameLogoutService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
 import com.indo.game.service.sa.SaService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -37,7 +41,8 @@ public class SaServiceImpl implements SaService {
     private CptOpenMemberService externalService;
     @Resource
     private GameCommonService gameCommonService;
-
+    @Autowired
+    private GameLogoutService gameLogoutService;
 
     @Override
     public Result saGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode) {
@@ -72,7 +77,7 @@ public class SaServiceImpl implements SaService {
 //            //站点棋牌余额不足
 //            return Result.failed("g300004", MessageUtils.get("g300004",countryCode));
 //        }
-
+        gameLogoutService.gamelogout(loginUser.getAccount(),  ip,  countryCode);
         try {
 
             // 验证且绑定（KY-CPT第三方会员关系）
@@ -93,7 +98,7 @@ public class SaServiceImpl implements SaService {
                 externalService.updateCptOpenMember(cptOpenMember);
 
                 //先退出
-                this.logout(loginUser,platform,ip,countryCode);
+//                this.logout(loginUser,platform,ip,countryCode);
 
                 logger.info("salogin ip{} saGame account:{},platform:{},parentName:{}", ip, loginUser.getAccount(), platform,parentName);
                 String time = DateUtils.getLongDateString(new Date());
@@ -193,8 +198,8 @@ public class SaServiceImpl implements SaService {
     }
 
     @Override
-    public Result logout(LoginInfo loginUser, String platform, String ip,String countryCode) {
-        logger.info("salogout ip{} saGame account:{},platform:{},parentName:{}", ip, loginUser.getAccount(), platform);
+    public Result logout(String account,String platform, String ip,String countryCode) {
+        logger.info("salogout ip{} saGame account:{},platform:{},parentName:{}", ip, account, platform);
         try {
             String time = DateUtils.getLongDateString(new Date());
             String qs = "method=KickUser&Key=" + OpenAPIProperties.SA_SECRET_KEY + "&Time=" + time;
@@ -202,7 +207,7 @@ public class SaServiceImpl implements SaService {
             param.put("method", "KickUser");
             param.put("Key", OpenAPIProperties.SA_SECRET_KEY);
             param.put("Time", time);
-            param.put("Username", loginUser.getAccount());
+            param.put("Username", account);
             param.put("s", FCHashAESEncrypt.encryptMd5(qs + OpenAPIProperties.SA_MD5KEY + time + OpenAPIProperties.SA_SECRET_KEY));
             param.put("q", SAJEncryption.encrypt(qs, OpenAPIProperties.SA_ENCRYPT_KEY));
             // 用户离线

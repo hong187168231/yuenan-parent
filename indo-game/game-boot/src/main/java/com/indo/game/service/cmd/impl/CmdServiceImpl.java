@@ -8,19 +8,23 @@ import com.indo.common.result.Result;
 import com.indo.common.utils.GameUtil;
 import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
+import com.indo.game.pojo.dto.comm.LoginGame;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.core.pojo.entity.game.GameParentPlatform;
 import com.indo.core.pojo.entity.game.GamePlatform;
 import com.indo.game.service.cmd.CmdService;
 import com.indo.game.service.common.GameCommonService;
+import com.indo.game.service.common.GameLogoutService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class CmdServiceImpl implements CmdService {
@@ -30,7 +34,8 @@ public class CmdServiceImpl implements CmdService {
     private CptOpenMemberService externalService;
     @Resource
     private GameCommonService gameCommonService;
-
+    @Autowired
+    private GameLogoutService gameLogoutService;
     @Override
     public Result cmdGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode) {
         logger.info("cmd体育log  cmdGame loginUser:{}, ip:{}, platform:{}, parentName:{}, isMobileLogin:{}", loginUser,ip,platform,parentName,isMobileLogin);
@@ -64,7 +69,7 @@ public class CmdServiceImpl implements CmdService {
 //            //站点棋牌余额不足
 //            return Result.failed("g300004", MessageUtils.get("g300004",countryCode));
 //        }
-
+        gameLogoutService.gamelogout(loginUser.getAccount(),  ip,  countryCode);
         try {
 
             // 验证且绑定（KY-CPT第三方会员关系）
@@ -85,8 +90,8 @@ public class CmdServiceImpl implements CmdService {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
 
-                String returnResult = GameUtil.httpGetWithCookies(getLoginOutUrl(loginUser.getAccount()), null, null);
-                JSONObject result = JSONObject.parseObject(returnResult);
+//                String returnResult = GameUtil.httpGetWithCookies(getLoginOutUrl(loginUser.getAccount()), null, null);
+//                JSONObject result = JSONObject.parseObject(returnResult);
 
                 logger.info("cmd体育log  登录cmdGame输入 urlapi:{}",getStartGame(cptOpenMember, gameParentPlatform.getCurrencyType(), gameParentPlatform.getLanguageType(), isMobileLogin));
                 //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
@@ -147,11 +152,11 @@ public class CmdServiceImpl implements CmdService {
     }
 
     @Override
-    public Result logout(LoginInfo loginUser, String platform, String ip,String countryCode) {
-        logger.info("cmdlogout {} cmdGame account:{},cmdCodeId:{}", ip, loginUser.getAccount(), platform);
+    public Result logout(String account,String platform, String ip,String countryCode) {
+        logger.info("cmdlogout {} cmdGame account:{},cmdCodeId:{}", ip, account ,platform);
         try {
-            logger.info("cmd体育log  登出logout输入 loginUser:{}, ip:{}, urlapi:{}", loginUser,ip,getLoginOutUrl(loginUser.getAccount()));
-            String returnResult = GameUtil.httpGetWithCookies(getLoginOutUrl(loginUser.getAccount()), null, null);
+            logger.info("cmd体育log  登出logout输入 loginUser:{}, ip:{}, urlapi:{}", account,ip,getLoginOutUrl(account));
+            String returnResult = GameUtil.httpGetWithCookies(getLoginOutUrl(account), null, null);
             logger.info("cmd体育log  登出logout返回 responseData:{}",returnResult);
             JSONObject result = JSONObject.parseObject(returnResult);
             if (null == result) {

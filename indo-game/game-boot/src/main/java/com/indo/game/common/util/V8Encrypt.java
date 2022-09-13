@@ -98,8 +98,8 @@ public class V8Encrypt {
 		}
 	}
 	public static void main(String[] args) throws Exception {
-		System.out.println(V8Encrypt.AESEncrypt("jI11wfffPw1nlNQ9aTbeW1yrPHEWLgbkG0DR6jiEZ0s=","D939447DB8B048FC"));
+//		System.out.println(V8Encrypt.AESEncrypt("jI11wfffPw1nlNQ9aTbeW1yrPHEWLgbkG0DR6jiEZ0s=","0F402F10708486AC"));
 
-		System.out.println(V8Encrypt.AESDecrypt("jI11wfffPw1nlNQ9aTbeW1yrPHEWLgbkG0DR6jiEZ0s=","D939447DB8B048FC",false));
+		System.out.println(V8Encrypt.AESDecrypt("BMsIl9x971D+un4GwFCd5UrEtocNLIKI4mFA72KbBz4=","0F402F10708486AC",false));
 	}
 }

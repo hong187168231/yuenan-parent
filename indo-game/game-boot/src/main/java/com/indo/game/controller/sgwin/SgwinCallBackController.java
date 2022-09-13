@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
-@RequestMapping("/SGWin/callBack")
+@RequestMapping("/SGWin/callBack/notify")
 public class SgwinCallBackController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 

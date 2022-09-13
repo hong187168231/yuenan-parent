@@ -43,6 +43,8 @@ public interface RedisConstants {
 
     static final String GAME_DOWNLOAD_KEY = "GAME_DOWNLOAD_KEY";
 
+    static final String GAME_LOGINGAME_KEY = "GAME_LOGINGAME_KEY";
+
     static final String GAME_CATEGORY_KEY = "GAME_CATEGORY_KEY";
 
     static final String GAME_PLATFORM_KEY = "GAME_PLATFORM_KEY";

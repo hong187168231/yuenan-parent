@@ -73,7 +73,7 @@ public class V8CallbackController {
         String gameNo = null;
         BigDecimal money = BigDecimal.ZERO;
         try {
-            param = V8Encrypt.AESDecrypt(param, OpenAPIProperties.V8_DESKEY,true);
+            param = V8Encrypt.AESDecrypt(param, OpenAPIProperties.V8_DESKEY,false);
             logger.info("V8Callback 回调 解密后数据, param[]:{}", param);
             String[] params = param.split("&");
             for (String temp : params) {

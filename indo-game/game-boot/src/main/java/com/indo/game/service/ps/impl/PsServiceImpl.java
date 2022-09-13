@@ -12,6 +12,7 @@ import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.core.pojo.entity.game.GameParentPlatform;
 import com.indo.core.pojo.entity.game.GamePlatform;
 import com.indo.game.service.common.GameCommonService;
+import com.indo.game.service.common.GameLogoutService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
 import com.indo.game.service.ps.PsService;
 
@@ -40,7 +41,8 @@ public class PsServiceImpl implements PsService {
     private CptOpenMemberService externalService;
     @Autowired
     private GameCommonService gameCommonService;
-
+    @Autowired
+    private GameLogoutService gameLogoutService;
 
     /**
      * 登录游戏CQ9游戏
@@ -79,6 +81,7 @@ public class PsServiceImpl implements PsService {
 //            //站点棋牌余额不足
 //            return Result.failed("g300004", MessageUtils.get("g300004",countryCode));
 //        }
+        gameLogoutService.gamelogout(loginUser.getAccount(),  ip,  countryCode);
         try {
             // 验证且绑定（AE-CPT第三方会员关系）
             CptOpenMember cptOpenMember = externalService.getCptOpenMember(loginUser.getId().intValue(), parentName);
@@ -95,7 +98,7 @@ public class PsServiceImpl implements PsService {
             } else {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
-                this.logout(loginUser, platform, ip,countryCode);
+//                this.logout(loginUser, platform, ip,countryCode);
             }
             String lang = "";
             if(null!=countryCode&&!"".equals(countryCode)){
@@ -158,18 +161,19 @@ public class PsServiceImpl implements PsService {
     /**
      * 强迫登出玩家
      */
-    public Result logout(LoginInfo loginUser, String platform, String ip,String countryCode) {
+    public Result logout(String account,String platform, String ip,String countryCode) {
         try {
-            GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(platform);
-            if (null == platformGameParent) {
-                return Result.failed();
-            }
+//            GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(platform);
+//            if (null == platformGameParent) {
+//                return Result.failed();
+//            }
+            CptOpenMember cptOpenMember = externalService.getCptOpenMember(account, platform);
             Map<String, String> map = new HashMap<>();
             map.put("host_id", OpenAPIProperties.PS_HOST_ID);
-            map.put("member_id", loginUser.getId() + "");
+            map.put("member_id", cptOpenMember.getPassword());
             StringBuilder builder = new StringBuilder();
             builder.append(OpenAPIProperties.PS_API_URL).append("/admin/kickout");
-            JSONObject jsonObject = commonRequest(builder.toString(), map, loginUser.getId().intValue(), "cqGamelogout");
+            JSONObject jsonObject = commonRequest(builder.toString(), map, 0, "cqGamelogout");
             if (null == jsonObject) {
                 return Result.failed();
             }

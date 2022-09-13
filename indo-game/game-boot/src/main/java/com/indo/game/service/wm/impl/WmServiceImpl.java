@@ -9,14 +9,17 @@ import com.indo.common.utils.DateUtils;
 import com.indo.common.utils.GameUtil;
 import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
+import com.indo.game.pojo.dto.comm.LoginGame;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.core.pojo.entity.game.GameParentPlatform;
 import com.indo.core.pojo.entity.game.GamePlatform;
 import com.indo.game.service.common.GameCommonService;
+import com.indo.game.service.common.GameLogoutService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
 import com.indo.game.service.wm.WmService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -31,7 +34,8 @@ public class WmServiceImpl implements WmService {
     private CptOpenMemberService externalService;
     @Resource
     private GameCommonService gameCommonService;
-
+    @Autowired
+    private GameLogoutService gameLogoutService;
 
     @Override
     public Result wmGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode) {
@@ -66,7 +70,7 @@ public class WmServiceImpl implements WmService {
 //            //站点棋牌余额不足
 //            return Result.failed("g300004", MessageUtils.get("g300004",countryCode));
 //        }
-
+        gameLogoutService.gamelogout(loginUser.getAccount(),  ip,  countryCode);
         try {
 
             // 验证且绑定（KY-CPT第三方会员关系）
@@ -86,7 +90,7 @@ public class WmServiceImpl implements WmService {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
                 // 先退出
-                commonRequest(getLoginOutUrl(loginUser.getAccount()), null);
+//                commonRequest(getLoginOutUrl(loginUser.getAccount()), null);
 //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
                 String lang = "";
                 if(null!=countryCode&&!"".equals(countryCode)){
@@ -149,12 +153,12 @@ public class WmServiceImpl implements WmService {
     }
 
     @Override
-    public Result logout(LoginInfo loginUser, String platform, String ip,String countryCode) {
-        logger.info("wmlogout {} wmGame account:{},wmCodeId:{}", ip, loginUser.getAccount(), platform);
+    public Result logout(String account,String platform, String ip,String countryCode) {
+        logger.info("wmlogout {} wmGame account:{},wmCodeId:{}", ip, account, platform);
         try {
             // 游戏退出
-            logger.info("wmlogout 退出请求url:{}", getLoginOutUrl(loginUser.getAccount()));
-            JSONObject result = commonRequest(getLoginOutUrl(loginUser.getAccount()), null);
+            logger.info("wmlogout 退出请求url:{}", getLoginOutUrl(account));
+            JSONObject result = commonRequest(getLoginOutUrl(account), null);
             logger.info("wmlogout 退出返回result:{}", result);
             if (null == result) {
                 return Result.failed("g091087", MessageUtils.get("g091087",countryCode));

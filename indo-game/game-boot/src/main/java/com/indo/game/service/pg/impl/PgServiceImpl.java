@@ -10,11 +10,13 @@ import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.common.util.RandomGUID;
 import com.indo.game.common.util.SnowflakeId;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
+import com.indo.game.pojo.dto.comm.LoginGame;
 import com.indo.game.pojo.dto.pg.PgApiResponseData;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.core.pojo.entity.game.GameParentPlatform;
 import com.indo.core.pojo.entity.game.GamePlatform;
 import com.indo.game.service.common.GameCommonService;
+import com.indo.game.service.common.GameLogoutService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
 import com.indo.game.service.pg.PgService;
 
@@ -27,6 +29,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -43,7 +46,8 @@ public class PgServiceImpl implements PgService {
     private CptOpenMemberService externalService;
     @Autowired
     private GameCommonService gameCommonService;
-
+    @Autowired
+    private GameLogoutService gameLogoutService;
 
     /**
      * 登录游戏PG游戏
@@ -82,6 +86,7 @@ public class PgServiceImpl implements PgService {
 //            //站点棋牌余额不足
 //            return Result.failed("g300004", MessageUtils.get("g300004",countryCode));
 //        }
+        gameLogoutService.gamelogout(loginUser.getAccount(),  ip,  countryCode);
         try {
 
             // 验证且绑定（AE-CPT第三方会员关系）
@@ -99,7 +104,7 @@ public class PgServiceImpl implements PgService {
             } else {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
-                logout(loginUser, platform, ip, countryCode);
+//                logout(loginUser, platform, ip, countryCode);
             }
 //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
             String lang = "";
@@ -217,7 +222,7 @@ public class PgServiceImpl implements PgService {
     /**
      * 强迫登出玩家
      */
-    public Result logout(LoginInfo loginUser, String platform, String ip,String countryCode) {
+    public Result logout(String account,String platform, String ip,String countryCode) {
         try {
             GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(platform);
             if (null == platformGameParent) {
@@ -225,15 +230,15 @@ public class PgServiceImpl implements PgService {
             }
             Map<String, String> map = new HashMap<>();
             map.put("operator_token", OpenAPIProperties.PG_API_TOKEN);
-            map.put("player_name", loginUser.getAccount());
+            map.put("player_name", account);
             map.put("secret_key", OpenAPIProperties.PG_SECRET_KEY);
             map.put("currency", platformGameParent.getCurrencyType());
             StringBuilder builder = new StringBuilder();
             RandomGUID myGUID = new RandomGUID();
             builder.append(OpenAPIProperties.PG_API_URL).append("/Player/v1/Kick")
                     .append("?trace_id=").append(myGUID.toString());
-            logger.info("pglog  logout登出玩家 urlapi:{},paramsMap:{},loginUser:{}", builder.toString(), map,loginUser);
-            PgApiResponseData pgApiResponseData = commonRequest(builder.toString(), map, loginUser.getId().intValue(), "cqGameLogin");
+            logger.info("pglog  logout登出玩家 urlapi:{},paramsMap:{},loginUser:{}", builder.toString(), map,account);
+            PgApiResponseData pgApiResponseData = commonRequest(builder.toString(), map, 0, "cqGameLogin");
             logger.info("pglog  logout登出玩家返回 pgApiResponseData:{}", JSONObject.toJSONString(pgApiResponseData));
             if (null == pgApiResponseData) {
                 return Result.failed();

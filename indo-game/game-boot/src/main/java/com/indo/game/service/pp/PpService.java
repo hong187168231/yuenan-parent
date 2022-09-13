@@ -18,7 +18,7 @@ public interface PpService {
     /**
      * PP电子游戏 强迫登出玩家
      */
-    Result logout(LoginInfo loginUser, String platform, String ip,String countryCode);
+    Result logout(String account,String platform, String ip,String countryCode);
 
     /**
      * PP电子充值提款

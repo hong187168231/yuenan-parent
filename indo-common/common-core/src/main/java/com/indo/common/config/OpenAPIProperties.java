@@ -10,6 +10,9 @@ public class OpenAPIProperties implements InitializingBean {
     /**
      * 代理地址
      */
+    public static String USER_PREFIX;
+    @Value("${user.prefix}")
+    private String userPrefix;
     public static String PROXY_HOST_NAME;
     public static int PROXY_PORT;
     public static String PROXY_TCP;
@@ -698,6 +701,7 @@ public class OpenAPIProperties implements InitializingBean {
     @Override
     public void afterPropertiesSet() {
 
+        USER_PREFIX = userPrefix;
         PROXY_HOST_NAME = proxyHostName;
         PROXY_PORT = proxyPort;
         PROXY_TCP = proxyTcp;

@@ -12,9 +12,11 @@ import com.indo.core.pojo.entity.game.GameParentPlatform;
 import com.indo.core.pojo.entity.game.GamePlatform;
 import com.indo.game.common.util.AGEncrypt;
 import com.indo.game.common.util.SnowflakeId;
+import com.indo.game.pojo.dto.comm.LoginGame;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.game.service.ag.AgService;
 import com.indo.game.service.common.GameCommonService;
+import com.indo.game.service.common.GameLogoutService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -30,6 +32,7 @@ import java.io.StringReader;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 ;
@@ -52,6 +55,8 @@ public class AgServiceImpl implements AgService {
     GameCategoryMapper gameCategoryMapper;
     @Autowired
     private GamePlatformMapper gamePlatformMapper;
+    @Autowired
+    private GameLogoutService gameLogoutService;
     /**
      * 登录游戏AG
      * @return loginUser 用户信息
@@ -92,7 +97,7 @@ public class AgServiceImpl implements AgService {
 //            //站点棋牌余额不足
 //            return Result.failed("g300004",MessageUtils.get("g300004",countryCode));
 //        }
-
+        gameLogoutService.gamelogout(loginUser.getAccount(),  ip,  countryCode);
         try {
 
             // 验证且绑定（KY-CPT第三方会员关系）
@@ -108,7 +113,7 @@ public class AgServiceImpl implements AgService {
                 //创建玩家
                 return createMemberGame(gameParentPlatform,gamePlatform, ip, cptOpenMember,isMobileLogin, countryCode);
             } else {
-                this.logout(loginUser,ip, countryCode);
+//                this.logout(loginUser,ip, countryCode);
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
                 //登录
@@ -123,9 +128,9 @@ public class AgServiceImpl implements AgService {
     /**
      * AE真人、SV388斗鸡游戏 强迫登出玩家
      */
-    public Result logout(LoginInfo loginUser,String ip,String countryCode){
+    public Result logout(String account,String platform, String ip,String countryCode){
         Map<String, String> trr = new HashMap<>();
-        trr.put("userIds", loginUser.getAccount());
+        trr.put("userIds", account);
 
         try {
 //            String paramStr = "cagent="+OpenAPIProperties.AG_CAGENT+"/\\\\\\\\/loginname="+cptOpenMember.getUserName()+

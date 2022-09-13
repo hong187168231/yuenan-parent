@@ -27,4 +27,8 @@ public class ServiceIdConstant {
      */
     public static final String USER_SERVICE_ID = "indo-user";
 
+    /**
+     * 游戏服务
+     */
+    public static final String GAME_SERVICE_ID = "indo-game";
 }

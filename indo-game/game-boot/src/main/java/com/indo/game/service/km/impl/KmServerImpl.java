@@ -8,10 +8,12 @@ import com.indo.common.utils.GameUtil;
 import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.common.util.SnowflakeId;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
+import com.indo.game.pojo.dto.comm.LoginGame;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.core.pojo.entity.game.GameParentPlatform;
 import com.indo.core.pojo.entity.game.GamePlatform;
 import com.indo.game.service.common.GameCommonService;
+import com.indo.game.service.common.GameLogoutService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
 import com.indo.game.service.km.KmService;
 
@@ -24,6 +26,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -40,7 +43,8 @@ public class KmServerImpl implements KmService {
     private CptOpenMemberService externalService;
     @Autowired
     private GameCommonService gameCommonService;
-
+    @Autowired
+    private GameLogoutService gameLogoutService;
 
     /**
      * 登录游戏Mg游戏
@@ -79,6 +83,7 @@ public class KmServerImpl implements KmService {
 //            //站点棋牌余额不足
 //            return Result.failed("g300004", MessageUtils.get("g300004",countryCode));
 //        }
+        gameLogoutService.gamelogout(loginUser.getAccount(),  ip,  countryCode);
         try {
 
             // 验证且绑定（AE-CPT第三方会员关系）
@@ -96,9 +101,9 @@ public class KmServerImpl implements KmService {
             } else {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
-                logout(loginUser, platform, ip, countryCode);
+//                logout(loginUser, platform, ip, countryCode);
             }
-            JSONObject tokenJson = gameToken(loginUser, gameParentPlatform, ip);
+            JSONObject tokenJson = gameToken(loginUser, gameParentPlatform, ip,countryCode,isMobileLogin);
             if (StringUtils.isEmpty(tokenJson.getString("authtoken"))) {
                 return errorCode(tokenJson.getString("code"), tokenJson.getString("message"), countryCode);
             }
@@ -117,48 +122,6 @@ public class KmServerImpl implements KmService {
                 builder.append("gpcode=").append("KMQM");
                 builder.append("&gcode=").append(gamePlatform.getPlatformCode());
                 builder.append("&token=").append(tokenJson.getString("authtoken"));
-                //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
-                String lang = "";
-                if(null!=countryCode&&!"".equals(countryCode)){
-                    switch (countryCode) {
-                        case "IN":
-                            lang = "en-US";
-                            break;
-                        case "EN":
-                            lang = "en_US";
-                            break;
-                        case "CN":
-                            lang = "zh-CN";
-                            break;
-                        case "VN":
-                            lang = "vi-VN";
-                            break;
-                        case "TW":
-                            lang = "zh-TW";
-                            break;
-                        case "TH":
-                            lang = "th-TH";
-                            break;
-                        case "ID":
-                            lang = "in-ID";
-                            break;
-                        case "MY":
-                            lang = "ms-MY";
-                            break;
-                        case "KR":
-                            lang = "ko-KR";
-                            break;
-                        case "JP":
-                            lang = "ja-JP";
-                            break;
-                        default:
-                            lang = gameParentPlatform.getLanguageType();
-                            break;
-                    }
-                }else{
-                    lang = gameParentPlatform.getLanguageType();
-                }
-                builder.append("&lang=").append(lang);
             }
 
             //登录
@@ -172,15 +135,62 @@ public class KmServerImpl implements KmService {
         }
     }
 
-    private JSONObject gameToken(LoginInfo loginUser, GameParentPlatform platformGameParent, String ip) {
+    private JSONObject gameToken(LoginInfo loginUser, GameParentPlatform platformGameParent, String ip,String countryCode,String isMobileLogin) {
         Map<String, String> map = new HashMap<>();
         map.put("ipaddress", OpenAPIProperties.PROXY_HOST_NAME);
         map.put("username", loginUser.getAccount());
         map.put("userid", loginUser.getAccount());
-        map.put("lang", platformGameParent.getLanguageType());
+        //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+        String lang = "";
+        if(null!=countryCode&&!"".equals(countryCode)){
+            switch (countryCode) {
+                case "IN":
+                    lang = "en-US";
+                    break;
+                case "EN":
+                    lang = "en_US";
+                    break;
+                case "CN":
+                    lang = "zh-CN";
+                    break;
+                case "VN":
+                    lang = "vi-VN";
+                    break;
+                case "TW":
+                    lang = "zh-TW";
+                    break;
+                case "TH":
+                    lang = "th-TH";
+                    break;
+                case "ID":
+                    lang = "in-ID";
+                    break;
+                case "MY":
+                    lang = "ms-MY";
+                    break;
+                case "KR":
+                    lang = "ko-KR";
+                    break;
+                case "JP":
+                    lang = "ja-JP";
+                    break;
+                default:
+                    lang = platformGameParent.getLanguageType();
+                    break;
+            }
+        }else{
+            lang = platformGameParent.getLanguageType();
+        }
+        map.put("lang", lang);
         map.put("cur", platformGameParent.getCurrencyType());
+
         map.put("betlimitid", "1");
-        map.put("platformtype", "1");
+        //                1：手机 0:PC
+        if("0".equals(isMobileLogin)) {
+            map.put("platformtype", "0");
+        }else {
+            map.put("platformtype", "1");
+        }
         //调用此API时，请务必传递正确的'istestplayer'参数值。若针对玩家传递'istestplayer=false'，那么玩家就会
 //        在QM中以真实玩家身份被创建，且无法经由API将此身份变更为测试玩家。
         map.put("istestplayer", "false");
@@ -203,15 +213,15 @@ public class KmServerImpl implements KmService {
     /**
      * 强迫登出玩家
      */
-    public Result logout(LoginInfo loginUser, String platform, String ip,String countryCode) {
+    public Result logout(String account,String platform, String ip,String countryCode) {
         try {
             Map<String, String> map = new HashMap<>();
-            map.put("userid", loginUser.getAccount());
+            map.put("userid", account);
             StringBuilder builder = new StringBuilder();
             builder.append(OpenAPIProperties.KM_API_URL).append("/api/player/deauthorize");
             JSONObject apiResponseData = null;
             logger.error("kmLog  logout请求 url:{},params:{},", builder.toString(),map);
-            apiResponseData = commonRequest(builder.toString(), map, loginUser.getId().intValue(), "logout");
+            apiResponseData = commonRequest(builder.toString(), map, 0, "logout");
             logger.error("kmLog  logout返回 apiResponseData:{},", JSONObject.toJSONString(apiResponseData));
             if(null==apiResponseData){
                 return Result.failed("g100104", MessageUtils.get("g100104",countryCode));

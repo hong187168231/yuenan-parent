@@ -15,7 +15,7 @@ public interface V8Service {
     /**
      * V8电子游戏 强迫登出玩家
      */
-    Result logout(LoginInfo loginUser,String platform, String ip,String countryCode);
+    Result logout(String account,String platform, String ip,String countryCode);
 
     /**
      * V8游戏下分

@@ -17,16 +17,19 @@ import com.indo.game.common.util.TCGWinSHA256Encrypt;
 import com.indo.game.mapper.lottery.GameTcgLotteryMapper;
 import com.indo.game.pojo.dto.ae.AeApiResponseData;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
+import com.indo.game.pojo.dto.comm.LoginGame;
 import com.indo.game.pojo.dto.tcgwin.*;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.game.pojo.entity.lottery.TcgLottery;
 import com.indo.game.service.common.GameCommonService;
+import com.indo.game.service.common.GameLogoutService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
 import com.indo.game.service.tcg.TCGWinService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -44,7 +47,8 @@ public class TCGWinServiceImpl implements TCGWinService {
     private GameCommonService gameCommonService;
     @Resource
     private GameTcgLotteryMapper gameTcgLotteryMapper;
-
+    @Autowired
+    private GameLogoutService gameLogoutService;
 
     @Override
     public Result tcgwinGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode) {
@@ -81,6 +85,7 @@ public class TCGWinServiceImpl implements TCGWinService {
 //            //站点棋牌余额不足
 //            return Result.failed("g300004", MessageUtils.get("g300004",countryCode));
 //        }
+        gameLogoutService.gamelogout(loginUser.getAccount(),  ip,  countryCode);
         try {
 
             // 验证且绑定（AE-CPT第三方会员关系）
@@ -97,7 +102,7 @@ public class TCGWinServiceImpl implements TCGWinService {
             } else {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
-                logout(loginUser, platform, ip,countryCode);
+//                logout(loginUser, platform, ip,countryCode);
                 return  initGame(platformGameParent, gamePlatform,  cptOpenMember, isMobileLogin, countryCode);
             }
 
@@ -288,18 +293,18 @@ public class TCGWinServiceImpl implements TCGWinService {
      * 强迫登出玩家
      */
     @Override
-    public Result logout(LoginInfo loginUser, String platform, String ip,String countryCode) {
+    public Result logout(String account,String platform, String ip,String countryCode) {
         try {
             TcgwinApiOutLottoMemberReq tcgwinApiOutLottoMemberReq = new TcgwinApiOutLottoMemberReq();
             tcgwinApiOutLottoMemberReq.setMethod("kom");
-            tcgwinApiOutLottoMemberReq.setUsername(loginUser.getAccount());
+            tcgwinApiOutLottoMemberReq.setUsername(account);
 
             String jsonStr = JSON.toJSONString(tcgwinApiOutLottoMemberReq);
             TcgwinApiResp tcgwinApiResp = null;
             StringBuilder apiUrl = new StringBuilder();
             apiUrl.append(OpenAPIProperties.TCGWIN_API_URL);
-            logger.info("tcgwin  logout注销请求apiUrl:{}, params:{}, user:{}", apiUrl, jsonStr, loginUser);
-            tcgwinApiResp = commonRequest(apiUrl.toString(), jsonStr, loginUser.getId().intValue(), "logout");
+            logger.info("tcgwin  logout注销请求apiUrl:{}, params:{}, user:{}", apiUrl, jsonStr, account);
+            tcgwinApiResp = commonRequest(apiUrl.toString(), jsonStr, 0, "logout");
             logger.info("tcgwin  logout注销返回resultString:{}", JSON.toJSONString(tcgwinApiResp));
             if (null == tcgwinApiResp) {
                 return Result.failed("g091087", MessageUtils.get("g091087",countryCode));

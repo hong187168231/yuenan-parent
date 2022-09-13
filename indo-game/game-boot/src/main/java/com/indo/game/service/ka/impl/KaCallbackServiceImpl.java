@@ -139,7 +139,7 @@ public class KaCallbackServiceImpl implements KaCallbackService {
 
             }
             // 查询用户请求订单
-            Txns oldTxns = getTxns(kaCallbackPlayReq.getTransactionId(), memBaseinfo.getId(), kaCallbackPlayReq.getRound());
+            Txns oldTxns = getTxns(kaCallbackPlayReq.getTransactionId(), memBaseinfo.getAccount(), kaCallbackPlayReq.getRound());
             if (null != oldTxns) {
                 return initFailureResponse(201, "交易已存在");
             }
@@ -269,7 +269,7 @@ public class KaCallbackServiceImpl implements KaCallbackService {
             }
 
             // 查询用户请求订单
-            Txns oldTxns = getTxns(kaCallbackCreditReq.getTransactionId(), memBaseinfo.getId(), null);
+            Txns oldTxns = getTxns(kaCallbackCreditReq.getTransactionId(), memBaseinfo.getAccount(), null);
             if (null != oldTxns) {
                 return initFailureResponse(201, "交易已存在");
             }
@@ -376,7 +376,7 @@ public class KaCallbackServiceImpl implements KaCallbackService {
             }
             Long round = kaCallbackRevokeReq.getRound();
             // 查询用户请求订单
-            Txns oldTxns = getTxns(kaCallbackRevokeReq.getTransactionId(), memBaseinfo.getId(), round);
+            Txns oldTxns = getTxns(kaCallbackRevokeReq.getTransactionId(), memBaseinfo.getAccount(), round);
             if (null == oldTxns) {
                 return initFailureResponse(400, "该笔交易不存在");
             }
@@ -486,7 +486,7 @@ public class KaCallbackServiceImpl implements KaCallbackService {
      * @param round     回合(一般游戏为0,免费游戏有具体1.2.3...)
      * @return 订单
      */
-    private Txns getTxns(String reference, Long userId, Long round) {
+    private Txns getTxns(String reference, String userAccount, Long round) {
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
         wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet")
                 .or().eq(Txns::getMethod, "Cancel Bet")
@@ -494,7 +494,7 @@ public class KaCallbackServiceImpl implements KaCallbackService {
                 .or().eq(Txns::getMethod, "Settle"));
         wrapper.eq(Txns::getStatus, "Running");
         wrapper.eq(Txns::getPlatformTxId, reference);
-        wrapper.eq(Txns::getUserId, userId);
+//        wrapper.eq(Txns::getUserId, userAccount);
         if (null != round) {
             wrapper.eq(Txns::getRoundId, round);
         }

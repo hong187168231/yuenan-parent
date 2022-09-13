@@ -9,11 +9,13 @@ import com.indo.common.utils.GameUtil;
 import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.common.util.FCHashAESEncrypt;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
+import com.indo.game.pojo.dto.comm.LoginGame;
 import com.indo.game.pojo.dto.fc.FCApiCommonResp;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.core.pojo.entity.game.GameParentPlatform;
 import com.indo.core.pojo.entity.game.GamePlatform;
 import com.indo.game.service.common.GameCommonService;
+import com.indo.game.service.common.GameLogoutService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
 import com.indo.game.service.fc.FCService;
 import org.slf4j.Logger;
@@ -24,6 +26,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -33,7 +36,8 @@ public class FCServiceImpl implements FCService {
     private CptOpenMemberService externalService;
     @Autowired
     private GameCommonService gameCommonService;
-
+    @Autowired
+    private GameLogoutService gameLogoutService;
     @Override
     public Result fcGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode) {
         logger.info("fclog {} fcGame account:{},kaCodeId:{}", loginUser.getId(), loginUser.getAccount(), platform);
@@ -67,7 +71,7 @@ public class FCServiceImpl implements FCService {
 //            //站点棋牌余额不足
 //            return Result.failed("g300004", MessageUtils.get("g300004",countryCode));
 //        }
-
+        gameLogoutService.gamelogout(loginUser.getAccount(),  ip,  countryCode);
         try {
 
             // 验证且绑定（KY-CPT第三方会员关系）
@@ -85,17 +89,17 @@ public class FCServiceImpl implements FCService {
                 externalService.updateCptOpenMember(cptOpenMember);
 
                 // 先退出
-                Map<String, Object> loginouotParam = new HashMap<>();
-                loginouotParam.put("MemberAccount", loginUser.getAccount());
-
-                Map<String, Object> param = new HashMap<>();
-                param.put("AgentCode", OpenAPIProperties.FC_AGENT_CODE);
-                param.put("Currency", gameParentPlatform.getCurrencyType());
-                param.put("Params", FCHashAESEncrypt.encrypt(JSONObject.toJSONString(loginouotParam), OpenAPIProperties.FC_AGENT_KEY));
-                param.put("Sign", FCHashAESEncrypt.encryptMd5(JSONObject.toJSONString(loginouotParam)));
-
-                String url = OpenAPIProperties.FC_API_URL + "/KickOut";
-                JSONObject.parseObject(GameUtil.postForm4PP(url, param, null), FCApiCommonResp.class);
+//                Map<String, Object> loginouotParam = new HashMap<>();
+//                loginouotParam.put("MemberAccount", loginUser.getAccount());
+//
+//                Map<String, Object> param = new HashMap<>();
+//                param.put("AgentCode", OpenAPIProperties.FC_AGENT_CODE);
+//                param.put("Currency", gameParentPlatform.getCurrencyType());
+//                param.put("Params", FCHashAESEncrypt.encrypt(JSONObject.toJSONString(loginouotParam), OpenAPIProperties.FC_AGENT_KEY));
+//                param.put("Sign", FCHashAESEncrypt.encryptMd5(JSONObject.toJSONString(loginouotParam)));
+//
+//                String url = OpenAPIProperties.FC_API_URL + "/KickOut";
+//                JSONObject.parseObject(GameUtil.postForm4PP(url, param, null), FCApiCommonResp.class);
 
             }
 //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
@@ -132,12 +136,12 @@ public class FCServiceImpl implements FCService {
     }
 
     @Override
-    public Result logout(LoginInfo loginUser, String platform, String ip,String countryCode) {
-        logger.info("fclogout {} fcGame account:{},t9CodeId:{}", ip, loginUser.getAccount(), platform);
+    public Result logout(String account,String platform, String ip,String countryCode) {
+        logger.info("fclogout {} fcGame account:{},t9CodeId:{}", ip, account, platform);
         try {
             GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.FC_PLATFORM_CODE);
             Map<String, Object> loginouotParam = new HashMap<>();
-            loginouotParam.put("MemberAccount", loginUser.getAccount());
+            loginouotParam.put("MemberAccount", account);
 
             Map<String, Object> param = new HashMap<>();
             param.put("AgentCode", OpenAPIProperties.FC_AGENT_CODE);

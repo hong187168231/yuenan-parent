@@ -9,12 +9,14 @@ import com.indo.common.utils.RandomUtil;
 import com.indo.common.utils.SignMd5Utils;
 import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
+import com.indo.game.pojo.dto.comm.LoginGame;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.core.pojo.entity.game.GameParentPlatform;
 import com.indo.core.pojo.entity.game.GamePlatform;
 import com.indo.game.pojo.vo.callback.bl.BlResponseParentData;
 import com.indo.game.service.bl.BlService;
 import com.indo.game.service.common.GameCommonService;
+import com.indo.game.service.common.GameLogoutService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
 
 import org.apache.commons.lang3.StringUtils;
@@ -26,6 +28,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -43,7 +46,8 @@ public class BlServiceImpl implements BlService {
     private CptOpenMemberService externalService;
     @Autowired
     private GameCommonService gameCommonService;
-
+    @Autowired
+    private GameLogoutService gameLogoutService;
 
     /**
      * 登录游戏CQ9游戏
@@ -83,6 +87,7 @@ public class BlServiceImpl implements BlService {
 //            //站点棋牌余额不足
 //            return Result.failed("g300004", MessageUtils.get("g300004",countryCode));
 //        }
+        gameLogoutService.gamelogout(loginUser.getAccount(),  ip,  countryCode);
         try {
 
             // 验证且绑定（AE-CPT第三方会员关系）
@@ -99,7 +104,7 @@ public class BlServiceImpl implements BlService {
             } else {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
-                Result result = logout(loginUser, platform, ip, countryCode);
+//                Result result = logout(loginUser, platform, ip, countryCode);
             }
             BlResponseParentData apiResponseData = gameLogin(gameParentPlatform, gamePlatform,cptOpenMember,ip, countryCode);
             if (null != apiResponseData && "200".equals(apiResponseData.getResp_msg().getCode())) {
@@ -181,7 +186,7 @@ public class BlServiceImpl implements BlService {
     /**
      * 强迫登出玩家
      */
-    public Result logout(LoginInfo loginUser, String platform, String ip,String countryCode) {
+    public Result logout(String account,String platform, String ip,String countryCode) {
         try {
             Map<String, String> map = new HashMap<String, String>();
             Long dataTime =  System.currentTimeMillis() / 1000;
@@ -189,7 +194,7 @@ public class BlServiceImpl implements BlService {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append(OpenAPIProperties.BL_KEY_SECRET).append(random).append(dataTime);
             String sign = SignMd5Utils.getSha1(stringBuilder.toString()).toLowerCase();
-            map.put("player_account", loginUser.getAccount());
+            map.put("player_account", account);
             map.put("AccessKeyId", OpenAPIProperties.BL_KEY_ID);
             map.put("Timestamp", dataTime + "");
             map.put("Nonce", random + "");
@@ -197,7 +202,7 @@ public class BlServiceImpl implements BlService {
             StringBuilder apiUrl = new StringBuilder();
             apiUrl.append(OpenAPIProperties.BL_API_URL).append("/v1/player/logout");
             logger.info("BL强迫登出玩家 logout apiUrl:{},map:{}",apiUrl.toString(), map);
-            BlResponseParentData apiResponseData = commonRequest(apiUrl.toString(), map, loginUser.getId().intValue(), "BLlogout");
+            BlResponseParentData apiResponseData = commonRequest(apiUrl.toString(), map, 0, "BLlogout");
             logger.info("BL强迫登出玩家 logout apiResponseData:{}",apiResponseData);
             if (null != apiResponseData && "0".equals(apiResponseData.getResp_msg().getCode())) {
                 return Result.success();

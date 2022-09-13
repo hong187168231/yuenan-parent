@@ -10,21 +10,25 @@ import com.indo.common.utils.StringUtils;
 import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.common.util.JiliAESEncrypt;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
+import com.indo.game.pojo.dto.comm.LoginGame;
 import com.indo.game.pojo.dto.jili.JiliApiResponse;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.core.pojo.entity.game.GameParentPlatform;
 import com.indo.core.pojo.entity.game.GamePlatform;
 import com.indo.game.service.common.GameCommonService;
+import com.indo.game.service.common.GameLogoutService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
 import com.indo.game.service.jili.JiliService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -34,7 +38,8 @@ public class JiliServiceImpl implements JiliService {
     private CptOpenMemberService externalService;
     @Resource
     private GameCommonService gameCommonService;
-
+    @Autowired
+    private GameLogoutService gameLogoutService;
     @Override
     public Result jiliGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode) {
         logger.info("jililog {} jiliGame account:{},jiliCodeId:{}", parentName, loginUser.getAccount(), platform);
@@ -68,7 +73,7 @@ public class JiliServiceImpl implements JiliService {
 //            //站点棋牌余额不足
 //            return Result.failed("g300004", MessageUtils.get("g300004",countryCode));
 //        }
-
+        gameLogoutService.gamelogout(loginUser.getAccount(),  ip,  countryCode);
         try {
 
             // 验证且绑定（KY-CPT第三方会员关系）
@@ -89,9 +94,9 @@ public class JiliServiceImpl implements JiliService {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
 
-                Map<String, Object> params = new HashMap<>();
-                params.put("Account", loginUser.getAccount());
-                GameUtil.postForm4PP(getLoginOutUrl(loginUser.getAccount()), params, null);
+//                Map<String, Object> params = new HashMap<>();
+//                params.put("Account", loginUser.getAccount());
+//                GameUtil.postForm4PP(getLoginOutUrl(loginUser.getAccount()), params, null);
                 //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
                 String lang = "";
                 if(null!=countryCode&&!"".equals(countryCode)){
@@ -147,12 +152,12 @@ public class JiliServiceImpl implements JiliService {
     }
 
     @Override
-    public Result logout(LoginInfo loginUser, String platform, String ip,String countryCode) {
-        logger.info("jililogout {} jiliGame account:{},jiliCodeId:{}", loginUser.getId(), loginUser.getAccount(), platform);
+    public Result logout(String account,String platform, String ip,String countryCode) {
+        logger.info("jililogout jiliGame account:{},platform:{}", account, platform);
         try {
             Map<String, Object> params = new HashMap<>();
-            params.put("Account", loginUser.getAccount());
-            String json = GameUtil.postForm4PP(getLoginOutUrl(loginUser.getAccount()), params, null);
+            params.put("Account", account);
+            String json = GameUtil.postForm4PP(getLoginOutUrl(account), params, null);
             JiliApiResponse jiliApiResponse = JSONObject.parseObject(json, JiliApiResponse.class);
             if (0 == jiliApiResponse.getErrorCode()) {
                 return Result.success();

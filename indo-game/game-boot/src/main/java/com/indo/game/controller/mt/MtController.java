@@ -19,72 +19,72 @@ import java.math.BigDecimal;
 @RequestMapping("/mt/callBack")
 public class MtController {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    @Autowired
-    private MtService mtService;
-    // 全部提取
-    @RequestMapping(value = "/allWithdraw", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
-    @ResponseBody
-    @AllowAccess
-    public Object allWithdraw(@LoginUser LoginInfo loginUser,
-                              @RequestBody JSONObject params, HttpServletRequest request) {
-        String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("MtController allWithdraw, params:{}", params);
-        String platform = params.getString("platform");
-        //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
-        String countryCode = request.getHeader("countryCode");
-        Object object = mtService.allWithdraw(loginUser, platform, ip,countryCode);
-        logger.info("MtController allWithdraw 返回数据 params:{}", object);
-        return object;
-    }
-    // 查询余额
-    @RequestMapping(value = "/getPlayerBalance", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
-    @ResponseBody
-    @AllowAccess
-    private Object getPlayerBalance(@LoginUser LoginInfo loginUser,
-                                    @RequestBody JSONObject params, HttpServletRequest request) {
-        String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("MtController getPlayerBalance , params:{}", params);
-        String platform = params.getString("platform");
-        //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
-        String countryCode = request.getHeader("countryCode");
-        Object object = mtService.getPlayerBalance(loginUser, platform, ip,countryCode);
-        logger.info("MtController getPlayerBalance 返回数据 params:{}", object);
-        return object;
-    }
-    // 充值
-    @RequestMapping(value = "/deposit", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
-    @ResponseBody
-    @AllowAccess
-    private Object deposit(@LoginUser LoginInfo loginUser,
-                           @RequestBody JSONObject params, HttpServletRequest request) {
-        String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("MtController deposit params:{}", params);
-        String platform = params.getString("platform");
-        BigDecimal coins = params.getBigDecimal("coins");
-        //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
-        String countryCode = request.getHeader("countryCode");
-        Object object = mtService.deposit(loginUser, platform, ip, coins,countryCode);
-        logger.info("MtController deposit 返回数据 params:{}", object);
-        return object;
-    }
-    // 提取
-    @RequestMapping(value = "/withdraw", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
-    @ResponseBody
-    @AllowAccess
-    private Object withdraw(@LoginUser LoginInfo loginUser,
-                            @RequestBody JSONObject params, HttpServletRequest request) {
-        String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("MtController withdraw params:{}", params);
-        String platform = params.getString("platform");
-        BigDecimal coins = params.getBigDecimal("coins");
-        //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
-        String countryCode = request.getHeader("countryCode");
-
-        Object object = mtService.withdraw(loginUser, platform, ip, coins,countryCode);
-        logger.info("MtController withdraw 返回数据 params:{}", object);
-        return object;
-    }
+//    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+//
+//    @Autowired
+//    private MtService mtService;
+//    // 全部提取
+//    @RequestMapping(value = "/allWithdraw", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
+//    @ResponseBody
+//    @AllowAccess
+//    public Object allWithdraw(@LoginUser LoginInfo loginUser,
+//                              @RequestBody JSONObject params, HttpServletRequest request) {
+//        String ip = IPAddressUtil.getIpAddress(request);
+//        logger.info("MtController allWithdraw, params:{}", params);
+//        String platform = params.getString("platform");
+//        //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+//        String countryCode = request.getHeader("countryCode");
+//        Object object = mtService.allWithdraw(loginUser, platform, ip,countryCode);
+//        logger.info("MtController allWithdraw 返回数据 params:{}", object);
+//        return object;
+//    }
+//    // 查询余额
+//    @RequestMapping(value = "/getPlayerBalance", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
+//    @ResponseBody
+//    @AllowAccess
+//    private Object getPlayerBalance(@LoginUser LoginInfo loginUser,
+//                                    @RequestBody JSONObject params, HttpServletRequest request) {
+//        String ip = IPAddressUtil.getIpAddress(request);
+//        logger.info("MtController getPlayerBalance , params:{}", params);
+//        String platform = params.getString("platform");
+//        //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+//        String countryCode = request.getHeader("countryCode");
+//        Object object = mtService.getPlayerBalance(loginUser, platform, ip,countryCode);
+//        logger.info("MtController getPlayerBalance 返回数据 params:{}", object);
+//        return object;
+//    }
+//    // 充值
+//    @RequestMapping(value = "/deposit", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
+//    @ResponseBody
+//    @AllowAccess
+//    private Object deposit(@LoginUser LoginInfo loginUser,
+//                           @RequestBody JSONObject params, HttpServletRequest request) {
+//        String ip = IPAddressUtil.getIpAddress(request);
+//        logger.info("MtController deposit params:{}", params);
+//        String platform = params.getString("platform");
+//        BigDecimal coins = params.getBigDecimal("coins");
+//        //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+//        String countryCode = request.getHeader("countryCode");
+//        Object object = mtService.deposit(loginUser, platform, ip, coins,countryCode);
+//        logger.info("MtController deposit 返回数据 params:{}", object);
+//        return object;
+//    }
+//    // 提取
+//    @RequestMapping(value = "/withdraw", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
+//    @ResponseBody
+//    @AllowAccess
+//    private Object withdraw(@LoginUser LoginInfo loginUser,
+//                            @RequestBody JSONObject params, HttpServletRequest request) {
+//        String ip = IPAddressUtil.getIpAddress(request);
+//        logger.info("MtController withdraw params:{}", params);
+//        String platform = params.getString("platform");
+//        BigDecimal coins = params.getBigDecimal("coins");
+//        //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
+//        String countryCode = request.getHeader("countryCode");
+//
+//        Object object = mtService.withdraw(loginUser, platform, ip, coins,countryCode);
+//        logger.info("MtController withdraw 返回数据 params:{}", object);
+//        return object;
+//    }
 
 }

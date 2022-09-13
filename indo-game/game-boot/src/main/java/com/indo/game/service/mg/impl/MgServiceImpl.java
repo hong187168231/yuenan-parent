@@ -8,10 +8,12 @@ import com.indo.common.utils.GameUtil;
 import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.game.common.util.SnowflakeId;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
+import com.indo.game.pojo.dto.comm.LoginGame;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.core.pojo.entity.game.GameParentPlatform;
 import com.indo.core.pojo.entity.game.GamePlatform;
 import com.indo.game.service.common.GameCommonService;
+import com.indo.game.service.common.GameLogoutService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
 import com.indo.game.service.mg.MgService;
 
@@ -24,6 +26,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -40,7 +43,8 @@ public class MgServiceImpl implements MgService {
     private CptOpenMemberService externalService;
     @Autowired
     private GameCommonService gameCommonService;
-
+    @Autowired
+    private GameLogoutService gameLogoutService;
 
     /**
      * 登录游戏Mg游戏
@@ -79,6 +83,7 @@ public class MgServiceImpl implements MgService {
 //            //站点棋牌余额不足
 //            return Result.failed("g300004", MessageUtils.get("g300004",countryCode));
 //        }
+        gameLogoutService.gamelogout(loginUser.getAccount(),  ip,  countryCode);
         try {
             JSONObject tokenJson;
             // 验证且绑定（AE-CPT第三方会员关系）
@@ -100,7 +105,7 @@ public class MgServiceImpl implements MgService {
             } else {
                 cptOpenMember.setLoginTime(new Date());
                 externalService.updateCptOpenMember(cptOpenMember);
-                logout(loginUser, platform, ip,countryCode);
+//                logout(loginUser, platform, ip,countryCode);
                 tokenJson = gameToken(loginUser.getId().intValue());
                 if (StringUtils.isEmpty(tokenJson.getString("access_token"))) {
                     return errorCode(tokenJson.getString("code"), tokenJson.getString("message"),countryCode);
@@ -293,7 +298,7 @@ public class MgServiceImpl implements MgService {
     /**
      * 强迫登出玩家
      */
-    public Result logout(LoginInfo loginUser, String platform, String ip,String  countryCode) {
+    public Result logout(String account,String platform, String ip,String countryCode) {
         try {
             return Result.success();
         } catch (Exception e) {
