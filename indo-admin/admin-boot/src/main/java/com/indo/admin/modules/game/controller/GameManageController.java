@@ -86,7 +86,7 @@ public class GameManageController {
         return Result.judge(iGameManageService.deleteBatchGameCategory(list));
     }
 
-    @ApiOperation(value = "查询所有平台游戏", httpMethod = "POST")
+    @ApiOperation(value = "查询所有游戏", httpMethod = "POST")
     @PostMapping(value = "/queryAllGamePlatform")
     public Result<List<GamePlatform>> queryAllGamePlatform(GamePlatformPageReq req) {
         log.info("查询所有平台游戏 queryAllGamePlatform {} req:{}", JSONObject.toJSONString(req));
