@@ -125,33 +125,42 @@ public class UgCallbackServiceImpl implements UgCallbackService {
             if (null == memBaseinfo) {
                 ugCallBackBalanceResp.setCode("100001");
                 ugCallBackBalanceResp.setMsg("MEMBER ACCOUNT IS NOT EXIST");
+                continue;
             } else {
 
                 BigDecimal betAmount = null!=ugCallBackTransactionItemReq.getAmount()?ugCallBackTransactionItemReq.getAmount().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
-                if (balance.compareTo(betAmount) == -1) {
-                    ugCallBackSubBalanceResp.setCode("300004");
-                    ugCallBackSubBalanceResp.setMsg("INSUFFICIENT BALANCE");
-
-                } else {
-
-                    if (ugCallBackTransactionItemReq.isBet()) {//此交易是否是投注
-                        if (BigDecimal.valueOf(0).compareTo(betAmount) == -1) {
-                            gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.PLACE_BET, TradingEnum.INCOME);
-                        } else {
-                            gameCommonService.updateUserBalance(memBaseinfo, betAmount.abs(), GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
-                        }
-                    } else {
-                        if (BigDecimal.valueOf(0).compareTo(betAmount) == -1) {
-                            gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.BETNSETTLE, TradingEnum.INCOME);
-                        } else {
-                            gameCommonService.updateUserBalance(memBaseinfo, betAmount.abs(), GoldchangeEnum.BETNSETTLE, TradingEnum.SPENDING);
-                        }
+                String method = "Place Bet";
+                if (ugCallBackTransactionItemReq.isBet()) {//此交易是否是投注
+                    if (balance.compareTo(betAmount.abs()) == -1) {
+                        ugCallBackSubBalanceResp.setCode("300004");
+                        ugCallBackSubBalanceResp.setMsg("INSUFFICIENT BALANCE");
+                        continue;
                     }
+                    balance = balance.subtract(betAmount.abs());
+                    gameCommonService.updateUserBalance(memBaseinfo, betAmount.abs(), GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
+                } else {
+                    method = "Settle";
+                    if (betAmount.abs().compareTo(BigDecimal.ZERO) == -1) {
+                        balance = balance.subtract(betAmount.abs());
+                        gameCommonService.updateUserBalance(memBaseinfo, betAmount.abs(), GoldchangeEnum.BETNSETTLE, TradingEnum.SPENDING);
+                    } else {
+                        balance = balance.add(betAmount.abs());
+                        gameCommonService.updateUserBalance(memBaseinfo, betAmount.abs(), GoldchangeEnum.BETNSETTLE, TradingEnum.INCOME);
+                    }
+                }
 
-                    balance = balance.add(betAmount);
-                    ugCallBackSubBalanceResp.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
 
-                    Txns txns = new Txns();
+                ugCallBackSubBalanceResp.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
+//创建时间
+                String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
+                Txns txns = new Txns();
+                if(null!=oldTxns) {
+                    BeanUtils.copyProperties(oldTxns, txns);
+                    txns.setId(null);
+                    oldTxns.setStatus(method);
+                    oldTxns.setUpdateTime(dateStr);
+                    txnsMapper.updateById(oldTxns);
+                }else {
                     //游戏商注单号
                     txns.setPlatformTxId(ugCallBackTransactionItemReq.getTicketId());
                     //此交易是否是投注 true是投注 false 否
@@ -182,57 +191,48 @@ public class UgCallbackServiceImpl implements UgCallbackService {
                     //玩家下注时间
                     txns.setBetTime(DateUtils.getNewFormatDateString(new Date()));
                     //游戏商的回合识别码
-                    txns.setRoundId(ugCallBackTransactionItemReq.getTxnId());
+                    txns.setRoundId(String.valueOf(ugCallBackTransactionItemReq.getTxnId()));
                     //下注金额
                     txns.setBetAmount(betAmount);
 
-                    //真实下注金额,需增加在玩家的金额
-                    txns.setRealBetAmount(betAmount);
-                    //真实返还金额,游戏赢分
-                    txns.setRealWinAmount(betAmount);
-                    //返还金额 (包含下注金额)
-                    txns.setWinAmount(betAmount);
-                    if(oldTxns!=null) {
-                        txnsMapper.updateById(oldTxns);
-                        BeanUtils.copyProperties(oldTxns, txns);
-                        txns.setId(null);
-                    }
-
-                    //游戏讯息会由游戏商以 JSON 格式提供
-//        txns.setgameInfo();
-                    //更新时间 (遵循 ISO8601 格式)
-                    txns.setUpdateTime(DateUtils.getNewFormatDateString(new Date()));
-
-                    //赔率
-//        txns.setodds();
-                    //赔率类型
-//        txns.setoddsType();
-                    //打赏资讯，此参数仅游戏商有提供资讯时才会出现
-//        txns.settipinfo();
-                    //操作状态
-                    txns.setStatus("Running");
-                    //操作名称
-                    if (ugCallBackTransactionItemReq.isBet()){
-                        txns.setMethod("Place Bet");
-                    }else {
-                        //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
-                        txns.setWinningAmount(betAmount);
-                        txns.setMethod("Settle");
-                    }
-
-                    //余额
-                    txns.setBalance(balance);
-                    //创建时间
-                    String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
-                    txns.setCreateTime(dateStr);
-
-                    txnsMapper.insert(txns);
-                    ugCallBackSubBalanceResp.setCode("000000");
-                    ugCallBackSubBalanceResp.setMsg("SUCCESS");
                 }
+                txns.setWinningAmount(betAmount);
+                //真实下注金额,需增加在玩家的金额
+                txns.setRealBetAmount(betAmount);
+                //真实返还金额,游戏赢分
+                txns.setRealWinAmount(betAmount);
+                //返还金额 (包含下注金额)
+                txns.setWinAmount(betAmount);
+                //游戏讯息会由游戏商以 JSON 格式提供
+//        txns.setgameInfo();
+                //更新时间 (遵循 ISO8601 格式)
+                txns.setUpdateTime(DateUtils.getNewFormatDateString(new Date()));
+
+                //赔率
+//        txns.setodds();
+                //赔率类型
+//        txns.setoddsType();
+                //打赏资讯，此参数仅游戏商有提供资讯时才会出现
+//        txns.settipinfo();
+                //操作状态
+                txns.setStatus("Running");
+                txns.setMethod(method);
+
+                //余额
+                txns.setBalance(balance);
+
+                txns.setCreateTime(dateStr);
+
+                txnsMapper.insert(txns);
+                ugCallBackSubBalanceResp.setCode("000000");
+                ugCallBackSubBalanceResp.setMsg("SUCCESS");
+                ugCallBackSubBalanceResp.setTicketId(ugCallBackTransactionItemReq.getTicketId());//	string	注單 ID
+                ugCallBackSubBalanceResp.setTxnId(ugCallBackTransactionItemReq.getTxnId());//	number	交易編號
             }
             ugCallBackBalanceRespList.add(ugCallBackSubBalanceResp);
         }
+        ugCallBackBalanceResp.setCode("000000");
+        ugCallBackBalanceResp.setMsg("SUCCESS");
         ugCallBackBalanceResp.setData(ugCallBackBalanceRespList);
 
         return ugCallBackBalanceResp;
@@ -252,7 +252,8 @@ public class UgCallbackServiceImpl implements UgCallbackService {
         }
         List<UgCallBackCancelItemReq> ugCallBackCancelItemReqList = ugCallBackCancelReq.getData();
         List<UgCallBackCancelSubResp> ugCallBackCancelSubRespList = new ArrayList<>();
-        for(UgCallBackCancelItemReq ugCallBackCancelItemReq : ugCallBackCancelItemReqList) {
+        for (int i=0;i<ugCallBackCancelItemReqList.size();i++){
+            UgCallBackCancelItemReq ugCallBackCancelItemReq = JSONObject.parseObject(JSONObject.toJSONString(ugCallBackCancelItemReqList.get(i)),UgCallBackCancelItemReq.class);;
             UgCallBackCancelSubResp ugCallBackCancelSubResp = new UgCallBackCancelSubResp();
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(ugCallBackCancelItemReq.getUserId());
 
@@ -271,35 +272,33 @@ public class UgCallbackServiceImpl implements UgCallbackService {
                 Txns oldTxns = txnsMapper.selectOne(wrapper);
                 BigDecimal balance = memBaseinfo.getBalance();
                 if (null != oldTxns && !oldTxns.getMethod().equals("Cancel Bet")) {
-                    BigDecimal betAmount = oldTxns.getAmount().abs();
+                    BigDecimal betAmount = oldTxns.getWinAmount().abs();
                     if (oldTxns.getMethod().equals("Place Bet")) {//此交易是否是投注
-                        if (BigDecimal.valueOf(0).compareTo(oldTxns.getAmount()) == -1) {
-                            gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
-                            balance = balance.subtract(betAmount);
-                        } else {
-                            gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.PLACE_BET, TradingEnum.INCOME);
-                            balance = balance.add(betAmount);
-                        }
+                        gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.CANCEL_BET, TradingEnum.INCOME);
+                        balance = balance.add(betAmount);
                     } else {
-                        if (BigDecimal.valueOf(0).compareTo(oldTxns.getAmount()) == -1) {
-                            gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.BETNSETTLE, TradingEnum.SPENDING);
-                            balance = balance.subtract(betAmount);
-                        } else {
-                            gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.BETNSETTLE, TradingEnum.INCOME);
+                        if (BigDecimal.valueOf(0).compareTo(oldTxns.getWinAmount()) == -1) {
+                            gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.UNSETTLE, TradingEnum.INCOME);
                             balance = balance.add(betAmount);
+
+                        } else {
+                            gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.UNSETTLE, TradingEnum.SPENDING);
+                            balance = balance.subtract(betAmount);
                         }
                     }
+                    String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
                     oldTxns.setStatus("Cancel");
+                    oldTxns.setUpdateTime(dateStr);
                     txnsMapper.updateById(oldTxns);
-                Txns txns = new Txns();
-                BeanUtils.copyProperties(oldTxns, txns);
-                txns.setId(null);
-                txns.setMethod("Cancel Bet");
-                String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
-                txns.setCreateTime(dateStr);
-                txns.setBalance(balance);
-                txns.setStatus("Running");
-                txnsMapper.insert(txns);
+                    Txns txns = new Txns();
+                    BeanUtils.copyProperties(oldTxns, txns);
+                    txns.setId(null);
+                    txns.setMethod("Cancel Bet");
+
+                    txns.setCreateTime(dateStr);
+                    txns.setBalance(balance);
+                    txns.setStatus("Running");
+                    txnsMapper.insert(txns);
                 }
                 ugCallBackCancelSubResp.setCode("000010");
                 ugCallBackCancelSubResp.setMsg("API PASSWORD ERROR");
@@ -325,7 +324,9 @@ public class UgCallbackServiceImpl implements UgCallbackService {
             ugCallBackCheckTxnResp.setMsg("API PASSWORD ERROR");
         }
         List<UgCallBackCheckTxnlSubResp> ugCallBackCheckTxnlSubRespList = new ArrayList<>();
-        for (UgCallBackCheckTxnItemReq ugCallBackCheckTxnItemReq : ugCallBackCheckTxnReq.getData()) {
+        List<UgCallBackCheckTxnItemReq> ugCallBackCheckTxnItemReqList = ugCallBackCheckTxnReq.getData();
+        for (int i=0;i<ugCallBackCheckTxnItemReqList.size();i++){
+            UgCallBackCheckTxnItemReq ugCallBackCheckTxnItemReq = JSONObject.parseObject(JSONObject.toJSONString(ugCallBackCheckTxnItemReqList.get(i)),UgCallBackCheckTxnItemReq.class);;
             UgCallBackCheckTxnlSubResp ugCallBackCheckTxnlSubResp = new UgCallBackCheckTxnlSubResp();
             ugCallBackCheckTxnlSubResp.setCode("000000");
             ugCallBackCheckTxnlSubResp.setMsg("SUCCESS");

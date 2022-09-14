@@ -4,6 +4,8 @@ package com.indo.game.pojo.dto.ka;
 import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 /**
  * KA 游戏派彩请求对象
  */
@@ -15,7 +17,7 @@ public class KACallbackCreditReq extends KACallbackCommonReq {
 
     // 派彩金额 已经乘以100
     @JSONField(name = "amount")
-    private Long amount;
+    private BigDecimal amount;
 
     // 派彩类型 例如： "BonusPick"或“Progressive”
     @JSONField(name = "type")
