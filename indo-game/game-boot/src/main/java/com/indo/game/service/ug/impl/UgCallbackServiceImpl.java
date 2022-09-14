@@ -191,7 +191,7 @@ public class UgCallbackServiceImpl implements UgCallbackService {
                     //玩家下注时间
                     txns.setBetTime(DateUtils.getNewFormatDateString(new Date()));
                     //游戏商的回合识别码
-                    txns.setRoundId(ugCallBackTransactionItemReq.getTxnId());
+                    txns.setRoundId(String.valueOf(ugCallBackTransactionItemReq.getTxnId()));
                     //下注金额
                     txns.setBetAmount(betAmount);
 
@@ -226,6 +226,8 @@ public class UgCallbackServiceImpl implements UgCallbackService {
                 txnsMapper.insert(txns);
                 ugCallBackSubBalanceResp.setCode("000000");
                 ugCallBackSubBalanceResp.setMsg("SUCCESS");
+                ugCallBackSubBalanceResp.setTicketId(ugCallBackTransactionItemReq.getTicketId());//	string	注單 ID
+                ugCallBackSubBalanceResp.setTxnId(ugCallBackTransactionItemReq.getTxnId());//	number	交易編號
             }
             ugCallBackBalanceRespList.add(ugCallBackSubBalanceResp);
         }
@@ -250,7 +252,8 @@ public class UgCallbackServiceImpl implements UgCallbackService {
         }
         List<UgCallBackCancelItemReq> ugCallBackCancelItemReqList = ugCallBackCancelReq.getData();
         List<UgCallBackCancelSubResp> ugCallBackCancelSubRespList = new ArrayList<>();
-        for(UgCallBackCancelItemReq ugCallBackCancelItemReq : ugCallBackCancelItemReqList) {
+        for (int i=0;i<ugCallBackCancelItemReqList.size();i++){
+            UgCallBackCancelItemReq ugCallBackCancelItemReq = JSONObject.parseObject(JSONObject.toJSONString(ugCallBackCancelItemReqList.get(i)),UgCallBackCancelItemReq.class);;
             UgCallBackCancelSubResp ugCallBackCancelSubResp = new UgCallBackCancelSubResp();
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(ugCallBackCancelItemReq.getUserId());
 
@@ -321,7 +324,9 @@ public class UgCallbackServiceImpl implements UgCallbackService {
             ugCallBackCheckTxnResp.setMsg("API PASSWORD ERROR");
         }
         List<UgCallBackCheckTxnlSubResp> ugCallBackCheckTxnlSubRespList = new ArrayList<>();
-        for (UgCallBackCheckTxnItemReq ugCallBackCheckTxnItemReq : ugCallBackCheckTxnReq.getData()) {
+        List<UgCallBackCheckTxnItemReq> ugCallBackCheckTxnItemReqList = ugCallBackCheckTxnReq.getData();
+        for (int i=0;i<ugCallBackCheckTxnItemReqList.size();i++){
+            UgCallBackCheckTxnItemReq ugCallBackCheckTxnItemReq = JSONObject.parseObject(JSONObject.toJSONString(ugCallBackCheckTxnItemReqList.get(i)),UgCallBackCheckTxnItemReq.class);;
             UgCallBackCheckTxnlSubResp ugCallBackCheckTxnlSubResp = new UgCallBackCheckTxnlSubResp();
             ugCallBackCheckTxnlSubResp.setCode("000000");
             ugCallBackCheckTxnlSubResp.setMsg("SUCCESS");
