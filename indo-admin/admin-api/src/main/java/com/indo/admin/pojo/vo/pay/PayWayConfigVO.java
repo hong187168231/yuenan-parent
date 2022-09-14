@@ -34,7 +34,4 @@ public class PayWayConfigVO {
 
     @ApiModelProperty(value = "每日总额度")
     private Integer todayAmount;
-
-    @ApiModelProperty(value = "银行列表")
-    private List<String> bankList;
 }

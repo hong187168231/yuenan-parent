@@ -11,6 +11,7 @@ import com.indo.admin.pojo.dto.PayWayQueryDTO;
 import com.indo.admin.pojo.vo.pay.PayWayBankConfigVO;
 import com.indo.admin.pojo.vo.pay.PayWayConfigVO;
 import com.indo.common.constant.RedisConstants;
+import com.indo.common.utils.StringUtils;
 import com.indo.common.web.util.DozerUtil;
 import com.indo.core.pojo.entity.PayWayBankConfig;
 import com.indo.core.pojo.entity.PayWayConfig;
@@ -21,6 +22,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,7 +50,7 @@ public class PayWayConfigServiceImpl extends ServiceImpl<PayWayConfigMapper, Pay
         if (CollectionUtils.isNotEmpty(list)) {
             for (PayWayConfigVO vo : list) {
                 List<PayWayBankConfigVO> payWayBankConfigList = payWayBankConfigService.getPayChannelId(vo.getPayChannelId());
-                vo.setBankList(payWayBankConfigList.stream().map(PayWayBankConfigVO::getBankName).collect(Collectors.toList()));
+                vo.setWayName(StringUtils.join(payWayBankConfigList.stream().map(PayWayBankConfigVO::getBankName).collect(Collectors.toList()), " "));
             }
         }
         page.setRecords(list);
