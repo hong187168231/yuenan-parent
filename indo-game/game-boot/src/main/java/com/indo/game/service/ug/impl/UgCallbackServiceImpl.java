@@ -140,7 +140,7 @@ public class UgCallbackServiceImpl implements UgCallbackService {
                     gameCommonService.updateUserBalance(memBaseinfo, betAmount.abs(), GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
                 } else {
                     method = "Settle";
-                    if (BigDecimal.ZERO.compareTo(betAmount.abs()) == -1) {
+                    if (betAmount.abs().compareTo(BigDecimal.ZERO) == -1) {
                         balance = balance.subtract(betAmount.abs());
                         gameCommonService.updateUserBalance(memBaseinfo, betAmount.abs(), GoldchangeEnum.BETNSETTLE, TradingEnum.SPENDING);
                     } else {
