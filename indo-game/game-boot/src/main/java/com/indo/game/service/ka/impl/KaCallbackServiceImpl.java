@@ -270,9 +270,9 @@ public class KaCallbackServiceImpl implements KaCallbackService {
 
             // 查询用户请求订单
             Txns oldTxns = getTxns(kaCallbackCreditReq.getTransactionId(), memBaseinfo.getAccount(), null);
-            if (null != oldTxns) {
-                return initFailureResponse(201, "交易已存在");
-            }
+//            if (null != oldTxns) {
+//                return initFailureResponse(201, "交易已存在");
+//            }
 
             GamePlatform gamePlatform;
             if("Y".equals(OpenAPIProperties.KA_IS_PLATFORM_LOGIN)){
@@ -287,55 +287,70 @@ public class KaCallbackServiceImpl implements KaCallbackService {
             gameCommonService.updateUserBalance(memBaseinfo, amount, GoldchangeEnum.ACTIVITY_GIVE, TradingEnum.INCOME);
 
             Txns txns = new Txns();
-            //游戏商注单号
-            txns.setPlatformTxId(kaCallbackCreditReq.getTransactionId());
+            String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
+            BigDecimal wingAmount = amount;
+            if (null != oldTxns) {
+                BeanUtils.copyProperties(oldTxns, txns);
+                oldTxns.setStatus("Settle");
+                oldTxns.setUpdateTime(dateStr);
+                txns.setId(null);
+                wingAmount =  wingAmount.add(oldTxns.getWinAmount());
+                txnsMapper.updateById(oldTxns);
+            }else {
+                //游戏商注单号
+                txns.setPlatformTxId(kaCallbackCreditReq.getTransactionId());
 
-            //玩家 ID
-            txns.setUserId(memBaseinfo.getAccount());
-            //玩家货币代码
-            txns.setCurrency(platformGameParent.getCurrencyType());
+                //玩家 ID
+                txns.setUserId(memBaseinfo.getAccount());
+                //玩家货币代码
+                txns.setCurrency(platformGameParent.getCurrencyType());
 //            txns.setOdds(kaCallbackPlayReq.getBetPerSelection());
 //            txns.setRoundId(kaCallbackPlayReq.getRound().toString());
-            //平台代码
-            txns.setPlatform(platformGameParent.getPlatformCode());
-            //平台名称
-            txns.setPlatformEnName(platformGameParent.getPlatformEnName());
-            txns.setPlatformCnName(platformGameParent.getPlatformCnName());
-            //平台游戏类型
-            txns.setGameType(gameCategory.getGameType());
-            //游戏分类ID
-            txns.setCategoryId(gameCategory.getId());
-            //游戏分类名称
-            txns.setCategoryName(gameCategory.getGameName());
-            //平台游戏代码
-            txns.setGameCode(gamePlatform.getPlatformCode());
-            //游戏名称
-            txns.setGameName(gamePlatform.getPlatformEnName());
-            //下注金额
-            txns.setBetAmount(BigDecimal.ZERO);
-            //游戏平台的下注项目
-            txns.setBetType(kaCallbackCreditReq.getGameId());
+                //平台代码
+                txns.setPlatform(platformGameParent.getPlatformCode());
+                //平台名称
+                txns.setPlatformEnName(platformGameParent.getPlatformEnName());
+                txns.setPlatformCnName(platformGameParent.getPlatformCnName());
+                //平台游戏类型
+                txns.setGameType(gameCategory.getGameType());
+                //游戏分类ID
+                txns.setCategoryId(gameCategory.getId());
+                //游戏分类名称
+                txns.setCategoryName(gameCategory.getGameName());
+                //平台游戏代码
+                txns.setGameCode(gamePlatform.getPlatformCode());
+                //游戏名称
+                txns.setGameName(gamePlatform.getPlatformEnName());
+                //下注金额
+                txns.setBetAmount(BigDecimal.ZERO);
+                //游戏平台的下注项目
+                txns.setBetType(kaCallbackCreditReq.getGameId());
+
+                //玩家下注时间
+                txns.setBetTime(DateUtils.formatByLong(kaCallbackCreditReq.getTimestamp(), DateUtils.newFormat));
+                //真实下注金额,需增加在玩家的金额
+                txns.setRealBetAmount(BigDecimal.ZERO);
+                //真实返还金额,游戏赢分
+                txns.setRealWinAmount(amount);
+
+                //有效投注金额 或 投注面值
+                txns.setTurnover(BigDecimal.ZERO);
+                //辨认交易时间依据
+                txns.setTxTime(DateUtils.formatByLong(kaCallbackCreditReq.getTimestamp(), DateUtils.newFormat));
+
+
+            }
             //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
-            txns.setWinningAmount(amount);
-            //玩家下注时间
-            txns.setBetTime(DateUtils.formatByLong(kaCallbackCreditReq.getTimestamp(), DateUtils.newFormat));
-            //真实下注金额,需增加在玩家的金额
-            txns.setRealBetAmount(BigDecimal.ZERO);
-            //真实返还金额,游戏赢分
-            txns.setRealWinAmount(amount);
+            txns.setWinningAmount(wingAmount);
             //返还金额 (包含下注金额)
             txns.setWinAmount(amount);
-            //有效投注金额 或 投注面值
-            txns.setTurnover(BigDecimal.ZERO);
-            //辨认交易时间依据
-            txns.setTxTime(DateUtils.formatByLong(kaCallbackCreditReq.getTimestamp(), DateUtils.newFormat));
             //操作名称
             txns.setMethod("Settle");
             txns.setStatus("Running");
             //余额
             txns.setBalance(balance);
             //创建时间
-            String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
+
             txns.setCreateTime(dateStr);
             //投注 IP
             txns.setBetIp(ip);//  string 是 投注 IP
