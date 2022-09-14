@@ -237,6 +237,9 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             if (null != oldTxns&&"Place Bet".equals(oldTxns.getMethod())) {
                 jsonObject.put("balance", balance.divide(platformGameParent.getCurrencyPro()));
                 jsonObject.put("bonus", 0);
+                if("Cancel Bet".equals(oldTxns.getGameMethod())){
+                    jsonObject.put("status", "FINAL_ERROR_ACTION_FAILED");
+                }
 //                jsonObject.put("status", "BET_ALREADY_SETTLED");
                 return jsonObject;
             }else if (null != oldTxns){
@@ -560,6 +563,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
                 txnsMapper.insert(txns2);
                 txns.setStatus("Place Bet");
             }
+            txns.setGameMethod("Cancel Bet");
             txnsMapper.insert(txns);
 
             oldTxns.setStatus("Cancel Bet");

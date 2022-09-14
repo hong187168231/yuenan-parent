@@ -12,13 +12,13 @@ public interface SabaCallbackService {
     Object confirmBet(SabaCallBackReq<SabaCallBackConfirmBetReq<TicketInfoReq>> sabaCallBackReq);
 
     //结算投注
-    Object settle(SabaCallBackReq<SabaCallBackSettleReq<SettleTradingInfoReq<ParlayDetailReq<SystemParlayDetailReq>>>> sabaCallBackReq);
+    Object settle(SabaCallBackReq<SabaCallBackSettleReq<SettleTradingInfoReq>> sabaCallBackReq);
 
     //重新结算投注
-    Object resettle(SabaCallBackReq<SabaCallBackSettleReq<SettleTradingInfoReq<ParlayDetailReq<SystemParlayDetailReq>>>> sabaCallBackReq);
+    Object resettle(SabaCallBackReq<SabaCallBackSettleReq<SettleTradingInfoReq>> sabaCallBackReq);
 
     //撤销结算投注
-    Object unsettle(SabaCallBackReq<SabaCallBackSettleReq<SettleTradingInfoReq<ParlayDetailReq<SystemParlayDetailReq>>>> sabaCallBackReq);
+    Object unsettle(SabaCallBackReq<SabaCallBackSettleReq<SettleTradingInfoReq>> sabaCallBackReq);
 
     //取消投注
     Object cancelBet(SabaCallBackReq<SabaCallBackCancelBetReq<TradingInfoReq>> sabaCallBackReq);
@@ -28,6 +28,8 @@ public interface SabaCallbackService {
 
     //当沙巴体育通过 PlaceBetParlay 方法收到成功结果，沙巴体育将会呼叫 ConfirmBetParlay
     Object confirmBetParlay(SabaCallBackReq<SabaCallBackConfirmBetParlayReq> sabaCallBackReq);
+
+    Object adjustbalance(SabaCallBackReq<SabaCallBackAdjustbalanceReq<SabaCallBackAdjustbalanceInfoReq>> sabaCallBackReq);
 
     //厂商提供此方法，沙巴体育通过呼叫此方法提供下注细节给厂商。本方法支持快乐彩、彩票、桌面游戏产品
     Object placeBet3rd(SabaCallBackReq<SabaCallBackPlaceBet3rdReq<PlaceBet3rdTicketInfoReq>> sabaCallBackReq);

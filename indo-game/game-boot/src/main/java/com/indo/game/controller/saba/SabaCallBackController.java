@@ -90,7 +90,7 @@ public class SabaCallBackController {
     public Object settle(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
         String ip = IPAddressUtil.getIpAddress(request);
         logger.info("sabaCallBack settle 回调,结算投注 params:{},ip:{}",JSONObject.toJSONString(jsonObject),ip);
-        SabaCallBackReq<SabaCallBackSettleReq<SettleTradingInfoReq<ParlayDetailReq<SystemParlayDetailReq>>>> sabaCallBackReq = JSONObject.toJavaObject(jsonObject,SabaCallBackReq.class);
+        SabaCallBackReq<SabaCallBackSettleReq<SettleTradingInfoReq>> sabaCallBackReq = JSONObject.toJavaObject(jsonObject,SabaCallBackReq.class);
         Object settle = sabaCallbackService.settle(sabaCallBackReq);
         logger.info("sabaCallBack settle 回调返回数据,结算投注 params:{}",settle);
         return settle;
@@ -105,7 +105,7 @@ public class SabaCallBackController {
     public Object resettle(@RequestBody JSONObject jsonObject, HttpServletRequest request)  {
         String ip = IPAddressUtil.getIpAddress(request);
         logger.info("sabaCallBack resettle 回调,重新结算投注 params:{},ip:{}",JSONObject.toJSONString(jsonObject),ip);
-        SabaCallBackReq<SabaCallBackSettleReq<SettleTradingInfoReq<ParlayDetailReq<SystemParlayDetailReq>>>> sabaCallBackReq = JSONObject.toJavaObject(jsonObject,SabaCallBackReq.class);
+        SabaCallBackReq<SabaCallBackSettleReq<SettleTradingInfoReq>> sabaCallBackReq = JSONObject.toJavaObject(jsonObject,SabaCallBackReq.class);
         Object resettle = sabaCallbackService.resettle(sabaCallBackReq);
         logger.info("sabaCallBack resettle 回调返回数据,重新结算投注 params:{}",resettle);
         return resettle;
@@ -120,7 +120,7 @@ public class SabaCallBackController {
     public Object unsettle(@RequestBody JSONObject jsonObject, HttpServletRequest request){
         String ip = IPAddressUtil.getIpAddress(request);
         logger.info("sabaCallBack unsettle 回调,撤销结算投注 params:{},ip:{}",JSONObject.toJSONString(jsonObject),ip);
-        SabaCallBackReq<SabaCallBackSettleReq<SettleTradingInfoReq<ParlayDetailReq<SystemParlayDetailReq>>>> sabaCallBackReq = JSONObject.toJavaObject(jsonObject,SabaCallBackReq.class);
+        SabaCallBackReq<SabaCallBackSettleReq<SettleTradingInfoReq>> sabaCallBackReq = JSONObject.toJavaObject(jsonObject,SabaCallBackReq.class);
         Object unsettle = sabaCallbackService.unsettle(sabaCallBackReq);
         logger.info("sabaCallBack unsettle 回调返回数据,撤销结算投注 params:{}",unsettle);
         return unsettle;
@@ -154,6 +154,22 @@ public class SabaCallBackController {
         Object confirmBetParlay = sabaCallbackService.confirmBetParlay(sabaCallBackReq);
         logger.info("sabaCallBack confirmBetParlay 回调返回数据,当沙巴体育通过 PlaceBetParlay 方法收到成功结果 params:{}",confirmBetParlay);
         return confirmBetParlay;
+    }
+
+    /**
+     * 此方法支持推广活动或任何会影响玩家钱包余额
+     * 当呼叫失败时，将会持续呼叫 Adjust Balance 直到成功或达到重试最大次数上限。
+     */
+    @RequestMapping(value="/adjustbalance",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    @AllowAccess
+    public Object adjustbalance(@RequestBody JSONObject jsonObject, HttpServletRequest request){
+        String ip = IPAddressUtil.getIpAddress(request);
+        logger.info("sabaCallBack confirmBetParlay 回调,当沙巴体育通过 PlaceBetParlay 方法收到成功结果 params:{},ip:{}",JSONObject.toJSONString(jsonObject),ip);
+        SabaCallBackReq<SabaCallBackAdjustbalanceReq<SabaCallBackAdjustbalanceInfoReq>> sabaCallBackReq = JSONObject.toJavaObject(jsonObject,SabaCallBackReq.class);
+        Object adjustbalance = sabaCallbackService.adjustbalance(sabaCallBackReq);
+        logger.info("sabaCallBack confirmBetParlay 回调返回数据,当沙巴体育通过 PlaceBetParlay 方法收到成功结果 params:{}",adjustbalance);
+        return adjustbalance;
     }
 
     /**

@@ -16,6 +16,6 @@ public class SettleTradingInfoReq<T> {
     private BigDecimal payout;//  Y (decimal) 注单赢回的金额
     private BigDecimal creditAmount;//  Y (decimal) 需增加在玩家的金额。
     private BigDecimal debitAmount;//  Y (decimal) 需从玩家扣除的金额。
-    private List<T> parlayDetail;//  Y Json 格式: 请参阅下方说明
+//    private List<T> parlayDetail;//  Y Json 格式: 请参阅下方说明
 
 }

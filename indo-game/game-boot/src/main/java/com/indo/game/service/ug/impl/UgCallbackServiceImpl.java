@@ -253,7 +253,7 @@ public class UgCallbackServiceImpl implements UgCallbackService {
         List<UgCallBackCancelItemReq> ugCallBackCancelItemReqList = ugCallBackCancelReq.getData();
         List<UgCallBackCancelSubResp> ugCallBackCancelSubRespList = new ArrayList<>();
         for (int i=0;i<ugCallBackCancelItemReqList.size();i++){
-            UgCallBackCancelItemReq ugCallBackCancelItemReq = JSONObject.parseObject(JSONObject.toJSONString(ugCallBackCancelItemReqList.get(i)),UgCallBackCancelItemReq.class);;
+            UgCallBackCancelItemReq ugCallBackCancelItemReq = JSONObject.parseObject(JSONObject.toJSONString(ugCallBackCancelItemReqList.get(i)),UgCallBackCancelItemReq.class);
             UgCallBackCancelSubResp ugCallBackCancelSubResp = new UgCallBackCancelSubResp();
             MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(ugCallBackCancelItemReq.getUserId());
 
