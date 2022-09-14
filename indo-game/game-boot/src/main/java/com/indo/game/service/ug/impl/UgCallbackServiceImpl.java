@@ -229,6 +229,8 @@ public class UgCallbackServiceImpl implements UgCallbackService {
             }
             ugCallBackBalanceRespList.add(ugCallBackSubBalanceResp);
         }
+        ugCallBackBalanceResp.setCode("000000");
+        ugCallBackBalanceResp.setMsg("SUCCESS");
         ugCallBackBalanceResp.setData(ugCallBackBalanceRespList);
 
         return ugCallBackBalanceResp;
