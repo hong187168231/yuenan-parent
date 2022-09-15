@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.jboss.resteasy.annotations.GZIP;
 
 import javax.servlet.http.HttpServletRequest;
+import java.nio.charset.StandardCharsets;
 
 @RestController
 @RequestMapping("/saba/callBack")
@@ -29,7 +30,7 @@ public class SabaCallBackController {
     @ResponseBody
     @AllowAccess
     public Object getBalance(@GZIP @RequestBody String result,HttpServletRequest request) {
-        logger.info("sabaCallBack GetBalance 回调,取得用户的余额 result:{}",result);
+        logger.info("sabaCallBack GetBalance 回调,取得用户的余额 result:{}",new String(result.getBytes(StandardCharsets.ISO_8859_1),StandardCharsets.UTF_8));
         JSONObject jsonObject = SabaGZIPUtil.getJSONObject(request);
         String ip = IPAddressUtil.getIpAddress(request);
         logger.info("sabaCallBack GetBalance 回调,取得用户的余额 params:{},ip:{}",JSONObject.toJSONString(jsonObject),ip);
