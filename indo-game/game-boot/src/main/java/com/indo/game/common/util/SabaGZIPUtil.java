@@ -79,9 +79,9 @@ public class SabaGZIPUtil {
             System.out.println("00000=================="+contentEncoding);
             if(null!=contentEncoding && "gzip".equals(contentEncoding)){
                 System.out.println("111111==================1");
-                System.out.println(request.getReader());
                 // 获取输入流
                 BufferedReader reader = request.getReader();
+                System.out.println("111111============4======2");
                 // 将输入流中的请求实体转换为 byte 数组, 进行 gzip 解压
                 byte[] bytes = IOUtils.toByteArray(reader, "iso-8859-1");
                 System.out.println("111111==================2");
@@ -103,7 +103,7 @@ public class SabaGZIPUtil {
             }
             System.out.println("44444==================");
         } catch (IOException e) {
-            System.out.println("eeeee==================");
+            System.out.println("eeeee=================="+e.getMessage());
             e.printStackTrace();
         }
         return null;
