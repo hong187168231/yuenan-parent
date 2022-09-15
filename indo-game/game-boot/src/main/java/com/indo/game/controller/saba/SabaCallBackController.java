@@ -3,6 +3,7 @@ package com.indo.game.controller.saba;
 import com.alibaba.fastjson.JSONObject;
 import com.indo.common.annotation.AllowAccess;
 import com.indo.common.utils.IPAddressUtil;
+import com.indo.game.common.util.SabaGZIPUtil;
 import com.indo.game.pojo.dto.saba.*;
 import com.indo.game.service.saba.SabaCallbackService;
 import org.slf4j.Logger;
@@ -27,7 +28,8 @@ public class SabaCallBackController {
     @RequestMapping(value="/getbalance",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object getBalance(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
+    public Object getBalance(HttpServletRequest request) {
+        JSONObject jsonObject = SabaGZIPUtil.getJSONObject(request);
         String ip = IPAddressUtil.getIpAddress(request);
         logger.info("sabaCallBack GetBalance 回调,取得用户的余额 params:{},ip:{}",JSONObject.toJSONString(jsonObject),ip);
         SabaCallBackReq<SabaCallBackParentReq> sabaCallBackReq = JSONObject.toJavaObject(jsonObject,SabaCallBackReq.class);
