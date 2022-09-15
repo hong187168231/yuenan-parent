@@ -278,12 +278,11 @@ public class UgCallbackServiceImpl implements UgCallbackService {
                         balance = balance.add(betAmount);
                     } else {
                         if (BigDecimal.valueOf(0).compareTo(oldTxns.getWinAmount()) == -1) {
-                            gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.UNSETTLE, TradingEnum.INCOME);
-                            balance = balance.add(betAmount);
-
-                        } else {
                             gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.UNSETTLE, TradingEnum.SPENDING);
                             balance = balance.subtract(betAmount);
+                        } else {
+                            gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.UNSETTLE, TradingEnum.INCOME);
+                            balance = balance.add(betAmount);
                         }
                     }
                     String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);

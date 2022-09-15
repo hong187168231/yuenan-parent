@@ -29,6 +29,7 @@ public class SabaCallBackController {
     @ResponseBody
     @AllowAccess
     public Object getBalance(HttpServletRequest request) {
+        logger.info("sabaCallBack GetBalance 回调,取得用户的余额 params:{},ip:{}",JSONObject.toJSONString(request));
         JSONObject jsonObject = SabaGZIPUtil.getJSONObject(request);
         String ip = IPAddressUtil.getIpAddress(request);
         logger.info("sabaCallBack GetBalance 回调,取得用户的余额 params:{},ip:{}",JSONObject.toJSONString(jsonObject),ip);
