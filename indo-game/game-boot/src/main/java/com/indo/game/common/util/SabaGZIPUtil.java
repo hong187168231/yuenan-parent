@@ -25,13 +25,13 @@ public class SabaGZIPUtil {
      */
 
     public static String uncompress(byte[] bytes, String charset) {
-
+        System.out.println("111111==================4");
         if (bytes == null || bytes.length == 0) {
 
             return null;
 
         }
-
+        System.out.println("111111==================5");
         ByteArrayOutputStream byteArrayOutputStream = null;
 
         ByteArrayInputStream byteArrayInputStream = null;
@@ -39,21 +39,21 @@ public class SabaGZIPUtil {
         GZIPInputStream gzipInputStream = null;
 
         try {
-
+            System.out.println("111111==================6");
             byteArrayOutputStream = new ByteArrayOutputStream();
 
             byteArrayInputStream = new ByteArrayInputStream(bytes);
 
             gzipInputStream = new GZIPInputStream(byteArrayInputStream);
-
+            System.out.println("111111==================7");
 // 使用 org.apache.commons.io.IOUtils 简化流的操作
 
             IOUtils.copy(gzipInputStream, byteArrayOutputStream);
-
+            System.out.println("111111==================8");
             return byteArrayOutputStream.toString(charset);
 
         } catch (IOException e) {
-
+            System.out.println("111111=====eeeeeeee=============5");
             e.printStackTrace();
 
         } finally {
@@ -78,13 +78,16 @@ public class SabaGZIPUtil {
             String contentEncoding = request.getHeader("content-encoding");
             System.out.println("00000=================="+contentEncoding);
             if(null!=contentEncoding && "gzip".equals(contentEncoding)){
+                System.out.println("111111==================1");
+                System.out.println(request.getReader());
                 // 获取输入流
                 BufferedReader reader = request.getReader();
                 // 将输入流中的请求实体转换为 byte 数组, 进行 gzip 解压
                 byte[] bytes = IOUtils.toByteArray(reader, "iso-8859-1");
+                System.out.println("111111==================2");
                 // 对 bytes 数组进行解压
                 params = SabaGZIPUtil.uncompress(bytes, "utf-8");
-                System.out.println("111111==================");
+                System.out.println("111111==================3");
             } else {
                 BufferedReader reader = request.getReader();
                 params = IOUtils.toString(reader);
@@ -100,6 +103,7 @@ public class SabaGZIPUtil {
             }
             System.out.println("44444==================");
         } catch (IOException e) {
+            System.out.println("eeeee==================");
             e.printStackTrace();
         }
         return null;
