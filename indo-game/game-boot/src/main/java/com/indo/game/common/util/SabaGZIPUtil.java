@@ -76,7 +76,6 @@ public class SabaGZIPUtil {
         try {
             // 获取 Content-Encoding 请求头
             String contentEncoding = request.getHeader("content-encoding");
-            System.out.println("============="+contentEncoding);
             if (contentEncoding != null && contentEncoding.equals("gzip")) {
                 // 获取输入流
                 BufferedReader reader = request.getReader();
@@ -84,16 +83,20 @@ public class SabaGZIPUtil {
                 byte[] bytes = IOUtils.toByteArray(reader, "iso-8859-1");
                 // 对 bytes 数组进行解压
                 params = SabaGZIPUtil.uncompress(bytes, "utf-8");
+                System.out.println("111111==================");
             } else {
                 BufferedReader reader = request.getReader();
                 params = IOUtils.toString(reader);
+                System.out.println("222222==================");
             }
             if (params != null && params.trim().length() > 0) {
+                System.out.println("333333==================");
                 // 因为前台对参数进行了 url 编码, 在此进行解码
                 params = URLDecoder.decode(params, "utf-8");
                 // 将解码后的参数转换为 json 对象
                 return JSONObject.parseObject(params);
             }
+            System.out.println("44444==================");
         } catch (IOException e) {
             e.printStackTrace();
         }
