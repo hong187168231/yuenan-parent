@@ -28,7 +28,9 @@ public class SabaCallBackController {
     @RequestMapping(value="/getbalance",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object getBalance(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
+    public Object getBalance(HttpServletRequest request) {
+
+        JSONObject jsonObject = SabaGZIPUtil.getJSONObject(request);
         String ip = IPAddressUtil.getIpAddress(request);
         logger.info("sabaCallBack GetBalance 回调,取得用户的余额 params:{},ip:{}",JSONObject.toJSONString(jsonObject),ip);
         SabaCallBackReq<SabaCallBackParentReq> sabaCallBackReq = JSONObject.toJavaObject(jsonObject,SabaCallBackReq.class);
