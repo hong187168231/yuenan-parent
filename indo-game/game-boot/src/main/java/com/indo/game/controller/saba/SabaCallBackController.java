@@ -29,8 +29,8 @@ public class SabaCallBackController {
     @ResponseBody
     @AllowAccess
     public Object getBalance(HttpServletRequest request) {
-        logger.info("所有参数",JSONObject.toJSONString(request.getParameterMap()));
-        logger.info("所有header参数",JSONObject.toJSONString(request.getHeaderNames()));
+        logger.info("所有参数:{}",JSONObject.toJSONString(request.getParameterMap()));
+        logger.info("所有header参数:{}",JSONObject.toJSONString(request.getHeaderNames()));
         JSONObject jsonObject = SabaGZIPUtil.getJSONObject(request);
         String ip = IPAddressUtil.getIpAddress(request);
         logger.info("sabaCallBack GetBalance 回调,取得用户的余额 params:{},ip:{}",JSONObject.toJSONString(jsonObject),ip);
