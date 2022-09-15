@@ -1,115 +1,126 @@
 package com.indo.game.common.util;
 
-
-import com.alibaba.fastjson.JSONObject;
-import org.apache.commons.io.IOUtils;
-
-import javax.servlet.http.HttpServletRequest;
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
+
+import org.apache.commons.codec.binary.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SabaGZIPUtil {
+    private static final Logger logger = LoggerFactory.getLogger(SabaGZIPUtil.class);
+    public static final String GZIP_ENCODE_UTF_8 = "UTF-8";
+
+    public static final String GZIP_ENCODE_ISO_8859_1 = "ISO-8859-1";
 
     /**
-
-     * 解压 gzip 格式 byte 数组
-
-     * @param bytes gzip 格式 byte 数组
-
-     * @param charset 字符集
-
+     * 字符串压缩为GZIP字节数组
+     *
+     * @param str
+     * @return
      */
-
-    public static String uncompress(byte[] bytes, String charset) {
-        System.out.println("111111==================4");
-        if (bytes == null || bytes.length == 0) {
-
-            return null;
-
-        }
-        System.out.println("111111==================5");
-        ByteArrayOutputStream byteArrayOutputStream = null;
-
-        ByteArrayInputStream byteArrayInputStream = null;
-
-        GZIPInputStream gzipInputStream = null;
-
-        try {
-            System.out.println("111111==================6");
-            byteArrayOutputStream = new ByteArrayOutputStream();
-
-            byteArrayInputStream = new ByteArrayInputStream(bytes);
-
-            gzipInputStream = new GZIPInputStream(byteArrayInputStream);
-            System.out.println("111111==================7");
-// 使用 org.apache.commons.io.IOUtils 简化流的操作
-
-            IOUtils.copy(gzipInputStream, byteArrayOutputStream);
-            System.out.println("111111==================8");
-            return byteArrayOutputStream.toString(charset);
-
-        } catch (IOException e) {
-            System.out.println("111111=====eeeeeeee=============5");
-            e.printStackTrace();
-
-        } finally {
-
-// 释放流资源
-
-            IOUtils.closeQuietly(gzipInputStream);
-
-            IOUtils.closeQuietly(byteArrayInputStream);
-
-            IOUtils.closeQuietly(byteArrayOutputStream);
-
-        }
-
-        return null;
-
+    public static byte[] compress(String str) {
+        return compress(str, GZIP_ENCODE_UTF_8);
     }
-    public static JSONObject getJSONObject(String result){
-        String params = "";
+
+    /**
+     * 字符串压缩为GZIP字节数组
+     *
+     * @param str
+     * @param encoding
+     * @return
+     */
+    public static byte[] compress(String str, String encoding) {
+        if (str == null || str.length() == 0) {
+            return null;
+        }
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        GZIPOutputStream gzip;
         try {
-            System.out.println("111111==================1");
-            params = SabaGZIPUtil.uncompress(result.getBytes(StandardCharsets.UTF_8), "utf-8");
-            System.out.println("111111==================3"+params);
-            // 获取 Content-Encoding 请求头
-//            String contentEncoding = request.getHeader("content-encoding");
-//            System.out.println("00000=================="+contentEncoding);
-//            if(null!=contentEncoding && "gzip".equals(contentEncoding)){
-//                System.out.println("111111==================1");
-//                // 获取输入流
-//                BufferedReader reader = request.getReader();
-//                System.out.println("111111============4======2");
-//                // 将输入流中的请求实体转换为 byte 数组, 进行 gzip 解压
-//                byte[] bytes = IOUtils.toByteArray(reader, "iso-8859-1");
-//                System.out.println("111111==================2");
-//                // 对 bytes 数组进行解压
-//                params = SabaGZIPUtil.uncompress(bytes, "utf-8");
-//                System.out.println("111111==================3");
-//            } else {
-//                BufferedReader reader = request.getReader();
-//                params = IOUtils.toString(reader);
-//                System.out.println("222222==================");
-//            }
-//            if (params != null && params.trim().length() > 0) {
-//                System.out.println("333333=================="+params);
-//                // 因为前台对参数进行了 url 编码, 在此进行解码
-//                params = URLDecoder.decode(params, "utf-8");
-//                System.out.println("66666=================="+params);
-//                // 将解码后的参数转换为 json 对象
-//                return JSONObject.parseObject(params);
-//            }
-            System.out.println("44444==================");
-        } catch (Exception e) {
-            System.out.println("eeeee=================="+e.getMessage());
-            e.printStackTrace();
+            gzip = new GZIPOutputStream(out);
+            gzip.write(str.getBytes(encoding));
+            gzip.close();
+        } catch (IOException e) {
+            logger.error("gzip compress error.", e);
+        }
+        return out.toByteArray();
+    }
+
+    /**
+     * GZIP解压缩
+     *
+     * @param bytes
+     * @return
+     */
+    public static byte[] uncompress(byte[] bytes) {
+        if (bytes == null || bytes.length == 0) {
+            return null;
+        }
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ByteArrayInputStream in = new ByteArrayInputStream(bytes);
+        try {
+            GZIPInputStream ungzip = new GZIPInputStream(in);
+            byte[] buffer = new byte[256];
+            int n;
+            while ((n = ungzip.read(buffer)) >= 0) {
+                out.write(buffer, 0, n);
+            }
+        } catch (IOException e) {
+            logger.error("gzip uncompress error.", e);
+        }
+
+        return out.toByteArray();
+    }
+
+    /**
+     *
+     * @param bytes
+     * @return
+     */
+    public static String uncompressToString(byte[] bytes) {
+        return uncompressToString(bytes, GZIP_ENCODE_UTF_8);
+    }
+
+    /**
+     *
+     * @param bytes
+     * @param encoding
+     * @return
+     */
+    public static String uncompressToString(byte[] bytes, String encoding) {
+        if (bytes == null || bytes.length == 0) {
+            return null;
+        }
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ByteArrayInputStream in = new ByteArrayInputStream(bytes);
+        try {
+            GZIPInputStream ungzip = new GZIPInputStream(in);
+            byte[] buffer = new byte[256];
+            int n;
+            while ((n = ungzip.read(buffer)) >= 0) {
+                out.write(buffer, 0, n);
+            }
+            return out.toString(encoding);
+        } catch (IOException e) {
+            logger.error("gzip uncompress to string error.", e);
         }
         return null;
+    }
+
+    public static void main(String[] args) {
+        String str ="{\n" +
+                " \"key\":\"xxx\",\n" +
+                " \"message\":{\n" +
+                " \"action\":\"GetBalance\",\n" +
+                " \"userId\":\"swuserid\"\n" +
+                " }\n" +
+                "}";
+        System.out.println("原长度：" + str.length());
+        System.out.println("压缩后字符串：" + SabaGZIPUtil.compress(str).toString().length());
+        System.out.println("解压缩后字符串：" + StringUtils.newStringUtf8(SabaGZIPUtil.uncompress(SabaGZIPUtil.compress(str))));
+        System.out.println("解压缩后字符串：" + SabaGZIPUtil.uncompressToString(SabaGZIPUtil.compress(str)));
     }
 }
