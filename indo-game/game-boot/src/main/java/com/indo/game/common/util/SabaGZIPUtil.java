@@ -77,7 +77,7 @@ public class SabaGZIPUtil {
             // 获取 Content-Encoding 请求头
             String contentEncoding = request.getHeader("content-encoding");
             System.out.println("00000=================="+contentEncoding);
-            if (contentEncoding != null && contentEncoding.equals("gzip")) {
+            if(null!=contentEncoding && "gzip".equals(contentEncoding)){
                 // 获取输入流
                 BufferedReader reader = request.getReader();
                 // 将输入流中的请求实体转换为 byte 数组, 进行 gzip 解压

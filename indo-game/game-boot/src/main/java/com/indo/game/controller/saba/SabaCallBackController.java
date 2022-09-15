@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.jboss.resteasy.annotations.GZIP;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -21,14 +22,14 @@ public class SabaCallBackController {
     @Autowired
     private SabaCallbackService sabaCallbackService;
 
-
     /**
      * 取得用户的余额
      */
     @RequestMapping(value="/getbalance",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object getBalance(HttpServletRequest request) {
+    public Object getBalance(@GZIP @RequestBody String result,HttpServletRequest request) {
+        logger.info("sabaCallBack GetBalance 回调,取得用户的余额 result:{}",result);
         JSONObject jsonObject = SabaGZIPUtil.getJSONObject(request);
         String ip = IPAddressUtil.getIpAddress(request);
         logger.info("sabaCallBack GetBalance 回调,取得用户的余额 params:{},ip:{}",JSONObject.toJSONString(jsonObject),ip);
@@ -36,6 +37,7 @@ public class SabaCallBackController {
         Object getBalance = sabaCallbackService.getBalance(sabaCallBackReq);
         logger.info("sabaCallBack GetBalance 回调返回数据,取得用户的余额 params:{}",getBalance);
         return getBalance;
+
     }
 
     /**
