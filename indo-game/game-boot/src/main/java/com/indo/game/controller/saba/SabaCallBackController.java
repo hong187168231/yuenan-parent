@@ -69,7 +69,7 @@ public class SabaCallBackController {
     /**
      * 取消投注
      */
-    @RequestMapping(value="/CancelBet",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
+    @RequestMapping(value="/cancelBet",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object cancelBet(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
@@ -84,7 +84,7 @@ public class SabaCallBackController {
     /**
      * 结算
      */
-    @RequestMapping(value="/Settle",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
+    @RequestMapping(value="/settle",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object settle(@RequestBody JSONObject jsonObject, HttpServletRequest request) {

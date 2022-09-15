@@ -72,7 +72,7 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
             GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.SABA_PLATFORM_CODE);
             GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(gameParentPlatform.getPlatformCode(),gameParentPlatform.getPlatformCode());
             GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
-            BigDecimal betAmount = null!=sabaCallBackPlaceBetReq.getActualAmount()?sabaCallBackPlaceBetReq.getActualAmount().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
+            BigDecimal betAmount = null!=sabaCallBackPlaceBetReq.getDebitAmount()?sabaCallBackPlaceBetReq.getDebitAmount().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
             if (balance.compareTo(betAmount) == -1) {
                 sabaCallBackRespError.setStatus("502");
                 sabaCallBackRespError.setMsg("Player Has Insufficient Funds");
@@ -123,6 +123,7 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
                 //操作名称
                 txns.setMethod("Place Bet");
                 txns.setStatus("Running");
+                txns.setGameMethod("placeBet");
                 //余额
                 txns.setBalance(balance);
                 txnsMapper.insert(txns);
@@ -157,7 +158,7 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
                 wrapper.eq(Txns::getStatus, "Running");
                 Txns oldTxns = txnsMapper.selectOne(wrapper);
                 if (null==oldTxns) {
-                    BigDecimal betAmount = null!=t.getActualAmount()?t.getActualAmount().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
+                    BigDecimal betAmount = null!=t.getDebitAmount()?t.getDebitAmount().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
                     balance = balance.subtract(betAmount);
                     gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
 
@@ -198,6 +199,7 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
                     //操作名称
                     txns.setMethod("Place Bet");
                     txns.setStatus("Running");
+                    txns.setGameMethod("confirmBet");
                     //余额
                     txns.setBalance(balance);
                     txnsMapper.insert(txns);
@@ -326,7 +328,7 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
                 txns.setWinningAmount(amount);
                 txns.setMethod("Settle");
                 txns.setCreateTime(dateStr);
-                txns.setGameMethod("Settle");
+                txns.setGameMethod("settle");
                 txnsMapper.insert(txns);
 
                 oldTxns.setStatus("Settle");
@@ -371,16 +373,16 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
             BigDecimal amount = BigDecimal.ZERO;
             if(null!=oldTxns) {
                 if("Settle".equals(oldTxns.getMethod())){
-                    if("resettle".equals(oldTxns.getMethod())){
+                    if("resettle".equals(oldTxns.getGameMethod())){
                         return sabaCallBackParentResp;
                     }
                     BigDecimal winAmount = oldTxns.getWinAmount();
                     if(BigDecimal.ZERO.compareTo(winAmount)==-1){//回退之前结算
-                        gameCommonService.updateUserBalance(memBaseinfo, debitAmount, GoldchangeEnum.SETTLE, TradingEnum.SPENDING);
-                        balance = balance.subtract(debitAmount);
+                        gameCommonService.updateUserBalance(memBaseinfo, winAmount, GoldchangeEnum.SETTLE, TradingEnum.SPENDING);
+                        balance = balance.subtract(winAmount);
                     }else {
-                        gameCommonService.updateUserBalance(memBaseinfo, creditAmount, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
-                        balance = balance.add(creditAmount);
+                        gameCommonService.updateUserBalance(memBaseinfo, winAmount, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
+                        balance = balance.add(winAmount);
                     }
                 }
                 if(BigDecimal.ZERO.compareTo(creditAmount)==-1) {
@@ -506,7 +508,7 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
         for (ComboInfo comboInfo : comboInfoList) {
             TicketInfoMapping ticketInfoMapping = new TicketInfoMapping();
             String rePlatformTxId = GeneratorIdUtil.generateId();
-            BigDecimal betAmount = null!=comboInfo.getBetAmount()?comboInfo.getBetAmount().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
+            BigDecimal betAmount = null!=comboInfo.getDebitAmount()?comboInfo.getDebitAmount().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
             if (balance.compareTo(betAmount) == -1) {
                 sabaCallBackRespError.setStatus("502");
                 sabaCallBackRespError.setMsg("Player Has Insufficient Funds");
@@ -514,7 +516,19 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
             } else {
                 balance = balance.subtract(betAmount);
                 gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
-
+                LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+//                wrapper.eq(Txns::getPlatformTxId, sabaCallBackConfirmBetReq.getOperationId());
+//                wrapper.eq(Txns::getUserId, sabaCallBackConfirmBetReq.getUserId());
+//                wrapper.eq(Txns::getRePlatformTxId,sabaCallBackConfirmBetReq.getOperationId());
+                wrapper.eq(Txns::getRoundId, comboInfo.getRefId());
+                wrapper.eq(Txns::getMethod, "Place Bet");
+                wrapper.eq(Txns::getStatus, "Running");
+                Txns oldTxns = txnsMapper.selectOne(wrapper);
+                if (null!=oldTxns) {
+                    sabaCallBackRespError.setStatus("203");
+                    sabaCallBackRespError.setMsg("Account Existed");
+                    return sabaCallBackRespError;
+                }
 
                 Txns txns = new Txns();
 //                BeanUtils.copyProperties(sabaCallBackPlaceBetReq, txns);
@@ -554,6 +568,7 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
                 //操作名称
                 txns.setMethod("Place Bet");
                 txns.setStatus("Running");
+                txns.setGameMethod("placeBetParlay");
                 //余额
                 txns.setBalance(balance);
                 txnsMapper.insert(txns);
@@ -595,7 +610,7 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
             wrapper.eq(Txns::getStatus, "Running");
             Txns oldTxns = txnsMapper.selectOne(wrapper);
             if (null==oldTxns) {
-                BigDecimal betAmount = null!=confirmBetParlayTicketInfoReq.getActualAmount()?confirmBetParlayTicketInfoReq.getActualAmount().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
+                BigDecimal betAmount = null!=confirmBetParlayTicketInfoReq.getDebitAmount()?confirmBetParlayTicketInfoReq.getDebitAmount().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
                 if (balance.compareTo(betAmount) == -1) {
                     sabaCallBackRespError.setStatus("502");
                     sabaCallBackRespError.setMsg("Player Has Insufficient Funds");
@@ -642,6 +657,7 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
                     //操作名称
                     txns.setMethod("Place Bet");
                     txns.setStatus("Running");
+                    txns.setGameMethod("confirmBetParlay");
                     //余额
                     txns.setBalance(balance);
                     txnsMapper.insert(txns);
@@ -650,7 +666,7 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
         }
         SabaCallBackConfirmBetResp sabaCallBackConfirmBetResp = new SabaCallBackConfirmBetResp();
         sabaCallBackConfirmBetResp.setStatus("0");
-        sabaCallBackConfirmBetResp.setBalance(balance);
+        sabaCallBackConfirmBetResp.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
         return sabaCallBackConfirmBetResp;
     }
 
@@ -673,63 +689,74 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
         BigDecimal balance = memBaseinfo.getBalance();
         BigDecimal creditAmount = null!=sabaCallBackAdjustbalanceInfoReq.getCreditAmount()?sabaCallBackAdjustbalanceInfoReq.getCreditAmount().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;// Y (decimal) 需增加在玩家的金额。
         BigDecimal debitAmount = null!=sabaCallBackAdjustbalanceInfoReq.getDebitAmount()?sabaCallBackAdjustbalanceInfoReq.getDebitAmount().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;// Y (decimal) 需从玩家扣除的金额
-        if(BigDecimal.ZERO.compareTo(creditAmount)==-1) {
-            balance = balance.add(creditAmount);
-            gameCommonService.updateUserBalance(memBaseinfo, creditAmount, GoldchangeEnum.ACTIVITY_GIVE, TradingEnum.INCOME);
-        }
-        if(BigDecimal.ZERO.compareTo(debitAmount)==-1) {
-            balance = balance.add(debitAmount);
-            gameCommonService.updateUserBalance(memBaseinfo, debitAmount, GoldchangeEnum.ACTIVITY_GIVE, TradingEnum.SPENDING);
-        }
-        Txns txns = new Txns();
+        LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+//                wrapper.eq(Txns::getPlatformTxId, sabaCallBackConfirmBetReq.getOperationId());
+//                wrapper.eq(Txns::getUserId, sabaCallBackConfirmBetReq.getUserId());
+//                wrapper.eq(Txns::getRePlatformTxId,sabaCallBackConfirmBetReq.getOperationId());
+        wrapper.eq(Txns::getRoundId, sabaCallBackAdjustbalanceParlayReq.getRefId());
+        wrapper.eq(Txns::getMethod, "Adjust Bet");
+        wrapper.eq(Txns::getStatus, "Running");
+        Txns oldTxns = txnsMapper.selectOne(wrapper);
+        if(null!=oldTxns) {
+            if (BigDecimal.ZERO.compareTo(creditAmount) == -1) {
+                balance = balance.add(creditAmount);
+                gameCommonService.updateUserBalance(memBaseinfo, creditAmount, GoldchangeEnum.ACTIVITY_GIVE, TradingEnum.INCOME);
+            }
+            if (BigDecimal.ZERO.compareTo(debitAmount) == -1) {
+                balance = balance.add(debitAmount);
+                gameCommonService.updateUserBalance(memBaseinfo, debitAmount, GoldchangeEnum.ACTIVITY_GIVE, TradingEnum.SPENDING);
+            }
+            Txns txns = new Txns();
 
 //                BeanUtils.copyProperties(sabaCallBackPlaceBetReq, txns);
-        //游戏商注单号
-        txns.setPlatformTxId(sabaCallBackAdjustbalanceParlayReq.getOperationId());
-        txns.setRoundId(sabaCallBackAdjustbalanceParlayReq.getRefId());
-        txns.setRePlatformTxId(rePlatformTxId);
-        //此交易是否是投注 true是投注 false 否
-        txns.setBet(true);
-        //玩家 ID
-        txns.setUserId(memBaseinfo.getAccount());
-        //玩家货币代码
-        txns.setCurrency(gameParentPlatform.getCurrencyType());
-        ;
-        //平台代码
-        txns.setPlatform(gameParentPlatform.getPlatformCode());
-        //平台英文名称
-        txns.setPlatformEnName(gameParentPlatform.getPlatformEnName());
-        //平台中文名称
-        txns.setPlatformCnName(gameParentPlatform.getPlatformCnName());
-        //平台游戏类型
-        txns.setGameType(gameCategory.getGameType());
-        //游戏分类ID
-        txns.setCategoryId(gameCategory.getId());
-        //游戏分类名称
-        txns.setCategoryName(gameCategory.getGameName());
-        //平台游戏代码
-        txns.setGameCode(gamePlatform.getPlatformCode());
-        //游戏名称
-        txns.setGameName(gamePlatform.getPlatformEnName());
-        //下注金额
-        if(BigDecimal.ZERO.compareTo(creditAmount)!= 0) {
-            txns.setBetAmount(creditAmount);
-            txns.setWinningAmount(creditAmount);
-            txns.setWinAmount(creditAmount);
+            //游戏商注单号
+            txns.setPlatformTxId(sabaCallBackAdjustbalanceParlayReq.getOperationId());
+            txns.setRoundId(sabaCallBackAdjustbalanceParlayReq.getRefId());
+            txns.setRePlatformTxId(rePlatformTxId);
+            //此交易是否是投注 true是投注 false 否
+            txns.setBet(true);
+            //玩家 ID
+            txns.setUserId(memBaseinfo.getAccount());
+            //玩家货币代码
+            txns.setCurrency(gameParentPlatform.getCurrencyType());
+            ;
+            //平台代码
+            txns.setPlatform(gameParentPlatform.getPlatformCode());
+            //平台英文名称
+            txns.setPlatformEnName(gameParentPlatform.getPlatformEnName());
+            //平台中文名称
+            txns.setPlatformCnName(gameParentPlatform.getPlatformCnName());
+            //平台游戏类型
+            txns.setGameType(gameCategory.getGameType());
+            //游戏分类ID
+            txns.setCategoryId(gameCategory.getId());
+            //游戏分类名称
+            txns.setCategoryName(gameCategory.getGameName());
+            //平台游戏代码
+            txns.setGameCode(gamePlatform.getPlatformCode());
+            //游戏名称
+            txns.setGameName(gamePlatform.getPlatformEnName());
+            //下注金额
+            if (BigDecimal.ZERO.compareTo(creditAmount) != 0) {
+                txns.setBetAmount(creditAmount);
+                txns.setWinningAmount(creditAmount);
+                txns.setWinAmount(creditAmount);
+            }
+            if (BigDecimal.ZERO.compareTo(debitAmount) != 0) {
+                txns.setBetAmount(debitAmount);
+                txns.setWinningAmount(debitAmount);
+                txns.setWinAmount(debitAmount);
+            }
+            String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
+            txns.setCreateTime(dateStr);
+            //操作名称
+            txns.setMethod("Adjust Bet");
+            txns.setStatus("Running");
+            txns.setGameMethod("adjustbalance");
+            //余额
+            txns.setBalance(balance);
+            txnsMapper.insert(txns);
         }
-        if(BigDecimal.ZERO.compareTo(debitAmount)!= 0) {
-            txns.setBetAmount(debitAmount);
-            txns.setWinningAmount(debitAmount);
-            txns.setWinAmount(debitAmount);
-        }
-        String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
-        txns.setCreateTime(dateStr);
-        //操作名称
-        txns.setMethod("Place Bet");
-        txns.setStatus("Running");
-        //余额
-        txns.setBalance(balance);
-        txnsMapper.insert(txns);
         return sabaCallBackParentResp;
     }
 

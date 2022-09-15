@@ -300,8 +300,8 @@ public class UgCallbackServiceImpl implements UgCallbackService {
                     txns.setStatus("Running");
                     txnsMapper.insert(txns);
                 }
-                ugCallBackCancelSubResp.setCode("000010");
-                ugCallBackCancelSubResp.setMsg("API PASSWORD ERROR");
+                ugCallBackCancelSubResp.setCode("000000");
+                ugCallBackCancelSubResp.setMsg("SUCCESS");
 
             }
             ugCallBackCancelSubRespList.add(ugCallBackCancelSubResp);
