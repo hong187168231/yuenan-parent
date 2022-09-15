@@ -90,9 +90,10 @@ public class SabaGZIPUtil {
                 System.out.println("222222==================");
             }
             if (params != null && params.trim().length() > 0) {
-                System.out.println("333333==================");
+                System.out.println("333333=================="+params);
                 // 因为前台对参数进行了 url 编码, 在此进行解码
                 params = URLDecoder.decode(params, "utf-8");
+                System.out.println("66666=================="+params);
                 // 将解码后的参数转换为 json 对象
                 return JSONObject.parseObject(params);
             }
