@@ -10,6 +10,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.zip.GZIPInputStream;
 
 public class SabaGZIPUtil {
@@ -71,38 +72,41 @@ public class SabaGZIPUtil {
         return null;
 
     }
-    public static JSONObject getJSONObject(HttpServletRequest request){
+    public static JSONObject getJSONObject(String result){
         String params = "";
         try {
+            System.out.println("111111==================1");
+            params = SabaGZIPUtil.uncompress(result.getBytes(StandardCharsets.UTF_8), "utf-8");
+            System.out.println("111111==================3"+params);
             // 获取 Content-Encoding 请求头
-            String contentEncoding = request.getHeader("content-encoding");
-            System.out.println("00000=================="+contentEncoding);
-            if(null!=contentEncoding && "gzip".equals(contentEncoding)){
-                System.out.println("111111==================1");
-                // 获取输入流
-                BufferedReader reader = request.getReader();
-                System.out.println("111111============4======2");
-                // 将输入流中的请求实体转换为 byte 数组, 进行 gzip 解压
-                byte[] bytes = IOUtils.toByteArray(reader, "iso-8859-1");
-                System.out.println("111111==================2");
-                // 对 bytes 数组进行解压
-                params = SabaGZIPUtil.uncompress(bytes, "utf-8");
-                System.out.println("111111==================3");
-            } else {
-                BufferedReader reader = request.getReader();
-                params = IOUtils.toString(reader);
-                System.out.println("222222==================");
-            }
-            if (params != null && params.trim().length() > 0) {
-                System.out.println("333333=================="+params);
-                // 因为前台对参数进行了 url 编码, 在此进行解码
-                params = URLDecoder.decode(params, "utf-8");
-                System.out.println("66666=================="+params);
-                // 将解码后的参数转换为 json 对象
-                return JSONObject.parseObject(params);
-            }
+//            String contentEncoding = request.getHeader("content-encoding");
+//            System.out.println("00000=================="+contentEncoding);
+//            if(null!=contentEncoding && "gzip".equals(contentEncoding)){
+//                System.out.println("111111==================1");
+//                // 获取输入流
+//                BufferedReader reader = request.getReader();
+//                System.out.println("111111============4======2");
+//                // 将输入流中的请求实体转换为 byte 数组, 进行 gzip 解压
+//                byte[] bytes = IOUtils.toByteArray(reader, "iso-8859-1");
+//                System.out.println("111111==================2");
+//                // 对 bytes 数组进行解压
+//                params = SabaGZIPUtil.uncompress(bytes, "utf-8");
+//                System.out.println("111111==================3");
+//            } else {
+//                BufferedReader reader = request.getReader();
+//                params = IOUtils.toString(reader);
+//                System.out.println("222222==================");
+//            }
+//            if (params != null && params.trim().length() > 0) {
+//                System.out.println("333333=================="+params);
+//                // 因为前台对参数进行了 url 编码, 在此进行解码
+//                params = URLDecoder.decode(params, "utf-8");
+//                System.out.println("66666=================="+params);
+//                // 将解码后的参数转换为 json 对象
+//                return JSONObject.parseObject(params);
+//            }
             System.out.println("44444==================");
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.out.println("eeeee=================="+e.getMessage());
             e.printStackTrace();
         }
