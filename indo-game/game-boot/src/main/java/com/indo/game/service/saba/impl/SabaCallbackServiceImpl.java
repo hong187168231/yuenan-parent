@@ -37,6 +37,7 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
 
     //取得用户的余额
     public Object getBalance(SabaCallBackReq<SabaCallBackParentReq> sabaCallBackReq) {
+        System.out.println("===0=======");
         System.out.println("==1========"+sabaCallBackReq.getMessage());
         System.out.println("====2======"+JSONObject.parseObject(sabaCallBackReq.getMessage()));
         SabaCallBackParentReq sabaCallBackParentReq = JSONObject.toJavaObject(JSONObject.parseObject(sabaCallBackReq.getMessage()),SabaCallBackParentReq.class);
