@@ -41,6 +41,7 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
         System.out.println("====2======"+JSONObject.parseObject(sabaCallBackReq.getMessage()));
         SabaCallBackParentReq sabaCallBackParentReq = JSONObject.toJavaObject(JSONObject.parseObject(sabaCallBackReq.getMessage()),SabaCallBackParentReq.class);
         System.out.println("=========="+sabaCallBackParentReq);
+
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sabaCallBackParentReq.getUserId());
         SabaCallBackGetBalanceResp sabaCallBackGetBalanceResp = new SabaCallBackGetBalanceResp();
 
