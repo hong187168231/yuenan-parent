@@ -3,7 +3,6 @@ package com.indo.game.controller.saba;
 import com.alibaba.fastjson.JSONObject;
 import com.indo.common.annotation.AllowAccess;
 import com.indo.common.utils.IPAddressUtil;
-import com.indo.game.common.util.SabaGZIPUtil;
 import com.indo.game.pojo.dto.saba.*;
 import com.indo.game.service.saba.SabaCallbackService;
 import org.slf4j.Logger;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Response;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
