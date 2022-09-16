@@ -560,6 +560,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
                 txns2.setRealWinAmount(amount);//真实返还金额
                 txns2.setMethod("Place Bet");
                 txns2.setCreateTime(dateStr);
+                txns2.setGameMethod("Cancel Bet");
                 txnsMapper.insert(txns2);
                 txns.setStatus("Place Bet");
             }
