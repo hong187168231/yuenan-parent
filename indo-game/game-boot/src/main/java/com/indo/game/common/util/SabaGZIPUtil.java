@@ -1,14 +1,15 @@
 package com.indo.game.common.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import org.apache.commons.codec.binary.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
 
 public class SabaGZIPUtil {
     private static final Logger logger = LoggerFactory.getLogger(SabaGZIPUtil.class);
@@ -122,5 +123,23 @@ public class SabaGZIPUtil {
         System.out.println("压缩后字符串：" + SabaGZIPUtil.compress(str).toString().length());
         System.out.println("解压缩后字符串：" + StringUtils.newStringUtf8(SabaGZIPUtil.uncompress(SabaGZIPUtil.compress(str))));
         System.out.println("解压缩后字符串：" + SabaGZIPUtil.uncompressToString(SabaGZIPUtil.compress(str)));
+    }
+    public static String getRequestBody(HttpServletRequest request){
+        try {
+            ServletInputStream inputStream = request.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null){
+                sb.append(line);
+                return sb.toString();
+            }
+
+        }catch (UnsupportedEncodingException e){
+            logger.error("gzip uncompress to getRequestBody error.", e);
+        }catch (IOException e){
+            logger.error("gzip uncompress to getRequestBody error.", e);
+        }
+        return "";
     }
 }

@@ -6,14 +6,18 @@ import com.indo.common.utils.IPAddressUtil;
 import com.indo.game.common.util.SabaGZIPUtil;
 import com.indo.game.pojo.dto.saba.*;
 import com.indo.game.service.saba.SabaCallbackService;
-import org.jboss.resteasy.annotations.GZIP;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 
 @RestController
 @RequestMapping("/saba/callBack")
@@ -23,15 +27,33 @@ public class SabaCallBackController {
     @Autowired
     private SabaCallbackService sabaCallbackService;
 
-
+    protected String getRequestBody(HttpServletRequest request){
+        try {
+            ServletInputStream inputStream = request.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream,"UTF-8"));
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null){
+                sb.append(line);
+            }
+            return sb.toString();
+        }catch (UnsupportedEncodingException e){
+            e.printStackTrace();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+        return "";
+    }
     /**
      * 取得用户的余额
      */
     @RequestMapping(value="/getbalance",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object getBalance(@GZIP @RequestBody String result, HttpServletRequest request) {
-        JSONObject jsonObject = JSONObject.parseObject(SabaGZIPUtil.uncompressToString(SabaGZIPUtil.compress(result)));
+    public Object getBalance(HttpServletRequest request) {
+        logger.info("sabaCallBack GetBalance 回调,取得用户的余额 gzip:{}",this.getRequestBody(request));
+        JSONObject jsonObject = JSONObject.parseObject(this.getRequestBody(request));
+//        JSONObject jsonObject = JSONObject.parseObject(SabaGZIPUtil.uncompressToString(SabaGZIPUtil.compress(result)));
         String ip = IPAddressUtil.getIpAddress(request);
         logger.info("sabaCallBack GetBalance 回调,取得用户的余额 params:{},ip:{}",JSONObject.toJSONString(jsonObject),ip);
         SabaCallBackReq<SabaCallBackParentReq> sabaCallBackReq = JSONObject.toJavaObject(jsonObject,SabaCallBackReq.class);
