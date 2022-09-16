@@ -647,11 +647,12 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
                 // 免费回合头奖
                 roundId = game.getJSONObject("details").getJSONObject("table").getString("id");
                 promotionId = roundId;
-                JSONArray jsonArray = promoTransaction.getJSONArray("jackpots");
-                for (int i = 0; i < jsonArray.size(); i++) {
-                    JSONObject jsonObject1 = jsonArray.getJSONObject(i);
-                    betAmount.add(null!=jsonObject1.getBigDecimal("winAmount")?jsonObject1.getBigDecimal("winAmount").multiply(platformGameParent.getCurrencyPro()):BigDecimal.ZERO);
-                }
+                betAmount = null!=promoTransaction.getBigDecimal("amount")?promoTransaction.getBigDecimal("amount").multiply(platformGameParent.getCurrencyPro()):BigDecimal.ZERO;
+//                JSONArray jsonArray = promoTransaction.getJSONArray("jackpots");
+//                for (int i = 0; i < jsonArray.size(); i++) {
+//                    JSONObject jsonObject1 = jsonArray.getJSONObject(i);
+//                    betAmount.add(null!=jsonObject1.getBigDecimal("winAmount")?jsonObject1.getBigDecimal("winAmount").multiply(platformGameParent.getCurrencyPro()):BigDecimal.ZERO);
+//                }
             } else if ("RewardGamePlayableSpent".equals(promoType)) {
                 // 由于花费了所有奖励游戏代金券可玩余额而发放了促销支出
                 betAmount = null!=promoTransaction.getBigDecimal("amount")?promoTransaction.getBigDecimal("amount").multiply(platformGameParent.getCurrencyPro()):BigDecimal.ZERO;
