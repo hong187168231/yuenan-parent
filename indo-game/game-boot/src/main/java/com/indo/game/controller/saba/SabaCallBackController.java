@@ -108,7 +108,7 @@ public class SabaCallBackController {
     /**
      * 取消投注
      */
-    @RequestMapping(value="/cancelBet",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
+    @RequestMapping(value="/cancelbet",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
     public Object cancelBet( HttpServletRequest request) {
