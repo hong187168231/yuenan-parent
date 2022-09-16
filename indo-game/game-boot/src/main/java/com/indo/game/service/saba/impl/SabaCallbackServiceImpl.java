@@ -37,11 +37,7 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
 
     //取得用户的余额
     public Object getBalance(SabaCallBackReq<SabaCallBackParentReq> sabaCallBackReq) {
-        System.out.println("===0=======");
-        System.out.println("==1========"+sabaCallBackReq.getMessage());
-        System.out.println("====2======"+JSONObject.parseObject(sabaCallBackReq.getMessage()));
         SabaCallBackParentReq sabaCallBackParentReq = JSONObject.toJavaObject(JSONObject.parseObject(sabaCallBackReq.getMessage()),SabaCallBackParentReq.class);
-        System.out.println("=========="+sabaCallBackParentReq);
 
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sabaCallBackParentReq.getUserId());
         SabaCallBackGetBalanceResp sabaCallBackGetBalanceResp = new SabaCallBackGetBalanceResp();
@@ -64,7 +60,7 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
 
     //投注
     public Object placeBet(SabaCallBackReq<SabaCallBackPlaceBetReq> sabaCallBackReq) {
-        SabaCallBackPlaceBetReq sabaCallBackPlaceBetReq = JSONObject.parseObject(JSONObject.toJSONString(sabaCallBackReq.getMessage()),SabaCallBackPlaceBetReq.class);
+        SabaCallBackPlaceBetReq sabaCallBackPlaceBetReq = JSONObject.toJavaObject(JSONObject.parseObject(sabaCallBackReq.getMessage()),SabaCallBackPlaceBetReq.class);
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sabaCallBackPlaceBetReq.getUserId());
         SabaCallBackRespError sabaCallBackRespError = new SabaCallBackRespError();
 
@@ -139,7 +135,7 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
 
     //确认投注查询
     public Object confirmBet(SabaCallBackReq<SabaCallBackConfirmBetReq<TicketInfoReq>> sabaCallBackReq) {
-        SabaCallBackConfirmBetReq<TicketInfoReq> sabaCallBackConfirmBetReq = JSONObject.parseObject(JSONObject.toJSONString(sabaCallBackReq.getMessage()),SabaCallBackConfirmBetReq.class);
+        SabaCallBackConfirmBetReq<TicketInfoReq> sabaCallBackConfirmBetReq = JSONObject.toJavaObject(JSONObject.parseObject(sabaCallBackReq.getMessage()),SabaCallBackConfirmBetReq.class);
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sabaCallBackConfirmBetReq.getUserId());
         SabaCallBackRespError sabaCallBackRespError = new SabaCallBackRespError();
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.SABA_PLATFORM_CODE);
@@ -220,7 +216,7 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
     //取消投注
     public Object cancelBet(SabaCallBackReq<SabaCallBackCancelBetReq<TradingInfoReq>> sabaCallBackReq) {
 
-        SabaCallBackCancelBetReq<TradingInfoReq> sabaCallBackCancelBetReq = JSONObject.parseObject(JSONObject.toJSONString(sabaCallBackReq.getMessage()),SabaCallBackCancelBetReq.class);
+        SabaCallBackCancelBetReq<TradingInfoReq> sabaCallBackCancelBetReq = JSONObject.toJavaObject(JSONObject.parseObject(sabaCallBackReq.getMessage()),SabaCallBackCancelBetReq.class);
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sabaCallBackCancelBetReq.getUserId());
         SabaCallBackRespError sabaCallBackRespError = new SabaCallBackRespError();
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.SABA_PLATFORM_CODE);
@@ -283,7 +279,7 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
 
     //结算投注
     public Object settle(SabaCallBackReq<SabaCallBackSettleReq<SettleTradingInfoReq>> sabaCallBackReq) {
-        SabaCallBackSettleReq<SettleTradingInfoReq> sabaCallBackSettleReq = JSONObject.parseObject(JSONObject.toJSONString(sabaCallBackReq.getMessage()),SabaCallBackSettleReq.class);
+        SabaCallBackSettleReq<SettleTradingInfoReq> sabaCallBackSettleReq = JSONObject.toJavaObject(JSONObject.parseObject(sabaCallBackReq.getMessage()),SabaCallBackSettleReq.class);
 
         List<SettleTradingInfoReq> settleTradingInfoReqList = sabaCallBackSettleReq.getTxns();
         SabaCallBackParentResp sabaCallBackParentResp = new SabaCallBackParentResp();
@@ -350,7 +346,7 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
 
     //重新结算投注
     public Object resettle(SabaCallBackReq<SabaCallBackSettleReq<SettleTradingInfoReq>> sabaCallBackReq) {
-        SabaCallBackSettleReq<SettleTradingInfoReq> sabaCallBackSettleReq = JSONObject.parseObject(JSONObject.toJSONString(sabaCallBackReq.getMessage()),SabaCallBackSettleReq.class);
+        SabaCallBackSettleReq<SettleTradingInfoReq> sabaCallBackSettleReq = JSONObject.toJavaObject(JSONObject.parseObject(sabaCallBackReq.getMessage()),SabaCallBackSettleReq.class);
 
         List<SettleTradingInfoReq> settleTradingInfoReqList = sabaCallBackSettleReq.getTxns();
         SabaCallBackParentResp sabaCallBackParentResp = new SabaCallBackParentResp();
@@ -428,7 +424,7 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
 
     //撤销结算投注
     public Object unsettle(SabaCallBackReq<SabaCallBackSettleReq<SettleTradingInfoReq>> sabaCallBackReq) {
-        SabaCallBackSettleReq<SettleTradingInfoReq> sabaCallBackSettleReq = JSONObject.parseObject(JSONObject.toJSONString(sabaCallBackReq.getMessage()),SabaCallBackSettleReq.class);
+        SabaCallBackSettleReq<SettleTradingInfoReq> sabaCallBackSettleReq = JSONObject.toJavaObject(JSONObject.parseObject(sabaCallBackReq.getMessage()),SabaCallBackSettleReq.class);
 
         List<SettleTradingInfoReq> settleTradingInfoReqList = sabaCallBackSettleReq.getTxns();
         SabaCallBackParentResp sabaCallBackParentResp = new SabaCallBackParentResp();
@@ -496,7 +492,7 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
     //投注-仅支援欧洲盘
     public Object placeBetParlay(SabaCallBackReq<SabaCallBackPlaceBetParlayReq> sabaCallBackReq) {
 
-        SabaCallBackPlaceBetParlayReq sabaCallBackPlaceBetParlayReq = JSONObject.parseObject(JSONObject.toJSONString(sabaCallBackReq.getMessage()),SabaCallBackPlaceBetParlayReq.class);
+        SabaCallBackPlaceBetParlayReq sabaCallBackPlaceBetParlayReq = JSONObject.toJavaObject(JSONObject.parseObject(sabaCallBackReq.getMessage()),SabaCallBackPlaceBetParlayReq.class);
         List<ComboInfo> comboInfoList = sabaCallBackPlaceBetParlayReq.getTxns();
         SabaCallBackRespError sabaCallBackRespError = new SabaCallBackRespError();
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sabaCallBackPlaceBetParlayReq.getUserId());
@@ -593,7 +589,7 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
     //当沙巴体育通过 PlaceBetParlay 方法收到成功结果，沙巴体育将会呼叫 ConfirmBetParlay
     public Object confirmBetParlay(SabaCallBackReq<SabaCallBackConfirmBetParlayReq> sabaCallBackReq) {
         SabaCallBackRespError sabaCallBackRespError = new SabaCallBackRespError();
-        SabaCallBackConfirmBetParlayReq sabaCallBackConfirmBetParlayReq = JSONObject.parseObject(JSONObject.toJSONString(sabaCallBackReq.getMessage()),SabaCallBackConfirmBetParlayReq.class);
+        SabaCallBackConfirmBetParlayReq sabaCallBackConfirmBetParlayReq = JSONObject.toJavaObject(JSONObject.parseObject(sabaCallBackReq.getMessage()),SabaCallBackConfirmBetParlayReq.class);
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sabaCallBackConfirmBetParlayReq.getUserId());
         if (null == memBaseinfo) {
             sabaCallBackRespError.setStatus("203");
@@ -676,8 +672,8 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
     }
 
     public Object adjustbalance(SabaCallBackReq<SabaCallBackAdjustbalanceReq<SabaCallBackAdjustbalanceInfoReq>> sabaCallBackReq){
-        SabaCallBackAdjustbalanceReq<SabaCallBackAdjustbalanceInfoReq> sabaCallBackAdjustbalanceParlayReq = JSONObject.parseObject(JSONObject.toJSONString(sabaCallBackReq.getMessage()), SabaCallBackAdjustbalanceReq.class);
-        SabaCallBackAdjustbalanceInfoReq sabaCallBackAdjustbalanceInfoReq = JSONObject.parseObject(JSONObject.toJSONString(sabaCallBackAdjustbalanceParlayReq.getBalanceInfo()), SabaCallBackAdjustbalanceInfoReq.class);
+        SabaCallBackAdjustbalanceReq<SabaCallBackAdjustbalanceInfoReq> sabaCallBackAdjustbalanceParlayReq = JSONObject.toJavaObject(JSONObject.parseObject(sabaCallBackReq.getMessage()), SabaCallBackAdjustbalanceReq.class);
+        SabaCallBackAdjustbalanceInfoReq sabaCallBackAdjustbalanceInfoReq = JSONObject.toJavaObject(JSONObject.parseObject(sabaCallBackAdjustbalanceParlayReq.getBalanceInfo()), SabaCallBackAdjustbalanceInfoReq.class);
         SabaCallBackParentResp sabaCallBackParentResp = new SabaCallBackParentResp();
         sabaCallBackParentResp.setStatus("0");
         SabaCallBackRespError sabaCallBackRespError = new SabaCallBackRespError();

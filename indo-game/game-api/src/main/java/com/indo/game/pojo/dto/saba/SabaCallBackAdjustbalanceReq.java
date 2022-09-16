@@ -15,5 +15,5 @@ public class SabaCallBackAdjustbalanceReq<T> extends SabaCallBackParentReq{
     private String betTypeName;//  Y (string) 只提供英文语系。
     private String winlostDate;//  Y (string) 决胜时间(仅显示日期)
 //            (yyyy-MM-dd 00:00:00.000) GMT-4
-    private Object balanceInfo;//  Y 请参阅表 BalanceInfo
+    private String balanceInfo;//  Y 请参阅表 BalanceInfo
 }
