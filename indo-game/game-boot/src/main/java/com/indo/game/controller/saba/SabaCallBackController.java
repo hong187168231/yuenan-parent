@@ -5,6 +5,7 @@ import com.indo.common.annotation.AllowAccess;
 import com.indo.common.utils.IPAddressUtil;
 import com.indo.game.pojo.dto.saba.*;
 import com.indo.game.service.saba.SabaCallbackService;
+import com.indo.game.service.saba.impl.SabaCallbackServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,14 @@ public class SabaCallBackController {
         }
         return "";
     }
+    public static void main(String[] args) {
+        JSONObject jsonObject = JSONObject.parseObject("{\"key\":\"y270zsfdqy\",\"message\":{\"action\":\"GetBalance\",\"userId\":\"swuserid\"}}");
+        System.out.println("json:"+JSONObject.toJSONString(jsonObject));
+        SabaCallBackReq<SabaCallBackParentReq> sabaCallBackReq = JSONObject.toJavaObject(jsonObject,SabaCallBackReq.class);
+        System.out.println("bean:"+sabaCallBackReq);
+        SabaCallbackService sabaCallbackService = new SabaCallbackServiceImpl();
+        Object getBalance = sabaCallbackService.getBalance(sabaCallBackReq);
+    }
     /**
      * 取得用户的余额
      */
@@ -53,7 +62,7 @@ public class SabaCallBackController {
         JSONObject jsonObject = JSONObject.parseObject(this.getRequestBody(request));
 //        JSONObject jsonObject = JSONObject.parseObject(SabaGZIPUtil.uncompressToString(SabaGZIPUtil.compress(result)));
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("sabaCallBack GetBalance 回调,取得用户的余额 params:{},ip:{}",JSONObject.toJSONString(jsonObject),ip);
+        logger.info("sabaCallBack GetBalance 回调,取得用户的余额 params:{},ip:{}",this.getRequestBody(request),ip);
         SabaCallBackReq<SabaCallBackParentReq> sabaCallBackReq = JSONObject.toJavaObject(jsonObject,SabaCallBackReq.class);
         Object getBalance = sabaCallbackService.getBalance(sabaCallBackReq);
         logger.info("sabaCallBack GetBalance 回调返回数据,取得用户的余额 params:{}",getBalance);
@@ -69,7 +78,7 @@ public class SabaCallBackController {
     @AllowAccess
     public Object placeBet(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("sabaCallBack placeBet 回调,扣除投注金额 params:{},ip:{}",JSONObject.toJSONString(jsonObject),ip);
+        logger.info("sabaCallBack placeBet 回调,扣除投注金额 params:{},ip:{}",this.getRequestBody(request),ip);
         SabaCallBackReq<SabaCallBackPlaceBetReq> sabaCallBackReq = JSONObject.toJavaObject(jsonObject,SabaCallBackReq.class);
         Object placeBet = sabaCallbackService.placeBet(sabaCallBackReq);
         logger.info("sabaCallBack placeBet 回调返回数据,扣除投注金额 params:{}",placeBet);
@@ -84,7 +93,7 @@ public class SabaCallBackController {
     @AllowAccess
     public Object confirmBet(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("sabaCallBack Deduct 回调,沙巴体育将会呼叫 ConfirmBet params:{},ip:{}",JSONObject.toJSONString(jsonObject),ip);
+        logger.info("sabaCallBack Deduct 回调,沙巴体育将会呼叫 ConfirmBet params:{},ip:{}",this.getRequestBody(request),ip);
         SabaCallBackReq<SabaCallBackConfirmBetReq<TicketInfoReq>> sabaCallBackReq = JSONObject.toJavaObject(jsonObject,SabaCallBackReq.class);
         Object confirmBet = sabaCallbackService.confirmBet(sabaCallBackReq);
         logger.info("sabaCallBack Deduct 回调返回数据,沙巴体育将会呼叫 ConfirmBet params:{}",confirmBet);
@@ -99,7 +108,7 @@ public class SabaCallBackController {
     @AllowAccess
     public Object cancelBet(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("sabaCallBack rollback 回调,回滚 params:{},ip:{}",JSONObject.toJSONString(jsonObject),ip);
+        logger.info("sabaCallBack rollback 回调,回滚 params:{},ip:{}",this.getRequestBody(request),ip);
         SabaCallBackReq<SabaCallBackCancelBetReq<TradingInfoReq>> sabaCallBackReq = JSONObject.toJavaObject(jsonObject,SabaCallBackReq.class);
         Object cancelBet = sabaCallbackService.cancelBet(sabaCallBackReq);
         logger.info("sabaCallBack rollback 回调返回数据,回滚 params:{}",cancelBet);
@@ -114,7 +123,7 @@ public class SabaCallBackController {
     @AllowAccess
     public Object settle(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("sabaCallBack settle 回调,结算投注 params:{},ip:{}",JSONObject.toJSONString(jsonObject),ip);
+        logger.info("sabaCallBack settle 回调,结算投注 params:{},ip:{}",this.getRequestBody(request),ip);
         SabaCallBackReq<SabaCallBackSettleReq<SettleTradingInfoReq>> sabaCallBackReq = JSONObject.toJavaObject(jsonObject,SabaCallBackReq.class);
         Object settle = sabaCallbackService.settle(sabaCallBackReq);
         logger.info("sabaCallBack settle 回调返回数据,结算投注 params:{}",settle);
@@ -129,7 +138,7 @@ public class SabaCallBackController {
     @AllowAccess
     public Object resettle(@RequestBody JSONObject jsonObject, HttpServletRequest request)  {
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("sabaCallBack resettle 回调,重新结算投注 params:{},ip:{}",JSONObject.toJSONString(jsonObject),ip);
+        logger.info("sabaCallBack resettle 回调,重新结算投注 params:{},ip:{}",this.getRequestBody(request),ip);
         SabaCallBackReq<SabaCallBackSettleReq<SettleTradingInfoReq>> sabaCallBackReq = JSONObject.toJavaObject(jsonObject,SabaCallBackReq.class);
         Object resettle = sabaCallbackService.resettle(sabaCallBackReq);
         logger.info("sabaCallBack resettle 回调返回数据,重新结算投注 params:{}",resettle);
@@ -144,7 +153,7 @@ public class SabaCallBackController {
     @AllowAccess
     public Object unsettle(@RequestBody JSONObject jsonObject, HttpServletRequest request){
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("sabaCallBack unsettle 回调,撤销结算投注 params:{},ip:{}",JSONObject.toJSONString(jsonObject),ip);
+        logger.info("sabaCallBack unsettle 回调,撤销结算投注 params:{},ip:{}",this.getRequestBody(request),ip);
         SabaCallBackReq<SabaCallBackSettleReq<SettleTradingInfoReq>> sabaCallBackReq = JSONObject.toJavaObject(jsonObject,SabaCallBackReq.class);
         Object unsettle = sabaCallbackService.unsettle(sabaCallBackReq);
         logger.info("sabaCallBack unsettle 回调返回数据,撤销结算投注 params:{}",unsettle);
@@ -159,7 +168,7 @@ public class SabaCallBackController {
     @AllowAccess
     public Object placeBetParlay(@RequestBody JSONObject jsonObject, HttpServletRequest request){
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("sabaCallBack placeBetParlay 回调,下注细节 params:{},ip:{}",JSONObject.toJSONString(jsonObject),ip);
+        logger.info("sabaCallBack placeBetParlay 回调,下注细节 params:{},ip:{}",this.getRequestBody(request),ip);
         SabaCallBackReq<SabaCallBackPlaceBetParlayReq> sabaCallBackReq = JSONObject.toJavaObject(jsonObject,SabaCallBackReq.class);
         Object placeBetParlay = sabaCallbackService.placeBetParlay(sabaCallBackReq);
         logger.info("sabaCallBack placeBetParlay 回调返回数据,下注细节 params:{}",placeBetParlay);
@@ -174,7 +183,7 @@ public class SabaCallBackController {
     @AllowAccess
     public Object confirmBetParlay(@RequestBody JSONObject jsonObject, HttpServletRequest request){
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("sabaCallBack confirmBetParlay 回调,当沙巴体育通过 PlaceBetParlay 方法收到成功结果 params:{},ip:{}",JSONObject.toJSONString(jsonObject),ip);
+        logger.info("sabaCallBack confirmBetParlay 回调,当沙巴体育通过 PlaceBetParlay 方法收到成功结果 params:{},ip:{}",this.getRequestBody(request),ip);
         SabaCallBackReq<SabaCallBackConfirmBetParlayReq> sabaCallBackReq = JSONObject.toJavaObject(jsonObject,SabaCallBackReq.class);
         Object confirmBetParlay = sabaCallbackService.confirmBetParlay(sabaCallBackReq);
         logger.info("sabaCallBack confirmBetParlay 回调返回数据,当沙巴体育通过 PlaceBetParlay 方法收到成功结果 params:{}",confirmBetParlay);
@@ -190,7 +199,7 @@ public class SabaCallBackController {
     @AllowAccess
     public Object adjustbalance(@RequestBody JSONObject jsonObject, HttpServletRequest request){
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("sabaCallBack confirmBetParlay 回调,当沙巴体育通过 PlaceBetParlay 方法收到成功结果 params:{},ip:{}",JSONObject.toJSONString(jsonObject),ip);
+        logger.info("sabaCallBack confirmBetParlay 回调,当沙巴体育通过 PlaceBetParlay 方法收到成功结果 params:{},ip:{}",this.getRequestBody(request),ip);
         SabaCallBackReq<SabaCallBackAdjustbalanceReq<SabaCallBackAdjustbalanceInfoReq>> sabaCallBackReq = JSONObject.toJavaObject(jsonObject,SabaCallBackReq.class);
         Object adjustbalance = sabaCallbackService.adjustbalance(sabaCallBackReq);
         logger.info("sabaCallBack confirmBetParlay 回调返回数据,当沙巴体育通过 PlaceBetParlay 方法收到成功结果 params:{}",adjustbalance);
@@ -206,7 +215,7 @@ public class SabaCallBackController {
     @AllowAccess
     public Object placeBet3rd(@RequestBody JSONObject jsonObject, HttpServletRequest request){
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("sabaCallBack placeBet3rd 回调,本方法支持快乐彩、彩票、桌面游戏产品 params:{},ip:{}",JSONObject.toJSONString(jsonObject),ip);
+        logger.info("sabaCallBack placeBet3rd 回调,本方法支持快乐彩、彩票、桌面游戏产品 params:{},ip:{}",this.getRequestBody(request),ip);
         SabaCallBackReq<SabaCallBackPlaceBet3rdReq<PlaceBet3rdTicketInfoReq>> sabaCallBackReq = JSONObject.toJavaObject(jsonObject,SabaCallBackReq.class);
         Object placeBet3rd = sabaCallbackService.placeBet3rd(sabaCallBackReq);
         logger.info("sabaCallBack placeBet3rd 回调返回数据,本方法支持快乐彩、彩票、桌面游戏产品 params:{}",placeBet3rd);
@@ -222,7 +231,7 @@ public class SabaCallBackController {
     @AllowAccess
     public Object confirmBet3rd(@RequestBody JSONObject jsonObject, HttpServletRequest request){
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("sabaCallBack confirmBet3rd 回调,本方法支持快乐彩、彩票、桌面游戏产品 params:{},ip:{}",JSONObject.toJSONString(jsonObject),ip);
+        logger.info("sabaCallBack confirmBet3rd 回调,本方法支持快乐彩、彩票、桌面游戏产品 params:{},ip:{}",this.getRequestBody(request),ip);
         SabaCallBackReq<SabaCallBackConfirmBet3rdReq<ConfirmBet3rdTicketInfoReq>> sabaCallBackReq = JSONObject.toJavaObject(jsonObject,SabaCallBackReq.class);
         Object confirmBet3rd = sabaCallbackService.confirmBet3rd(sabaCallBackReq);
         logger.info("sabaCallBack confirmBet3rd 回调返回数据,本方法支持快乐彩、彩票、桌面游戏产品 params:{}",confirmBet3rd);
@@ -237,7 +246,7 @@ public class SabaCallBackController {
     @AllowAccess
     public Object cashOut(@RequestBody JSONObject jsonObject, HttpServletRequest request){
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("sabaCallBack cashOut 回调,当 Cash Out 交易被接受后，沙巴体育将会通过此方法传输交易 params:{},ip:{}",JSONObject.toJSONString(jsonObject),ip);
+        logger.info("sabaCallBack cashOut 回调,当 Cash Out 交易被接受后，沙巴体育将会通过此方法传输交易 params:{},ip:{}",this.getRequestBody(request),ip);
         SabaCallBackReq<SabaCallBackCashOutReq<CashOutTicketInfoReq>> sabaCallBackReq = JSONObject.toJavaObject(jsonObject,SabaCallBackReq.class);
         Object cashOut = sabaCallbackService.cashOut(sabaCallBackReq);
         logger.info("sabaCallBack cashOut 回调返回数据,当 Cash Out 交易被接受后，沙巴体育将会通过此方法传输交易 params:{}",cashOut);
@@ -252,7 +261,7 @@ public class SabaCallBackController {
     @AllowAccess
     public Object updateBet(@RequestBody JSONObject jsonObject, HttpServletRequest request){
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("sabaCallBack updateBet 回调,因 Cashout 票的异动造成原 Cashout 的主票发生变化，沙巴体育将会透过这支 API 传送原 Cashout 主票的信息。 params:{},ip:{}",JSONObject.toJSONString(jsonObject),ip);
+        logger.info("sabaCallBack updateBet 回调,因 Cashout 票的异动造成原 Cashout 的主票发生变化，沙巴体育将会透过这支 API 传送原 Cashout 主票的信息。 params:{},ip:{}",this.getRequestBody(request),ip);
         SabaCallBackReq<SabaCallBackCashOutReq<UpdateBetTicketInfoReq>> sabaCallBackReq = JSONObject.toJavaObject(jsonObject,SabaCallBackReq.class);
         Object updateBet = sabaCallbackService.updateBet(sabaCallBackReq);
         logger.info("sabaCallBack updateBet 回调返回数据,因 Cashout 票的异动造成原 Cashout 的主票发生变化，沙巴体育将会透过这支 API 传送原 Cashout 主票的信息。 params:{}",updateBet);
@@ -267,7 +276,7 @@ public class SabaCallBackController {
     @AllowAccess
     public Object healthcheck(@RequestBody JSONObject jsonObject, HttpServletRequest request){
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("sabaCallBack healthcheck 回调,检查沙巴体育与厂商之间的连结是否有效。 params:{},ip:{}",JSONObject.toJSONString(jsonObject),ip);
+        logger.info("sabaCallBack healthcheck 回调,检查沙巴体育与厂商之间的连结是否有效。 params:{},ip:{}",this.getRequestBody(request),ip);
         SabaCallBackReq<HealthCheckReq> sabaCallBackReq = JSONObject.toJavaObject(jsonObject,SabaCallBackReq.class);
         Object healthcheck = sabaCallbackService.healthcheck(sabaCallBackReq);
         logger.info("sabaCallBack healthcheck 回调返回数据,检查沙巴体育与厂商之间的连结是否有效。 params:{}",healthcheck);
