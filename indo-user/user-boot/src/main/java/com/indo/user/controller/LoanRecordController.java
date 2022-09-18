@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 
 /**
@@ -50,20 +51,20 @@ public class LoanRecordController {
     @ApiOperation(value = "借款", httpMethod = "GET")
     @GetMapping(value = "/loanMoney")
     @ApiImplicitParam(name = "amount", value = "借款金额", dataType = "Decimal")
-    public Result findLoanRecordPage(@RequestParam BigDecimal amount, @LoginUser LoginInfo loginInfo) {
-        loanRecordService.loanMoney(amount,loginInfo);
+    public Result findLoanRecordPage(@RequestParam BigDecimal amount, @LoginUser LoginInfo loginInfo, HttpServletRequest request) {
+        loanRecordService.loanMoney(amount,loginInfo,request);
         return Result.success();
     }
     @ApiOperation(value = "主动还款", httpMethod = "GET")
     @GetMapping(value = "/activeBackMoney")
     @ApiImplicitParam(name = "amount", value = "还款金额", dataType = "Decimal")
-    public Result activeBackMoney(@RequestParam BigDecimal amount,@LoginUser LoginInfo loginInfo) {
-        loanRecordService.activeBackMoney(amount,loginInfo);
+    public Result activeBackMoney(@RequestParam BigDecimal amount,@LoginUser LoginInfo loginInfo, HttpServletRequest request) {
+        loanRecordService.activeBackMoney(amount,loginInfo,request);
         return Result.success();
     }
     @ApiOperation(value = "查询用户借款相关信息", httpMethod = "GET")
     @GetMapping(value = "/findMemLoanInfo")
-    public Result findMemLoanInfo(@LoginUser LoginInfo loginInfo) {
-        return Result.success(loanRecordService.findMemLoanInfo(loginInfo));
+    public Result findMemLoanInfo(@LoginUser LoginInfo loginInfo, HttpServletRequest request) {
+        return Result.success(loanRecordService.findMemLoanInfo(loginInfo,request));
     }
 }

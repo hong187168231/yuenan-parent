@@ -8,6 +8,7 @@ import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.ResultCode;
+import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.common.web.exception.BizException;
 import com.indo.core.mapper.ActivityConfigMapper;
 import com.indo.core.mapper.LoanRecordMapper;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -60,18 +62,19 @@ public class LoanRecordServiceImpl extends ServiceImpl<LoanRecordMapper, LoanRec
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void loanMoney(BigDecimal amount,LoginInfo loginInfo) {
+    public void loanMoney(BigDecimal amount,LoginInfo loginInfo, HttpServletRequest request) {
         MemLevel memLevel = memLevelMapper.selectById(loginInfo.getMemLevel());
         LambdaQueryWrapper<ActivityConfig> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(ActivityConfig::getTypes,2);
         ActivityConfig activityConfig = activityConfigMapper.selectOne(wrapper);
+        String countryCode = request.getHeader("countryCode");
         if(activityConfig==null){
-            throw new BizException(ResultCode.ACTIVITY_NOT_CONFIGURATION);
+            throw new BizException(MessageUtils.get(ResultCode.ACTIVITY_NOT_CONFIGURATION.getCode(),countryCode));
         }
         JSONObject json = JSONObject.parseObject(activityConfig.getConfigInfo());
         BigDecimal money = json.getBigDecimal("vip"+memLevel.getLevel());
         if(money==null||money.compareTo(BigDecimal.ZERO)==0){
-            throw new BizException(ResultCode.LOANRECORD_NOT_CONFIGURATION);
+            throw new BizException(MessageUtils.get(ResultCode.ACTIVITY_NOT_CONFIGURATION.getCode(),countryCode));
         }
         LambdaQueryWrapper<LoanRecord> loanWrapper = new LambdaQueryWrapper<>();
         loanWrapper.eq(LoanRecord::getMemId,loginInfo.getId());
@@ -88,7 +91,7 @@ public class LoanRecordServiceImpl extends ServiceImpl<LoanRecordMapper, LoanRec
             }
         });
         if((money.subtract((loanAmount.get().subtract(backMoney.get())))).compareTo(amount)==-1){
-            throw new BizException(ResultCode.BALANCE_BU);
+            throw new BizException(MessageUtils.get(ResultCode.BALANCE_BU.getCode(),countryCode));
         }
         LoanRecord lr = new LoanRecord();
         lr.setLoanAmount(amount);
@@ -130,12 +133,13 @@ public class LoanRecordServiceImpl extends ServiceImpl<LoanRecordMapper, LoanRec
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void activeBackMoney(BigDecimal amount,LoginInfo loginInfo) {
+    public void activeBackMoney(BigDecimal amount,LoginInfo loginInfo, HttpServletRequest request) {
+        String countryCode = request.getHeader("countryCode");
         if(amount.compareTo(BigDecimal.ZERO)<=0){
-            throw new BizException(ResultCode.REPAYMENT_AMOUNT_ERROR);
+            throw new BizException(MessageUtils.get(ResultCode.REPAYMENT_AMOUNT_ERROR.getCode(),countryCode));
         }
         if(loginInfo.getBalance().compareTo(amount)==-1){
-            throw new BizException(ResultCode.BALANCE_BU);
+            throw new BizException(MessageUtils.get(ResultCode.BALANCE_BU.getCode(),countryCode));
         }
         LambdaQueryWrapper<LoanRecord> loanWrapper = new LambdaQueryWrapper<>();
         loanWrapper.eq(LoanRecord::getStates,1);
@@ -146,7 +150,7 @@ public class LoanRecordServiceImpl extends ServiceImpl<LoanRecordMapper, LoanRec
         loanWrappers.eq(LoanRecord::getMemId,loginInfo.getId());
         List<LoanRecord> loanRecordLists = baseMapper.selectList(loanWrappers);
         if(loanRecordList==null&&loanRecordLists==null){
-            throw new BizException(ResultCode.NO_ARREARS);
+            throw new BizException(MessageUtils.get(ResultCode.NO_ARREARS.getCode(),countryCode));
         }
         BigDecimal repayment = new BigDecimal(0).add(amount);
         //还部分优先清账
@@ -200,18 +204,19 @@ public class LoanRecordServiceImpl extends ServiceImpl<LoanRecordMapper, LoanRec
     }
 
     @Override
-    public LoanRecordVo findMemLoanInfo(LoginInfo loginInfo) {
+    public LoanRecordVo findMemLoanInfo(LoginInfo loginInfo, HttpServletRequest request) {
         MemLevel memLevel = memLevelMapper.selectById(loginInfo.getMemLevel());
         LambdaQueryWrapper<ActivityConfig> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(ActivityConfig::getTypes,2);
         ActivityConfig activityConfig = activityConfigMapper.selectOne(wrapper);
+        String countryCode = request.getHeader("countryCode");
         if(activityConfig==null){
-            throw new BizException(ResultCode.ACTIVITY_NOT_CONFIGURATION);
+            throw new BizException(MessageUtils.get(ResultCode.ACTIVITY_NOT_CONFIGURATION.getCode(),countryCode));
         }
         JSONObject json = JSONObject.parseObject(activityConfig.getConfigInfo());
         BigDecimal money = json.getBigDecimal("vip"+memLevel.getLevel());
         if(money==null||money.compareTo(BigDecimal.ZERO)==0){
-            throw new BizException(ResultCode.LOANRECORD_NOT_CONFIGURATION);
+            throw new BizException(MessageUtils.get(ResultCode.LOANRECORD_NOT_CONFIGURATION.getCode(),countryCode));
         }
         LambdaQueryWrapper<LoanRecord> loanWrapper = new LambdaQueryWrapper<>();
         loanWrapper.eq(LoanRecord::getMemId,loginInfo.getId());

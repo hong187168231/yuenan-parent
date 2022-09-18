@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * <p>
@@ -38,8 +39,8 @@ public class SysTaskController {
     @ApiOperation(value = "领取任务奖励", httpMethod = "GET")
     @GetMapping(value = "/receiveTaskReward")
     @ApiImplicitParam(name = "taskId", value = "任务id", required = true,dataType = "int")
-    public Result receiveTaskReward(@RequestParam Integer taskId, @LoginUser LoginInfo loginInfo) {
-        sysTaskService.receiveTaskReward(loginInfo,taskId);
+    public Result receiveTaskReward(@RequestParam Integer taskId, @LoginUser LoginInfo loginInfo, HttpServletRequest request) {
+        sysTaskService.receiveTaskReward(loginInfo,taskId,request);
         return Result.success();
     }
 }

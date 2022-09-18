@@ -52,6 +52,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.security.GeneralSecurityException;
@@ -320,7 +321,7 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
 
 
 	@Override
-	public MemBaseInfoVo getMemBaseInfo(String account) {
+	public MemBaseInfoVo getMemBaseInfo(String account, HttpServletRequest request) {
 		MemBaseInfoBO cacheMemBaseInfo = this.getMemCacheBaseInfo(account);
 		if (cacheMemBaseInfo == null) {
 			cacheMemBaseInfo = findMemBaseInfo(account);
@@ -333,7 +334,7 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
 		LoginInfo loginInfo = new LoginInfo();
 		loginInfo.setId(cacheMemBaseInfo.getId());
 		loginInfo.setMemLevel(memLevel == null ? 11 : memLevel.getId().intValue());
-		LoanRecordVo loanRecordVo = loanRecordService.findMemLoanInfo(loginInfo);
+		LoanRecordVo loanRecordVo = loanRecordService.findMemLoanInfo(loginInfo,request);
 		vo.setLoanAmount(loanRecordVo == null ? BigDecimal.ZERO : loanRecordVo.getArrears());
 		return vo;
 	}

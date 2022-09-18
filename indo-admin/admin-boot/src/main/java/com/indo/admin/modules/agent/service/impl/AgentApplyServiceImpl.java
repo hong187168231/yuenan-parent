@@ -83,7 +83,7 @@ public class AgentApplyServiceImpl extends ServiceImpl<AgentApplyMapper, AgentAp
             //更新代理关系
             modifyAgentRelation(memBaseinfo,request);
             //插入会员邀请码
-            iMemBaseinfoService.saveMemInviteCode(memBaseinfo);
+            iMemBaseinfoService.saveMemInviteCode(memBaseinfo,request);
             //更新会员代理状态
             modifyMemAccType(memBaseinfo,request);
         } else {

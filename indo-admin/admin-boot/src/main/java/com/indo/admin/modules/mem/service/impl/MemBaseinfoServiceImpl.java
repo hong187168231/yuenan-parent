@@ -74,7 +74,7 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
     @Resource
     private ILoanRecordService loanRecordService;
     @Override
-    public Page<MemBaseInfoVo> queryList(MemBaseInfoReq req) {
+    public Page<MemBaseInfoVo> queryList(MemBaseInfoReq req, HttpServletRequest request) {
         Page<MemBaseInfoVo> page = new Page<>(req.getPage(), req.getLimit());
         List<MemBaseInfoVo> list = memBaseInfoMapper.queryList(page, req);
         Date now = new Date();
@@ -94,7 +94,7 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
             LoginInfo loginInfo = new LoginInfo();
             loginInfo.setMemLevel(Integer.valueOf(item.getMemLevel()));
             loginInfo.setId(item.getId());
-            LoanRecordVo loanRecordVo = loanRecordService.findMemLoanInfo(loginInfo);
+            LoanRecordVo loanRecordVo = loanRecordService.findMemLoanInfo(loginInfo,request);
             if(loanRecordVo!=null){
                 item.setLoanRecordVo(loanRecordVo);
             }

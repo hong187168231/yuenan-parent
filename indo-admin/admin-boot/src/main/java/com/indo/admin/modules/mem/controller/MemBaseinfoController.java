@@ -42,8 +42,8 @@ public class MemBaseinfoController {
 
     @ApiOperation(value = "分页查询")
     @PostMapping(value = "/listByPage")
-    public Result<List<MemBaseInfoVo>> getMemBaseInfo(@RequestBody MemBaseInfoReq baseInfoPageReq) {
-        Page<MemBaseInfoVo> result = memBaseinfoService.queryList(baseInfoPageReq);
+    public Result<List<MemBaseInfoVo>> getMemBaseInfo(@RequestBody MemBaseInfoReq baseInfoPageReq, HttpServletRequest request) {
+        Page<MemBaseInfoVo> result = memBaseinfoService.queryList(baseInfoPageReq,request);
         return Result.success(result.getRecords(), result.getTotal());
     }
 

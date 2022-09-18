@@ -12,6 +12,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -37,22 +38,22 @@ public class AppParamController {
     @GetMapping(value = "/{paramCode}")
     @ApiImplicitParam(name = "paramCode", value = "参数code 多个用,号分隔", required = true, paramType = "path", dataType = "String")
     @AllowAccess
-    public Result<List<SysParameter>> getByCode(@PathVariable String paramCode) {
+    public Result<List<SysParameter>> getByCode(@PathVariable String paramCode, HttpServletRequest request) {
         List<SysParameter> parameterList = new LinkedList<>();
         if (paramCode.contains(",")) {
             List<String> strsToList1 = Arrays.asList(paramCode.split(","));
             strsToList1.forEach(item -> {
-                parameterList.add(iSysParameterService.getByCode(item));
+                parameterList.add(iSysParameterService.getByCode(item,request));
             });
         } else {
-            parameterList.add(iSysParameterService.getByCode(paramCode));
+            parameterList.add(iSysParameterService.getByCode(paramCode,request));
         }
         return Result.success(parameterList);
     }
     @ApiOperation(value = "查询AB程序切换时间(分钟)")
     @GetMapping("/findProgramSwitchTime")
-    public Result<SysParameter> findProgramSwitchTime() {
-        return Result.success(iSysParameterService.findProgramSwitchTime());
+    public Result<SysParameter> findProgramSwitchTime(HttpServletRequest request) {
+        return Result.success(iSysParameterService.findProgramSwitchTime(request));
     }
 
 }

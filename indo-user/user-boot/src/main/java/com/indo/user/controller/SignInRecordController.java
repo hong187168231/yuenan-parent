@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * <p>
@@ -53,8 +54,8 @@ public class SignInRecordController {
 
     @ApiOperation(value = "用户签到", httpMethod = "GET")
     @GetMapping(value = "/signIn")
-    public Result signIn(@LoginUser LoginInfo loginInfo) {
-        signInRecordServicel.signIn(loginInfo);
+    public Result signIn(@LoginUser LoginInfo loginInfo, HttpServletRequest request) {
+        signInRecordServicel.signIn(loginInfo,request);
         return Result.success();
     }
 }

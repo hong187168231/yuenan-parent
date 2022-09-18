@@ -21,6 +21,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 @Api(tags = "会员接口")
 @RestController
@@ -62,8 +63,8 @@ public class MemBaseInfoController {
 
     @ApiOperation(value = "个人基本信息", httpMethod = "POST")
     @PostMapping(value = "/info")
-    public Result<MemBaseInfoVo> info(@LoginUser LoginInfo loginUser) {
-        return Result.success(memBaseInfoService.getMemBaseInfo(loginUser.getAccount()));
+    public Result<MemBaseInfoVo> info(@LoginUser LoginInfo loginUser, HttpServletRequest request) {
+        return Result.success(memBaseInfoService.getMemBaseInfo(loginUser.getAccount(),request));
     }
 
     @ApiOperation(value = "更改密码", httpMethod = "POST")

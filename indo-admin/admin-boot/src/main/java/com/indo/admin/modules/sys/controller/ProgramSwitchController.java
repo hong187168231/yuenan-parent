@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 @Api(tags = "程序包切换设置")
 @RestController
@@ -23,21 +24,21 @@ public class ProgramSwitchController {
 
     @ApiOperation(value = "查询程序切换时间(分钟)")
     @GetMapping("/findProgramSwitchTime")
-    public Result<SysParameter> findProgramSwitchTime() {
-        return Result.success(iSysParameterService.findProgramSwitchTime());
+    public Result<SysParameter> findProgramSwitchTime(HttpServletRequest request) {
+        return Result.success(iSysParameterService.findProgramSwitchTime(request));
     }
     @ApiOperation(value = "新增程序切换时间(分钟)")
     @GetMapping("/insertProgramSwitchTime")
     @ApiImplicitParam(name = "minute", value = "时间（分钟）", required = true, paramType = "path", dataType = "String")
-    public Result insertProgramSwitchTime(String minute) {
-        iSysParameterService.insertProgramSwitchTime(minute);
+    public Result insertProgramSwitchTime(String minute, HttpServletRequest request) {
+        iSysParameterService.insertProgramSwitchTime(minute,request);
         return Result.success();
     }
     @ApiOperation(value = "修改程序切换时间(分钟)")
     @GetMapping("/updateProgramSwitchTime")
     @ApiImplicitParam(name = "minute", value = "时间（分钟）", required = true, paramType = "path", dataType = "String")
-    public Result updateProgramSwitchTime(String minute) {
-        iSysParameterService.updateProgramSwitchTime(minute);
+    public Result updateProgramSwitchTime(String minute, HttpServletRequest request) {
+        iSysParameterService.updateProgramSwitchTime(minute,request);
         return Result.success();
     }
 }

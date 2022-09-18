@@ -32,7 +32,7 @@ public interface IMemBaseinfoService extends SuperService<MemBaseinfo> {
      * @param memBaseInfoPageReq
      * @return
      */
-    Page<MemBaseInfoVo> queryList(MemBaseInfoReq memBaseInfoPageReq);
+    Page<MemBaseInfoVo> queryList(MemBaseInfoReq memBaseInfoPageReq, HttpServletRequest request);
 
     /**
      * 后台新增会员
