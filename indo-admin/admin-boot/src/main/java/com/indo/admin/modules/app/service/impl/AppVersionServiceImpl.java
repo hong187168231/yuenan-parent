@@ -16,6 +16,7 @@ import com.indo.common.constant.RedisConstants;
 import com.indo.common.result.Result;
 import com.indo.common.result.ResultCode;
 import com.indo.common.utils.StringUtils;
+import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
 import com.indo.common.web.util.JwtUtils;
@@ -29,6 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -65,10 +67,11 @@ public class AppVersionServiceImpl extends ServiceImpl<AppVersionMapper, AppVers
 
     @Override
     @Transactional
-    public boolean edit(AppVersionReq req) {
+    public boolean edit(AppVersionReq req, HttpServletRequest request) {
         AppVersion appVersion = findAppVersionById(req.getVersionId());
         if (null == appVersion) {
-            throw new BizException(ResultCode.DATA_NONENTITY);
+            String countryCode = request.getHeader("countryCode");
+            throw new BizException(MessageUtils.get(ResultCode.DATA_NONENTITY.getCode(),countryCode));
         }
         DozerUtil.map(req, appVersion);
         if (baseMapper.updateById(appVersion) > 0) {

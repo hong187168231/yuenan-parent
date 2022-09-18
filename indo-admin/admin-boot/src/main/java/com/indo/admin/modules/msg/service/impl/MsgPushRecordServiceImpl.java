@@ -9,6 +9,7 @@ import com.indo.admin.pojo.dto.MsgDTO;
 import com.indo.admin.pojo.vo.msg.MsgPushRecordVO;
 import com.indo.common.result.ResultCode;
 import com.indo.common.utils.StringUtils;
+import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
 import com.indo.common.web.util.JwtUtils;
@@ -20,6 +21,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -83,13 +85,14 @@ public class MsgPushRecordServiceImpl extends ServiceImpl<MsgPushRecordMapper, M
     }
 
     @Override
-    public void deleteMsg(MsgDTO msgDTO) {
+    public void deleteMsg(MsgDTO msgDTO, HttpServletRequest request) {
+        String countryCode = request.getHeader("countryCode");
        if(msgDTO.getMsgId()==null){
-           throw new BizException(ResultCode.SYSPARAMETER_EMPTY);
+           throw new BizException(MessageUtils.get(ResultCode.SYSPARAMETER_EMPTY.getCode(),countryCode));
        }
         MsgPushRecord msgPushRecord = baseMapper.selectById(msgDTO.getMsgId());
        if(msgPushRecord==null){
-           throw new BizException(ResultCode.DATA_NONENTITY);
+           throw new BizException(MessageUtils.get(ResultCode.DATA_NONENTITY.getCode(),countryCode));
        }
         msgPushRecord.setIsDel(true);
         baseMapper.updateById(msgPushRecord);

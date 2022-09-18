@@ -11,6 +11,7 @@ import com.indo.admin.pojo.req.agnet.SubordinateReq;
 import com.indo.admin.pojo.vo.agent.AgentSubVO;
 import com.indo.admin.pojo.vo.agent.AgentVo;
 import com.indo.common.result.ResultCode;
+import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.common.web.exception.BizException;
 import com.indo.core.pojo.bo.MemBaseInfoBO;
 import com.indo.core.pojo.entity.AgentRelation;
@@ -19,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -88,12 +90,13 @@ public class AgentRelationServiceImpl extends ServiceImpl<AgentRelationMapper, A
     }
 
     @Override
-    public boolean upgradeAgent(String account) {
+    public boolean upgradeAgent(String account, HttpServletRequest request) {
         LambdaQueryWrapper<MemBaseinfo> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(MemBaseinfo::getAccount, account);
         MemBaseinfo memBaseinfo = memBaseinfoMapper.selectOne(wrapper);
         if (null == memBaseinfo) {
-            throw new BizException(ResultCode.USERNAME_NONENTITY);
+            String countryCode = request.getHeader("countryCode");
+            throw new BizException(MessageUtils.get(ResultCode.USERNAME_NONENTITY.getCode(),countryCode));
         }
         memBaseinfo.setAccType(2);
         return memBaseinfoMapper.updateById(memBaseinfo) > 0;

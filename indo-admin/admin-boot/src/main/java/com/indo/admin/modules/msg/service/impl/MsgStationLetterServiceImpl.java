@@ -10,6 +10,7 @@ import com.indo.admin.pojo.dto.MsgDTO;
 import com.indo.admin.pojo.vo.msg.MsgStationLetterVO;
 import com.indo.common.result.ResultCode;
 import com.indo.common.utils.StringUtils;
+import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
 import com.indo.core.pojo.bo.MemBaseInfoBO;
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -91,13 +93,14 @@ public class MsgStationLetterServiceImpl extends ServiceImpl<MsgStationLetterMap
     }
 
     @Override
-    public void deleteMsg(MsgDTO msgDTO) {
+    public void deleteMsg(MsgDTO msgDTO, HttpServletRequest request) {
+        String countryCode = request.getHeader("countryCode");
         if(msgDTO.getMsgId()==null){
-            throw new BizException(ResultCode.SYSPARAMETER_EMPTY);
+            throw new BizException(MessageUtils.get(ResultCode.SYSPARAMETER_EMPTY.getCode(),countryCode));
         }
         MsgStationLetter msgStationLetter = baseMapper.selectById(msgDTO.getMsgId());
         if(msgStationLetter==null){
-            throw new BizException(ResultCode.DATA_NONENTITY);
+            throw new BizException(MessageUtils.get(ResultCode.DATA_NONENTITY.getCode(),countryCode));
         }
         msgStationLetter.setIsDel(true);
         baseMapper.updateById(msgStationLetter);

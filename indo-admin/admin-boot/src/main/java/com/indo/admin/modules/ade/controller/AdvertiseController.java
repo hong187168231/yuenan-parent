@@ -13,6 +13,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -47,15 +48,16 @@ public class AdvertiseController {
 
     @ApiOperation(value = "编辑广告")
     @PostMapping(value = "/edit")
-    public Result edit(AdvertiseReq advertiseDTO) {
-        return Result.judge(iAdvertiseRecordService.edit(advertiseDTO));
+    public Result edit(AdvertiseReq advertiseDTO,
+                       HttpServletRequest request) {
+        return Result.judge(iAdvertiseRecordService.edit(advertiseDTO,request));
     }
 
     @ApiOperation(value = "删除广告")
     @DeleteMapping(value = "/{adeId}")
     @ApiImplicitParam(name = "adeId", value = "广告id", required = true, paramType = "path", dataType = "long")
-    public Result delete(@PathVariable Long adeId) {
-        return Result.judge(iAdvertiseRecordService.delAde(adeId));
+    public Result delete(@PathVariable Long adeId,HttpServletRequest request) {
+        return Result.judge(iAdvertiseRecordService.delAde(adeId,request));
     }
 
 
@@ -65,8 +67,9 @@ public class AdvertiseController {
             @ApiImplicitParam(name = "adeId", value = "广告id", required = true, paramType = "query", dataType = "long"),
             @ApiImplicitParam(name = "status", value = "状态 0 下架1 上架", required = true, paramType = "query", dataType = "int")
     })
-    public Result operateStatus(@RequestParam("adeId") Long adeId,@RequestParam("status") Integer status) {
-        return Result.judge(iAdvertiseRecordService.operateStatus(adeId,status));
+    public Result operateStatus(@RequestParam("adeId") Long adeId,@RequestParam("status") Integer status,
+                                HttpServletRequest request) {
+        return Result.judge(iAdvertiseRecordService.operateStatus(adeId,status,request));
     }
 
 }

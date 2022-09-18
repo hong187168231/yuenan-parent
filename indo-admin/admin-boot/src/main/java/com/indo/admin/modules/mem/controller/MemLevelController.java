@@ -12,6 +12,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -48,8 +49,8 @@ public class MemLevelController {
 
     @ApiOperation(value = "修改")
     @PutMapping(value = "/update")
-    public Result update(@Validated @RequestBody MemLevelUpdateReq req) {
-        return Result.judge(memLevelService.updateOne(req));
+    public Result update(@Validated @RequestBody MemLevelUpdateReq req, HttpServletRequest request) {
+        return Result.judge(memLevelService.updateOne(req,request));
     }
 
     @ApiOperation(value = "删除")

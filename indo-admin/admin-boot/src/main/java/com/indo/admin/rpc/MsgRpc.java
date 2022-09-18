@@ -11,6 +11,7 @@ import com.indo.common.result.Result;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 
@@ -77,11 +78,11 @@ public class MsgRpc {
      * @return
      */
     @PostMapping("/deleteMsg")
-    public Result deleteMsg(@RequestBody MsgDTO msgDTO) {
+    public Result deleteMsg(@RequestBody MsgDTO msgDTO, HttpServletRequest request) {
         if(msgDTO.getMsgType().equals(1)){
-            iMsgStationLetterService.deleteMsg(msgDTO);
+            iMsgStationLetterService.deleteMsg(msgDTO,request);
         }else{
-            iMsgPushRecordService.deleteMsg(msgDTO);
+            iMsgPushRecordService.deleteMsg(msgDTO,request);
         }
         return Result.success();
     }

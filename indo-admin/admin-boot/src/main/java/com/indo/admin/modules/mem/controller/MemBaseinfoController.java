@@ -20,6 +20,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -48,24 +49,24 @@ public class MemBaseinfoController {
 
     @ApiOperation(value = "新增会员信息")
     @PostMapping(value = "/add")
-    public Result addMemBaseInfo(@RequestBody @Validated MemAddReq memAddReq) {
-        memBaseinfoService.addMemBaseInfo(memAddReq);
+    public Result addMemBaseInfo(@RequestBody @Validated MemAddReq memAddReq,HttpServletRequest request) {
+        memBaseinfoService.addMemBaseInfo(memAddReq,request);
         return Result.success();
     }
 
 
     @ApiOperation(value = "编辑会员信息")
     @PostMapping(value = "/edit")
-    public Result editMemBaseInfo(@RequestBody @Validated MemEditReq memEditReq) {
-        boolean flag = memBaseinfoService.editMemBaseInfo(memEditReq);
+    public Result editMemBaseInfo(@RequestBody @Validated MemEditReq memEditReq,HttpServletRequest request) {
+        boolean flag = memBaseinfoService.editMemBaseInfo(memEditReq,request);
         return Result.judge(flag);
 
     }
 
     @ApiOperation(value = "更改会员状态")
     @PostMapping(value = "/editStatus")
-    public Result editStatus(@RequestBody @Validated MemEditStatusReq frozenStatusReq) {
-        boolean flag = memBaseinfoService.editStatus(frozenStatusReq);
+    public Result editStatus(@RequestBody @Validated MemEditStatusReq frozenStatusReq,HttpServletRequest request) {
+        boolean flag = memBaseinfoService.editStatus(frozenStatusReq,request);
         return Result.judge(flag);
     }
 
@@ -74,8 +75,8 @@ public class MemBaseinfoController {
             @ApiImplicitParam(name = "memId", value = "用户ID", required = true, paramType = "path", dataType = "Long")
     })
     @GetMapping(value = "/resetPassword/{memId}")
-    public Result resetPassword(@PathVariable Long memId) {
-        boolean flag = memBaseinfoService.resetPassword(memId);
+    public Result resetPassword(@PathVariable Long memId,HttpServletRequest request) {
+        boolean flag = memBaseinfoService.resetPassword(memId,request);
         return Result.judge(flag);
     }
 
@@ -86,8 +87,8 @@ public class MemBaseinfoController {
             @ApiImplicitParam(name = "memId", value = "用户ID", required = true, paramType = "query", dataType = "Long"),
             @ApiImplicitParam(name = "memLevel", value = "用户等级", required = true, paramType = "query", dataType = "int")
     })
-    public Result updateMemLevel(@RequestParam("memId") Long memId, @RequestParam("memLevel") Integer memLevel) {
-        boolean flag = memBaseinfoService.updateMemLevel(memId, memLevel);
+    public Result updateMemLevel(@RequestParam("memId") Long memId, @RequestParam("memLevel") Integer memLevel,HttpServletRequest request) {
+        boolean flag = memBaseinfoService.updateMemLevel(memId, memLevel,request);
         return Result.judge(flag);
 
     }
@@ -98,8 +99,8 @@ public class MemBaseinfoController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "account", value = "用户账号", required = true, paramType = "query", dataType = "String")
     })
-    public Result<MemBaseDetailVO> getMemBaseInfo(@RequestParam("account") String account) {
-        MemBaseDetailVO detailVO = memBaseinfoService.getMemBaseInfoByAccount(account);
+    public Result<MemBaseDetailVO> getMemBaseInfo(@RequestParam("account") String account,HttpServletRequest request) {
+        MemBaseDetailVO detailVO = memBaseinfoService.getMemBaseInfoByAccount(account,request);
         return Result.success(detailVO);
     }
     @ApiOperation(value = "查询重复IP用户信息")

@@ -16,6 +16,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * 数据报表
@@ -31,31 +32,31 @@ public class DataReportController {
 
     @ApiOperation(value = "查询会员报表")
     @GetMapping(value = "/findMemReportPaghe")
-    public Result<Page<MemReportVo>> findMemReportPaghe(MemReportDTO memReportDTO) {
-        return Result.success(dataReportService.findMemberReportPage(memReportDTO));
+    public Result<Page<MemReportVo>> findMemReportPaghe(MemReportDTO memReportDTO, HttpServletRequest request) {
+        return Result.success(dataReportService.findMemberReportPage(memReportDTO,request));
     }
 
     @ApiOperation(value = "查询代理报表")
     @GetMapping(value = "/findAgentReportPage")
-    public Result<Page<AgentReportVo>> findAgentReportPage(AgentReportDTO agentReportDTO) {
-        return Result.success(dataReportService.findAgentReportPage(agentReportDTO));
+    public Result<Page<AgentReportVo>> findAgentReportPage(AgentReportDTO agentReportDTO, HttpServletRequest request) {
+        return Result.success(dataReportService.findAgentReportPage(agentReportDTO,request));
     }
 
     @ApiOperation(value = "查询充值报表")
     @GetMapping(value = "/findPayRechargeReportPage")
-    public Result<Page<PayRechargeReportVo>> findPayRechargeReportPage(PayRechargeReportDTO payRechargeReportDTO) {
-        return Result.success(dataReportService.findPayRechargeReportPage(payRechargeReportDTO));
+    public Result<Page<PayRechargeReportVo>> findPayRechargeReportPage(PayRechargeReportDTO payRechargeReportDTO, HttpServletRequest request) {
+        return Result.success(dataReportService.findPayRechargeReportPage(payRechargeReportDTO,request));
     }
 
     @ApiOperation(value = "查询平台报表")
     @GetMapping(value = "/findPlatformReportPage")
-    public Result<Page<PlatformReportVo>> findPlatformReportPage(PlatformReportDTO platformReportDT) {
-        return Result.success(dataReportService.findPlatformReportPage(platformReportDT));
+    public Result<Page<PlatformReportVo>> findPlatformReportPage(PlatformReportDTO platformReportDT, HttpServletRequest request) {
+        return Result.success(dataReportService.findPlatformReportPage(platformReportDT,request));
     }
 
     @ApiOperation(value = "查询总表")
     @GetMapping(value = "/findTotalReport")
-    public Result<TotalReportVo> findTotalReport(TotalReportDTO totalReportDTO) {
-        return Result.success(dataReportService.findTotalReport(totalReportDTO));
+    public Result<TotalReportVo> findTotalReport(TotalReportDTO totalReportDTO, HttpServletRequest request) {
+        return Result.success(dataReportService.findTotalReport(totalReportDTO,request));
     }
 }

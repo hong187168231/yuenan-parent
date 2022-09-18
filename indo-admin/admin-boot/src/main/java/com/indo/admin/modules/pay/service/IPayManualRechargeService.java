@@ -6,6 +6,8 @@ import com.indo.core.pojo.entity.PayManualRecharge;
 import com.indo.pay.pojo.vo.ManualRechargeMemVO;
 import com.indo.pay.pojo.vo.ManualRechargeRecordVO;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * <p>
  * 人工充值表 服务类
@@ -20,7 +22,7 @@ public interface IPayManualRechargeService extends SuperService<PayManualRecharg
     Page<ManualRechargeMemVO> memList(Long page, Long limit, String account);
 
 
-    boolean operateRecharge(Integer operateType, Long memId, Float amount,String remarks);
+    boolean operateRecharge(Integer operateType, Long memId, Float amount,String remarks, HttpServletRequest request);
 
 
     Page<ManualRechargeRecordVO> queryList(Integer page, Integer limit, String account, Integer operateType);

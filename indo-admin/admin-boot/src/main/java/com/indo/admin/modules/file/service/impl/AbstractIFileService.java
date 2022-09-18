@@ -8,12 +8,14 @@ import com.indo.admin.modules.file.service.IFileService;
 import com.indo.common.pojo.bo.ObjectInfo;
 import com.indo.common.result.PageResult;
 import com.indo.common.result.ResultCode;
+import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.common.web.exception.BizException;
 import com.indo.core.pojo.entity.FileInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.MapUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
@@ -26,10 +28,11 @@ public abstract class AbstractIFileService extends ServiceImpl<FileMapper, FileI
     private static final String FILE_SPLIT = ".";
 
     @Override
-    public FileInfo upload(MultipartFile file, String folder) {
+    public FileInfo upload(MultipartFile file, String folder, HttpServletRequest request) {
         FileInfo fileInfo = FileUtil.getFileInfo(file);
         if (!fileInfo.getName().contains(FILE_SPLIT)) {
-            throw new BizException(ResultCode.MISSING_SUFFIX);
+            String countryCode = request.getHeader("countryCode");
+            throw new BizException(MessageUtils.get(ResultCode.MISSING_SUFFIX.getCode(),countryCode));
         }
         ObjectInfo objectInfo = uploadFile(file, folder);
         fileInfo.setPath(objectInfo.getObjectPath());

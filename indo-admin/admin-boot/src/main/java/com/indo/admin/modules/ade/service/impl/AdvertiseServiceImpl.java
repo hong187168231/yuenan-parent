@@ -11,6 +11,7 @@ import com.indo.admin.pojo.vo.act.AdvertiseVO;
 import com.indo.common.constant.RedisConstants;
 import com.indo.common.result.Result;
 import com.indo.common.result.ResultCode;
+import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
 import com.indo.common.web.util.JwtUtils;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -66,11 +68,12 @@ public class AdvertiseServiceImpl extends ServiceImpl<AdvertiseRecordMapper, Adv
 
     @Override
     @Transactional
-    public boolean edit(AdvertiseReq advertiseDTO) {
-        checkAdeOpera(advertiseDTO.getAdeId());
+    public boolean edit(AdvertiseReq advertiseDTO, HttpServletRequest request) {
+        checkAdeOpera(advertiseDTO.getAdeId(),request);
         Advertise advertise = findAdvertiseById(advertiseDTO.getAdeId());
         if (null == advertise) {
-            throw new BizException(ResultCode.DATA_NONENTITY);
+            String countryCode = request.getHeader("countryCode");
+            throw new BizException(MessageUtils.get(ResultCode.DATA_NONENTITY.getCode(),countryCode));
         }
         BeanUtils.copyProperties(advertiseDTO, advertise);
         advertise.setUpdateUser(JwtUtils.getUsername());
@@ -83,8 +86,8 @@ public class AdvertiseServiceImpl extends ServiceImpl<AdvertiseRecordMapper, Adv
 
     @Override
     @Transactional
-    public boolean delAde(Long adeId) {
-        checkAdeOpera(adeId);
+    public boolean delAde(Long adeId,HttpServletRequest request) {
+        checkAdeOpera(adeId,request);
         if (this.baseMapper.deleteById(adeId) > 0) {
             AdminBusinessRedisUtils.hdel(RedisConstants.ADMIN_ADVERTISING_KEY, adeId + "");
             return true;
@@ -94,10 +97,11 @@ public class AdvertiseServiceImpl extends ServiceImpl<AdvertiseRecordMapper, Adv
 
     @Override
     @Transactional
-    public boolean operateStatus(Long adeId, Integer status) {
+    public boolean operateStatus(Long adeId, Integer status,HttpServletRequest request) {
         Advertise advertise = findAdvertiseById(adeId);
         if (null == advertise) {
-            throw new BizException(ResultCode.DATA_NONENTITY);
+            String countryCode = request.getHeader("countryCode");
+            throw new BizException(MessageUtils.get(ResultCode.DATA_NONENTITY.getCode(),countryCode));
         }
         advertise.setStatus(status);
         advertise.setAdeId(adeId);
@@ -119,9 +123,10 @@ public class AdvertiseServiceImpl extends ServiceImpl<AdvertiseRecordMapper, Adv
      *
      * @param adeId
      */
-    private void checkAdeOpera(Long adeId) {
+    private void checkAdeOpera(Long adeId, HttpServletRequest request) {
         if (selectAdeShelveFlag(adeId)) {
-            throw new BizException(ResultCode.DATA_PUT);
+            String countryCode = request.getHeader("countryCode");
+            throw new BizException(MessageUtils.get(ResultCode.DATA_PUT.getCode(),countryCode));
         }
     }
 

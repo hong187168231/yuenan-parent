@@ -8,6 +8,8 @@ import com.indo.core.pojo.vo.MemLevelVo;
 import com.indo.core.base.service.SuperService;
 import com.indo.core.pojo.entity.MemLevel;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * <p>
  * 用户等级表 服务类
@@ -27,7 +29,7 @@ public interface IMemLevelService extends SuperService<MemLevel> {
 
     boolean saveOne(MemLevelAddReq req);
 
-    boolean updateOne(MemLevelUpdateReq req);
+    boolean updateOne(MemLevelUpdateReq req, HttpServletRequest request);
 
     boolean delMemLevel(Long id);
 

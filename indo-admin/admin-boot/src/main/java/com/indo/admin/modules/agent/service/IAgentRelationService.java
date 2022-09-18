@@ -8,6 +8,8 @@ import com.indo.admin.pojo.vo.agent.AgentSubVO;
 import com.indo.admin.pojo.vo.agent.AgentVo;
 import com.indo.core.pojo.entity.AgentRelation;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * <p>
  * 会员下级表 服务类
@@ -24,6 +26,6 @@ public interface IAgentRelationService extends IService<AgentRelation> {
 
 	Page<AgentSubVO> subordinatePage(SubordinateReq req);
 
-    boolean upgradeAgent(String  account);
+    boolean upgradeAgent(String  account, HttpServletRequest request);
 
 }

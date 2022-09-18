@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.indo.admin.common.util.AdminBusinessRedisUtils;
 import com.indo.common.result.ResultCode;
+import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.core.mapper.MemLevelMapper;
 import com.indo.admin.pojo.req.mem.MemLevelAddReq;
 import com.indo.admin.pojo.req.mem.MemLevelPageReq;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -57,13 +59,14 @@ public class MemLevelServiceImpl extends SuperServiceImpl<MemLevelMapper, MemLev
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean updateOne(MemLevelUpdateReq req) {
+    public boolean updateOne(MemLevelUpdateReq req, HttpServletRequest request) {
         MemLevel memLevel = baseMapper.selectById(req.getId());
+        String countryCode = request.getHeader("countryCode");
         if (memLevel == null) {
-            throw new BizException(ResultCode.DATA_NONENTITY);
+            throw new BizException(MessageUtils.get(ResultCode.DATA_NONENTITY.getCode(),countryCode));
         }
         if(!memLevel.getLevel().equals(req.getLevel())){
-            throw new BizException(ResultCode.NOT_UPDATE_LEVEL);
+            throw new BizException(MessageUtils.get(ResultCode.NOT_UPDATE_LEVEL.getCode(),countryCode));
         }
         MemLevel tempMemLevel = new MemLevel();
         BeanUtils.copyProperties(req, tempMemLevel);

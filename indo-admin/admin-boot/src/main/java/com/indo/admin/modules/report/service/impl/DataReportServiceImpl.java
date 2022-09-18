@@ -14,10 +14,12 @@ import com.indo.admin.pojo.vo.mem.MemReportVo;
 import com.indo.admin.pojo.vo.pay.PayRechargeReportVo;
 import com.indo.common.result.ResultCode;
 import com.indo.common.utils.StringUtils;
+import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.common.web.exception.BizException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 @Service
 public class DataReportServiceImpl implements DataReportService {
@@ -30,45 +32,50 @@ public class DataReportServiceImpl implements DataReportService {
     @Resource
     private AdminGameParentPlatformMapper adminGameParentPlatformMapper;
     @Override
-    public Page<AgentReportVo> findAgentReportPage(AgentReportDTO agentReportDTO) {
+    public Page<AgentReportVo> findAgentReportPage(AgentReportDTO agentReportDTO, HttpServletRequest request) {
         if(StringUtils.isEmpty(agentReportDTO.getBeginTime())||StringUtils.isEmpty(agentReportDTO.getEndTime())){
-            throw new BizException(ResultCode.SYSPARAMETER_EMPTY);
+            String countryCode = request.getHeader("countryCode");
+            throw new BizException(MessageUtils.get(ResultCode.SYSPARAMETER_EMPTY.getCode(),countryCode));
         }
         Page<AgentReportVo> page = new Page<>(agentReportDTO.getPage(), agentReportDTO.getLimit());
         return agentRelationMapper.findAgentReport(page,agentReportDTO);
     }
 
     @Override
-    public Page<MemReportVo> findMemberReportPage(MemReportDTO memReportDTO) {
+    public Page<MemReportVo> findMemberReportPage(MemReportDTO memReportDTO, HttpServletRequest request) {
         if(StringUtils.isEmpty(memReportDTO.getBeginTime())||StringUtils.isEmpty(memReportDTO.getEndTime())){
-            throw new BizException(ResultCode.SYSPARAMETER_EMPTY);
+            String countryCode = request.getHeader("countryCode");
+            throw new BizException(MessageUtils.get(ResultCode.SYSPARAMETER_EMPTY.getCode(),countryCode));
         }
         Page<MemReportVo> page = new Page<>(memReportDTO.getPage(), memReportDTO.getLimit());
         return memBankMapper.findMemberReport(page,memReportDTO);
     }
 
     @Override
-    public Page<PayRechargeReportVo> findPayRechargeReportPage(PayRechargeReportDTO payRechargeReportDTO) {
+    public Page<PayRechargeReportVo> findPayRechargeReportPage(PayRechargeReportDTO payRechargeReportDTO, HttpServletRequest request) {
         if(StringUtils.isEmpty(payRechargeReportDTO.getBeginTime())||StringUtils.isEmpty(payRechargeReportDTO.getEndTime())){
-            throw new BizException(ResultCode.SYSPARAMETER_EMPTY);
+            String countryCode = request.getHeader("countryCode");
+            throw new BizException(MessageUtils.get(ResultCode.SYSPARAMETER_EMPTY.getCode(),countryCode));
         }
         Page<PayRechargeReportVo> page = new Page<>(payRechargeReportDTO.getPage(), payRechargeReportDTO.getLimit());
         return payRechargeMapper.findPayRechargeReport(page,payRechargeReportDTO);
     }
 
     @Override
-    public Page<PlatformReportVo> findPlatformReportPage(PlatformReportDTO platformReportDTO) {
+    public Page<PlatformReportVo> findPlatformReportPage(PlatformReportDTO platformReportDTO, HttpServletRequest request) {
         if(StringUtils.isEmpty(platformReportDTO.getBeginTime())||StringUtils.isEmpty(platformReportDTO.getEndTime())){
-            throw new BizException(ResultCode.SYSPARAMETER_EMPTY);
+            String countryCode = request.getHeader("countryCode");
+            throw new BizException(MessageUtils.get(ResultCode.SYSPARAMETER_EMPTY.getCode(),countryCode));
         }
         Page<PlatformReportVo> page = new Page<>(platformReportDTO.getPage(), platformReportDTO.getLimit());
         return adminGameParentPlatformMapper.findPlatformReport(page,platformReportDTO);
     }
 
     @Override
-    public TotalReportVo findTotalReport(TotalReportDTO totalReportDTO) {
+    public TotalReportVo findTotalReport(TotalReportDTO totalReportDTO, HttpServletRequest request) {
         if(StringUtils.isEmpty(totalReportDTO.getBeginTime())||StringUtils.isEmpty(totalReportDTO.getEndTime())){
-            throw new BizException(ResultCode.SYSPARAMETER_EMPTY);
+            String countryCode = request.getHeader("countryCode");
+            throw new BizException(MessageUtils.get(ResultCode.SYSPARAMETER_EMPTY.getCode(),countryCode));
         }
         return payRechargeMapper.findTotalReport(totalReportDTO);
     }

@@ -12,6 +12,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -50,8 +51,8 @@ public class ActivityTypeController {
 
     @ApiOperation(value = "编辑活动类型")
     @PostMapping(value = "/edit")
-    public Result edit(ActivityTypeDTO activityTypeDTO) {
-        return Result.judge(iActivityTypeService.edit(activityTypeDTO));
+    public Result edit(ActivityTypeDTO activityTypeDTO, HttpServletRequest request) {
+        return Result.judge(iActivityTypeService.edit(activityTypeDTO,request));
     }
 
     @ApiOperation(value = "删除活动类型及旗下所有活动")

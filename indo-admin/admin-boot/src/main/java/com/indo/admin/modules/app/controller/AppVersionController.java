@@ -18,6 +18,7 @@ import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -52,8 +53,8 @@ public class AppVersionController {
 
     @ApiOperation(value = "编辑appVersion")
     @PostMapping(value = "/edit")
-    public Result edit(AppVersionReq versionReq) {
-        return Result.judge(iAppVersionService.edit(versionReq));
+    public Result edit(AppVersionReq versionReq,HttpServletRequest request) {
+        return Result.judge(iAppVersionService.edit(versionReq,request));
     }
 
 

@@ -10,6 +10,7 @@ import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.common.redis.utils.GeneratorIdUtil;
 import com.indo.common.result.ResultCode;
+import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.JwtUtils;
 import com.indo.core.base.service.impl.SuperServiceImpl;
@@ -24,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -59,10 +61,11 @@ public class PayManualRechargeServiceImpl extends SuperServiceImpl<PayManualRech
 
     @Override
     @Transactional
-    public boolean operateRecharge(Integer operateType, Long memId, Float amount,String remarks) {
+    public boolean operateRecharge(Integer operateType, Long memId, Float amount,String remarks, HttpServletRequest request) {
         MemBaseinfo memBaseinfo = memBaseinfoMapper.selectById(memId);
+        String countryCode = request.getHeader("countryCode");
         if (null == memBaseinfo) {
-            throw new BizException(ResultCode.USERNAME_NONENTITY);
+            throw new BizException(MessageUtils.get(ResultCode.USERNAME_NONENTITY.getCode(),countryCode));
         }
         BigDecimal operateAmount = new BigDecimal(amount);
         PayRecharge rechargeOrder = new PayRecharge();

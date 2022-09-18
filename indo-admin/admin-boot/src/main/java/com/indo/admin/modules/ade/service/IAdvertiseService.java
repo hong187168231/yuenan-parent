@@ -7,6 +7,7 @@ import com.indo.core.pojo.entity.Advertise;
 import com.indo.user.pojo.req.AdvertiseQueryReq;
 import com.indo.user.pojo.req.agent.AdvertiseReq;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -42,7 +43,7 @@ public interface IAdvertiseService extends IService<Advertise> {
      * @param advertiseDTO
      * @return
      */
-    boolean edit(AdvertiseReq advertiseDTO);
+    boolean edit(AdvertiseReq advertiseDTO, HttpServletRequest request);
 
     /**
      * 删除广告
@@ -50,7 +51,7 @@ public interface IAdvertiseService extends IService<Advertise> {
      * @param adeId
      * @return
      */
-    boolean delAde(Long adeId);
+    boolean delAde(Long adeId,HttpServletRequest request);
 
     /**
      * 广告上下架
@@ -59,6 +60,6 @@ public interface IAdvertiseService extends IService<Advertise> {
      * @param status
      * @return
      */
-    boolean operateStatus(Long adeId, Integer status);
+    boolean operateStatus(Long adeId, Integer status,HttpServletRequest request);
 
 }

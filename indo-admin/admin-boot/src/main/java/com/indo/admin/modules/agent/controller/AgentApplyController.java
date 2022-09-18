@@ -11,6 +11,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -39,8 +40,8 @@ public class AgentApplyController {
 
     @ApiOperation(value = "审核申请", httpMethod = "PUT")
     @PutMapping(value = "/appltAudit")
-    public Result applyAudit(@RequestBody MemApplyAuditReq req) {
-        boolean flag = agentApplyService.applyAudit(req);
+    public Result applyAudit(@RequestBody MemApplyAuditReq req, HttpServletRequest request) {
+        boolean flag = agentApplyService.applyAudit(req,request);
         return Result.judge(flag);
     }
 }

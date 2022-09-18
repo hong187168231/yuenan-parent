@@ -11,6 +11,7 @@ import com.indo.admin.pojo.vo.agent.AgentSpreadVO;
 import com.indo.common.result.Result;
 import com.indo.common.result.ResultCode;
 import com.indo.common.utils.StringUtils;
+import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
 import com.indo.common.web.util.JwtUtils;
@@ -20,6 +21,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -42,31 +44,33 @@ public class AgentSpreadServiceImpl extends ServiceImpl<AgentSpreadMapper, Agent
     }
 
     @Override
-    public void insertAgentSpread(AgentSpreadReq req) {
+    public void insertAgentSpread(AgentSpreadReq req, HttpServletRequest request) {
+        String countryCode = request.getHeader("countryCode");
         if(StringUtils.isEmpty(req.getImageUrl()) ||StringUtils.isEmpty(req.getSkipUrl())||StringUtils.isEmpty(req.getContent())){
-            throw new BizException(ResultCode.PARAM_ERROR);
+            throw new BizException(MessageUtils.get(ResultCode.PARAM_ERROR.getCode(),countryCode));
         }
         AgentSpread agentSpread = new AgentSpread();
         BeanUtils.copyProperties(req, agentSpread);
         //agentSpread.setCreateUser(JwtUtils.getUsername());
         if(baseMapper.insert(agentSpread)<=0){
-            throw new BizException(ResultCode.AGENT_PROMOTION_INSERTION_ERROR);
+            throw new BizException(MessageUtils.get(ResultCode.AGENT_PROMOTION_INSERTION_ERROR.getCode(),countryCode));
         }
     }
 
     @Override
-    public void updateAgentSpread(AgentSpreadReq req) {
+    public void updateAgentSpread(AgentSpreadReq req, HttpServletRequest request) {
+        String countryCode = request.getHeader("countryCode");
         if(req.getId()==null){
-            throw new BizException(ResultCode.PARAM_ERROR);
+            throw new BizException(MessageUtils.get(ResultCode.PARAM_ERROR.getCode(),countryCode));
         }
         AgentSpread agentSpread = baseMapper.selectById(req.getId());
         if(agentSpread==null){
-            throw new BizException(ResultCode.DATA_NONENTITY);
+            throw new BizException(MessageUtils.get(ResultCode.DATA_NONENTITY.getCode(),countryCode));
         }
         BeanUtils.copyProperties(req, agentSpread);
         //agentSpread.setUpdateUser(JwtUtils.getUsername());
         if(baseMapper.updateById(agentSpread)<=0){
-            throw new BizException(ResultCode.AGENT_PROMOTION_UPDATE_ERROR);
+            throw new BizException(MessageUtils.get(ResultCode.AGENT_PROMOTION_UPDATE_ERROR.getCode(),countryCode));
         }
     }
 }

@@ -14,6 +14,7 @@ import com.indo.common.constant.RedisConstants;
 import com.indo.common.result.Result;
 import com.indo.common.result.ResultCode;
 import com.indo.common.utils.StringUtils;
+import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
 import com.indo.common.web.util.JwtUtils;
@@ -25,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -78,11 +80,12 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> i
 
     @Override
     @Transactional
-    public boolean edit(ActivityDTO activityDTO) {
-        checkAdeOpera(activityDTO.getActId());
+    public boolean edit(ActivityDTO activityDTO, HttpServletRequest request) {
+        checkAdeOpera(activityDTO.getActId(),request);
         Activity activity = findActivityById(activityDTO.getActId());
         if (null == activity) {
-            throw new BizException(ResultCode.DATA_NONENTITY);
+            String countryCode = request.getHeader("countryCode");
+            throw new BizException(MessageUtils.get(ResultCode.DATA_NONENTITY.getCode(),countryCode));
         }
         BeanUtils.copyProperties(activityDTO, activity);
         if (baseMapper.updateById(activity) > 0) {
@@ -95,8 +98,8 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> i
 
     @Override
     @Transactional
-    public boolean delAct(Long actId) {
-        checkAdeOpera(actId);
+    public boolean delAct(Long actId,HttpServletRequest request) {
+        checkAdeOpera(actId,request);
         Activity activity = findActivityById(actId);
         if (this.baseMapper.deleteById(actId) > 0) {
             activityTypeService.updateActNum(activity.getActTypeId(), -1);
@@ -108,10 +111,11 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> i
 
     @Override
     @Transactional
-    public boolean operateStatus(Long actId, Integer status) {
+    public boolean operateStatus(Long actId, Integer status,HttpServletRequest request) {
         Activity activity = findActivityById(actId);
         if (null == activity) {
-            throw new BizException(ResultCode.DATA_NONENTITY);
+            String countryCode = request.getHeader("countryCode");
+            throw new BizException(MessageUtils.get(ResultCode.DATA_NONENTITY.getCode(),countryCode));
         }
         activity.setStatus(status);
         activity.setActId(actId);
@@ -132,9 +136,10 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> i
      *
      * @param adeId
      */
-    private void checkAdeOpera(Long adeId) {
+    private void checkAdeOpera(Long adeId,HttpServletRequest request) {
         if (selectActShelveFlag(adeId)) {
-            throw new BizException(ResultCode.DATA_PUT);
+            String countryCode = request.getHeader("countryCode");
+            throw new BizException(MessageUtils.get(ResultCode.DATA_PUT.getCode(),countryCode));
         }
     }
 
