@@ -49,13 +49,13 @@ public class SecurityGlobalFilter implements GlobalFilter, Ordered {
         ServerHttpResponse response = exchange.getResponse();
 
         // 线上演示环境禁止修改和删除
-        if (env.equals("prod")
-                && (HttpMethod.DELETE.toString().equals(request.getMethodValue()) // 删除方法
-                || HttpMethod.PUT.toString().equals(request.getMethodValue())) // 修改方法
-        ) {
-            log.info("pppppppppppppppppppppppppppppppppppppppp");
-            return ResponseUtils.writeErrorInfo(response, ResultCode.FORBIDDEN_OPERATION);
-        }
+//        if (env.equals("prod")
+//                && (HttpMethod.DELETE.toString().equals(request.getMethodValue()) // 删除方法
+//                || HttpMethod.PUT.toString().equals(request.getMethodValue())) // 修改方法
+//        ) {
+//            log.info("pppppppppppppppppppppppppppppppppppppppp");
+//            return ResponseUtils.writeErrorInfo(response, ResultCode.FORBIDDEN_OPERATION);
+//        }
 
         // 非JWT或者JWT为空不作处理
         String token = request.getHeaders().getFirst(AuthConstants.AUTHORIZATION_KEY);
