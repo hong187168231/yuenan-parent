@@ -310,6 +310,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
             //操作名称
             txns.setMethod("Place Bet");
             txns.setStatus("Running");
+            txns.setGameMethod("debit");
             //余额
             txns.setBalance(balance);
             //创建时间
@@ -515,6 +516,12 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
                 txns2.setPlatformTxId(platformTxId);
                 txns2.setRoundId(refId);
                 txns2.setBalance(balance);
+                txns2.setUserId(memBaseinfo.getAccount());
+                //平台代码
+                txns2.setPlatform(platformGameParent.getPlatformCode());
+                //平台名称
+                txns2.setPlatformEnName(platformGameParent.getPlatformEnName());
+                txns2.setPlatformCnName(platformGameParent.getPlatformCnName());
                 txns2.setId(null);
                 txns2.setStatus("Running");
                 txns2.setWinningAmount(betAmount.negate());
