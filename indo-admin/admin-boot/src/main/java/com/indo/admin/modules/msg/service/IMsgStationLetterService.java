@@ -8,6 +8,7 @@ import com.indo.core.pojo.entity.MsgStationLetter;
 import com.indo.user.pojo.req.msg.StationLetterAddReq;
 import com.indo.user.pojo.req.msg.StationLetterQueryReq;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -41,6 +42,6 @@ public interface IMsgStationLetterService extends IService<MsgStationLetter> {
 
     int personalMsgTotal(MsgDTO msgDTO);
 
-    void deleteMsg(MsgDTO msgDTO);
+    void deleteMsg(MsgDTO msgDTO, HttpServletRequest request);
 
 }

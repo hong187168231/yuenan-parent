@@ -8,6 +8,7 @@ import com.indo.core.pojo.entity.SysParameter;
 import com.indo.core.pojo.req.SysParameterQueryReq;
 import com.indo.core.pojo.req.SysParameterReq;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -28,7 +29,7 @@ public interface ISysParameterService extends IService<SysParameter> {
      * @return
      * @throws BizException
      */
-    SysParameter getByCode(SysParameterEnum sysParameterEnum);
+    SysParameter getByCode(SysParameterEnum sysParameterEnum,HttpServletRequest request);
 
     /**
      * 获取系统配置
@@ -37,7 +38,7 @@ public interface ISysParameterService extends IService<SysParameter> {
      * @return
      * @throws BizException
      */
-    SysParameter getByCode(String paramCode);
+    SysParameter getByCode(String paramCode, HttpServletRequest request);
 
     /**
      * 新增系统参数
@@ -96,16 +97,16 @@ public interface ISysParameterService extends IService<SysParameter> {
      * 新增程序切换时间(分钟)
      * @param minute
      */
-    void insertProgramSwitchTime(String minute);
+    void insertProgramSwitchTime(String minute, HttpServletRequest request);
 
     /**
      * 查询程序切换时间(分钟)
      * @return
      */
-    SysParameter findProgramSwitchTime();
+    SysParameter findProgramSwitchTime(HttpServletRequest request);
 
     /**
      * 修改程序切换时间(分钟)
      */
-    void updateProgramSwitchTime(String minute);
+    void updateProgramSwitchTime(String minute, HttpServletRequest request);
 }

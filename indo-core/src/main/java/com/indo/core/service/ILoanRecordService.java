@@ -7,6 +7,7 @@ import com.indo.core.pojo.dto.LoanRecordDTO;
 import com.indo.core.pojo.entity.LoanRecord;
 import com.indo.core.pojo.vo.LoanRecordVo;
 
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 
 /**
@@ -27,7 +28,7 @@ public interface ILoanRecordService extends IService<LoanRecord> {
     /**
      * 借款
      */
-    void loanMoney(BigDecimal amount,LoginInfo loginInfo);
+    void loanMoney(BigDecimal amount,LoginInfo loginInfo, HttpServletRequest request);
 
 //    /**
 //     * 自动还款
@@ -37,11 +38,11 @@ public interface ILoanRecordService extends IService<LoanRecord> {
     /**
      * 主动还款
      */
-    void activeBackMoney(BigDecimal amount,LoginInfo loginInfo);
+    void activeBackMoney(BigDecimal amount,LoginInfo loginInfo, HttpServletRequest request);
 
     /**
      * 查询用户借款相关信息
      * @return
      */
-    LoanRecordVo findMemLoanInfo(LoginInfo loginInfo);
+    LoanRecordVo findMemLoanInfo(LoginInfo loginInfo, HttpServletRequest request);
 }

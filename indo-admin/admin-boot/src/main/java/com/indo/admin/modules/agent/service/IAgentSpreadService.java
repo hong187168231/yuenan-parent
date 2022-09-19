@@ -8,6 +8,7 @@ import com.indo.common.result.Result;
 import com.indo.core.pojo.entity.AgentSpread;
 import com.indo.admin.pojo.req.agnet.AgentSpreadReq;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 
@@ -31,11 +32,11 @@ public interface IAgentSpreadService extends IService<AgentSpread> {
      * 新增代理推广
      * @param agentSpread
      */
-    void insertAgentSpread(AgentSpreadReq agentSpread);
+    void insertAgentSpread(AgentSpreadReq agentSpread,HttpServletRequest request);
 
     /**
      * 修改代理推广
      */
-    void updateAgentSpread(AgentSpreadReq agentSpread);
+    void updateAgentSpread(AgentSpreadReq agentSpread, HttpServletRequest request);
 
 }

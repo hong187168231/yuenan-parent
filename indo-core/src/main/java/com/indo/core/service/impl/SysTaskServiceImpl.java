@@ -9,6 +9,7 @@ import com.indo.common.enums.TaskEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.ResultCode;
+import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.common.web.exception.BizException;
 import com.indo.core.mapper.MemTaskRecordMapper;
 import com.indo.core.mapper.SysTaskMapper;
@@ -25,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -223,14 +225,15 @@ public class SysTaskServiceImpl extends ServiceImpl<SysTaskMapper, SysTask> impl
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void receiveTaskReward(LoginInfo loginInfo, Integer taskId) {
+    public void receiveTaskReward(LoginInfo loginInfo, Integer taskId, HttpServletRequest request) {
         LambdaQueryWrapper<MemTaskRecord> taskwrapper = new LambdaQueryWrapper<>();
         taskwrapper.eq(MemTaskRecord::getMemId,loginInfo.getId());
         taskwrapper.eq(MemTaskRecord::getTaskId,taskId);
         taskwrapper.eq(MemTaskRecord::getStates,0);
         List<MemTaskRecord> memTaskRecordList = memTaskRecordMapper.selectList(taskwrapper);
         if(memTaskRecordList.isEmpty()){
-            throw new BizException(ResultCode.TASK_REWARD_ERROR);
+            String countryCode = request.getHeader("countryCode");
+            throw new BizException(MessageUtils.get(ResultCode.TASK_REWARD_ERROR.getCode(),countryCode));
         }
         memTaskRecordList.forEach(l->{
             MemGoldChangeDTO agentRebateChange = new MemGoldChangeDTO();

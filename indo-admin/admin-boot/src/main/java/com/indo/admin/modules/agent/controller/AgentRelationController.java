@@ -15,6 +15,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -52,8 +53,8 @@ public class AgentRelationController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "account", value = "会员账号", paramType = "query", dataType = "string", required = true)
     })
-    public Result upgradeAgent(@RequestParam("account") String account) {
-        boolean flag = agentRelationService.upgradeAgent(account);
+    public Result upgradeAgent(@RequestParam("account") String account, HttpServletRequest request) {
+        boolean flag = agentRelationService.upgradeAgent(account,request);
         return Result.judge(flag);
     }
 

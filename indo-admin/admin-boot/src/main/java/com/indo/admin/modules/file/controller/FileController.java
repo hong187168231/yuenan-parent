@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 /**
@@ -31,8 +32,8 @@ public class FileController {
      * @throws Exception
      */
     @PostMapping("/files-anon")
-    public FileInfo upload(@RequestParam("file") MultipartFile file) throws Exception {
-        return fileService.upload(file, "admin");
+    public FileInfo upload(@RequestParam("file") MultipartFile file,HttpServletRequest request) throws Exception {
+        return fileService.upload(file, "admin",request);
     }
 
     /**

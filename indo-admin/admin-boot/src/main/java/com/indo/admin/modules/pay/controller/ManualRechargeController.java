@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -60,8 +61,8 @@ public class ManualRechargeController {
             @ApiImplicitParam(name = "amount", value = "金额", required = true, paramType = "query", dataType = "float"),
             @ApiImplicitParam(name = "remarks", value = "备注", required = true, paramType = "query", dataType = "String"),
     })
-    public Result operateRecharge(@Param("operateType") Integer operateType, @Param("memId") Long memId, @Param("amount") Float amount,@Param("remarks") String remarks) {
-        boolean flag = iPayManualRechargeService.operateRecharge(operateType, memId, amount,remarks);
+    public Result operateRecharge(@Param("operateType") Integer operateType, @Param("memId") Long memId, @Param("amount") Float amount,@Param("remarks") String remarks, HttpServletRequest request) {
+        boolean flag = iPayManualRechargeService.operateRecharge(operateType, memId, amount,remarks,request);
         return Result.judge(flag);
     }
 

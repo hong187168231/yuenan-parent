@@ -6,6 +6,8 @@ import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.core.pojo.dto.SignInRecordDTO;
 import com.indo.core.pojo.entity.SignInRecord;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * <p>
  * 签到记录表 服务类
@@ -33,5 +35,5 @@ public interface ISignInRecordService extends IService<SignInRecord> {
     /**
      * 签到
      */
-    void signIn(LoginInfo loginInfo);
+    void signIn(LoginInfo loginInfo, HttpServletRequest request);
 }

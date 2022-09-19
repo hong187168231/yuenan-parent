@@ -17,6 +17,7 @@ import com.indo.common.enums.AccountTypeEnum;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.ResultCode;
 import com.indo.common.utils.ShareCodeUtil;
+import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
 import com.indo.core.mapper.MemLevelMapper;
@@ -45,6 +46,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -72,7 +74,7 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
     @Resource
     private ILoanRecordService loanRecordService;
     @Override
-    public Page<MemBaseInfoVo> queryList(MemBaseInfoReq req) {
+    public Page<MemBaseInfoVo> queryList(MemBaseInfoReq req, HttpServletRequest request) {
         Page<MemBaseInfoVo> page = new Page<>(req.getPage(), req.getLimit());
         List<MemBaseInfoVo> list = memBaseInfoMapper.queryList(page, req);
         Date now = new Date();
@@ -92,7 +94,7 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
             LoginInfo loginInfo = new LoginInfo();
             loginInfo.setMemLevel(Integer.valueOf(item.getMemLevel()));
             loginInfo.setId(item.getId());
-            LoanRecordVo loanRecordVo = loanRecordService.findMemLoanInfo(loginInfo);
+            LoanRecordVo loanRecordVo = loanRecordService.findMemLoanInfo(loginInfo,request);
             if(loanRecordVo!=null){
                 item.setLoanRecordVo(loanRecordVo);
             }
@@ -105,16 +107,17 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
 
     @Override
     @Transactional
-    public void addMemBaseInfo(MemAddReq req) {
+    public void addMemBaseInfo(MemAddReq req, HttpServletRequest request) {
         MemBaseInfoBO curentMem = this.memBaseInfoMapper.findMemBaseInfoByAccount(req.getAccount());
+        String countryCode = request.getHeader("countryCode");
         if (curentMem != null) {
-            throw new BizException(ResultCode.DATA_DUPLICATION);
+            throw new BizException(MessageUtils.get(ResultCode.DATA_DUPLICATION.getCode(),countryCode));
         }
         MemBaseInfoBO supperMem = null;
         if (StringUtils.isNotBlank(req.getSuperAccno())) {
             supperMem = this.memBaseInfoMapper.findMemBaseInfoByAccount(req.getSuperAccno());
             if (supperMem == null || !supperMem.getAccType().equals(2)) {
-                throw new BizException(ResultCode.ACCOUNT_ERROR);
+                throw new BizException(MessageUtils.get(ResultCode.ACCOUNT_ERROR.getCode(),countryCode));
             }
         }
         MemBaseinfo memBaseinfo = new MemBaseinfo();
@@ -123,7 +126,7 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
         memBaseinfo.setPasswordMd5(MD5.md5(req.getPassword()));
         memBaseinfo.setAccType(AccountTypeEnum.AGENT.getValue());
         if (baseMapper.insert(memBaseinfo) > 0) {
-            saveMemInviteCode(memBaseinfo);
+            saveMemInviteCode(memBaseinfo,request);
             memAgent.setMemId(memBaseinfo.getId());
             memAgent.setAccount(memBaseinfo.getAccount());
             memAgent.setTeamNum(1);
@@ -140,7 +143,7 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
             if (row > 0) {
                 //给上级增加下级相关参数
                 if(supperMem!=null){
-                    initMemParentAgent(memBaseinfo, supperMem.getId());
+                    initMemParentAgent(memBaseinfo, supperMem.getId(),request);
                 }
             }
         }
@@ -151,7 +154,7 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
      * @param memBaseinfo
      */
     @Override
-    public void saveMemInviteCode(MemBaseinfo memBaseinfo) {
+    public void saveMemInviteCode(MemBaseinfo memBaseinfo, HttpServletRequest request) {
         MemInviteCode memInviteCode = new MemInviteCode();
         String code = ShareCodeUtil.inviteCode(memBaseinfo.getId());
         memInviteCode.setMemId(memBaseinfo.getId());
@@ -160,7 +163,8 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
         memInviteCode.setStatus(1);
         boolean inviteFlag = memInviteCodeMapper.insert(memInviteCode) > 0;
         if (!inviteFlag) {
-            throw new BizException(ResultCode.INVITATION_CODE_ERROR);
+            String countryCode = request.getHeader("countryCode");
+            throw new BizException(MessageUtils.get(ResultCode.INVITATION_CODE_ERROR.getCode(),countryCode));
         }
     }
 
@@ -179,13 +183,14 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
         return page;
     }
 
-    public void initMemParentAgent(MemBaseinfo memBaseinfo, Long parentId) {
+    public void initMemParentAgent(MemBaseinfo memBaseinfo, Long parentId,HttpServletRequest request) {
         LambdaQueryWrapper<AgentRelation> wrapper = new LambdaQueryWrapper();
         wrapper.eq(AgentRelation::getMemId, parentId)
                 .eq(AgentRelation::getStatus, 1);
         AgentRelation parentAgent = agentRelationMapper.selectOne(wrapper);
         if (ObjectUtil.isNull(wrapper)) {
-            throw new BizException(ResultCode.INVITEE_NO_AGENT_ERROR);
+            String countryCode = request.getHeader("countryCode");
+            throw new BizException(MessageUtils.get(ResultCode.INVITEE_NO_AGENT_ERROR.getCode(),countryCode));
         }
         String subUserIds = StringUtils.isBlank(parentAgent.getSubUserIds()) ?
                 memBaseinfo.getId() + "" : parentAgent.getSubUserIds() + "," + memBaseinfo.getId();
@@ -195,8 +200,8 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
     }
 
     @Override
-    public boolean editMemBaseInfo(MemEditReq req) {
-        MemBaseinfo memBaseinfo = checkMemIsExist(req.getId());
+    public boolean editMemBaseInfo(MemEditReq req,HttpServletRequest request) {
+        MemBaseinfo memBaseinfo = checkMemIsExist(req.getId(),request);
         memBaseinfo.setId(req.getId());
         DozerUtil.map(req, memBaseinfo);
         MemBaseInfoDTO memBaseInfoDTO = new MemBaseInfoDTO();
@@ -206,8 +211,8 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
     }
 
     @Override
-    public boolean updateMemLevel(Long memId, Integer memLevel) {
-        MemBaseinfo memBaseinfo = checkMemIsExist(memId);
+    public boolean updateMemLevel(Long memId, Integer memLevel,HttpServletRequest request) {
+        MemBaseinfo memBaseinfo = checkMemIsExist(memId,request);
         memBaseinfo.setMemLevel(memLevel);
         memBaseinfo.setId(memId);
         MemBaseInfoDTO memBaseInfoDTO = new MemBaseInfoDTO();
@@ -223,10 +228,11 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
     }
 
     @Override
-    public MemBaseDetailVO getMemBaseInfoByAccount(String account) {
+    public MemBaseDetailVO getMemBaseInfoByAccount(String account,HttpServletRequest request) {
         MemBaseinfo memBaseinfo = baseMapper.selectOne(new QueryWrapper<MemBaseinfo>().lambda().eq(MemBaseinfo::getAccount, account));
         if(memBaseinfo==null){
-            throw new BizException(ResultCode.DATA_NONENTITY);
+            String countryCode = request.getHeader("countryCode");
+            throw new BizException(MessageUtils.get(ResultCode.DATA_NONENTITY.getCode(),countryCode));
         }
         MemBaseDetailVO memBaseDetailVO = new MemBaseDetailVO();
         BeanUtils.copyProperties(memBaseinfo, memBaseDetailVO);
@@ -235,8 +241,8 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
 
     @Override
     @Transactional
-    public boolean editStatus(MemEditStatusReq req) {
-        MemBaseinfo memBaseinfo = checkMemIsExist(req.getId());
+    public boolean editStatus(MemEditStatusReq req,HttpServletRequest request) {
+        MemBaseinfo memBaseinfo = checkMemIsExist(req.getId(),request);
         Integer status = memBaseinfo.getStatus();
         Integer prohibitLogin = memBaseinfo.getProhibitLogin();
         DozerUtil.map(req, memBaseinfo);
@@ -253,8 +259,8 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
     }
 
     @Override
-    public boolean resetPassword(Long memId) {
-        MemBaseinfo memBaseinfo = checkMemIsExist(memId);
+    public boolean resetPassword(Long memId,HttpServletRequest request) {
+        MemBaseinfo memBaseinfo = checkMemIsExist(memId,request);
         memBaseinfo.setPasswordMd5(MD5.md5("12345678"));
         MemBaseInfoDTO memBaseInfoDTO = new MemBaseInfoDTO();
         memBaseInfoDTO.setPasswordMd5(memBaseinfo.getPasswordMd5());
@@ -285,10 +291,11 @@ public class MemBaseinfoServiceImpl extends SuperServiceImpl<MemBaseinfoMapper, 
         return page;
     }
 
-    public MemBaseinfo checkMemIsExist(Long id) {
+    public MemBaseinfo checkMemIsExist(Long id,HttpServletRequest request) {
         MemBaseinfo memBaseinfo = this.baseMapper.selectById(id);
         if (memBaseinfo == null) {
-            throw new BizException(ResultCode.DATA_NONENTITY);
+            String countryCode = request.getHeader("countryCode");
+            throw new BizException(MessageUtils.get(ResultCode.DATA_NONENTITY.getCode(),countryCode));
         }
         return memBaseinfo;
     }

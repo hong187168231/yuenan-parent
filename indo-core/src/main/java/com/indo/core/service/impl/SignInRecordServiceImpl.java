@@ -8,6 +8,7 @@ import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.ResultCode;
+import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.common.web.exception.BizException;
 import com.indo.core.mapper.ActivityConfigMapper;
 import com.indo.core.mapper.SignInRecordMapper;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -58,12 +60,13 @@ public class SignInRecordServiceImpl extends ServiceImpl<SignInRecordMapper, Sig
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void signIn(LoginInfo loginInfo) {
+    public void signIn(LoginInfo loginInfo, HttpServletRequest request) {
         LambdaQueryWrapper<ActivityConfig> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(ActivityConfig::getTypes,1);
         ActivityConfig activityConfig = activityConfigMapper.selectOne(wrapper);
+        String countryCode = request.getHeader("countryCode");
         if(activityConfig==null){
-            throw new BizException(ResultCode.ACTIVITY_NOT_CONFIGURATION);
+            throw new BizException(MessageUtils.get(ResultCode.ACTIVITY_NOT_CONFIGURATION.getCode(),countryCode));
         }
         JSONObject json = JSONObject.parseObject(activityConfig.getConfigInfo());
         LambdaQueryWrapper<SignInRecord> srWrapper = new LambdaQueryWrapper<>();
@@ -71,7 +74,7 @@ public class SignInRecordServiceImpl extends ServiceImpl<SignInRecordMapper, Sig
         List<SignInRecord> srList=  baseMapper.selectList(srWrapper);
         srList.forEach(l->{
             if(DateUtils.isSameDay(l.getCreateTime(),new Date())){
-                throw new BizException(ResultCode.SIGNED_IN_TODAY);
+                throw new BizException(MessageUtils.get(ResultCode.SIGNED_IN_TODAY.getCode(),countryCode));
             }
         });
         Integer num = baseMapper.selectCount(srWrapper);

@@ -8,6 +8,7 @@ import com.indo.core.pojo.entity.MsgPushRecord;
 import com.indo.user.pojo.req.msg.PushRecordAddReq;
 import com.indo.user.pojo.req.msg.PushRecordQueryReq;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -39,5 +40,5 @@ public interface IMsgPushRecordService extends IService<MsgPushRecord> {
 
     int sysMsgTotal(MsgDTO msgDTO);
 
-    void deleteMsg(MsgDTO msgDTO);
+    void deleteMsg(MsgDTO msgDTO, HttpServletRequest request);
 }

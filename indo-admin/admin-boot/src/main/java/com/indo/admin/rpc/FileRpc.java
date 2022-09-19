@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -35,8 +36,8 @@ public class FileRpc {
      * @throws Exception
      */
     @PostMapping("/upload")
-    public Result<String> upload(@RequestParam("file") MultipartFile file) {
-        FileInfo fileInfo = fileService.upload(file,"app");
+    public Result<String> upload(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
+        FileInfo fileInfo = fileService.upload(file,"app",request);
         return Result.success(fileInfo.getUrl());
     }
 

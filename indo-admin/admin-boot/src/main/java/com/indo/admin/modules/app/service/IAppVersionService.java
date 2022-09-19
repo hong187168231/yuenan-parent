@@ -10,6 +10,7 @@ import com.indo.core.pojo.entity.AppVersion;
 import com.indo.user.pojo.vo.act.ActivityVo;
 import com.indo.user.pojo.vo.app.AppVersionVo;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -45,7 +46,7 @@ public interface IAppVersionService extends IService<AppVersion> {
      * @param req
      * @return
      */
-    boolean edit(AppVersionReq req);
+    boolean edit(AppVersionReq req, HttpServletRequest request);
 
 
     /**

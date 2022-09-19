@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.indo.common.enums.SysParameterEnum;
 import com.indo.common.result.ResultCode;
 import com.indo.common.utils.StringUtils;
+import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.JwtUtils;
 import com.indo.core.mapper.SysParameterMapper;
@@ -17,6 +18,7 @@ import com.indo.core.util.BusinessRedisUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
@@ -35,18 +37,19 @@ public class SysParameterServiceImpl extends ServiceImpl<SysParameterMapper, Sys
 
 
     @Override
-    public SysParameter getByCode(SysParameterEnum sysParameterEnum) {
-        return getByCode(null == sysParameterEnum ? null : sysParameterEnum.getCode());
+    public SysParameter getByCode(SysParameterEnum sysParameterEnum,HttpServletRequest request) {
+        return getByCode(null == sysParameterEnum ? null : sysParameterEnum.getCode(),request);
     }
 
     @Override
-    public SysParameter getByCode(String paramCode) {
+    public SysParameter getByCode(String paramCode, HttpServletRequest request) {
         SysParameter sysParameter = BusinessRedisUtils.getSysParameter(paramCode);
         if (sysParameter == null) {
             LambdaQueryWrapper<SysParameter> wrapper = new LambdaQueryWrapper<>();
             sysParameter = baseMapper.selectOne(wrapper.eq(SysParameter::getParamCode, paramCode));
             if (sysParameter == null || StringUtils.isEmpty(sysParameter.getParamValue())) {
-                throw new BizException(ResultCode.SYSPARAMETER_NOT_EXIST);
+                String countryCode = request.getHeader("countryCode");
+                throw new BizException(MessageUtils.get(ResultCode.SYSPARAMETER_NOT_EXIST.getCode(),countryCode));
             }
             BusinessRedisUtils.addSysParameter(sysParameter);
         }
@@ -62,10 +65,11 @@ public class SysParameterServiceImpl extends ServiceImpl<SysParameterMapper, Sys
     }
 
     @Override
-    public void insertProgramSwitchTime(String minute) {
-        SysParameter sysParameter =findProgramSwitchTime();
+    public void insertProgramSwitchTime(String minute, HttpServletRequest request) {
+        SysParameter sysParameter =findProgramSwitchTime(request);
         if(sysParameter!=null){
-            throw new BizException(ResultCode.DATA_DUPLICATION);
+            String countryCode = request.getHeader("countryCode");
+            throw new BizException(MessageUtils.get(ResultCode.DATA_DUPLICATION.getCode(),countryCode));
         }
         SysParameterReq parameter = new SysParameterReq();
         parameter.setParamCode(SysParameterEnum.PROGRAM_SWITCH_TIME.getCode());
@@ -76,15 +80,16 @@ public class SysParameterServiceImpl extends ServiceImpl<SysParameterMapper, Sys
     }
 
     @Override
-    public SysParameter findProgramSwitchTime() {
-        return getByCode(SysParameterEnum.PROGRAM_SWITCH_TIME.getCode());
+    public SysParameter findProgramSwitchTime(HttpServletRequest request) {
+        return getByCode(SysParameterEnum.PROGRAM_SWITCH_TIME.getCode(),request);
     }
 
     @Override
-    public void updateProgramSwitchTime(String minute) {
-        SysParameter parameter =findProgramSwitchTime();
+    public void updateProgramSwitchTime(String minute, HttpServletRequest request) {
+        SysParameter parameter =findProgramSwitchTime(request);
         if(parameter==null){
-            throw new BizException(ResultCode.DATA_NONENTITY);
+            String countryCode = request.getHeader("countryCode");
+            throw new BizException(MessageUtils.get(ResultCode.DATA_NONENTITY.getCode(),countryCode));
         }
         parameter.setParamValue(minute);
         parameter.setUpdateUser(JwtUtils.getUsername());

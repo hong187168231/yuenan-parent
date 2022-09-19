@@ -9,6 +9,7 @@ import com.indo.core.pojo.entity.SysTask;
 import com.indo.core.pojo.entity.SysTaskType;
 import com.indo.core.pojo.vo.TaskModuleVo;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -37,5 +38,5 @@ public interface ISysTaskService extends IService<SysTask> {
     /**
      * 领取任务奖励
      */
-    void receiveTaskReward(LoginInfo loginInfo,Integer taskId);
+    void receiveTaskReward(LoginInfo loginInfo,Integer taskId, HttpServletRequest request);
 }

@@ -13,6 +13,7 @@ import com.indo.admin.pojo.vo.act.ActivityTypeVO;
 import com.indo.common.constant.RedisConstants;
 import com.indo.common.result.Result;
 import com.indo.common.result.ResultCode;
+import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
 import com.indo.common.web.util.JwtUtils;
@@ -22,6 +23,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -70,10 +72,11 @@ public class ActivityTypeServiceImpl extends ServiceImpl<ActivityTypeMapper, Act
     }
 
     @Override
-    public boolean edit(ActivityTypeDTO activityTypeDTO) {
+    public boolean edit(ActivityTypeDTO activityTypeDTO, HttpServletRequest request) {
         ActivityType activityType = this.baseMapper.selectById(activityTypeDTO.getActTypeId());
         if (null == activityType) {
-            throw new BizException(ResultCode.DATA_NONENTITY);
+            String countryCode = request.getHeader("countryCode");
+            throw new BizException(MessageUtils.get(ResultCode.DATA_NONENTITY.getCode(),countryCode));
         }
         BeanUtils.copyProperties(activityTypeDTO, activityType);
         if (baseMapper.updateById(activityType) > 0) {

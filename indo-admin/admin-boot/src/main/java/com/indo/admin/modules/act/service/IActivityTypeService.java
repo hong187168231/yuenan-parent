@@ -6,6 +6,7 @@ import com.indo.admin.pojo.vo.act.ActivityTypeVO;
 import com.indo.common.result.Result;
 import com.indo.core.pojo.entity.ActivityType;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -42,7 +43,7 @@ public interface IActivityTypeService extends IService<ActivityType> {
      * @param activityTypeDTO
      * @return
      */
-    boolean edit(ActivityTypeDTO activityTypeDTO);
+    boolean edit(ActivityTypeDTO activityTypeDTO, HttpServletRequest request);
 
     boolean updateActNum(Long actTypeId, Integer actNum);
 

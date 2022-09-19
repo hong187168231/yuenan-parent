@@ -8,6 +8,8 @@ import com.indo.admin.pojo.vo.agent.AgentApplyVO;
 import com.indo.core.pojo.entity.AgentApply;
 import com.indo.core.pojo.entity.MemBaseinfo;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * <p>
  * 会员下级表 服务类
@@ -20,5 +22,5 @@ public interface IAgentApplyService extends IService<AgentApply> {
 
     Page<AgentApplyVO> getPage(MemAgentApplyReq req);
 
-    boolean applyAudit(MemApplyAuditReq req);
+    boolean applyAudit(MemApplyAuditReq req, HttpServletRequest request);
 }

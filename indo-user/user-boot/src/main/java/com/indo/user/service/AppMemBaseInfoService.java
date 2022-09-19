@@ -15,6 +15,7 @@ import com.indo.user.pojo.req.mem.UpdatePasswordReq;
 import com.indo.user.pojo.vo.AppLoginVo;
 import com.indo.user.pojo.vo.mem.MemBaseInfoVo;
 
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 
 public interface AppMemBaseInfoService extends SuperService<MemBaseinfo> {
@@ -58,7 +59,7 @@ public interface AppMemBaseInfoService extends SuperService<MemBaseinfo> {
      * @param account
      * @return
      */
-    MemBaseInfoVo getMemBaseInfo(String account);
+    MemBaseInfoVo getMemBaseInfo(String account, HttpServletRequest request);
 
 
     /**

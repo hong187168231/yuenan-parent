@@ -13,6 +13,7 @@ import com.indo.core.base.service.SuperService;
 import com.indo.core.pojo.dto.MemBaseInfoDTO;
 import com.indo.core.pojo.entity.MemBaseinfo;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
 
@@ -31,7 +32,7 @@ public interface IMemBaseinfoService extends SuperService<MemBaseinfo> {
      * @param memBaseInfoPageReq
      * @return
      */
-    Page<MemBaseInfoVo> queryList(MemBaseInfoReq memBaseInfoPageReq);
+    Page<MemBaseInfoVo> queryList(MemBaseInfoReq memBaseInfoPageReq, HttpServletRequest request);
 
     /**
      * 后台新增会员
@@ -39,7 +40,7 @@ public interface IMemBaseinfoService extends SuperService<MemBaseinfo> {
      * @param memAddReq
      * @return
      */
-    void addMemBaseInfo(MemAddReq memAddReq);
+    void addMemBaseInfo(MemAddReq memAddReq, HttpServletRequest request);
 
 
     /**
@@ -48,9 +49,9 @@ public interface IMemBaseinfoService extends SuperService<MemBaseinfo> {
      * @param memEditReq
      * @return
      */
-    boolean editMemBaseInfo(MemEditReq memEditReq);
+    boolean editMemBaseInfo(MemEditReq memEditReq,HttpServletRequest request);
 
-    boolean updateMemLevel(Long memId, Integer memLevel);
+    boolean updateMemLevel(Long memId, Integer memLevel,HttpServletRequest request);
 
     /**
      * 根据会员UID 查会员编辑详情
@@ -61,7 +62,7 @@ public interface IMemBaseinfoService extends SuperService<MemBaseinfo> {
     MemBaseinfo getMemBaseInfo(Long uid);
 
 
-    MemBaseDetailVO getMemBaseInfoByAccount(String account);
+    MemBaseDetailVO getMemBaseInfoByAccount(String account,HttpServletRequest request);
 
 
     /**
@@ -70,10 +71,10 @@ public interface IMemBaseinfoService extends SuperService<MemBaseinfo> {
      * @param frozenStatusReq
      * @return
      */
-    boolean editStatus(MemEditStatusReq frozenStatusReq);
+    boolean editStatus(MemEditStatusReq frozenStatusReq,HttpServletRequest request);
 
 
-    boolean resetPassword(Long memId);
+    boolean resetPassword(Long memId,HttpServletRequest request);
 
 
     void refreshMemBaseInfo(MemBaseInfoDTO memBaseInfoDTO, String account);
@@ -89,7 +90,7 @@ public interface IMemBaseinfoService extends SuperService<MemBaseinfo> {
      * 邀请码
      * @param memBaseinfo
      */
-    void saveMemInviteCode(MemBaseinfo memBaseinfo);
+    void saveMemInviteCode(MemBaseinfo memBaseinfo, HttpServletRequest request);
 
     /**
      * 会员打码量信息查询

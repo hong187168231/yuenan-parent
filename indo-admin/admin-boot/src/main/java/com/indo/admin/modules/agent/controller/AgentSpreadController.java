@@ -11,6 +11,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -36,15 +37,15 @@ public class AgentSpreadController {
 
     @ApiOperation(value = "新增代理推广信息", httpMethod = "POST")
     @PostMapping(value = "/insert")
-    public Result insert(@RequestBody AgentSpreadReq req) {
-        agentSpreadService.insertAgentSpread(req);
+    public Result insert(@RequestBody AgentSpreadReq req, HttpServletRequest request) {
+        agentSpreadService.insertAgentSpread(req,request);
         return Result.success();
     }
 
     @ApiOperation(value = "修改代理推广信息", httpMethod = "POST")
     @PostMapping(value = "/update")
-    public Result update(@RequestBody AgentSpreadReq req) {
-        agentSpreadService.updateAgentSpread(req);
+    public Result update(@RequestBody AgentSpreadReq req, HttpServletRequest request) {
+        agentSpreadService.updateAgentSpread(req,request);
         return Result.success();
     }
 }

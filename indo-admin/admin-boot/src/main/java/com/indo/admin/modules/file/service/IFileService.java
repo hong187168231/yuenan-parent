@@ -5,6 +5,7 @@ import com.indo.common.result.PageResult;
 import com.indo.core.pojo.entity.FileInfo;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.OutputStream;
 import java.util.Map;
 
@@ -14,7 +15,7 @@ import java.util.Map;
  * @author 作者 owen E-mail: 624191343@qq.com
  */
 public interface IFileService extends IService<FileInfo> {
-    FileInfo upload(MultipartFile file, String folder);
+    FileInfo upload(MultipartFile file, String folder, HttpServletRequest request);
 
     PageResult<FileInfo> findList(Map<String, Object> params);
 

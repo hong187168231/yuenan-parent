@@ -13,6 +13,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -47,16 +48,16 @@ public class ActivityController {
 
     @ApiOperation(value = "编辑活动类型")
     @PostMapping(value = "/edit")
-    public Result edit(ActivityDTO activityDTO) {
-        return Result.judge(iActivityService.edit(activityDTO));
+    public Result edit(ActivityDTO activityDTO, HttpServletRequest request) {
+        return Result.judge(iActivityService.edit(activityDTO,request));
     }
 
 
     @ApiOperation(value = "删除活动")
     @DeleteMapping(value = "/{actId}")
     @ApiImplicitParam(name = "actId", value = "活动id", required = true, paramType = "path", dataType = "long")
-    public Result delete(@PathVariable Long actId) {
-        return Result.judge(iActivityService.delAct(actId));
+    public Result delete(@PathVariable Long actId,HttpServletRequest request) {
+        return Result.judge(iActivityService.delAct(actId,request));
     }
 
 
@@ -66,8 +67,8 @@ public class ActivityController {
             @ApiImplicitParam(name = "actId", value = "广告id", required = true, paramType = "query", dataType = "long"),
             @ApiImplicitParam(name = "status", value = "状态 0 下架1 上架", required = true, paramType = "query", dataType = "int")
     })
-    public Result operateStatus(@RequestParam("actId") Long actId, @RequestParam("status") Integer status) {
-        return Result.judge(iActivityService.operateStatus(actId, status));
+    public Result operateStatus(@RequestParam("actId") Long actId, @RequestParam("status") Integer status,HttpServletRequest request) {
+        return Result.judge(iActivityService.operateStatus(actId, status,request));
     }
 
 }

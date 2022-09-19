@@ -7,6 +7,7 @@ import com.indo.common.result.Result;
 import com.indo.core.pojo.entity.Activity;
 import com.indo.user.pojo.vo.act.ActivityVo;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -43,7 +44,7 @@ public interface IActivityService extends IService<Activity> {
      * @param activityDTO
      * @return
      */
-    boolean edit(ActivityDTO activityDTO);
+    boolean edit(ActivityDTO activityDTO, HttpServletRequest request);
 
 
     /**
@@ -52,7 +53,7 @@ public interface IActivityService extends IService<Activity> {
      * @param actId
      * @return
      */
-    boolean delAct(Long actId);
+    boolean delAct(Long actId,HttpServletRequest request);
 
     /**
      * 活动上下架
@@ -61,6 +62,6 @@ public interface IActivityService extends IService<Activity> {
      * @param status
      * @return
      */
-    boolean operateStatus(Long actId, Integer status);
+    boolean operateStatus(Long actId, Integer status,HttpServletRequest request);
 
 }
