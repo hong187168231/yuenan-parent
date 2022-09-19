@@ -506,7 +506,24 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
 //            }
             // 查询用户请求订单
             Txns oldTxns = getTxnsByRoundId(refId, memBaseinfo.getAccount());
+            BigDecimal betAmount = null!=transaction.getBigDecimal("amount")?transaction.getBigDecimal("amount").multiply(platformGameParent.getCurrencyPro()):BigDecimal.ZERO;
+            String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
+
             if (null == oldTxns) {
+                Txns txns2 = new Txns();
+                //游戏商注单号
+                txns2.setPlatformTxId(platformTxId);
+                txns2.setRoundId(refId);
+                txns2.setBalance(balance);
+                txns2.setId(null);
+                txns2.setStatus("Running");
+                txns2.setWinningAmount(betAmount.negate());
+                txns2.setWinAmount(betAmount);
+                txns2.setRealWinAmount(betAmount);//真实返还金额
+                txns2.setMethod("Cancel Bet");
+                txns2.setCreateTime(dateStr);
+                txns2.setGameMethod("Cancel Bet");
+                txnsMapper.insert(txns2);
                 jsonObject.put("balance", balance.divide(platformGameParent.getCurrencyPro()));
                 jsonObject.put("bonus", 0);
                 jsonObject.put("status", "BET_DOES_NOT_EXIST");
@@ -520,9 +537,7 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
                 jsonObject.put("status", "BET_ALREADY_SETTLED");
                 return jsonObject;
             }
-            BigDecimal betAmount = null!=transaction.getBigDecimal("amount")?transaction.getBigDecimal("amount").multiply(platformGameParent.getCurrencyPro()):BigDecimal.ZERO;
             BigDecimal amount = oldTxns.getBetAmount();
-
             // 取消金额大于下注金额
             if (betAmount.compareTo(amount) == 1) {
                 jsonObject.put("balance", balance.divide(platformGameParent.getCurrencyPro()));
@@ -533,8 +548,6 @@ public class RedtigerCallbackServiceImpl implements RedtigerCallbackService {
                 balance = balance.add(betAmount);
                 gameCommonService.updateUserBalance(memBaseinfo, amount, GoldchangeEnum.REFUND, TradingEnum.INCOME);
             }
-
-            String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
 
             Txns txns = new Txns();
             BeanUtils.copyProperties(oldTxns, txns);
