@@ -322,10 +322,8 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
                 Txns oldTxns = txnsMapper.selectOne(wrapper);
                 if (null == oldTxns) {
-                    AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
-                    callBacekFail.setStatus("1017");
-                    callBacekFail.setDesc("TxCode is not exist");
-                    return callBacekFail;
+                    placeBetSuccess.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
+                    return placeBetSuccess;
                 } else if ("Cancel Bet".equals(oldTxns.getMethod())) {
                     placeBetSuccess.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
                     return placeBetSuccess;
