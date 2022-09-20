@@ -59,10 +59,10 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                 } else {
                     JSONArray arrayList = new JSONArray();
                     JSONObject object = new JSONObject();
-                    object.put("code", json.getString("walletcode"));
+                    object.put("code", json.getString("Mainwallet"));
                     object.put("bal", memBaseinfo.getBalance().divide(gameParentPlatform.getCurrencyPro()));
                     object.put("cur", json.getString("cur"));
-                    object.put("name", memBaseinfo.getAccount());
+                    object.put("name", "Mainwallet");
                     object.put("desc", memBaseinfo.getBalance().divide(gameParentPlatform.getCurrencyPro()));
                     arrayList.add(object);
                     dataJson.put("userid", json.getString("userid"));
@@ -187,8 +187,6 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                 txns.setRoundId(json.getString("roundid"));
 
                 txns.setMpId(json.getInteger("txtype"));
-                //平台代码
-                txns.setPlatform("DG");
                 //下注金额
                 txns.setBetAmount(amt);
                 //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
@@ -353,8 +351,6 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                 txns.setUserId(memBaseinfo.getId().toString());
 
                 txns.setRoundId(json.getString("roundid"));
-                //平台代码
-                txns.setPlatform("KingMaker");
                 //下注金额
                 txns.setBetAmount(amt);
                 //中奖金额（赢为正数，亏为负数，和为0）或者总输赢

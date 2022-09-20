@@ -195,7 +195,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     }
                 }
                 BigDecimal betAmount = null!=placeBetTxns.getBetAmount()?placeBetTxns.getBetAmount().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
-                if (memBaseinfo.getBalance().compareTo(betAmount) == -1) {
+                if (balance.compareTo(betAmount) == -1) {
                     AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                     callBacekFail.setStatus("1018");
                     callBacekFail.setDesc("Not Enough Balance");
