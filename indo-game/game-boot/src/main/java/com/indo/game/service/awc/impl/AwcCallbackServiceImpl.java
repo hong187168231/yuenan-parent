@@ -817,6 +817,8 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
             callBacekFail.setDesc("invalid IP address.");
             return callBacekFail;
         }
+        AwcCallBackParentRespSuccess callBackSuccess = new AwcCallBackParentRespSuccess();
+        callBackSuccess.setStatus("0000");
         if (null != voidSettleTxnsList && voidSettleTxnsList.size() > 0) {
             for (VoidSettleTxns voidSettleTxns : voidSettleTxnsList) {
                 String userId = voidSettleTxns.getUserId();
@@ -828,7 +830,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     return callBacekFail;
                 } else {
                     LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
-                    wrapper.eq(Txns::getMethod, "Settle");
+                    wrapper.and(c -> c.eq(Txns::getMethod, "Settle").or().eq(Txns::getMethod, "Void Settle"));
                     wrapper.eq(Txns::getStatus, "Running");
                     wrapper.eq(Txns::getPlatformTxId, voidSettleTxns.getPlatformTxId());
                     wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
@@ -838,6 +840,8 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                         callBacekFail.setStatus("1017");
                         callBacekFail.setDesc("TxCode is not exist");
                         return callBacekFail;
+                    }else if("Void Settle".equals(oldTxns.getMethod())){
+                        return callBackSuccess;
                     }
                     BigDecimal winAmount = oldTxns.getWinAmount();
                     BigDecimal balance = memBaseinfo.getBalance().subtract(winAmount);
@@ -858,8 +862,6 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
 
                 }
             }
-            AwcCallBackParentRespSuccess callBackSuccess = new AwcCallBackParentRespSuccess();
-            callBackSuccess.setStatus("0000");
             return callBackSuccess;
         } else {
             AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
