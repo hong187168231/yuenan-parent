@@ -287,6 +287,10 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
         });
         List<CancelBetTxns> cancelBetTxnsList = apiRequestData.getTxns();
         GameParentPlatform gameParentPlatform = new GameParentPlatform();
+        AwcCallBackRespSuccess placeBetSuccess = new AwcCallBackRespSuccess();
+        placeBetSuccess.setStatus("0000");
+
+        placeBetSuccess.setBalanceTs(DateUtils.getTimeAndZone());
         if (null != cancelBetTxnsList && cancelBetTxnsList.size() > 0) {
             BigDecimal balance = BigDecimal.ZERO;
             MemTradingBO memBaseinfo = new MemTradingBO();
@@ -323,21 +327,15 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     callBacekFail.setDesc("TxCode is not exist");
                     return callBacekFail;
                 } else if ("Cancel Bet".equals(oldTxns.getMethod())) {
-                    AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
-                    callBacekFail.setStatus("1043");
-                    callBacekFail.setDesc("Bet has canceled.");
-                    return callBacekFail;
+                    placeBetSuccess.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
+                    return placeBetSuccess;
                 }
-
 
                 //查询下注订单
                 BigDecimal betAmount = oldTxns.getBetAmount();
                 balance = balance.add(betAmount);
                 gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.PLACE_BET, TradingEnum.INCOME);
-
                 String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
-
-
                 Txns txns = new Txns();
                 BeanUtils.copyProperties(oldTxns, txns);
                 txns.setId(null);
@@ -350,10 +348,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 oldTxns.setUpdateTime(dateStr);
                 txnsMapper.updateById(oldTxns);
             }
-            AwcCallBackRespSuccess placeBetSuccess = new AwcCallBackRespSuccess();
-            placeBetSuccess.setStatus("0000");
             placeBetSuccess.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
-            placeBetSuccess.setBalanceTs(DateUtils.getTimeAndZone());
             return placeBetSuccess;
         } else {
             AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
