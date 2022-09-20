@@ -508,11 +508,11 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     txns.setId(null);
                     txns.setBalance(balance);
                     txns.setMethod("Void Bet");
-                    txns.setStatus(oldTxns.getMethod());
+                    txns.setStatus("Running");
                     txns.setRealBetAmount(realBetAmount);
                     txns.setCreateTime(dateStr);
                     txnsMapper.insert(txns);
-                    oldTxns.setStatus("Running");
+                    oldTxns.setStatus("Void Bet");
                     oldTxns.setUpdateTime(dateStr);
                     txnsMapper.updateById(oldTxns);
 
