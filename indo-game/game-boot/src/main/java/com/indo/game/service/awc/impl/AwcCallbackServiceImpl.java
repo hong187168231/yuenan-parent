@@ -676,6 +676,8 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
             callBacekFail.setDesc("invalid IP address.");
             return callBacekFail;
         }
+        AwcCallBackParentRespSuccess callBackSuccess = new AwcCallBackParentRespSuccess();
+        callBackSuccess.setStatus("0000");
         if (null != settleTxnsList && settleTxnsList.size() > 0) {
             for (SettleTxns settleTxns : settleTxnsList) {
                 String platformCode = settleTxns.getGameCode();
@@ -688,7 +690,8 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     return callBacekFail;
                 } else {
                     LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
-                    wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Unsettle").or().eq(Txns::getMethod, "Adjust Bet"));
+                    wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Unsettle")
+                            .or().eq(Txns::getMethod, "Adjust Bet").or().eq(Txns::getMethod, "Settle"));
                     wrapper.eq(Txns::getStatus, "Running");
                     wrapper.eq(Txns::getPlatformTxId, settleTxns.getPlatformTxId());
                     wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
@@ -698,7 +701,9 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                         callBacekFail.setStatus("1017");
                         callBacekFail.setDesc("TxCode is not exist");
                         return callBacekFail;
-                    } else {
+                    }else if("Settle".equals(oldTxns.getMethod())) {
+                        return callBackSuccess;
+                    }else {
 
                         BigDecimal winAmount = null!=settleTxns.getWinAmount()?settleTxns.getWinAmount().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
                         BigDecimal balance = memBaseinfo.getBalance().add(winAmount);
@@ -723,8 +728,6 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     }
                 }
             }
-            AwcCallBackParentRespSuccess callBackSuccess = new AwcCallBackParentRespSuccess();
-            callBackSuccess.setStatus("0000");
             return callBackSuccess;
         } else {
             AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
