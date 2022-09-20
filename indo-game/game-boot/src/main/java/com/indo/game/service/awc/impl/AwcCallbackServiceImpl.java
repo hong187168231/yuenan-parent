@@ -463,6 +463,8 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
             callBacekFail.setDesc("invalid IP address.");
             return callBacekFail;
         }
+        AwcCallBackParentRespSuccess callBackSuccess = new AwcCallBackParentRespSuccess();
+        callBackSuccess.setStatus("0000");
         if (null != voidBetTxnsList && voidBetTxnsList.size() > 0) {
             for (VoidBetTxns voidBetTxns : voidBetTxnsList) {
 
@@ -475,7 +477,8 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     return callBacekFail;
                 } else {
                     LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
-                    wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Adjust Bet"));
+                    wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet")
+                            .or().eq(Txns::getMethod, "Adjust Bet").or().eq(Txns::getMethod, "Void Bet"));
                     wrapper.eq(Txns::getStatus, "Running");
                     wrapper.eq(Txns::getPlatformTxId, voidBetTxns.getPlatformTxId());
                     wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
@@ -485,7 +488,9 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                         callBacekFail.setStatus("1017");
                         callBacekFail.setDesc("TxCode is not exist");
                         return callBacekFail;
-                    } else if ("Cancel Bet".equals(oldTxns.getMethod())) {
+                    } else if ("Void Bet".equals(oldTxns.getMethod())) {
+                        return callBackSuccess;
+                    }else if ("Cancel Bet".equals(oldTxns.getMethod())) {
                         AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                         callBacekFail.setStatus("1043");
                         callBacekFail.setDesc("Bet has canceled.");
@@ -507,14 +512,13 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     txns.setRealBetAmount(realBetAmount);
                     txns.setCreateTime(dateStr);
                     txnsMapper.insert(txns);
-                    oldTxns.setStatus("Void");
+                    oldTxns.setStatus("Running");
                     oldTxns.setUpdateTime(dateStr);
                     txnsMapper.updateById(oldTxns);
 
                 }
             }
-            AwcCallBackParentRespSuccess callBackSuccess = new AwcCallBackParentRespSuccess();
-            callBackSuccess.setStatus("0000");
+
             return callBackSuccess;
         } else {
             AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
