@@ -163,28 +163,25 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
         if (null != placeBetTxnsList && placeBetTxnsList.size() > 0) {
             BigDecimal balance = BigDecimal.ZERO;
             MemTradingBO memBaseinfo = new MemTradingBO();
-            GameCategory gameCategory = new GameCategory();
-            GamePlatform gamePlatform = new GamePlatform();
-            GameParentPlatform gameParentPlatform = new GameParentPlatform();
+
+            GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.AWC_PLATFORM_CODE);
+            GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.AWC_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
+            GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
+            LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+            wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Adjust Bet"));
+            wrapper.eq(Txns::getStatus, "Running");
+            wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
             for (int i = 0; i < placeBetTxnsList.size(); i++) {
                 PlaceBetTxns placeBetTxns = placeBetTxnsList.get(i);
-                String platformCode = placeBetTxns.getGameCode();
-
                 if (i == 0) {
                     String userId = placeBetTxns.getUserId();
-                    gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.AWC_PLATFORM_CODE);
+
                     if (!checkIp(gameParentPlatform,ip)) {
                         AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                         callBacekFail.setStatus("1029");
                         callBacekFail.setDesc("invalid IP address.");
                         return callBacekFail;
                     }
-                    if(OpenAPIProperties.AWC_IS_PLATFORM_LOGIN.equals("Y")){//平台登录Y 游戏登录N
-                        gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.AWC_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
-                    }else {
-                        gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platformCode,gameParentPlatform.getPlatformCode());
-                    }
-                    gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
                     memBaseinfo = gameCommonService.getMemTradingInfo(userId);
                     balance = memBaseinfo.getBalance();
                     if (null == memBaseinfo) {
@@ -201,11 +198,9 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
 //                    callBacekFail.setDesc("Not Enough Balance");
 //                    return callBacekFail;
 //                }
-                LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
-                wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Adjust Bet"));
-                wrapper.eq(Txns::getStatus, "Running");
+
                 wrapper.eq(Txns::getPlatformTxId, placeBetTxns.getPlatformTxId());
-                wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
+
                 Txns oldTxns = txnsMapper.selectOne(wrapper);
                 if (null != oldTxns) {
                     if ("Cancel Bet".equals(oldTxns.getMethod())) {
@@ -220,8 +215,6 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                         return callBacekFail;
                     }
                 }
-
-
                 balance = balance.subtract(betAmount);
                 gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
 
