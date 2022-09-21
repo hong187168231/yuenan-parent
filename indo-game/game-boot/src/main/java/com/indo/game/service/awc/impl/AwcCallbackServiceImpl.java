@@ -195,12 +195,12 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     }
                 }
                 BigDecimal betAmount = null!=placeBetTxns.getBetAmount()?placeBetTxns.getBetAmount().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
-                if (balance.compareTo(betAmount) == -1) {
-                    AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
-                    callBacekFail.setStatus("1018");
-                    callBacekFail.setDesc("Not Enough Balance");
-                    return callBacekFail;
-                }
+//                if (balance.compareTo(betAmount) == -1) {
+//                    AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
+//                    callBacekFail.setStatus("1018");
+//                    callBacekFail.setDesc("Not Enough Balance");
+//                    return callBacekFail;
+//                }
                 LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
                 wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Adjust Bet"));
                 wrapper.eq(Txns::getStatus, "Running");
