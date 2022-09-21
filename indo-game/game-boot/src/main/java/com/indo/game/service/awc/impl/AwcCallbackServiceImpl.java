@@ -1274,6 +1274,8 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
             callBacekFail.setDesc("invalid IP address.");
             return callBacekFail;
         }
+        GamePlatform gamePlatform = gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.AWC_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
+        GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         if (null != tipTxnsList && tipTxnsList.size() > 0) {
             BigDecimal balance = BigDecimal.ZERO;
             MemTradingBO memBaseinfo = new MemTradingBO();
@@ -1323,6 +1325,37 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
                 Txns txns = new Txns();
                 BeanUtils.copyProperties(tipTxns, txns);
+                //玩家 ID
+                txns.setUserId(memBaseinfo.getAccount());
+                //玩家货币代码
+                txns.setCurrency(gameParentPlatform.getCurrencyType());
+                //平台代码
+                txns.setPlatform(gameParentPlatform.getPlatformCode());
+                //平台英文名称
+                txns.setPlatformEnName(gameParentPlatform.getPlatformEnName());
+                //平台中文名称
+                txns.setPlatformCnName(gameParentPlatform.getPlatformCnName());
+                //平台游戏类型
+                txns.setGameType(gameCategory.getGameType());
+                //游戏分类ID
+                txns.setCategoryId(gameCategory.getId());
+                //游戏分类名称
+                txns.setCategoryName(gameCategory.getGameName());
+                //平台游戏代码
+                txns.setGameCode(gamePlatform.getPlatformCode());
+                //游戏名称
+                txns.setGameName(gamePlatform.getPlatformEnName());
+                //平台游戏类型
+                txns.setGameType(gameCategory.getGameType());
+                txns.setWinningAmount(tip.negate());
+                txns.setBetAmount(tip);
+                txns.setWinAmount(tip);
+                //游戏分类名称
+                txns.setCategoryName(gameCategory.getGameName());
+                //平台游戏代码
+                txns.setGameCode(gamePlatform.getPlatformCode());
+                //游戏名称
+                txns.setGameName(gamePlatform.getPlatformEnName());
                 txns.setBalance(balance);
                 txns.setMethod("Tip");
                 txns.setStatus("Running");
@@ -1355,6 +1388,8 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
             callBacekFail.setDesc("invalid IP address.");
             return callBacekFail;
         }
+        AwcCallBackRespSuccess placeBetSuccess = new AwcCallBackRespSuccess();
+        placeBetSuccess.setStatus("0000");
         if (null != cancelTipTxnsList && cancelTipTxnsList.size() > 0) {
             BigDecimal balance = BigDecimal.ZERO;
             MemTradingBO memBaseinfo = new MemTradingBO();
@@ -1383,10 +1418,9 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     callBacekFail.setDesc("TxCode is not exist");
                     return callBacekFail;
                 } else if ("Cancel Tip".equals(oldTxns.getMethod())) {
-                    AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
-                    callBacekFail.setStatus("1043");
-                    callBacekFail.setDesc("Bet has canceled.");
-                    return callBacekFail;
+                    placeBetSuccess.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
+                    placeBetSuccess.setBalanceTs(DateUtils.getTimeAndZone());
+                    return placeBetSuccess;
                 }
 
                 //打赏给直播主的金额
@@ -1407,8 +1441,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 oldTxns.setUpdateTime(dateStr);
                 txnsMapper.updateById(oldTxns);
             }
-            AwcCallBackRespSuccess placeBetSuccess = new AwcCallBackRespSuccess();
-            placeBetSuccess.setStatus("0000");
+
             placeBetSuccess.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
             placeBetSuccess.setBalanceTs(DateUtils.getTimeAndZone());
             return placeBetSuccess;
