@@ -168,7 +168,7 @@ public class RedtigerServiceImpl implements RedtigerService {
 
         session.put("id", cptOpenMember.getPassword());
         session.put("ip", OpenAPIProperties.PROXY_HOST_NAME);
-        group.put("action", "assign");
+        group.put("action", "clear");
         group.put("id", "");
 
         JSONObject game = new JSONObject();
