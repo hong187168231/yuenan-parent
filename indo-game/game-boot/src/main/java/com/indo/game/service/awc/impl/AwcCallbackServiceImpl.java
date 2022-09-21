@@ -1227,7 +1227,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
                 wrapper.eq(Txns::getMethod, "Give");
                 wrapper.eq(Txns::getStatus, "Running");
-                wrapper.eq(Txns::getPromotionTxId, giveTxns.getPromotionTxId());
+                wrapper.eq(Txns::getPlatformTxId, giveTxns.getPromotionTxId());
                 wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
                 Txns oldTxns = txnsMapper.selectOne(wrapper);
                 if (null != oldTxns) {
