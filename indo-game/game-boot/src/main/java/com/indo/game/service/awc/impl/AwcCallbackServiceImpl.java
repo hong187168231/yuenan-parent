@@ -1274,6 +1274,8 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
             callBacekFail.setDesc("invalid IP address.");
             return callBacekFail;
         }
+        AwcCallBackRespSuccess placeBetSuccess = new AwcCallBackRespSuccess();
+        placeBetSuccess.setStatus("0000");
         GamePlatform gamePlatform = gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.AWC_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
         GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         if (null != tipTxnsList && tipTxnsList.size() > 0) {
@@ -1308,10 +1310,9 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 Txns oldTxns = txnsMapper.selectOne(wrapper);
                 if (null != oldTxns) {
                     if ("Cancel Tip".equals(oldTxns.getMethod())) {
-                        AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
-                        callBacekFail.setStatus("1043");
-                        callBacekFail.setDesc("Bet has canceled.");
-                        return callBacekFail;
+                        placeBetSuccess.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
+                        placeBetSuccess.setBalanceTs(DateUtils.getTimeAndZone());
+                        return placeBetSuccess;
                     } else {
                         AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                         callBacekFail.setStatus("1038");
@@ -1357,8 +1358,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 txnsMapper.insert(txns);
 
             }
-            AwcCallBackRespSuccess placeBetSuccess = new AwcCallBackRespSuccess();
-            placeBetSuccess.setStatus("0000");
+
             placeBetSuccess.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
             placeBetSuccess.setBalanceTs(DateUtils.getTimeAndZone());
             return placeBetSuccess;
@@ -1411,6 +1411,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
                 if (null == oldTxns) {
                     Txns txns = new Txns();
+                    txns.setPlatformTxId(cancelTipTxns.getPlatformTxId());
                     //玩家 ID
                     txns.setUserId(memBaseinfo.getAccount());
                     //玩家货币代码
