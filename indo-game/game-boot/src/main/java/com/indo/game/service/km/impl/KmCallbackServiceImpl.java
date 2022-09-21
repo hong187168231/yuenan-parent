@@ -117,11 +117,13 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                 String refptxid = json.getString("refptxid");
                 String cur = json.getString("cur");
                 String roundid = json.getString("roundid");
-                wrapper.eq(Txns::getRePlatformTxId, refptxid);
-                Txns oldTxns = txnsMapper.selectOne(wrapper);
+
                 String method = "Place Bet";
                 boolean b = true;//是否新增 true新增
+                Txns oldTxns = new Txns();
                 if(500==txtype || 530==txtype){//500 投注(Place bet) 530 免费投注(Free bet)
+                    wrapper.eq(Txns::getPlatformTxId, ptxid);
+                    oldTxns = txnsMapper.selectOne(wrapper);
                     if(null==oldTxns && 500==txtype){
                         if (memBaseinfo.getBalance().compareTo(amt) == -1) {
                             dataJson.put("err", 100);
@@ -162,6 +164,8 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                 //                600 电子钱包加钱 (Fund in the player’s wallet)
                 //                610 电子钱包扣钱 (Fund out the player’s wallet)
                 if(510==txtype || 511==txtype || 520==txtype || 540==txtype || 590==txtype || 600==txtype || 610==txtype){
+                    wrapper.eq(Txns::getPlatformTxId, refptxid);
+                    oldTxns = txnsMapper.selectOne(wrapper);
                     method = "Settle";
                     if(null==oldTxns){
                         if (memBaseinfo.getBalance().compareTo(amt) == -1) {
@@ -203,22 +207,27 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                 }
                 //                560 取消交易
                 //                611 取消电子钱包扣钱 (Cancel fund-in)
-                if(560==txtype || 560==txtype){
+                if(560==txtype || 611==txtype){
                     method = "Cancel Bet";
+                    wrapper.eq(Txns::getPlatformTxId, refptxid);
+                    oldTxns = txnsMapper.selectOne(wrapper);
                     if(null==oldTxns){
-                        dataJson.put("err", 600);
-                        dataJson.put("errdesc", "交易记录不存在");
+                        dataJson.put("txid", ptxid);
+                        dataJson.put("bal", balance.divide(gameParentPlatform.getCurrencyPro()));
+                        dataJson.put("ptxid", ptxid);
+                        dataJson.put("cur", cur);
+                        dataJson.put("dup", "false");
                         jsonArray.add(dataJson);
                         continue;
                     }else if("Cancel Bet".equals(oldTxns.getMethod())) {
                         dataJson.put("txid", ptxid);
                         dataJson.put("bal", balance.divide(gameParentPlatform.getCurrencyPro()));
-                        dataJson.put("ptxid", refptxid);
+                        dataJson.put("ptxid", ptxid);
                         dataJson.put("cur", cur);
                         dataJson.put("dup", "true");
                         jsonArray.add(dataJson);
                         continue;
-                    }else {
+                    }else  {
                         if (memBaseinfo.getBalance().compareTo(amt) == -1) {
                             dataJson.put("err", 100);
                             dataJson.put("errdesc", "资金不足，无法执行操作。");
@@ -269,7 +278,8 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                     txnsMapper.updateById(oldTxns);
                 }
                 //游戏商注单号
-                txns.setPlatformTxId(refptxid);
+                txns.setPlatformTxId(ptxid);
+                txns.setRePlatformTxId(refptxid);
                 //玩家 ID
                 txns.setUserId(memBaseinfo.getAccount());
                 txns.setRoundId(roundid);
@@ -288,10 +298,10 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                 txns.setBetIp(ip);//  string 是 投注 IP
                 int num = txnsMapper.insert(txns);
 
-                dataJson.put("txid", json.getString("ptxid"));
+                dataJson.put("txid", ptxid);
                 dataJson.put("bal", balance.divide(gameParentPlatform.getCurrencyPro()));
-                dataJson.put("ptxid", json.getString("ptxid"));
-                dataJson.put("cur", json.getString("cur"));
+                dataJson.put("ptxid", ptxid);
+                dataJson.put("cur", cur);
                 dataJson.put("dup", "false");
                 jsonArray.add(dataJson);
             }
@@ -345,11 +355,12 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                 String refptxid = json.getString("refptxid");
                 String cur = json.getString("cur");
                 String roundid = json.getString("roundid");
-                wrapper.eq(Txns::getRePlatformTxId, refptxid);
-                Txns oldTxns = txnsMapper.selectOne(wrapper);
                 String method = "Place Bet";
+                Txns oldTxns = new Txns();
                 boolean b = true;//是否新增 true新增
                 if(500==txtype || 530==txtype){//500 投注(Place bet) 530 免费投注(Free bet)
+                    wrapper.eq(Txns::getPlatformTxId, ptxid);
+                    oldTxns = txnsMapper.selectOne(wrapper);
                     if(null==oldTxns && 500==txtype){
                         if (amt.compareTo(BigDecimal.ZERO) != 0) {
                             balance = balance.add(amt);
@@ -358,9 +369,9 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                     }else if("Place Bet".equals(oldTxns.getMethod())) {
                         dataJson.put("txid", ptxid);
                         dataJson.put("bal", balance.divide(gameParentPlatform.getCurrencyPro()));
-                        dataJson.put("ptxid", refptxid);
+                        dataJson.put("ptxid", ptxid);
                         dataJson.put("cur", cur);
-                        dataJson.put("dup", "true");
+                        dataJson.put("dup", "false");
                         jsonArray.add(dataJson);
                         continue;
                     }else if("Cancel Bet".equals(oldTxns.getMethod())) {
@@ -384,6 +395,8 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                 //                600 电子钱包加钱 (Fund in the player’s wallet)
                 //                610 电子钱包扣钱 (Fund out the player’s wallet)
                 if(510==txtype || 511==txtype || 520==txtype || 540==txtype || 590==txtype || 600==txtype || 610==txtype){
+                    wrapper.eq(Txns::getPlatformTxId, refptxid);
+                    oldTxns = txnsMapper.selectOne(wrapper);
                     method = "Settle";
                     if(null==oldTxns){
                         if (amt.compareTo(BigDecimal.ZERO) != 0) {
@@ -413,17 +426,22 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                 }
                 //                560 取消交易
                 //                611 取消电子钱包扣钱 (Cancel fund-in)
-                if(560==txtype || 560==txtype){
+                if(560==txtype || 611==txtype){
+                    wrapper.eq(Txns::getPlatformTxId, refptxid);
+                    oldTxns = txnsMapper.selectOne(wrapper);
                     method = "Cancel Bet";
                     if(null==oldTxns){
-                        dataJson.put("err", 600);
-                        dataJson.put("errdesc", "交易记录不存在");
+                        dataJson.put("txid", ptxid);
+                        dataJson.put("bal", balance.divide(gameParentPlatform.getCurrencyPro()));
+                        dataJson.put("ptxid", ptxid);
+                        dataJson.put("cur", cur);
+                        dataJson.put("dup", "true");
                         jsonArray.add(dataJson);
                         continue;
                     }else if("Cancel Bet".equals(oldTxns.getMethod())) {
                         dataJson.put("txid", ptxid);
                         dataJson.put("bal", balance.divide(gameParentPlatform.getCurrencyPro()));
-                        dataJson.put("ptxid", refptxid);
+                        dataJson.put("ptxid", ptxid);
                         dataJson.put("cur", cur);
                         dataJson.put("dup", "true");
                         jsonArray.add(dataJson);
@@ -475,7 +493,8 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                     txnsMapper.updateById(oldTxns);
                 }
                 //游戏商注单号
-                txns.setPlatformTxId(refptxid);
+                txns.setPlatformTxId(ptxid);
+                txns.setRePlatformTxId(refptxid);
                 //玩家 ID
                 txns.setUserId(memBaseinfo.getAccount());
                 txns.setRoundId(roundid);
@@ -485,7 +504,7 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                 txns.setMethod(method);
                 txns.setStatus("Running");
                 //中奖金额（赢为正数，亏为负数，和为0）或者总输赢
-                txns.setWinningAmount(amt.negate());
+                txns.setWinningAmount(amt);
                 txns.setWinAmount(amt);
                 //余额
                 txns.setBalance(balance);
