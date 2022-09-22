@@ -138,7 +138,7 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                     }else if("Place Bet".equals(oldTxns.getMethod())) {
                         dataJson.put("txid", ptxid);
                         dataJson.put("bal", balance.divide(gameParentPlatform.getCurrencyPro()));
-                        dataJson.put("ptxid", refptxid);
+                        dataJson.put("ptxid", ptxid);
                         dataJson.put("cur", cur);
                         dataJson.put("dup", "true");
                         jsonArray.add(dataJson);
@@ -181,7 +181,7 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                     }else if("Settle".equals(oldTxns.getMethod())) {
                         dataJson.put("txid", ptxid);
                         dataJson.put("bal", balance.divide(gameParentPlatform.getCurrencyPro()));
-                        dataJson.put("ptxid", refptxid);
+                        dataJson.put("ptxid", ptxid);
                         dataJson.put("cur", cur);
                         dataJson.put("dup", "true");
                         jsonArray.add(dataJson);
@@ -406,7 +406,7 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                     }else if("Settle".equals(oldTxns.getMethod())) {
                         dataJson.put("txid", ptxid);
                         dataJson.put("bal", balance.divide(gameParentPlatform.getCurrencyPro()));
-                        dataJson.put("ptxid", refptxid);
+                        dataJson.put("ptxid", ptxid);
                         dataJson.put("cur", cur);
                         dataJson.put("dup", "true");
                         jsonArray.add(dataJson);
@@ -515,7 +515,7 @@ public class KmCallbackServiceImpl implements KmCallbackService {
 
                 dataJson.put("txid", ptxid);
                 dataJson.put("bal", balance.divide(gameParentPlatform.getCurrencyPro()));
-                dataJson.put("ptxid", refptxid);
+                dataJson.put("ptxid", ptxid);
                 dataJson.put("cur", cur);
                 dataJson.put("dup", "false");
                 jsonArray.add(dataJson);
