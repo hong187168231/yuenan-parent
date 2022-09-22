@@ -171,7 +171,8 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
             wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Adjust Bet"));
             wrapper.eq(Txns::getStatus, "Running");
             wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
-            for (int i = 0; i < placeBetTxnsList.size(); i++) {
+            int l = placeBetTxnsList.size();
+            for (int i = 0; i < l; i++) {
                 PlaceBetTxns placeBetTxns = placeBetTxnsList.get(i);
                 if (i == 0) {
                     String userId = placeBetTxns.getUserId();
