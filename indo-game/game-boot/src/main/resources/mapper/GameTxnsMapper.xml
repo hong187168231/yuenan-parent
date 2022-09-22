@@ -254,7 +254,7 @@
                 bet_amount=#${item.betAmount},
                 bet_time=#${item.betTime},
                 round_id=#${item.roundId},
-                game_info=#${item.gameInfo},
+--                 game_info=#${item.gameInfo},
                 update_time=#${item.updateTime},
                 real_bet_amount=#${item.realBetAmount},
                 real_win_amount=#${item.realWinAmount},
