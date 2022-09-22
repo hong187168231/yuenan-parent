@@ -167,21 +167,19 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
             GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.AWC_PLATFORM_CODE);
             GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.AWC_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
             GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
-            if (!checkIp(gameParentPlatform,ip)) {
-                AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
-                callBacekFail.setStatus("1029");
-                callBacekFail.setDesc("invalid IP address.");
-                return callBacekFail;
-            }
-            LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
-            wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Adjust Bet"));
-            wrapper.eq(Txns::getStatus, "Running");
-            wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
+
             int l = placeBetTxnsList.size();
             for (int i = 0; i < l; i++) {
                 PlaceBetTxns placeBetTxns = placeBetTxnsList.get(i);
                 if (i == 0) {
                     String userId = placeBetTxns.getUserId();
+
+                    if (!checkIp(gameParentPlatform,ip)) {
+                        AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
+                        callBacekFail.setStatus("1029");
+                        callBacekFail.setDesc("invalid IP address.");
+                        return callBacekFail;
+                    }
                     memBaseinfo = gameCommonService.getMemTradingInfo(userId);
                     balance = memBaseinfo.getBalance();
                     if (null == memBaseinfo) {
@@ -198,7 +196,10 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
 //                    callBacekFail.setDesc("Not Enough Balance");
 //                    return callBacekFail;
 //                }
-
+                LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+                wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Adjust Bet"));
+                wrapper.eq(Txns::getStatus, "Running");
+                wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
                 wrapper.eq(Txns::getPlatformTxId, placeBetTxns.getPlatformTxId());
 
                 Txns oldTxns = txnsMapper.selectOne(wrapper);
@@ -279,22 +280,11 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
         AwcApiRequestData<List<CancelBetTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()), new TypeReference<AwcApiRequestData<List<CancelBetTxns>>>() {
         });
         List<CancelBetTxns> cancelBetTxnsList = apiRequestData.getTxns();
+        GameParentPlatform gameParentPlatform = new GameParentPlatform();
         AwcCallBackRespSuccess placeBetSuccess = new AwcCallBackRespSuccess();
         placeBetSuccess.setStatus("0000");
+
         placeBetSuccess.setBalanceTs(DateUtils.getTimeAndZone());
-        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.AWC_PLATFORM_CODE);
-        GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.AWC_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
-        GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
-        if (!checkIp(gameParentPlatform,ip)) {
-            AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
-            callBacekFail.setStatus("1029");
-            callBacekFail.setDesc("invalid IP address.");
-            return callBacekFail;
-        }
-        LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
-        wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Adjust Bet"));
-        wrapper.eq(Txns::getStatus, "Running");
-        wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
         if (null != cancelBetTxnsList && cancelBetTxnsList.size() > 0) {
             BigDecimal balance = BigDecimal.ZERO;
             MemTradingBO memBaseinfo = new MemTradingBO();
@@ -302,6 +292,13 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 CancelBetTxns cancelBetTxns = cancelBetTxnsList.get(i);
 
                 if (i == 0) {
+                    gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.AWC_PLATFORM_CODE);
+                    if (!checkIp(gameParentPlatform,ip)) {
+                        AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
+                        callBacekFail.setStatus("1029");
+                        callBacekFail.setDesc("invalid IP address.");
+                        return callBacekFail;
+                    }
                     String userId = cancelBetTxns.getUserId();
                     memBaseinfo = gameCommonService.getMemTradingInfo(userId);
                     balance = memBaseinfo.getBalance();
@@ -312,7 +309,11 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                         return callBacekFail;
                     }
                 }
+                LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+                wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Adjust Bet"));
+                wrapper.eq(Txns::getStatus, "Running");
                 wrapper.eq(Txns::getPlatformTxId, cancelBetTxns.getPlatformTxId());
+                wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
                 Txns oldTxns = txnsMapper.selectOne(wrapper);
                 if (null == oldTxns) {
                     placeBetSuccess.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
@@ -451,12 +452,6 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
         }
         AwcCallBackParentRespSuccess callBackSuccess = new AwcCallBackParentRespSuccess();
         callBackSuccess.setStatus("0000");
-        LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
-        wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet")
-                .or().eq(Txns::getMethod, "Adjust Bet").or().eq(Txns::getMethod, "Void Bet"));
-        wrapper.eq(Txns::getStatus, "Running");
-
-        wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
         if (null != voidBetTxnsList && voidBetTxnsList.size() > 0) {
             for (VoidBetTxns voidBetTxns : voidBetTxnsList) {
 
@@ -468,7 +463,12 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     callBacekFail.setDesc("Account is not exists");
                     return callBacekFail;
                 } else {
+                    LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+                    wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet")
+                            .or().eq(Txns::getMethod, "Adjust Bet").or().eq(Txns::getMethod, "Void Bet"));
+                    wrapper.eq(Txns::getStatus, "Running");
                     wrapper.eq(Txns::getPlatformTxId, voidBetTxns.getPlatformTxId());
+                    wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
                     Txns oldTxns = txnsMapper.selectOne(wrapper);
                     if (null == oldTxns) {
                         AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
@@ -527,9 +527,6 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
             callBacekFail.setDesc("invalid IP address.");
             return callBacekFail;
         }
-        LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Txns::getMethod, "Void Bet");
-        wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
         if (null != unvoidBetTxnsList && unvoidBetTxnsList.size() > 0) {
             for (UnvoidBetTxns unvoidBetTxns : unvoidBetTxnsList) {
                 String userId = unvoidBetTxns.getUserId();
@@ -540,7 +537,10 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     callBacekFail.setDesc("Account is not exists");
                     return callBacekFail;
                 } else {
+                    LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+                    wrapper.eq(Txns::getMethod, "Void Bet");
                     wrapper.eq(Txns::getPlatformTxId, unvoidBetTxns.getPlatformTxId());
+                    wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
                     Txns oldTxns = txnsMapper.selectOne(wrapper);
                     if (null == oldTxns) {
                         AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
@@ -589,11 +589,16 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
             return callBacekFail;
         }
         if (null != refundTxnsList && refundTxnsList.size() > 0) {
-
-            GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.AWC_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
-            GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
+            GameCategory gameCategory = new GameCategory();
+            GamePlatform gamePlatform = new GamePlatform();
             for (RefundTxns refundTxns : refundTxnsList) {
-
+                String platformCode = refundTxns.getGameCode();
+                if(OpenAPIProperties.AWC_IS_PLATFORM_LOGIN.equals("Y")){//平台登录Y 游戏登录N
+                    gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.AWC_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
+                }else {
+                    gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platformCode,gameParentPlatform.getPlatformCode());
+                }
+                gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
                 String userId = refundTxns.getUserId();
                 MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(userId);
                 if (null == memBaseinfo) {
@@ -664,14 +669,9 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
         }
         AwcCallBackParentRespSuccess callBackSuccess = new AwcCallBackParentRespSuccess();
         callBackSuccess.setStatus("0000");
-        LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
-        wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Unsettle")
-                .or().eq(Txns::getMethod, "Adjust Bet").or().eq(Txns::getMethod, "Settle"));
-        wrapper.eq(Txns::getStatus, "Running");
-
-        wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
         if (null != settleTxnsList && settleTxnsList.size() > 0) {
             for (SettleTxns settleTxns : settleTxnsList) {
+                String platformCode = settleTxns.getGameCode();
                 String userId = settleTxns.getUserId();
                 MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(userId);
                 if (null == memBaseinfo) {
@@ -680,7 +680,12 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     callBacekFail.setDesc("Account is not exists");
                     return callBacekFail;
                 } else {
+                    LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+                    wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Unsettle")
+                            .or().eq(Txns::getMethod, "Adjust Bet").or().eq(Txns::getMethod, "Settle"));
+                    wrapper.eq(Txns::getStatus, "Running");
                     wrapper.eq(Txns::getPlatformTxId, settleTxns.getPlatformTxId());
+                    wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
                     Txns oldTxns = txnsMapper.selectOne(wrapper);
                     if (null == oldTxns) {
                         AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
@@ -735,11 +740,6 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
             callBacekFail.setDesc("invalid IP address.");
             return callBacekFail;
         }
-        LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Txns::getMethod, "Settle");
-        wrapper.eq(Txns::getStatus, "Running");
-
-        wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
         if (null != unsettleTxnsList && unsettleTxnsList.size() > 0) {
             for (UnsettleTxns unsettleTxns : unsettleTxnsList) {
                 String userId = unsettleTxns.getUserId();
@@ -750,7 +750,11 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     callBacekFail.setDesc("Account is not exists");
                     return callBacekFail;
                 } else {
+                    LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+                    wrapper.eq(Txns::getMethod, "Settle");
+                    wrapper.eq(Txns::getStatus, "Running");
                     wrapper.eq(Txns::getPlatformTxId, unsettleTxns.getPlatformTxId());
+                    wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
                     Txns oldTxns = txnsMapper.selectOne(wrapper);
                     if (null == oldTxns) {
                         AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
@@ -802,11 +806,6 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
         }
         AwcCallBackParentRespSuccess callBackSuccess = new AwcCallBackParentRespSuccess();
         callBackSuccess.setStatus("0000");
-        LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
-        wrapper.and(c -> c.eq(Txns::getMethod, "Settle").or().eq(Txns::getMethod, "Void Settle"));
-        wrapper.eq(Txns::getStatus, "Running");
-
-        wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
         if (null != voidSettleTxnsList && voidSettleTxnsList.size() > 0) {
             for (VoidSettleTxns voidSettleTxns : voidSettleTxnsList) {
                 String userId = voidSettleTxns.getUserId();
@@ -817,7 +816,11 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     callBacekFail.setDesc("Account is not exists");
                     return callBacekFail;
                 } else {
+                    LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+                    wrapper.and(c -> c.eq(Txns::getMethod, "Settle").or().eq(Txns::getMethod, "Void Settle"));
+                    wrapper.eq(Txns::getStatus, "Running");
                     wrapper.eq(Txns::getPlatformTxId, voidSettleTxns.getPlatformTxId());
+                    wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
                     Txns oldTxns = txnsMapper.selectOne(wrapper);
                     if (null == oldTxns) {
                         AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
@@ -868,11 +871,6 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
             callBacekFail.setDesc("invalid IP address.");
             return callBacekFail;
         }
-        LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Txns::getMethod, "Void Settle");
-        wrapper.eq(Txns::getStatus, "Running");
-
-        wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
         if (null != unvoidSettleTxnsList && unvoidSettleTxnsList.size() > 0) {
             BigDecimal balance = BigDecimal.ZERO;
             for (int i = 0; i < unvoidSettleTxnsList.size(); i++) {
@@ -888,7 +886,12 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                         return callBacekFail;
                     }
                 }
+
+                LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+                wrapper.eq(Txns::getMethod, "Void Settle");
+                wrapper.eq(Txns::getStatus, "Running");
                 wrapper.eq(Txns::getPlatformTxId, unvoidSettleTxns.getPlatformTxId());
+                wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
                 Txns oldTxns = txnsMapper.selectOne(wrapper);
                 if (null == oldTxns) {
                     AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
@@ -942,17 +945,18 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
         if (null != betNSettleTxnsList && betNSettleTxnsList.size() > 0) {
             BigDecimal balance = BigDecimal.ZERO;
             MemTradingBO memBaseinfo = new MemTradingBO();
-            GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.AWC_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
-            GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
-            LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
-            wrapper.and(c -> c.eq(Txns::getMethod, "BetNSettle").or().eq(Txns::getMethod, "Cancel BetNSettle"));
-            wrapper.eq(Txns::getStatus, "Running");
-
-            wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
+            GameCategory gameCategory = new GameCategory();
+            GamePlatform gamePlatform = new GamePlatform();
             for (int i = 0; i < betNSettleTxnsList.size(); i++) {
                 BetNSettleTxns betNSettleTxns = betNSettleTxnsList.get(i);
                 String platformCode = betNSettleTxns.getGameCode();
                 if (i == 0) {
+                    if(OpenAPIProperties.AWC_IS_PLATFORM_LOGIN.equals("Y")){//平台登录Y 游戏登录N
+                        gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.AWC_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
+                    }else {
+                        gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platformCode,gameParentPlatform.getPlatformCode());
+                    }
+                    gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
                     String userId = betNSettleTxns.getUserId();
                     memBaseinfo = gameCommonService.getMemTradingInfo(userId);
                     balance = memBaseinfo.getBalance();
@@ -970,7 +974,11 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     callBacekFail.setDesc("Not Enough Balance");
                     return callBacekFail;
                 }
+                LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+                wrapper.and(c -> c.eq(Txns::getMethod, "BetNSettle").or().eq(Txns::getMethod, "Cancel BetNSettle"));
+                wrapper.eq(Txns::getStatus, "Running");
                 wrapper.eq(Txns::getPlatformTxId, betNSettleTxns.getPlatformTxId());
+                wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
                 Txns oldTxns = txnsMapper.selectOne(wrapper);
                 if (null != oldTxns) {
                     if ("Cancel BetNSettle".equals(oldTxns.getMethod())) {
@@ -1044,11 +1052,6 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
         if (null != cancelBetNSettleTxnsList && cancelBetNSettleTxnsList.size() > 0) {
             BigDecimal balance = BigDecimal.ZERO;
             MemTradingBO memBaseinfo = new MemTradingBO();
-            LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
-            wrapper.eq(Txns::getMethod, "BetNSettle");
-            wrapper.eq(Txns::getStatus, "Running");
-
-            wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
             for (int i = 0; i < cancelBetNSettleTxnsList.size(); i++) {
                 CancelBetNSettleTxns cancelBetNSettleTxns = cancelBetNSettleTxnsList.get(i);
                 if (i == 0) {
@@ -1062,7 +1065,11 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                         return callBacekFail;
                     }
                 }
+                LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+                wrapper.eq(Txns::getMethod, "BetNSettle");
+                wrapper.eq(Txns::getStatus, "Running");
                 wrapper.eq(Txns::getPlatformTxId, cancelBetNSettleTxns.getPlatformTxId());
+                wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
                 Txns oldTxns = txnsMapper.selectOne(wrapper);
                 if (null == oldTxns) {
                     AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
@@ -1113,11 +1120,6 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
             callBacekFail.setDesc("invalid IP address.");
             return callBacekFail;
         }
-        LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Txns::getMethod, "Free Spin");
-        wrapper.eq(Txns::getStatus, "Running");
-
-        wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
         if (null != freeSpinTxnsList && freeSpinTxnsList.size() > 0) {
             for (FreeSpinTxns freeSpinTxns : freeSpinTxnsList) {
                 String userId = freeSpinTxns.getUserId();
@@ -1135,7 +1137,11 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                         callBacekFail.setDesc("Not Enough Balance");
                         return callBacekFail;
                     }
+                    LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+                    wrapper.eq(Txns::getMethod, "Free Spin");
+                    wrapper.eq(Txns::getStatus, "Running");
                     wrapper.eq(Txns::getPlatformTxId, freeSpinTxns.getPlatformTxId());
+                    wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
                     Txns oldTxns = txnsMapper.selectOne(wrapper);
                     if (null != oldTxns) {
                         AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
@@ -1185,11 +1191,6 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
         List<GiveTxns> giveTxnsList = apiRequestData.getTxns();
         AwcCallBackRespSuccess placeBetSuccess = new AwcCallBackRespSuccess();
         placeBetSuccess.setStatus("0000");
-        LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Txns::getMethod, "Give");
-        wrapper.eq(Txns::getStatus, "Running");
-
-        wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
         if (null != giveTxnsList && giveTxnsList.size() > 0) {
             BigDecimal balance = BigDecimal.ZERO;
             MemTradingBO memBaseinfo = new MemTradingBO();
@@ -1217,7 +1218,11 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                         return callBacekFail;
                     }
                 }
+                LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+                wrapper.eq(Txns::getMethod, "Give");
+                wrapper.eq(Txns::getStatus, "Running");
                 wrapper.eq(Txns::getPlatformTxId, giveTxns.getPromotionTxId());
+                wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
                 Txns oldTxns = txnsMapper.selectOne(wrapper);
                 if (null != oldTxns) {
                     placeBetSuccess.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
@@ -1293,11 +1298,6 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
         placeBetSuccess.setStatus("0000");
         GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.AWC_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
         GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
-        LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
-        wrapper.and(c -> c.eq(Txns::getMethod, "Tip").or().eq(Txns::getMethod, "Cancel Tip"));
-        wrapper.eq(Txns::getStatus, "Running");
-
-        wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
         if (null != tipTxnsList && tipTxnsList.size() > 0) {
             BigDecimal balance = BigDecimal.ZERO;
             MemTradingBO memBaseinfo = new MemTradingBO();
@@ -1322,7 +1322,11 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     callBacekFail.setDesc("Not Enough Balance");
                     return callBacekFail;
                 }
+                LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+                wrapper.and(c -> c.eq(Txns::getMethod, "Tip").or().eq(Txns::getMethod, "Cancel Tip"));
+                wrapper.eq(Txns::getStatus, "Running");
                 wrapper.eq(Txns::getPlatformTxId, tipTxns.getPlatformTxId());
+                wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
                 Txns oldTxns = txnsMapper.selectOne(wrapper);
                 if (null != oldTxns) {
                     if ("Cancel Tip".equals(oldTxns.getMethod())) {
@@ -1402,11 +1406,6 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
         GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         AwcCallBackRespSuccess placeBetSuccess = new AwcCallBackRespSuccess();
         placeBetSuccess.setStatus("0000");
-        LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
-        wrapper.and(c -> c.eq(Txns::getMethod, "Tip").or().eq(Txns::getMethod, "Cancel Tip"));
-        wrapper.eq(Txns::getStatus, "Running");
-
-        wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
         if (null != cancelTipTxnsList && cancelTipTxnsList.size() > 0) {
             BigDecimal balance = BigDecimal.ZERO;
             MemTradingBO memBaseinfo = new MemTradingBO();
@@ -1423,7 +1422,11 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                         return callBacekFail;
                     }
                 }
+                LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+                wrapper.and(c -> c.eq(Txns::getMethod, "Tip").or().eq(Txns::getMethod, "Cancel Tip"));
+                wrapper.eq(Txns::getStatus, "Running");
                 wrapper.eq(Txns::getPlatformTxId, cancelTipTxns.getPlatformTxId());
+                wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
                 Txns oldTxns = txnsMapper.selectOne(wrapper);
                 String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
                 if (null == oldTxns) {
