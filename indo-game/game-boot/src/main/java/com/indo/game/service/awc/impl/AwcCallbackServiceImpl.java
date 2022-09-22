@@ -29,6 +29,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -167,8 +168,10 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
             GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.AWC_PLATFORM_CODE);
             GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(OpenAPIProperties.AWC_PLATFORM_CODE,gameParentPlatform.getPlatformCode());
             GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
-
+            List<Txns> txnsList = new ArrayList<>();
             int l = placeBetTxnsList.size();
+            BigDecimal allBetAmount = BigDecimal.ZERO;
+            String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
             for (int i = 0; i < l; i++) {
                 PlaceBetTxns placeBetTxns = placeBetTxnsList.get(i);
                 if (i == 0) {
@@ -217,14 +220,13 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     }
                 }
                 balance = balance.subtract(betAmount);
-                gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
+                allBetAmount = allBetAmount.add(betAmount);
 
                 Txns txns = new Txns();
                 BeanUtils.copyProperties(placeBetTxns, txns);
                 txns.setBalance(balance);
                 txns.setMethod("Place Bet");
                 txns.setStatus("Running");
-                String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
                 txns.setCreateTime(dateStr);
                 //玩家 ID
                 txns.setUserId(memBaseinfo.getAccount());
@@ -257,9 +259,12 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 txns.setGameCode(gamePlatform.getPlatformCode());
                 //游戏名称
                 txns.setGameName(gamePlatform.getPlatformEnName());
-                txnsMapper.insert(txns);
+                txnsList.add(txns);
+
 
             }
+            gameCommonService.updateUserBalance(memBaseinfo, allBetAmount, GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
+            txnsMapper.batchInsertGameTxns(txnsList);
             AwcCallBackRespSuccess placeBetSuccess = new AwcCallBackRespSuccess();
             placeBetSuccess.setBalanceTs(DateUtils.getTimeAndZone());
             placeBetSuccess.setStatus("0000");
@@ -285,9 +290,13 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
         placeBetSuccess.setStatus("0000");
 
         placeBetSuccess.setBalanceTs(DateUtils.getTimeAndZone());
+        String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
         if (null != cancelBetTxnsList && cancelBetTxnsList.size() > 0) {
             BigDecimal balance = BigDecimal.ZERO;
             MemTradingBO memBaseinfo = new MemTradingBO();
+            List<Txns> txnsList = new ArrayList<>();
+            List<Txns> oldtxnsList = new ArrayList<>();
+            BigDecimal allBetAmount = BigDecimal.ZERO;
             for (int i = 0; i < cancelBetTxnsList.size(); i++) {
                 CancelBetTxns cancelBetTxns = cancelBetTxnsList.get(i);
 
@@ -325,9 +334,10 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
 
                 //查询下注订单
                 BigDecimal betAmount = oldTxns.getBetAmount();
+                allBetAmount = allBetAmount.add(betAmount);
                 balance = balance.add(betAmount);
-                gameCommonService.updateUserBalance(memBaseinfo, betAmount, GoldchangeEnum.PLACE_BET, TradingEnum.INCOME);
-                String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
+
+
                 Txns txns = new Txns();
                 BeanUtils.copyProperties(oldTxns, txns);
                 txns.setId(null);
@@ -335,12 +345,18 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 txns.setMethod("Cancel Bet");
                 txns.setStatus("Running");
                 txns.setCreateTime(dateStr);
-                txnsMapper.insert(txns);
+                txnsList.add(txns);
+//                txnsMapper.insert(txns);
                 oldTxns.setStatus("Cancel");
                 oldTxns.setUpdateTime(dateStr);
-                txnsMapper.updateById(oldTxns);
+                oldtxnsList.add(oldTxns);
+//                txnsMapper.updateById(oldTxns);
             }
+
             placeBetSuccess.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
+            gameCommonService.updateUserBalance(memBaseinfo, allBetAmount, GoldchangeEnum.PLACE_BET, TradingEnum.INCOME);
+            txnsMapper.batchInsertGameTxns(txnsList);
+            txnsMapper.batchupdateGameTxns(oldtxnsList);
             return placeBetSuccess;
         } else {
             AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();

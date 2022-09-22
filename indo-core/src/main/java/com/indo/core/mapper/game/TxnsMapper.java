@@ -30,4 +30,8 @@ public interface TxnsMapper extends BaseMapper<Txns> {
 
     String getMaxSortNo(@Param("platform") String platform);
 
+    void batchInsertGameTxns(List<Txns> list);
+
+    void batchupdateGameTxns(List<Txns> list);
+
 }
