@@ -146,8 +146,8 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
             AwcGetBalanceRespSuccess getBalanceSuccess = new AwcGetBalanceRespSuccess();
             getBalanceSuccess.setStatus("0000");
             getBalanceSuccess.setBalance(memBaseinfo.getBalance().divide(gameParentPlatform.getCurrencyPro()));
-
-            getBalanceSuccess.setBalanceTs(DateUtils.getTimeAndZone());
+            
+            getBalanceSuccess.setBalanceTs(DateUtils.format(new Date(), "YYYY-MM-DDThh:mm:ss.sss+|-hh:mm"));
             getBalanceSuccess.setUserId(userId);
             return getBalanceSuccess;
         }
@@ -266,7 +266,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
             gameCommonService.updateUserBalance(memBaseinfo, allBetAmount, GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
             txnsMapper.batchInsertGameTxns(txnsList);
             AwcCallBackRespSuccess placeBetSuccess = new AwcCallBackRespSuccess();
-            placeBetSuccess.setBalanceTs(DateUtils.getTimeAndZone());
+            placeBetSuccess.setBalanceTs(DateUtils.format(new Date(), "YYYY-MM-DDThh:mm:ss.sss+|-hh:mm"));
             placeBetSuccess.setStatus("0000");
             placeBetSuccess.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
             return placeBetSuccess;
@@ -289,7 +289,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
         AwcCallBackRespSuccess placeBetSuccess = new AwcCallBackRespSuccess();
         placeBetSuccess.setStatus("0000");
 
-        placeBetSuccess.setBalanceTs(DateUtils.getTimeAndZone());
+        placeBetSuccess.setBalanceTs(DateUtils.format(new Date(), "YYYY-MM-DDThh:mm:ss.sss+|-hh:mm"));
         String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
         if (null != cancelBetTxnsList && cancelBetTxnsList.size() > 0) {
             BigDecimal balance = BigDecimal.ZERO;
@@ -444,7 +444,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
             AwcCallBackRespSuccess placeBetSuccess = new AwcCallBackRespSuccess();
             placeBetSuccess.setStatus("0000");
             placeBetSuccess.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
-            placeBetSuccess.setBalanceTs(DateUtils.getTimeAndZone());
+            placeBetSuccess.setBalanceTs(DateUtils.format(new Date(), "YYYY-MM-DDThh:mm:ss.sss+|-hh:mm"));
             return placeBetSuccess;
         } else {
             AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
@@ -991,7 +991,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
             AwcCallBackRespSuccess placeBetSuccess = new AwcCallBackRespSuccess();
             placeBetSuccess.setStatus("0000");
             placeBetSuccess.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
-            placeBetSuccess.setBalanceTs(DateUtils.getTimeAndZone());
+            placeBetSuccess.setBalanceTs(DateUtils.format(new Date(), "YYYY-MM-DDThh:mm:ss.sss+|-hh:mm"));
             return placeBetSuccess;
         } else {
             AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
@@ -1107,7 +1107,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
             AwcCallBackRespSuccess placeBetSuccess = new AwcCallBackRespSuccess();
             placeBetSuccess.setStatus("0000");
             placeBetSuccess.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
-            placeBetSuccess.setBalanceTs(DateUtils.getTimeAndZone());
+            placeBetSuccess.setBalanceTs(DateUtils.format(new Date(), "YYYY-MM-DDThh:mm:ss.sss+|-hh:mm"));
             return placeBetSuccess;
         } else {
             AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
@@ -1187,7 +1187,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
             AwcCallBackRespSuccess placeBetSuccess = new AwcCallBackRespSuccess();
             placeBetSuccess.setStatus("0000");
             placeBetSuccess.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
-            placeBetSuccess.setBalanceTs(DateUtils.getTimeAndZone());
+            placeBetSuccess.setBalanceTs(DateUtils.format(new Date(), "YYYY-MM-DDThh:mm:ss.sss+|-hh:mm"));
             return placeBetSuccess;
         } else {
             AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
@@ -1315,7 +1315,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 Txns oldTxns = txnsMapper.selectOne(wrapper);
                 if (null != oldTxns) {
                     placeBetSuccess.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
-                    placeBetSuccess.setBalanceTs(DateUtils.getTimeAndZone());
+                    placeBetSuccess.setBalanceTs(DateUtils.format(new Date(), "YYYY-MM-DDThh:mm:ss.sss+|-hh:mm"));
                     return placeBetSuccess;
                 }
                 BigDecimal amount = BigDecimal.valueOf(Double.valueOf(giveTxns.getAmount())).multiply(gameParentPlatform.getCurrencyPro());
@@ -1361,7 +1361,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
             }
 
             placeBetSuccess.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
-            placeBetSuccess.setBalanceTs(DateUtils.getTimeAndZone());
+            placeBetSuccess.setBalanceTs(DateUtils.format(new Date(), "YYYY-MM-DDThh:mm:ss.sss+|-hh:mm"));
             return placeBetSuccess;
         } else {
             AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
@@ -1420,7 +1420,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 if (null != oldTxns) {
                     if ("Cancel Tip".equals(oldTxns.getMethod())) {
                         placeBetSuccess.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
-                        placeBetSuccess.setBalanceTs(DateUtils.getTimeAndZone());
+                        placeBetSuccess.setBalanceTs(DateUtils.format(new Date(), "YYYY-MM-DDThh:mm:ss.sss+|-hh:mm"));
                         return placeBetSuccess;
                     } else {
                         AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
@@ -1469,7 +1469,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
             }
 
             placeBetSuccess.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
-            placeBetSuccess.setBalanceTs(DateUtils.getTimeAndZone());
+            placeBetSuccess.setBalanceTs(DateUtils.format(new Date(), "YYYY-MM-DDThh:mm:ss.sss+|-hh:mm"));
             return placeBetSuccess;
         } else {
             AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
@@ -1549,11 +1549,11 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     txns.setCreateTime(dateStr);
                     txnsMapper.insert(txns);
                     placeBetSuccess.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
-                    placeBetSuccess.setBalanceTs(DateUtils.getTimeAndZone());
+                    placeBetSuccess.setBalanceTs(DateUtils.format(new Date(), "YYYY-MM-DDThh:mm:ss.sss+|-hh:mm"));
                     return placeBetSuccess;
                 } else if ("Cancel Tip".equals(oldTxns.getMethod())) {
                     placeBetSuccess.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
-                    placeBetSuccess.setBalanceTs(DateUtils.getTimeAndZone());
+                    placeBetSuccess.setBalanceTs(DateUtils.format(new Date(), "YYYY-MM-DDThh:mm:ss.sss+|-hh:mm"));
                     return placeBetSuccess;
                 }
 
@@ -1576,7 +1576,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
             }
 
             placeBetSuccess.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
-            placeBetSuccess.setBalanceTs(DateUtils.getTimeAndZone());
+            placeBetSuccess.setBalanceTs(DateUtils.format(new Date(), "YYYY-MM-DDThh:mm:ss.sss+|-hh:mm"));
             return placeBetSuccess;
         } else {
             AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
