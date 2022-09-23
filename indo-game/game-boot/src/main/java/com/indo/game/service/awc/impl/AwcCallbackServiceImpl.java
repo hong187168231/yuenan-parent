@@ -184,13 +184,13 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                         return callBacekFail;
                     }
                     memBaseinfo = gameCommonService.getMemTradingInfo(userId);
-                    balance = memBaseinfo.getBalance();
                     if (null == memBaseinfo) {
                         AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                         callBacekFail.setStatus("1002");
                         callBacekFail.setDesc("Account is not exists");
                         return callBacekFail;
                     }
+                    balance = memBaseinfo.getBalance();
                 }
                 BigDecimal betAmount = null!=placeBetTxns.getBetAmount()?placeBetTxns.getBetAmount().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
 //                if (balance.compareTo(betAmount) == -1) {
@@ -312,13 +312,13 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     }
                     String userId = cancelBetTxns.getUserId();
                     memBaseinfo = gameCommonService.getMemTradingInfo(userId);
-                    balance = memBaseinfo.getBalance();
                     if (null == memBaseinfo) {
                         AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                         callBacekFail.setStatus("1002");
                         callBacekFail.setDesc("Account is not exists");
                         return callBacekFail;
                     }
+                    balance = memBaseinfo.getBalance();
                 }
                 LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
                 wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Adjust Bet"));
@@ -392,13 +392,13 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     }
                     String userId = adjustBetTxns.getUserId();
                     memBaseinfo = gameCommonService.getMemTradingInfo(userId);
-                    balance = memBaseinfo.getBalance();
                     if (null == memBaseinfo) {
                         AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                         callBacekFail.setStatus("1002");
                         callBacekFail.setDesc("Account is not exists");
                         return callBacekFail;
                     }
+                    balance = memBaseinfo.getBalance();
                 }
                 LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
                 wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet"));
@@ -479,6 +479,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
             String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
             MemTradingBO memBaseinfo = new MemTradingBO();
             boolean b = true;
+            BigDecimal balance = BigDecimal.ZERO;
             for (VoidBetTxns voidBetTxns : voidBetTxnsList) {
 
                 if(b) {
@@ -491,6 +492,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                         return callBacekFail;
                     }
                     b = false;
+                    balance = memBaseinfo.getBalance();
                 }
                 LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
                 wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet")
@@ -515,7 +517,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 // 下注金额
                 BigDecimal realBetAmount = BigDecimal.valueOf(Double.valueOf(voidBetTxns.getBetAmount())).multiply(gameParentPlatform.getCurrencyPro());
                 allBetAmount = allBetAmount.add(realBetAmount);
-                BigDecimal balance = memBaseinfo.getBalance().add(realBetAmount);
+                balance = balance.add(realBetAmount);
 
                 Txns txns = new Txns();
                 BeanUtils.copyProperties(oldTxns, txns);
@@ -577,6 +579,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                         return callBacekFail;
                     }
                     b = false;
+                    balance = memBaseinfo.getBalance();
                 }
                 LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
                 wrapper.eq(Txns::getMethod, "Void Bet");
@@ -658,6 +661,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                         callBacekFail.setDesc("Account is not exists");
                         return callBacekFail;
                     }
+                    balance = memBaseinfo.getBalance();
                     b = false;
                 }
                     BigDecimal betAmount = null!=refundTxns.getBetAmount()?refundTxns.getBetAmount().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
@@ -739,6 +743,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                         callBacekFail.setDesc("Account is not exists");
                         return callBacekFail;
                     }
+                    balance = memBaseinfo.getBalance();
                     b = false;
                 }
 
@@ -828,6 +833,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                         return callBacekFail;
                     }
                     b = false;
+                    balance = memBaseinfo.getBalance();
                 }
 
                 LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
@@ -892,47 +898,63 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
         AwcCallBackParentRespSuccess callBackSuccess = new AwcCallBackParentRespSuccess();
         callBackSuccess.setStatus("0000");
         if (null != voidSettleTxnsList && voidSettleTxnsList.size() > 0) {
+            List<Txns> txnsList = new ArrayList<>();
+            List<Txns> oldtxnsList = new ArrayList<>();
+            BigDecimal allBetAmount = BigDecimal.ZERO;
+            String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
+            boolean b = true;
+            MemTradingBO memBaseinfo = new MemTradingBO();
+            BigDecimal balance = BigDecimal.ZERO;
             for (VoidSettleTxns voidSettleTxns : voidSettleTxnsList) {
-                String userId = voidSettleTxns.getUserId();
-                MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(userId);
-                if (null == memBaseinfo) {
-                    AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
-                    callBacekFail.setStatus("1002");
-                    callBacekFail.setDesc("Account is not exists");
-                    return callBacekFail;
-                } else {
-                    LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
-                    wrapper.and(c -> c.eq(Txns::getMethod, "Settle").or().eq(Txns::getMethod, "Void Settle"));
-                    wrapper.eq(Txns::getStatus, "Running");
-                    wrapper.eq(Txns::getPlatformTxId, voidSettleTxns.getPlatformTxId());
-                    wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
-                    Txns oldTxns = txnsMapper.selectOne(wrapper);
-                    if (null == oldTxns) {
+                if(b) {
+                    String userId = voidSettleTxns.getUserId();
+                    memBaseinfo = gameCommonService.getMemTradingInfo(userId);
+                    if (null == memBaseinfo) {
                         AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
-                        callBacekFail.setStatus("1017");
-                        callBacekFail.setDesc("TxCode is not exist");
+                        callBacekFail.setStatus("1002");
+                        callBacekFail.setDesc("Account is not exists");
                         return callBacekFail;
-                    }else if("Void Settle".equals(oldTxns.getMethod())){
-                        return callBackSuccess;
                     }
-                    BigDecimal winAmount = oldTxns.getWinAmount();
-                    BigDecimal balance = memBaseinfo.getBalance().subtract(winAmount);
-                    gameCommonService.updateUserBalance(memBaseinfo, winAmount, GoldchangeEnum.VOID_SETTLE, TradingEnum.SPENDING);
-                    String dateStr = DateUtils.format(new Date(), DateUtils.ISO8601_DATE_FORMAT);
-
-                    Txns txns = new Txns();
-                    BeanUtils.copyProperties(oldTxns, txns);
-                    txns.setId(null);
-                    txns.setBalance(balance);
-                    txns.setMethod("Void Settle");
-                    txns.setStatus("Running");
-                    txns.setCreateTime(dateStr);
-                    txnsMapper.insert(txns);
-                    oldTxns.setStatus("Void Settle");
-                    oldTxns.setUpdateTime(dateStr);
-                    txnsMapper.updateById(oldTxns);
-
+                    balance = memBaseinfo.getBalance();
+                    b = false;
                 }
+                LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
+                wrapper.and(c -> c.eq(Txns::getMethod, "Settle").or().eq(Txns::getMethod, "Void Settle"));
+                wrapper.eq(Txns::getStatus, "Running");
+                wrapper.eq(Txns::getPlatformTxId, voidSettleTxns.getPlatformTxId());
+                wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
+                Txns oldTxns = txnsMapper.selectOne(wrapper);
+                if (null == oldTxns) {
+                    AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
+                    callBacekFail.setStatus("1017");
+                    callBacekFail.setDesc("TxCode is not exist");
+                    return callBacekFail;
+                }else if("Void Settle".equals(oldTxns.getMethod())){
+                    continue;
+                }
+                BigDecimal winAmount = oldTxns.getWinAmount();
+                allBetAmount = allBetAmount.add(winAmount);
+                balance = balance.subtract(winAmount);
+
+
+                Txns txns = new Txns();
+                BeanUtils.copyProperties(oldTxns, txns);
+                txns.setId(null);
+                txns.setBalance(balance);
+                txns.setMethod("Void Settle");
+                txns.setStatus("Running");
+                txns.setCreateTime(dateStr);
+//                txnsMapper.insert(txns);
+                txnsList.add(txns);
+                oldTxns.setStatus("Void Settle");
+                oldTxns.setUpdateTime(dateStr);
+//                txnsMapper.updateById(oldTxns);
+                oldtxnsList.add(oldTxns);
+            }
+            if(null!=txnsList && txnsList.size()>0) {
+                gameCommonService.updateUserBalance(memBaseinfo, allBetAmount, GoldchangeEnum.VOID_SETTLE, TradingEnum.SPENDING);
+                txnsMapper.batchInsertGameTxns(txnsList);
+                txnsMapper.batchupdateGameTxns(oldtxnsList);
             }
             return callBackSuccess;
         } else {
@@ -963,13 +985,13 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 if (i == 0) {
                     String userId = unvoidSettleTxns.getUserId();
                     memBaseinfo = gameCommonService.getMemTradingInfo(userId);
-                    balance = memBaseinfo.getBalance();
                     if (null == memBaseinfo) {
                         AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                         callBacekFail.setStatus("1002");
                         callBacekFail.setDesc("Account is not exists");
                         return callBacekFail;
                     }
+                    balance = memBaseinfo.getBalance();
                 }
 
                 LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
@@ -1048,13 +1070,14 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
                     String userId = betNSettleTxns.getUserId();
                     memBaseinfo = gameCommonService.getMemTradingInfo(userId);
-                    balance = memBaseinfo.getBalance();
+
                     if (null == memBaseinfo) {
                         AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                         callBacekFail.setStatus("1002");
                         callBacekFail.setDesc("Account is not exists");
                         return callBacekFail;
                     }
+                    balance = memBaseinfo.getBalance();
                 }
                 BigDecimal winAmount = null!=betNSettleTxns.getWinAmount()?betNSettleTxns.getWinAmount().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
                 if (memBaseinfo.getBalance().compareTo(winAmount) == -1) {
@@ -1157,13 +1180,14 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 if (i == 0) {
                     String userId = cancelBetNSettleTxns.getUserId();
                     memBaseinfo = gameCommonService.getMemTradingInfo(userId);
-                    balance = memBaseinfo.getBalance();
+
                     if (null == memBaseinfo) {
                         AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                         callBacekFail.setStatus("1002");
                         callBacekFail.setDesc("Account is not exists");
                         return callBacekFail;
                     }
+                    balance = memBaseinfo.getBalance();
                 }
                 LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
                 wrapper.eq(Txns::getMethod, "BetNSettle");
