@@ -263,8 +263,10 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
 
 
             }
-            gameCommonService.updateUserBalance(memBaseinfo, allBetAmount, GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
-            txnsMapper.batchInsertGameTxns(txnsList);
+            if(null!=txnsList && txnsList.size()>0) {
+                gameCommonService.updateUserBalance(memBaseinfo, allBetAmount, GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
+                txnsMapper.batchInsertGameTxns(txnsList);
+            }
             AwcCallBackRespSuccess placeBetSuccess = new AwcCallBackRespSuccess();
             placeBetSuccess.setBalanceTs(DateUtils.getTimeAndZone());
             placeBetSuccess.setStatus("0000");
@@ -354,9 +356,11 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
             }
 
             placeBetSuccess.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
-            gameCommonService.updateUserBalance(memBaseinfo, allBetAmount, GoldchangeEnum.PLACE_BET, TradingEnum.INCOME);
-            txnsMapper.batchInsertGameTxns(txnsList);
-            txnsMapper.batchupdateGameTxns(oldtxnsList);
+            if(null!=txnsList && txnsList.size()>0) {
+                gameCommonService.updateUserBalance(memBaseinfo, allBetAmount, GoldchangeEnum.PLACE_BET, TradingEnum.INCOME);
+                txnsMapper.batchInsertGameTxns(txnsList);
+                txnsMapper.batchupdateGameTxns(oldtxnsList);
+            }
             return placeBetSuccess;
         } else {
             AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
@@ -528,9 +532,11 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 oldtxnsList.add(oldTxns);
 //                    txnsMapper.updateById(oldTxns);
             }
-            gameCommonService.updateUserBalance(memBaseinfo, allBetAmount, GoldchangeEnum.VOID_BET, TradingEnum.INCOME);
-            txnsMapper.batchInsertGameTxns(txnsList);
-            txnsMapper.batchupdateGameTxns(oldtxnsList);
+            if(null!=txnsList && txnsList.size()>0) {
+                gameCommonService.updateUserBalance(memBaseinfo, allBetAmount, GoldchangeEnum.VOID_BET, TradingEnum.INCOME);
+                txnsMapper.batchInsertGameTxns(txnsList);
+                txnsMapper.batchupdateGameTxns(oldtxnsList);
+            }
             return callBackSuccess;
         } else {
             AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
@@ -603,9 +609,11 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 oldTxns.setUpdateTime(dateStr);
                 oldtxnsList.add(oldTxns);
             }
-            gameCommonService.updateUserBalance(memBaseinfo, allBetAmount, GoldchangeEnum.UNVOID_BET, TradingEnum.SPENDING);
-            txnsMapper.batchInsertGameTxns(txnsList);
-            txnsMapper.batchupdateGameTxns(oldtxnsList);
+            if(null!=txnsList && txnsList.size()>0) {
+                gameCommonService.updateUserBalance(memBaseinfo, allBetAmount, GoldchangeEnum.UNVOID_BET, TradingEnum.SPENDING);
+                txnsMapper.batchInsertGameTxns(txnsList);
+                txnsMapper.batchupdateGameTxns(oldtxnsList);
+            }
             AwcCallBackParentRespSuccess callBackSuccess = new AwcCallBackParentRespSuccess();
             callBackSuccess.setStatus("0000");
             return callBackSuccess;
@@ -775,9 +783,11 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 }
 
             }
-            gameCommonService.updateUserBalance(memBaseinfo, allBetAmount, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
-            txnsMapper.batchInsertGameTxns(txnsList);
-            txnsMapper.batchupdateGameTxns(oldtxnsList);
+            if(null!=txnsList && txnsList.size()>0) {
+                gameCommonService.updateUserBalance(memBaseinfo, allBetAmount, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
+                txnsMapper.batchInsertGameTxns(txnsList);
+                txnsMapper.batchupdateGameTxns(oldtxnsList);
+            }
             return callBackSuccess;
         } else {
             AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
@@ -851,10 +861,11 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
 
                 oldtxnsList.add(oldTxns);
             }
-            gameCommonService.updateUserBalance(memBaseinfo, allBetAmount, GoldchangeEnum.UNSETTLE, TradingEnum.SPENDING);
-            txnsMapper.batchInsertGameTxns(txnsList);
-            txnsMapper.batchupdateGameTxns(oldtxnsList);
-
+            if(null!=txnsList && txnsList.size()>0) {
+                gameCommonService.updateUserBalance(memBaseinfo, allBetAmount, GoldchangeEnum.UNSETTLE, TradingEnum.SPENDING);
+                txnsMapper.batchInsertGameTxns(txnsList);
+                txnsMapper.batchupdateGameTxns(oldtxnsList);
+            }
             AwcCallBackParentRespSuccess callBackSuccess = new AwcCallBackParentRespSuccess();
             callBackSuccess.setStatus("0000");
             return callBackSuccess;
@@ -1104,9 +1115,11 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 txnsList.add(txns);
 //                txnsMapper.insert(txns);
             }
-            gameCommonService.updateUserBalance(memBaseinfo, allBetAmount, GoldchangeEnum.BETNSETTLE, TradingEnum.INCOME);
-            txnsMapper.batchInsertGameTxns(txnsList);
+            if(null!=txnsList && txnsList.size()>0) {
+                gameCommonService.updateUserBalance(memBaseinfo, allBetAmount, GoldchangeEnum.BETNSETTLE, TradingEnum.INCOME);
+                txnsMapper.batchInsertGameTxns(txnsList);
 //            txnsMapper.batchupdateGameTxns(oldtxnsList);
+            }
             AwcCallBackRespSuccess placeBetSuccess = new AwcCallBackRespSuccess();
             placeBetSuccess.setStatus("0000");
             placeBetSuccess.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
@@ -1184,9 +1197,11 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 oldtxnsList.add(oldTxns);
 
             }
-            gameCommonService.updateUserBalance(memBaseinfo, allBetAmount, GoldchangeEnum.CANCEL_BETNSETTLE, TradingEnum.SPENDING);
-            txnsMapper.batchInsertGameTxns(txnsList);
-            txnsMapper.batchupdateGameTxns(oldtxnsList);
+            if(null!=txnsList && txnsList.size()>0) {
+                gameCommonService.updateUserBalance(memBaseinfo, allBetAmount, GoldchangeEnum.CANCEL_BETNSETTLE, TradingEnum.SPENDING);
+                txnsMapper.batchInsertGameTxns(txnsList);
+                txnsMapper.batchupdateGameTxns(oldtxnsList);
+            }
             AwcCallBackRespSuccess placeBetSuccess = new AwcCallBackRespSuccess();
             placeBetSuccess.setStatus("0000");
             placeBetSuccess.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
