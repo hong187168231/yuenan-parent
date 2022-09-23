@@ -220,6 +220,8 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(sabaCallBackCancelBetReq.getUserId());
         SabaCallBackRespError sabaCallBackRespError = new SabaCallBackRespError();
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.SABA_PLATFORM_CODE);
+        SabaCallBackConfirmBetResp sabaCallBackConfirmBetResp = new SabaCallBackConfirmBetResp();
+        sabaCallBackConfirmBetResp.setStatus("0");
         if (null == memBaseinfo) {
             sabaCallBackRespError.setStatus("203");
             sabaCallBackRespError.setMsg("Account Existed");
@@ -266,11 +268,11 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
                     oldTxns.setUpdateTime(dateStr);
                     txnsMapper.updateById(oldTxns);
                 }else {
-                    return sabaCallBackRespError;
+                    sabaCallBackConfirmBetResp.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
+                    return sabaCallBackConfirmBetResp;
                 }
             }
-            SabaCallBackConfirmBetResp sabaCallBackConfirmBetResp = new SabaCallBackConfirmBetResp();
-            sabaCallBackConfirmBetResp.setStatus("0");
+
             sabaCallBackConfirmBetResp.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
             return sabaCallBackConfirmBetResp;
         }
