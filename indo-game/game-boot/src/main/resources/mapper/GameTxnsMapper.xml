@@ -260,7 +260,7 @@
                     <if test="item.realWinAmount !=null">real_win_amount=#{item.realWinAmount},</if>
                     <if test="item.odds !=null">odds=#{item.odds},</if>
                     <if test="item.winAmount !=null">win_amount=#{item.winAmount},</if>
-                    <if test="item.turnover !=null">turnover=#{item.turnover,jdbcType=int},</if>
+                    <if test="item.turnover !=null">turnover=#{item.turnover},</if>
                     <if test="item.resultType !=null">result_type=#{item.resultType,jdbcType=VARCHAR},</if>
                     <if test="item.oddsType !=null">odds_type=#{item.oddsType,jdbcType=VARCHAR},</if>
                     <if test="item.txTime !=null">tx_time=#{item.txTime,jdbcType=VARCHAR},</if>
@@ -280,20 +280,20 @@
                     <if test="item.gameMethod !=null">game_method=#{item.gameMethod,jdbcType=VARCHAR},</if>
                     <if test="item.method !=null">`method`=#{item.method,jdbcType=VARCHAR},</if>
                     <if test="item.balance !=null">balance=#{item.balance},</if>
-                    <if test="item.categoryId !=null">category_id=#{item.categoryId,jdbcType=int},</if>
+                    <if test="item.categoryId !=null">category_id=#{item.categoryId},</if>
                     <if test="item.categoryName !=null">category_name=#{item.categoryName,jdbcType=VARCHAR},</if>
                     <if test="item.createTime !=null">create_time=#{item.createTime,jdbcType=VARCHAR},</if>
-                    <if test="item.bet !=null">bet=#{item.bet,jdbcType=tinyint},</if>
+                    <if test="item.bet !=null">bet=#{item.bet},</if>
                     <if test="item.sortNo !=null">sort_no=#{item.sortNo,jdbcType=VARCHAR},</if>
                     <if test="item.betIp !=null">bet_ip=#{item.betIp,jdbcType=VARCHAR},</if>
                     <if test="item.agentId !=null">agent_id=#{item.agentId,jdbcType=VARCHAR},</if>
                     <if test="item.groupComm !=null">group_comm=#{item.groupComm,jdbcType=VARCHAR},</if>
-                    <if test="item.mpId !=null">mp_id=#{item.mpId,jdbcType=int},</if>
-                    <if test="item.betWay !=null">bet_way=#{item.betWay,jdbcType=int},</if>
+                    <if test="item.mpId !=null">mp_id=#{item.mpId},</if>
+                    <if test="item.betWay !=null">bet_way=#{item.betWay},</if>
                     <if test="item.reportDate !=null">report_date=#{item.reportDate,jdbcType=VARCHAR},</if>
-                    <if test="item.hasBonusGame !=null">has_bonus_game=#{item.hasBonusGame,jdbcType=int},</if>
-                    <if test="item.hasGamble !=null">has_gamble=#{item.hasGamble,jdbcType=int},</if>
-                    <if test="item.roomType !=null">room_type=#{item.roomType,jdbcType=int}</if>
+                    <if test="item.hasBonusGame !=null">has_bonus_game=#{item.hasBonusGame},</if>
+                    <if test="item.hasGamble !=null">has_gamble=#{item.hasGamble},</if>
+                    <if test="item.roomType !=null">room_type=#{item.roomType}</if>
                 </trim>
             where id = #{item.id}
         </foreach>
