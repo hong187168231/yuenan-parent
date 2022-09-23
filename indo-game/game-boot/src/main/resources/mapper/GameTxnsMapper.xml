@@ -241,7 +241,6 @@
         <foreach collection="list" item="item" index="index" open="" close="" separator=";">
             update game_txns
                 <trim prefix="set" suffixOverrides=",">
-
                     <if test="item.platformTxId !=null">platform_tx_id=#{item.platformTxId,jdbcType=VARCHAR},</if>
                     <if test="item.userId !=null">user_id=#{item.userId,jdbcType=VARCHAR},</if>
                     <if test="item.currency !=null">currency=#{item.currency,jdbcType=VARCHAR},</if>
@@ -291,9 +290,11 @@
                     <if test="item.mpId !=null">mp_id=#{item.mpId},</if>
                     <if test="item.betWay !=null">bet_way=#{item.betWay},</if>
                     <if test="item.reportDate !=null">report_date=#{item.reportDate,jdbcType=VARCHAR},</if>
-                    <if test="item.hasBonusGame !=null">has_bonus_game=#{item.hasBonusGame},</if>
                     <if test="item.hasGamble !=null">has_gamble=#{item.hasGamble},</if>
-                    <if test="item.roomType !=null">room_type=#{item.roomType}</if>
+                    <if test="item.roomType !=null">room_type=#{item.roomType},</if>
+                    <choose>
+                        <when test="item.hasBonusGame !=null">has_bonus_game=#{item.hasBonusGame}</when><otherwise>has_bonus_game=1</otherwise>
+                    </choose>
                 </trim>
             where id = #{item.id}
         </foreach>
