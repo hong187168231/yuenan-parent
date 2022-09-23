@@ -789,6 +789,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
 
             }
             if(null!=txnsList && txnsList.size()>0) {
+                logger.info("settle 结算后balance:{}, 结算前balance:{}, 结算金额Amount:{}", balance,memBaseinfo.getBalance(),allBetAmount);
                 gameCommonService.updateUserBalance(memBaseinfo, allBetAmount, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
                 txnsMapper.batchInsertGameTxns(txnsList);
                 txnsMapper.batchupdateGameTxns(oldtxnsList);
