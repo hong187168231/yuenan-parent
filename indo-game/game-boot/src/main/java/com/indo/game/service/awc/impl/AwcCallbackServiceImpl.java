@@ -165,6 +165,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
         AwcApiRequestData<List<PlaceBetTxns>> apiRequestData = JSON.parseObject(String.valueOf(awcApiRequestData.getMessage()), new TypeReference<AwcApiRequestData<List<PlaceBetTxns>>>() {
         });
         List<PlaceBetTxns> placeBetTxnsList = apiRequestData.getTxns();
+        boolean b = false;
         if (null != placeBetTxnsList && placeBetTxnsList.size() > 0) {
             BigDecimal balance = BigDecimal.ZERO;
             MemTradingBO memBaseinfo = new MemTradingBO();
@@ -196,10 +197,7 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 }
                 BigDecimal betAmount = null!=placeBetTxns.getBetAmount()?placeBetTxns.getBetAmount().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
                 if (balance.compareTo(betAmount) == -1) {
-                    AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
-                    callBacekFail.setStatus("1018");
-                    callBacekFail.setDesc("Not Enough Balance");
-                    return callBacekFail;
+                    b = true;
                 }
                 LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
                 wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Adjust Bet"));
@@ -269,11 +267,18 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 gameCommonService.updateUserBalance(memBaseinfo, allBetAmount, GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
                 txnsMapper.batchInsertGameTxns(txnsList);
             }
-            AwcCallBackRespSuccess placeBetSuccess = new AwcCallBackRespSuccess();
-            placeBetSuccess.setBalanceTs(DateUtils.getTimeAndZone());
-            placeBetSuccess.setStatus("0000");
-            placeBetSuccess.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
-            return placeBetSuccess;
+            if(b){
+                AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
+                callBacekFail.setStatus("1018");
+                callBacekFail.setDesc("Not Enough Balance");
+                return callBacekFail;
+            }else {
+                AwcCallBackRespSuccess placeBetSuccess = new AwcCallBackRespSuccess();
+                placeBetSuccess.setBalanceTs(DateUtils.getTimeAndZone());
+                placeBetSuccess.setStatus("0000");
+                placeBetSuccess.setBalance(balance.divide(gameParentPlatform.getCurrencyPro()));
+                return placeBetSuccess;
+            }
         } else {
             AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
             callBacekFail.setStatus("1036");
