@@ -1401,11 +1401,12 @@ public class DateUtils {
      * 获取带时区格式的时间
      */
     public static String getTimeAndZone() {
-        ZonedDateTime zbj = ZonedDateTime.now(ZoneId.of("Asia/Shanghai"));
-        //2022-09-24T14:30:38.032+08:00[Asia/Shanghai]
-        String lzt = DateTimeFormatter.ISO_ZONED_DATE_TIME.format(zbj);
-        //2022-09-24T14:30:38.032+08:00
-        return lzt.substring(0, lzt.lastIndexOf("["));
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+        ZoneId zoneId = ZoneId.ofOffset("GMT",ZoneOffset.ofHours(8));
+        TimeZone timeZone = TimeZone.getTimeZone(zoneId);
+        df.setTimeZone(timeZone);
+        return df.format(cal.getTime());
     }
 
     /**
@@ -1582,10 +1583,18 @@ public class DateUtils {
 //        System.out.println(getUTCTimeStr(DateUtils.newFormat));
 //        System.out.println(getLocalTimeFromUTC("637922749635693535",format));
 //DateUtils.getTimeAndZone();
-        ZonedDateTime zbj = ZonedDateTime.now(ZoneId.of("Asia/Shanghai"));
+//        ZonedDateTime zbj = ZonedDateTime.now(ZoneId.of("Asia/Shanghai"));
+//        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:sssXXX");
 
-        System.out.println("--------------1-----"+DateTimeFormatter.ISO_OFFSET_DATE.format(zbj));
-        System.out.println("--------------2-----"+DateTimeFormatter.ISO_ZONED_DATE_TIME.format(zbj));
+//                System.out.println("--------------1-----"+DateTimeFormatter.ISO_OFFSET_DATE.format(zbj));
+//        System.out.println("--------------2-----"+DateTimeFormatter.ISO_ZONED_DATE_TIME.format(zbj));
+//        System.out.println("--------------3-----"+df.format(zbj));
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+        ZoneId zoneId = ZoneId.ofOffset("GMT",ZoneOffset.ofHours(8));
+        TimeZone timeZone = TimeZone.getTimeZone(zoneId);
+        df.setTimeZone(timeZone);
+        System.out.println("--------------3-----"+df.format(cal.getTime()));
     }
 
 }
