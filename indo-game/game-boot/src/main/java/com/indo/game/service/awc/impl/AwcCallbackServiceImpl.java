@@ -1586,23 +1586,35 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
                 Txns oldTxns = txnsMapper.selectOne(wrapper);
                 BigDecimal winAmount = null!=settleTxns.getWinAmount()?settleTxns.getWinAmount().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
+                BigDecimal winingAmount = BigDecimal.ZERO;
                 if (null == oldTxns) {
                     AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                     callBacekFail.setStatus("1017");
                     callBacekFail.setDesc("TxCode is not exist");
                     return callBacekFail;
                 }else if("Settle".equals(oldTxns.getMethod())) {
-                    winAmount = winAmount.subtract(oldTxns.getWinAmount());
+                    if(oldTxns.getWinAmount().compareTo(winAmount)==1){
+                        gameCommonService.updateUserBalance(memBaseinfo, winAmount, GoldchangeEnum.SETTLE, TradingEnum.SPENDING);
+                        balance = balance.subtract(winAmount);
+                        winingAmount = oldTxns.getWinAmount().subtract(winAmount);
+                    }
+                    if(oldTxns.getWinAmount().compareTo(winAmount)==-1){
+                        gameCommonService.updateUserBalance(memBaseinfo, winAmount.subtract(oldTxns.getWinAmount()), GoldchangeEnum.SETTLE, TradingEnum.INCOME);
+                        balance = balance.add(winAmount.subtract(oldTxns.getWinAmount()));
+                        winingAmount = winAmount.subtract(oldTxns.getWinAmount());
+                    }
+                }else {
+                    winingAmount = winAmount;
+                    gameCommonService.updateUserBalance(memBaseinfo, winAmount, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
+                    balance = balance.add(winAmount);
                 }
-                gameCommonService.updateUserBalance(memBaseinfo, winAmount, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
-                balance = balance.add(winAmount);
                 Txns txns = new Txns();
                 BeanUtils.copyProperties(oldTxns, txns);
 //                        BeanUtils.copyProperties(settleTxns, txns);
                 txns.setId(null);
                 txns.setBalance(balance);
-                txns.setWinningAmount(winAmount);
-                txns.setWinAmount(winAmount);
+                txns.setWinningAmount(winingAmount);
+                txns.setWinAmount(winingAmount);
                 txns.setMethod("Settle");
                 txns.setStatus("Running");
                 txns.setCreateTime(dateStr);

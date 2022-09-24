@@ -1402,7 +1402,9 @@ public class DateUtils {
      */
     public static String getTimeAndZone() {
         ZonedDateTime zbj = ZonedDateTime.now(ZoneId.of("Asia/Shanghai"));
+        //2022-09-24T14:30:38.032+08:00[Asia/Shanghai]
         String lzt = zbj.toString();
+        //2022-09-24T14:30:38.032+08:00
         return lzt.substring(0, lzt.lastIndexOf("["));
     }
 
