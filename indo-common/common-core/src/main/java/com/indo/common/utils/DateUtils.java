@@ -1401,12 +1401,8 @@ public class DateUtils {
      * 获取带时区格式的时间
      */
     public static String getTimeAndZone() {
-        Calendar ca = Calendar.getInstance();
-        TimeZone tz = ca.getTimeZone();
-        ZoneId zoneId = tz.toZoneId();
-        LocalDateTime localDateTime = LocalDateTime.now(zoneId);
-        ZonedDateTime zonedTime = localDateTime.atZone(zoneId);
-        String lzt = zonedTime.toString();
+        ZonedDateTime zbj = ZonedDateTime.now(ZoneId.of("Asia/Shanghai"));
+        String lzt = zbj.toString();
         return lzt.substring(0, lzt.lastIndexOf("["));
     }
 
@@ -1580,10 +1576,10 @@ public class DateUtils {
 
     public static void main(String[] args) {
 //        System.out.println(daysBetween("2022-01-25", "2022-01-28"));
-        DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//        DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 //        System.out.println(getUTCTimeStr(DateUtils.newFormat));
-        System.out.println(getLocalTimeFromUTC("637922749635693535",format));
-
+//        System.out.println(getLocalTimeFromUTC("637922749635693535",format));
+DateUtils.getTimeAndZone();
     }
 
 }
