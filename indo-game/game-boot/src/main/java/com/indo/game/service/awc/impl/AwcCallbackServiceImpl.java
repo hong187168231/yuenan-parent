@@ -121,6 +121,10 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
             if ("cancelTip".equals(action)) {
                 return cancelTip(awcApiRequestData, ip);
             }
+            //Resettle 重新结账派彩
+            if ("resettle".equals(action)) {
+                return resettle(awcApiRequestData, ip);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             logger.info("awcCallBack {9999Fail} callBack 回调,IP:" + ip + " params:{}", e);
