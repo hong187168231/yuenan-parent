@@ -8,6 +8,7 @@ import com.indo.admin.modules.sys.mapper.SysIpLimitMapper;
 import com.indo.admin.modules.sys.service.ISysIpLimitService;
 import com.indo.admin.pojo.dto.SysIpLimitDTO;
 import com.indo.common.result.ResultCode;
+import com.indo.common.web.util.JwtUtils;
 import com.indo.core.pojo.entity.SysIpLimit;
 import com.indo.common.utils.StringUtils;
 import com.indo.common.web.exception.BizException;
@@ -73,7 +74,7 @@ public class SysIpLimitServiceImpl extends ServiceImpl<SysIpLimitMapper, SysIpLi
         if(sysIpLimit.getTypes()==null||sysIpLimit.getTypes()<=0){
             throw new BizException(ResultCode.PARAM_ERROR);
         }
-        //sysIpLimit.setCreateUser(JwtUtils.getUsername());
+        sysIpLimit.setCreateUser(JwtUtils.getUsername());
         baseMapper.insert(sysIpLimit);
     }
 
