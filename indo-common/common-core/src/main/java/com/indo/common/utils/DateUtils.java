@@ -1403,7 +1403,7 @@ public class DateUtils {
     public static String getTimeAndZone() {
         ZonedDateTime zbj = ZonedDateTime.now(ZoneId.of("Asia/Shanghai"));
         //2022-09-24T14:30:38.032+08:00[Asia/Shanghai]
-        String lzt = zbj.toString();
+        String lzt = DateTimeFormatter.ISO_ZONED_DATE_TIME.format(zbj);
         //2022-09-24T14:30:38.032+08:00
         return lzt.substring(0, lzt.lastIndexOf("["));
     }
@@ -1581,7 +1581,11 @@ public class DateUtils {
 //        DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 //        System.out.println(getUTCTimeStr(DateUtils.newFormat));
 //        System.out.println(getLocalTimeFromUTC("637922749635693535",format));
-DateUtils.getTimeAndZone();
+//DateUtils.getTimeAndZone();
+        ZonedDateTime zbj = ZonedDateTime.now(ZoneId.of("Asia/Shanghai"));
+
+        System.out.println("--------------1-----"+DateTimeFormatter.ISO_OFFSET_DATE.format(zbj));
+        System.out.println("--------------2-----"+DateTimeFormatter.ISO_ZONED_DATE_TIME.format(zbj));
     }
 
 }
