@@ -1586,7 +1586,6 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                 wrapper.eq(Txns::getPlatform, OpenAPIProperties.AWC_PLATFORM_CODE);
                 Txns oldTxns = txnsMapper.selectOne(wrapper);
                 BigDecimal winAmount = null!=settleTxns.getWinAmount()?settleTxns.getWinAmount().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
-                BigDecimal winingAmount = BigDecimal.ZERO;
                 if (null == oldTxns) {
                     AwcCallBackRespFail callBacekFail = new AwcCallBackRespFail();
                     callBacekFail.setStatus("1017");
@@ -1594,17 +1593,14 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
                     return callBacekFail;
                 }else if("Settle".equals(oldTxns.getMethod())) {
                     if(oldTxns.getWinAmount().compareTo(winAmount)==1){
-                        gameCommonService.updateUserBalance(memBaseinfo, winAmount, GoldchangeEnum.SETTLE, TradingEnum.SPENDING);
-                        balance = balance.subtract(winAmount);
-                        winingAmount = oldTxns.getWinAmount().subtract(winAmount);
+                        gameCommonService.updateUserBalance(memBaseinfo,oldTxns.getWinAmount().subtract(winAmount) , GoldchangeEnum.SETTLE, TradingEnum.SPENDING);
+                        balance = balance.subtract(oldTxns.getWinAmount().subtract(winAmount));
                     }
                     if(oldTxns.getWinAmount().compareTo(winAmount)==-1){
                         gameCommonService.updateUserBalance(memBaseinfo, winAmount.subtract(oldTxns.getWinAmount()), GoldchangeEnum.SETTLE, TradingEnum.INCOME);
                         balance = balance.add(winAmount.subtract(oldTxns.getWinAmount()));
-                        winingAmount = winAmount.subtract(oldTxns.getWinAmount());
                     }
                 }else {
-                    winingAmount = winAmount;
                     gameCommonService.updateUserBalance(memBaseinfo, winAmount, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
                     balance = balance.add(winAmount);
                 }
@@ -1613,8 +1609,8 @@ public class AwcCallbackServiceImpl implements AwcCallbackService {
 //                        BeanUtils.copyProperties(settleTxns, txns);
                 txns.setId(null);
                 txns.setBalance(balance);
-                txns.setWinningAmount(winingAmount);
-                txns.setWinAmount(winingAmount);
+                txns.setWinningAmount(winAmount);
+                txns.setWinAmount(winAmount);
                 txns.setMethod("Settle");
                 txns.setStatus("Running");
                 txns.setCreateTime(dateStr);
