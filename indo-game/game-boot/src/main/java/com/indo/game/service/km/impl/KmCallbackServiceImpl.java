@@ -212,11 +212,8 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                     wrapper.eq(Txns::getPlatformTxId, refptxid);
                     oldTxns = txnsMapper.selectOne(wrapper);
                     if(null==oldTxns){
-                        dataJson.put("txid", ptxid);
-                        dataJson.put("bal", balance.divide(gameParentPlatform.getCurrencyPro()));
-                        dataJson.put("ptxid", ptxid);
-                        dataJson.put("cur", cur);
-                        dataJson.put("dup", "false");
+                        dataJson.put("err", 600);
+                        dataJson.put("errdesc", "transaction does not exist");
                         jsonArray.add(dataJson);
                         continue;
                     }else if("Cancel Bet".equals(oldTxns.getMethod())) {
@@ -302,7 +299,7 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                 dataJson.put("bal", balance.divide(gameParentPlatform.getCurrencyPro()));
                 dataJson.put("ptxid", ptxid);
                 dataJson.put("cur", cur);
-                dataJson.put("dup", "false");
+                dataJson.put("dup", "true");
                 jsonArray.add(dataJson);
             }
         }
@@ -333,6 +330,7 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                     dataJson.put("err", " 10");
                     dataJson.put("errdesc", "Token has expired");
                     jsonArray.add(dataJson);
+                    return jsonArray;
                 }
                 //                500 投注(Place bet)
 //                510 赢钱(Win bet)
@@ -371,7 +369,7 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                         dataJson.put("bal", balance.divide(gameParentPlatform.getCurrencyPro()));
                         dataJson.put("ptxid", ptxid);
                         dataJson.put("cur", cur);
-                        dataJson.put("dup", "false");
+                        dataJson.put("dup", "true");
                         jsonArray.add(dataJson);
                         continue;
                     }else if("Cancel Bet".equals(oldTxns.getMethod())) {
@@ -431,11 +429,8 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                     oldTxns = txnsMapper.selectOne(wrapper);
                     method = "Cancel Bet";
                     if(null==oldTxns){
-                        dataJson.put("txid", ptxid);
-                        dataJson.put("bal", balance.divide(gameParentPlatform.getCurrencyPro()));
-                        dataJson.put("ptxid", ptxid);
-                        dataJson.put("cur", cur);
-                        dataJson.put("dup", "true");
+                        dataJson.put("err", 600);
+                        dataJson.put("errdesc", "transaction does not exist");
                         jsonArray.add(dataJson);
                         continue;
                     }else if("Cancel Bet".equals(oldTxns.getMethod())) {
@@ -517,7 +512,7 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                 dataJson.put("bal", balance.divide(gameParentPlatform.getCurrencyPro()));
                 dataJson.put("ptxid", ptxid);
                 dataJson.put("cur", cur);
-                dataJson.put("dup", "false");
+                dataJson.put("dup", "true");
                 jsonArray.add(dataJson);
             }
         }
