@@ -164,7 +164,7 @@ public class AwcServiceImpl implements AwcService {
      * 创建玩家
      */
     private Result createMemberGame(GameParentPlatform gameParentPlatform,GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember,String isMobileLogin,String countryCode) throws Exception {
-        AwcApiResponseData awcApiResponseData = createMember(gameParentPlatform,gamePlatform, ip, cptOpenMember);
+        AwcApiResponseData awcApiResponseData = createMember(gameParentPlatform,gamePlatform, ip, cptOpenMember, countryCode);
 //        AwcApiResponseData awcApiResponseData = new AwcApiResponseData();
 //        awcApiResponseData.setStatus("0000");
         if (null == awcApiResponseData ) {
@@ -185,13 +185,44 @@ public class AwcServiceImpl implements AwcService {
      * @param cptOpenMember
      * @return
      */
-    public AwcApiResponseData createMember(GameParentPlatform gameParentPlatform,GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember) {
+    public AwcApiResponseData createMember(GameParentPlatform gameParentPlatform,GamePlatform gamePlatform, String ip, CptOpenMember cptOpenMember,String countryCode) {
         try {
+            String lang = "";
+            if(null!=countryCode&&!"".equals(countryCode)){
+                switch (countryCode) {
+                    case "IN":
+                        lang = "en";
+                        break;
+                    case "EN":
+                        lang = "en";
+                        break;
+                    case "CN":
+                        lang = "cn";
+                        break;
+                    case "VN":
+                        lang = "vn";
+                        break;
+                    case "TH":
+                        lang = "th";
+                        break;
+                    case "KR":
+                        lang = "kr";
+                        break;
+                    case "JP":
+                        lang = "jp";
+                        break;
+                    default:
+                        lang = gameParentPlatform.getLanguageType();
+                        break;
+                }
+            }else{
+                lang = gameParentPlatform.getLanguageType();
+            }
             String time = System.currentTimeMillis() / 1000 + "";
             Map<String, String> trr = new HashMap<>();
             trr.put("userId", cptOpenMember.getUserName());
             trr.put("currency", gameParentPlatform.getCurrencyType());//玩家货币代码
-            trr.put("language", gameParentPlatform.getLanguageType());
+            trr.put("language", lang);
             trr.put("userName", "");//玩家名称
 //           platform: SEXYBCRT
 //                   - gameType: LIVE
@@ -253,34 +284,25 @@ public class AwcServiceImpl implements AwcService {
             if(null!=countryCode&&!"".equals(countryCode)){
                 switch (countryCode) {
                     case "IN":
-                        lang = "en_US";
+                        lang = "en";
                         break;
                     case "EN":
-                        lang = "en_US";
+                        lang = "en";
                         break;
                     case "CN":
-                        lang = "zh_CN";
+                        lang = "cn";
                         break;
                     case "VN":
-                        lang = "vi_VN";
-                        break;
-                    case "TW":
-                        lang = "zh_TW";
+                        lang = "vn";
                         break;
                     case "TH":
-                        lang = "th_TH";
-                        break;
-                    case "ID":
-                        lang = "in_ID";
-                        break;
-                    case "MY":
-                        lang = "ms_MY";
+                        lang = "th";
                         break;
                     case "KR":
-                        lang = "ko_KR";
+                        lang = "kr";
                         break;
                     case "JP":
-                        lang = "ja_JP";
+                        lang = "jp";
                         break;
                     default:
                         lang = gameParentPlatform.getLanguageType();
