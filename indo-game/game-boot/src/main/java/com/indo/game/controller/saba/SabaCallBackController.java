@@ -98,10 +98,10 @@ public class SabaCallBackController {
         String gzipStr = this.getRequestBody(request);
         JSONObject jsonObject = JSONObject.parseObject(gzipStr);
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("sabaCallBack Deduct 回调,沙巴体育将会呼叫 ConfirmBet params:{},ip:{}",gzipStr,ip);
+        logger.info("sabaCallBack confirmbet 回调,沙巴体育将会呼叫 ConfirmBet params:{},ip:{}",gzipStr,ip);
         SabaCallBackReq<SabaCallBackConfirmBetReq<TicketInfoReq>> sabaCallBackReq = JSONObject.toJavaObject(jsonObject,SabaCallBackReq.class);
         Object confirmBet = sabaCallbackService.confirmBet(sabaCallBackReq);
-        logger.info("sabaCallBack Deduct 回调返回数据,沙巴体育将会呼叫 ConfirmBet params:{}",JSONObject.toJSONString(confirmBet));
+        logger.info("sabaCallBack confirmbet 回调返回数据,沙巴体育将会呼叫 ConfirmBet params:{}",JSONObject.toJSONString(confirmBet));
         return confirmBet;
     }
 
@@ -115,10 +115,10 @@ public class SabaCallBackController {
         String gzipStr = this.getRequestBody(request);
         JSONObject jsonObject = JSONObject.parseObject(gzipStr);
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("sabaCallBack rollback 回调,回滚 params:{},ip:{}",gzipStr,ip);
+        logger.info("sabaCallBack cancelbet 回调,回滚 params:{},ip:{}",gzipStr,ip);
         SabaCallBackReq<SabaCallBackCancelBetReq<TradingInfoReq>> sabaCallBackReq = JSONObject.toJavaObject(jsonObject,SabaCallBackReq.class);
         Object cancelBet = sabaCallbackService.cancelBet(sabaCallBackReq);
-        logger.info("sabaCallBack rollback 回调返回数据,回滚 params:{}",JSONObject.toJSONString(cancelBet));
+        logger.info("sabaCallBack cancelbet 回调返回数据,回滚 params:{}",JSONObject.toJSONString(cancelBet));
         return cancelBet;
     }
 
@@ -218,10 +218,10 @@ public class SabaCallBackController {
         String gzipStr = this.getRequestBody(request);
         JSONObject jsonObject = JSONObject.parseObject(gzipStr);
         String ip = IPAddressUtil.getIpAddress(request);
-        logger.info("sabaCallBack confirmBetParlay 回调,当沙巴体育通过 PlaceBetParlay 方法收到成功结果 params:{},ip:{}",gzipStr,ip);
+        logger.info("sabaCallBack adjustbalance 回调,当沙巴体育通过 PlaceBetParlay 方法收到成功结果 params:{},ip:{}",gzipStr,ip);
         SabaCallBackReq<SabaCallBackAdjustbalanceReq<SabaCallBackAdjustbalanceInfoReq>> sabaCallBackReq = JSONObject.toJavaObject(jsonObject,SabaCallBackReq.class);
         Object adjustbalance = sabaCallbackService.adjustbalance(sabaCallBackReq);
-        logger.info("sabaCallBack confirmBetParlay 回调返回数据,当沙巴体育通过 PlaceBetParlay 方法收到成功结果 params:{}",JSONObject.toJSONString(adjustbalance));
+        logger.info("sabaCallBack adjustbalance 回调返回数据,当沙巴体育通过 PlaceBetParlay 方法收到成功结果 params:{}",JSONObject.toJSONString(adjustbalance));
         return adjustbalance;
     }
 

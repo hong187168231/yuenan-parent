@@ -242,12 +242,12 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
                     BigDecimal creditAmount = t.getCreditAmount().multiply(gameParentPlatform.getCurrencyPro());// Y (decimal) 需增加在玩家的金额。
                     BigDecimal debitAmount = t.getDebitAmount().multiply(gameParentPlatform.getCurrencyPro());// Y (decimal) 需从玩家扣除的金额。
                     BigDecimal amount = BigDecimal.ZERO;
-                    if(BigDecimal.ZERO.compareTo(creditAmount)==1) {
+                    if(BigDecimal.ZERO.compareTo(creditAmount)==-1) {
                         gameCommonService.updateUserBalance(memBaseinfo, creditAmount, GoldchangeEnum.CANCEL_BET, TradingEnum.INCOME);
                         balance = balance.add(creditAmount);
                         amount = amount.add(creditAmount);
                     }
-                    if(BigDecimal.ZERO.compareTo(debitAmount)==1) {
+                    if(BigDecimal.ZERO.compareTo(debitAmount)==-1) {
                         gameCommonService.updateUserBalance(memBaseinfo, debitAmount, GoldchangeEnum.CANCEL_BET, TradingEnum.SPENDING);
                         balance = balance.subtract(debitAmount);
                         amount = amount.subtract(debitAmount);
