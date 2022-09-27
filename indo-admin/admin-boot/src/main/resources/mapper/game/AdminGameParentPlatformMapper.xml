@@ -63,5 +63,6 @@
         FROM game_parent_platform gpp
         LEFT JOIN game_platform gp on gp.platform_code=gpp.platform_code
         LEFT JOIN game_category gc on gc.id=gp.category_id
+        where gpp.is_start=1
     </select>
 </mapper>
