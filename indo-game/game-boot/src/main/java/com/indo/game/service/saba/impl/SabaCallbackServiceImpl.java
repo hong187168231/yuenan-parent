@@ -338,9 +338,9 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
                 oldTxns.setUpdateTime(dateStr);
                 txnsMapper.updateById(oldTxns);
             }else {
-                sabaCallBackRespError.setStatus("203");
-                sabaCallBackRespError.setMsg("Account Existed");
-                return sabaCallBackRespError;
+//                sabaCallBackRespError.setStatus("203");
+//                sabaCallBackRespError.setMsg("Account Existed");
+//                return sabaCallBackRespError;
             }
         }
         return sabaCallBackParentResp;
