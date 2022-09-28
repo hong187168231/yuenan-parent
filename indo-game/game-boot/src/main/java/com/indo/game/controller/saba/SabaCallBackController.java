@@ -128,7 +128,7 @@ public class SabaCallBackController {
     @RequestMapping(value="/settle",method=RequestMethod.POST,produces = "application/json;charset=UTF-8")
     @ResponseBody
     @AllowAccess
-    public Object settle( HttpServletRequest request) {
+    public Object settle(HttpServletRequest request) {
         String gzipStr = this.getRequestBody(request);
         JSONObject jsonObject = JSONObject.parseObject(gzipStr);
         String ip = IPAddressUtil.getIpAddress(request);

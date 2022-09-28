@@ -373,30 +373,38 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
             Txns oldTxns = txnsMapper.selectOne(wrapper);
             BigDecimal creditAmount = settleTradingInfoReq.getCreditAmount().multiply(gameParentPlatform.getCurrencyPro());// Y (decimal) 需增加在玩家的金额。
             BigDecimal debitAmount = settleTradingInfoReq.getDebitAmount().multiply(gameParentPlatform.getCurrencyPro());// Y (decimal) 需从玩家扣除的金额。
-            BigDecimal amount = BigDecimal.ZERO;
+            BigDecimal payout = settleTradingInfoReq.getPayout()!=null?settleTradingInfoReq.getPayout().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;// Y (decimal) 需从玩家扣除的金额。
+//            BigDecimal amount = BigDecimal.ZERO;
             if(null!=oldTxns) {
                 if("Settle".equals(oldTxns.getMethod())){
                     if("resettle".equals(oldTxns.getGameMethod())){
                         return sabaCallBackParentResp;
                     }
-                    BigDecimal winAmount = oldTxns.getWinAmount();
-                    if(BigDecimal.ZERO.compareTo(winAmount)==-1){//回退之前结算
-                        gameCommonService.updateUserBalance(memBaseinfo, winAmount, GoldchangeEnum.SETTLE, TradingEnum.SPENDING);
-                        balance = balance.subtract(winAmount);
-                    }else {
-                        gameCommonService.updateUserBalance(memBaseinfo, winAmount, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
-                        balance = balance.add(winAmount);
-                    }
+//                    BigDecimal winAmount = oldTxns.getWinAmount();
+//                    if(BigDecimal.ZERO.compareTo(winAmount)==-1){//回退之前结算
+//                        gameCommonService.updateUserBalance(memBaseinfo, winAmount, GoldchangeEnum.UNSETTLE, TradingEnum.SPENDING);
+//                        balance = balance.subtract(winAmount);
+//                    }else {
+//                        gameCommonService.updateUserBalance(memBaseinfo, winAmount.abs(), GoldchangeEnum.UNSETTLE, TradingEnum.INCOME);
+//                        balance = balance.add(winAmount.abs());
+//                    }
                 }
+//                if(BigDecimal.ZERO.compareTo(payout)!=0){
+//                    if(BigDecimal.ZERO.compareTo(payout)==-1) {
+//                        gameCommonService.updateUserBalance(memBaseinfo, payout.abs(), GoldchangeEnum.SETTLE, TradingEnum.INCOME);
+//                        balance = balance.add(payout.abs());
+//                    }else {
+//                        gameCommonService.updateUserBalance(memBaseinfo, payout.abs(), GoldchangeEnum.SETTLE, TradingEnum.SPENDING);
+//                        balance = balance.subtract(payout.abs());
+//                    }
+//                }
                 if(BigDecimal.ZERO.compareTo(creditAmount)==-1) {
                     gameCommonService.updateUserBalance(memBaseinfo, creditAmount, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
                     balance = balance.add(creditAmount);
-                    amount = amount.add(creditAmount);
                 }
                 if(BigDecimal.ZERO.compareTo(debitAmount)==-1) {
                     gameCommonService.updateUserBalance(memBaseinfo, debitAmount, GoldchangeEnum.SETTLE, TradingEnum.SPENDING);
                     balance = balance.subtract(debitAmount);
-                    amount = amount.subtract(debitAmount);
                 }
                 String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
                 Txns txns = new Txns();
@@ -404,14 +412,14 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
                 txns.setBalance(balance);
                 txns.setId(null);
                 txns.setStatus("Running");
-                txns.setWinAmount(amount);
-                txns.setWinningAmount(amount);
+                txns.setWinAmount(payout);
+                txns.setWinningAmount(payout);
                 txns.setMethod("Settle");
                 txns.setCreateTime(dateStr);
                 txns.setGameMethod("resettle");
                 txnsMapper.insert(txns);
 
-                oldTxns.setStatus("Settle");
+                oldTxns.setStatus("resettle");
                 oldTxns.setUpdateTime(dateStr);
                 txnsMapper.updateById(oldTxns);
 
@@ -456,12 +464,12 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
                 if("Settle".equals(oldTxns.getMethod())){
                     BigDecimal winAmount = oldTxns.getWinAmount();
                     if(BigDecimal.ZERO.compareTo(winAmount)==-1){//回退之前结算
-                        gameCommonService.updateUserBalance(memBaseinfo, debitAmount, GoldchangeEnum.SETTLE, TradingEnum.SPENDING);
+                        gameCommonService.updateUserBalance(memBaseinfo, debitAmount, GoldchangeEnum.UNSETTLE, TradingEnum.SPENDING);
                         balance = balance.subtract(debitAmount);
                         amount = amount.subtract(debitAmount);
 
                     }else {
-                        gameCommonService.updateUserBalance(memBaseinfo, creditAmount, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
+                        gameCommonService.updateUserBalance(memBaseinfo, creditAmount, GoldchangeEnum.UNSETTLE, TradingEnum.INCOME);
                         balance = balance.add(creditAmount);
                         amount = amount.add(creditAmount);
                     }
@@ -478,7 +486,7 @@ public class SabaCallbackServiceImpl implements SabaCallbackService {
                     txns.setGameMethod("unsettle");
                     txnsMapper.insert(txns);
 
-                    oldTxns.setStatus("Settle");
+                    oldTxns.setStatus("unsettle");
                     oldTxns.setUpdateTime(dateStr);
                     txnsMapper.updateById(oldTxns);
                 }
