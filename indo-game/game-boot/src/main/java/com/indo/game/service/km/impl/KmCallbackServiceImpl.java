@@ -117,6 +117,7 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                 String refptxid = json.getString("refptxid");
                 String cur = json.getString("cur");
                 String roundid = json.getString("roundid");
+                String gamecode = json.getString("gamecode");
 
                 String method = "Place Bet";
                 boolean b = true;//是否新增 true新增
@@ -124,10 +125,14 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                 if(500==txtype || 530==txtype){//500 投注(Place bet) 530 免费投注(Free bet)
                     wrapper.eq(Txns::getPlatformTxId, ptxid);
                     oldTxns = txnsMapper.selectOne(wrapper);
-                    if(null==oldTxns && 500==txtype){
+                    if(null==oldTxns && 500==txtype && !"Gao_Gae".equals(gamecode)&& !"Kingmaker_Pok_Deng".equals(gamecode)
+                            && !"Pai_Kang".equals(gamecode)&& !"Blackjack".equals(gamecode)
+                            && !"Teen_Patti".equals(gamecode)&& !"5_Card_Poker".equals(gamecode)&& !"Bola_Tangkas".equals(gamecode)){
                         if (memBaseinfo.getBalance().compareTo(amt) == -1) {
                             dataJson.put("err", 100);
                             dataJson.put("errdesc", "资金不足，无法执行操作。");
+                            dataJson.put("txid", ptxid);
+                            dataJson.put("ptxid", ptxid);
                             jsonArray.add(dataJson);
                             continue;
                         }
@@ -146,11 +151,15 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                     }else if("Cancel Bet".equals(oldTxns.getMethod())) {
                         dataJson.put("err", 610);
                         dataJson.put("errdesc", "交易已被取消");
+                        dataJson.put("txid", ptxid);
+                        dataJson.put("ptxid", ptxid);
                         jsonArray.add(dataJson);
                         continue;
                     }else if("Settle".equals(oldTxns.getMethod())) {
                         dataJson.put("err", 800);
                         dataJson.put("errdesc", "确定性的操作失败。");
+                        dataJson.put("txid", ptxid);
+                        dataJson.put("ptxid", ptxid);
                         jsonArray.add(dataJson);
                         continue;
                     }
@@ -168,16 +177,12 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                     oldTxns = txnsMapper.selectOne(wrapper);
                     method = "Settle";
                     if(null==oldTxns){
-                        if (memBaseinfo.getBalance().compareTo(amt) == -1) {
-                            dataJson.put("err", 100);
-                            dataJson.put("errdesc", "资金不足，无法执行操作。");
-                            jsonArray.add(dataJson);
-                            continue;
-                        }
-                        if (amt.compareTo(BigDecimal.ZERO) != 0) {
-                            balance = balance.subtract(amt);
-                            gameCommonService.updateUserBalance(memBaseinfo, amt, GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
-                        }
+                        dataJson.put("err", 600);
+                        dataJson.put("txid", ptxid);
+                        dataJson.put("ptxid", ptxid);
+                        dataJson.put("errdesc", "transaction does not exist");
+                        jsonArray.add(dataJson);
+                        continue;
                     }else if("Settle".equals(oldTxns.getMethod())) {
                         dataJson.put("txid", ptxid);
                         dataJson.put("bal", balance.divide(gameParentPlatform.getCurrencyPro()));
@@ -189,12 +194,32 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                     }else if("Cancel Bet".equals(oldTxns.getMethod())) {
                         dataJson.put("err", 610);
                         dataJson.put("errdesc", "交易已被取消");
+                        dataJson.put("txid", ptxid);
+                        dataJson.put("ptxid", ptxid);
                         jsonArray.add(dataJson);
                         continue;
+                    }else if((510==txtype || 520==txtype)&&!"Gao_Gae".equals(gamecode)&& !"Kingmaker_Pok_Deng".equals(gamecode)
+                            && !"Pai_Kang".equals(gamecode)&& !"Blackjack".equals(gamecode)
+                            && !"Teen_Patti".equals(gamecode)&& !"5_Card_Poker".equals(gamecode)&& !"Bola_Tangkas".equals(gamecode)){
+                        if (memBaseinfo.getBalance().compareTo(amt) == -1) {
+                            dataJson.put("err", 100);
+                            dataJson.put("errdesc", "资金不足，无法执行操作。");
+                            dataJson.put("txid", ptxid);
+                            dataJson.put("ptxid", ptxid);
+                            jsonArray.add(dataJson);
+                            continue;
+                        }
+                        if (amt.compareTo(BigDecimal.ZERO) != 0) {
+                            balance = balance.subtract(amt);
+                            gameCommonService.updateUserBalance(memBaseinfo, amt, GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
+                        }
+                        b = false;
                     }else {
                         if (memBaseinfo.getBalance().compareTo(amt) == -1) {
                             dataJson.put("err", 100);
                             dataJson.put("errdesc", "资金不足，无法执行操作。");
+                            dataJson.put("txid", ptxid);
+                            dataJson.put("ptxid", ptxid);
                             jsonArray.add(dataJson);
                             continue;
                         }
@@ -213,6 +238,8 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                     oldTxns = txnsMapper.selectOne(wrapper);
                     if(null==oldTxns){
                         dataJson.put("err", 600);
+                        dataJson.put("txid", ptxid);
+                        dataJson.put("ptxid", ptxid);
                         dataJson.put("errdesc", "transaction does not exist");
                         jsonArray.add(dataJson);
                         continue;
@@ -224,18 +251,26 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                         dataJson.put("dup", "true");
                         jsonArray.add(dataJson);
                         continue;
-                    }else  {
-                        if (memBaseinfo.getBalance().compareTo(amt) == -1) {
-                            dataJson.put("err", 100);
-                            dataJson.put("errdesc", "资金不足，无法执行操作。");
-                            jsonArray.add(dataJson);
-                            continue;
-                        }
+                    }else if( !"Gao_Gae".equals(gamecode)&& !"Kingmaker_Pok_Deng".equals(gamecode)
+                            && !"Pai_Kang".equals(gamecode)&& !"Blackjack".equals(gamecode)
+                            && !"Teen_Patti".equals(gamecode)&& !"5_Card_Poker".equals(gamecode)&& !"Bola_Tangkas".equals(gamecode)){
                         if (amt.compareTo(BigDecimal.ZERO) != 0) {
-                            balance = balance.subtract(amt);
                             if("Place Bet".equals(oldTxns.getMethod())) {
-                                gameCommonService.updateUserBalance(memBaseinfo, amt, GoldchangeEnum.CANCEL_BET, TradingEnum.SPENDING);
+                                balance = balance.add(amt);
+                                gameCommonService.updateUserBalance(memBaseinfo, amt, GoldchangeEnum.CANCEL_BET, TradingEnum.INCOME);
                             }else {
+                                balance = balance.subtract(amt);
+                                gameCommonService.updateUserBalance(memBaseinfo, amt, GoldchangeEnum.UNSETTLE, TradingEnum.SPENDING);
+                            }
+                        }
+                        b = false;
+                    }else {
+                        if (amt.compareTo(BigDecimal.ZERO) != 0) {
+                            if("Place Bet".equals(oldTxns.getMethod())) {
+                                balance = balance.add(amt);
+                                gameCommonService.updateUserBalance(memBaseinfo, amt, GoldchangeEnum.CANCEL_BET, TradingEnum.INCOME);
+                            }else {
+                                balance = balance.subtract(amt);
                                 gameCommonService.updateUserBalance(memBaseinfo, amt, GoldchangeEnum.UNSETTLE, TradingEnum.SPENDING);
                             }
                         }
@@ -299,7 +334,7 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                 dataJson.put("bal", balance.divide(gameParentPlatform.getCurrencyPro()));
                 dataJson.put("ptxid", ptxid);
                 dataJson.put("cur", cur);
-                dataJson.put("dup", "true");
+                dataJson.put("dup", "false");
                 jsonArray.add(dataJson);
             }
         }
@@ -353,13 +388,16 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                 String refptxid = json.getString("refptxid");
                 String cur = json.getString("cur");
                 String roundid = json.getString("roundid");
+                String gamecode = json.getString("gamecode");
                 String method = "Place Bet";
                 Txns oldTxns = new Txns();
                 boolean b = true;//是否新增 true新增
                 if(500==txtype || 530==txtype){//500 投注(Place bet) 530 免费投注(Free bet)
                     wrapper.eq(Txns::getPlatformTxId, ptxid);
                     oldTxns = txnsMapper.selectOne(wrapper);
-                    if(null==oldTxns && 500==txtype){
+                    if(null==oldTxns && 500==txtype&& !"Gao_Gae".equals(gamecode)&& !"Kingmaker_Pok_Deng".equals(gamecode)
+                            && !"Pai_Kang".equals(gamecode)&& !"Blackjack".equals(gamecode)
+                            && !"Teen_Patti".equals(gamecode)&& !"5_Card_Poker".equals(gamecode)&& !"Bola_Tangkas".equals(gamecode)){
                         if (amt.compareTo(BigDecimal.ZERO) != 0) {
                             balance = balance.add(amt);
                             gameCommonService.updateUserBalance(memBaseinfo, amt, GoldchangeEnum.PLACE_BET, TradingEnum.INCOME);
@@ -375,11 +413,15 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                     }else if("Cancel Bet".equals(oldTxns.getMethod())) {
                         dataJson.put("err", 610);
                         dataJson.put("errdesc", "交易已被取消");
+                        dataJson.put("txid", ptxid);
+                        dataJson.put("ptxid", ptxid);
                         jsonArray.add(dataJson);
                         continue;
                     }else if("Settle".equals(oldTxns.getMethod())) {
                         dataJson.put("err", 800);
                         dataJson.put("errdesc", "确定性的操作失败。");
+                        dataJson.put("txid", ptxid);
+                        dataJson.put("ptxid", ptxid);
                         jsonArray.add(dataJson);
                         continue;
                     }
@@ -397,10 +439,12 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                     oldTxns = txnsMapper.selectOne(wrapper);
                     method = "Settle";
                     if(null==oldTxns){
-                        if (amt.compareTo(BigDecimal.ZERO) != 0) {
-                            balance = balance.add(amt);
-                            gameCommonService.updateUserBalance(memBaseinfo, amt, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
-                        }
+                        dataJson.put("err", 600);
+                        dataJson.put("txid", ptxid);
+                        dataJson.put("ptxid", ptxid);
+                        dataJson.put("errdesc", "transaction does not exist");
+                        jsonArray.add(dataJson);
+                        continue;
                     }else if("Settle".equals(oldTxns.getMethod())) {
                         dataJson.put("txid", ptxid);
                         dataJson.put("bal", balance.divide(gameParentPlatform.getCurrencyPro()));
@@ -412,8 +456,18 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                     }else if("Cancel Bet".equals(oldTxns.getMethod())) {
                         dataJson.put("err", 610);
                         dataJson.put("errdesc", "交易已被取消");
+                        dataJson.put("txid", ptxid);
+                        dataJson.put("ptxid", ptxid);
                         jsonArray.add(dataJson);
                         continue;
+                    }else if((510==txtype || 520==txtype)&&!"Gao_Gae".equals(gamecode)&& !"Kingmaker_Pok_Deng".equals(gamecode)
+                            && !"Pai_Kang".equals(gamecode)&& !"Blackjack".equals(gamecode)
+                            && !"Teen_Patti".equals(gamecode)&& !"5_Card_Poker".equals(gamecode)&& !"Bola_Tangkas".equals(gamecode)){
+                        if (amt.compareTo(BigDecimal.ZERO) != 0) {
+                            balance = balance.add(amt);
+                            gameCommonService.updateUserBalance(memBaseinfo, amt, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
+                        }
+                        b = false;
                     }else {
                         if (amt.compareTo(BigDecimal.ZERO) != 0) {
                             balance = balance.add(amt);
@@ -430,6 +484,8 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                     method = "Cancel Bet";
                     if(null==oldTxns){
                         dataJson.put("err", 600);
+                        dataJson.put("txid", ptxid);
+                        dataJson.put("ptxid", ptxid);
                         dataJson.put("errdesc", "transaction does not exist");
                         jsonArray.add(dataJson);
                         continue;
@@ -441,15 +497,27 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                         dataJson.put("dup", "true");
                         jsonArray.add(dataJson);
                         continue;
+                    }else if(!"Gao_Gae".equals(gamecode)&& !"Kingmaker_Pok_Deng".equals(gamecode)
+                            && !"Pai_Kang".equals(gamecode)&& !"Blackjack".equals(gamecode)
+                            && !"Teen_Patti".equals(gamecode)&& !"5_Card_Poker".equals(gamecode)&& !"Bola_Tangkas".equals(gamecode)){
+                        if (amt.compareTo(BigDecimal.ZERO) != 0) {
+                            if("Place Bet".equals(oldTxns.getMethod())) {
+                                balance = balance.add(amt);
+                                gameCommonService.updateUserBalance(memBaseinfo, amt, GoldchangeEnum.CANCEL_BET, TradingEnum.INCOME);
+                            }else {
+                                balance = balance.subtract(amt);
+                                gameCommonService.updateUserBalance(memBaseinfo, amt, GoldchangeEnum.UNSETTLE, TradingEnum.SPENDING);
+                            }
+                        }
+                        b = false;
                     }else {
                         if (amt.compareTo(BigDecimal.ZERO) != 0) {
-                            if (amt.compareTo(BigDecimal.ZERO) != 0) {
+                            if("Place Bet".equals(oldTxns.getMethod())) {
                                 balance = balance.add(amt);
-                                if("Place Bet".equals(oldTxns.getMethod())) {
-                                    gameCommonService.updateUserBalance(memBaseinfo, amt, GoldchangeEnum.CANCEL_BET, TradingEnum.INCOME);
-                                }else {
-                                    gameCommonService.updateUserBalance(memBaseinfo, amt, GoldchangeEnum.UNSETTLE, TradingEnum.INCOME);
-                                }
+                                gameCommonService.updateUserBalance(memBaseinfo, amt, GoldchangeEnum.CANCEL_BET, TradingEnum.INCOME);
+                            }else {
+                                balance = balance.subtract(amt);
+                                gameCommonService.updateUserBalance(memBaseinfo, amt, GoldchangeEnum.UNSETTLE, TradingEnum.SPENDING);
                             }
                         }
                         b = false;
@@ -512,7 +580,7 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                 dataJson.put("bal", balance.divide(gameParentPlatform.getCurrencyPro()));
                 dataJson.put("ptxid", ptxid);
                 dataJson.put("cur", cur);
-                dataJson.put("dup", "true");
+                dataJson.put("dup", "false");
                 jsonArray.add(dataJson);
             }
         }
