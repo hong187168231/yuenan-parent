@@ -429,10 +429,11 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                         jsonArray.add(dataJson);
                         continue;
                     }else if("Settle".equals(oldTxns.getMethod())) {
-                        dataJson.put("err", 800);
-                        dataJson.put("errdesc", "确定性的操作失败。");
                         dataJson.put("txid", ptxid);
+                        dataJson.put("bal", balance.divide(gameParentPlatform.getCurrencyPro()));
                         dataJson.put("ptxid", ptxid);
+                        dataJson.put("cur", cur);
+                        dataJson.put("dup", "true");
                         jsonArray.add(dataJson);
                         continue;
                     }
