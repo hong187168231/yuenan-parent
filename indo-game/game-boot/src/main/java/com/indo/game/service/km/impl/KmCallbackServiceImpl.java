@@ -125,20 +125,22 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                 if(500==txtype || 530==txtype || 610==txtype){//500 投注(Place bet) 530 免费投注(Free bet) 610 电子钱包扣钱 (Fund out the player’s wallet)
                     wrapper.eq(Txns::getPlatformTxId, ptxid);
                     oldTxns = txnsMapper.selectOne(wrapper);
-                    if(null==oldTxns && (610==txtype || (500==txtype && !"Gao_Gae".equals(gamecode)&& !"Kingmaker_Pok_Deng".equals(gamecode)
-                            && !"Pai_Kang".equals(gamecode)&& !"Blackjack".equals(gamecode)
-                            && !"Teen_Patti".equals(gamecode)&& !"5_Card_Poker".equals(gamecode)&& !"Bola_Tangkas".equals(gamecode)))){
-                        if (memBaseinfo.getBalance().compareTo(amt) == -1) {
-                            dataJson.put("err", 100);
-                            dataJson.put("errdesc", "资金不足，无法执行操作。");
-                            dataJson.put("txid", ptxid);
-                            dataJson.put("ptxid", ptxid);
-                            jsonArray.add(dataJson);
-                            continue;
-                        }
-                        if (amt.compareTo(BigDecimal.ZERO) != 0) {
-                            balance = balance.subtract(amt);
-                            gameCommonService.updateUserBalance(memBaseinfo, amt, GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
+                    if(null==oldTxns){
+                        if(610==txtype || (500==txtype && !"Gao_Gae".equals(gamecode)&& !"Kingmaker_Pok_Deng".equals(gamecode)
+                                && !"Pai_Kang".equals(gamecode)&& !"Blackjack".equals(gamecode)
+                                && !"Teen_Patti".equals(gamecode)&& !"5_Card_Poker".equals(gamecode)&& !"Bola_Tangkas".equals(gamecode))){
+                            if (memBaseinfo.getBalance().compareTo(amt) == -1) {
+                                dataJson.put("err", 100);
+                                dataJson.put("errdesc", "资金不足，无法执行操作。");
+                                dataJson.put("txid", ptxid);
+                                dataJson.put("ptxid", ptxid);
+                                jsonArray.add(dataJson);
+                                continue;
+                            }
+                            if (amt.compareTo(BigDecimal.ZERO) != 0) {
+                                balance = balance.subtract(amt);
+                                gameCommonService.updateUserBalance(memBaseinfo, amt, GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
+                            }
                         }
                     }else if("Place Bet".equals(oldTxns.getMethod())) {
                         dataJson.put("txid", ptxid);
@@ -395,16 +397,18 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                 if(500==txtype || 530==txtype || 600==txtype){//500 投注(Place bet) 530 免费投注(Free bet) 600 电子钱包加钱 (Fund in the player’s wallet)
                     wrapper.eq(Txns::getPlatformTxId, ptxid);
                     oldTxns = txnsMapper.selectOne(wrapper);
-                    if(null==oldTxns && (600==txtype || (500==txtype && !"Gao_Gae".equals(gamecode)&& !"Kingmaker_Pok_Deng".equals(gamecode)
-                            && !"Pai_Kang".equals(gamecode)&& !"Blackjack".equals(gamecode)
-                            && !"Teen_Patti".equals(gamecode)&& !"5_Card_Poker".equals(gamecode)&& !"Bola_Tangkas".equals(gamecode)))){
-                        if (amt.compareTo(BigDecimal.ZERO) != 0) {
-                            balance = balance.add(amt);
-                            if(500==txtype) {
-                                gameCommonService.updateUserBalance(memBaseinfo, amt, GoldchangeEnum.PLACE_BET, TradingEnum.INCOME);
-                            }else {
-                                method = "Settle";
-                                gameCommonService.updateUserBalance(memBaseinfo, amt, GoldchangeEnum.DSFYXZZ, TradingEnum.INCOME);
+                    if(null==oldTxns){
+                        if(600==txtype || (500==txtype && !"Gao_Gae".equals(gamecode)&& !"Kingmaker_Pok_Deng".equals(gamecode)
+                                && !"Pai_Kang".equals(gamecode)&& !"Blackjack".equals(gamecode)
+                                && !"Teen_Patti".equals(gamecode)&& !"5_Card_Poker".equals(gamecode)&& !"Bola_Tangkas".equals(gamecode))) {
+                            if (amt.compareTo(BigDecimal.ZERO) != 0) {
+                                balance = balance.add(amt);
+                                if (500 == txtype) {
+                                    gameCommonService.updateUserBalance(memBaseinfo, amt, GoldchangeEnum.PLACE_BET, TradingEnum.INCOME);
+                                } else {
+                                    method = "Settle";
+                                    gameCommonService.updateUserBalance(memBaseinfo, amt, GoldchangeEnum.DSFYXZZ, TradingEnum.INCOME);
+                                }
                             }
                         }
                     }else if("Place Bet".equals(oldTxns.getMethod())) {
@@ -439,7 +443,7 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                 //                590 结束局(End Round)
                 //                600 电子钱包加钱 (Fund in the player’s wallet)
                 //                610 电子钱包扣钱 (Fund out the player’s wallet)
-                if(510==txtype || 511==txtype || 520==txtype || 540==txtype || 590==txtype || 600==txtype){
+                if(510==txtype || 511==txtype || 520==txtype || 540==txtype || 590==txtype){
                     wrapper.eq(Txns::getPlatformTxId, refptxid);
                     oldTxns = txnsMapper.selectOne(wrapper);
                     method = "Settle";
