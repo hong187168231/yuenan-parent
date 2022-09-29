@@ -122,10 +122,10 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                 String method = "Place Bet";
                 boolean b = true;//是否新增 true新增
                 Txns oldTxns = new Txns();
-                if(500==txtype || 530==txtype){//500 投注(Place bet) 530 免费投注(Free bet)
+                if(500==txtype || 530==txtype || 610==txtype){//500 投注(Place bet) 530 免费投注(Free bet) 610 电子钱包扣钱 (Fund out the player’s wallet)
                     wrapper.eq(Txns::getPlatformTxId, ptxid);
                     oldTxns = txnsMapper.selectOne(wrapper);
-                    if(null==oldTxns && 500==txtype && !"Gao_Gae".equals(gamecode)&& !"Kingmaker_Pok_Deng".equals(gamecode)
+                    if(null==oldTxns && (500==txtype || 610==txtype) && !"Gao_Gae".equals(gamecode)&& !"Kingmaker_Pok_Deng".equals(gamecode)
                             && !"Pai_Kang".equals(gamecode)&& !"Blackjack".equals(gamecode)
                             && !"Teen_Patti".equals(gamecode)&& !"5_Card_Poker".equals(gamecode)&& !"Bola_Tangkas".equals(gamecode)){
                         if (memBaseinfo.getBalance().compareTo(amt) == -1) {
@@ -171,8 +171,8 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                 //                540 平手(Tie bet)
                 //                590 结束局(End Round)
                 //                600 电子钱包加钱 (Fund in the player’s wallet)
-                //                610 电子钱包扣钱 (Fund out the player’s wallet)
-                if(510==txtype || 511==txtype || 520==txtype || 540==txtype || 590==txtype || 600==txtype || 610==txtype){
+
+                if(510==txtype || 511==txtype || 520==txtype || 540==txtype || 590==txtype){
                     wrapper.eq(Txns::getPlatformTxId, refptxid);
                     oldTxns = txnsMapper.selectOne(wrapper);
                     method = "Settle";
@@ -256,8 +256,8 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                             && !"Teen_Patti".equals(gamecode)&& !"5_Card_Poker".equals(gamecode)&& !"Bola_Tangkas".equals(gamecode)){
                         if (amt.compareTo(BigDecimal.ZERO) != 0) {
                             if("Place Bet".equals(oldTxns.getMethod())) {
-                                balance = balance.add(amt);
-                                gameCommonService.updateUserBalance(memBaseinfo, amt, GoldchangeEnum.CANCEL_BET, TradingEnum.INCOME);
+                                balance = balance.subtract(amt);
+                                gameCommonService.updateUserBalance(memBaseinfo, amt, GoldchangeEnum.CANCEL_BET, TradingEnum.SPENDING);
                             }else {
                                 balance = balance.subtract(amt);
                                 gameCommonService.updateUserBalance(memBaseinfo, amt, GoldchangeEnum.UNSETTLE, TradingEnum.SPENDING);
@@ -267,8 +267,8 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                     }else {
                         if (amt.compareTo(BigDecimal.ZERO) != 0) {
                             if("Place Bet".equals(oldTxns.getMethod())) {
-                                balance = balance.add(amt);
-                                gameCommonService.updateUserBalance(memBaseinfo, amt, GoldchangeEnum.CANCEL_BET, TradingEnum.INCOME);
+                                balance = balance.subtract(amt);
+                                gameCommonService.updateUserBalance(memBaseinfo, amt, GoldchangeEnum.CANCEL_BET, TradingEnum.SPENDING);
                             }else {
                                 balance = balance.subtract(amt);
                                 gameCommonService.updateUserBalance(memBaseinfo, amt, GoldchangeEnum.UNSETTLE, TradingEnum.SPENDING);
@@ -300,7 +300,14 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                     txns.setGameName(gamePlatform.getPlatformEnName());
                     //下注金额
                     txns.setBetAmount(amt.negate());
+                    //游戏商注单号
+                    txns.setPlatformTxId(ptxid);
+                    txns.setRePlatformTxId(refptxid);
+                    //玩家 ID
+                    txns.setUserId(memBaseinfo.getAccount());
+                    txns.setRoundId(roundid);
 
+                    txns.setMpId(txtype);
                 }else {
                     BeanUtils.copyProperties(oldTxns, txns);
                     txns.setId(null);
@@ -309,14 +316,7 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                     oldTxns.setUpdateTime(dateStr);
                     txnsMapper.updateById(oldTxns);
                 }
-                //游戏商注单号
-                txns.setPlatformTxId(ptxid);
-                txns.setRePlatformTxId(refptxid);
-                //玩家 ID
-                txns.setUserId(memBaseinfo.getAccount());
-                txns.setRoundId(roundid);
 
-                txns.setMpId(txtype);
                 //操作名称
                 txns.setMethod(method);
                 txns.setStatus("Running");
@@ -392,7 +392,7 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                 String method = "Place Bet";
                 Txns oldTxns = new Txns();
                 boolean b = true;//是否新增 true新增
-                if(500==txtype || 530==txtype){//500 投注(Place bet) 530 免费投注(Free bet)
+                if(500==txtype || 530==txtype){//500 投注(Place bet) 530 免费投注(Free bet) 600 电子钱包加钱 (Fund in the player’s wallet)
                     wrapper.eq(Txns::getPlatformTxId, ptxid);
                     oldTxns = txnsMapper.selectOne(wrapper);
                     if(null==oldTxns && 500==txtype&& !"Gao_Gae".equals(gamecode)&& !"Kingmaker_Pok_Deng".equals(gamecode)
@@ -505,8 +505,8 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                                 balance = balance.add(amt);
                                 gameCommonService.updateUserBalance(memBaseinfo, amt, GoldchangeEnum.CANCEL_BET, TradingEnum.INCOME);
                             }else {
-                                balance = balance.subtract(amt);
-                                gameCommonService.updateUserBalance(memBaseinfo, amt, GoldchangeEnum.UNSETTLE, TradingEnum.SPENDING);
+                                balance = balance.add(amt);
+                                gameCommonService.updateUserBalance(memBaseinfo, amt, GoldchangeEnum.UNSETTLE, TradingEnum.INCOME);
                             }
                         }
                         b = false;
@@ -516,8 +516,8 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                                 balance = balance.add(amt);
                                 gameCommonService.updateUserBalance(memBaseinfo, amt, GoldchangeEnum.CANCEL_BET, TradingEnum.INCOME);
                             }else {
-                                balance = balance.subtract(amt);
-                                gameCommonService.updateUserBalance(memBaseinfo, amt, GoldchangeEnum.UNSETTLE, TradingEnum.SPENDING);
+                                balance = balance.add(amt);
+                                gameCommonService.updateUserBalance(memBaseinfo, amt, GoldchangeEnum.UNSETTLE, TradingEnum.INCOME);
                             }
                         }
                         b = false;
@@ -546,7 +546,14 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                     txns.setGameName(gamePlatform.getPlatformEnName());
                     //下注金额
                     txns.setBetAmount(amt.negate());
+                    //游戏商注单号
+                    txns.setPlatformTxId(ptxid);
+                    txns.setRePlatformTxId(refptxid);
+                    //玩家 ID
+                    txns.setUserId(memBaseinfo.getAccount());
+                    txns.setRoundId(roundid);
 
+                    txns.setMpId(txtype);
                 }else {
                     BeanUtils.copyProperties(oldTxns, txns);
                     txns.setId(null);
@@ -555,14 +562,7 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                     oldTxns.setUpdateTime(dateStr);
                     txnsMapper.updateById(oldTxns);
                 }
-                //游戏商注单号
-                txns.setPlatformTxId(ptxid);
-                txns.setRePlatformTxId(refptxid);
-                //玩家 ID
-                txns.setUserId(memBaseinfo.getAccount());
-                txns.setRoundId(roundid);
 
-                txns.setMpId(txtype);
                 //操作名称
                 txns.setMethod(method);
                 txns.setStatus("Running");
