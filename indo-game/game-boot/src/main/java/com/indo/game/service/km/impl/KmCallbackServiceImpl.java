@@ -200,20 +200,22 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                         dataJson.put("ptxid", ptxid);
                         jsonArray.add(dataJson);
                         continue;
-                    }else if((510==txtype || 520==txtype)&&!"Gao_Gae".equals(gamecode)&& !"Kingmaker_Pok_Deng".equals(gamecode)
-                            && !"Pai_Kang".equals(gamecode)&& !"Blackjack".equals(gamecode)
-                            && !"Teen_Patti".equals(gamecode)&& !"5_Card_Poker".equals(gamecode)&& !"Bola_Tangkas".equals(gamecode)){
-                        if (memBaseinfo.getBalance().compareTo(amt) == -1) {
-                            dataJson.put("err", 100);
-                            dataJson.put("errdesc", "资金不足，无法执行操作。");
-                            dataJson.put("txid", ptxid);
-                            dataJson.put("ptxid", ptxid);
-                            jsonArray.add(dataJson);
-                            continue;
-                        }
-                        if (amt.compareTo(BigDecimal.ZERO) != 0) {
-                            balance = balance.subtract(amt);
-                            gameCommonService.updateUserBalance(memBaseinfo, amt, GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
+                    }else if(510==txtype || 520==txtype){
+                        if(!"Gao_Gae".equals(gamecode)&& !"Kingmaker_Pok_Deng".equals(gamecode)
+                                && !"Pai_Kang".equals(gamecode)&& !"Blackjack".equals(gamecode)
+                                && !"Teen_Patti".equals(gamecode)&& !"5_Card_Poker".equals(gamecode)&& !"Bola_Tangkas".equals(gamecode)) {
+//                            if (memBaseinfo.getBalance().compareTo(amt) == -1) {
+//                                dataJson.put("err", 100);
+//                                dataJson.put("errdesc", "资金不足，无法执行操作。");
+//                                dataJson.put("txid", ptxid);
+//                                dataJson.put("ptxid", ptxid);
+//                                jsonArray.add(dataJson);
+//                                continue;
+//                            }
+                            if (amt.compareTo(BigDecimal.ZERO) != 0) {
+                                balance = balance.subtract(amt);
+                                gameCommonService.updateUserBalance(memBaseinfo, amt, GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
+                            }
                         }
                         b = false;
                     }else {
@@ -469,12 +471,14 @@ public class KmCallbackServiceImpl implements KmCallbackService {
                         dataJson.put("ptxid", ptxid);
                         jsonArray.add(dataJson);
                         continue;
-                    }else if((510==txtype || 520==txtype)&&!"Gao_Gae".equals(gamecode)&& !"Kingmaker_Pok_Deng".equals(gamecode)
-                            && !"Pai_Kang".equals(gamecode)&& !"Blackjack".equals(gamecode)
-                            && !"Teen_Patti".equals(gamecode)&& !"5_Card_Poker".equals(gamecode)&& !"Bola_Tangkas".equals(gamecode)){
-                        if (amt.compareTo(BigDecimal.ZERO) != 0) {
-                            balance = balance.add(amt);
-                            gameCommonService.updateUserBalance(memBaseinfo, amt, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
+                    }else if(510==txtype || 520==txtype){
+                        if(!"Gao_Gae".equals(gamecode)&& !"Kingmaker_Pok_Deng".equals(gamecode)
+                                && !"Pai_Kang".equals(gamecode)&& !"Blackjack".equals(gamecode)
+                                && !"Teen_Patti".equals(gamecode)&& !"5_Card_Poker".equals(gamecode)&& !"Bola_Tangkas".equals(gamecode)) {
+                            if (amt.compareTo(BigDecimal.ZERO) != 0) {
+                                balance = balance.add(amt);
+                                gameCommonService.updateUserBalance(memBaseinfo, amt, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
+                            }
                         }
                         b = false;
                     }else {
