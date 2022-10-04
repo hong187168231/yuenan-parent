@@ -471,6 +471,12 @@ public class V8ServiceImpl implements V8Service {
     public Result errorCode(String errorCode, String errorMessage,String countryCode) {
 //        0 成功。                                                Succeed.
         switch (errorCode) {
+            case "1":
+                return Result.failed("g091008", MessageUtils.get("g091008",countryCode));
+            case "3":
+                return Result.failed("g091067", MessageUtils.get("g091067",countryCode));
+            case "5":
+                return Result.failed("g000003", MessageUtils.get("g000003",countryCode));
 //        2 Key 验证失败
             case "2":
                 return Result.failed("g100107", MessageUtils.get("g100107",countryCode));

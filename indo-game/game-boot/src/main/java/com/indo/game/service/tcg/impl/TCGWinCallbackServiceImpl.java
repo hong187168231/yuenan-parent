@@ -127,7 +127,7 @@ public class TCGWinCallbackServiceImpl implements TCGWinCallbackService {
                 gameCommonService.updateUserBalance(memBaseinfo, betAmount.subtract(betAmount),
                         GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
 
-                GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(tcgWinDebitCallBackReq.getProduct_type().toString(), platformGameParent.getPlatformCode());
+                GamePlatform gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(platformGameParent.getPlatformCode(), platformGameParent.getPlatformCode());
                 GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
 
                 Txns txns = new Txns();
