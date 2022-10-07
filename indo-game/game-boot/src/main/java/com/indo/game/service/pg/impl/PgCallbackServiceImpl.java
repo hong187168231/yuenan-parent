@@ -51,16 +51,22 @@ public class PgCallbackServiceImpl implements PgCallbackService {
     @Override
     public Object pgBalanceCallback(PgGetBalanceCallBackReq pgGetBalanceCallBackReq, String ip) {
         GameParentPlatform platformGameParent = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.PG_PLATFORM_CODE);
-        //进行秘钥
         PgCallBackResponse pgCallBackRespFail = new PgCallBackResponse();
-        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(pgGetBalanceCallBackReq.getPlayer_name());
         JSONObject dataJson = new JSONObject();
         JSONObject errorJson = new JSONObject();
+        //进行秘钥
+        if(!checkKey(pgGetBalanceCallBackReq.getOperator_token(),pgGetBalanceCallBackReq.getSecret_key())){
+            errorJson.put("code", "1302");
+            errorJson.put("message", "无效玩家令牌");
+            pgCallBackRespFail.setError(errorJson);
+            return pgCallBackRespFail;
+        }
+
+        MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(pgGetBalanceCallBackReq.getPlayer_name());
+
         if (null == memBaseinfo) {
-            pgCallBackRespFail.setData(dataJson);
-            errorJson.put("code", "1034");
-            errorJson.put("message", "无效请求");
-            pgCallBackRespFail.setData(null);
+            errorJson.put("code", "3004");
+            errorJson.put("message", "玩家不存在");
             pgCallBackRespFail.setError(errorJson);
             return pgCallBackRespFail;
         } else {
@@ -76,8 +82,30 @@ public class PgCallbackServiceImpl implements PgCallbackService {
 
     @Override
     public Object pgTransferInCallback(PgTransferInOutCallBackReq pgTransferInOutCallBackReq, String ip) {
+        PgCallBackResponse pgCallBackRespFail = new PgCallBackResponse();
+        JSONObject dataJson = new JSONObject();
+        JSONObject errorJson = new JSONObject();
+        //进行秘钥
+        if(!checkKey(pgTransferInOutCallBackReq.getOperator_token(),pgTransferInOutCallBackReq.getSecret_key())){
+            errorJson.put("code", "1302");
+            errorJson.put("message", "无效玩家令牌");
+            pgCallBackRespFail.setError(errorJson);
+            return pgCallBackRespFail;
+        }
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(pgTransferInOutCallBackReq.getPlayer_name());
+        if (null == memBaseinfo) {
+            errorJson.put("code", "3004");
+            errorJson.put("message", "玩家不存在");
+            pgCallBackRespFail.setError(errorJson);
+            return pgCallBackRespFail;
+        }
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.PG_PLATFORM_CODE);
+        if(null==pgTransferInOutCallBackReq.getCurrency_code()||!pgTransferInOutCallBackReq.getCurrency_code().equals(gameParentPlatform.getCurrencyType())){
+            errorJson.put("code", "1034");
+            errorJson.put("message", "无效请求");
+            pgCallBackRespFail.setError(errorJson);
+            return pgCallBackRespFail;
+        }
         GamePlatform gamePlatform;
         if(OpenAPIProperties.PG_IS_PLATFORM_LOGIN.equals("Y")) {
             gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(gameParentPlatform.getPlatformCode(), gameParentPlatform.getPlatformCode());
@@ -85,23 +113,46 @@ public class PgCallbackServiceImpl implements PgCallbackService {
             gamePlatform = gameCommonService.getGamePlatformByplatformCodeAndParentName(String.valueOf(pgTransferInOutCallBackReq.getGame_id()), gameParentPlatform.getPlatformCode());
         }
         GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
-        PgCallBackResponse pgCallBackRespFail = new PgCallBackResponse();
-        JSONObject dataJson = new JSONObject();
-        JSONObject errorJson = new JSONObject();
+
         BigDecimal balance = memBaseinfo.getBalance();
-        BigDecimal transferAmount = null!=pgTransferInOutCallBackReq.getTransfer_amount()?pgTransferInOutCallBackReq.getTransfer_amount().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
-        BigDecimal betAmount = null!=pgTransferInOutCallBackReq.getBet_amount()?pgTransferInOutCallBackReq.getBet_amount().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
-        if (memBaseinfo.getBalance().compareTo(transferAmount) == -1) {
-            errorJson.put("code", "3202");
-            errorJson.put("message", "ot Enough Balance");
-            pgCallBackRespFail.setData(null);
-            pgCallBackRespFail.setError(errorJson);
+        if("G".equals(pgTransferInOutCallBackReq.getWallet_type())){//G：免费游戏
+            dataJson.put("currency_code", pgTransferInOutCallBackReq.getCurrency_code());
+            dataJson.put("balance_amount", balance.divide(gameParentPlatform.getCurrencyPro()));
+            dataJson.put("updated_time", pgTransferInOutCallBackReq.getUpdated_time());
+            pgCallBackRespFail.setData(dataJson);
+            pgCallBackRespFail.setError(null);
             return pgCallBackRespFail;
         }
+        BigDecimal transferAmount = null!=pgTransferInOutCallBackReq.getTransfer_amount()?pgTransferInOutCallBackReq.getTransfer_amount().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
+        BigDecimal betAmount = null!=pgTransferInOutCallBackReq.getBet_amount()?pgTransferInOutCallBackReq.getBet_amount().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
+        if(BigDecimal.ZERO.compareTo(betAmount)!=0&&"106".equals(pgTransferInOutCallBackReq.getTransaction_id())){//投付
+            if (memBaseinfo.getBalance().compareTo(betAmount) == -1) {
+                errorJson.put("code", "3202");
+                errorJson.put("message", "ot Enough Balance");
+                pgCallBackRespFail.setData(null);
+                pgCallBackRespFail.setError(errorJson);
+                return pgCallBackRespFail;
+            }
+        }
+        LambdaQueryWrapper<Txns> wrapper1 = new LambdaQueryWrapper<>();
+        wrapper1.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Settle"));
+        wrapper1.eq(Txns::getStatus, "Running");
+        wrapper1.eq(Txns::getPlatformTxId, pgTransferInOutCallBackReq.getTrace_id());
+        wrapper1.eq(Txns::getPlatform,gameParentPlatform.getPlatformCode());
+        Txns oldTxns1 = txnsMapper.selectOne(wrapper1);
+        if(null!=oldTxns1){
+            dataJson.put("currency_code", pgTransferInOutCallBackReq.getCurrency_code());
+            dataJson.put("balance_amount", balance.divide(gameParentPlatform.getCurrencyPro()));
+            dataJson.put("updated_time", pgTransferInOutCallBackReq.getUpdated_time());
+            pgCallBackRespFail.setData(dataJson);
+            pgCallBackRespFail.setError(null);
+            return pgCallBackRespFail;
+        }
+
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
         wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Settle"));
         wrapper.eq(Txns::getStatus, "Running");
-        wrapper.eq(Txns::getPlatformTxId, pgTransferInOutCallBackReq.getBet_id());
+        wrapper.eq(Txns::getRePlatformTxId, pgTransferInOutCallBackReq.getBet_id());
         wrapper.eq(Txns::getPlatform,gameParentPlatform.getPlatformCode());
         Txns oldTxns = txnsMapper.selectOne(wrapper);
         if (null != oldTxns) {
@@ -139,7 +190,9 @@ public class PgCallbackServiceImpl implements PgCallbackService {
             txnsMapper.updateById(oldTxns);
         }else {
             //游戏商注单号
-            txns.setPlatformTxId(pgTransferInOutCallBackReq.getBet_id());
+            txns.setPlatformTxId(pgTransferInOutCallBackReq.getTrace_id());
+            txns.setRoundId(pgTransferInOutCallBackReq.getParent_bet_id());
+            txns.setRePlatformTxId(pgTransferInOutCallBackReq.getBet_id());
             //此交易是否是投注 true是投注 false 否
             //玩家 ID
             txns.setUserId(memBaseinfo.getAccount());
@@ -211,7 +264,7 @@ public class PgCallbackServiceImpl implements PgCallbackService {
 
         dataJson.put("currency_code", pgTransferInOutCallBackReq.getCurrency_code());
         dataJson.put("balance_amount", balance.divide(gameParentPlatform.getCurrencyPro()));
-        dataJson.put("updated_time", System.currentTimeMillis());
+        dataJson.put("updated_time", pgTransferInOutCallBackReq.getUpdated_time());
         pgCallBackRespFail.setData(dataJson);
         pgCallBackRespFail.setError(null);
         return pgCallBackRespFail;
@@ -219,6 +272,16 @@ public class PgCallbackServiceImpl implements PgCallbackService {
 
     @Override
     public Object pgAdjustmentCallback(PgAdjustmentOutCallBackReq pgAdjustmentOutCallBackReq, String ip) {
+        PgCallBackResponse pgCallBackRespFail = new PgCallBackResponse();
+        JSONObject dataJson = new JSONObject();
+        JSONObject errorJson = new JSONObject();
+        //进行秘钥
+        if(!checkKey(pgAdjustmentOutCallBackReq.getOperator_token(),pgAdjustmentOutCallBackReq.getSecret_key())){
+            errorJson.put("code", "1302");
+            errorJson.put("message", "无效玩家令牌");
+            pgCallBackRespFail.setError(errorJson);
+            return pgCallBackRespFail;
+        }
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.PG_PLATFORM_CODE);
         GamePlatform gamePlatform = new GamePlatform();
         if(OpenAPIProperties.PG_IS_PLATFORM_LOGIN.equals("Y")) {
@@ -229,6 +292,12 @@ public class PgCallbackServiceImpl implements PgCallbackService {
             gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
         }
         MemTradingBO memBaseinfo = gameCommonService.getMemTradingInfo(pgAdjustmentOutCallBackReq.getPlayer_name());
+        if (null == memBaseinfo) {
+            errorJson.put("code", "3004");
+            errorJson.put("message", "玩家不存在");
+            pgCallBackRespFail.setError(errorJson);
+            return pgCallBackRespFail;
+        }
         BigDecimal balance = memBaseinfo.getBalance();
         BigDecimal money = memBaseinfo.getBalance();
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
@@ -237,9 +306,6 @@ public class PgCallbackServiceImpl implements PgCallbackService {
         wrapper.eq(Txns::getPlatformTxId, pgAdjustmentOutCallBackReq.getAdjustment_transaction_id());
         wrapper.eq(Txns::getPlatform,gameParentPlatform.getPlatformCode());
         Txns oldTxns = txnsMapper.selectOne(wrapper);
-        PgCallBackResponse pgCallBackRespFail = new PgCallBackResponse();
-        JSONObject dataJson = new JSONObject();
-        JSONObject errorJson = new JSONObject();
 
         BigDecimal realWinAmount = null!=pgAdjustmentOutCallBackReq.getTransfer_amount()?pgAdjustmentOutCallBackReq.getTransfer_amount().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
         if (realWinAmount.compareTo(BigDecimal.ZERO) != 0) {
@@ -316,6 +382,33 @@ public class PgCallbackServiceImpl implements PgCallbackService {
         return pgCallBackRespFail;
     }
 
+    @Override
+    public Object pgVerifyCallback(PgVerifySessionCallBackReq pgVerifySessionCallBackReq, String ip) {
+        PgCallBackResponse pgCallBackRespFail = new PgCallBackResponse();
+        JSONObject dataJson = new JSONObject();
+        JSONObject errorJson = new JSONObject();
+        if(!checkKey(pgVerifySessionCallBackReq.getOperator_token(),pgVerifySessionCallBackReq.getSecret_key())){
+            errorJson.put("code", "1302");
+            errorJson.put("message", "无效玩家令牌");
+            pgCallBackRespFail.setError(errorJson);
+            return pgCallBackRespFail;
+        }
+        CptOpenMember cptOpenMember = externalService.quertCptOpenMember(pgVerifySessionCallBackReq.getOperator_player_session(), OpenAPIProperties.PG_PLATFORM_CODE);
+        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.PG_PLATFORM_CODE);
+
+        if (cptOpenMember == null) {
+            errorJson.put("code", "3004");
+            errorJson.put("message", "玩家不存在");
+            pgCallBackRespFail.setError(errorJson);
+            return pgCallBackRespFail;
+        }
+        dataJson.put("player_name", cptOpenMember.getUserName());
+        dataJson.put("nickname", cptOpenMember.getUserName());
+        dataJson.put("currency", gameParentPlatform.getCurrencyType());
+        pgCallBackRespFail.setData(dataJson);
+        pgCallBackRespFail.setError(null);
+        return pgCallBackRespFail;
+    }
 
     private boolean checkIp(String ip) {
         GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.PG_PLATFORM_CODE);
@@ -329,28 +422,13 @@ public class PgCallbackServiceImpl implements PgCallbackService {
         return false;
     }
 
-    @Override
-    public Object pgVerifyCallback(PgVerifySessionCallBackReq pgVerifySessionCallBackReq, String ip) {
-        CptOpenMember cptOpenMember = externalService.quertCptOpenMember(pgVerifySessionCallBackReq.getOperator_player_session(), OpenAPIProperties.PG_PLATFORM_CODE);
-        GameParentPlatform gameParentPlatform = gameCommonService.getGameParentPlatformByplatformCode(OpenAPIProperties.PG_PLATFORM_CODE);
-        PgCallBackResponse pgCallBackRespFail = new PgCallBackResponse();
-        JSONObject dataJson = new JSONObject();
-        JSONObject errorJson = new JSONObject();
-        if (cptOpenMember == null) {
-            pgCallBackRespFail.setData(dataJson);
-            errorJson.put("code", "1034");
-            errorJson.put("message", "无效请求");
-            pgCallBackRespFail.setError(errorJson);
-            return pgCallBackRespFail;
+    private boolean checkKey(String operator_token,String secret_key) {
+        if(OpenAPIProperties.PG_OPERATOR_TOKEN.equals(operator_token)&&OpenAPIProperties.PG_SECRET_KEY.equals(secret_key)){
+            return true;
+        }else {
+            return false;
         }
-        dataJson.put("player_name", cptOpenMember.getUserName());
-        dataJson.put("nickname", cptOpenMember.getUserName());
-        dataJson.put("currency", gameParentPlatform.getCurrencyType());
-        pgCallBackRespFail.setData(dataJson);
-        pgCallBackRespFail.setError(null);
-        return pgCallBackRespFail;
     }
-
 
 }
 

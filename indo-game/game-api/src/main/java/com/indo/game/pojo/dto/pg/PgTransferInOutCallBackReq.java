@@ -8,6 +8,11 @@ import java.math.BigDecimal;
 @Data
 public class PgTransferInOutCallBackReq {
 
+    /**
+     * 请求的唯一标识符（GUID）
+     */
+    @JSONField(name = "trace_id")
+    private String trace_id;
 
     /**
      * 运营商独有的身份识别

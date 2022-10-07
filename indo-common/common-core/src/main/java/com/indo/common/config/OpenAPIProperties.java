@@ -161,6 +161,7 @@ public class OpenAPIProperties implements InitializingBean {
 
     //PG
     public static String PG_API_TOKEN;
+    public static String PG_OPERATOR_TOKEN;
     public static String PG_API_URL;
     public static String PG_LOGIN_URL;
     public static String PG_SECRET_KEY;
@@ -174,6 +175,8 @@ public class OpenAPIProperties implements InitializingBean {
     private String pgSecretKey;
     @Value("${pg.pgApiToken}")
     private String pgApiToken;
+    @Value("${pg.pgOperatorToken}")
+    private String pgOperatorToken;
     @Value("${pg.platformCode}")
     private String pgPlatformCode;
     @Value("${pg.isPlatformLogin}")
@@ -755,6 +758,7 @@ public class OpenAPIProperties implements InitializingBean {
         PG_LOGIN_URL = loginUrl;
         PG_SECRET_KEY = pgSecretKey;
         PG_API_TOKEN = pgApiToken;
+        PG_OPERATOR_TOKEN = pgOperatorToken;
         PG_PLATFORM_CODE = pgPlatformCode;
         PG_IS_PLATFORM_LOGIN = pgIsPlatformLogin;
 
