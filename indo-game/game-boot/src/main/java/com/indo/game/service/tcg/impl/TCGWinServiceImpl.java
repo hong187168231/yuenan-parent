@@ -97,6 +97,7 @@ public class TCGWinServiceImpl implements TCGWinService {
             if (cptOpenMember == null) {
                 cptOpenMember = new CptOpenMember();
                 cptOpenMember.setUserName(loginUser.getAccount());
+                cptOpenMember.setPassword(loginUser.getAccount());
                 cptOpenMember.setUserId(loginUser.getId().intValue());
                 cptOpenMember.setCreateTime(new Date());
                 cptOpenMember.setLoginTime(new Date());
