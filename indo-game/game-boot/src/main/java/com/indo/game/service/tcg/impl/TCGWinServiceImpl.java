@@ -339,6 +339,7 @@ public class TCGWinServiceImpl implements TCGWinService {
                     + "&params="+URLEncoder.encode(encryptedParams,"UTF-8")
                     + "&sign="+URLEncoder.encode(sign,"UTF-8");
             Map<String, String> paramsMap = new HashMap<>();
+            logger.info("tcgwin  请求commonRequest:{}", apiUrl+"?"+data);
             String resultString = GameUtil.doProxyPostJson(OpenAPIProperties.PROXY_HOST_NAME, OpenAPIProperties.PROXY_PORT, OpenAPIProperties.PROXY_TCP,
                     apiUrl+"?"+data, paramsMap, type, userId);
             //传送
