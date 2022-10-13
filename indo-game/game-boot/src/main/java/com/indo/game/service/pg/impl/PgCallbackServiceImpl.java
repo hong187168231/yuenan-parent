@@ -115,64 +115,76 @@ public class PgCallbackServiceImpl implements PgCallbackService {
         GameCategory gameCategory = gameCommonService.getGameCategoryById(gamePlatform.getCategoryId());
 
         BigDecimal balance = memBaseinfo.getBalance();
-        if("G".equals(pgTransferInOutCallBackReq.getWallet_type())){//G：免费游戏
-            dataJson.put("currency_code", pgTransferInOutCallBackReq.getCurrency_code());
-            dataJson.put("balance_amount", balance.divide(gameParentPlatform.getCurrencyPro()));
-            dataJson.put("updated_time", pgTransferInOutCallBackReq.getUpdated_time());
-            pgCallBackRespFail.setData(dataJson);
-            pgCallBackRespFail.setError(null);
-            return pgCallBackRespFail;
-        }
+
+        String str = pgTransferInOutCallBackReq.getTransaction_id();
+        String[] arr = str.split("-");
+        String transaction_id  = arr[0];
+        String transaction_type  = arr[2];
         BigDecimal transferAmount = null!=pgTransferInOutCallBackReq.getTransfer_amount()?pgTransferInOutCallBackReq.getTransfer_amount().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
         BigDecimal betAmount = null!=pgTransferInOutCallBackReq.getBet_amount()?pgTransferInOutCallBackReq.getBet_amount().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
-        if(BigDecimal.ZERO.compareTo(betAmount)!=0&&"106".equals(pgTransferInOutCallBackReq.getTransaction_id())){//投付
-            if (memBaseinfo.getBalance().compareTo(betAmount) == -1) {
-                errorJson.put("code", "3202");
-                errorJson.put("message", "ot Enough Balance");
-                pgCallBackRespFail.setData(null);
-                pgCallBackRespFail.setError(errorJson);
-                return pgCallBackRespFail;
-            }
-        }
+
         LambdaQueryWrapper<Txns> wrapper1 = new LambdaQueryWrapper<>();
         wrapper1.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Settle"));
         wrapper1.eq(Txns::getStatus, "Running");
-        wrapper1.eq(Txns::getPlatformTxId, pgTransferInOutCallBackReq.getTrace_id());
+        wrapper1.eq(Txns::getRoundId, pgTransferInOutCallBackReq.getParent_bet_id());
+        wrapper1.eq(Txns::getRePlatformTxId, pgTransferInOutCallBackReq.getBet_id());
         wrapper1.eq(Txns::getPlatform,gameParentPlatform.getPlatformCode());
-        Txns oldTxns1 = txnsMapper.selectOne(wrapper1);
-        if(null!=oldTxns1){
-            dataJson.put("currency_code", pgTransferInOutCallBackReq.getCurrency_code());
-            dataJson.put("balance_amount", balance.divide(gameParentPlatform.getCurrencyPro()));
-            dataJson.put("updated_time", pgTransferInOutCallBackReq.getUpdated_time());
-            pgCallBackRespFail.setData(dataJson);
-            pgCallBackRespFail.setError(null);
-            return pgCallBackRespFail;
-        }
-
-        LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
-        wrapper.and(c -> c.eq(Txns::getMethod, "Place Bet").or().eq(Txns::getMethod, "Cancel Bet").or().eq(Txns::getMethod, "Settle"));
-        wrapper.eq(Txns::getStatus, "Running");
-        wrapper.eq(Txns::getRePlatformTxId, pgTransferInOutCallBackReq.getBet_id());
-        wrapper.eq(Txns::getPlatform,gameParentPlatform.getPlatformCode());
-        Txns oldTxns = txnsMapper.selectOne(wrapper);
-        if (null != oldTxns) {
-            if ("Cancel Bet".equals(oldTxns.getMethod())) {
-                errorJson.put("code", "1034");
-                errorJson.put("message", "无效请求");
-                pgCallBackRespFail.setData(null);
-                pgCallBackRespFail.setError(errorJson);
+        Txns oldTxns = txnsMapper.selectOne(wrapper1);
+        String method = "Place Bet";
+        if("106".equals(transaction_type)){//投付
+            if(null!=oldTxns){
+                dataJson.put("currency_code", pgTransferInOutCallBackReq.getCurrency_code());
+                dataJson.put("balance_amount", balance.divide(gameParentPlatform.getCurrencyPro()));
+                dataJson.put("updated_time", pgTransferInOutCallBackReq.getUpdated_time());
+                pgCallBackRespFail.setData(dataJson);
+                pgCallBackRespFail.setError(null);
                 return pgCallBackRespFail;
             }
-        }
-        balance = balance.add(transferAmount);
-        if (transferAmount.compareTo(BigDecimal.ZERO) != 0) {
-            if (betAmount.compareTo(BigDecimal.ZERO) == 0) {//下注
-                gameCommonService.updateUserBalance(memBaseinfo, transferAmount.abs(), GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
-            } else {
-                if (betAmount.compareTo(BigDecimal.ZERO) == -1) {//输
+            if("G".equals(pgTransferInOutCallBackReq.getWallet_type())){//G：免费游戏
+                dataJson.put("currency_code", pgTransferInOutCallBackReq.getCurrency_code());
+                dataJson.put("balance_amount", balance.divide(gameParentPlatform.getCurrencyPro()));
+                dataJson.put("updated_time", pgTransferInOutCallBackReq.getUpdated_time());
+                pgCallBackRespFail.setData(dataJson);
+                pgCallBackRespFail.setError(null);
+                return pgCallBackRespFail;
+            }else {
+                if(BigDecimal.ZERO.compareTo(betAmount)!=0){
+                    if (memBaseinfo.getBalance().compareTo(betAmount) == -1) {
+                        errorJson.put("code", "3202");
+                        errorJson.put("message", "ot Enough Balance");
+                        pgCallBackRespFail.setData(null);
+                        pgCallBackRespFail.setError(errorJson);
+                        return pgCallBackRespFail;
+                    }
+                }
+                if (transferAmount.compareTo(BigDecimal.ZERO) != 0) {
+                    if (transferAmount.compareTo(BigDecimal.ZERO) == -1) {//负数：扣除余额
+                        balance = balance.subtract(transferAmount.abs());
+                        gameCommonService.updateUserBalance(memBaseinfo, transferAmount.abs(), GoldchangeEnum.PLACE_BET, TradingEnum.SPENDING);
+                    }else {
+                        method = "Cancel Bet";
+                        balance = balance.add(transferAmount.abs());
+                        gameCommonService.updateUserBalance(memBaseinfo, transferAmount.abs(), GoldchangeEnum.PLACE_BET, TradingEnum.INCOME);
+                    }
+                }
+            }
+        }else {
+            if(null!=oldTxns&&"Settle".equals(oldTxns.getMethod())){
+                dataJson.put("currency_code", pgTransferInOutCallBackReq.getCurrency_code());
+                dataJson.put("balance_amount", balance.divide(gameParentPlatform.getCurrencyPro()));
+                dataJson.put("updated_time", pgTransferInOutCallBackReq.getUpdated_time());
+                pgCallBackRespFail.setData(dataJson);
+                pgCallBackRespFail.setError(null);
+                return pgCallBackRespFail;
+            }
+            method = "Settle";
+            if (transferAmount.compareTo(BigDecimal.ZERO) != 0) {
+                if (transferAmount.compareTo(BigDecimal.ZERO) == -1) {//负数：扣除余额
+                    balance = balance.subtract(transferAmount.abs());
                     gameCommonService.updateUserBalance(memBaseinfo, transferAmount.abs(), GoldchangeEnum.SETTLE, TradingEnum.SPENDING);
-                } else {
-                    gameCommonService.updateUserBalance(memBaseinfo, transferAmount, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
+                }else {
+                    balance = balance.add(transferAmount.abs());
+                    gameCommonService.updateUserBalance(memBaseinfo, transferAmount.abs(), GoldchangeEnum.SETTLE, TradingEnum.INCOME);
                 }
             }
         }
@@ -182,9 +194,9 @@ public class PgCallbackServiceImpl implements PgCallbackService {
         String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
         if (oldTxns != null) {
             BeanUtils.copyProperties(oldTxns, txns);
-            oldTxns.setStatus("Settle");
+            oldTxns.setStatus(method);
             //操作名称
-            txns.setMethod("Settle");
+            txns.setMethod(method);
             txns.setStatus("Running");
             oldTxns.setUpdateTime(dateStr);
             txnsMapper.updateById(oldTxns);
@@ -215,7 +227,7 @@ public class PgCallbackServiceImpl implements PgCallbackService {
             //游戏名称
             txns.setGameName(gamePlatform.getPlatformEnName());
             //操作名称
-            txns.setMethod("Place Bet");
+            txns.setMethod(method);
             txns.setStatus("Running");
         }
         //下注金额
@@ -299,7 +311,6 @@ public class PgCallbackServiceImpl implements PgCallbackService {
             return pgCallBackRespFail;
         }
         BigDecimal balance = memBaseinfo.getBalance();
-        BigDecimal money = memBaseinfo.getBalance();
         LambdaQueryWrapper<Txns> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Txns::getStatus, "Running");
         wrapper.eq(Txns::getMethod, "Settle");
@@ -308,26 +319,29 @@ public class PgCallbackServiceImpl implements PgCallbackService {
         Txns oldTxns = txnsMapper.selectOne(wrapper);
 
         BigDecimal realWinAmount = null!=pgAdjustmentOutCallBackReq.getTransfer_amount()?pgAdjustmentOutCallBackReq.getTransfer_amount().multiply(gameParentPlatform.getCurrencyPro()):BigDecimal.ZERO;
-        if (realWinAmount.compareTo(BigDecimal.ZERO) != 0) {
-            balance = balance.add(realWinAmount);
-            if (realWinAmount.compareTo(BigDecimal.ZERO) == 1) {//赢
-                gameCommonService.updateUserBalance(memBaseinfo, realWinAmount, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
-            }else {
-                gameCommonService.updateUserBalance(memBaseinfo, realWinAmount.abs(), GoldchangeEnum.SETTLE, TradingEnum.SPENDING);
-            }
-        }
+
         String dateStr = DateUtils.format(new Date(), DateUtils.newFormat);
 
         Txns txns = new Txns();
         if(null!=oldTxns) {
-            dataJson.put("adjust_amount", realWinAmount.divide(gameParentPlatform.getCurrencyPro()));
-            dataJson.put("balance_before", money.divide(gameParentPlatform.getCurrencyPro()));
-            dataJson.put("balance_after", balance.divide(gameParentPlatform.getCurrencyPro()));
+            dataJson.put("adjust_amount", realWinAmount.divide(oldTxns.getWinningAmount()));
+            dataJson.put("balance_before", oldTxns.getBalance().add(oldTxns.getWinningAmount()).divide(gameParentPlatform.getCurrencyPro()));
+            dataJson.put("balance_after", oldTxns.getBalance().divide(gameParentPlatform.getCurrencyPro()));
             dataJson.put("updated_time", System.currentTimeMillis());
             pgCallBackRespFail.setData(dataJson);
             pgCallBackRespFail.setError(null);
             return pgCallBackRespFail;
         }else {
+            if (realWinAmount.compareTo(BigDecimal.ZERO) != 0) {
+
+                if (realWinAmount.compareTo(BigDecimal.ZERO) == 1) {//赢
+                    balance = balance.add(realWinAmount);
+                    gameCommonService.updateUserBalance(memBaseinfo, realWinAmount, GoldchangeEnum.SETTLE, TradingEnum.INCOME);
+                }else {
+                    balance = balance.subtract(realWinAmount.abs());
+                    gameCommonService.updateUserBalance(memBaseinfo, realWinAmount.abs(), GoldchangeEnum.SETTLE, TradingEnum.SPENDING);
+                }
+            }
             //游戏商注单号
             txns.setPlatformTxId(pgAdjustmentOutCallBackReq.getAdjustment_id());
             //此交易是否是投注 true是投注 false 否
@@ -374,7 +388,7 @@ public class PgCallbackServiceImpl implements PgCallbackService {
 
 
         dataJson.put("adjust_amount", realWinAmount.divide(gameParentPlatform.getCurrencyPro()));
-        dataJson.put("balance_before", money.divide(gameParentPlatform.getCurrencyPro()));
+        dataJson.put("balance_before", memBaseinfo.getBalance().divide(gameParentPlatform.getCurrencyPro()));
         dataJson.put("balance_after", balance.divide(gameParentPlatform.getCurrencyPro()));
         dataJson.put("updated_time", System.currentTimeMillis());
         pgCallBackRespFail.setData(dataJson);
