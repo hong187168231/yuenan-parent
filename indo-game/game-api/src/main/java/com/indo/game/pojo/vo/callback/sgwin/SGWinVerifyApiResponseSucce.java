@@ -10,4 +10,14 @@ import java.math.BigDecimal;
 public class SGWinVerifyApiResponseSucce {
     @JSONField(name = "Success")
     private Boolean Success;
+
+    @JSONField(name = "Success")
+    public Boolean getSuccess() {
+        return Success;
+    }
+
+    @JSONField(name = "Success")
+    public void setSuccess(Boolean success) {
+        Success = success;
+    }
 }
