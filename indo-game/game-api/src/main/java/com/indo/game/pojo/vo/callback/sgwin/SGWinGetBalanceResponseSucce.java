@@ -1,22 +1,22 @@
 package com.indo.game.pojo.vo.callback.sgwin;
 
 
-import com.alibaba.fastjson.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.math.BigDecimal;
 
 @Data
 public class SGWinGetBalanceResponseSucce {
-    @JSONField(name = "Code")
+    @JsonProperty("Code")
     private int Code;
-    @JSONField(name = "Message")
+    @JsonProperty("Message")
     private String Message;
-    @JSONField(name = "MemberId")
+    @JsonProperty("MemberId")
     private String MemberId;
-    @JSONField(name = "Currency")
+    @JsonProperty("Currency")
     private String Currency;
-    @JSONField(name = "Balance")
+    @JsonProperty("Balance")
     private BigDecimal Balance;
 
 }
