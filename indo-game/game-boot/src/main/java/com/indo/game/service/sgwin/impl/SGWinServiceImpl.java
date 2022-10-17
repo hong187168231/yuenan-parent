@@ -52,18 +52,6 @@ public class SGWinServiceImpl implements SGWinService {
     private HttpURLConnection conn;
     private String hashValue;
     private String postParams;
-    private String apiKey = OpenAPIProperties.SGWIN_API_KEY;
-    private String root = OpenAPIProperties.SGWIN_AGENT;
-
-    String website = OpenAPIProperties.SGWIN_API_URL;
-    private String urlLogin = website + "/api/login";
-    private String urlLogout = website + "/api/logout";
-    private String urlTransaction = website + "/api/transaction";
-    private String urlconfirm = website + "/api/confirm";
-    private String urlAccount = website + "/api/account";
-    private String urlOnline = website + "/api/online";
-    private String urlLastBets = website + "/api/lastbets";
-    private String urlBets = website + "/api/bets";
 
     @Override
     public Result sgwinGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode) {
@@ -152,14 +140,24 @@ public class SGWinServiceImpl implements SGWinService {
      * 调用API登录
      */
     private SgwinApiResp gameLogin(CptOpenMember cptOpenMember) {
+        String apiKey = OpenAPIProperties.SGWIN_API_KEY;
+        String root = OpenAPIProperties.SGWIN_AGENT;
+
+        String website = OpenAPIProperties.SGWIN_API_URL;
+        String urlLogin = website + "/api/login";
+//        String urlLogout = website + "/api/logout";
+//        String urlTransaction = website + "/api/transaction";
+//        String urlconfirm = website + "/api/confirm";
+//        String urlAccount = website + "/api/account";
+//        String urlOnline = website + "/api/online";
+//        String urlLastBets = website + "/api/lastbets";
+//        String urlBets = website + "/api/bets";
         String rawData = "root=" + root + "&username=" + cptOpenMember.getUserName() + "&" + apiKey;
         String hashValue = this.calcuHashValue(rawData);
-        System.out.println(hashValue);
         postParams = "root=" + root + "&username=" + cptOpenMember.getUserName() + "&hash=" + hashValue;
 
         SgwinApiResp sgwinApiResp = null;
         try {
-            System.out.println("============="+OpenAPIProperties.SGWIN_API_URL);
             logger.info("SGWin  gameLogin登录请求apiUrl:{}, postParams:{}, rawData:{}", urlLogin, postParams, rawData);
             sgwinApiResp = commonRequest(urlLogin, postParams);;
             logger.info("SGWin  gameLogin登录返回resultString:{}", JSON.toJSONString(sgwinApiResp));
@@ -178,6 +176,11 @@ public class SGWinServiceImpl implements SGWinService {
     @Override
     public Result logout(String account,String platform, String ip,String countryCode) {
         try {
+            String apiKey = OpenAPIProperties.SGWIN_API_KEY;
+            String root = OpenAPIProperties.SGWIN_AGENT;
+
+            String website = OpenAPIProperties.SGWIN_API_URL;
+            String urlLogout = website + "/api/logout";
             String rawData = "root=" + root + "&username=" + account + "&" + apiKey;
             String hashValue = this.calcuHashValue(rawData);
             System.out.println(hashValue);
