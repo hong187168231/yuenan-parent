@@ -5,11 +5,13 @@ import com.alibaba.fastjson.JSONObject;
 import com.indo.common.config.OpenAPIProperties;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
+import com.indo.common.utils.DateUtils;
 import com.indo.common.utils.GameUtil;
 import com.indo.common.utils.encrypt.MD5;
 import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.core.pojo.entity.game.GameParentPlatform;
 import com.indo.core.pojo.entity.game.GamePlatform;
+import com.indo.game.common.util.SgwinEncrypt;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
 import com.indo.game.pojo.dto.comm.LoginGame;
 import com.indo.game.pojo.dto.sgwin.SgwinApiResp;
@@ -26,7 +28,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.InputStreamReader;
 import java.math.BigDecimal;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -41,6 +48,22 @@ public class SGWinServiceImpl implements SGWinService {
     private GameCommonService gameCommonService;
     @Autowired
     private GameLogoutService gameLogoutService;
+
+    private HttpURLConnection conn;
+    private String hashValue;
+    private String postParams;
+    private String apiKey = OpenAPIProperties.SGWIN_API_KEY;
+    private String root = OpenAPIProperties.SGWIN_AGENT;
+
+    String website = OpenAPIProperties.SGWIN_API_URL;
+    private String urlLogin = website + "/api/login";
+    private String urlLogout = website + "/api/logout";
+    private String urlTransaction = website + "/api/transaction";
+    private String urlconfirm = website + "/api/confirm";
+    private String urlAccount = website + "/api/account";
+    private String urlOnline = website + "/api/online";
+    private String urlLastBets = website + "/api/lastbets";
+    private String urlBets = website + "/api/bets";
 
     @Override
     public Result sgwinGame(LoginInfo loginUser, String isMobileLogin, String ip, String platform, String parentName,String countryCode) {
@@ -129,27 +152,15 @@ public class SGWinServiceImpl implements SGWinService {
      * 调用API登录
      */
     private SgwinApiResp gameLogin(CptOpenMember cptOpenMember) {
-//        登录接口调用：
-//        md5(“agentID=xxxxroot=apitest&username=xxx&1234567890abcdef”)
-//        其中，agentID为分公司账号，root为公司账号，1234567890abcdef为加密密钥，username为会员账号。
-        StringBuilder params = new StringBuilder();
-        params.append("agentID").append("=").append(OpenAPIProperties.SGWIN_AGENT_ID);
-        params.append("&root").append("=").append(OpenAPIProperties.SGWIN_AGENT);
-        params.append("&username").append("=").append(cptOpenMember.getUserName().toUpperCase(Locale.ROOT));
-        String sign = MD5.md5(params.toString()+"&"+OpenAPIProperties.SGWIN_API_TOKEN);
-        StringBuilder urlParams = new StringBuilder();
-        urlParams.append(params+"&hash").append(sign);
-        SgwinLoginRequest sgwinLoginRequest = new SgwinLoginRequest();
-        sgwinLoginRequest.setDefaultBgColor("black");
+        String rawData = "root=" + root + "&username=" + cptOpenMember.getUserName() + "&" + apiKey;
+        String hashValue = this.calcuHashValue(rawData);
+        System.out.println(hashValue);
+        postParams = "root=" + root + "&username=" + cptOpenMember.getUserName() + "&hash=" + hashValue;
 
-        String jsonStr = JSON.toJSONString(sgwinLoginRequest);
         SgwinApiResp sgwinApiResp = null;
         try {
-            StringBuilder apiUrl = new StringBuilder();
-            apiUrl.append(OpenAPIProperties.SGWIN_API_URL).append("/api/login").append("?");
-            apiUrl.append(urlParams);
-            logger.info("SGWin  gameLogin登录请求apiUrl:{}, params:{}, user:{}", apiUrl, jsonStr, cptOpenMember);
-            sgwinApiResp = commonRequest(apiUrl.toString(), jsonStr, cptOpenMember.getUserId(), "gameLogin");
+            logger.info("SGWin  gameLogin登录请求apiUrl:{}, postParams:{}, rawData:{}", urlLogin, postParams, rawData);
+            sgwinApiResp = commonRequest(urlLogin, postParams);;
             logger.info("SGWin  gameLogin登录返回resultString:{}", JSON.toJSONString(sgwinApiResp));
         } catch (Exception e) {
             logger.error("aelog aeGameLogin:{}", e);
@@ -166,19 +177,13 @@ public class SGWinServiceImpl implements SGWinService {
     @Override
     public Result logout(String account,String platform, String ip,String countryCode) {
         try {
-            StringBuilder params = new StringBuilder();
-            params.append("agentID").append("=").append(OpenAPIProperties.SGWIN_AGENT_ID);
-            params.append("&root").append("=").append(OpenAPIProperties.SGWIN_AGENT);
-            params.append("&username").append("=").append(account.toUpperCase(Locale.ROOT));
-            String sign = MD5.md5(params.toString()+"&"+OpenAPIProperties.SGWIN_API_TOKEN);
-            StringBuilder urlParams = new StringBuilder();
-            urlParams.append(params+"&hash").append(sign);
+            String rawData = "root=" + root + "&username=" + account + "&" + apiKey;
+            String hashValue = this.calcuHashValue(rawData);
+            System.out.println(hashValue);
+            postParams = "root=" + root + "&username=" + account + "&hash=" + hashValue;
             SgwinApiResp sgwinApiResp = null;
-            StringBuilder apiUrl = new StringBuilder();
-            apiUrl.append(OpenAPIProperties.SGWIN_API_URL).append("/api/logout").append("?");
-            apiUrl.append(urlParams);
-            logger.info("SGWin  logout注销请求apiUrl:{}, params:{}, user:{}", apiUrl, null, account);
-            sgwinApiResp = commonRequest(apiUrl.toString(), "", 0, "logout");
+            logger.info("SGWin  logout注销请求apiUrl:{}, postParams:{}, rawData:{}", urlLogout, postParams, rawData);
+            sgwinApiResp = commonRequest(urlLogout, postParams);;
             logger.info("SGWin  logout注销返回resultString:{}", JSON.toJSONString(sgwinApiResp));
             if(sgwinApiResp.getSuccess()){
                 return Result.success();
@@ -195,15 +200,55 @@ public class SGWinServiceImpl implements SGWinService {
     /**
      * 公共请求
      */
-    public SgwinApiResp commonRequest(String apiUrl, String jsonStr, Integer userId, String type) throws Exception {
+    public SgwinApiResp commonRequest(String apiUrl, String postParams) throws Exception {
         SgwinApiResp sgwinApiResp = null;
-        String resultString = GameUtil.doProxyPostJson(OpenAPIProperties.PROXY_HOST_NAME, OpenAPIProperties.PROXY_PORT, OpenAPIProperties.PROXY_TCP,
-            apiUrl, jsonStr, type, userId);
+        String resultString = sendPost( apiUrl,  postParams);
         if (StringUtils.isNotEmpty(resultString)) {
             sgwinApiResp = JSONObject.parseObject(resultString, SgwinApiResp.class);
         }
         return sgwinApiResp;
     }
+
+    private String sendPost(String url, String postParams) throws Exception {
+
+        URL obj = new URL(url);
+        conn = (HttpURLConnection) obj.openConnection();
+
+        // Acts like a browser to post
+        conn.setRequestMethod("POST");
+
+        conn.setRequestProperty("Content-Length", Integer.toString(postParams.length()));
+
+        conn.setDoOutput(true);
+        conn.setDoInput(true);
+
+        // Send post request
+        DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
+        wr.writeBytes(postParams);
+        wr.flush();
+        wr.close();
+
+        int responseCode = conn.getResponseCode();
+        System.out.println("\nSending 'POST' request to URL : " + url);
+        System.out.println("Post parameters : " + postParams);
+        System.out.println("Response Code : " + responseCode);
+
+        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        String inputLine;
+        StringBuffer response = new StringBuffer();
+
+        while ((inputLine = in.readLine()) != null) {
+            response.append(inputLine);
+        }
+        in.close();
+        System.out.println(response.toString());
+        return response.toString();
+    }
+
+    public String calcuHashValue(String rawData) {
+        return SgwinEncrypt.md5(rawData);
+    }
+
     public Result errorCode(String errorCode, String errorMessage,String countryCode) {
         if ("E0016.member.offline".equals(errorCode)) {//会员不在线
             return Result.failed("g091088", MessageUtils.get("\"g091088\"",countryCode));

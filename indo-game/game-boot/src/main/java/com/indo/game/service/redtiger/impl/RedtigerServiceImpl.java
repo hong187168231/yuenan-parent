@@ -131,7 +131,7 @@ public class RedtigerServiceImpl implements RedtigerService {
         player.put("id", loginUser.getAccount());
         player.put("update", true);
         player.put("nickname", StringUtils.isEmpty(loginUser.getNickName()) ? loginUser.getAccount() : loginUser.getNickName());
-        player.put("country", "CN");
+        player.put("country", countryCode);
         //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
         String lang = "";
         if(null!=countryCode&&!"".equals(countryCode)){
