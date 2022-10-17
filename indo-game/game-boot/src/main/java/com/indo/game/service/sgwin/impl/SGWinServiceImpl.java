@@ -159,6 +159,7 @@ public class SGWinServiceImpl implements SGWinService {
 
         SgwinApiResp sgwinApiResp = null;
         try {
+            System.out.println("============="+OpenAPIProperties.SGWIN_API_URL);
             logger.info("SGWin  gameLogin登录请求apiUrl:{}, postParams:{}, rawData:{}", urlLogin, postParams, rawData);
             sgwinApiResp = commonRequest(urlLogin, postParams);;
             logger.info("SGWin  gameLogin登录返回resultString:{}", JSON.toJSONString(sgwinApiResp));
