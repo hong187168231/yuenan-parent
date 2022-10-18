@@ -161,7 +161,7 @@ public class SGWinServiceImpl implements SGWinService {
         String rawData = root + root + cptOpenMember.getUserName() + 1 + timestamp ;
 //        String hashValue = this.calcuHashValue(rawData);
         try {
-            hashValue = RSAUtils.privateEncrypt(rawData,RSAUtils.getPrivateKey(apiKey));
+            hashValue = RSAUtils.publicEncrypt(rawData, RSAUtils.getPublicKey(OpenAPIProperties.SGWIN_API_TOKEN));;
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         } catch (InvalidKeySpecException e) {
