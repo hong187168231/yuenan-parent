@@ -204,7 +204,7 @@ public class SGWinServiceImpl implements SGWinService {
         SgwinApiResp sgwinApiResp = null;
         try {
 //            logger.info("SGWin  gameLogin登录请求apiUrl:{}, jsonParams:{}, rawData:{}", urlLogin, postParams, rawData);
-            logger.info("SGWin  gameLogin登录请求apiUrl:{}, jsonParams:{}", urlLogin, jsonStr);
+            logger.info("SGWin  gameLogin登录请求apiUrl:{}, jsonParams:{}, 加密前参数rawData:{}", urlLogin, jsonStr,rawData);
             sgwinApiResp = commonRequest(urlLogin, jsonStr, cptOpenMember.getUserId(), "gameLogin");
             logger.info("SGWin  gameLogin登录返回resultString:{}", JSON.toJSONString(sgwinApiResp));
         } catch (Exception e) {
