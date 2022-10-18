@@ -4,7 +4,7 @@ import lombok.Data;
 
 
 @Data
-public class SgwinLoginRequest {
+public class SgwinLoginRequest extends SgwinRequest {
     private String defaultBgColor;//	String	默认背景色调，white – 白，black – 黑。可空。
 //    为空时，默认为白。
     private String defaultColor;//	String	默认色调，blue – 蓝，red – 红，gold – 金，pink – 粉红。可空。
@@ -28,5 +28,11 @@ public class SgwinLoginRequest {
 //    如为第一次登录的用户，默认为正式会员。
 //    试玩会员可以转换为正式会员(试玩额度会清零)，而正式会员不可转换。
 
+    private String defaultLang;
+//    To set default language for new member 1st time login Optional.
+//            (VI/EN)
+//    VI: Vietnamese
+//    EN: English
+//    If not provided, default language will be VI
 
 }

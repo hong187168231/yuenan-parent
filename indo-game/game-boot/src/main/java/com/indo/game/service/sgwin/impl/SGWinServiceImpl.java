@@ -1,5 +1,6 @@
 package com.indo.game.service.sgwin.impl;
 
+import cn.hutool.crypto.asymmetric.RSA;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.indo.common.config.OpenAPIProperties;
@@ -11,11 +12,13 @@ import com.indo.common.utils.encrypt.MD5;
 import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.core.pojo.entity.game.GameParentPlatform;
 import com.indo.core.pojo.entity.game.GamePlatform;
+import com.indo.game.common.util.RSAUtils;
 import com.indo.game.common.util.SgwinEncrypt;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
 import com.indo.game.pojo.dto.comm.LoginGame;
 import com.indo.game.pojo.dto.sgwin.SgwinApiResp;
 import com.indo.game.pojo.dto.sgwin.SgwinLoginRequest;
+import com.indo.game.pojo.dto.sgwin.SgwinRequest;
 import com.indo.game.pojo.entity.CptOpenMember;
 import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.common.GameLogoutService;
@@ -34,6 +37,8 @@ import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -108,7 +113,7 @@ public class SGWinServiceImpl implements SGWinService {
 //                logout(loginUser, platform, ip, countryCode);
             }
 
-            SgwinApiResp sgwinApiResp = gameLogin( cptOpenMember);
+            SgwinApiResp sgwinApiResp = gameLogin( cptOpenMember,  countryCode, platformGameParent);
             if(sgwinApiResp.getSuccess()){
                 JSONObject jsonObject = JSONObject.parseObject(sgwinApiResp.getResult());
                 //登录
@@ -139,7 +144,7 @@ public class SGWinServiceImpl implements SGWinService {
     /**
      * 调用API登录
      */
-    private SgwinApiResp gameLogin(CptOpenMember cptOpenMember) {
+    private SgwinApiResp gameLogin(CptOpenMember cptOpenMember,String  countryCode,GameParentPlatform platformGameParent) {
         String apiKey = OpenAPIProperties.SGWIN_API_KEY;
         String root = OpenAPIProperties.SGWIN_AGENT;
 
@@ -152,14 +157,55 @@ public class SGWinServiceImpl implements SGWinService {
 //        String urlOnline = website + "/api/online";
 //        String urlLastBets = website + "/api/lastbets";
 //        String urlBets = website + "/api/bets";
-        String rawData = "root=" + root + "&username=" + cptOpenMember.getUserName() + "&" + apiKey;
-        String hashValue = this.calcuHashValue(rawData);
+        Long timestamp = new Date().getTime();
+        String rawData = root + root + cptOpenMember.getUserName() + 1 + timestamp ;
+//        String hashValue = this.calcuHashValue(rawData);
+        try {
+            hashValue = RSAUtils.privateEncrypt(rawData,RSAUtils.getPrivateKey(apiKey));
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (InvalidKeySpecException e) {
+            e.printStackTrace();
+        }
         postParams = "root=" + root + "&username=" + cptOpenMember.getUserName() + "&hash=" + hashValue;
+        SgwinLoginRequest sgwinLoginRequest = new SgwinLoginRequest();
+        sgwinLoginRequest.setRoot(root);
+        sgwinLoginRequest.setAgentID(root);
+        sgwinLoginRequest.setUsername(cptOpenMember.getUserName());
+        sgwinLoginRequest.setUserType(1);
+        sgwinLoginRequest.setTimestamp(timestamp);
+        sgwinLoginRequest.setSign(hashValue);
+        sgwinLoginRequest.setDefaultBgColor("black");
+        String lang = "";
+        if(null!=countryCode&&!"".equals(countryCode)){
+            switch (countryCode) {
+                case "IN":
+                    lang = "EN";
+                    break;
+                case "EN":
+                    lang = "EN";
+                    break;
+                case "CN":
+                    lang = "CN";
+                    break;
+                case "VN":
+                    lang = "VN";
+                    break;
+                default:
+                    lang = platformGameParent.getLanguageType();
+                    break;
+            }
+        }else{
+            lang = platformGameParent.getLanguageType();
+        }
+        sgwinLoginRequest.setDefaultLang(lang);
 
+        String jsonStr = JSON.toJSONString(sgwinLoginRequest);
         SgwinApiResp sgwinApiResp = null;
         try {
-            logger.info("SGWin  gameLogin登录请求apiUrl:{}, postParams:{}, rawData:{}", urlLogin, postParams, rawData);
-            sgwinApiResp = commonRequest(urlLogin, postParams);;
+//            logger.info("SGWin  gameLogin登录请求apiUrl:{}, jsonParams:{}, rawData:{}", urlLogin, postParams, rawData);
+            logger.info("SGWin  gameLogin登录请求apiUrl:{}, jsonParams:{}", urlLogin, jsonStr);
+            sgwinApiResp = commonRequest(urlLogin, jsonStr, cptOpenMember.getUserId(), "gameLogin");
             logger.info("SGWin  gameLogin登录返回resultString:{}", JSON.toJSONString(sgwinApiResp));
         } catch (Exception e) {
             logger.error("aelog aeGameLogin:{}", e);
@@ -181,13 +227,28 @@ public class SGWinServiceImpl implements SGWinService {
 
             String website = OpenAPIProperties.SGWIN_API_URL;
             String urlLogout = website + "/api/logout";
-            String rawData = "root=" + root + "&username=" + account + "&" + apiKey;
-            String hashValue = this.calcuHashValue(rawData);
-            System.out.println(hashValue);
+            Long timestamp = new Date().getTime();
+            String rawData = root + root + account + 1 + timestamp ;
+//            String hashValue = this.calcuHashValue(rawData);
+            try {
+                hashValue = RSAUtils.privateEncrypt(rawData,RSAUtils.getPrivateKey(apiKey));
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            } catch (InvalidKeySpecException e) {
+                e.printStackTrace();
+            }
             postParams = "root=" + root + "&username=" + account + "&hash=" + hashValue;
+            SgwinRequest sgwinRequest = new SgwinRequest();
+            sgwinRequest.setRoot(root);
+            sgwinRequest.setAgentID(root);
+            sgwinRequest.setUsername(account);
+            sgwinRequest.setUserType(1);
+            sgwinRequest.setTimestamp(timestamp);
+            sgwinRequest.setSign(hashValue);
+            String jsonStr = JSON.toJSONString(sgwinRequest);
             SgwinApiResp sgwinApiResp = null;
-            logger.info("SGWin  logout注销请求apiUrl:{}, postParams:{}, rawData:{}", urlLogout, postParams, rawData);
-            sgwinApiResp = commonRequest(urlLogout, postParams);;
+            logger.info("SGWin  logout注销请求apiUrl:{}, jsonParams:{}, 加密前参数rawData:{}", urlLogout, jsonStr, rawData);
+            sgwinApiResp = commonRequest(urlLogout, jsonStr, 0, "logout");
             logger.info("SGWin  logout注销返回resultString:{}", JSON.toJSONString(sgwinApiResp));
             if(sgwinApiResp.getSuccess()){
                 return Result.success();
@@ -204,9 +265,10 @@ public class SGWinServiceImpl implements SGWinService {
     /**
      * 公共请求
      */
-    public SgwinApiResp commonRequest(String apiUrl, String postParams) throws Exception {
+    public SgwinApiResp commonRequest(String apiUrl, String jsonStr, Integer userId, String type) throws Exception {
         SgwinApiResp sgwinApiResp = null;
-        String resultString = sendPost( apiUrl,  postParams);
+        String resultString = GameUtil.doProxyPostJson(OpenAPIProperties.PROXY_HOST_NAME, OpenAPIProperties.PROXY_PORT, OpenAPIProperties.PROXY_TCP,
+            apiUrl, jsonStr, type, userId);
         if (StringUtils.isNotEmpty(resultString)) {
             sgwinApiResp = JSONObject.parseObject(resultString, SgwinApiResp.class);
         }
