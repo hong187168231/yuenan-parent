@@ -17,6 +17,7 @@ import com.indo.game.common.util.SgwinEncrypt;
 import com.indo.game.pojo.dto.comm.ApiResponseData;
 import com.indo.game.pojo.dto.comm.LoginGame;
 import com.indo.game.pojo.dto.sgwin.SgwinApiResp;
+import com.indo.game.pojo.dto.sgwin.SgwinLoginApiResp;
 import com.indo.game.pojo.dto.sgwin.SgwinLoginRequest;
 import com.indo.game.pojo.dto.sgwin.SgwinRequest;
 import com.indo.game.pojo.entity.CptOpenMember;
@@ -115,10 +116,10 @@ public class SGWinServiceImpl implements SGWinService {
 
             SgwinApiResp sgwinApiResp = gameLogin( cptOpenMember,  countryCode, platformGameParent);
             if(sgwinApiResp.getSuccess()){
-                JSONObject jsonObject = JSONObject.parseObject(sgwinApiResp.getResult());
+                SgwinLoginApiResp loginApiResp = (SgwinLoginApiResp)sgwinApiResp.getResult();
                 //登录
                 ApiResponseData responseData = new ApiResponseData();
-                String session = jsonObject.getString("session");
+                String session = loginApiResp.getSession();
                 String url = "";
                 if(!"1".equals(isMobileLogin)){//1：手机 0:PC
                     url = OpenAPIProperties.SGWIN_LOGIN_URL+"/member/index?_OLID_="+session;
@@ -145,8 +146,10 @@ public class SGWinServiceImpl implements SGWinService {
      * 调用API登录
      */
     private SgwinApiResp gameLogin(CptOpenMember cptOpenMember,String  countryCode,GameParentPlatform platformGameParent) {
-//        String apiKey = OpenAPIProperties.SGWIN_API_KEY;
-//        String root = OpenAPIProperties.SGWIN_AGENT;
+        String apiKey = OpenAPIProperties.SGWIN_API_KEY;
+        String apiToken = OpenAPIProperties.SGWIN_API_TOKEN;
+        String root = OpenAPIProperties.SGWIN_Root;
+        String agentID = OpenAPIProperties.SGWIN_AGENT;
 
         String website = OpenAPIProperties.SGWIN_API_URL;
         String urlLogin = website + "/api/login";
@@ -158,23 +161,17 @@ public class SGWinServiceImpl implements SGWinService {
 //        String urlLastBets = website + "/api/lastbets";
 //        String urlBets = website + "/api/bets";
         Long timestamp = new Date().getTime();
-        String rawData = OpenAPIProperties.SGWIN_Root + OpenAPIProperties.SGWIN_AGENT + cptOpenMember.getUserName() + 1 + timestamp ;
+        String rawData = root + agentID + cptOpenMember.getUserName() + 1 + timestamp ;
 //        String hashValue = this.calcuHashValue(rawData);
-//        try {
-//            hashValue = RSAUtils.publicEncrypt(rawData, RSAUtils.getPublicKey(OpenAPIProperties.SGWIN_API_TOKEN));;
-//        } catch (NoSuchAlgorithmException e) {
-//            e.printStackTrace();
-//        } catch (InvalidKeySpecException e) {
-//            e.printStackTrace();
-//        }
+        hashValue = RSAUtils.sign(apiToken, rawData);
 //        postParams = "root=" + OpenAPIProperties.SGWIN_AGENT + "&username=" + cptOpenMember.getUserName() + "&hash=" + hashValue;
         SgwinLoginRequest sgwinLoginRequest = new SgwinLoginRequest();
-        sgwinLoginRequest.setRoot(OpenAPIProperties.SGWIN_Root);
-        sgwinLoginRequest.setAgentID(OpenAPIProperties.SGWIN_AGENT);
+        sgwinLoginRequest.setRoot(root);
+        sgwinLoginRequest.setAgentID(agentID);
         sgwinLoginRequest.setUsername(cptOpenMember.getUserName());
         sgwinLoginRequest.setUserType(1);
         sgwinLoginRequest.setTimestamp(timestamp);
-        sgwinLoginRequest.setSign(OpenAPIProperties.SGWIN_API_TOKEN);
+        sgwinLoginRequest.setSign(hashValue);
         sgwinLoginRequest.setDefaultBgColor("black");
         String lang = "";
         if(null!=countryCode&&!"".equals(countryCode)){
@@ -223,24 +220,20 @@ public class SGWinServiceImpl implements SGWinService {
     public Result logout(String account,String platform, String ip,String countryCode) {
         try {
             String apiKey = OpenAPIProperties.SGWIN_API_KEY;
-            String root = OpenAPIProperties.SGWIN_AGENT;
+            String apiToken = OpenAPIProperties.SGWIN_API_TOKEN;
+            String root = OpenAPIProperties.SGWIN_Root;
+            String agentID = OpenAPIProperties.SGWIN_AGENT;
 
             String website = OpenAPIProperties.SGWIN_API_URL;
             String urlLogout = website + "/api/logout";
             Long timestamp = new Date().getTime();
-            String rawData = root + root + account + 1 + timestamp ;
+            String rawData = root + agentID + account + 1 + timestamp ;
 //            String hashValue = this.calcuHashValue(rawData);
-            try {
-                hashValue = RSAUtils.privateEncrypt(rawData,RSAUtils.getPrivateKey(apiKey));
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            } catch (InvalidKeySpecException e) {
-                e.printStackTrace();
-            }
+            hashValue = RSAUtils.sign(apiToken, rawData);
             postParams = "root=" + root + "&username=" + account + "&hash=" + hashValue;
             SgwinRequest sgwinRequest = new SgwinRequest();
             sgwinRequest.setRoot(root);
-            sgwinRequest.setAgentID(root);
+            sgwinRequest.setAgentID(agentID);
             sgwinRequest.setUsername(account);
             sgwinRequest.setUserType(1);
             sgwinRequest.setTimestamp(timestamp);
