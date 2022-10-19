@@ -145,8 +145,8 @@ public class SGWinServiceImpl implements SGWinService {
      * 调用API登录
      */
     private SgwinApiResp gameLogin(CptOpenMember cptOpenMember,String  countryCode,GameParentPlatform platformGameParent) {
-        String apiKey = OpenAPIProperties.SGWIN_API_KEY;
-        String root = OpenAPIProperties.SGWIN_AGENT;
+//        String apiKey = OpenAPIProperties.SGWIN_API_KEY;
+//        String root = OpenAPIProperties.SGWIN_AGENT;
 
         String website = OpenAPIProperties.SGWIN_API_URL;
         String urlLogin = website + "/api/login";
@@ -158,23 +158,23 @@ public class SGWinServiceImpl implements SGWinService {
 //        String urlLastBets = website + "/api/lastbets";
 //        String urlBets = website + "/api/bets";
         Long timestamp = new Date().getTime();
-        String rawData = root + root + cptOpenMember.getUserName() + 1 + timestamp ;
+        String rawData = OpenAPIProperties.SGWIN_Root + OpenAPIProperties.SGWIN_AGENT + cptOpenMember.getUserName() + 1 + timestamp ;
 //        String hashValue = this.calcuHashValue(rawData);
-        try {
-            hashValue = RSAUtils.publicEncrypt(rawData, RSAUtils.getPublicKey(OpenAPIProperties.SGWIN_API_TOKEN));;
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (InvalidKeySpecException e) {
-            e.printStackTrace();
-        }
-        postParams = "root=" + root + "&username=" + cptOpenMember.getUserName() + "&hash=" + hashValue;
+//        try {
+//            hashValue = RSAUtils.publicEncrypt(rawData, RSAUtils.getPublicKey(OpenAPIProperties.SGWIN_API_TOKEN));;
+//        } catch (NoSuchAlgorithmException e) {
+//            e.printStackTrace();
+//        } catch (InvalidKeySpecException e) {
+//            e.printStackTrace();
+//        }
+//        postParams = "root=" + OpenAPIProperties.SGWIN_AGENT + "&username=" + cptOpenMember.getUserName() + "&hash=" + hashValue;
         SgwinLoginRequest sgwinLoginRequest = new SgwinLoginRequest();
-        sgwinLoginRequest.setRoot(root);
-        sgwinLoginRequest.setAgentID(root);
+        sgwinLoginRequest.setRoot(OpenAPIProperties.SGWIN_Root);
+        sgwinLoginRequest.setAgentID(OpenAPIProperties.SGWIN_AGENT);
         sgwinLoginRequest.setUsername(cptOpenMember.getUserName());
         sgwinLoginRequest.setUserType(1);
         sgwinLoginRequest.setTimestamp(timestamp);
-        sgwinLoginRequest.setSign(hashValue);
+        sgwinLoginRequest.setSign(OpenAPIProperties.SGWIN_API_TOKEN);
         sgwinLoginRequest.setDefaultBgColor("black");
         String lang = "";
         if(null!=countryCode&&!"".equals(countryCode)){
