@@ -8,6 +8,8 @@ import com.indo.admin.pojo.vo.msg.MsgTotalVO;
 import com.indo.common.annotation.LoginUser;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
+import com.indo.common.result.ResultCode;
+import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.common.web.exception.BizException;
 import com.indo.user.pojo.dto.MsgPushRecordDto;
 import com.indo.user.pojo.vo.MsgPushRecordVO;
@@ -21,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Api(tags = "消息接口")
@@ -38,7 +41,7 @@ public class MsgController {
 
     @ApiOperation(value = "个人消息接口", httpMethod = "GET")
     @GetMapping(value = "/personal")
-    public Result<List<MsgStationLetterVO>> loginDo(@LoginUser LoginInfo loginInfo) {
+    public Result<List<MsgStationLetterVO>> loginDo(@LoginUser LoginInfo loginInfo, HttpServletRequest request) {
         MsgDTO dto = new MsgDTO();
         dto.setMemId(loginInfo.getId());
         Result result = msgFeignClient.getPersonalMsg(dto);
@@ -46,7 +49,8 @@ public class MsgController {
             List<MsgStationLetterVO> data = (List<MsgStationLetterVO>) result.getData();
             return Result.success(data);
         } else {
-            throw new BizException("远程调用异常");
+            String countryCode = request.getHeader("countryCode");
+            throw new BizException(MessageUtils.get("u170009", countryCode));
         }
     }
 
@@ -73,7 +77,7 @@ public class MsgController {
     public Result<MsgTotalVO> msgTotal(@RequestParam("beginTime") String beginTime,
                                        @RequestParam("endTime") String endTime,
                                        @RequestParam("deviceType") Integer deviceType,
-                                       @LoginUser LoginInfo loginInfo) {
+                                       @LoginUser LoginInfo loginInfo, HttpServletRequest request) {
         MsgDTO dto = new MsgDTO();
         dto.setDeviceType(deviceType);
         dto.setBeginTime(beginTime);
@@ -84,7 +88,8 @@ public class MsgController {
             MsgTotalVO data = (MsgTotalVO) result.getData();
             return Result.success(data);
         } else {
-            throw new BizException("远程调用异常");
+            String countryCode = request.getHeader("countryCode");
+            throw new BizException(MessageUtils.get("u170009", countryCode));
         }
     }
     @ApiOperation(value = "删除消息接口", httpMethod = "GET")
@@ -93,7 +98,9 @@ public class MsgController {
             @ApiImplicitParam(name = "msgId", value = "消息id ", dataType = "Long", required = true)
     })
     @GetMapping(value = "/delete")
-    public Result<List<MsgPushRecordVO>> delete(@RequestParam("msgType") Integer msgType,@RequestParam("msgId") Long msgId,@LoginUser LoginInfo loginInfo) {
+    public Result<List<MsgPushRecordVO>> delete(@RequestParam("msgType") Integer msgType,
+                                                @RequestParam("msgId") Long msgId,@LoginUser LoginInfo loginInfo,
+                                                HttpServletRequest request) {
         if(msgType.equals(2)){
             msgStatusRecordService.insertMsgStatusRecord(msgId,msgType,loginInfo);
             return Result.success();
@@ -105,7 +112,8 @@ public class MsgController {
             if (Result.success().getCode().equals(result.getCode())) {
                 return Result.success();
             } else {
-                throw new BizException("远程调用异常");
+                String countryCode = request.getHeader("countryCode");
+                throw new BizException(MessageUtils.get("u170009", countryCode));
             }
         }
     }

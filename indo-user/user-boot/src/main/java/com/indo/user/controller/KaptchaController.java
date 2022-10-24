@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -36,9 +37,9 @@ public class KaptchaController {
     @ApiOperation(value = "获取验证码接口", httpMethod = "GET")
     @AllowAccess
     @GetMapping("kaptcha")
-    public Result kaptcha() {
+    public Result kaptcha(HttpServletRequest request) {
         // 获取运算的结果
-        Captcha captcha = loginProperties.getCaptcha();
+        Captcha captcha = loginProperties.getCaptcha(request);
         String uuid = IdUtil.simpleUUID();
         //当验证码类型为 arithmetic时且长度 >= 2 时，captcha.text()的结果有几率为浮点型
         String captchaValue = captcha.text();

@@ -12,6 +12,7 @@ import com.indo.core.pojo.entity.AgentRelation;
 import com.indo.user.pojo.req.mem.MemAgentApplyReq;
 import com.indo.user.pojo.req.mem.SubordinateAppReq;
 
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 
 /**
@@ -24,11 +25,11 @@ import java.math.BigDecimal;
  */
 public interface IMemAgentService extends SuperService<AgentRelation> {
 
-    boolean apply(MemAgentApplyReq req, LoginInfo loginInfo);
+    boolean apply(MemAgentApplyReq req, LoginInfo loginInfo, HttpServletRequest request);
 
     Integer applyStatus(LoginInfo loginInfo);
 
-    boolean takeRebate(BigDecimal rebateAmount, Long memBankId, LoginInfo loginInfo);
+    boolean takeRebate(BigDecimal rebateAmount, Long memBankId, LoginInfo loginInfo, HttpServletRequest request);
 
     Page<AgentSubVO> subordinatePage(SubordinateAppReq req, LoginInfo loginInfo);
 
