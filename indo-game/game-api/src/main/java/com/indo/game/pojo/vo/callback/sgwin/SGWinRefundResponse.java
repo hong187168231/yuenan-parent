@@ -2,12 +2,20 @@ package com.indo.game.pojo.vo.callback.sgwin;
 
 
 import com.alibaba.fastjson.annotation.JSONField;
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
-@Data
 public class SGWinRefundResponse {
-    @JSONField(name = "Response")
+
     private List Response;
+
+    @JsonProperty("Response")
+    public List getResponse() {
+        return Response;
+    }
+
+    public void setResponse(List response) {
+        Response = response;
+    }
 }

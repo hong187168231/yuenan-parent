@@ -1,19 +1,35 @@
 package com.indo.game.pojo.vo.callback.sgwin;
 
 
-import com.alibaba.fastjson.annotation.JSONField;
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.math.BigDecimal;
 
-@Data
 public class SGWinBetResponseError {
-    @JSONField(name = "Code")
+
     private int Code;
-    @JSONField(name = "Message")
+
     private String Message;
-//    @JSONField(name = "TransactionId")
+//    @JsonProperty("TransactionId")
 //    private String TransactionId;
-//    @JSONField(name = "Balance")
+//    @JsonProperty("Balance")
 //    private BigDecimal Balance;
+
+    @JsonProperty("Code")
+    public int getCode() {
+        return Code;
+    }
+
+    public void setCode(int code) {
+        Code = code;
+    }
+
+    @JsonProperty("Message")
+    public String getMessage() {
+        return Message;
+    }
+
+    public void setMessage(String message) {
+        Message = message;
+    }
 }

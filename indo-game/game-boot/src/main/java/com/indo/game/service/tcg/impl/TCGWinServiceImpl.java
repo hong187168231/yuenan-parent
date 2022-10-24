@@ -25,6 +25,10 @@ import com.indo.game.service.common.GameCommonService;
 import com.indo.game.service.common.GameLogoutService;
 import com.indo.game.service.cptopenmember.CptOpenMemberService;
 import com.indo.game.service.tcg.TCGWinService;
+import com.tcg.api.core.common.DESEncrypt;
+import com.tcg.api.core.common.HashUtil;
+import com.tcg.api.core.common.HttpUtils;
+import com.tcg.api.core.obj.TCGamingConfigObj;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,6 +97,7 @@ public class TCGWinServiceImpl implements TCGWinService {
             if (cptOpenMember == null) {
                 cptOpenMember = new CptOpenMember();
                 cptOpenMember.setUserName(loginUser.getAccount());
+                cptOpenMember.setPassword(loginUser.getAccount());
                 cptOpenMember.setUserId(loginUser.getId().intValue());
                 cptOpenMember.setCreateTime(new Date());
                 cptOpenMember.setLoginTime(new Date());
@@ -327,21 +332,26 @@ public class TCGWinServiceImpl implements TCGWinService {
      */
     protected TcgwinApiResp commonRequest(String apiUrl,String json, Integer userId, String type){
         TcgwinApiResp tcgwinApiResp = null;
+        System.out.println("json :\n " + json);
+
         try {
             // 参数加密
-            String encryptedParams = TCGWinEncrypt.encryptDes(json,OpenAPIProperties.TCGWIN_DES_KEY);
+            DESEncrypt des = new DESEncrypt(OpenAPIProperties.TCGWIN_DES_KEY);
+            String encryptedParams = des.encrypt(json);
 
             //签名档加密
-            String sign = TCGWinSHA256Encrypt.encryptDes(encryptedParams+OpenAPIProperties.TCGWIN_SHA256_KEY);
+            String sign = HashUtil.sha256(encryptedParams+OpenAPIProperties.TCGWIN_SHA256_KEY);
 
             //组连接字串
-            String data = "merchant_code="+ URLEncoder.encode(OpenAPIProperties.TCGWIN_MERCHANT_CODE,"UTF-8")
+            String data = "merchant_code="+URLEncoder.encode(OpenAPIProperties.TCGWIN_MERCHANT_CODE,"UTF-8")
                     + "&params="+URLEncoder.encode(encryptedParams,"UTF-8")
-                    + "&sign="+URLEncoder.encode(sign,"UTF-8");
-            Map<String, String> paramsMap = new HashMap<>();
-            String resultString = GameUtil.doProxyPostJson(OpenAPIProperties.PROXY_HOST_NAME, OpenAPIProperties.PROXY_PORT, OpenAPIProperties.PROXY_TCP,
-                    apiUrl, paramsMap, type, userId);
+                    +"&sign="+URLEncoder.encode(sign,"UTF-8");
+
+
+            System.out.println("data :\n " + data);
+            logger.info("tcgwin  commonRequest请求apiUrl:{}, data:{}", apiUrl, data);
             //传送
+            String resultString = HttpUtils.newPost(apiUrl, data).execute();
             if (StringUtils.isNotEmpty(resultString)) {
                 tcgwinApiResp = JSONObject.parseObject(resultString, TcgwinApiResp.class);
                 return tcgwinApiResp;

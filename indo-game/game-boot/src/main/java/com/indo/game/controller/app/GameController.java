@@ -289,7 +289,7 @@ public class GameController {
                 if (OpenAPIProperties.SGWIN_PLATFORM_CODE.equals(parentName)) {
                     resultInfo = sgWinService.sgwinGame(loginUser, isMobileLogin, ip, platform, parentName, countryCode);
                 }
-                if (OpenAPIProperties.TCGWIN_PLATFORM_CODE.equals(platform)) {
+                if (OpenAPIProperties.TCGWIN_PLATFORM_CODE.equals(parentName)) {
                     resultInfo = tcgWinService.tcgwinGame(loginUser, isMobileLogin, ip, platform, parentName, countryCode);
                 }
 

@@ -1,17 +1,42 @@
 package com.indo.game.pojo.vo.callback.sgwin;
 
 
-import com.alibaba.fastjson.annotation.JSONField;
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.math.BigDecimal;
 
-@Data
 public class SGWinNotifySettleResponseSucce {
-    @JSONField(name = "Code")
+
     private int Code;
-    @JSONField(name = "Message")
+
     private String Message;
-    @JSONField(name = "TransactionId")
+
     private String TransactionId;
+
+    @JsonProperty("Code")
+    public int getCode() {
+        return Code;
+    }
+
+    public void setCode(int code) {
+        Code = code;
+    }
+
+    @JsonProperty("Message")
+    public String getMessage() {
+        return Message;
+    }
+
+    public void setMessage(String message) {
+        Message = message;
+    }
+
+    @JsonProperty("TransactionId")
+    public String getTransactionId() {
+        return TransactionId;
+    }
+
+    public void setTransactionId(String transactionId) {
+        TransactionId = transactionId;
+    }
 }
