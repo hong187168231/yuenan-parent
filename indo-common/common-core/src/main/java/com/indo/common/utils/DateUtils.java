@@ -368,6 +368,13 @@ public class DateUtils {
         return new Date();
     }
 
+    /**
+     * 得到当前日期和时间字符串 格式（yyyy-MM-dd HH:mm:ss）
+     */
+    public static String getDateTime(String format) {
+        return format(new Date(), format);
+    }
+
     public static Date getDate(long millsecord) {
         return new Date(millsecord);
     }
