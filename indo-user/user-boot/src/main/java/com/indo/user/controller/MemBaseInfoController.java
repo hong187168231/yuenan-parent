@@ -17,11 +17,14 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpRequest;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.LocaleResolver;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Locale;
 
 @Api(tags = "会员接口")
 @RestController
@@ -32,7 +35,6 @@ public class MemBaseInfoController {
     @Resource
     private AppMemBaseInfoService memBaseInfoService;
 
-
     @ApiOperation(value = "账号检查", httpMethod = "GET")
     @GetMapping(value = "/checkAccount")
     @ApiImplicitParam(name = "account", value = "账号", required = true, paramType = "query", dataType = "string")
@@ -41,11 +43,12 @@ public class MemBaseInfoController {
         return Result.success(memBaseInfoService.checkAccount(account));
     }
 
+
     @ApiOperation(value = "登录接口", httpMethod = "POST")
     @PostMapping(value = "/login")
     @AllowAccess
-    public Result<AppLoginVo> loginDo(@RequestBody LoginReq req) {
-        return memBaseInfoService.appLogin(req);
+    public Result<AppLoginVo> loginDo(@RequestBody LoginReq req, HttpServletRequest request) {
+        return memBaseInfoService.appLogin(req, request);
     }
 
     @ApiOperation(value = "退出登录", httpMethod = "POST")
@@ -57,8 +60,8 @@ public class MemBaseInfoController {
     @ApiOperation(value = "注册接口", httpMethod = "POST")
     @PostMapping(value = "/register")
     @AllowAccess
-    public Result<AppLoginVo> register(@RequestBody @Validated RegisterReq req) {
-        return memBaseInfoService.register(req);
+    public Result<AppLoginVo> register(@RequestBody @Validated RegisterReq req, HttpServletRequest request) {
+        return memBaseInfoService.register(req, request);
     }
 
     @ApiOperation(value = "个人基本信息", httpMethod = "POST")
@@ -69,8 +72,9 @@ public class MemBaseInfoController {
 
     @ApiOperation(value = "更改密码", httpMethod = "POST")
     @PostMapping(value = "/updatePassword")
-    public Result updatePassword(@RequestBody UpdatePasswordReq req, @LoginUser LoginInfo loginUser) {
-        return Result.judge(memBaseInfoService.updatePassword(req, loginUser));
+    public Result updatePassword(@RequestBody UpdatePasswordReq req, @LoginUser LoginInfo loginUser,
+                                 HttpServletRequest request) {
+        return Result.judge(memBaseInfoService.updatePassword(req, loginUser, request));
     }
 
     @ApiOperation(value = "修改头像", httpMethod = "POST")

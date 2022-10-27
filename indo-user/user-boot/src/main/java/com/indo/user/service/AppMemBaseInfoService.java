@@ -34,7 +34,7 @@ public interface AppMemBaseInfoService extends SuperService<MemBaseinfo> {
      * @param req
      * @return
      */
-    Result<AppLoginVo> appLogin(LoginReq req);
+    Result<AppLoginVo> appLogin(LoginReq req, HttpServletRequest request);
 
     /**
      * 退出登录
@@ -51,7 +51,7 @@ public interface AppMemBaseInfoService extends SuperService<MemBaseinfo> {
      * @param req
      * @return
      */
-    Result<AppLoginVo> register(RegisterReq req);
+    Result<AppLoginVo> register(RegisterReq req, HttpServletRequest request);
 
     /**
      * 查询用户信息
@@ -69,7 +69,7 @@ public interface AppMemBaseInfoService extends SuperService<MemBaseinfo> {
      * @param loginUser
      * @return
      */
-    boolean updatePassword(UpdatePasswordReq req, LoginInfo loginUser);
+    boolean updatePassword(UpdatePasswordReq req, LoginInfo loginUser, HttpServletRequest request);
 
     /**
      * 修改头像

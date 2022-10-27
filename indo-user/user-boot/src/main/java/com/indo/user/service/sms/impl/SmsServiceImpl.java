@@ -3,6 +3,7 @@ package com.indo.user.service.sms.impl;
 import com.indo.common.enums.VerifCodeTypeEnum;
 import com.indo.common.utils.CommonFunction;
 import com.indo.common.utils.StringUtils;
+import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.common.utils.sms.SmsSendResult;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.IPUtils;
@@ -64,6 +65,7 @@ public class SmsServiceImpl implements ISmsService {
 
     @Override
     public Integer sendSmsCode(VerifyCodeReq req, HttpServletRequest request) {
+        String countryCode = request.getHeader("countryCode");
         String ipAddress = IPUtils.getIpAddr(request);
         log.info("ip: {} ", ipAddress);
 //        SysParameter ipMsgLimit = iSysParameterService.getByCode(SysParameterEnum.IP_MSG_LIMIT.name());
@@ -73,7 +75,7 @@ public class SmsServiceImpl implements ISmsService {
         Integer ipCount = iSmsSendRecordService.getLimit(smsSendRecord);
         if (ipCount >= iplimit) {
             log.info("ip: {} ,短信条数 {}", ipAddress, ipCount);
-            throw new BizException("今天短信条数超过限制");
+            throw new BizException(MessageUtils.get("u170037", countryCode));
         }
         // 验证这个手机号是否超过限制
         smsSendRecord = new SmsSendRecord();
@@ -81,21 +83,21 @@ public class SmsServiceImpl implements ISmsService {
         Integer mobileCount = iSmsSendRecordService.getLimit(smsSendRecord);
         if (mobileCount >= iplimit) {
             log.info("mobile: {} ,短信条数 {}", req.getPhone(), mobileCount);
-            throw new BizException("今天短信条数超过限制");
+            throw new BizException(MessageUtils.get("u170037", countryCode));
         }
         MemBaseinfo ml = null;// memBaseInfoService.findByMobile(req.getPhone());
         // 验证这个手机号是否已经存在 如果是发送注册
         if (req.getVerifCodeTypeEnum().equals(VerifCodeTypeEnum.register)) {
             // 手机号 不存在 才 3注册；
             if (ml != null) {
-                throw new BizException("该手机号已注册");
+                throw new BizException(MessageUtils.get("u170039", countryCode));
             }
         } else {
             if (ml == null) {
-                throw new BizException("该手机号不存在");
+                throw new BizException(MessageUtils.get("u170040", countryCode));
             }
-            if (ml.getStatus() != UserConstants.ACCOUNT_NORMAL) {
-                throw new BizException("非法账号");
+            if (ml.getStatus().equals(UserConstants.ACCOUNT_NORMAL)) {
+                throw new BizException(MessageUtils.get("u170041", countryCode));
             }
         }
 
@@ -132,7 +134,8 @@ public class SmsServiceImpl implements ISmsService {
 //                    throw new BizException("系统参数(SMS_ONOFF)异常");
 //                }
                 //发送短信验证码组件
-                SmsSendResult smsSendResult = smsSendTemplate.sendSms(req.getPhone(), smsCode, sysShortmsg.getSmsType());
+                SmsSendResult smsSendResult = smsSendTemplate.sendSms(req.getPhone(),
+                    smsCode, sysShortmsg.getSmsType(), request);
                 if (smsSendResult.isSuccess()) {
                     // 发送成功
                     // logger.info("{}发送短信验证码{} ",req.getTel(),smsCode);
@@ -142,14 +145,14 @@ public class SmsServiceImpl implements ISmsService {
                 } else {
                     sysShortmsg.setStatus(UserConstants.STATUS_FAIL);
                     iSmsSendRecordService.saveSmsSendRecord(sysShortmsg);
-                    throw new BizException("短信发送失败");
+                    throw new BizException(MessageUtils.get("u170042", countryCode));
                 }
 
             }
         } else {
             // 明确提示
             String s = String.valueOf(countInteger).replaceAll("-", "");
-            throw new BizException(s + "秒后才能发送");
+            throw new BizException(s + MessageUtils.get("u170043", countryCode));
         }
         return null;
     }

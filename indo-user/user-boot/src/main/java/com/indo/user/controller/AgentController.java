@@ -21,6 +21,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -43,8 +44,8 @@ public class AgentController {
 
     @ApiOperation(value = "申请", httpMethod = "POST")
     @PostMapping(value = "/apply")
-    public Result add(@RequestBody MemAgentApplyReq req, @LoginUser LoginInfo loginInfo) {
-        iMemAgentService.apply(req, loginInfo);
+    public Result add(@RequestBody MemAgentApplyReq req, @LoginUser LoginInfo loginInfo, HttpServletRequest request) {
+        iMemAgentService.apply(req, loginInfo, request);
         return Result.success();
     }
 
@@ -69,8 +70,9 @@ public class AgentController {
             @ApiImplicitParam(name = "rebateAmount", value = "佣金", defaultValue = "0.00", paramType = "query", dataType = "string"),
             @ApiImplicitParam(name = "memBankId", value = "会员银行卡id", paramType = "query", dataType = "long")
     })
-    public Result takeRebate(BigDecimal rebateAmount, Long memBankId, @LoginUser LoginInfo loginInfo) {
-        boolean flag = iMemAgentService.takeRebate(rebateAmount, memBankId, loginInfo);
+    public Result takeRebate(BigDecimal rebateAmount, Long memBankId, @LoginUser LoginInfo loginInfo,
+                             HttpServletRequest request) {
+        boolean flag = iMemAgentService.takeRebate(rebateAmount, memBankId, loginInfo, request);
         return Result.judge(flag);
     }
 

@@ -1,12 +1,14 @@
 package com.indo.user.common.kaptcha;
 
 import com.indo.common.utils.StringUtils;
+import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.common.web.exception.BizException;
 import com.wf.captcha.*;
 import com.wf.captcha.base.Captcha;
 import lombok.Data;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.HttpServletRequest;
 import java.awt.*;
 import java.util.Objects;
 
@@ -42,14 +44,14 @@ public class LoginProperties {
      *
      * @return /
      */
-    public Captcha getCaptcha() {
+    public Captcha getCaptcha(HttpServletRequest request) {
         if (Objects.isNull(loginCode)) {
             loginCode = new LoginCode();
             if (Objects.isNull(loginCode.getCodeType())) {
                 loginCode.setCodeType(LoginCodeEnum.spec);
             }
         }
-        return switchCaptcha(loginCode);
+        return switchCaptcha(loginCode, request);
     }
 
     /**
@@ -58,7 +60,7 @@ public class LoginProperties {
      * @param loginCode 验证码配置信息
      * @return /
      */
-    private Captcha switchCaptcha(LoginCode loginCode) {
+    private Captcha switchCaptcha(LoginCode loginCode, HttpServletRequest request) {
         Captcha captcha;
         synchronized (this) {
             switch (loginCode.getCodeType()) {
@@ -85,7 +87,8 @@ public class LoginProperties {
                     captcha.setLen(loginCode.getLength());
                     break;
                 default:
-                    throw new BizException("验证码配置信息错误！正确配置查看 LoginCodeEnum ");
+                    String countryCode = request.getHeader("countryCode");
+                    throw new BizException(MessageUtils.get("u170008", countryCode));
             }
         }
         if(StringUtils.isNotBlank(loginCode.getFontName())){

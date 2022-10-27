@@ -3,6 +3,7 @@ package com.indo.user.service.sms.impl;
 import com.indo.common.enums.SmsChannelEnum;
 import com.indo.common.enums.SysParameterEnum;
 import com.indo.common.utils.StringUtils;
+import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.common.utils.sms.SmsSendResult;
 import com.indo.common.web.exception.BizException;
 import com.indo.core.pojo.entity.SysParameter;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -43,13 +45,13 @@ public class SmsSendTemplate {
      * @param captchaType 验证码类型
      * @return
      */
-    public SmsSendResult sendSms(String phone, String captchaCode, int captchaType) {
+    public SmsSendResult sendSms(String phone, String captchaCode, int captchaType, HttpServletRequest request) {
         if (realFlag()) {
             return SmsSendResult.getResult(true);
         }
         SmsSendResult result = new SmsSendResult(phone, captchaType, captchaCode);
         List<String> smsParam = SmsChannelEnum.getAll();
-        List<SysParameter> sysList = getSmsParamList(smsParam);
+        List<SysParameter> sysList = getSmsParamList(smsParam, request);
         SysParameter sendSms = null;
         Collections.sort(sysList, Comparator.comparing(SysParameter::getSortBy));
 
@@ -80,7 +82,7 @@ public class SmsSendTemplate {
      * @param list
      * @return smsParamList
      */
-    private List<SysParameter> getSmsParamList(List<String> list) {
+    private List<SysParameter> getSmsParamList(List<String> list, HttpServletRequest request) {
         List<SysParameter> smsParamList = new LinkedList<>();
         for (String s : list) {
 //            SysParameter shortmsg = this.sysParamService.getByCode(s);
@@ -90,7 +92,8 @@ public class SmsSendTemplate {
         }
         List<SysParameter> filterList = smsParamList.stream().filter(s -> UserConstants.OPEN.equals(s.getStatus())).collect(Collectors.toList());
         if (CollectionUtils.isEmpty(filterList)) {
-            throw new BizException("无可用短信渠道");
+            String countryCode = request.getHeader("countryCode");
+            throw new BizException(MessageUtils.get("u170036", countryCode));
         }
         return filterList;
     }

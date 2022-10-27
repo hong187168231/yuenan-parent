@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * <p>
@@ -32,8 +33,9 @@ public class GiftController {
 
     @ApiOperation(value = "礼金领取")
     @PostMapping(value = "/receive")
-    public Result add(GiftReceiveReq giftReceiveReq, @LoginUser LoginInfo loginInfo) {
-        return Result.judge(iMemGiftReceiveService.saveMemGiftReceive(giftReceiveReq, loginInfo));
+    public Result add(GiftReceiveReq giftReceiveReq, @LoginUser LoginInfo loginInfo,
+                      HttpServletRequest request) {
+        return Result.judge(iMemGiftReceiveService.saveMemGiftReceive(giftReceiveReq, loginInfo, request));
     }
 
 

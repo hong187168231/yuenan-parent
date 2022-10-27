@@ -16,9 +16,11 @@ import com.indo.common.enums.GoldchangeEnum;
 import com.indo.common.enums.TradingEnum;
 import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.common.result.Result;
+import com.indo.common.result.ResultCode;
 import com.indo.common.utils.DeviceInfoUtil;
 import com.indo.common.utils.ShareCodeUtil;
 import com.indo.common.utils.StringUtils;
+import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.common.web.exception.BizException;
 import com.indo.common.web.util.DozerUtil;
 import com.indo.core.base.service.impl.SuperServiceImpl;
@@ -62,7 +64,8 @@ import java.util.Date;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, MemBaseinfo> implements AppMemBaseInfoService {
+public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMapper, MemBaseinfo>
+		implements AppMemBaseInfoService {
 
 
 	@Resource
@@ -96,7 +99,7 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
 	}
 
 	@Override
-	public Result<AppLoginVo> appLogin(LoginReq req) {
+	public Result<AppLoginVo> appLogin(LoginReq req, HttpServletRequest request) {
 		//黑名单校验
 //        List<SysIpLimit> list =sysIpLimitClient.findSysIpLimitByType(1).getData();
 //        if(!CollectionUtils.isEmpty(list)){
@@ -130,7 +133,8 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
 			return Result.failed("账号或密码错误！");
 		}
 		if (userInfo.getProhibitLogin().equals(1) || !userInfo.getStatus().equals(0)) {
-			throw new BizException("你暂时不能登录,请联系管理员");
+			String countryCode = request.getHeader("countryCode");
+			throw new BizException(MessageUtils.get("u170010", countryCode));
 		}
 		modifyLogin(userInfo);
 		String accToken = UserBusinessRedisUtils.createMemAccToken(userInfo);
@@ -185,7 +189,7 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public Result<AppLoginVo> register(RegisterReq req) {
+	public Result<AppLoginVo> register(RegisterReq req, HttpServletRequest request) {
 		if (!req.getPassword().equals(req.getConfirmPassword())) {
 			return Result.failed("两次密码填写不一样！");
 		}
@@ -204,7 +208,8 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
 			}
 			MemBaseInfoBO superiorMem = findMemBaseInfo(memInviteCode.getAccount());
 			if (superiorMem.getProhibitInvite().equals(1)) {
-				throw new BizException("该邀请人已被禁止发展下级");
+				String countryCode = request.getHeader("countryCode");
+				throw new BizException(MessageUtils.get("u170011", countryCode));
 			}
 		}
 		//查询是否存在当前用户
@@ -304,13 +309,15 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
 
 	@Override
 	@Transactional
-	public boolean updatePassword(UpdatePasswordReq req, LoginInfo loginUser) {
+	public boolean updatePassword(UpdatePasswordReq req, LoginInfo loginUser, HttpServletRequest request) {
 		MemBaseinfo memBaseinfo = this.baseMapper.selectById(loginUser.getId());
 		if (!memBaseinfo.getPasswordMd5().equals(req.getOldPassword())) {
-			throw new BizException("旧密码输错误");
+			String countryCode = request.getHeader("countryCode");
+			throw new BizException(MessageUtils.get("u170012", countryCode));
 		}
 		if (memBaseinfo.getPasswordMd5().equals(req.getNewPassword())) {
-			throw new BizException("新密码和旧密码不能一样");
+			String countryCode = request.getHeader("countryCode");
+			throw new BizException(MessageUtils.get("u170013", countryCode));
 		}
 		memBaseinfo.setPasswordMd5(req.getNewPassword());
 		MemBaseInfoDTO memBaseInfoDTO = new MemBaseInfoDTO();

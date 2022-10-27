@@ -5,6 +5,8 @@ import com.indo.common.pojo.bo.LoginInfo;
 import com.indo.core.pojo.entity.MemGiftReceive;
 import com.indo.user.pojo.req.gift.GiftReceiveReq;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * <p>
  * 礼金领取 服务类
@@ -15,7 +17,7 @@ import com.indo.user.pojo.req.gift.GiftReceiveReq;
  */
 public interface IMemGiftReceiveService extends IService<MemGiftReceive> {
 
-    boolean saveMemGiftReceive(GiftReceiveReq giftReceiveReq, LoginInfo loginInfo);
+    boolean saveMemGiftReceive(GiftReceiveReq giftReceiveReq, LoginInfo loginInfo, HttpServletRequest request);
 
     MemGiftReceive findGiftByCodeAndMemId(String giftCode, Long memId);
 

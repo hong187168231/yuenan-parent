@@ -8,7 +8,9 @@ import com.indo.admin.pojo.vo.agent.AgentSubVO;
 import com.indo.admin.pojo.vo.agent.RebateStatVO;
 import com.indo.common.constant.GlobalConstants;
 import com.indo.common.pojo.bo.LoginInfo;
+import com.indo.common.result.ResultCode;
 import com.indo.common.utils.DateUtils;
+import com.indo.common.utils.i18n.MessageUtils;
 import com.indo.common.web.exception.BizException;
 import com.indo.core.base.service.impl.SuperServiceImpl;
 import com.indo.core.pojo.bo.MemBaseInfoBO;
@@ -23,8 +25,10 @@ import com.indo.user.service.IMemAgentService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -61,23 +65,27 @@ public class AppAgentServiceImpl extends SuperServiceImpl<AgentRelationMapper, A
 	private MemBaseInfoMapper memBaseInfoMapper;
 
 	@Override
-	public boolean apply(MemAgentApplyReq req, LoginInfo loginInfo) {
+	public boolean apply(MemAgentApplyReq req, LoginInfo loginInfo, HttpServletRequest request) {
 		String uuidKey = UserBusinessRedisUtils.get(req.getUuid());
 		if (StringUtils.isEmpty(uuidKey) || !req.getImgCode().equalsIgnoreCase(uuidKey)) {
-			throw new BizException("图像验证码错误！");
+			String countryCode = request.getHeader("countryCode");
+			throw new BizException(MessageUtils.get("u170001", countryCode));
 		}
 		LambdaQueryWrapper<AgentApply> wrapper = new LambdaQueryWrapper<>();
 		wrapper.eq(AgentApply::getAccount, loginInfo.getAccount());
 		AgentApply agentApply = agentApplyMapper.selectOne(wrapper);
 		if (ObjectUtil.isNotNull(agentApply)) {
 			if (agentApply.getStatus().equals(GlobalConstants.AGENT_APPLY_STATUS_AUDIT)) {
-				throw new BizException("代理申请审核中，请勿重复提交!");
+				String countryCode = request.getHeader("countryCode");
+				throw new BizException(MessageUtils.get("u170002", countryCode));
 			}
 			if (agentApply.getStatus().equals(GlobalConstants.AGENT_APPLY_STATUS_PASS)) {
-				throw new BizException("您已经是代理了哦呦!");
+				String countryCode = request.getHeader("countryCode");
+				throw new BizException(MessageUtils.get("u170002", countryCode));
 			}
 			if (agentApply.getStatus().equals(GlobalConstants.AGENT_APPLY_STATUS_REJECT)) {
-				throw new BizException("代理申请被拒,请联系客服处理!");
+				String countryCode = request.getHeader("countryCode");
+				throw new BizException(MessageUtils.get("u170004", countryCode));
 			}
 		}
 		agentApply = new AgentApply();
@@ -100,21 +108,23 @@ public class AppAgentServiceImpl extends SuperServiceImpl<AgentRelationMapper, A
 	}
 
 	@Override
-	public boolean
-	takeRebate(BigDecimal rebateAmount, Long memBankId, LoginInfo loginInfo) {
+	public boolean takeRebate(BigDecimal rebateAmount, Long memBankId, LoginInfo loginInfo, HttpServletRequest request) {
 		LambdaQueryWrapper<AgentRebate> wrapper = new LambdaQueryWrapper<>();
 		wrapper.eq(AgentRebate::getMemId, loginInfo.getId());
 		AgentRebate agentRebate = agentRebateMapper.selectOne(wrapper);
 		if (null == agentRebate) {
-			throw new BizException("无返佣金额");
+			String countryCode = request.getHeader("countryCode");
+			throw new BizException(MessageUtils.get("u170005", countryCode));
 		}
 		// 提现金额必须大于0
 		if (rebateAmount.intValue() < 100) {
-			throw new BizException("佣金提款金额必须在100以上!");
+			String countryCode = request.getHeader("countryCode");
+			throw new BizException(MessageUtils.get("u170006", countryCode));
 		}
 		MemBank memBank = memBankRelationMapper.selectById(memBankId);
 		if (memBank == null) {
-			throw new BizException("银行卡信息为空!");
+			String countryCode = request.getHeader("countryCode");
+			throw new BizException(MessageUtils.get("u170007", countryCode));
 		}
 		AgentCashApply agentCashApply = new AgentCashApply();
 		agentCashApply.setMemId(loginInfo.getId());
