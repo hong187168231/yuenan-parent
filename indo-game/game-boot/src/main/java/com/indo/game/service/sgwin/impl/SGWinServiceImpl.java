@@ -126,7 +126,7 @@ public class SGWinServiceImpl implements SGWinService {
                 }else {
                     url = OpenAPIProperties.SGWIN_LOGIN_URL+"/mobile/member/index?_OLID_="+session;
                 }
-
+                logger.info("SGWin  sgwinGame登录请求url:{}", url);
                 responseData.setPathUrl(url);
                 return Result.success(responseData);
             }else {
