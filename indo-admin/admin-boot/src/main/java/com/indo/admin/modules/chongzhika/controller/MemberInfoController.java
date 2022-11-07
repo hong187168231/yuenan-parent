@@ -1,5 +1,6 @@
 package com.indo.admin.modules.chongzhika.controller;
 
+import com.indo.common.web.util.JwtUtils;
 import com.indo.core.service.chongzhika.IMemberInfoService;
 import com.indo.core.pojo.req.chongzhika.MemberInfoReq;
 import com.indo.core.pojo.req.chongzhika.PageRequest;
@@ -90,18 +91,20 @@ public class MemberInfoController {
 //            result.setMsg("您是普通会员，此功能只对管理员开放。");
 //            return result;
 //        }
-        if(null==memberInfoReq.getUserid()||"".equals(memberInfoReq.getUserid())){
-            Result result = new Result();
-            result.setSuccess(false);
-            result.setMsg(MessageUtils.get("a100002",countryCode));
-            return result;
-        }
-        if(null==memberInfoReq.getUsername()||"".equals(memberInfoReq.getUsername())){
-            Result result = new Result();
-            result.setSuccess(false);
-            result.setMsg(MessageUtils.get("a100003",countryCode));
-            return result;
-        }
+        memberInfoReq.setUsername(JwtUtils.getUsername());
+        memberInfoReq.setUserid(JwtUtils.getUserId());
+//        if(null==memberInfoReq.getUserid()||"".equals(memberInfoReq.getUserid())){
+//            Result result = new Result();
+//            result.setSuccess(false);
+//            result.setMsg(MessageUtils.get("a100002",countryCode));
+//            return result;
+//        }
+//        if(null==memberInfoReq.getUsername()||"".equals(memberInfoReq.getUsername())){
+//            Result result = new Result();
+//            result.setSuccess(false);
+//            result.setMsg(MessageUtils.get("a100003",countryCode));
+//            return result;
+//        }
         return memberInfoService.isHandleCard(memberInfoReq,countryCode);
     }
 }

@@ -3,6 +3,7 @@ package com.indo.admin.modules.chongzhika.controller;
 import com.indo.admin.modules.chongzhika.service.ICardInfoService;
 import com.indo.admin.modules.chongzhika.service.IExportService;
 import com.indo.admin.pojo.req.chongzhika.CardInfoReq;
+import com.indo.common.web.util.JwtUtils;
 import com.indo.core.pojo.req.chongzhika.Result;
 import com.indo.common.utils.i18n.MessageUtils;
 import io.swagger.annotations.ApiOperation;
@@ -48,12 +49,13 @@ public class CardController {
 //            result.setMsg("用户登录已失效请重新登录");
 //            return result;
 //        }
-        if(null==cardInfoReq.getUserId()||"".equals(cardInfoReq.getUserId())){
-            Result result = new Result();
-            result.setSuccess(false);
-            result.setMsg(MessageUtils.get("a100001",countryCode));
-            return result;
-        }
+//        if(null==cardInfoReq.getUserId()||"".equals(cardInfoReq.getUserId())){
+//            Result result = new Result();
+//            result.setSuccess(false);
+//            result.setMsg(MessageUtils.get("a100001",countryCode));
+//            return result;
+//        }
+        cardInfoReq.setUserId(JwtUtils.getUserId());//登录ID
 
 //        cardInfoReq1.setCardNoPrefix("z");//前缀
 //        cardInfoReq1.setCardAmount(10D);//卡面金额
