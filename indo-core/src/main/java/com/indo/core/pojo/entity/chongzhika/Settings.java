@@ -1,4 +1,4 @@
-package com.indo.admin.pojo.entity.chongzhika;
+package com.indo.core.pojo.entity.chongzhika;
 
 public class Settings {
 

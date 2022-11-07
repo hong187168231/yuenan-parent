@@ -1,6 +1,6 @@
-package com.indo.admin.modules.chongzhika.mapper;
+package com.indo.core.service.chongzhika.mapper;
 
-import com.indo.admin.pojo.entity.chongzhika.Settings;
+import com.indo.core.pojo.entity.chongzhika.Settings;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
 

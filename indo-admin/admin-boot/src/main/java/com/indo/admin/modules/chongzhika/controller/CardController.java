@@ -3,11 +3,10 @@ package com.indo.admin.modules.chongzhika.controller;
 import com.indo.admin.modules.chongzhika.service.ICardInfoService;
 import com.indo.admin.modules.chongzhika.service.IExportService;
 import com.indo.admin.pojo.req.chongzhika.CardInfoReq;
-import com.indo.admin.pojo.req.chongzhika.Result;
+import com.indo.core.pojo.req.chongzhika.Result;
 import com.indo.common.utils.i18n.MessageUtils;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;

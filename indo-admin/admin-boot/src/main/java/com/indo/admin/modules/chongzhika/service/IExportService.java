@@ -1,6 +1,6 @@
 package com.indo.admin.modules.chongzhika.service;
 
-import com.indo.admin.pojo.req.chongzhika.Result;
+import com.indo.core.pojo.req.chongzhika.Result;
 
 import javax.servlet.http.HttpServletResponse;
 

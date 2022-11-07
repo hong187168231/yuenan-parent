@@ -1,4 +1,4 @@
-package com.indo.admin.pojo.req.chongzhika;
+package com.indo.core.pojo.req.chongzhika;
 
 public class PageRequest {
     /**

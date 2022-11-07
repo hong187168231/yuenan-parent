@@ -1,16 +1,15 @@
-package com.indo.admin.modules.chongzhika.service.impl;
+package com.indo.core.service.chongzhika;
 
-import com.indo.admin.modules.chongzhika.mapper.CardInfoMapper;
-import com.indo.admin.modules.chongzhika.mapper.MemberInfoMapper;
-import com.indo.admin.modules.chongzhika.mapper.SettingsMapper;
-import com.indo.admin.modules.chongzhika.service.IMemberInfoService;
-import com.indo.admin.pojo.entity.chongzhika.CardInfo;
-import com.indo.admin.pojo.entity.chongzhika.MemberInfo;
-import com.indo.admin.pojo.entity.chongzhika.Settings;
-import com.indo.admin.pojo.req.chongzhika.MemberInfoReq;
-import com.indo.admin.pojo.req.chongzhika.PageRequest;
-import com.indo.admin.pojo.req.chongzhika.Result;
-import com.indo.admin.pojo.vo.chongzhika.MemberInfoVo;
+import com.indo.core.pojo.entity.chongzhika.CardInfo;
+import com.indo.core.pojo.entity.chongzhika.MemberInfo;
+import com.indo.core.pojo.entity.chongzhika.Settings;
+import com.indo.core.pojo.req.chongzhika.MemberInfoReq;
+import com.indo.core.pojo.req.chongzhika.PageRequest;
+import com.indo.core.pojo.req.chongzhika.Result;
+import com.indo.core.service.chongzhika.mapper.CardInfoMapper;
+import com.indo.core.service.chongzhika.mapper.MemberInfoMapper;
+import com.indo.core.service.chongzhika.mapper.SettingsMapper;
+import com.indo.core.pojo.vo.chongzhika.MemberInfoVo;
 import com.indo.common.utils.DateUtils;
 import com.indo.common.utils.i18n.MessageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +30,7 @@ public class MemberInfoServiceImpl implements IMemberInfoService {
     private SettingsMapper settingsMapper;
 
     @Transactional(rollbackFor = Exception.class)
-    public Result addMemberInfo(MemberInfoReq memberInfoReq,String countryCode){
+    public Result addMemberInfo(MemberInfoReq memberInfoReq, String countryCode){
         Result result = new Result();
         result.setSuccess(false);
         result.setDetail(null);
@@ -223,7 +222,7 @@ public class MemberInfoServiceImpl implements IMemberInfoService {
         return result;
     }
 
-    public Result selectStatiActivationCard(MemberInfoReq memberInfoReq, PageRequest pageRequest,String countryCode){
+    public Result selectStatiActivationCard(MemberInfoReq memberInfoReq, PageRequest pageRequest, String countryCode){
         Result result = new Result();
         result.setSuccess(false);
         result.setDetail(null);

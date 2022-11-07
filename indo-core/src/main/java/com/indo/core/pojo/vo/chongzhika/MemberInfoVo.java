@@ -1,4 +1,4 @@
-package com.indo.admin.pojo.vo.chongzhika;
+package com.indo.core.pojo.vo.chongzhika;
 
 public class MemberInfoVo {
     private String cardNoPrefix;

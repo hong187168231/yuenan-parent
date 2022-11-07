@@ -1,6 +1,7 @@
-package com.indo.admin.pojo.req.chongzhika;
+package com.indo.core.pojo.req.chongzhika;
 
-import com.indo.admin.pojo.entity.chongzhika.MemberInfo;
+
+import com.indo.core.pojo.entity.chongzhika.MemberInfo;
 
 public class MemberInfoReq extends MemberInfo {
 

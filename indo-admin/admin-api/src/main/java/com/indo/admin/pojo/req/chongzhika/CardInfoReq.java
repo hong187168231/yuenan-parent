@@ -1,6 +1,6 @@
 package com.indo.admin.pojo.req.chongzhika;
 
-import com.indo.admin.pojo.entity.chongzhika.CardInfo;
+import com.indo.core.pojo.entity.chongzhika.CardInfo;
 
 public class CardInfoReq extends CardInfo {
 
