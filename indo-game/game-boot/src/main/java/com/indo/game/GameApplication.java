@@ -2,6 +2,7 @@ package com.indo.game;
 
 import com.indo.common.config.OpenAPIProperties;
 import com.indo.game.common.util.SpringUtil;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;

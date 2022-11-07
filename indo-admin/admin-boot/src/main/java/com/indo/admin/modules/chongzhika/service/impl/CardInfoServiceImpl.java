@@ -1,6 +1,6 @@
 package com.indo.admin.modules.chongzhika.service.impl;
 
-import com.indo.core.service.chongzhika.mapper.CardInfoMapper;
+import com.indo.core.mapper.chongzhika.CardInfoMapper;
 import com.indo.admin.modules.chongzhika.service.ICardInfoService;
 import com.indo.core.pojo.entity.chongzhika.CardInfo;
 import com.indo.admin.pojo.req.chongzhika.CardInfoReq;

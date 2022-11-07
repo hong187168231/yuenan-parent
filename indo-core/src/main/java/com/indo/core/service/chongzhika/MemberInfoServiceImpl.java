@@ -6,27 +6,27 @@ import com.indo.core.pojo.entity.chongzhika.Settings;
 import com.indo.core.pojo.req.chongzhika.MemberInfoReq;
 import com.indo.core.pojo.req.chongzhika.PageRequest;
 import com.indo.core.pojo.req.chongzhika.Result;
-import com.indo.core.service.chongzhika.mapper.CardInfoMapper;
-import com.indo.core.service.chongzhika.mapper.MemberInfoMapper;
-import com.indo.core.service.chongzhika.mapper.SettingsMapper;
+import com.indo.core.mapper.chongzhika.CardInfoMapper;
+import com.indo.core.mapper.chongzhika.MemberInfoMapper;
+import com.indo.core.mapper.chongzhika.SettingsMapper;
 import com.indo.core.pojo.vo.chongzhika.MemberInfoVo;
 import com.indo.common.utils.DateUtils;
 import com.indo.common.utils.i18n.MessageUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @Transactional(rollbackFor = RuntimeException.class)
 public class MemberInfoServiceImpl implements IMemberInfoService {
-    @Autowired
+    @Resource
     private MemberInfoMapper memberInfoMapper;
-    @Autowired
+    @Resource
     private CardInfoMapper cardInfoMapper;
-    @Autowired
+    @Resource
     private SettingsMapper settingsMapper;
 
     @Transactional(rollbackFor = Exception.class)

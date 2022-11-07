@@ -1,4 +1,4 @@
-package com.indo.core.service.chongzhika.mapper;
+package com.indo.core.mapper.chongzhika;
 
 import com.indo.core.pojo.entity.chongzhika.Settings;
 import org.apache.ibatis.annotations.*;

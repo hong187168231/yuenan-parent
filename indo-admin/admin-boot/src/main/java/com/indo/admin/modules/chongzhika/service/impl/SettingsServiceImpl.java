@@ -1,6 +1,6 @@
 package com.indo.admin.modules.chongzhika.service.impl;
 
-import com.indo.core.service.chongzhika.mapper.SettingsMapper;
+import com.indo.core.mapper.chongzhika.SettingsMapper;
 import com.indo.admin.modules.chongzhika.service.ISettingsService;
 import com.indo.core.pojo.entity.chongzhika.Settings;
 import com.indo.core.pojo.req.chongzhika.Result;
