@@ -4,10 +4,12 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.indo.core.pojo.entity.chongzhika.MemberInfo;
 import com.indo.core.pojo.vo.chongzhika.MemberInfoVo;
 import org.apache.ibatis.annotations.*;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Mapper
+@Repository
 public interface MemberInfoMapper extends BaseMapper<MemberInfo> {
     @Insert("insert into memberInfo values(#{id},#{activationAcct},#{ipAddress},#{deviceInfo},#{cardNo},#{is_delete},#{create_time},#{update_time},#{cardAmount},#{additionalAmount},#{isHandle},#{userid},#{username},#{cardPwd},#{cardNoPrefix},#{remark})")
     //加入该注解可以保存对象后，查看对象插入id
