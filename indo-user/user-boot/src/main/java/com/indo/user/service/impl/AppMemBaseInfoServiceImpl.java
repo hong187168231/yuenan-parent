@@ -374,15 +374,20 @@ public class AppMemBaseInfoServiceImpl extends SuperServiceImpl<MemBaseInfoMappe
 	@Override
 	@Transactional
 	public void updateBaseInfo(UpdateBaseInfoReq req, LoginInfo loginUser) {
+		MemBaseInfoBO memBaseInfoBOFromDb = this.findMemBaseInfo(loginUser.getAccount());
+		if (memBaseInfoBOFromDb == null) {
+			return;
+		}
 		MemBaseinfo memBaseinfo = new MemBaseinfo();
 		memBaseinfo.setPhone(req.getPhone());
 		memBaseinfo.setBirthday(req.getBirthday());
 		memBaseinfo.setFaceBook(req.getFacebook());
 		memBaseinfo.setWhatsApp(req.getWhatsapp());
 		memBaseinfo.setEmail(req.getEmail());
-		memBaseinfo.setRealName(req.getRealUserName());
+		if (org.apache.commons.lang3.StringUtils.isBlank(memBaseInfoBOFromDb.getRealName())) {
+			memBaseinfo.setRealName(req.getRealUserName());
+		}
 		memBaseinfo.setId(loginUser.getId());
-
 		MemBaseInfoDTO memBaseInfoDTO = new MemBaseInfoDTO();
 		DozerUtil.map(memBaseinfo, memBaseInfoDTO);
 		refreshMemBaseInfo(memBaseInfoDTO, loginUser.getAccount());
