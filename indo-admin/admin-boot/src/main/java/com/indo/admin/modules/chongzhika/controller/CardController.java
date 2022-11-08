@@ -3,9 +3,8 @@ package com.indo.admin.modules.chongzhika.controller;
 import com.indo.admin.modules.chongzhika.service.ICardInfoService;
 import com.indo.admin.modules.chongzhika.service.IExportService;
 import com.indo.admin.pojo.req.chongzhika.CardInfoReq;
+import com.indo.common.result.Result;
 import com.indo.common.web.util.JwtUtils;
-import com.indo.core.pojo.req.chongzhika.Result;
-import com.indo.common.utils.i18n.MessageUtils;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +27,7 @@ public class CardController {
      */
     @ApiOperation(value = "批量生成卡密", httpMethod = "POST")
     @PostMapping(value = "/addCardInfo")
-    public Result addCardInfo(HttpServletRequest request,CardInfoReq cardInfoReq){
+    public Result addCardInfo(HttpServletRequest request, CardInfoReq cardInfoReq){
         //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
         String countryCode = request.getHeader("countryCode");
 //        CardInfoReq cardInfoReq1 = new CardInfoReq();

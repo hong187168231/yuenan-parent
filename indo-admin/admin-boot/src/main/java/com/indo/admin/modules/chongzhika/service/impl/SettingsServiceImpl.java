@@ -1,9 +1,9 @@
 package com.indo.admin.modules.chongzhika.service.impl;
 
+import com.indo.common.result.Result;
 import com.indo.core.mapper.chongzhika.SettingsMapper;
 import com.indo.admin.modules.chongzhika.service.ISettingsService;
 import com.indo.core.pojo.entity.chongzhika.Settings;
-import com.indo.core.pojo.req.chongzhika.Result;
 import com.indo.admin.pojo.req.chongzhika.SettingsReq;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,13 +20,10 @@ public class SettingsServiceImpl implements ISettingsService {
 
     public Result querySettings(){
         Result result = new Result();
-        result.setSuccess(false);
-        result.setDetail(null);
         try {
             List<Settings> settingsList = settingsMapper.selectSettings();
-            result.setSuccess(true);
-            result.setMsg("管理设置查询成功");
-            result.setDetail(settingsList);
+//            result.setMsg("管理设置查询成功");
+            result.success(settingsList);
         } catch (Exception e) {
             result.setMsg("管理设置查询失败");
             e.printStackTrace();
@@ -37,8 +34,6 @@ public class SettingsServiceImpl implements ISettingsService {
     @Transactional(rollbackFor = Exception.class)
     public Result modifySettings(SettingsReq settingsReq){
         Result result = new Result();
-        result.setSuccess(false);
-        result.setDetail(null);
 
         Settings settings = new Settings();
         settings.setId(settingsReq.getId());
@@ -51,11 +46,11 @@ public class SettingsServiceImpl implements ISettingsService {
         settings.setSwhLitAcctActiDay(settingsReq.getSwhLitAcctActiDay());//限制同一个id账号激活开关 0开 1关闭
         settings.setLitAcctActiDay(settingsReq.getLitAcctActiDay());//限制同一个id账号只能激活数量
         settingsMapper.updateSettings(settings);
-        result.setSuccess(true);
-        result.setMsg("管理设置修改成功");
+//        result.setSuccess(true);
+//        result.setMsg("管理设置修改成功");
         List<Settings> settingsList = new ArrayList<Settings>();
         settingsList.add(settings);
-        result.setDetail(settingsList);
+        result.success(settingsList);
 
         return result;
     }

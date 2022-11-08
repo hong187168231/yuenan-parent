@@ -1,10 +1,10 @@
 package com.indo.admin.modules.chongzhika.service.impl;
 
+import com.indo.common.result.Result;
 import com.indo.core.mapper.chongzhika.CardInfoMapper;
 import com.indo.admin.modules.chongzhika.service.ICardInfoService;
 import com.indo.core.pojo.entity.chongzhika.CardInfo;
 import com.indo.admin.pojo.req.chongzhika.CardInfoReq;
-import com.indo.core.pojo.req.chongzhika.Result;
 import com.indo.common.utils.DateUtils;
 import com.indo.common.utils.i18n.MessageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,10 +25,8 @@ public class CardInfoServiceImpl implements ICardInfoService {
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
-    public Result insertCardInfoBatch(CardInfoReq cardInfoReq,String countryCode){
+    public Result insertCardInfoBatch(CardInfoReq cardInfoReq, String countryCode){
         Result result = new Result();
-        result.setSuccess(false);
-        result.setDetail(null);
 
             Long serialNumber = 0l;
             if(cardInfoReq.getCardNoSerial()!=null&&!"".equals(cardInfoReq.getCardNoSerial())){
@@ -37,7 +35,7 @@ public class CardInfoServiceImpl implements ICardInfoService {
             int total = cardInfoReq.getTotal();
             String msg = this.verifyTotal(cardInfoReq, countryCode);
             if(null!=msg&&!"".equals(msg)){
-                result.setMsg(msg);
+                result.failed(msg);
                 return result;
             }
             CardInfo maxCardInfo = cardInfoMapper.selectMaxId(cardInfoReq.getCardNoPrefix());
@@ -46,13 +44,13 @@ public class CardInfoServiceImpl implements ICardInfoService {
                     if(maxCardInfo.getCardNoPrefix()!=null&&!"".equals(maxCardInfo.getCardNoPrefix())){
                         if(maxCardInfo.getCardNoSerial()!=null&&!"".equals(maxCardInfo.getCardNoSerial())){
                             if(Long.valueOf(maxCardInfo.getCardNoSerial())>=Long.valueOf(serialNumber)){
-                                result.setMsg(MessageUtils.get("a100004",countryCode)+"（"+serialNumber+"）"+MessageUtils.get("a100005",countryCode)+"（"+maxCardInfo.getCardNoSerial()+"）");
+                                result.failed(MessageUtils.get("a100004",countryCode)+"（"+serialNumber+"）"+MessageUtils.get("a100005",countryCode)+"（"+maxCardInfo.getCardNoSerial()+"）");
                                 return result;
                             }
                         }
                     }
                 }else {
-                    result.setMsg(MessageUtils.get("a100006",countryCode));
+                    result.failed(MessageUtils.get("a100006",countryCode));
                     return result;
                 }
 
@@ -110,24 +108,20 @@ public class CardInfoServiceImpl implements ICardInfoService {
                 cardInfoMapper.insertCollectList(cardInfoLists);
             }
 
-            result.setMsg(MessageUtils.get("a100007",countryCode));
-            result.setSuccess(true);
-            result.setDetail(cardInfoAllLists);
+//            result.failed(MessageUtils.get("a100007",countryCode));
+        result.success(cardInfoAllLists);
 
         return result;
     }
     public Result selectCardInfoByisActivation(String countryCode){
         Result result = new Result();
-        result.setSuccess(false);
-        result.setDetail(null);
 
         try {
             List<CardInfo> cardInfoLists = cardInfoMapper.selectCardInfoByisActivationAndIsHandle("0","1","1");
-            result.setMsg(MessageUtils.get("a100008",countryCode));
-            result.setSuccess(true);
-            result.setDetail(cardInfoLists);
+//            result.failed(MessageUtils.get("a100008",countryCode));
+            result.success(cardInfoLists);
         } catch (Exception e) {
-            result.setMsg(MessageUtils.get("a100009",countryCode));
+            result.failed(MessageUtils.get("a100009",countryCode));
             e.printStackTrace();
         }
         return result;
@@ -135,16 +129,13 @@ public class CardInfoServiceImpl implements ICardInfoService {
 
     public Result selectCardNoPrefix(String countryCode){
         Result result = new Result();
-        result.setSuccess(false);
-        result.setDetail(null);
 
         try {
             List<String> prefixLists = cardInfoMapper.selectCardNoPrefix();
-            result.setMsg(MessageUtils.get("a100010",countryCode));
-            result.setSuccess(true);
-            result.setDetail(prefixLists);
+//            result.failed(MessageUtils.get("a100010",countryCode));
+            result.success(prefixLists);
         } catch (Exception e) {
-            result.setMsg(MessageUtils.get("a100011",countryCode));
+            result.failed(MessageUtils.get("a100011",countryCode));
             e.printStackTrace();
         }
         return result;

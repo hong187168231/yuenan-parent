@@ -1,9 +1,9 @@
 package com.indo.admin.modules.chongzhika.service.impl;
 
+import com.indo.common.result.Result;
 import com.indo.core.mapper.chongzhika.CardInfoMapper;
 import com.indo.admin.modules.chongzhika.service.IExportService;
 import com.indo.core.pojo.entity.chongzhika.CardInfo;
-import com.indo.core.pojo.req.chongzhika.Result;
 import com.indo.common.utils.DateUtils;
 import com.indo.common.utils.i18n.MessageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +26,8 @@ public class ExportServiceImpl implements IExportService {
     @Transactional(rollbackFor = Exception.class)
     public Result exportCardInfo(HttpServletResponse response, String cardNoPrefix,String countryCode){
         Result result = new Result();
-        result.setSuccess(false);
-        result.setDetail(null);
         if(null==cardNoPrefix||"".equals(cardNoPrefix)){
-            result.setMsg(MessageUtils.get("a100025",countryCode));
+            result.failed(MessageUtils.get("a100025",countryCode));
             return result;
         }
         //导出txt文件
@@ -41,7 +39,7 @@ public class ExportServiceImpl implements IExportService {
 //        } catch (Exception e1) {
 //            // TODO Auto-generated catch block
 //            e1.printStackTrace();
-//            result.setMsg("导出文件失败");
+//            result.failed("导出文件失败");
 //        }
 //        response.setHeader("Content-Disposition","attachment; filename=" + fileName + ".txt");
 //        BufferedOutputStream buff = null;
@@ -65,17 +63,16 @@ public class ExportServiceImpl implements IExportService {
                     write.append(enter);
                 }
             }else {
-                result.setMsg(MessageUtils.get("a100026",countryCode));
+                result.failed(MessageUtils.get("a100026",countryCode));
                 return result;
             }
             out.write(write.toString());
 
             cardInfoMapper.updateCardInfoByCardNoPrefix(cardNoPrefix, DateUtils.getDateTime(DateUtils.newFormat));
-            result.setMsg(MessageUtils.get("a100027",countryCode));
-            result.setSuccess(true);
-            result.setDetail(fineNameList);
+            result.failed(MessageUtils.get("a100027",countryCode));
+            result.success(fineNameList);
         } catch (Exception e) {
-            result.setMsg(MessageUtils.get("a100028",countryCode));
+            result.failed(MessageUtils.get("a100028",countryCode));
             e.printStackTrace();
         }
         finally {

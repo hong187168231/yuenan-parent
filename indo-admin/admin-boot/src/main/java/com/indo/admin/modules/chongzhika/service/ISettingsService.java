@@ -1,8 +1,8 @@
 package com.indo.admin.modules.chongzhika.service;
 
 
-import com.indo.core.pojo.req.chongzhika.Result;
 import com.indo.admin.pojo.req.chongzhika.SettingsReq;
+import com.indo.common.result.Result;
 
 public interface ISettingsService {
 

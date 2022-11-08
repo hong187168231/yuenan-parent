@@ -1,7 +1,7 @@
 package com.indo.game.controller.chongzhika;
 
+import com.indo.common.result.Result;
 import com.indo.core.pojo.req.chongzhika.MemberInfoReq;
-import com.indo.core.pojo.req.chongzhika.Result;
 import com.indo.common.web.util.IPUtils;
 import com.indo.core.service.chongzhika.IMemberInfoService;
 import io.swagger.annotations.ApiOperation;
