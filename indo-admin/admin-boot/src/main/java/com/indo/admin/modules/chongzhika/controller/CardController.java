@@ -5,7 +5,10 @@ import com.indo.admin.modules.chongzhika.service.IExportService;
 import com.indo.admin.pojo.req.chongzhika.CardInfoReq;
 import com.indo.common.result.Result;
 import com.indo.common.web.util.JwtUtils;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,6 +17,9 @@ import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/card")
+@Api(tags = "生成卡密")
+@AllArgsConstructor
+@Slf4j
 public class CardController {
     @Autowired
     private ICardInfoService iCardInfoService;

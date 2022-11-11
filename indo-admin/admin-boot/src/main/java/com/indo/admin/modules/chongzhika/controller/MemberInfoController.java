@@ -6,7 +6,10 @@ import com.indo.common.web.util.JwtUtils;
 import com.indo.core.service.chongzhika.IMemberInfoService;
 import com.indo.core.pojo.req.chongzhika.MemberInfoReq;
 import com.indo.core.pojo.req.chongzhika.PageRequest;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +19,9 @@ import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/member")
+@Api(tags = "激活卡密")
+@AllArgsConstructor
+@Slf4j
 public class MemberInfoController {
 
     @Autowired
