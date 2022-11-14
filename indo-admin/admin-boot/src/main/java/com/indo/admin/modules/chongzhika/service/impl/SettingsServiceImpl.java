@@ -19,21 +19,19 @@ public class SettingsServiceImpl implements ISettingsService {
     private SettingsMapper settingsMapper;
 
     public Result querySettings(){
-        Result result = new Result();
         try {
             List<Settings> settingsList = settingsMapper.selectSettings();
 //            result.setMsg("管理设置查询成功");
-            result.success(settingsList);
+            return Result.success(settingsList);
         } catch (Exception e) {
-            result.setMsg("管理设置查询失败");
+//            result.setMsg("管理设置查询失败");
             e.printStackTrace();
+            return Result.failed();
         }
-        return result;
     }
 
     @Transactional(rollbackFor = Exception.class)
     public Result modifySettings(SettingsReq settingsReq){
-        Result result = new Result();
 
         Settings settings = new Settings();
         settings.setId(settingsReq.getId());
@@ -50,8 +48,6 @@ public class SettingsServiceImpl implements ISettingsService {
 //        result.setMsg("管理设置修改成功");
         List<Settings> settingsList = new ArrayList<Settings>();
         settingsList.add(settings);
-        result.success(settingsList);
-
-        return result;
+        return Result.success(settingsList);
     }
 }

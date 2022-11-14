@@ -2,6 +2,7 @@ package com.indo.core.service.chongzhika;
 
 import com.indo.common.result.PageResult;
 import com.indo.common.result.Result;
+import com.indo.common.result.ResultCode;
 import com.indo.core.pojo.entity.chongzhika.CardInfo;
 import com.indo.core.pojo.entity.chongzhika.MemberInfo;
 import com.indo.core.pojo.entity.chongzhika.Settings;
@@ -32,36 +33,30 @@ public class MemberInfoServiceImpl implements IMemberInfoService {
 
     @Transactional(rollbackFor = Exception.class)
     public Result addMemberInfo(MemberInfoReq memberInfoReq, String countryCode){
-        Result result = new Result();
         if(null==memberInfoReq.getCardNo()||"".equals(memberInfoReq.getCardNo())){
 //            result.failed("充值卡卡号不能为空");
-            result.failed(MessageUtils.get("a100029",countryCode));
-            return result;
+            return Result.failed(MessageUtils.get("a100029",countryCode));
         }
 
         if(null==memberInfoReq.getCardPwd()||"".equals(memberInfoReq.getCardPwd())){
 //            result.failed("充值卡密码不能为空");
-            result.failed(MessageUtils.get("a100030",countryCode));
-            return result;
+            Result.failed(MessageUtils.get("a100030",countryCode));
         }
         if(null==memberInfoReq.getActivationAcct()||"".equals(memberInfoReq.getActivationAcct())){
 //            result.failed("会员账号不能为空");
-            result.failed(MessageUtils.get("a100031",countryCode));
-            return result;
+            return Result.failed(MessageUtils.get("a100031",countryCode));
         }
         if(null==memberInfoReq.getIpAddress()||"".equals(memberInfoReq.getIpAddress())){
-//            result.failed("IP地址不能为空");
-            result.failed(MessageUtils.get("a100032",countryCode));
-            return result;
+//            return Result.failed("IP地址不能为空");
+            return Result.failed(MessageUtils.get("a100032",countryCode));
         }
         Settings settings = settingsMapper.selectSettingsByid("1");
         if("0".equals(settings.getSwhLitIpActi())){//限制同一个ip激活开关 0开 1关闭
             List<MemberInfo> IPList = memberInfoMapper.selectMemberInfoByIp(memberInfoReq.getIpAddress());
             if(null!=IPList){
                 if(IPList.size()>=settings.getLimitIpActi()){;//限制同一个ip激活数量
-//                    result.failed("同一个ip只能激活（"+settings.getLimitIpActi()+"）个卡密");
-                    result.failed(MessageUtils.get("a100033",countryCode)+" （"+settings.getLimitIpActi()+"） "+MessageUtils.get("a100034",countryCode));
-                    return result;
+//                    return Result.failed("同一个ip只能激活（"+settings.getLimitIpActi()+"）个卡密");
+                    return Result.failed(MessageUtils.get("a100033",countryCode)+" （"+settings.getLimitIpActi()+"） "+MessageUtils.get("a100034",countryCode));
                 }
             }
         }
@@ -70,9 +65,8 @@ public class MemberInfoServiceImpl implements IMemberInfoService {
             List<MemberInfo> activationAcctList = memberInfoMapper.selectMemberInfoByActivationAcct(memberInfoReq.getActivationAcct());
             if(null!=activationAcctList){
                 if(activationAcctList.size()>=settings.getLitAcctActi()){//限制同一个id账号只能激活数量
-//                    result.failed("同一个会员账号只能激活（"+settings.getLitAcctActi()+"）张卡密");
-                    result.failed(MessageUtils.get("a100035",countryCode)+"（"+settings.getLitAcctActi()+"） "+MessageUtils.get("a100036",countryCode));
-                    return result;
+//                    return Result.failed("同一个会员账号只能激活（"+settings.getLitAcctActi()+"）张卡密");
+                    return Result.failed(MessageUtils.get("a100035",countryCode)+"（"+settings.getLitAcctActi()+"） "+MessageUtils.get("a100036",countryCode));
                 }
             }
         }
@@ -81,9 +75,8 @@ public class MemberInfoServiceImpl implements IMemberInfoService {
             List<MemberInfo> activationAcctList = memberInfoMapper.selectMemberInfoByActivationAcctToDays(memberInfoReq.getActivationAcct());
             if(null!=activationAcctList){
                 if(activationAcctList.size()>=settings.getLitAcctActiDay()){//限制同一个id账号只能激活数量
-//                    result.failed("同一个会员账号每天只能激活（"+settings.getLitAcctActi()+"）张卡密");
-                    result.failed(MessageUtils.get("a100037",countryCode)+" ("+settings.getLitAcctActiDay()+") "+MessageUtils.get("a100038",countryCode));
-                    return result;
+//                    return Result.failed("同一个会员账号每天只能激活（"+settings.getLitAcctActi()+"）张卡密");
+                    return Result.failed(MessageUtils.get("a100037",countryCode)+" ("+settings.getLitAcctActiDay()+") "+MessageUtils.get("a100038",countryCode));
                 }
             }
         }
@@ -91,29 +84,24 @@ public class MemberInfoServiceImpl implements IMemberInfoService {
 
             CardInfo cardInfo = cardInfoMapper.selectCardInfoByCardNoAndCardPwd(memberInfoReq.getCardNo(),memberInfoReq.getCardPwd());
             if(null==cardInfo){
-//                result.failed("充值卡（"+memberInfoReq.getCardNo()+"）不存在或者卡号密码错误");
-                result.failed(MessageUtils.get("a100039",countryCode)+"（"+memberInfoReq.getCardNo()+"）"+MessageUtils.get("a100040",countryCode));
-                return result;
+//                return Result.failed("充值卡（"+memberInfoReq.getCardNo()+"）不存在或者卡号密码错误");
+                return Result.failed(MessageUtils.get("a100039",countryCode)+"（"+memberInfoReq.getCardNo()+"）"+MessageUtils.get("a100040",countryCode));
             }
             if("1".equals(cardInfo.getIs_delete())){
-//                result.failed("充值卡（"+memberInfoReq.getCardNo()+"）已经删除");
-                result.failed(MessageUtils.get("a100039",countryCode)+"（"+memberInfoReq.getCardNo()+"）"+MessageUtils.get("a100041",countryCode));
-                return result;
+//                return Result.failed("充值卡（"+memberInfoReq.getCardNo()+"）已经删除");
+                return Result.failed(MessageUtils.get("a100039",countryCode)+"（"+memberInfoReq.getCardNo()+"）"+MessageUtils.get("a100041",countryCode));
             }
             if("0".equals(cardInfo.getIsExp())){
-//                result.failed("充值卡（"+memberInfoReq.getCardNo()+"）还未分发，暂不能激活");
-                result.failed(MessageUtils.get("a100039",countryCode)+"（"+memberInfoReq.getCardNo()+"）"+MessageUtils.get("a100042",countryCode));
-                return result;
+//                return Result.failed("充值卡（"+memberInfoReq.getCardNo()+"）还未分发，暂不能激活");
+                return Result.failed(MessageUtils.get("a100039",countryCode)+"（"+memberInfoReq.getCardNo()+"）"+MessageUtils.get("a100042",countryCode));
             }
             if("1".equals(cardInfo.getIsActivation())){
-//                result.failed("充值卡（"+memberInfoReq.getCardNo()+"）已经激活，同一张卡不能重复激活");
-                result.failed(MessageUtils.get("a100039",countryCode)+"（"+memberInfoReq.getCardNo()+"）"+MessageUtils.get("a100043",countryCode));
-                return result;
+//                return Result.failed("充值卡（"+memberInfoReq.getCardNo()+"）已经激活，同一张卡不能重复激活");
+                return Result.failed(MessageUtils.get("a100039",countryCode)+"（"+memberInfoReq.getCardNo()+"）"+MessageUtils.get("a100043",countryCode));
             }
             if("1".equals(cardInfo.getIsHandle())){
-//                result.failed("充值卡（"+memberInfoReq.getCardNo()+"）已经处理，同一张卡不能重复激活");
-                result.failed(MessageUtils.get("a100039",countryCode)+"（"+memberInfoReq.getCardNo()+"）"+MessageUtils.get("a100044",countryCode));
-                return result;
+//                return Result.failed("充值卡（"+memberInfoReq.getCardNo()+"）已经处理，同一张卡不能重复激活");
+                return Result.failed(MessageUtils.get("a100039",countryCode)+"（"+memberInfoReq.getCardNo()+"）"+MessageUtils.get("a100044",countryCode));
             }
             cardInfo.setIsActivation("1");//0否   1激活
             cardInfo.setActivationAcct(memberInfoReq.getActivationAcct());//激活账号
@@ -132,11 +120,11 @@ public class MemberInfoServiceImpl implements IMemberInfoService {
             memberInfo.setAdditionalAmount(cardInfo.getAdditionalAmount());//增送金额
             memberInfo.setCreate_time(DateUtils.getDateTime(DateUtils.newFormat));
             memberInfoMapper.insertMemberInfo(memberInfo);
-//            result.failed("充值卡（"+memberInfoReq.getCardNo()+"）激活成功，充值金额（"+cardInfo.getCardAmount()+"），增送金额（"+cardInfo.getAdditionalAmount()+"）");
-            result.failed(MessageUtils.get("a100039",countryCode)+"（"+memberInfoReq.getCardNo()+"）"+MessageUtils.get("a100045",countryCode)+"（"+cardInfo.getCardAmount()+"），"+MessageUtils.get("a100046",countryCode)+"（"+cardInfo.getAdditionalAmount()+"）");
-        result.success(memberInfo);
+//            return Result.failed("充值卡（"+memberInfoReq.getCardNo()+"）激活成功，充值金额（"+cardInfo.getCardAmount()+"），增送金额（"+cardInfo.getAdditionalAmount()+"）");
+//            return Result.failed(MessageUtils.get("a100039",countryCode)+"（"+memberInfoReq.getCardNo()+"）"+MessageUtils.get("a100045",countryCode)+"（"+cardInfo.getCardAmount()+"），"+MessageUtils.get("a100046",countryCode)+"（"+cardInfo.getAdditionalAmount()+"）");
+        String msg = MessageUtils.get("a100039",countryCode)+"（"+memberInfoReq.getCardNo()+"）"+MessageUtils.get("a100045",countryCode)+"（"+cardInfo.getCardAmount()+"），"+MessageUtils.get("a100046",countryCode)+"（"+cardInfo.getAdditionalAmount()+"）";
+        return Result.success(memberInfo,msg);
 
-        return result;
     }
     public PageResult selectActivationCard(MemberInfoReq memberInfoReq, PageRequest pageRequest,String countryCode){
         PageResult result = new PageResult();
@@ -178,10 +166,8 @@ public class MemberInfoServiceImpl implements IMemberInfoService {
 
     @Transactional(rollbackFor = Exception.class)
     public Result isHandleCard(MemberInfoReq memberInfoReq,String countryCode){
-        Result result = new Result();
         if(null==memberInfoReq.getCardNo()||"".equals(memberInfoReq.getCardNo())){
-            result.failed(MessageUtils.get("a100029",countryCode));
-            return result;
+            return Result.failed(MessageUtils.get("a100029",countryCode));
         }
         List<MemberInfo> list = memberInfoMapper.selectMemberInfoByCardNo(memberInfoReq.getCardNo());
         if(null!=list && list.size()>0) {
@@ -203,17 +189,16 @@ public class MemberInfoServiceImpl implements IMemberInfoService {
                     }
                     cardInfoMapper.updateIsHandleByCardNo(memberInfoReq.getIsHandle(), isActivation, DateUtils.getDateTime(DateUtils.newFormat), memberInfoReq.getCardNo());
                     memberInfoMapper.updateIsHandleByCardNo(isHandle, memberInfoReq.getIs_delete(), memberInfoReq.getRemark(), DateUtils.getDateTime(DateUtils.newFormat), memberInfoReq.getUserid(), memberInfoReq.getUsername(), memberInfo.getId());
-//                    result.failed(MessageUtils.get("a100049",countryCode));
-                    result.success(memberInfo);
+//                    return Result.failed(MessageUtils.get("a100049",countryCode));
+                    return Result.success(memberInfo);
                 }else {
                     memberInfoMapper.deleteMemberInfo(memberInfo.getId());
                 }
             }
         }else {
-            result.failed(MessageUtils.get("a100050",countryCode)+"(" + memberInfoReq.getCardNo() + ")"+MessageUtils.get("a100051",countryCode));
-            return result;
+            return Result.failed(MessageUtils.get("a100050",countryCode)+"(" + memberInfoReq.getCardNo() + ")"+MessageUtils.get("a100051",countryCode));
         }
-        return result;
+        return Result.success();
     }
 
     public PageResult selectStatiActivationCard(MemberInfoReq memberInfoReq, PageRequest pageRequest, String countryCode){

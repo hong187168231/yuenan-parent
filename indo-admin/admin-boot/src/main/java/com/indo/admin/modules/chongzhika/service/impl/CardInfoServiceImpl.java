@@ -26,7 +26,6 @@ public class CardInfoServiceImpl implements ICardInfoService {
      */
     @Transactional(rollbackFor = Exception.class)
     public Result insertCardInfoBatch(CardInfoReq cardInfoReq, String countryCode){
-        Result result = new Result();
 
             Long serialNumber = 0l;
             if(cardInfoReq.getCardNoSerial()!=null&&!"".equals(cardInfoReq.getCardNoSerial())){
@@ -35,8 +34,7 @@ public class CardInfoServiceImpl implements ICardInfoService {
             int total = cardInfoReq.getTotal();
             String msg = this.verifyTotal(cardInfoReq, countryCode);
             if(null!=msg&&!"".equals(msg)){
-                result.failed(msg);
-                return result;
+                return Result.failed(msg);
             }
             CardInfo maxCardInfo = cardInfoMapper.selectMaxId(cardInfoReq.getCardNoPrefix());
             if(null!=maxCardInfo){
@@ -44,14 +42,12 @@ public class CardInfoServiceImpl implements ICardInfoService {
                     if(maxCardInfo.getCardNoPrefix()!=null&&!"".equals(maxCardInfo.getCardNoPrefix())){
                         if(maxCardInfo.getCardNoSerial()!=null&&!"".equals(maxCardInfo.getCardNoSerial())){
                             if(Long.valueOf(maxCardInfo.getCardNoSerial())>=Long.valueOf(serialNumber)){
-                                result.failed(MessageUtils.get("a100004",countryCode)+"（"+serialNumber+"）"+MessageUtils.get("a100005",countryCode)+"（"+maxCardInfo.getCardNoSerial()+"）");
-                                return result;
+                                return Result.failed(MessageUtils.get("a100004",countryCode)+"（"+serialNumber+"）"+MessageUtils.get("a100005",countryCode)+"（"+maxCardInfo.getCardNoSerial()+"）");
                             }
                         }
                     }
                 }else {
-                    result.failed(MessageUtils.get("a100006",countryCode));
-                    return result;
+                    return Result.failed(MessageUtils.get("a100006",countryCode));
                 }
 
             }
@@ -109,36 +105,31 @@ public class CardInfoServiceImpl implements ICardInfoService {
             }
 
 //            result.failed(MessageUtils.get("a100007",countryCode));
-        result.success(cardInfoAllLists);
+        return Result.success(cardInfoAllLists);
 
-        return result;
     }
     public Result selectCardInfoByisActivation(String countryCode){
-        Result result = new Result();
 
         try {
             List<CardInfo> cardInfoLists = cardInfoMapper.selectCardInfoByisActivationAndIsHandle("0","1","1");
 //            result.failed(MessageUtils.get("a100008",countryCode));
-            result.success(cardInfoLists);
+            return Result.success(cardInfoLists);
         } catch (Exception e) {
-            result.failed(MessageUtils.get("a100009",countryCode));
             e.printStackTrace();
+            return Result.failed(MessageUtils.get("a100009",countryCode));
         }
-        return result;
     }
 
     public Result selectCardNoPrefix(String countryCode){
-        Result result = new Result();
 
         try {
             List<String> prefixLists = cardInfoMapper.selectCardNoPrefix();
 //            result.failed(MessageUtils.get("a100010",countryCode));
-            result.success(prefixLists);
+            return Result.success(prefixLists);
         } catch (Exception e) {
-            result.failed(MessageUtils.get("a100011",countryCode));
             e.printStackTrace();
+            return Result.failed(MessageUtils.get("a100011",countryCode));
         }
-        return result;
     }
 
     private String getCardNoSerial(int strLength,Long number){

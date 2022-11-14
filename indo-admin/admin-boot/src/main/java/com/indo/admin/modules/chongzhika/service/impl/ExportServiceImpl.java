@@ -25,10 +25,8 @@ public class ExportServiceImpl implements IExportService {
 
     @Transactional(rollbackFor = Exception.class)
     public Result exportCardInfo(HttpServletResponse response, String cardNoPrefix,String countryCode){
-        Result result = new Result();
         if(null==cardNoPrefix||"".equals(cardNoPrefix)){
-            result.failed(MessageUtils.get("a100025",countryCode));
-            return result;
+            return Result.failed(MessageUtils.get("a100025",countryCode));
         }
         //导出txt文件
 //        response.setContentType("text/plain;charset=UTF-8");
@@ -63,17 +61,17 @@ public class ExportServiceImpl implements IExportService {
                     write.append(enter);
                 }
             }else {
-                result.failed(MessageUtils.get("a100026",countryCode));
-                return result;
+                return Result.failed(MessageUtils.get("a100026",countryCode));
             }
             out.write(write.toString());
 
             cardInfoMapper.updateCardInfoByCardNoPrefix(cardNoPrefix, DateUtils.getDateTime(DateUtils.newFormat));
-            result.failed(MessageUtils.get("a100027",countryCode));
-            result.success(fineNameList);
+//            result.failed(MessageUtils.get("a100027",countryCode));
+            return Result.success(fineNameList);
         } catch (Exception e) {
-            result.failed(MessageUtils.get("a100028",countryCode));
             e.printStackTrace();
+            return Result.failed(MessageUtils.get("a100028",countryCode));
+
         }
         finally {
             try {
@@ -85,6 +83,5 @@ public class ExportServiceImpl implements IExportService {
                 e.printStackTrace();
             }
         }
-        return result;
     }
 }
