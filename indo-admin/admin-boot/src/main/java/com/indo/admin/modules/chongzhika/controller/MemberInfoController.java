@@ -54,10 +54,11 @@ public class MemberInfoController {
      */
     @ApiOperation(value = "查询激活信息", httpMethod = "POST")
     @PostMapping(value = "/queryActivationCard")
-    public PageResult queryActivationCard(HttpServletRequest request, MemberInfoReq memberInfoReq, PageRequest pageRequest){
+    public Result<Object> queryActivationCard(HttpServletRequest request, MemberInfoReq memberInfoReq, PageRequest pageRequest){
         //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
         String countryCode = request.getHeader("countryCode");
-        return memberInfoService.selectActivationCard(memberInfoReq,pageRequest,countryCode);
+        PageResult pageResult = memberInfoService.selectActivationCard(memberInfoReq,pageRequest,countryCode);
+        return Result.success(pageResult.getData(), Long.valueOf(pageResult.getTotalCount()));
     }
 
     /**
@@ -67,10 +68,11 @@ public class MemberInfoController {
      */
     @ApiOperation(value = "查询统计激活信息", httpMethod = "POST")
     @PostMapping(value = "/queryStatiActivationCard")
-    public PageResult queryStatiActivationCard(HttpServletRequest request, MemberInfoReq memberInfoReq, PageRequest pageRequest){
+    public Result<Object> queryStatiActivationCard(HttpServletRequest request, MemberInfoReq memberInfoReq, PageRequest pageRequest){
         //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
         String countryCode = request.getHeader("countryCode");
-        return memberInfoService.selectStatiActivationCard(memberInfoReq,pageRequest,countryCode);
+        PageResult pageResult = memberInfoService.selectStatiActivationCard(memberInfoReq,pageRequest,countryCode);
+        return Result.success(pageResult.getData(), Long.valueOf(pageResult.getTotalCount()));
     }
 
     /**
