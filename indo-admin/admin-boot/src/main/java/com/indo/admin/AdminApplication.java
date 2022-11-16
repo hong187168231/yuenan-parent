@@ -19,4 +19,7 @@ public class AdminApplication {
         ApplicationContext applicationContext = SpringApplication.run(AdminApplication.class, args);
         SpringUtil.setApplicationContext(applicationContext);
     }
+    static {
+        System.setProperty("druid.mysql.usePingMethod","false");
+    }
 }
