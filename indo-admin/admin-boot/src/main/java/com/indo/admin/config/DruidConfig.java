@@ -9,6 +9,7 @@ import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -50,5 +51,13 @@ public class DruidConfig {
         bean.setInitParameters(initParams);
         bean.setUrlPatterns(Arrays.asList("/*"));
         return bean;
+    }
+
+    /*
+     * 解决druid 日志报错：discard long time none received connection:xxx
+     * */
+    @PostConstruct
+    public void setProperties(){
+        System.setProperty("druid.mysql.usePingMethod","false");
     }
 }
