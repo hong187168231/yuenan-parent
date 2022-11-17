@@ -30,6 +30,15 @@ public class ExportServiceImpl implements IExportService {
         if(null==cardNoPrefix||"".equals(cardNoPrefix)){
             return Result.failed(MessageUtils.get("a100025",countryCode));
         }
+        //用户主目录
+        String userHome = System.getProperties().getProperty("user.home");
+        logger.info("用户主目录,userHome:{}", userHome);
+        String javaPath = System.getProperties().getProperty("java.home");
+        logger.info("java实时运行环境安装目录,userHome:{}", javaPath);
+        String osName = System.getProperties().getProperty("os.home");
+        logger.info("操作系统名称,userHome:{}", osName);
+        String userDir = System.getProperties().getProperty("user.dir");
+        logger.info("当前用户程序所在目录,userHome:{}", userDir);
         //导出txt文件
 //        response.setContentType("text/plain;charset=UTF-8");
 
