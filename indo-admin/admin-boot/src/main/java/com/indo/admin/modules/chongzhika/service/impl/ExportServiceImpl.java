@@ -71,7 +71,6 @@ public class ExportServiceImpl implements IExportService {
 //            result.failed(MessageUtils.get("a100027",countryCode));
             return Result.success(fineNameList);
         } catch (Exception e) {
-            logger.info("导出卡号信息。 Exception:{}", e);
             e.printStackTrace();
             return Result.failed(MessageUtils.get("a100028",countryCode));
 
