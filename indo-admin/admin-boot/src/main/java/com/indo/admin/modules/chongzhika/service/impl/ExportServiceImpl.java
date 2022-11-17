@@ -61,7 +61,7 @@ public class ExportServiceImpl implements IExportService {
         try {
 //            outSTr = response.getOutputStream(); // 建立
 //            buff = new BufferedOutputStream(outSTr);
-            out = new BufferedWriter(new FileWriter("/templates/"+fileName));
+            out = new BufferedWriter(new FileWriter(userDir+"/templates/"+fileName));
             List<CardInfo> list = cardInfoMapper.selectCardInfoByCardNoPrefix(cardNoPrefix);
             //把内容写入文件
             if(null!=list&&list.size()>0){
