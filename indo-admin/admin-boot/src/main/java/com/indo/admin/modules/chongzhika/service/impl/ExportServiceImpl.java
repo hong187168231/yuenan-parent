@@ -6,6 +6,8 @@ import com.indo.admin.modules.chongzhika.service.IExportService;
 import com.indo.core.pojo.entity.chongzhika.CardInfo;
 import com.indo.common.utils.DateUtils;
 import com.indo.common.utils.i18n.MessageUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +21,7 @@ import java.util.List;
 @Service
 @Transactional(rollbackFor = RuntimeException.class)
 public class ExportServiceImpl implements IExportService {
-
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
     private CardInfoMapper cardInfoMapper;
 
@@ -69,6 +71,7 @@ public class ExportServiceImpl implements IExportService {
 //            result.failed(MessageUtils.get("a100027",countryCode));
             return Result.success(fineNameList);
         } catch (Exception e) {
+            logger.info("导出卡号信息。 Exception:{}", e);
             e.printStackTrace();
             return Result.failed(MessageUtils.get("a100028",countryCode));
 
