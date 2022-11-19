@@ -38,7 +38,7 @@ public class RouteController {
             list.forEach(l->{
                 l.getMeta().setTitle(MessageUtils.get(l.getName(),countryCode));
                 l.getChildren().forEach(ll->{
-                    ll.getMeta().setTitle(MessageUtils.get(l.getName(),countryCode));
+                    ll.getMeta().setTitle(MessageUtils.get(ll.getName(),countryCode));
                 });
             });
         }
