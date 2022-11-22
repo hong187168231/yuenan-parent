@@ -3,4 +3,5 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   com.indo.admin.api.fallback.MsgFeignFallback,\
   com.indo.admin.api.fallback.FileFeignFallback,\
   com.indo.admin.api.fallback.GameFeignFallback,\
+  com.indo.admin.api.fallback.HelpFeignClientFallback,\
   com.indo.admin.api.fallback.SysIpLimitFeignFallback
