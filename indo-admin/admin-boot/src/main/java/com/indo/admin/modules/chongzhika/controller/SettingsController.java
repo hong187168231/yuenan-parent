@@ -1,9 +1,12 @@
 package com.indo.admin.modules.chongzhika.controller;
 
 import com.indo.admin.modules.chongzhika.service.ISettingsService;
-import com.indo.core.pojo.req.chongzhika.Result;
 import com.indo.admin.pojo.req.chongzhika.SettingsReq;
+import com.indo.common.result.Result;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +17,9 @@ import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/settings")
+@Api(tags = "卡密后台设置")
+@AllArgsConstructor
+@Slf4j
 public class SettingsController {
 
     @Autowired

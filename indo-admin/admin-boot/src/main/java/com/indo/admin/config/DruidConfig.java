@@ -51,4 +51,5 @@ public class DruidConfig {
         bean.setUrlPatterns(Arrays.asList("/*"));
         return bean;
     }
+
 }

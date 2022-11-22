@@ -12,8 +12,11 @@ import com.indo.admin.pojo.vo.MenuVO;
 import com.indo.admin.pojo.vo.RouteVO;
 import com.indo.admin.pojo.vo.TreeVO;
 import com.indo.common.constant.GlobalConstants;
+import com.indo.common.utils.StringUtils;
+import com.indo.common.utils.i18n.MessageUtils;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -27,9 +30,18 @@ import java.util.Optional;
 public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> implements ISysMenuService {
 
     @Override
-    public List<MenuVO> listMenuVO(LambdaQueryWrapper<SysMenu> baseQuery) {
+    public List<MenuVO> listMenuVO(LambdaQueryWrapper<SysMenu> baseQuery, HttpServletRequest request) {
+        String countryCode = request.getHeader("countryCode");
         List<SysMenu> menuList = this.baseMapper.selectList(baseQuery);
         List<MenuVO> list = recursionForTree(SystemConstants.ROOT_MENU_ID, menuList);
+        if(StringUtils.isNotEmpty(countryCode)&&!countryCode.equals("CN")){
+            list.forEach(l->{
+                l.setName(MessageUtils.get(l.getId().toString(),countryCode));
+                l.getChildren().forEach(ll->{
+                    ll.setName(MessageUtils.get(ll.getId().toString(),countryCode));
+                });
+            });
+        }
         return list;
     }
 

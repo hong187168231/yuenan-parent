@@ -19,4 +19,5 @@ public class AdminApplication {
         ApplicationContext applicationContext = SpringApplication.run(AdminApplication.class, args);
         SpringUtil.setApplicationContext(applicationContext);
     }
+
 }

@@ -15,6 +15,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
 
@@ -38,7 +39,7 @@ public class MenuController {
             @ApiImplicitParam(name = "queryMode", value = "查询模式", paramType = "query", dataType = "QueryModeEnum")
     })
     @GetMapping
-    public Result list(String queryMode, String name) {
+    public Result list(String queryMode, String name, HttpServletRequest request) {
 
         QueryModeEnum queryModeEnum = QueryModeEnum.getByCode(queryMode);
 
@@ -50,7 +51,7 @@ public class MenuController {
         switch (queryModeEnum) {
             case LIST:
                 baseQuery = baseQuery.like(StrUtil.isNotBlank(name), SysMenu::getName, name);
-                list = iSysMenuService.listMenuVO(baseQuery);
+                list = iSysMenuService.listMenuVO(baseQuery,request);
                 break;
             case TREE:
                 list = iSysMenuService.listTreeVO(baseQuery);

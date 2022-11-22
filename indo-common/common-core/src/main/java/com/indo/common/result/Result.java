@@ -31,6 +31,14 @@ public class Result<T> implements Serializable {
 //        }
         return result(rce, data);
     }
+    public static <T> Result<T> success(T data,String msg) {
+        ResultCode rce = ResultCode.SUCCESS;
+
+//        if (data instanceof Boolean && Boolean.FALSE.equals(data)) {
+//            rce = ResultCode.SYSTEM_EXECUTION_ERROR;
+//        }
+        return failed(rce,msg, data);
+    }
 
     public static <T> Result<T> success(T data, Long total) {
         Result<T> result = new Result<>();
@@ -77,6 +85,10 @@ public class Result<T> implements Serializable {
 
     public static <T> Result<T> failed(IResultCode resultCode, String msg) {
         return result(resultCode.getCode(), msg, null);
+    }
+
+    public static <T> Result<T> failed(IResultCode resultCode, String msg, T data) {
+        return result(resultCode.getCode(), msg, data);
     }
 
     private static <T> Result<T> result(IResultCode resultCode, T data) {

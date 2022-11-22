@@ -8,8 +8,8 @@ spring:
     nacos:
       # 注册中心
       discovery:
-        server-addr: http://172.31.38.39:8848
-        namespace: 368a1e2d-5359-405c-9834-a39a44e1d522
+        server-addr: http://172.31.47.34:8848
+        namespace: indo-prod
       # 配置中心
 
       config:

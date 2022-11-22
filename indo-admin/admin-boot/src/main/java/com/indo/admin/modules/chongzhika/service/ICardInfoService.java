@@ -2,11 +2,11 @@ package com.indo.admin.modules.chongzhika.service;
 
 
 import com.indo.admin.pojo.req.chongzhika.CardInfoReq;
-import com.indo.core.pojo.req.chongzhika.Result;
+import com.indo.common.result.Result;
 
 public interface ICardInfoService {
 
-    public Result insertCardInfoBatch(CardInfoReq cardInfoReq,String countryCode);
+    public Result insertCardInfoBatch(CardInfoReq cardInfoReq, String countryCode);
 
     public Result selectCardInfoByisActivation(String countryCode);
 

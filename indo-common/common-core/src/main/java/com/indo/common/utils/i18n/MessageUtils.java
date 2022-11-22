@@ -77,7 +77,8 @@ public class MessageUtils {
             Locale locale = new Locale(lang,country);
             logger.info("获取单个国际化翻译值msgKey:{},countryCode：{},lang：{},country：{},locale：{}", msgKey, countryCode,lang,country,locale);
             ResourceBundle bundle = ResourceBundle.getBundle("messages", locale);
-            return new String(bundle.getString(msgKey).getBytes(StandardCharsets.ISO_8859_1),StandardCharsets.UTF_8);
+            //return new String(bundle.getString(msgKey).getBytes(StandardCharsets.ISO_8859_1),StandardCharsets.UTF_8);
+            return bundle.getString(msgKey);
         } catch (Exception e) {
             e.printStackTrace();
             return msgKey;

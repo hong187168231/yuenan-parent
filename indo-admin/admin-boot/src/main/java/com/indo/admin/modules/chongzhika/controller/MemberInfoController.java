@@ -1,13 +1,15 @@
 package com.indo.admin.modules.chongzhika.controller;
 
+import com.indo.common.result.PageResult;
+import com.indo.common.result.Result;
 import com.indo.common.web.util.JwtUtils;
 import com.indo.core.service.chongzhika.IMemberInfoService;
 import com.indo.core.pojo.req.chongzhika.MemberInfoReq;
 import com.indo.core.pojo.req.chongzhika.PageRequest;
-import com.indo.core.pojo.req.chongzhika.Result;
-import com.indo.common.utils.i18n.MessageUtils;
-import com.indo.common.web.util.IPUtils;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +19,9 @@ import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/member")
+@Api(tags = "激活卡密")
+@AllArgsConstructor
+@Slf4j
 public class MemberInfoController {
 
     @Autowired
@@ -49,10 +54,11 @@ public class MemberInfoController {
      */
     @ApiOperation(value = "查询激活信息", httpMethod = "POST")
     @PostMapping(value = "/queryActivationCard")
-    public Result queryActivationCard(HttpServletRequest request,MemberInfoReq memberInfoReq, PageRequest pageRequest){
+    public Result<Object> queryActivationCard(HttpServletRequest request, MemberInfoReq memberInfoReq, PageRequest pageRequest){
         //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
         String countryCode = request.getHeader("countryCode");
-        return memberInfoService.selectActivationCard(memberInfoReq,pageRequest,countryCode);
+        PageResult pageResult = memberInfoService.selectActivationCard(memberInfoReq,pageRequest,countryCode);
+        return Result.success(pageResult.getData(), Long.valueOf(pageResult.getTotalCount()));
     }
 
     /**
@@ -62,10 +68,11 @@ public class MemberInfoController {
      */
     @ApiOperation(value = "查询统计激活信息", httpMethod = "POST")
     @PostMapping(value = "/queryStatiActivationCard")
-    public Result queryStatiActivationCard(HttpServletRequest request,MemberInfoReq memberInfoReq, PageRequest pageRequest){
+    public Result<Object> queryStatiActivationCard(HttpServletRequest request, MemberInfoReq memberInfoReq, PageRequest pageRequest){
         //        Header头带参，"countryCode":"VN" 越南 "IN" 印度 "CN"中国 "EN"英语
         String countryCode = request.getHeader("countryCode");
-        return memberInfoService.selectStatiActivationCard(memberInfoReq,pageRequest,countryCode);
+        PageResult pageResult = memberInfoService.selectStatiActivationCard(memberInfoReq,pageRequest,countryCode);
+        return Result.success(pageResult.getData(), Long.valueOf(pageResult.getTotalCount()));
     }
 
     /**

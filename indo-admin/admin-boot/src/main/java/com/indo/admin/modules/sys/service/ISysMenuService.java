@@ -8,6 +8,7 @@ import com.indo.admin.pojo.vo.MenuVO;
 import com.indo.admin.pojo.vo.RouteVO;
 import com.indo.admin.pojo.vo.TreeVO;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 /**
  * @author puff
@@ -15,7 +16,7 @@ import java.util.List;
  */
 public interface ISysMenuService extends IService<SysMenu> {
 
-    List<MenuVO> listMenuVO(LambdaQueryWrapper<SysMenu> baseQuery);
+    List<MenuVO> listMenuVO(LambdaQueryWrapper<SysMenu> baseQuery, HttpServletRequest request);
 
     List<TreeVO> listTreeVO(LambdaQueryWrapper<SysMenu> baseQuery);
 
